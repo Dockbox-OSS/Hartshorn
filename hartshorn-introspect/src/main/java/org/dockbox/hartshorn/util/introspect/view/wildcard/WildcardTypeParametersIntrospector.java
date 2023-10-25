@@ -29,7 +29,7 @@ import java.util.List;
 public class WildcardTypeParametersIntrospector implements TypeParametersIntrospector {
 
     @Override
-    public List<TypeView<?>> from(final Class<?> fromInterface) {
+    public List<TypeView<?>> from(Class<?> fromInterface) {
         return Collections.emptyList();
     }
 

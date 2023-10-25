@@ -25,7 +25,7 @@ public class AggregateReporterConfiguration {
 
     private final Set<CategorizedDiagnosticsReporter> reporters = new LinkedHashSet<>();
 
-    public void add(final CategorizedDiagnosticsReporter reporter) {
+    public void add(CategorizedDiagnosticsReporter reporter) {
         this.reporters.add(reporter);
     }
 

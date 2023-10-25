@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -24,6 +23,7 @@ import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
+import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.option.Option;
@@ -44,8 +44,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ScriptContext extends DefaultApplicationAwareContext implements ResultCollector {
 
     private static final String GLOBAL_RESULT = "$__result__$";
-    protected final Map<String, Object> results = new ConcurrentHashMap<>();
+    protected Map<String, Object> results = new ConcurrentHashMap<>();
 
+    private final ScriptRuntime runtime;
     private final String source;
 
     private List<Token> tokens;
@@ -57,9 +58,10 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private Resolver resolver;
     private Interpreter interpreter;
 
-    public ScriptContext(final ApplicationContext context, final String source) {
-        super(context);
+    public ScriptContext(ScriptRuntime runtime, String source) {
+        super(runtime.applicationContext());
         this.source = source;
+        this.runtime = runtime;
     }
 
     public String source() {
@@ -70,7 +72,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.tokens;
     }
 
-    public ScriptContext tokens(final List<Token> tokens) {
+    public ScriptContext tokens(List<Token> tokens) {
         this.tokens = tokens;
         return this;
     }
@@ -79,7 +81,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.statements;
     }
 
-    public ScriptContext statements(final List<Statement> statements) {
+    public ScriptContext statements(List<Statement> statements) {
         this.statements = statements;
         return this;
     }
@@ -88,7 +90,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.comments;
     }
 
-    public ScriptContext comments(final List<Comment> comments) {
+    public ScriptContext comments(List<Comment> comments) {
         this.comments = comments;
         return this;
     }
@@ -97,7 +99,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.lexer;
     }
 
-    public ScriptContext lexer(final Lexer lexer) {
+    public ScriptContext lexer(Lexer lexer) {
         this.lexer = lexer;
         return this;
     }
@@ -106,7 +108,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.parser;
     }
 
-    public ScriptContext parser(final TokenParser parser) {
+    public ScriptContext parser(TokenParser parser) {
         this.parser = parser;
         return this;
     }
@@ -115,7 +117,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.resolver;
     }
 
-    public ScriptContext resolver(final Resolver resolver) {
+    public ScriptContext resolver(Resolver resolver) {
         this.resolver = resolver;
         return this;
     }
@@ -124,30 +126,43 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.interpreter;
     }
 
-    public ScriptContext interpreter(final Interpreter interpreter) {
+    public ScriptContext interpreter(Interpreter interpreter) {
         this.interpreter = interpreter;
         return this;
     }
 
+    public ScriptRuntime runtime() {
+        return this.runtime;
+    }
+
     @Override
-    public void addResult(final Object value) {
+    public void addResult(Object value) {
         this.addResult(GLOBAL_RESULT, value);
     }
 
     @Override
-    public void addResult(final String id, final Object value) {
+    public void addResult(String id, Object value) {
         this.results.put(id, value);
     }
 
     @Override
-    public <T> Option<T> result() {
+    public <T> Option<T> result(Class<T> type) {
+        return this.result(GLOBAL_RESULT, type);
+    }
+
+    @Override
+    public Option<?> result() {
         return this.result(GLOBAL_RESULT);
     }
 
     @Override
-    public <T> Option<T> result(final String id) {
-        return Option.of(this.results.get(id))
-                .map(result -> (T) result);
+    public <T> Option<T> result(String id, Class<T> type) {
+        return Option.of(this.results.get(id)).ofType(type);
+    }
+
+    @Override
+    public Option<?> result(String id) {
+        return Option.of(this.results.get(id));
     }
 
     @Override

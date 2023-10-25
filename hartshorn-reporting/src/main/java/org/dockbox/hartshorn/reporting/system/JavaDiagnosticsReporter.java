@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.reporting.Reportable;
 public class JavaDiagnosticsReporter implements Reportable {
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         collector.property("version").write(System.getProperty("java.version"));
         collector.property("vendor").write(vendorCollector -> {
             vendorCollector.property("name").write(System.getProperty("java.vendor"));

@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Identifiable;
-
 import java.util.Locale;
 import java.util.UUID;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Identifiable;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -33,12 +33,12 @@ public abstract class SystemSubject implements CommandSource, Identifiable {
 
     public static final UUID UNIQUE_ID = new UUID(0, 0);
 
-    public static SystemSubject instance(final ApplicationContext context) {
+    public static SystemSubject instance(ApplicationContext context) {
         return context.get(SystemSubject.class);
     }
 
     @Inject
-    protected SystemSubject(final ApplicationContext applicationContext) {
+    protected SystemSubject(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
@@ -53,7 +53,7 @@ public abstract class SystemSubject implements CommandSource, Identifiable {
     }
 
     @Override
-    public void language(final Locale language) {
+    public void language(Locale language) {
         this.locale = language;
     }
 

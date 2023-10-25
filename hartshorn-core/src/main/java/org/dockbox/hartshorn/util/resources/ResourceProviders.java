@@ -35,7 +35,7 @@ public class ResourceProviders {
     }
 
     @Binds
-    public ResourceLookup resourceLookup(final ApplicationContext applicationContext) {
+    public ResourceLookup resourceLookup(ApplicationContext applicationContext) {
         return new FallbackResourceLookup(applicationContext, new FileSystemLookupStrategy());
     }
 

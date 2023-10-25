@@ -29,12 +29,12 @@ import java.util.Set;
 public class WhileStatementParser extends AbstractBodyStatementParser<WhileStatement> {
 
     @Override
-    public Option<WhileStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<WhileStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.WHILE)) {
             validator.expectAfter(TokenType.LEFT_PAREN, TokenType.WHILE);
-            final Expression condition = parser.expression();
+            Expression condition = parser.expression();
             validator.expectAfter(TokenType.RIGHT_PAREN, "while condition");
-            final BlockStatement loopBody = this.blockStatement("while", condition, parser, validator);
+            BlockStatement loopBody = this.blockStatement("while", condition, parser, validator);
             return Option.of(new WhileStatement(condition, loopBody));
         }
         return Option.empty();

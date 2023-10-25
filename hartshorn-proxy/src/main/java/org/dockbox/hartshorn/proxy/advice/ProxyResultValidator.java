@@ -37,5 +37,5 @@ public interface ProxyResultValidator {
      * @param result the result of the method invocation
      * @return the valid result of the method invocation
      */
-    Object validateResult(final MethodInvokable source, final Object result);
+    Object validateResult(MethodInvokable source, Object result);
 }

@@ -30,7 +30,7 @@ public class TypeReferenceLookupComponentLocator implements ComponentLocator {
     private final ApplicationContext applicationContext;
     private final Set<ComponentContainer<?>> componentContainers = ConcurrentHashMap.newKeySet();
 
-    public TypeReferenceLookupComponentLocator(final ApplicationContext applicationContext) {
+    public TypeReferenceLookupComponentLocator(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
@@ -46,14 +46,14 @@ public class TypeReferenceLookupComponentLocator implements ComponentLocator {
     }
 
     @Override
-    public Collection<ComponentContainer<?>> containers(final ComponentType componentType) {
+    public Collection<ComponentContainer<?>> containers(ComponentType componentType) {
         return this.containers().stream()
                 .filter(container -> container.componentType() == componentType)
                 .toList();
     }
 
     @Override
-    public Option<ComponentContainer<?>> container(final Class<?> type) {
+    public Option<ComponentContainer<?>> container(Class<?> type) {
         return Option.of(this.containers()
                 .stream()
                 .filter(container -> container.type().is(type))
@@ -62,9 +62,9 @@ public class TypeReferenceLookupComponentLocator implements ComponentLocator {
     }
 
     @Override
-    public <T> void validate(final ComponentKey<T> key) {
-        final Introspector introspector = this.applicationContext().environment();
-        final TypeView<T> contract = introspector.introspect(key.type());
+    public <T> void validate(ComponentKey<T> key) {
+        Introspector introspector = this.applicationContext().environment().introspector();
+        TypeView<T> contract = introspector.introspect(key.type());
 
         if (contract.annotations().has(Component.class) && this.container(contract.type()).absent()) {
             this.applicationContext().log().warn("Component key '%s' is annotated with @Component, but is not registered.".formatted(contract.qualifiedName()));

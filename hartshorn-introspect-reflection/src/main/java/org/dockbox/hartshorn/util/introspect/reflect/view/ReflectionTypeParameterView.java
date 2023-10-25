@@ -46,7 +46,7 @@ public class ReflectionTypeParameterView implements TypeParameterView {
     private Option<TypeView<?>> resolvedType;
     private TypeView<?> declaredBy;
 
-    public ReflectionTypeParameterView(final Type type, final TypeView<?> consumedBy, final int index, final Introspector introspector) {
+    public ReflectionTypeParameterView(Type type, TypeView<?> consumedBy, int index, Introspector introspector) {
         this.type = type;
         this.consumedBy = consumedBy;
         this.index = index;
@@ -72,7 +72,7 @@ public class ReflectionTypeParameterView implements TypeParameterView {
     public TypeView<?> declaredBy() {
         if (this.declaredBy == null) {
             if (this.type instanceof TypeVariable<?> typeVariable) {
-                final GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
+                GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
                 if (genericDeclaration instanceof Class<?> clazz) {
                     this.declaredBy = this.introspector.introspect(clazz);
                 }
@@ -95,11 +95,11 @@ public class ReflectionTypeParameterView implements TypeParameterView {
     @Override
     public Option<TypeParameterView> definition() {
         if (this.isOutputParameter() && this.isVariable()) {
-            final TypeVariable<?> typeVariable = (TypeVariable<?>) this.type;
-            final TypeVariable<? extends Class<?>>[] typeParameters = this.declaredBy.type().getTypeParameters();
+            TypeVariable<?> typeVariable = (TypeVariable<?>) this.type;
+            TypeVariable<? extends Class<?>>[] typeParameters = this.declaredBy.type().getTypeParameters();
             int index = -1;
             for (int i = 0; i < typeParameters.length; i++) {
-                final TypeVariable<? extends Class<?>> typeParameter = typeParameters[i];
+                TypeVariable<? extends Class<?>> typeParameter = typeParameters[i];
                 if (typeParameter == typeVariable) {
                     index = i;
                     break;
@@ -108,7 +108,7 @@ public class ReflectionTypeParameterView implements TypeParameterView {
             if (index == -1) {
                 throw new IllegalStateException("Could not find type parameter " + typeVariable.getName() + " in " + this.declaredBy.name());
             }
-            final TypeParameterView view = new ReflectionTypeParameterView(typeVariable, this.declaredBy, index, this.introspector);
+            TypeParameterView view = new ReflectionTypeParameterView(typeVariable, this.declaredBy, index, this.introspector);
             return Option.of(view);
         }
         else {
@@ -120,10 +120,10 @@ public class ReflectionTypeParameterView implements TypeParameterView {
     public Set<TypeParameterView> represents() {
         if (this.represents == null) {
             if (this.type instanceof TypeVariable<?> typeVariable) {
-                final TypeView<?> superClass = this.consumedBy.genericSuperClass();
-                final List<TypeView<?>> genericInterfaces = this.consumedBy.genericInterfaces();
+                TypeView<?> superClass = this.consumedBy.genericSuperClass();
+                List<TypeView<?>> genericInterfaces = this.consumedBy.genericInterfaces();
 
-                final Set<TypeView<?>> representationCandidates = new HashSet<>();
+                Set<TypeView<?>> representationCandidates = new HashSet<>();
                 representationCandidates.add(superClass);
                 representationCandidates.addAll(genericInterfaces);
 
@@ -140,9 +140,9 @@ public class ReflectionTypeParameterView implements TypeParameterView {
         return this.represents;
     }
 
-    private Set<TypeParameterView> getRepresentedParameters(final TypeVariable<?> typeVariable, final TypeView<?> typeView) {
-        final Set<TypeParameterView> representedParameters = new HashSet<>();
-        for (final TypeParameterView parameterView : typeView.typeParameters().all()) {
+    private Set<TypeParameterView> getRepresentedParameters(TypeVariable<?> typeVariable, TypeView<?> typeView) {
+        Set<TypeParameterView> representedParameters = new HashSet<>();
+        for (TypeParameterView parameterView : typeView.typeParameters().all()) {
             if (parameterView instanceof ReflectionTypeParameterView reflectionTypeParameterView) {
                 if (reflectionTypeParameterView.type == typeVariable) {
                     representedParameters.add(reflectionTypeParameterView);
@@ -258,7 +258,7 @@ public class ReflectionTypeParameterView implements TypeParameterView {
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         collector.property("name").write(this.name());
         collector.property("index").write(this.index());
         collector.property("declaredBy").write(this.declaredBy().name());
@@ -273,9 +273,9 @@ public class ReflectionTypeParameterView implements TypeParameterView {
 
     @Override
     public String toString() {
-        final String declaredBy = this.declaredBy().name();
-        final String consumedBy = this.consumedBy().name();
-        final String name = this.name();
+        String declaredBy = this.declaredBy().name();
+        String consumedBy = this.consumedBy().name();
+        String name = this.name();
 
         return "TypeParameter(name=" + name + ", declaredBy=" + declaredBy + ", consumedBy=" + consumedBy + ")";
     }

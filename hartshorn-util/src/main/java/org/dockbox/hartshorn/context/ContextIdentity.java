@@ -16,6 +16,18 @@
 
 package org.dockbox.hartshorn.context;
 
+/**
+ * A context identity is a key that can be used to identify a context. It can be used to
+ * look up a context in a {@link Context} instance, or to create a new context instance.
+ *
+ * <p>Note that a context identity is not a context itself. It is only a key that can be
+ * used to reach a usable context.
+ *
+ * @param <T> The type of the context.
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
 public interface ContextIdentity<T extends Context> {
 
     /**

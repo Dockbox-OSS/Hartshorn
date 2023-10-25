@@ -48,12 +48,12 @@ public class StandardJacksonObjectMapperConfigurator implements JacksonObjectMap
 
     private final Introspector introspector;
 
-    public StandardJacksonObjectMapperConfigurator(final Introspector introspector) {
+    public StandardJacksonObjectMapperConfigurator(Introspector introspector) {
         this.introspector = introspector;
     }
 
     @Override
-    public MapperBuilder<?, ?> configure(final MapperBuilder<?, ?> builder, final FileFormat format, final JsonInclusionRule inclusionRule) {
+    public MapperBuilder<?, ?> configure(MapperBuilder<?, ?> builder, FileFormat format, JsonInclusionRule inclusionRule) {
         MapperBuilder<?, ?> mb = builder
                 .annotationIntrospector(new HartshornJacksonAnnotationIntrospector(this.introspector))
                 .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)

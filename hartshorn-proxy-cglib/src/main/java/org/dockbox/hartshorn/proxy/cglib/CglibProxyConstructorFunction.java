@@ -33,21 +33,21 @@ public class CglibProxyConstructorFunction<T> implements ProxyConstructorFunctio
     private final Class<T> type;
     private final Enhancer enhancer;
 
-    public CglibProxyConstructorFunction(final Class<T> type, final Enhancer enhancer) {
+    public CglibProxyConstructorFunction(Class<T> type, Enhancer enhancer) {
         this.type = type;
         this.enhancer = enhancer;
     }
 
     @Override
     public T create() {
-        final Object instance = this.enhancer.create();
+        Object instance = this.enhancer.create();
         return this.type.cast(instance);
     }
 
     @Override
-    public T create(final Constructor<? extends T> constructor, final Object[] args) {
-        final Class<?>[] parameterTypes = constructor.getParameterTypes();
-        final Object instance = this.enhancer.create(parameterTypes, args);
+    public T create(Constructor<? extends T> constructor, Object[] args) {
+        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        Object instance = this.enhancer.create(parameterTypes, args);
         return this.type.cast(instance);
     }
 }

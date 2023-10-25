@@ -49,7 +49,7 @@ public class ExpressionCondition implements Condition {
     public static final String GLOBAL_APPLICATION_CONTEXT_NAME = "applicationContext";
 
     @Override
-    public ConditionResult matches(final ConditionContext context) {
+    public ConditionResult matches(ConditionContext context) {
         return context.annotatedElement().annotations().get(RequiresExpression.class)
                 .map(condition -> this.calculateResult(context, condition))
                 .orElse(ConditionResult.invalidCondition("expression"));
@@ -57,26 +57,26 @@ public class ExpressionCondition implements Condition {
 
     @NonNull
     private ConditionResult calculateResult(ConditionContext context, RequiresExpression condition) {
-        final String expression = condition.value();
-        final ValidateExpressionRuntime runtime = this.createRuntime(context);
+        String expression = condition.value();
+        ValidateExpressionRuntime runtime = this.createRuntime(context);
 
         try {
-            final ScriptContext scriptContext = runtime.run(expression);
-            final boolean result = ValidateExpressionRuntime.valid(scriptContext);
+            ScriptContext scriptContext = runtime.interpret(expression);
+            boolean result = ValidateExpressionRuntime.valid(scriptContext);
             return ConditionResult.of(result);
         }
-        catch (final ScriptEvaluationError e) {
+        catch (ScriptEvaluationError e) {
             context.applicationContext().handle("Failed to evaluate expression '%s'".formatted(expression), e);
             return ConditionResult.notMatched(e.getMessage());
         }
     }
 
-    protected ValidateExpressionRuntime createRuntime(final ConditionContext context) {
-        final ValidateExpressionRuntime runtime = context.applicationContext().get(ValidateExpressionRuntime.class);
+    protected ValidateExpressionRuntime createRuntime(ConditionContext context) {
+        ValidateExpressionRuntime runtime = context.applicationContext().get(ValidateExpressionRuntime.class);
         return this.enhance(runtime, context);
     }
 
-    protected ValidateExpressionRuntime enhance(final ValidateExpressionRuntime runtime, final ConditionContext context) {
+    protected ValidateExpressionRuntime enhance(ValidateExpressionRuntime runtime, ConditionContext context) {
         // Load parameters first, so they can be overwritten by the customizers and imports.
         context.first(ProvidedParameterContext.class).peek(parameterContext -> {
             parameterContext.arguments().forEach((parameter, value) -> runtime.global(parameter.name(), value));
@@ -96,9 +96,11 @@ public class ExpressionCondition implements Condition {
         return runtime;
     }
 
-    private void enhanceWithApplicationContext(final ScriptRuntime runtime, final ApplicationContext applicationContext) {
+    private void enhanceWithApplicationContext(ScriptRuntime runtime, ApplicationContext applicationContext) {
         if (runtime.globalVariables().containsKey(GLOBAL_APPLICATION_CONTEXT_NAME)) {
-            if (runtime.globalVariables().get(GLOBAL_APPLICATION_CONTEXT_NAME) != applicationContext) applicationContext.log().warn("Runtime contains mismatched application context reference");
+            if (runtime.globalVariables().get(GLOBAL_APPLICATION_CONTEXT_NAME) != applicationContext) {
+                applicationContext.log().warn("Runtime contains mismatched application context reference");
+            }
             // Ignore if the global applicationContext is equal to our active context
         }
         else {

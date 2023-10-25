@@ -30,12 +30,12 @@ import java.util.function.Function;
 
 public class ComponentProcessingContext<T> extends DefaultApplicationAwareContext {
 
-    protected final ComponentKey<T> key;
+    protected ComponentKey<T> key;
     private final Map<ComponentKey<?>, Object> data;
 
     protected T instance;
 
-    public ComponentProcessingContext(final ApplicationContext applicationContext, final ComponentKey<T> key, final T instance) {
+    public ComponentProcessingContext(ApplicationContext applicationContext, ComponentKey<T> key, T instance) {
         super(applicationContext);
         this.key = key;
         this.instance = instance;
@@ -52,9 +52,9 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
     
     public TypeView<T> type() {
         if (this.instance != null) {
-            return this.applicationContext().environment().introspect(this.instance);
+            return this.applicationContext().environment().introspector().introspect(this.instance);
         }
-        return this.applicationContext().environment().introspect(this.key.type());
+        return this.applicationContext().environment().introspector().introspect(this.key.type());
     }
 
     public int size() {
@@ -65,23 +65,23 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
         return this.data.isEmpty();
     }
 
-    public boolean containsKey(final ComponentKey<?> key) {
+    public boolean containsKey(ComponentKey<?> key) {
         return this.data.containsKey(key);
     }
 
-    public boolean containsValue(final ComponentKey<?> value) {
+    public boolean containsValue(ComponentKey<?> value) {
         return this.data.containsValue(value);
     }
 
-    public <R> R get(final ComponentKey<R> key) {
+    public <R> R get(ComponentKey<R> key) {
         return key.type().cast(this.data.get(key));
     }
 
-    public <R> R put(final ComponentKey<R> key, final R value) {
+    public <R> R put(ComponentKey<R> key, R value) {
         return key.type().cast(this.data.put(key, value));
     }
 
-    public <R> R remove(final ComponentKey<R> key) {
+    public <R> R remove(ComponentKey<R> key) {
         return key.type().cast(this.data.remove(key));
     }
 
@@ -101,23 +101,23 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
         return this.data.entrySet();
     }
 
-    public <R> R getOrDefault(final ComponentKey<R> key, final R defaultValue) {
+    public <R> R getOrDefault(ComponentKey<R> key, R defaultValue) {
         return key.type().cast(this.data.getOrDefault(key, defaultValue));
     }
 
-    public <R> R putIfAbsent(final ComponentKey<R> key, final R value) {
+    public <R> R putIfAbsent(ComponentKey<R> key, R value) {
         return key.type().cast(this.data.putIfAbsent(key, value));
     }
 
-    public <R> boolean remove(final ComponentKey<R> key, final R value) {
+    public <R> boolean remove(ComponentKey<R> key, R value) {
         return this.data.remove(key, value);
     }
 
-    public <R> boolean replace(final ComponentKey<R> key, final R oldValue, final R newValue) {
+    public <R> boolean replace(ComponentKey<R> key, R oldValue, R newValue) {
         return this.data.replace(key, oldValue, newValue);
     }
 
-    public <R> R computeIfAbsent(final ComponentKey<R> key, final Function<? super ComponentKey<R>, R> mappingFunction) {
+    public <R> R computeIfAbsent(ComponentKey<R> key, Function<? super ComponentKey<R>, R> mappingFunction) {
         return key.type().cast(this.data.computeIfAbsent(key, componentKey -> mappingFunction.apply(key)));
     }
 }

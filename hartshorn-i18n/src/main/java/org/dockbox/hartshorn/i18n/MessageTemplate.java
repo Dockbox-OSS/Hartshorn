@@ -31,7 +31,7 @@ public class MessageTemplate implements Message {
     private final Map<Locale, String> resourceMap;
     private final String defaultValue;
 
-    public MessageTemplate(final String value, final String key, final Locale language, final Object... args) {
+    public MessageTemplate(String value, String key, Locale language, Object... args) {
         this.language = language;
         this.key = key;
 
@@ -55,11 +55,12 @@ public class MessageTemplate implements Message {
     }
 
     @Override
-    public Message merge(final Locale language, final Message message) {
-        if (!this.key().equals(message.key()))
+    public Message merge(Locale language, Message message) {
+        if (!this.key().equals(message.key())) {
             throw new IllegalArgumentException("Key of provided message does not match existing message key, expected '" + this.key() + "' but received '" + message.key() + "'");
+        }
 
-        final MessageTemplate template = new MessageTemplate(this.safeValue(), this.key, this.language);
+        MessageTemplate template = new MessageTemplate(this.safeValue(), this.key, this.language);
         template.resourceMap.putAll(this.resourceMap);
         template.formattingArgs.putAll(this.formattingArgs);
 
@@ -73,7 +74,7 @@ public class MessageTemplate implements Message {
 
     @Override
     public Message detach() {
-        final MessageTemplate template = new MessageTemplate(this.defaultValue, this.key(), this.language());
+        MessageTemplate template = new MessageTemplate(this.defaultValue, this.key(), this.language());
         template.resourceMap.putAll(this.resourceMap);
         template.formattingArgs.putAll(this.formattingArgs);
         return template;
@@ -84,31 +85,31 @@ public class MessageTemplate implements Message {
     }
 
     @Override
-    public Message translate(final MessageReceiver receiver) {
+    public Message translate(MessageReceiver receiver) {
         return this.translate(receiver.language());
     }
 
     @Override
-    public Message translate(final Locale lang) {
+    public Message translate(Locale lang) {
         this.language = lang;
         return this;
     }
 
     @Override
-    public Message format(final Object... args) {
+    public Message format(Object... args) {
         return this.format(this.language(), args);
     }
 
     @Override
-    public Message format(final Locale language, final Object... args) {
+    public Message format(Locale language, Object... args) {
         this.formattingArgs.put(language, args);
         return this;
     }
 
     @Override
     public String string() {
-        final String temp = this.safeValue();
-        final Object[] args = this.formattingArgs.getOrDefault(this.language(), new Object[0]);
+        String temp = this.safeValue();
+        Object[] args = this.formattingArgs.getOrDefault(this.language(), new Object[0]);
         return StringUtilities.format(temp, args);
     }
 }

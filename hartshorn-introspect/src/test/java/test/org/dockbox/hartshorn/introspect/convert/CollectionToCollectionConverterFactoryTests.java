@@ -35,12 +35,12 @@ public class CollectionToCollectionConverterFactoryTests {
 
     @Test
     void convertHashSetToArrayList() {
-        final Set<Integer> input = new HashSet<>(Arrays.asList(1, 2, 3));
-        final List<Integer> expectedOutput = Arrays.asList(1, 2, 3);
+        Set<Integer> input = new HashSet<>(Arrays.asList(1, 2, 3));
+        List<Integer> expectedOutput = Arrays.asList(1, 2, 3);
 
-        final Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
-        final Converter<Collection<?>, ArrayList> converter = new CollectionToCollectionConverterFactory(introspector).create(ArrayList.class);
-        final List<Integer> output = converter.convert(input);
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
+        Converter<Collection<?>, ArrayList> converter = new CollectionToCollectionConverterFactory(introspector).create(ArrayList.class);
+        List<Integer> output = converter.convert(input);
 
         Assertions.assertTrue(output instanceof ArrayList);
         Assertions.assertEquals(expectedOutput.size(), output.size());
@@ -49,12 +49,12 @@ public class CollectionToCollectionConverterFactoryTests {
 
     @Test
     void convertLinkedHashSetToLinkedList() {
-        final Set<String> input = new LinkedHashSet<>(Arrays.asList("foo", "bar", "baz"));
-        final List<String> expectedOutput = new LinkedList<>(Arrays.asList("foo", "bar", "baz"));
+        Set<String> input = new LinkedHashSet<>(Arrays.asList("foo", "bar", "baz"));
+        List<String> expectedOutput = new LinkedList<>(Arrays.asList("foo", "bar", "baz"));
 
-        final Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(LinkedList.class, LinkedList::new);
-        final Converter<Collection<?>, LinkedList> converter = new CollectionToCollectionConverterFactory(introspector).create(LinkedList.class);
-        final List<String> output = converter.convert(input);
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(LinkedList.class, LinkedList::new);
+        Converter<Collection<?>, LinkedList> converter = new CollectionToCollectionConverterFactory(introspector).create(LinkedList.class);
+        List<String> output = converter.convert(input);
 
         Assertions.assertTrue(output instanceof LinkedList);
         Assertions.assertEquals(expectedOutput.size(), output.size());
@@ -63,19 +63,19 @@ public class CollectionToCollectionConverterFactoryTests {
 
     @Test
     void convertOrderedSetToOrderedSet() {
-        final Set<Integer> input = new LinkedHashSet<>(Arrays.asList(1, 2, 3));
-        final Set<Integer> expectedOutput = new LinkedHashSet<>(Arrays.asList(1, 2, 3));
+        Set<Integer> input = new LinkedHashSet<>(Arrays.asList(1, 2, 3));
+        Set<Integer> expectedOutput = new LinkedHashSet<>(Arrays.asList(1, 2, 3));
 
-        final Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(LinkedHashSet.class, LinkedHashSet::new);
-        final Converter<Collection<?>, LinkedHashSet> converter = new CollectionToCollectionConverterFactory(introspector).create(LinkedHashSet.class);
-        final Set<?> output = converter.convert(input);
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(LinkedHashSet.class, LinkedHashSet::new);
+        Converter<Collection<?>, LinkedHashSet> converter = new CollectionToCollectionConverterFactory(introspector).create(LinkedHashSet.class);
+        Set<?> output = converter.convert(input);
 
         Assertions.assertTrue(output instanceof LinkedHashSet);
         Assertions.assertEquals(expectedOutput.size(), output.size());
 
         // Assert order is preserved
-        final List<?> outputList = new ArrayList<>(output);
-        final List<?> expectedOutputList = new ArrayList<>(expectedOutput);
+        List<?> outputList = new ArrayList<>(output);
+        List<?> expectedOutputList = new ArrayList<>(expectedOutput);
         for (int i = 0; i < outputList.size(); i++) {
             Assertions.assertEquals(expectedOutputList.get(i), outputList.get(i));
         }

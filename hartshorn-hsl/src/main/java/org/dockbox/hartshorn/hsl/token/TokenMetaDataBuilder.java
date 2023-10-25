@@ -26,57 +26,57 @@ import java.util.Locale;
  */
 public class TokenMetaDataBuilder {
 
-    final TokenType type;
-    String representation;
-    boolean keyword;
-    boolean standaloneStatement;
-    boolean reserved;
-    TokenType assignsWith;
+    private final TokenType type;
+    private String representation;
+    private boolean keyword;
+    private boolean standaloneStatement;
+    private boolean reserved;
+    private TokenType assignsWith;
 
-    TokenMetaDataBuilder(final TokenType type) {
+    TokenMetaDataBuilder(TokenType type) {
         this.type = type;
         this.representation = type.name().toLowerCase(Locale.ROOT);
     }
 
-    public TokenMetaDataBuilder representation(final String representation) {
+    public TokenMetaDataBuilder representation(String representation) {
         this.representation = representation;
         return this;
     }
 
-    public TokenMetaDataBuilder combines(final TokenType... types) {
-        final StringBuilder combined = new StringBuilder();
-        for (final TokenType type : types) {
+    public TokenMetaDataBuilder combines(TokenType... types) {
+        StringBuilder combined = new StringBuilder();
+        for (TokenType type : types) {
             combined.append(type.representation());
         }
         this.representation = combined.toString();
         return this;
     }
 
-    public TokenMetaDataBuilder repeats(final TokenType type) {
+    public TokenMetaDataBuilder repeats(TokenType type) {
         return this.combines(type, type);
     }
 
-    public TokenMetaDataBuilder keyword(final boolean keyword) {
+    public TokenMetaDataBuilder keyword(boolean keyword) {
         this.keyword = keyword;
         return this;
     }
 
-    public TokenMetaDataBuilder standaloneStatement(final boolean standaloneStatement) {
+    public TokenMetaDataBuilder standaloneStatement(boolean standaloneStatement) {
         this.standaloneStatement = standaloneStatement;
         return this;
     }
 
-    public TokenMetaDataBuilder reserved(final boolean reserved) {
+    public TokenMetaDataBuilder reserved(boolean reserved) {
         this.reserved = reserved;
         return this;
     }
 
-    public TokenMetaDataBuilder assignsWith(final TokenType assignsWith) {
+    public TokenMetaDataBuilder assignsWith(TokenType assignsWith) {
         this.assignsWith = assignsWith;
         return this;
     }
 
     public TokenMetaData ok() {
-        return new TokenMetaData(this);
+        return new TokenMetaData(this.type, this.representation, this.keyword, this.standaloneStatement, this.reserved, this.assignsWith);
     }
 }

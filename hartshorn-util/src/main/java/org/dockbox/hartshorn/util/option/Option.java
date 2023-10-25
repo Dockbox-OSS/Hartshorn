@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.util.option;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.option.none.None;
-import org.dockbox.hartshorn.util.option.some.Some;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -42,6 +36,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.transform.Result;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.option.none.None;
+import org.dockbox.hartshorn.util.option.some.Some;
 
 /**
  * A container object which may or may not contain a non-null value. If a value is present, {@link #present()} will
@@ -69,8 +69,10 @@ public interface Option<T> extends Iterable<T> {
      * @return a new {@link Option} instance wrapping the given nullable value.
      */
     @NonNull
-    static <T> Option<T> of(final T value) {
-        if (value == null) return new None<>();
+    static <T> Option<T> of(T value) {
+        if (value == null) {
+            return new None<>();
+        }
         return new Some<>(value);
     }
 
@@ -85,8 +87,10 @@ public interface Option<T> extends Iterable<T> {
      * @return a new {@link Option} instance wrapping the (potential) value of the given {@link Optional} instance.
      */
     @NonNull
-    static <T> Option<T> of(final Optional<T> optional) {
-        if (optional.isEmpty()) return new None<>();
+    static <T> Option<T> of(Optional<T> optional) {
+        if (optional.isEmpty()) {
+            return new None<>();
+        }
         return new Some<>(optional.get());
     }
 
@@ -102,13 +106,15 @@ public interface Option<T> extends Iterable<T> {
      * @return a new {@link Option} instance wrapping the (potential) value of the given {@link Callable} instance.
      */
     @NonNull
-    static <T> Option<T> of(final Callable<T> supplier) {
+    static <T> Option<T> of(Callable<T> supplier) {
         try {
-            final T value = supplier.call();
-            if (value == null) return new None<>();
+            T value = supplier.call();
+            if (value == null) {
+                return new None<>();
+            }
             return new Some<>(value);
         }
-        catch (final Exception e) {
+        catch (Exception e) {
             return new None<>();
         }
     }
@@ -135,7 +141,7 @@ public interface Option<T> extends Iterable<T> {
      *
      * @return a {@link Attempt} instance based on the current {@link Option} instance.
      */
-    <E extends Throwable> Attempt<T, E> attempt(final Class<E> errorType);
+    <E extends Throwable> Attempt<T, E> attempt(Class<E> errorType);
 
     /**
      * If a value is present in this {@link Option}, the given {@link Consumer} is executed with the value as argument.
@@ -322,7 +328,7 @@ public interface Option<T> extends Iterable<T> {
      * @param <U> the type of the elements of the new {@link Stream}
      */
     @NonNull
-    default <U> Stream<U> stream(@NonNull final Function<@NonNull T, @NonNull Stream<U>> mapper) {
+    default <U> Stream<U> stream(@NonNull Function<@NonNull T, @NonNull Stream<U>> mapper) {
         return this.stream().flatMap(mapper);
     }
 
@@ -346,7 +352,7 @@ public interface Option<T> extends Iterable<T> {
      *       type.
      * @param <U> the type to cast the value to
      */
-    default <U> Option<U> ofType(@NonNull final Class<U> type) {
+    default <U> Option<U> ofType(@NonNull Class<U> type) {
         return this.filter(type::isInstance).cast(type);
     }
 
@@ -360,7 +366,7 @@ public interface Option<T> extends Iterable<T> {
      * @param <U> the type to cast the value to
      * @throws ClassCastException if the value is not of the given type
      */
-    default <U> Option<U> cast(@NonNull final Class<U> type) {
+    default <U> Option<U> cast(@NonNull Class<U> type) {
         return this.map(type::cast);
     }
 
@@ -374,7 +380,7 @@ public interface Option<T> extends Iterable<T> {
      * @param <K> the type to cast the value to
      * @param <A> the type parameter to adjust the wildcards of the given type to
      */
-    default <K extends T, A extends K> Option<A> adjust(@NonNull final Class<K> type) {
+    default <K extends T, A extends K> Option<A> adjust(@NonNull Class<K> type) {
         return this.ofType(type).map(value -> TypeUtils.adjustWildcards(value, type));
     }
 
@@ -388,7 +394,7 @@ public interface Option<T> extends Iterable<T> {
      * @return the result of the reduction
      * @param <E> the type of the result
      */
-    default <E> E collect(@NonNull final Collector<T, ?, E> collector) {
+    default <E> E collect(@NonNull Collector<T, ?, E> collector) {
         return this.stream().collect(collector);
     }
 
@@ -410,7 +416,7 @@ public interface Option<T> extends Iterable<T> {
      *
      * @return the result of the reduction
      */
-    default <E> E collect(@NonNull final Supplier<E> supplier, @NonNull final BiConsumer<E, T> accumulator, @NonNull final BiConsumer<E, E> combiner) {
+    default <E> E collect(@NonNull Supplier<E> supplier, @NonNull BiConsumer<E, T> accumulator, @NonNull BiConsumer<E, E> combiner) {
         return this.stream().collect(supplier, accumulator, combiner);
     }
 
@@ -448,7 +454,7 @@ public interface Option<T> extends Iterable<T> {
      * @return a {@link Map} containing the value wrapped by the current {@link Option} instance as value, identified
      *         by the key returned by the given {@link Function}.
      */
-    default <K> Map<K, T> toMap(@NonNull final Function<T, K> keyMapper) {
+    default <K> Map<K, T> toMap(@NonNull Function<T, K> keyMapper) {
         return this.collect(Collectors.toMap(keyMapper, Function.identity()));
     }
 
@@ -472,13 +478,13 @@ public interface Option<T> extends Iterable<T> {
      * @return a {@link Map} containing the wrapped value as both key and value, as returned by the given
      *         {@link Function functions}.
      */
-    default <K, V> Map<K, V> toMap(@NonNull final Function<T, K> keyMapper, @NonNull final Function<T, V> valueMapper) {
+    default <K, V> Map<K, V> toMap(@NonNull Function<T, K> keyMapper, @NonNull Function<T, V> valueMapper) {
         return this.collect(Collectors.toMap(keyMapper, valueMapper));
     }
 
     @Override
     default Spliterator<T> spliterator() {
-        final int size = this.map(value -> 1).orElse(0);
+        int size = this.map(value -> 1).orElse(0);
         return Spliterators.spliterator(this.iterator(), size, 0);
     }
 

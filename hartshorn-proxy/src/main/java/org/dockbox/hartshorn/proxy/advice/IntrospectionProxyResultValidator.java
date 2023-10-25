@@ -32,13 +32,13 @@ public class IntrospectionProxyResultValidator implements ProxyResultValidator {
 
     private final Introspector introspector;
 
-    public IntrospectionProxyResultValidator(final Introspector introspector) {
+    public IntrospectionProxyResultValidator(Introspector introspector) {
         this.introspector = introspector;
     }
 
     @Override
-    public Object validateResult(final MethodInvokable source, final Object result) {
-        final TypeView<?> returnType = source.toIntrospector().returnType();
+    public Object validateResult(MethodInvokable source, Object result) {
+        TypeView<?> returnType = source.toIntrospector().returnType();
         if (returnType.isVoid()) {
             return null;
         }
@@ -47,22 +47,26 @@ public class IntrospectionProxyResultValidator implements ProxyResultValidator {
                 return returnType.defaultOrNull();
             }
             else {
-                final TypeView<Object> resultView = this.introspector.introspect(result);
+                TypeView<Object> resultView = this.introspector.introspect(result);
                 if (resultView.isPrimitive() || resultView.isChildOf(returnType.type())) {
                     return result;
                 }
-                else throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
+                else {
+                    throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
+                }
             }
         }
         else if (result == null) {
             return null;
         }
         else {
-            final TypeView<Object> resultView = this.introspector.introspect(result);
+            TypeView<Object> resultView = this.introspector.introspect(result);
             if (resultView.isChildOf(returnType.type())) {
                 return result;
             }
-            else throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
+            else {
+                throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
+            }
         }
     }
 }

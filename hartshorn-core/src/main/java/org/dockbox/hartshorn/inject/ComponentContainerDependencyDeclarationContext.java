@@ -23,7 +23,7 @@ public class ComponentContainerDependencyDeclarationContext<T> implements Depend
 
     private final ComponentContainer<T> container;
 
-    public ComponentContainerDependencyDeclarationContext(final ComponentContainer<T> container) {
+    public ComponentContainerDependencyDeclarationContext(ComponentContainer<T> container) {
         this.container = container;
     }
 

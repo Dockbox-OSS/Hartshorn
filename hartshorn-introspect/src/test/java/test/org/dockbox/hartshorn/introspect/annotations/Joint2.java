@@ -16,16 +16,16 @@
 
 package test.org.dockbox.hartshorn.introspect.annotations;
 
-import org.dockbox.hartshorn.util.introspect.annotations.AliasFor;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Extends(Route.class)
 @Route(method = HttpMethod.POST, path = "joint")
 public @interface Joint2 {
-    @AliasFor(target = Get.class, value = "path")
+    @AttributeAlias(target = Get.class, value = "path")
     String path();
 }

@@ -16,19 +16,19 @@
 
 package org.dockbox.hartshorn.component.contextual;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.ContextKey;
-import org.dockbox.hartshorn.context.InstallIfAbsent;
-import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.ContextKey;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.context.InstallIfAbsent;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import jakarta.inject.Inject;
 
@@ -42,7 +42,7 @@ public class StaticComponentContext extends DefaultApplicationAwareContext imple
     private final List<StaticComponentContainer<?>> staticComponentContainers = new CopyOnWriteArrayList<>();
 
     @Inject
-    public StaticComponentContext(final ApplicationContext applicationContext) {
+    public StaticComponentContext(ApplicationContext applicationContext) {
         super(applicationContext);
     }
 
@@ -55,28 +55,28 @@ public class StaticComponentContext extends DefaultApplicationAwareContext imple
     }
 
     @Override
-    public <T> StaticComponentContainer<T> register(final T instance, final Class<T> type, final String id) {
-        final TypeView<T> typeView = this.applicationContext().environment().introspect(type);
-        final StaticComponentContainer<T> componentReference = new StaticComponentContainer<>(instance, typeView, id);
+    public <T> StaticComponentContainer<T> register(T instance, Class<T> type, String id) {
+        TypeView<T> typeView = this.applicationContext().environment().introspector().introspect(type);
+        StaticComponentContainer<T> componentReference = new StaticComponentContainer<>(instance, typeView, id);
         this.staticComponentContainers.add(componentReference);
         return componentReference;
     }
 
     @Override
-    public <T> Set<StaticComponentContainer<T>> register(final Class<T> type, final Collection<T> components, final String id) {
+    public <T> Set<StaticComponentContainer<T>> register(Class<T> type, Collection<T> components, String id) {
         return components.stream()
                 .map(component -> this.register(component, type, id))
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public void unregister(final StaticComponentContainer<?> componentReference) {
+    public void unregister(StaticComponentContainer<?> componentReference) {
         this.staticComponentContainers.remove(componentReference);
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
-        final Reportable[] reporters = this.staticComponentContainers.stream()
+    public void report(DiagnosticsPropertyCollector collector) {
+        Reportable[] reporters = this.staticComponentContainers.stream()
                 .map(StaticComponentContainerReportable::new)
                 .toArray(Reportable[]::new);
         collector.property("beans").write(reporters);

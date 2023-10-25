@@ -32,12 +32,12 @@ public class WildcardTypeConstructorsIntrospector implements TypeConstructorsInt
     }
 
     @Override
-    public List<ConstructorView<Object>> annotatedWith(final Class<? extends Annotation> annotation) {
+    public List<ConstructorView<Object>> annotatedWith(Class<? extends Annotation> annotation) {
         return Collections.emptyList();
     }
 
     @Override
-    public Option<ConstructorView<Object>> withParameters(final List<Class<?>> parameters) {
+    public Option<ConstructorView<Object>> withParameters(List<Class<?>> parameters) {
         return Option.empty();
     }
 

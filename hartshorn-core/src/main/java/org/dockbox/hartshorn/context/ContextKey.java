@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.context;
 
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * A {@link ContextKey} is a key which can be used to retrieve a context value from a {@link Context}
@@ -47,7 +47,7 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
     private final Function<ApplicationContext, T> fallback;
     private final boolean requiresApplicationContext;
 
-    private ContextKey(final Builder<T> builder) {
+    private ContextKey(Builder<T> builder) {
         this.type = builder.type;
         this.name = builder.name;
         this.fallback = builder.fallback;
@@ -71,6 +71,9 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
 
     @Override
     public T create() {
+        if (this.requiresApplicationContext()) {
+            throw new IllegalStateException("Cannot create context value without an application context");
+        }
         return this.create(null);
     }
 
@@ -87,7 +90,7 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * @param context The application context to use to create the context value.
      * @return The newly created context value.
      */
-    public T create(final ApplicationContext context) {
+    public T create(ApplicationContext context) {
         return this.create(context, Scope.DEFAULT_SCOPE);
     }
 
@@ -105,12 +108,12 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * @param scope The scope to use for the intermediate {@link ComponentKey}.
      * @return The newly created context value.
      */
-    public T create(final ApplicationContext context, final Scope scope) {
-        final T contextInstance;
+    public T create(ApplicationContext context, Scope scope) {
+        T contextInstance;
         if (this.fallback != null) {
             contextInstance = this.fallback.apply(context);
         }
-        else if (context != null && context.environment().introspect(this.type).annotations().has(InstallIfAbsent.class)) {
+        else if (context != null && context.environment().introspector().introspect(this.type).annotations().has(InstallIfAbsent.class)) {
             contextInstance = context.get(this.componentKey(scope));
         }
         else {
@@ -127,9 +130,11 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * @param scope The scope to use for the {@link ComponentKey}.
      * @return The newly created {@link ComponentKey}.
      */
-    public ComponentKey<T> componentKey(final Scope scope) {
-        final ComponentKey.Builder<T> builder = ComponentKey.builder(this.type).scope(scope);
-        if (this.name != null) builder.name(this.name);
+    public ComponentKey<T> componentKey(Scope scope) {
+        ComponentKey.Builder<T> builder = ComponentKey.builder(this.type).scope(scope);
+        if (this.name != null) {
+            builder.name(this.name);
+        }
         return builder.build();
     }
 
@@ -152,7 +157,7 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * @return A new {@link ContextKey key} which is bound to the given type.
      * @param <T> The type of the context represented by the key.
      */
-    public static <T extends Context> ContextKey<T> of(final Class<T> type) {
+    public static <T extends Context> ContextKey<T> of(Class<T> type) {
         return builder(type).build();
     }
 
@@ -163,7 +168,7 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * @return A new {@link ContextKey key} which is bound to the given type.
      * @param <T> The type of the context represented by the key.
      */
-    public static <T extends Context> ContextKey<T> of(final TypeView<T> type) {
+    public static <T extends Context> ContextKey<T> of(TypeView<T> type) {
         return builder(type).build();
     }
 
@@ -174,7 +179,7 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * @return A new {@link Builder key builder} which is bound to the given type and name.
      * @param <T> The type of the context represented by the key.
      */
-    public static <T extends Context> Builder<T> builder(final Class<T> type) {
+    public static <T extends Context> Builder<T> builder(Class<T> type) {
         return new Builder<>(type);
     }
 
@@ -185,22 +190,26 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * @return A new {@link Builder key builder} which is bound to the given type and name.
      * @param <T> The type of the context represented by the key.
      */
-    public static <T extends Context> Builder<T> builder(final TypeView<T> type) {
+    public static <T extends Context> Builder<T> builder(TypeView<T> type) {
         return new Builder<>(type.type());
     }
 
     @Override
     public String toString() {
-        final String nameSuffix = StringUtilities.empty(this.name) ? "" : ":" + this.name;
+        String nameSuffix = StringUtilities.empty(this.name) ? "" : ":" + this.name;
         return "ContextKey<%s%s>%s".formatted(this.type.getSimpleName(), nameSuffix,
                 this.requiresApplicationContext() ? " (requires ApplicationContext)" : "");
     }
 
     @Override
-    public boolean equals(final Object other) {
-        if (this == other) return true;
-        if (other == null || this.getClass() != other.getClass()) return false;
-        final ContextKey<?> contextKey = (ContextKey<?>) other;
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || this.getClass() != other.getClass()) {
+            return false;
+        }
+        ContextKey<?> contextKey = (ContextKey<?>) other;
         return this.requiresApplicationContext == contextKey.requiresApplicationContext
                 && this.type.equals(contextKey.type)
                 && Objects.equals(this.name, contextKey.name);
@@ -237,7 +246,7 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
          *
          * @param key The key to copy the values from.
          */
-        public Builder(final ContextKey<T> key) {
+        public Builder(ContextKey<T> key) {
             this.type = key.type();
             this.name = key.name();
             this.fallback = key.fallback;
@@ -248,7 +257,7 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
          *
          * @param type The type of the context represented by the key.
          */
-        public Builder(final Class<T> type) {
+        public Builder(Class<T> type) {
             this.type = type;
         }
 
@@ -259,7 +268,7 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
          * @param name The name of the context represented by the key.
          * @return This builder.
          */
-        public Builder<T> name(final String name) {
+        public Builder<T> name(String name) {
             this.name = StringUtilities.nullIfEmpty(name);
             return this;
         }
@@ -276,7 +285,7 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
          * @see ContextKey#create(ApplicationContext)
          * @see ContextKey#create(ApplicationContext, Scope)
          */
-        public Builder<T> fallback(final Supplier<T> fallback) {
+        public Builder<T> fallback(Supplier<T> fallback) {
             this.fallback = applicationContext -> fallback.get();
             this.requiresApplicationContext = false;
             return this;
@@ -293,7 +302,7 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
          * @see ContextKey#create(ApplicationContext)
          * @see ContextKey#create(ApplicationContext, Scope)
          */
-        public Builder<T> fallback(final Function<ApplicationContext, T> fallback) {
+        public Builder<T> fallback(Function<ApplicationContext, T> fallback) {
             this.fallback = fallback;
             this.requiresApplicationContext = true;
             return this;

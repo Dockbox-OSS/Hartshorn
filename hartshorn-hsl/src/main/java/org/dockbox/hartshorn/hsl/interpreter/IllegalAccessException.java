@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.interpreter;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class IllegalAccessException extends ApplicationRuntimeException {
-    public IllegalAccessException(final String message) {
+    public IllegalAccessException(String message) {
         super(message);
     }
 }

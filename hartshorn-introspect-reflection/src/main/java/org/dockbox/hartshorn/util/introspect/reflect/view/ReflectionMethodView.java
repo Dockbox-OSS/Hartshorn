@@ -42,7 +42,7 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     private MethodInvoker<ReturnType, Parent> invoker;
     private String qualifiedName;
 
-    public ReflectionMethodView(final ReflectionIntrospector introspector, final Method method) {
+    public ReflectionMethodView(ReflectionIntrospector introspector, Method method) {
         super(introspector, method);
         this.introspector = introspector;
         this.method = method;
@@ -54,7 +54,7 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public Attempt<ReturnType, Throwable> invoke(final Parent instance, final Collection<?> arguments) {
+    public Attempt<ReturnType, Throwable> invoke(Parent instance, Collection<?> arguments) {
         if (this.invoker == null) {
             this.invoker = new ReflectionMethodInvoker<>();
         }
@@ -62,9 +62,13 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public Attempt<ReturnType, Throwable> invokeStatic(final Collection<?> arguments) {
-        if (this.modifiers().isStatic()) return this.invoke(null, arguments);
-        else throw new IllegalIntrospectionException(this, "Method is not static");
+    public Attempt<ReturnType, Throwable> invokeStatic(Collection<?> arguments) {
+        if (this.modifiers().isStatic()) {
+            return this.invoke(null, arguments);
+        }
+        else {
+            throw new IllegalIntrospectionException(this, "Method is not static");
+        }
     }
 
     @Override
@@ -85,11 +89,11 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     @Override
     public String qualifiedName() {
         if (this.qualifiedName == null) {
-            final StringJoiner j = new StringJoiner(" ");
-            final String shortSig = MethodType.methodType(this.method.getReturnType(), this.method.getParameterTypes()).toString();
-            final int split = shortSig.lastIndexOf(')') + 1;
+            StringJoiner j = new StringJoiner(" ");
+            String shortSig = MethodType.methodType(this.method.getReturnType(), this.method.getParameterTypes()).toString();
+            int split = shortSig.lastIndexOf(')') + 1;
             j.add(shortSig.substring(split)).add(this.method.getName() + shortSig.substring(0, split));
-            final String k = j.toString();
+            String k = j.toString();
             this.qualifiedName = this.declaredBy().qualifiedName() + '#' + k.substring(k.indexOf(' ') + 1);
         }
         return this.qualifiedName;
@@ -141,7 +145,7 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
+    public void report(DiagnosticsPropertyCollector collector) {
         collector.property("name").write(this.name());
         collector.property("elementType").write("method");
         collector.property("returnType").write(this.genericReturnType());

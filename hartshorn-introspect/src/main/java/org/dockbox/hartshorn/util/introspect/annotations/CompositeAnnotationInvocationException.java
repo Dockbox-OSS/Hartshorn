@@ -22,11 +22,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 public class CompositeAnnotationInvocationException extends ApplicationRuntimeException {
-    public CompositeAnnotationInvocationException(final Class<?> type, final Method method, final Annotation annotation) {
+    public CompositeAnnotationInvocationException(Class<?> type, Method method, Annotation annotation) {
         super("Can't invoke " + type.getName() + "." + method.getName() + "() on composite annotation " + annotation);
     }
 
-    public CompositeAnnotationInvocationException(final Class<?> type, final Method method, final Annotation annotation, final Throwable cause) {
+    public CompositeAnnotationInvocationException(Class<?> type, Method method, Annotation annotation, Throwable cause) {
         super("Can't invoke " + type.getName() + "." + method.getName() + "() on composite annotation " + annotation, cause);
     }
 }

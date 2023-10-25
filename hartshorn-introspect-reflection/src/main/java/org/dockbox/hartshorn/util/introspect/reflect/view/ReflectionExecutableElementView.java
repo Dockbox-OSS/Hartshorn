@@ -40,12 +40,12 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     private ExecutableParametersIntrospector parametersIntrospector;
     private TypeVariablesIntrospector typeVariablesIntrospector;
 
-    protected ReflectionExecutableElementView(final ReflectionIntrospector introspector, final Executable executable) {
+    protected ReflectionExecutableElementView(ReflectionIntrospector introspector, Executable executable) {
         super(introspector);
         this.executable = executable;
         this.introspector = introspector;
         if (!executable.trySetAccessible()) {
-            final String packageName = executable.getDeclaringClass().getPackageName();
+            String packageName = executable.getDeclaringClass().getPackageName();
             if (!(packageName.startsWith("java.") || packageName.startsWith("jdk.") || packageName.startsWith("sun.") || packageName.startsWith("com.sun.") || packageName.startsWith("javax."))) {
                 throw new IllegalIntrospectionException(executable, "Unable to set executable " + executable.getName() + " accessible");
             }

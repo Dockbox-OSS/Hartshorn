@@ -20,7 +20,7 @@ public class ClassReference implements TypeReference {
 
     private final Class<?> type;
 
-    public ClassReference(final Class<?> type) {
+    public ClassReference(Class<?> type) {
         this.type = type;
     }
 

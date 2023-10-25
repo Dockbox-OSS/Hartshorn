@@ -25,7 +25,7 @@ public class AssignExpression extends Expression implements NamedNode {
     private final Token name;
     private final Expression value;
 
-    public AssignExpression(final Token name, final Expression value) {
+    public AssignExpression(Token name, Expression value) {
         super(name);
         this.name = name;
         this.value = value;
@@ -41,7 +41,7 @@ public class AssignExpression extends Expression implements NamedNode {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

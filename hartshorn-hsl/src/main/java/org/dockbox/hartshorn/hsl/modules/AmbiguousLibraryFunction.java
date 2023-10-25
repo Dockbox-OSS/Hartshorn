@@ -26,12 +26,13 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import java.util.List;
 import java.util.Set;
 
-public record AmbiguousLibraryFunction(Set<HslLibrary> libraries) implements CallableNode {
+public record AmbiguousLibraryFunction(Set<NativeLibrary> libraries) implements CallableNode {
 
     @Override
-    public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments)
+    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments)
             throws ApplicationException {
-        final List<HslLibrary> applicableLibraries = this.libraries.stream()
+
+        List<NativeLibrary> applicableLibraries = this.libraries.stream()
                 .filter(library -> library.declaration().params().size() == arguments.size())
                 .toList();
 
@@ -42,7 +43,7 @@ public record AmbiguousLibraryFunction(Set<HslLibrary> libraries) implements Cal
             throw new RuntimeError(at, "Multiple applicable libraries found for " + arguments.size() + " arguments");
         }
         else {
-            final HslLibrary library = applicableLibraries.get(0);
+            NativeLibrary library = applicableLibraries.get(0);
             return library.call(at, interpreter, instance, arguments);
         }
     }

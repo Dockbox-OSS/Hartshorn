@@ -16,26 +16,26 @@
 
 package org.dockbox.hartshorn.proxy.loaders;
 
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 
 /**
- * A parameter loader context that provides access to the {@link ApplicationProxier} instance.
+ * A parameter loader context that provides access to the {@link ProxyOrchestrator} instance.
  *
  * @since 0.4.12
  * @author Guus Lieben
  */
 public class ProxyParameterLoaderContext extends ParameterLoaderContext {
 
-    private final ApplicationProxier applicationProxier;
+    private final ProxyOrchestrator proxyOrchestrator;
 
-    public ProxyParameterLoaderContext(final ExecutableElementView<?> executable, final Object instance, final ApplicationProxier applicationProxier) {
+    public ProxyParameterLoaderContext(ExecutableElementView<?> executable, Object instance, ProxyOrchestrator proxyOrchestrator) {
         super(executable, instance);
-        this.applicationProxier = applicationProxier;
+        this.proxyOrchestrator = proxyOrchestrator;
     }
 
-    public ApplicationProxier applicationProxier() {
-        return this.applicationProxier;
+    public ProxyOrchestrator proxyOrchestrator() {
+        return this.proxyOrchestrator;
     }
 }

@@ -34,10 +34,10 @@ import java.util.Set;
 public class CaseBodyStatementParser implements ASTNodeParser<Statement> {
 
     @Override
-    public Attempt<Statement, ScriptEvaluationError> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Attempt<Statement, ScriptEvaluationError> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.COLON)) {
-            final Token colon = parser.previous();
-            final List<Statement> statements = new ArrayList<>();
+            Token colon = parser.previous();
+            List<Statement> statements = new ArrayList<>();
             while (!parser.check(TokenType.CASE, TokenType.DEFAULT, TokenType.RIGHT_BRACE)) {
                 statements.add(parser.statement());
             }

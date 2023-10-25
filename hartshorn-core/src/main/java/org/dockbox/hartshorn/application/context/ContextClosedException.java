@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class ContextClosedException extends ApplicationRuntimeException {
-    public ContextClosedException(final Class<? extends Context> type) {
+    public ContextClosedException(Class<? extends Context> type) {
         super("Context (" + type.getSimpleName() + ") is already closed.");
     }
 }

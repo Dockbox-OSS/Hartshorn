@@ -42,14 +42,24 @@ public class TypeUtils {
             Map.entry(boolean.class, input -> {
                 // Boolean.valueOf only checks if the input equals 'true', and otherwise
                 // defaults to 'false'. We want to be more strict.
-                if ("true".equals(input)) return true;
-                else if ("false".equals(input)) return false;
-                else throw new TypeConversionException("Invalid boolean value: " + input);
+                if ("true".equals(input)) {
+                    return true;
+                }
+                else if ("false".equals(input)) {
+                    return false;
+                }
+                else {
+                    throw new TypeConversionException("Invalid boolean value: " + input);
+                }
             }),
             Map.entry(byte.class, Byte::valueOf),
             Map.entry(char.class, input -> {
-                if (input.length() == 1) return input.charAt(0);
-                else throw new TypeConversionException("Invalid char value: " + input + " (length != 1)");
+                if (input.length() == 1) {
+                    return input.charAt(0);
+                }
+                else {
+                    throw new TypeConversionException("Invalid char value: " + input + " (length != 1)");
+                }
             }),
             Map.entry(double.class, Double::valueOf),
             Map.entry(float.class, Float::valueOf),
@@ -58,20 +68,20 @@ public class TypeUtils {
             Map.entry(short.class, Short::valueOf)
     );
 
-    public static <T> T toPrimitive(Class<?> type, final String value) throws TypeConversionException, NotPrimitiveException {
+    public static <T> T toPrimitive(Class<?> type, String value) throws TypeConversionException, NotPrimitiveException {
         if (type.isEnum()) {
-            final String name = String.valueOf(value).toUpperCase();
+            String name = String.valueOf(value).toUpperCase();
             try {
                 //noinspection unchecked,rawtypes
                 return (T) Enum.valueOf((Class<? extends Enum>) type, name);
             }
-            catch (final IllegalArgumentException e) {
+            catch (IllegalArgumentException e) {
                 throw new TypeConversionException("No enum constant " + type.getName() + "." + name);
             }
         }
         else {
             if (!type.isPrimitive()) {
-                for (final Entry<Class<?>, Class<?>> entry : PRIMITIVE_WRAPPERS.entrySet()) {
+                for (Entry<Class<?>, Class<?>> entry : PRIMITIVE_WRAPPERS.entrySet()) {
                     if (isPrimitiveWrapper(type, entry.getKey())) {
                         type = entry.getKey();
                     }
@@ -83,97 +93,103 @@ public class TypeUtils {
             }
             else {
                 try {
-                    final Function<String, ?> converter = PRIMITIVE_FROM_STRING.get(type);
-                    final T result = adjustWildcards(converter.apply(value), Object.class);
-                    if (result == null) throw new TypeConversionException(type, value);
+                    Function<String, ?> converter = PRIMITIVE_FROM_STRING.get(type);
+                    T result = adjustWildcards(converter.apply(value), Object.class);
+                    if (result == null) {
+                        throw new TypeConversionException(type, value);
+                    }
                     return result;
                 }
-                catch (final Throwable e) {
+                catch (Throwable e) {
                     throw new TypeConversionException(type, value, e);
                 }
             }
         }
     }
 
-    public static boolean isPrimitiveWrapper(final Class<?> targetClass, final Class<?> primitive) {
+    public static boolean isPrimitiveWrapper(Class<?> targetClass, Class<?> primitive) {
         if (!primitive.isPrimitive()) {
             throw new IllegalArgumentException("Expected second argument to be primitive type");
         }
         return PRIMITIVE_WRAPPERS.get(primitive) == targetClass;
     }
 
-    public static <InstanceType, KeyType extends InstanceType, AdjustedType extends KeyType> AdjustedType adjustWildcards(final InstanceType obj, final Class<KeyType> type) {
-        if (obj == null) return null;
+    public static <InstanceType, KeyType extends InstanceType, AdjustedType extends KeyType> AdjustedType adjustWildcards(InstanceType obj, Class<KeyType> type) {
+        if (obj == null) {
+            return null;
+        }
         if (type.isAssignableFrom(obj.getClass()))
             //noinspection unchecked
+        {
             return (AdjustedType) obj;
+        }
         throw new IllegalArgumentException("Cannot adjust wildcards for " + obj.getClass().getName() + " to " + type.getName());
     }
 
-    public static <A extends Annotation> A annotation(final Class<A> annotationType) {
+    public static <A extends Annotation> A annotation(Class<A> annotationType) {
         return annotation(annotationType, Collections.emptyMap());
     }
 
-    public static <A extends Annotation> A annotation(final Class<A> annotationType, final Map<String, Object> values) {
-        final Object instance = Proxy.newProxyInstance(annotationType.getClassLoader(),
+    public static <A extends Annotation> A annotation(Class<A> annotationType, Map<String, Object> values) {
+        Object instance = Proxy.newProxyInstance(annotationType.getClassLoader(),
                 new Class[]{ annotationType },
                 new MapBackedAnnotationInvocationHandler(annotationType, values == null ? Collections.emptyMap() : values));
         return adjustWildcards(instance, annotationType);
     }
 
-    public static Stream<Integer> stream(final int[] array) {
+    public static Stream<Integer> stream(int[] array) {
         return Arrays.stream(array).boxed();
     }
 
-    public static Stream<Long> stream(final long[] array) {
+    public static Stream<Long> stream(long[] array) {
         return Arrays.stream(array).boxed();
     }
 
-    public static Stream<Double> stream(final double[] array) {
+    public static Stream<Double> stream(double[] array) {
         return Arrays.stream(array).boxed();
     }
 
-    public static Stream<Float> stream(final float[] array) {
-        final Float[] boxed = new Float[array.length];
+    public static Stream<Float> stream(float[] array) {
+        Float[] boxed = new Float[array.length];
         for (int i = 0; i < array.length; i++) {
             boxed[i] = array[i];
         }
         return Arrays.stream(boxed);
     }
 
-    public static Stream<Short> stream(final short[] array) {
-        final Short[] boxed = new Short[array.length];
+    public static Stream<Short> stream(short[] array) {
+        Short[] boxed = new Short[array.length];
         for (int i = 0; i < array.length; i++) {
             boxed[i] = array[i];
         }
         return Arrays.stream(boxed);
     }
 
-    public static Stream<Byte> stream(final byte[] array) {
-        final Byte[] boxed = new Byte[array.length];
+    public static Stream<Byte> stream(byte[] array) {
+        Byte[] boxed = new Byte[array.length];
         for (int i = 0; i < array.length; i++) {
             boxed[i] = array[i];
         }
         return Arrays.stream(boxed);
     }
 
-    public static Stream<Character> stream(final char[] array) {
-        final Character[] boxed = new Character[array.length];
+    public static Stream<Character> stream(char[] array) {
+        Character[] boxed = new Character[array.length];
         for (int i = 0; i < array.length; i++) {
             boxed[i] = array[i];
         }
         return Arrays.stream(boxed);
     }
 
-    public static Stream<Boolean> stream(final boolean[] array) {
-        final Boolean[] boxed = new Boolean[array.length];
+    public static Stream<Boolean> stream(boolean[] array) {
+        Boolean[] boxed = new Boolean[array.length];
         for (int i = 0; i < array.length; i++) {
             boxed[i] = array[i];
         }
         return Arrays.stream(boxed);
     }
 
-    public static boolean isAssignable(final Class<?> source, final Class<?> target) {
+    public static boolean isAssignable(Class<?> source, Class<?> target) {
         if (target.isAssignableFrom(source)) {
             return true;
         }

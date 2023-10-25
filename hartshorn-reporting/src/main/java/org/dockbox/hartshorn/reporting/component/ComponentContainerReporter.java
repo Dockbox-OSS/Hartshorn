@@ -36,21 +36,21 @@ class ComponentContainerReporter implements Reportable {
     private final ComponentDiagnosticsReporter componentDiagnosticsReporter;
     private final ComponentContainer<?> container;
 
-    public ComponentContainerReporter(final ComponentDiagnosticsReporter componentDiagnosticsReporter,
-                                      final ComponentContainer<?> container) {
+    public ComponentContainerReporter(ComponentDiagnosticsReporter componentDiagnosticsReporter,
+                                      ComponentContainer<?> container) {
         this.componentDiagnosticsReporter = componentDiagnosticsReporter;
         this.container = container;
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector componentCollector) {
+    public void report(DiagnosticsPropertyCollector componentCollector) {
         componentCollector.property("type").write(this.container.type());
         componentCollector.property("id").write(this.container.id());
         componentCollector.property("name").write(this.container.name());
         componentCollector.property("singleton").write(this.container.singleton());
         componentCollector.property("lazy").write(this.container.lazy());
 
-        final String componentType = StringUtilities.capitalize(this.container.componentType().name()
+        String componentType = StringUtilities.capitalize(this.container.componentType().name()
                 .toLowerCase());
 
         componentCollector.property("componentType").write(componentType);
@@ -67,7 +67,7 @@ class ComponentContainerReporter implements Reportable {
         }
 
         if (this.componentDiagnosticsReporter.configuration().includeRequiredConditions()) {
-            final Reportable[] reporters = this.container.type().annotations().all(RequiresCondition.class)
+            Reportable[] reporters = this.container.type().annotations().all(RequiresCondition.class)
                     .stream()
                     .map(requiresCondition -> (Reportable) conditionCollector -> {
                         conditionCollector.property("type").write(requiresCondition.annotationType().getCanonicalName());
@@ -77,7 +77,7 @@ class ComponentContainerReporter implements Reportable {
             componentCollector.property("conditions").write(reporters);
         }
 
-        for (final Entry<ComponentAttribute, Boolean> entry : this.componentDiagnosticsReporter.configuration().attributes()
+        for (Entry<ComponentAttribute, Boolean> entry : this.componentDiagnosticsReporter.configuration().attributes()
                 .entrySet()) {
             if (entry.getValue()) {
                 switch (entry.getKey()) {
@@ -91,10 +91,10 @@ class ComponentContainerReporter implements Reportable {
         }
     }
 
-    private void reportAnnotatedField(final Class<? extends Annotation> annotation, final DiagnosticsPropertyCollector injectCollector) {
-        final List<? extends FieldView<?, ?>> injectFields = this.container.type().fields().annotatedWith(annotation);
+    private void reportAnnotatedField(Class<? extends Annotation> annotation, DiagnosticsPropertyCollector injectCollector) {
+        List<? extends FieldView<?, ?>> injectFields = this.container.type().fields().annotatedWith(annotation);
 
-        for (final FieldView<?, ?> injectField : injectFields) {
+        for (FieldView<?, ?> injectField : injectFields) {
             injectCollector.property(injectField.name()).write(fieldCollector -> {
                 fieldCollector.property("type").write(injectField.type());
                 fieldCollector.property("required").write(injectField.annotations().get(Required.class).map(Required::value).orElse(false));

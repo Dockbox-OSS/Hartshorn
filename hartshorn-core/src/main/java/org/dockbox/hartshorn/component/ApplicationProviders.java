@@ -46,14 +46,14 @@ import jakarta.inject.Singleton;
 public class ApplicationProviders {
 
     @Binds
-    public Logger logger(final ApplicationContext context) {
+    public Logger logger(ApplicationContext context) {
         return context.log();
     }
 
     @Binds
     @Singleton
-    public ConversionService conversionService(final Introspector introspector, @Context final StaticComponentContext staticComponentContext) {
-        final StandardConversionService service = new StandardConversionService(introspector).withDefaults();
+    public ConversionService conversionService(Introspector introspector, @Context StaticComponentContext staticComponentContext) {
+        StandardConversionService service = new StandardConversionService(introspector).withDefaults();
         staticComponentContext.provider().all(GenericConverter.class).forEach(service::addConverter);
         staticComponentContext.provider().all(ConverterFactory.class).forEach(service::addConverterFactory);
         staticComponentContext.provider().all(Converter.class).forEach(service::addConverter);

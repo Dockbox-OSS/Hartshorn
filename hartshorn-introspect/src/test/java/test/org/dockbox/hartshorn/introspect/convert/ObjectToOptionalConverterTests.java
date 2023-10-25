@@ -28,9 +28,9 @@ public class ObjectToOptionalConverterTests {
 
     @Test
     void testNonNullElementConvertsToPresentOptional() {
-        final String element = "test";
-        final Converter<Object, Optional<?>> converter = new ObjectToOptionalConverter();
-        final Object converted = converter.convert(element);
+        String element = "test";
+        Converter<Object, Optional<?>> converter = new ObjectToOptionalConverter();
+        Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Optional);
         Assertions.assertTrue(((Optional) converted).isPresent());
@@ -39,9 +39,9 @@ public class ObjectToOptionalConverterTests {
 
     @Test
     void testNullElementConvertsToEmptyOptional() {
-        final Object element = null;
-        final Converter<Object, Optional<?>> converter = new ObjectToOptionalConverter();
-        final Object converted = converter.convert(element);
+        Object element = null;
+        Converter<Object, Optional<?>> converter = new ObjectToOptionalConverter();
+        Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Optional);
         Assertions.assertFalse(((Optional) converted).isPresent());

@@ -30,7 +30,7 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     protected AbstractMultiMap() {
     }
 
-    protected AbstractMultiMap(final MultiMap<K, V> map) {
+    protected AbstractMultiMap(MultiMap<K, V> map) {
         this.putAll(map);
     }
 
@@ -40,24 +40,24 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     }
 
     @Override
-    public void putAll(final K key, final Collection<V> values) {
+    public void putAll(K key, Collection<V> values) {
         values.forEach(value -> this.put(key, value));
     }
 
     @Override
-    public void putAll(final MultiMap<K, V> map) {
-        for (final Entry<K, Collection<V>> collection : map.entrySet()) {
+    public void putAll(MultiMap<K, V> map) {
+        for (Entry<K, Collection<V>> collection : map.entrySet()) {
             this.putAll(collection.getKey(), collection.getValue());
         }
     }
 
     @Override
-    public void put(final K key, final V value) {
+    public void put(K key, V value) {
         this.map().computeIfAbsent(key, key0 -> this.createEmptyCollection()).add(value);
     }
 
     @Override
-    public void putIfAbsent(final K key, final V value) {
+    public void putIfAbsent(K key, V value) {
         this.map().computeIfAbsent(key, key0 -> this.createEmptyCollection());
         if (!this.map().get(key).contains(value)) {
             this.map().get(key).add(value);
@@ -65,7 +65,7 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     }
 
     @Override
-    public Collection<V> get(final K key) {
+    public Collection<V> get(K key) {
         return this.map().getOrDefault(key, this.createEmptyCollection());
     }
 
@@ -85,29 +85,29 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     }
 
     @Override
-    public boolean containsKey(final K key) {
+    public boolean containsKey(K key) {
         return this.map().containsKey(key);
     }
 
     @Override
-    public boolean containsValue(final V value) {
+    public boolean containsValue(V value) {
         return this.map().values().stream().anyMatch(value0 -> value0.contains(value));
     }
 
     @Override
-    public boolean containsEntry(final K key, final V value) {
+    public boolean containsEntry(K key, V value) {
         return this.map().containsKey(key) && this.map().get(key).contains(value);
     }
 
     @Override
-    public Collection<V> remove(final K key) {
+    public Collection<V> remove(K key) {
         return this.map().remove(key);
     }
 
     @Override
     public int size() {
         int size = 0;
-        for (final Collection<V> value : this.map().values()) {
+        for (Collection<V> value : this.map().values()) {
             size += value.size();
         }
         return size;
@@ -124,15 +124,16 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     }
 
     @Override
-    public boolean remove(final K key, final V value) {
-        if (this.map().get(key) != null)
+    public boolean remove(K key, V value) {
+        if (this.map().get(key) != null) {
             return this.map().get(key).remove(value);
+        }
 
         return false;
     }
 
     @Override
-    public boolean replace(final K key, final V oldValue, final V newValue) {
+    public boolean replace(K key, V oldValue, V newValue) {
         if (this.map().get(key) != null) {
             if (this.map().get(key).remove(oldValue)) {
                 return this.map().get(key).add(newValue);
@@ -142,7 +143,7 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     }
 
     @Override
-    public void forEach(final BiConsumer<K, V> consumer) {
+    public void forEach(BiConsumer<K, V> consumer) {
         this.map().forEach((key, value) -> value.forEach(value0 -> consumer.accept(key, value0)));
     }
 }

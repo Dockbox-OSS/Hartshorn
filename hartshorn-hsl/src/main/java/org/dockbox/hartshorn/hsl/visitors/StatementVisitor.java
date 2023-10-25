@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
@@ -75,8 +74,6 @@ public interface StatementVisitor<R> {
     R visit(FieldStatement statement);
 
     R visit(ConstructorStatement statement);
-
-    R visit(ExtensionStatement statement);
 
     R visit(VariableStatement statement);
 

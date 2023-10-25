@@ -24,7 +24,7 @@ public class HashSetMultiMap<K, V> extends HashMultiMap<K, V> {
     public HashSetMultiMap() {
     }
 
-    public HashSetMultiMap(final MultiMap<K, V> map) {
+    public HashSetMultiMap(MultiMap<K, V> map) {
         super(map);
     }
 

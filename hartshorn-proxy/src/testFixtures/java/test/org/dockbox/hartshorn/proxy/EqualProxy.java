@@ -19,7 +19,7 @@ package test.org.dockbox.hartshorn.proxy;
 import org.dockbox.hartshorn.proxy.lookup.Unproxy;
 
 public class EqualProxy {
-    public boolean test(@Unproxy(fallbackToProxy = true) final EqualProxy self) {
+    public boolean test(@Unproxy(fallbackToProxy = true) EqualProxy self) {
         return this.equals(self);
     }
 }

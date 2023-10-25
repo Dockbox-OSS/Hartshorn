@@ -1,0 +1,3 @@
+# HH-995 Bulk codestyle changes
+## Remove redundant `final` usages
+ee6db853810d8148dbd6aa87cfad907ba532270f

@@ -62,7 +62,7 @@ public interface Initializer<T> {
      * @return An initializer that will always return the given object.
      * @param <T> The type of object to initialize.
      */
-    static <T> Initializer<T> of(final T object) {
+    static <T> Initializer<T> of(T object) {
         return () -> object;
     }
 }

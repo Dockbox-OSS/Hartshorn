@@ -16,24 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
-import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.ProxyLookup;
-import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
-import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionConstructorView;
-import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionFieldView;
-import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionMethodView;
-import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionParameterView;
-import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeView;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -41,27 +23,81 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class ReflectionIntrospector implements Introspector {
+import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
+import org.dockbox.hartshorn.util.introspect.ConcurrentIntrospectionViewCache;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionConstructorView;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionFieldView;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionMethodView;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionParameterView;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeView;
+import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
-    // Caches are not static, as application context is passed to views and associated introspectors.
-    // Making these static would cause the context to leak across instances (when used in batching or
-    // consecutive mode).
-    private final Map<Class<?>, TypeView<?>> typeViewCache = new ConcurrentHashMap<>();
-    private final Map<Method, MethodView<?, ?>> methodViewCache = new ConcurrentHashMap<>();
-    private final Map<Field, FieldView<?, ?>> fieldViewCache = new ConcurrentHashMap<>();
-    private final Map<Parameter, ParameterView<?>> parameterViewCache = new ConcurrentHashMap<>();
-    private final Map<Constructor<?>, ConstructorView<?>> constructorViewCache = new ConcurrentHashMap<>();
+/**
+ * Introspector implementation based on the {@link java.lang.reflect} package. This implementation
+ * is typically the default introspector for applications, and provides complete coverage of the
+ * entire introspection API.
+ *
+ * <p>Individual views are cached to prevent the context from leaking across application instances
+ * when used in batching or consecutive mode. The cache is not synchronized, as it is not expected
+ * that the same type is introspected concurrently. If this is the case, the cache will not be
+ * populated multiple times, but the cache will be overwritten. This is typically won't cause any
+ * issues, as the cache is populated with the same effective value.
+ *
+ * <p>While caches are application specific and non-static by default, this implementation is
+ * suitable for multi-application environments. If shared caching is desired (e.g. to reduce
+ * memory footprint), a shared cache can be enabled by {@link #enableBatchMode(boolean) enabling
+ * batch mode}. Note that this will need to be enabled for all applications.
+ *
+ * <p>This implementation is proxy-aware, meaning that calls to {@link #introspect(Object)} will
+ * return the introspection view of the unproxied type. This is done by using the provided
+ * {@link ProxyLookup}. Note that {@link #introspect(Type)} and {@link #introspect(Class)} will
+ * return the proxy type, to allow for introspection of proxy types.
+ *
+ * @author Guus Lieben
+ * @since 0.4.13
+ */
+public class ReflectionIntrospector implements BatchCapableIntrospector {
+
+    private static final ConcurrentIntrospectionViewCache SHARED_CACHE = new ConcurrentIntrospectionViewCache();
+
+    private final ConcurrentIntrospectionViewCache viewCache = new ConcurrentIntrospectionViewCache();
     private final IntrospectionEnvironment environment = new ReflectionIntrospectionEnvironment();
 
     private final ProxyLookup proxyLookup;
     private final AnnotationLookup annotationLookup;
 
-    public ReflectionIntrospector(final ProxyLookup proxyLookup, final AnnotationLookup annotationLookup) {
+    private boolean batchModeEnabled = false;
+
+    public ReflectionIntrospector(ProxyLookup proxyLookup, AnnotationLookup annotationLookup) {
         this.proxyLookup = proxyLookup;
         this.annotationLookup = annotationLookup;
+    }
+
+    @Override
+    public boolean batchModeEnabled() {
+        return batchModeEnabled;
+    }
+
+    @Override
+    public void enableBatchMode(boolean enable) {
+        this.batchModeEnabled = enable;
+    }
+
+    protected ConcurrentIntrospectionViewCache viewCache() {
+        return this.batchModeEnabled ? SHARED_CACHE : this.viewCache;
     }
 
     private <T> TypeView<T> voidType() {
@@ -69,25 +105,20 @@ public class ReflectionIntrospector implements Introspector {
     }
 
     @Override
-    public <T> TypeView<T> introspect(final Class<T> type) {
+    public <T> TypeView<T> introspect(Class<T> type) {
         if (type == null) {
             return this.voidType();
         }
-        if (this.typeViewCache.containsKey(type))
-            return (TypeView<T>) this.typeViewCache.get(type);
-
-        final TypeView<T> context = new ReflectionTypeView<>(this, type);
-        this.typeViewCache.put(type, context);
-        return context;
+        return this.viewCache().computeIfAbsent(type, () -> new ReflectionTypeView<>(this, type));
     }
 
     @Override
-    public <T> TypeView<T> introspect(final T instance) {
+    public <T> TypeView<T> introspect(T instance) {
         if (instance == null) {
             return this.voidType();
         }
         else if (this.proxyLookup.isProxy(instance)) {
-            final Option<Class<T>> unproxied = this.proxyLookup.unproxy(instance);
+            Option<Class<T>> unproxied = this.proxyLookup.unproxy(instance);
             return unproxied.present()
                     ? this.introspect(unproxied.get())
                     : this.voidType();
@@ -98,21 +129,25 @@ public class ReflectionIntrospector implements Introspector {
     }
 
     @Override
-    public TypeView<?> introspect(final Type type) {
-        if (type instanceof Class<?> clazz) return this.introspect(clazz);
-        if (type instanceof ParameterizedType parameterizedType) return this.introspect(parameterizedType);
+    public TypeView<?> introspect(Type type) {
+        if (type instanceof Class<?> clazz) {
+            return this.introspect(clazz);
+        }
+        if (type instanceof ParameterizedType parameterizedType) {
+            return this.introspect(parameterizedType);
+        }
         throw new RuntimeException("Unexpected type " + type);
     }
 
     @Override
-    public TypeView<?> introspect(final ParameterizedType type) {
+    public TypeView<?> introspect(ParameterizedType type) {
         // Do not use cache here, as the type is parameterized
         return new ReflectionTypeView<>(this, type);
     }
 
     @Override
-    public <T> TypeView<T> introspect(final GenericType<T> type) {
-        final Option<TypeView<T>> view = type.asClass()
+    public <T> TypeView<T> introspect(GenericType<T> type) {
+        Option<TypeView<T>> view = type.asClass()
                 .<Object>map(this::introspect)
                 .orCompute(() -> this.introspect(type.type()))
                 .adjust(TypeView.class);
@@ -123,37 +158,47 @@ public class ReflectionIntrospector implements Introspector {
     }
 
     @Override
-    public TypeView<?> introspect(final String type) {
+    public TypeView<?> introspect(String type) {
         try {
             return this.introspect(Class.forName(type, false, Thread.currentThread().getContextClassLoader()));
         }
-        catch (final ClassNotFoundException e) {
+        catch (ClassNotFoundException e) {
             return this.voidType();
         }
     }
 
     @Override
-    public MethodView<?, ?> introspect(final Method method) {
-        return this.methodViewCache.computeIfAbsent(method, key0 -> new ReflectionMethodView<>(this, method));
+    public TypeView<?> introspect(TypeReference reference) {
+        try {
+            return this.introspect(reference.getOrLoad());
+        }
+        catch(ClassReferenceLoadException e) {
+            return this.voidType();
+        }
     }
 
     @Override
-    public <T> ConstructorView<T> introspect(final Constructor<T> method) {
-        return (ConstructorView<T>) this.constructorViewCache.computeIfAbsent(method, key0 -> new ReflectionConstructorView<>(this, method));
+    public MethodView<?, ?> introspect(Method method) {
+        return this.viewCache().computeIfAbsent(method, () -> new ReflectionMethodView<>(this, method));
     }
 
     @Override
-    public FieldView<?, ?> introspect(final Field field) {
-        return this.fieldViewCache.computeIfAbsent(field, fieldKey -> new ReflectionFieldView<>(this, field));
+    public <T> ConstructorView<T> introspect(Constructor<T> method) {
+        return this.viewCache().computeIfAbsent(method, () -> new ReflectionConstructorView<>(this, method));
     }
 
     @Override
-    public ParameterView<?> introspect(final Parameter parameter) {
-        return this.parameterViewCache.computeIfAbsent(parameter, fieldKey -> new ReflectionParameterView<>(this, parameter));
+    public FieldView<?, ?> introspect(Field field) {
+        return this.viewCache().computeIfAbsent(field, () -> new ReflectionFieldView<>(this, field));
     }
 
     @Override
-    public ElementAnnotationsIntrospector introspect(final AnnotatedElement annotatedElement) {
+    public ParameterView<?> introspect(Parameter parameter) {
+        return this.viewCache().computeIfAbsent(parameter, () -> new ReflectionParameterView<>(this, parameter));
+    }
+
+    @Override
+    public ElementAnnotationsIntrospector introspect(AnnotatedElement annotatedElement) {
         return new ReflectionElementAnnotationsIntrospector(this, annotatedElement);
     }
 
@@ -162,11 +207,8 @@ public class ReflectionIntrospector implements Introspector {
         return this.environment;
     }
 
-    public ProxyLookup proxyLookup() {
-        return this.proxyLookup;
-    }
-
-    public AnnotationLookup annotationLookup() {
+    @Override
+    public AnnotationLookup annotations() {
         return this.annotationLookup;
     }
 }

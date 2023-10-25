@@ -29,32 +29,32 @@ public class JarFileWalker implements FileVisitor<Path> {
     private final ResourceHandler handler;
     private final URLClassLoader classLoader;
 
-    public JarFileWalker(final ClassPathScanner classPathScanner, final ResourceHandler handler,
-                         final URLClassLoader classLoader) {
+    public JarFileWalker(ClassPathScanner classPathScanner, ResourceHandler handler,
+                         URLClassLoader classLoader) {
         this.classPathScanner = classPathScanner;
         this.handler = handler;
         this.classLoader = classLoader;
     }
 
     @Override
-    public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) {
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
         return FileVisitResult.CONTINUE;
     }
 
     @Override
-    public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) {
-        final String resourceName = file.toString().substring(1);
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+        String resourceName = file.toString().substring(1);
         this.classPathScanner.processPathResource(this.handler, this.classLoader, resourceName, file);
         return FileVisitResult.CONTINUE;
     }
 
     @Override
-    public FileVisitResult visitFileFailed(final Path file, final IOException exc) {
+    public FileVisitResult visitFileFailed(Path file, IOException exc) {
         return FileVisitResult.CONTINUE;
     }
 
     @Override
-    public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) {
+    public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
         return FileVisitResult.CONTINUE;
     }
 }

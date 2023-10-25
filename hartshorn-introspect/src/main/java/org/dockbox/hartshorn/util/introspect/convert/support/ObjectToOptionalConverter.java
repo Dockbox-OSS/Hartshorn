@@ -24,7 +24,7 @@ import java.util.Optional;
 public class ObjectToOptionalConverter implements Converter<Object, Optional<?>> {
 
     @Override
-    public Optional<?> convert(final @Nullable Object input) {
+    public Optional<?> convert(@Nullable Object input) {
         return Optional.ofNullable(input);
     }
 }

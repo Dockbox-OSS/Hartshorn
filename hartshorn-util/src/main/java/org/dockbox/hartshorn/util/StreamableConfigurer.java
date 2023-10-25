@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.context.DefaultContext;
-
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
+
+import org.dockbox.hartshorn.context.DefaultContext;
 
 public class StreamableConfigurer<I, T> extends DefaultContext implements Configurer {
 

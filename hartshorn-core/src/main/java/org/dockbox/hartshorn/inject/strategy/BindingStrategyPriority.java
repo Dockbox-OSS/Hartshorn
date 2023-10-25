@@ -26,7 +26,7 @@ public enum BindingStrategyPriority {
 
     private final int priority;
 
-    BindingStrategyPriority(final int priority) {
+    BindingStrategyPriority(int priority) {
         this.priority = priority;
     }
 

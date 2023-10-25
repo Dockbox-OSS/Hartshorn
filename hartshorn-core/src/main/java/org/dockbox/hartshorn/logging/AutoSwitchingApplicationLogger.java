@@ -29,7 +29,7 @@ public final class AutoSwitchingApplicationLogger {
 
     public static ContextualInitializer<ApplicationEnvironment, ApplicationLogger> create(Customizer<Configurer> customizer) {
         return context -> {
-            if (!context.input().introspect("ch.qos.logback.classic.Logger").isVoid()) {
+            if (!context.input().introspector().introspect("ch.qos.logback.classic.Logger").isVoid()) {
                 return new LogbackApplicationLogger();
             }
 

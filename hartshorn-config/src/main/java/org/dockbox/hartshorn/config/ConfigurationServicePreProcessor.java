@@ -23,13 +23,10 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
-import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.resources.FallbackResourceLookup;
 import org.dockbox.hartshorn.util.resources.FileSystemLookupStrategy;
 import org.dockbox.hartshorn.util.resources.MissingSourceException;
 import org.dockbox.hartshorn.util.resources.ResourceLookup;
 import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
-import org.dockbox.hartshorn.util.resources.ResourceLookupStrategyContext;
 
 import java.net.URI;
 import java.util.Set;
@@ -45,13 +42,15 @@ import java.util.Set;
 public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
 
     @Override
-    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().annotations().has(Configuration.class)) {
-            final Configuration configuration = processingContext.type().annotations().get(Configuration.class).get();
-            final String[] sources = configuration.value();
+            Configuration configuration = processingContext.type().annotations().get(Configuration.class).get();
+            String[] sources = configuration.value();
 
-            for (final String source : sources) {
-                if (this.processSource(source, context, processingContext.key())) return;
+            for (String source : sources) {
+                if (this.processSource(source, context, processingContext.key())) {
+                    return;
+                }
                 context.log().debug("Skipped configuration source '{}', proceeding to next source if available", source);
             }
 
@@ -64,15 +63,9 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
         }
     }
 
-    private <T> boolean processSource(final String source, final ApplicationContext context, final ComponentKey<T> key) {
-        final Option<ResourceLookupStrategyContext> strategyContext = context.first(ResourceLookupStrategyContext.class);
-        if (strategyContext.absent()) {
-            context.log().warn("No resource lookup strategies present, cannot look up resource for " + key.type().getSimpleName());
-            return false;
-        }
-
-        final ResourceLookup resourceLookup = new FallbackResourceLookup(context, new FileSystemLookupStrategy());
-        final Set<URI> config = resourceLookup.lookup(source);
+    private <T> boolean processSource(String source, ApplicationContext context, ComponentKey<T> key) {
+        ResourceLookup resourceLookup = context.get(ResourceLookup.class);
+        Set<URI> config = resourceLookup.lookup(source);
 
         if (config.isEmpty()) {
             context.log().warn("No configuration file found for " + key.type().getSimpleName());
@@ -82,9 +75,9 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
             context.log().warn("Found multiple configuration files for " + key.type().getSimpleName() + ": " + config);
         }
 
-        final ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
-        for (final URI uri : config) {
-            final ConfigurationURIContext uriContext = new ConfigurationURIContext(uri, key, source);
+        ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
+        for (URI uri : config) {
+            ConfigurationURIContext uriContext = new ConfigurationURIContext(uri, key, source);
             uriContextList.add(uriContext);
         }
 

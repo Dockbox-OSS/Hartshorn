@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 public class StringToEnumConverterFactory implements ConverterFactory<String, Enum> {
 
     @Override
-    public <O extends Enum> Converter<String, O> create(final Class<O> targetType) {
+    public <O extends Enum> Converter<String, O> create(Class<O> targetType) {
         return new StringToEnumConverter<>(targetType);
     }
 
@@ -32,16 +32,16 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
     private record StringToEnumConverter<T extends Enum>(Class<T> enumType) implements Converter<String, T> {
 
         @Override
-        public @Nullable T convert(final @Nullable String source) {
+        public @Nullable T convert(@Nullable String source) {
             assert source != null;
             if(source.isEmpty()) {
                 return null;
             }
             try {
-                final Enum value = Enum.valueOf(this.enumType, source.trim());
+                Enum value = Enum.valueOf(this.enumType, source.trim());
                 return this.enumType.cast(value);
             }
-            catch(final IllegalArgumentException e) {
+            catch(IllegalArgumentException e) {
                 return null;
             }
         }

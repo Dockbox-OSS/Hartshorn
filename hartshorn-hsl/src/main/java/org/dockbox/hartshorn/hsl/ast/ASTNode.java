@@ -21,11 +21,11 @@ public abstract class ASTNode {
     private final int line;
     private final int column;
 
-    protected ASTNode(final ASTNode at) {
+    protected ASTNode(ASTNode at) {
         this(at.line, at.column);
     }
 
-    protected ASTNode(final int line, final int column) {
+    protected ASTNode(int line, int column) {
         this.line = line;
         this.column = column;
     }

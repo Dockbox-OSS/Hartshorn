@@ -119,7 +119,7 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
 
     @Override
     public boolean isProxy(TypeView<?> type) {
-        return !type.isWildcard() && this.applicationContext().environment().isProxy(type.type());
+        return !type.isWildcard() && this.applicationContext().environment().proxyOrchestrator().isProxy(type.type());
     }
 
     private <T> ComponentKey<T> key(Class<T> type) {

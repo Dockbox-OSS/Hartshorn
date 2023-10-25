@@ -32,13 +32,15 @@ public class TokenMetaData {
     private final boolean reserved;
     private final TokenType assignsWith;
 
-    TokenMetaData(final TokenMetaDataBuilder builder) {
-        this.type = builder.type;
-        this.representation = builder.representation;
-        this.keyword = builder.keyword;
-        this.standaloneStatement = builder.standaloneStatement;
-        this.reserved = builder.reserved;
-        this.assignsWith = builder.assignsWith;
+    TokenMetaData(TokenType type, String representation,
+                  boolean keyword, boolean standaloneStatement, 
+                  boolean reserved, TokenType assignsWith) {
+        this.type = type;
+        this.representation = representation;
+        this.keyword = keyword;
+        this.standaloneStatement = standaloneStatement;
+        this.reserved = reserved;
+        this.assignsWith = assignsWith;
     }
 
     /**
@@ -98,7 +100,7 @@ public class TokenMetaData {
      * @param type The {@link TokenType} to attach to.
      * @return A new {@link TokenMetaDataBuilder}.
      */
-    public static TokenMetaDataBuilder builder(final TokenType type) {
+    public static TokenMetaDataBuilder builder(TokenType type) {
         return new TokenMetaDataBuilder(type);
     }
 }

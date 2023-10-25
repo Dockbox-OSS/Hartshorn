@@ -26,10 +26,12 @@ import java.lang.reflect.Method;
 public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
 
     @Override
-    public Attempt<T, Throwable> invoke(final MethodView<P, T> method, final P instance, final Object[] args) {
-        final Attempt<T, Throwable> result = Attempt.of(() -> {
-            final Option<Method> jlrMethod = method.method();
-            if (jlrMethod.absent()) return null;
+    public Attempt<T, Throwable> invoke(MethodView<P, T> method, P instance, Object[] args) {
+        Attempt<T, Throwable> result = Attempt.of(() -> {
+            Option<Method> jlrMethod = method.method();
+            if (jlrMethod.absent()) {
+                return null;
+            }
 
             // Do not use explicit casting here, as it will cause a ClassCastException if the method
             // returns a primitive type. Instead, use the inferred type from the method view.
@@ -39,7 +41,9 @@ public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
 
         if (result.errorPresent()) {
             Throwable cause = result.error();
-            if (result.error().getCause() != null) cause = result.error().getCause();
+            if (result.error().getCause() != null) {
+                cause = result.error().getCause();
+            }
             return Attempt.of(result.orNull(), cause);
         }
         return result;

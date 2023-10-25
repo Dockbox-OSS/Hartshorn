@@ -43,30 +43,30 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
     private final CaseBodyStatementParser caseBodyStatementParser;
 
     @Inject
-    public SwitchStatementParser(final CaseBodyStatementParser caseBodyStatementParser) {
+    public SwitchStatementParser(CaseBodyStatementParser caseBodyStatementParser) {
         this.caseBodyStatementParser = caseBodyStatementParser;
     }
 
     @Override
-    public Option<SwitchStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<SwitchStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.SWITCH)) {
-            final Token switchToken = parser.previous();
+            Token switchToken = parser.previous();
             validator.expectAfter(TokenType.LEFT_PAREN, "switch");
-            final Expression expr = parser.expression();
+            Expression expr = parser.expression();
             validator.expectAfter(TokenType.RIGHT_PAREN, "expression");
 
             validator.expectAfter(TokenType.LEFT_BRACE, "switch");
 
             SwitchCase defaultBody = null;
-            final List<SwitchCase> cases = new ArrayList<>();
-            final Set<Object> matchedLiterals = new HashSet<>();
+            List<SwitchCase> cases = new ArrayList<>();
+            Set<Object> matchedLiterals = new HashSet<>();
 
             while (parser.match(TokenType.CASE, TokenType.DEFAULT)) {
-                final Token caseToken = parser.previous();
+                Token caseToken = parser.previous();
 
                 if (caseToken.type() == TokenType.CASE) {
-                    final Expression caseExpr = parser.expression();
-                    if (!(caseExpr instanceof final LiteralExpression literal)) {
+                    Expression caseExpr = parser.expression();
+                    if (!(caseExpr instanceof LiteralExpression literal)) {
                         throw new ScriptEvaluationError("Case expression must be a literal.", Phase.PARSING, caseToken);
                     }
 
@@ -75,14 +75,14 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
                     }
                     matchedLiterals.add(literal.value());
 
-                    final Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
+                    Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
                     if (body.errorPresent()) {
                         return Attempt.of(body.error());
                     }
                     cases.add(new SwitchCase(caseToken, body.get(), literal, false));
                 }
                 else {
-                    final Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
+                    Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
                     if (body.errorPresent()) {
                         return Attempt.of(body.error());
                     }

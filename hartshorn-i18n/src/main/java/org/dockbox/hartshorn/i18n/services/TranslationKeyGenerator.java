@@ -21,5 +21,5 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public interface TranslationKeyGenerator {
 
-    String key(final TypeView<?> type, final MethodView<?, ?> method);
+    String key(TypeView<?> type, MethodView<?, ?> method);
 }

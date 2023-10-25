@@ -23,7 +23,7 @@ public class RepeatStatement extends BodyStatement {
 
     private final Expression value;
 
-    public RepeatStatement(final Expression value, final BlockStatement loopBody) {
+    public RepeatStatement(Expression value, BlockStatement loopBody) {
         super(value, loopBody);
         this.value = value;
     }
@@ -33,7 +33,7 @@ public class RepeatStatement extends BodyStatement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

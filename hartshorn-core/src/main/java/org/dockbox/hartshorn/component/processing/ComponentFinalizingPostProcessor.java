@@ -92,7 +92,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
     }
 
     protected <T> T createProxyInstance(ApplicationContext context, ProxyFactory<T> factory, @Nullable T instance) throws ApplicationException {
-        TypeView<T> factoryType = context.environment().introspect(factory.type());
+        TypeView<T> factoryType = context.environment().introspector().introspect(factory.type());
         // Ensure we use a non-default constructor if there is no default constructor to use
         if (!factoryType.isInterface() && factoryType.constructors().defaultConstructor().absent()) {
             ConstructorView<? extends T> constructor = ComponentConstructorResolver.create(context).findConstructor(factoryType)

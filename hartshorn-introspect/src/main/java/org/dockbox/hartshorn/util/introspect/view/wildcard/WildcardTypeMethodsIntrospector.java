@@ -27,7 +27,7 @@ import java.util.List;
 
 public class WildcardTypeMethodsIntrospector implements TypeMethodsIntrospector<Object> {
     @Override
-    public Option<MethodView<Object, ?>> named(final String name, final Collection<Class<?>> parameterTypes) {
+    public Option<MethodView<Object, ?>> named(String name, Collection<Class<?>> parameterTypes) {
         return Option.empty();
     }
 
@@ -42,7 +42,7 @@ public class WildcardTypeMethodsIntrospector implements TypeMethodsIntrospector<
     }
 
     @Override
-    public List<MethodView<Object, ?>> annotatedWith(final Class<? extends Annotation> annotation) {
+    public List<MethodView<Object, ?>> annotatedWith(Class<? extends Annotation> annotation) {
         return Collections.emptyList();
     }
 

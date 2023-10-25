@@ -22,12 +22,12 @@ import org.dockbox.hartshorn.reporting.Reportable;
 public class StaticComponentContainerReportable implements Reportable {
     private final StaticComponentContainer<?> componentReference;
 
-    public StaticComponentContainerReportable(final StaticComponentContainer<?> componentReference) {
+    public StaticComponentContainerReportable(StaticComponentContainer<?> componentReference) {
         this.componentReference = componentReference;
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector containerCollector) {
+    public void report(DiagnosticsPropertyCollector containerCollector) {
         containerCollector.property("type").write(this.componentReference.type());
         containerCollector.property("id").write(this.componentReference.id());
         containerCollector.property("instance").write(this.componentReference.instance().toString());

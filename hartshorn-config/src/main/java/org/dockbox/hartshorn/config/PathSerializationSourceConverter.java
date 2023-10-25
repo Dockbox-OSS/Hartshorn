@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.FileSystemProvider;
 import org.dockbox.hartshorn.config.annotations.FileSource;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -34,21 +34,21 @@ import jakarta.inject.Inject;
 
 public class PathSerializationSourceConverter implements SerializationSourceConverter {
 
-    private final ApplicationFSProvider fileSystem;
+    private final FileSystemProvider fileSystem;
 
     @Inject
-    public PathSerializationSourceConverter(final ApplicationFSProvider fileSystem) {
+    public PathSerializationSourceConverter(FileSystemProvider fileSystem) {
         this.fileSystem = fileSystem;
     }
 
     @Override
-    public InputStream inputStream(final AnnotatedElementView context, final Object... args) {
+    public InputStream inputStream(AnnotatedElementView context, Object... args) {
         return this.resolvePath(context)
                 .map(path -> {
                     try {
                         return Files.newInputStream(path);
                     }
-                    catch (final IOException e) {
+                    catch (IOException e) {
                         return null;
                     }
                 })
@@ -57,19 +57,19 @@ public class PathSerializationSourceConverter implements SerializationSourceConv
     }
 
     @Override
-    public OutputStream outputStream(final AnnotatedElementView context, final Object... args) {
+    public OutputStream outputStream(AnnotatedElementView context, Object... args) {
         return this.resolvePath(context).map(path -> {
                     try {
                         return Files.newOutputStream(path);
                     }
-                    catch (final IOException e) {
+                    catch (IOException e) {
                         return null;
                     }
                 }).map(BufferedOutputStream::new)
                 .orNull();
     }
 
-    private Option<Path> resolvePath(final AnnotatedElementView context) {
+    private Option<Path> resolvePath(AnnotatedElementView context) {
         return context.annotations().get(FileSource.class)
                 .map(fileSource -> {
                     if (fileSource.relativeToApplicationPath()) {

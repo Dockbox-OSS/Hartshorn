@@ -24,12 +24,12 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 public class StringParameterRule implements ParameterLoaderRule<ParameterLoaderContext> {
 
     @Override
-    public boolean accepts(final ParameterView<?> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+    public boolean accepts(ParameterView<?> parameter, int index, ParameterLoaderContext context, Object... args) {
         return parameter.type().is(String.class);
     }
 
     @Override
-    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
+    public <T> Option<T> load(ParameterView<T> parameter, int index, ParameterLoaderContext context, Object... args) {
         return Option.of(parameter.type().cast("JUnit"));
     }
 }

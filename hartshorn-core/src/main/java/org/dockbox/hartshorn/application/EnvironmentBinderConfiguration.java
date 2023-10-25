@@ -48,5 +48,5 @@ public interface EnvironmentBinderConfiguration {
      * @param configurer The configurer to use for additional bindings.
      * @param binder The binder to use for additional bindings.
      */
-    void configureBindings(final ApplicationEnvironment environment, final DefaultBindingConfigurer configurer, final Binder binder);
+    void configureBindings(ApplicationEnvironment environment, DefaultBindingConfigurer configurer, Binder binder);
 }

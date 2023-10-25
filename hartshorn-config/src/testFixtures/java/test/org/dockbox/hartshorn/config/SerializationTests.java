@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.config;
 
+import java.nio.file.Path;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.config.annotations.UseSerialization;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -23,8 +25,6 @@ import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.nio.file.Path;
 
 import jakarta.inject.Inject;
 
@@ -38,9 +38,9 @@ public abstract class SerializationTests {
     @Test
     @TestComponents(components = PersistenceService.class)
     void testToStringSerialization() {
-        final PersistenceService service = this.applicationContext.get(PersistenceService.class);
-        final PersistentElement element = new PersistentElement("sample");
-        final String json = service.writeToString(element);
+        PersistenceService service = this.applicationContext.get(PersistenceService.class);
+        PersistentElement element = new PersistentElement("sample");
+        String json = service.writeToString(element);
 
         Assertions.assertNotNull(json);
         Assertions.assertEquals("{\"name\":\"sample\"}", StringUtilities.strip(json));
@@ -49,9 +49,9 @@ public abstract class SerializationTests {
     @Test
     @TestComponents(components = PersistenceService.class)
     void testFromStringDeserialization() {
-        final PersistenceService service = this.applicationContext.get(PersistenceService.class);
-        final String json = "{\"name\":\"sample\"}";
-        final PersistentElement element = service.readFromString(json);
+        PersistenceService service = this.applicationContext.get(PersistenceService.class);
+        String json = "{\"name\":\"sample\"}";
+        PersistentElement element = service.readFromString(json);
 
         Assertions.assertNotNull(element);
         Assertions.assertEquals("sample", element.name());
@@ -60,28 +60,28 @@ public abstract class SerializationTests {
     @Test
     @TestComponents(components = PathPersistenceService.class)
     void testToPathSerialization() {
-        final PathPersistenceService service = this.applicationContext.get(PathPersistenceService.class);
-        final PersistentElement element = new PersistentElement("sample");
-        final boolean result = service.writeToPath(element, this.path());
+        PathPersistenceService service = this.applicationContext.get(PathPersistenceService.class);
+        PersistentElement element = new PersistentElement("sample");
+        boolean result = service.writeToPath(element, this.path());
 
         Assertions.assertTrue(result);
     }
 
     private Path path() {
-        return this.applicationContext.environment().applicationPath().resolve(System.nanoTime() + "-persistence.tmp");
+        return this.applicationContext.environment().fileSystem().applicationPath().resolve(System.nanoTime() + "-persistence.tmp");
     }
 
     @Test
     @TestComponents(components = PathPersistenceService.class)
     void testFromPathDeserialization() {
-        final PathPersistenceService service = this.applicationContext.get(PathPersistenceService.class);
-        final PersistentElement element = new PersistentElement("sample");
-        final Path path = this.path();
+        PathPersistenceService service = this.applicationContext.get(PathPersistenceService.class);
+        PersistentElement element = new PersistentElement("sample");
+        Path path = this.path();
 
-        final boolean result = service.writeToPath(element, path);
+        boolean result = service.writeToPath(element, path);
         Assertions.assertTrue(result);
 
-        final PersistentElement out = service.readFromPath(path);
+        PersistentElement out = service.readFromPath(path);
         Assertions.assertNotNull(out);
         Assertions.assertEquals("sample", out.name());
     }
@@ -89,9 +89,9 @@ public abstract class SerializationTests {
     @Test
     @TestComponents(components = AnnotationPathPersistenceService.class)
     void testToAnnotationPathSerialization() {
-        final AnnotationPathPersistenceService service = this.applicationContext.get(AnnotationPathPersistenceService.class);
-        final PersistentElement element = new PersistentElement("sample");
-        final boolean result = service.writeToPath(element);
+        AnnotationPathPersistenceService service = this.applicationContext.get(AnnotationPathPersistenceService.class);
+        PersistentElement element = new PersistentElement("sample");
+        boolean result = service.writeToPath(element);
 
         Assertions.assertTrue(result);
     }
@@ -99,13 +99,13 @@ public abstract class SerializationTests {
     @Test
     @TestComponents(components = AnnotationPathPersistenceService.class)
     void testFromAnnotationPathDeserialization() {
-        final AnnotationPathPersistenceService service = this.applicationContext.get(AnnotationPathPersistenceService.class);
-        final PersistentElement element = new PersistentElement("sample");
+        AnnotationPathPersistenceService service = this.applicationContext.get(AnnotationPathPersistenceService.class);
+        PersistentElement element = new PersistentElement("sample");
 
-        final boolean result = service.writeToPath(element);
+        boolean result = service.writeToPath(element);
         Assertions.assertTrue(result);
 
-        final PersistentElement out = service.readFromPath();
+        PersistentElement out = service.readFromPath();
         Assertions.assertNotNull(out);
         Assertions.assertEquals("sample", out.name());
     }

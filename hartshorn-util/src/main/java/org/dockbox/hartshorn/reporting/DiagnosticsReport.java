@@ -50,7 +50,7 @@ public interface DiagnosticsReport {
      * @param <T> the type of the serialized report
      * @throws ReportSerializationException if the serialization fails
      */
-    default <T> T serialize(final ReportSerializer<T> serializer) throws ReportSerializationException {
+    default <T> T serialize(ReportSerializer<T> serializer) throws ReportSerializationException {
         return serializer.serialize(this);
     }
 }

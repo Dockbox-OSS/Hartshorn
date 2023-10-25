@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
 @Deprecated(since = "0.5.0", forRemoval = true)
 public abstract class ConstructorFactoryMethodInterceptor<T, R> implements MethodInterceptor<T, R> {
 
-    protected <U> U processInstance(final ApplicationContext context, final U instance, final boolean enable) throws ApplicationException {
+    protected <U> U processInstance(ApplicationContext context, U instance, boolean enable) throws ApplicationException {
         U out = instance;
         out = context.get(ComponentPopulator.class).populate(out);
         if (enable) {

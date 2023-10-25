@@ -34,8 +34,8 @@ public class ParameterLoaderTests {
 
     @Test
     void testRuleBasedParameterLoadersCannotHaveDuplicateRules() {
-        final RuleBasedParameterLoaderImpl parameterLoader = new RuleBasedParameterLoaderImpl();
-        final ParameterLoaderRule<ParameterLoaderContext> stringRule = new StringParameterRule();
+        RuleBasedParameterLoaderImpl parameterLoader = new RuleBasedParameterLoaderImpl();
+        ParameterLoaderRule<ParameterLoaderContext> stringRule = new StringParameterRule();
         parameterLoader.add(stringRule);
         parameterLoader.add(stringRule);
         Assertions.assertEquals(1, parameterLoader.rules().size());
@@ -43,38 +43,38 @@ public class ParameterLoaderTests {
 
     @Test
     void testRuleBasedParameterLoaderReturnsCorrectObjectsOrDefault() {
-        final RuleBasedParameterLoaderImpl parameterLoader = new RuleBasedParameterLoaderImpl();
+        RuleBasedParameterLoaderImpl parameterLoader = new RuleBasedParameterLoaderImpl();
         parameterLoader.add(new StringParameterRule());
 
-        final TypeView<String> stringTypeView = Mockito.mock(TypeView.class);
+        TypeView<String> stringTypeView = Mockito.mock(TypeView.class);
         Mockito.doReturn(true).when(stringTypeView).is(String.class);
         Mockito.doReturn(null).when(stringTypeView).defaultOrNull();
         Mockito.when(stringTypeView.cast(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        final TypeView<Integer> intTypeView = Mockito.mock(TypeView.class);
+        TypeView<Integer> intTypeView = Mockito.mock(TypeView.class);
         Mockito.doReturn(true).when(intTypeView).is(int.class);
         Mockito.doReturn(0).when(intTypeView).defaultOrNull();
         Mockito.when(intTypeView.cast(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        final MethodView<?, ?> methodContext = Mockito.mock(MethodView.class);
+        MethodView<?, ?> methodContext = Mockito.mock(MethodView.class);
 
-        final ParameterView<String> stringParameter = TypeUtils.adjustWildcards(Mockito.mock(ParameterView.class), ParameterView.class);
+        ParameterView<String> stringParameter = TypeUtils.adjustWildcards(Mockito.mock(ParameterView.class), ParameterView.class);
         Mockito.when(stringParameter.type()).thenReturn(stringTypeView);
 
-        final ParameterView<Integer> intParameter = TypeUtils.adjustWildcards(Mockito.mock(ParameterView.class), ParameterView.class);
+        ParameterView<Integer> intParameter = TypeUtils.adjustWildcards(Mockito.mock(ParameterView.class), ParameterView.class);
         Mockito.when(intParameter.type()).thenReturn(intTypeView);
 
-        final ExecutableParametersIntrospector parametersIntrospector = Mockito.mock(ExecutableParametersIntrospector.class);
+        ExecutableParametersIntrospector parametersIntrospector = Mockito.mock(ExecutableParametersIntrospector.class);
 
-        final LinkedList<ParameterView<?>> parameters = new LinkedList<>();
+        LinkedList<ParameterView<?>> parameters = new LinkedList<>();
         parameters.add(stringParameter);
         parameters.add(intParameter);
 
         Mockito.when(parametersIntrospector.all()).thenReturn(parameters);
         Mockito.when(methodContext.parameters()).thenReturn(parametersIntrospector);
 
-        final ParameterLoaderContext loaderContext = new ParameterLoaderContext(methodContext, null);
-        final List<Object> objects = parameterLoader.loadArguments(loaderContext);
+        ParameterLoaderContext loaderContext = new ParameterLoaderContext(methodContext, null);
+        List<Object> objects = parameterLoader.loadArguments(loaderContext);
 
         Assertions.assertNotNull(objects);
         Assertions.assertEquals(2, objects.size());

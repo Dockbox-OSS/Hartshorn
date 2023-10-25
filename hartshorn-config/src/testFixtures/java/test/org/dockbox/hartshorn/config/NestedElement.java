@@ -27,7 +27,7 @@ public class NestedElement implements Element {
     public NestedElement() {
     }
 
-    public NestedElement(final EntityElement child) {
+    public NestedElement(EntityElement child) {
         this.child = child;
     }
 
@@ -39,7 +39,7 @@ public class NestedElement implements Element {
 
     @Override
     @IgnoreProperty
-    public NestedElement name(final String name) {
+    public NestedElement name(String name) {
         this.child.name(name);
         return this;
     }
@@ -48,16 +48,20 @@ public class NestedElement implements Element {
         return this.child;
     }
 
-    public NestedElement child(final EntityElement child) {
+    public NestedElement child(EntityElement child) {
         this.child = child;
         return this;
     }
 
     @Override
-    public boolean equals(final Object other) {
-        if (this == other) return true;
-        if (other == null || this.getClass() != other.getClass()) return false;
-        final NestedElement element = (NestedElement) other;
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || this.getClass() != other.getClass()) {
+            return false;
+        }
+        NestedElement element = (NestedElement) other;
         return Objects.equals(this.child, element.child);
     }
 

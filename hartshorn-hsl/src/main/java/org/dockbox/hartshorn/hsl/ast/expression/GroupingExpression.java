@@ -22,7 +22,7 @@ public class GroupingExpression extends Expression {
 
     private final Expression expression;
 
-    public GroupingExpression(final Expression expression) {
+    public GroupingExpression(Expression expression) {
         super(expression);
         this.expression = expression;
     }
@@ -32,7 +32,7 @@ public class GroupingExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

@@ -31,12 +31,12 @@ public class ArrayToCollectionConverterFactory implements ConverterFactory<Objec
 
     private final DefaultValueProviderFactory<Collection<?>> collectionFactory;
 
-    public ArrayToCollectionConverterFactory(final Introspector introspector) {
+    public ArrayToCollectionConverterFactory(Introspector introspector) {
         this.collectionFactory = new CollectionDefaultValueProviderFactory(introspector).withDefaults();
     }
 
     @Override
-    public <O extends Collection<?>> Converter<Object[], O> create(final Class<O> targetType) {
+    public <O extends Collection<?>> Converter<Object[], O> create(Class<O> targetType) {
         return new ArrayToCollectionConverter<>(this.collectionFactory.create(targetType));
     }
 
@@ -45,9 +45,9 @@ public class ArrayToCollectionConverterFactory implements ConverterFactory<Objec
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
             @Override
-            public O convert(final Object @Nullable [] source) {
+            public O convert(Object @Nullable [] source) {
                 assert source != null;
-                final Collection collection = this.helperProvider.defaultValue();
+                Collection collection = this.helperProvider.defaultValue();
                 Objects.requireNonNull(collection).addAll(Arrays.asList(source));
                 return (O) collection;
             }

@@ -26,16 +26,16 @@ public class ConditionMatcher {
 
     private final ApplicationContext applicationContext;
 
-    public ConditionMatcher(final ApplicationContext applicationContext) {
+    public ConditionMatcher(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
-    public boolean match(final AnnotatedElementView annotatedElementContext, final Context... contexts) {
-        final Set<RequiresCondition> conditions = annotatedElementContext.annotations().all(RequiresCondition.class);
-        for (final RequiresCondition condition : conditions) {
-            final Class<? extends Condition> conditionClass = condition.condition();
+    public boolean match(AnnotatedElementView annotatedElementContext, Context... contexts) {
+        Set<RequiresCondition> conditions = annotatedElementContext.annotations().all(RequiresCondition.class);
+        for (RequiresCondition condition : conditions) {
+            Class<? extends Condition> conditionClass = condition.condition();
 
-            final Condition conditionInstance = this.applicationContext.get(conditionClass);
+            Condition conditionInstance = this.applicationContext.get(conditionClass);
             if (!this.match(annotatedElementContext, conditionInstance, condition, contexts)) {
                 return false;
             }
@@ -43,10 +43,12 @@ public class ConditionMatcher {
         return true;
     }
 
-    public boolean match(final AnnotatedElementView element, final Condition condition, final RequiresCondition requiresCondition, final Context... contexts) {
-        final ConditionContext context = new ConditionContext(this.applicationContext, element, requiresCondition);
-        for (final Context child : contexts) context.add(child);
-        final ConditionResult result = condition.matches(context);
+    public boolean match(AnnotatedElementView element, Condition condition, RequiresCondition requiresCondition, Context... contexts) {
+        ConditionContext context = new ConditionContext(this.applicationContext, element, requiresCondition);
+        for (Context child : contexts) {
+            context.add(child);
+        }
+        ConditionResult result = condition.matches(context);
         if (!result.matches() && requiresCondition.failOnNoMatch()) {
             throw new ConditionFailedException(condition, result);
         }

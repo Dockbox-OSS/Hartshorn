@@ -30,10 +30,10 @@ import java.lang.reflect.Type;
  */
 public abstract class GenericType<T> implements Comparable<GenericType<T>> {
 
-    protected final Type type;
+    protected Type type;
 
     protected GenericType() {
-        final Type superClass = this.getClass().getGenericSuperclass();
+        Type superClass = this.getClass().getGenericSuperclass();
         if (superClass instanceof Class<?>) {
             throw new IllegalArgumentException("GenericType constructed without actual type information");
         }
@@ -45,14 +45,15 @@ public abstract class GenericType<T> implements Comparable<GenericType<T>> {
     }
 
     public Option<Class<T>> asClass() {
-        final Type type = this.type();
-        if (type instanceof Class<?> clazz)
+        Type type = this.type();
+        if (type instanceof Class<?> clazz) {
             return Option.of((Class<T>) clazz);
+        }
         return Option.empty();
     }
 
     @Override
-    public int compareTo(@NonNull final GenericType<T> other) {
+    public int compareTo(@NonNull GenericType<T> other) {
         return 0;
     }
 

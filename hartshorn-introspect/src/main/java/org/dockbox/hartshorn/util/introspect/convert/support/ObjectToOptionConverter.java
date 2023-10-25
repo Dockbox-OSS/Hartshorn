@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ObjectToOptionConverter implements Converter<Object, Option<?>> {
 
     @Override
-    public Option<?> convert(final @Nullable Object input) {
+    public Option<?> convert(@Nullable Object input) {
         return Option.of(input);
     }
 }

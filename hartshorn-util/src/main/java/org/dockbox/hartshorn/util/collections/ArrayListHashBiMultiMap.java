@@ -26,7 +26,7 @@ public class ArrayListHashBiMultiMap<K, V> extends AbstractBiMultiMap<K, V> {
     public ArrayListHashBiMultiMap() {
     }
 
-    public ArrayListHashBiMultiMap(final MultiMap<K, V> map) {
+    public ArrayListHashBiMultiMap(MultiMap<K, V> map) {
         super(map);
     }
 

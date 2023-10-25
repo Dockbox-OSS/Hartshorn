@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.context.ContextKey;
-import org.dockbox.hartshorn.context.DefaultProvisionContext;
-
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.dockbox.hartshorn.context.ContextKey;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 
 public class ConfigurationURIContextList extends DefaultProvisionContext {
 
@@ -34,11 +34,11 @@ public class ConfigurationURIContextList extends DefaultProvisionContext {
         return this.contexts;
     }
 
-    public void add(final Set<ConfigurationURIContext> contexts) {
+    public void add(Set<ConfigurationURIContext> contexts) {
         this.contexts.addAll(contexts);
     }
 
-    public void add(final ConfigurationURIContext context) {
+    public void add(ConfigurationURIContext context) {
         this.contexts.add(context);
     }
 }

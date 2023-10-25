@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class AmbiguousConverterException extends ApplicationRuntimeException {
 
-    public AmbiguousConverterException(final String message) {
+    public AmbiguousConverterException(String message) {
         super(message);
     }
 }

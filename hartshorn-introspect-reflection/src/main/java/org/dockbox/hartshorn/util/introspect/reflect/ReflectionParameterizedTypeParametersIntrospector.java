@@ -41,7 +41,7 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
     private MultiMap<Class<?>, TypeView<?>> interfaceTypeParameters;
     private TypeParameterList parameters;
 
-    public ReflectionParameterizedTypeParametersIntrospector(final TypeView<T> type, final ParameterizedType parameterizedType, final Introspector introspector) {
+    public ReflectionParameterizedTypeParametersIntrospector(TypeView<T> type, ParameterizedType parameterizedType, Introspector introspector) {
         super(type, introspector);
         this.parameterizedType = parameterizedType;
         if (parameterizedType != null && parameterizedType.getRawType() != type.type()) {
@@ -52,10 +52,10 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
     @Override
     public TypeParameterList allInput() {
         if (this.parameters == null) {
-            final List<TypeParameterView> typeParameters = new ArrayList<>();
-            final Type[] actualTypeArguments = this.parameterizedType.getActualTypeArguments();
+            List<TypeParameterView> typeParameters = new ArrayList<>();
+            Type[] actualTypeArguments = this.parameterizedType.getActualTypeArguments();
             for (int i = 0; i < actualTypeArguments.length; i++) {
-                final Type actualTypeArgument = actualTypeArguments[i];
+                Type actualTypeArgument = actualTypeArguments[i];
                 typeParameters.add(new ReflectionTypeParameterView(actualTypeArgument, this.type(), i, this.introspector()));
             }
             this.parameters = new SimpleTypeParameterList(typeParameters);
@@ -65,7 +65,7 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
 
     @Override
     @Deprecated(forRemoval = true, since = "0.5.0")
-    public List<TypeView<?>> from(final Class<?> fromInterface) {
+    public List<TypeView<?>> from(Class<?> fromInterface) {
         if (!fromInterface.isInterface()) {
             throw new IllegalArgumentException("Provided type " + fromInterface.getSimpleName() + " is not a interface");
         }
@@ -78,9 +78,9 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
         }
 
         if (!this.interfaceTypeParameters.containsKey(fromInterface)) {
-            for (final Type genericSuper : this.type().type().getGenericInterfaces()) {
+            for (Type genericSuper : this.type().type().getGenericInterfaces()) {
                 if (genericSuper instanceof ParameterizedType parameterized) {
-                    final Type raw = parameterized.getRawType();
+                    Type raw = parameterized.getRawType();
                     if (raw instanceof Class<?> clazz && fromInterface.equals(clazz)) {
                         this.interfaceTypeParameters.putAll(fromInterface, this.contextsFromParameterizedType(parameterized));
                     }
@@ -91,8 +91,8 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
         return List.copyOf(this.interfaceTypeParameters.get(fromInterface));
     }
 
-    private List<TypeView<?>> contextsFromParameterizedType(final ParameterizedType parameterizedType) {
-        final Type[] arguments = parameterizedType.getActualTypeArguments();
+    private List<TypeView<?>> contextsFromParameterizedType(ParameterizedType parameterizedType) {
+        Type[] arguments = parameterizedType.getActualTypeArguments();
 
         return Arrays.stream(arguments)
                 .filter(type -> type instanceof Class || type instanceof WildcardType || type instanceof ParameterizedType)

@@ -41,6 +41,6 @@ public class DemoProcessor extends ComponentPreProcessor {
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
     }
 }

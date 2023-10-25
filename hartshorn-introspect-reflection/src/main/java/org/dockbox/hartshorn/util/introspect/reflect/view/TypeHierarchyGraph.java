@@ -26,19 +26,19 @@ import java.util.List;
 
 public class TypeHierarchyGraph extends SimpleGraph<TypeView<?>> {
 
-    public static TypeHierarchyGraph of(final TypeView<?> type) {
-        final TypeHierarchyGraph graph = new TypeHierarchyGraph();
+    public static TypeHierarchyGraph of(TypeView<?> type) {
+        TypeHierarchyGraph graph = new TypeHierarchyGraph();
         graph.addRoot(createNode(type));
         return graph;
     }
 
-    private static ContainableGraphNode<TypeView<?>> createNode(final TypeView<?> type) {
-        final MutableContainableGraphNode<TypeView<?>> node = new SimpleGraphNode<>(type);
-        final List<TypeView<?>> interfaces = type.genericInterfaces();
-        for (final TypeView<?> anInterface : interfaces) {
+    private static ContainableGraphNode<TypeView<?>> createNode(TypeView<?> type) {
+        MutableContainableGraphNode<TypeView<?>> node = new SimpleGraphNode<>(type);
+        List<TypeView<?>> interfaces = type.genericInterfaces();
+        for (TypeView<?> anInterface : interfaces) {
             node.addChild(createNode(anInterface));
         }
-        final TypeView<?> superClass = type.genericSuperClass();
+        TypeView<?> superClass = type.genericSuperClass();
         if (!superClass.isVoid()) {
             node.addChild(createNode(superClass));
         }

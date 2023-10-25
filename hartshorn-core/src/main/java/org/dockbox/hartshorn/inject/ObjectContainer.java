@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.inject;
 
+/**
+ * A simple container for an object instance. Used to track whether an object has been processed or not.
+ *
+ * @param <T> the type of the object instance
+ *
+ * @author Guus Lieben
+ * @since 0.4.12
+ */
 public class ObjectContainer<T> {
 
     private final T instance;
@@ -25,14 +33,30 @@ public class ObjectContainer<T> {
         this.instance = instance;
     }
 
+    /**
+     * Returns the object instance. Note that this instance may or may not have been processed.
+     *
+     * @return the object instance
+     */
     public T instance() {
         return this.instance;
     }
 
+    /**
+     * Returns whether the object instance has been processed or not.
+     *
+     * @return {@code true} if the object instance has been processed, {@code false} otherwise
+     */
     public boolean processed() {
         return this.processed;
     }
 
+    /**
+     * Sets whether the object instance has been processed or not. This method is intended to be used by
+     * providers that are responsible for processing the object instance.
+     *
+     * @param processed whether the object instance has been processed or not
+     */
     public void processed(boolean processed) {
         this.processed = processed;
     }

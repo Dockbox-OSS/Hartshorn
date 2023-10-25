@@ -32,7 +32,7 @@ public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
 
     private final CommandElement<T> element;
 
-    public CommandFlagElement(final CommandElement<T> element) {
+    public CommandFlagElement(CommandElement<T> element) {
         this.element = element;
     }
 
@@ -42,12 +42,12 @@ public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
     }
 
     @Override
-    public Option<T> parse(final CommandSource source, final String argument) {
+    public Option<T> parse(CommandSource source, String argument) {
         return this.element.parse(source, argument);
     }
 
     @Override
-    public Collection<String> suggestions(final CommandSource source, final String argument) {
+    public Collection<String> suggestions(CommandSource source, String argument) {
         return this.element.suggestions(source, argument);
     }
 

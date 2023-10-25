@@ -24,7 +24,7 @@ public class CopyOnWriteArrayListMultiMap<K, V> extends ConcurrentMultiMap<K, V>
     public CopyOnWriteArrayListMultiMap() {
     }
 
-    public CopyOnWriteArrayListMultiMap(final MultiMap<K, V> map) {
+    public CopyOnWriteArrayListMultiMap(MultiMap<K, V> map) {
         super(map);
     }
 

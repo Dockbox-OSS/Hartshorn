@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslScript;
+import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -75,8 +75,8 @@ public class VirtualClassTests {
 
     @ParameterizedTest
     @MethodSource("propertyAccessors")
-    void test(final String modifier, final String accessor, final boolean shouldFail, final String message) {
-        final HslScript script = HslScript.of(this.applicationContext, """
+    void test(String modifier, String accessor, boolean shouldFail, String message) {
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 class User {
                     %s name;
                     constructor(name) {
@@ -94,7 +94,7 @@ public class VirtualClassTests {
                 """.formatted(modifier, accessor));
 
         if (shouldFail) {
-            final ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
+            ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
             String errorMessage = error.getMessage();
             errorMessage = errorMessage.substring(0, errorMessage.indexOf("."));
             Assertions.assertEquals(message, errorMessage);

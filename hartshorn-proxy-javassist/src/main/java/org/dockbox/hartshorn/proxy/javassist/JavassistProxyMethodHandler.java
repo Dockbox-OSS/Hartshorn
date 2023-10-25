@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
 public record JavassistProxyMethodHandler<T>(ProxyMethodInterceptor<T> interceptor, Introspector introspector) implements MethodHandler {
 
     @Override
-    public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
+    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
         return this.interceptor.intercept(self,
                 new MethodInvokable(thisMethod, this.introspector()),
                 new MethodInvokable(proceed, this.introspector()),

@@ -22,13 +22,19 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.dockbox.hartshorn.util.MapBackedAnnotationInvocationHandler;
+
+/**
+ * @deprecated Use {@link MapBackedAnnotationInvocationHandler} or {@link AnnotationAdapterProxy} instead.
+ */
+@Deprecated(forRemoval = true, since = "0.5.0")
 public class PolymorphicAnnotationInvocationHandler implements InvocationHandler {
 
-    final Map<String, Object> cache;
+    Map<String, Object> cache;
     private final Class<?> type;
     private final Annotation annotation;
 
-    public PolymorphicAnnotationInvocationHandler(final Class<?> type, final Annotation annotation) {
+    public PolymorphicAnnotationInvocationHandler(Class<?> type, Annotation annotation) {
         this.type = type;
         this.annotation = annotation;
         this.cache = new HashMap<>();
@@ -39,7 +45,7 @@ public class PolymorphicAnnotationInvocationHandler implements InvocationHandler
     }
 
     @Override
-    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if ("annotationType".equals(method.getName())) {
             return this.type;
         }
@@ -51,9 +57,9 @@ public class PolymorphicAnnotationInvocationHandler implements InvocationHandler
             return result;
         }
 
-        for (final Method methodInCompositeAnnotation : this.annotation.annotationType().getMethods()) {
-            final AliasFor aliasFor = methodInCompositeAnnotation.getAnnotation(AliasFor.class);
-            if (aliasFor != null && (this.directAlias(aliasFor, method) || this.indirectAlias(aliasFor, method))) {
+        for (Method methodInCompositeAnnotation : this.annotation.annotationType().getMethods()) {
+            AttributeAlias attributeAlias = methodInCompositeAnnotation.getAnnotation(AttributeAlias.class);
+            if (attributeAlias != null && (this.directAlias(attributeAlias, method) || this.indirectAlias(attributeAlias, method))) {
                 result = methodInCompositeAnnotation.invoke(this.annotation);
                 this.cache.put(method.getName(), result);
                 return result;
@@ -61,26 +67,26 @@ public class PolymorphicAnnotationInvocationHandler implements InvocationHandler
         }
 
         try {
-            final Object ret = this.type.getMethod(method.getName()).getDefaultValue();
+            Object ret = this.type.getMethod(method.getName()).getDefaultValue();
             if (ret == null) {
                 throw new CompositeAnnotationInvocationException(this.type, method, this.annotation);
             }
             return ret;
         }
-        catch (final NoSuchMethodError e) {
+        catch (NoSuchMethodError e) {
             throw new CompositeAnnotationInvocationException(this.type, method, this.annotation, e);
         }
     }
 
-    private boolean directAlias(final AliasFor aliasFor, final Method methodBeingInvoked) {
-        return aliasFor.target() == this.type && aliasFor.value().equals(methodBeingInvoked.getName());
+    private boolean directAlias(AttributeAlias attributeAlias, Method methodBeingInvoked) {
+        return attributeAlias.target() == this.type && attributeAlias.value().equals(methodBeingInvoked.getName());
     }
 
-    private boolean indirectAlias(final AliasFor aliasFor, final Method methodBeingInvoked) {
-        if (aliasFor.target() != this.type) {
+    private boolean indirectAlias(AttributeAlias attributeAlias, Method methodBeingInvoked) {
+        if (attributeAlias.target() != this.type) {
             return false;
         }
-        final AliasFor redirect = methodBeingInvoked.getAnnotation(AliasFor.class);
-        return redirect != null && redirect.target() == AliasFor.DefaultThis.class && redirect.value().equals(aliasFor.value());
+        AttributeAlias redirect = methodBeingInvoked.getAnnotation(AttributeAlias.class);
+        return redirect != null && redirect.target() == Void.class && redirect.value().equals(attributeAlias.value());
     }
 }

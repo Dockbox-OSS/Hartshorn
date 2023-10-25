@@ -41,7 +41,7 @@ public enum StandardLibrary {
     private final String name;
     private final Class<?> libraryClass;
 
-    StandardLibrary(final String name, final Class<?> libraryClass) {
+    StandardLibrary(String name, Class<?> libraryClass) {
         this.name = name;
         this.libraryClass = libraryClass;
     }
@@ -70,7 +70,7 @@ public enum StandardLibrary {
      * @param context The application context.
      * @return The {@link NativeModule} instance for this library.
      */
-    public NativeModule asModule(final ApplicationContext context) {
+    public NativeModule asModule(ApplicationContext context) {
         return new ApplicationBoundNativeModule(this.libraryClass, context);
     }
 
@@ -80,9 +80,9 @@ public enum StandardLibrary {
      * @param context The application context.
      * @return The {@link NativeModule} instances for all libraries.
      */
-    public static Map<String, NativeModule> asModules(final ApplicationContext context) {
-        final Map<String, NativeModule> modules = new ConcurrentHashMap<>();
-        for (final StandardLibrary library : StandardLibrary.values()) {
+    public static Map<String, NativeModule> asModules(ApplicationContext context) {
+        Map<String, NativeModule> modules = new ConcurrentHashMap<>();
+        for (StandardLibrary library : StandardLibrary.values()) {
             modules.put(library.libaryName(), library.asModule(context));
         }
         return modules;

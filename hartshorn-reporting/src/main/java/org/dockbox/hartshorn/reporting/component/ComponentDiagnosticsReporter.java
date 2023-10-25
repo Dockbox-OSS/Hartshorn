@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
@@ -27,11 +32,6 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.component.ComponentReportingConfiguration.ComponentAttribute;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ComponentReportingConfiguration>, CategorizedDiagnosticsReporter {
 
     public static final String COMPONENTS_CATEGORY = "components";
@@ -39,41 +39,41 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
     private final ComponentReportingConfiguration configuration = new ComponentReportingConfiguration();
     private final ApplicationContext applicationContext;
 
-    public ComponentDiagnosticsReporter(final ApplicationContext applicationContext) {
+    public ComponentDiagnosticsReporter(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
-        final ComponentLocator componentLocator = this.applicationContext.get(ComponentLocator.class);
+    public void report(DiagnosticsPropertyCollector collector) {
+        ComponentLocator componentLocator = this.applicationContext.get(ComponentLocator.class);
 
         if (this.configuration.groupBy() == ComponentAttribute.NONE) {
-            final Reportable[] reporters = this.diagnosticsReporters(componentLocator.containers());
+            Reportable[] reporters = this.diagnosticsReporters(componentLocator.containers());
             collector.property("all").write(reporters);
         }
         else {
-            final Map<String, List<ComponentContainer<?>>> groupedContainers = componentLocator.containers().stream()
+            Map<String, List<ComponentContainer<?>>> groupedContainers = componentLocator.containers().stream()
                     .collect(Collectors.groupingBy(container -> switch (this.configuration.groupBy()) {
                         case STEREOTYPE -> stereotype(container).getCanonicalName();
                         case PACKAGE -> container.type().packageInfo().name();
                         default -> throw new IllegalStateException("Unexpected value: " + this.configuration.groupBy());
                     }));
 
-            for (final String key : groupedContainers.keySet()) {
+            for (String key : groupedContainers.keySet()) {
                 collector.property(key).write(this.diagnosticsReporters(groupedContainers.get(key)));
             }
         }
     }
 
     @NonNull
-    private Reportable[] diagnosticsReporters(final Collection<ComponentContainer<?>> containers) {
+    private Reportable[] diagnosticsReporters(Collection<ComponentContainer<?>> containers) {
         return containers.stream()
                 .map(container -> (Reportable) new ComponentContainerReporter(this, container))
                 .toArray(Reportable[]::new);
     }
 
-    static Class<?> stereotype(final ComponentContainer<?> container) {
-        final Component component = container.type().annotations().get(Component.class).get();
+    static Class<?> stereotype(ComponentContainer<?> container) {
+        Component component = container.type().annotations().get(Component.class).get();
         return component.annotationType();
     }
 

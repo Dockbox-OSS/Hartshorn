@@ -39,17 +39,17 @@ import jakarta.inject.Inject;
 
 public class StandardPropertyHolder implements PropertyHolder {
 
-    protected final transient Map<String, Object> properties;
+    protected transient Map<String, Object> properties;
 
     private final ObjectMapper objectMapper;
     private final ObjectMapper propertyMapper;
     private final ApplicationContext applicationContext;
 
     @Inject
-    public StandardPropertyHolder(final ApplicationContext applicationContext,
-                                  final ApplicationPropertyHolder propertyHolder,
-                                  final ObjectMapper objectMapper,
-                                  final ObjectMapper propertyMapper) {
+    public StandardPropertyHolder(ApplicationContext applicationContext,
+                                  ApplicationPropertyHolder propertyHolder,
+                                  ObjectMapper objectMapper,
+                                  ObjectMapper propertyMapper) {
         this.applicationContext = applicationContext;
         this.objectMapper = objectMapper.fileType(FileFormats.JSON);
         this.propertyMapper = propertyMapper.fileType(FileFormats.PROPERTIES);
@@ -59,63 +59,63 @@ public class StandardPropertyHolder implements PropertyHolder {
     }
 
     @Override
-    public boolean has(final String key) {
+    public boolean has(String key) {
         return this.find(key) != null;
     }
 
     @Override
-    public <T> Option<T> update(final T object, final String key, final Class<T> type) {
+    public <T> Option<T> update(T object, String key, Class<T> type) {
         return this.restore(key, serialized -> this.objectMapper.update(object, serialized, type));
     }
 
-    private <T> Option<T> restore(final String key, final Function<String, Option<T>> mapper) {
-        final Object value = this.find(key);
+    private <T> Option<T> restore(String key, Function<String, Option<T>> mapper) {
+        Object value = this.find(key);
         return Option.of(value)
                 .flatMap(result -> this.objectMapper.write(result).peekError(this.applicationContext::handle))
                 .flatMap(mapper);
     }
 
     @Override
-    public <T> Option<T> update(final T object, final String key, final GenericType<T> type) {
+    public <T> Option<T> update(T object, String key, GenericType<T> type) {
         return Option.of(this.find(key))
                 .flatMap(value -> this.objectMapper.write(value).peekError(this.applicationContext::handle))
                 .flatMap(serialized -> this.objectMapper.read(serialized, type));
     }
 
     @Override
-    public <T> Option<T> get(final String key, final Class<T> type) {
+    public <T> Option<T> get(String key, Class<T> type) {
         return this.restore(key, serialized -> this.objectMapper.read(serialized, type));
     }
 
     @Override
-    public <T> Option<T> get(final String key, final GenericType<T> type) {
+    public <T> Option<T> get(String key, GenericType<T> type) {
         return Option.of(this.find(key))
                 .flatMap(value -> this.objectMapper.write(value).peekError(this.applicationContext::handle))
                 .flatMap(serialized -> this.objectMapper.read(serialized, type));
     }
 
     @Override
-    public void set(final Map<String, Object> tree) {
+    public void set(Map<String, Object> tree) {
         tree.forEach(this::set);
     }
 
     @Override
-    public <T> void set(final String key, final T value) {
-        final String[] split = key.split("\\.");
+    public <T> void set(String key, T value) {
+        String[] split = key.split("\\.");
 
-        final Object patch = this.objectMapper.write(value)
+        Object patch = this.objectMapper.write(value)
                 .flatMap(serialized -> this.objectMapper.read(serialized, Map.class))
                 .cast(Object.class)
                 .orElse(value);
 
         Map<String, Object> current = this.properties;
         for (int i = 0; i < split.length; i++) {
-            final String part = split[i];
+            String part = split[i];
             if (i == split.length - 1) {
-                final Object origin = current.get(part);
+                Object origin = current.get(part);
                 if (origin instanceof Map && patch instanceof Map) {
-                    final Map<String, Object> adjustedOrigin = TypeUtils.adjustWildcards(origin, Map.class);
-                    final Map<String, Object> adjustedPatch = TypeUtils.adjustWildcards(patch, Map.class);
+                    Map<String, Object> adjustedOrigin = TypeUtils.adjustWildcards(origin, Map.class);
+                    Map<String, Object> adjustedPatch = TypeUtils.adjustWildcards(patch, Map.class);
                     this.patchConfigurationMap(adjustedOrigin, adjustedPatch);
                     return;
                 }
@@ -136,12 +136,12 @@ public class StandardPropertyHolder implements PropertyHolder {
         return new LinkedHashMap<>();
     }
 
-    protected void patchConfigurationMap(final Map<String, Object> origin, final Map<String, Object> patch) {
-        for (final Entry<String, Object> entry : patch.entrySet()) {
-            final String key = entry.getKey();
-            final Object patchValue = entry.getValue();
+    protected void patchConfigurationMap(Map<String, Object> origin, Map<String, Object> patch) {
+        for (Entry<String, Object> entry : patch.entrySet()) {
+            String key = entry.getKey();
+            Object patchValue = entry.getValue();
             if (origin.containsKey(key)) {
-                final Object originValue = origin.get(key);
+                Object originValue = origin.get(key);
                 if (originValue instanceof Map && patchValue instanceof Map) {
                     this.patchConfigurationMap((Map<String, Object>) originValue, (Map<String, Object>) patchValue);
                 }
@@ -152,31 +152,33 @@ public class StandardPropertyHolder implements PropertyHolder {
                     origin.put(key, patchValue);
                 }
             }
-            else origin.put(key, patchValue);
+            else {
+                origin.put(key, patchValue);
+            }
         }
     }
 
-    protected <T> Collection<T> merge(final Collection<T> first, final Collection<T> second) {
+    protected <T> Collection<T> merge(Collection<T> first, Collection<T> second) {
         second.removeAll(first);
         first.addAll(second);
         return first;
     }
 
-    protected Object find(final String key) {
+    protected Object find(String key) {
         if (StringUtilities.empty(key)) {
             return this.properties;
         }
-        final String[] split = key.split("\\.");
+        String[] split = key.split("\\.");
         if (split.length == 1) {
             return this.properties.get(key);
         }
         Map<String, Object> current = this.properties;
         for (int i = 0; i < split.length; i++) {
-            final String part = split[i];
+            String part = split[i];
             if (i == split.length - 1) {
                 return current.get(part);
             }
-            final Object next = current.get(part);
+            Object next = current.get(part);
             if (next == null) {
                 return null;
             }
@@ -190,14 +192,14 @@ public class StandardPropertyHolder implements PropertyHolder {
 
     @Override
     public Properties properties() {
-        final Properties properties = new Properties();
+        Properties properties = new Properties();
         this.propertyMapper.write(this.properties)
                 .map(StringReader::new)
                 .peek(reader -> {
                     try {
                         properties.load(reader);
                     }
-                    catch (final IOException e) {
+                    catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 });

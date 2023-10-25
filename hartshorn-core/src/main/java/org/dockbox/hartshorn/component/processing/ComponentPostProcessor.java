@@ -54,13 +54,13 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @return {@code true} if the context can be processed, {@code false} otherwise
      * @param <T> The type of the component to be processed
      */
-    public <T> boolean isCompatible(final ComponentProcessingContext<T> processingContext) {
+    public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
         return true;
     }
 
     @Override
-    public final <T> T process(final ComponentProcessingContext<T> processingContext) {
-        final T instance = processingContext.instance();
+    public <T> T process(ComponentProcessingContext<T> processingContext) {
+        T instance = processingContext.instance();
 
         if (!this.isCompatible(processingContext)) {
             return instance;
@@ -69,7 +69,7 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
         this.preConfigureComponent(processingContext.applicationContext(), processingContext.instance(), processingContext);
         checkForModification(processingContext, this, instance, processingContext.instance());
 
-        final T updatedInstance = this.initializeComponent(processingContext.applicationContext(), processingContext.instance(), processingContext);
+        T updatedInstance = this.initializeComponent(processingContext.applicationContext(), processingContext.instance(), processingContext);
         if (processingContext instanceof ModifiableComponentProcessingContext<T> modifiableComponentProcessingContext) {
             if (!modifiableComponentProcessingContext.isInstanceLocked()) {
                 modifiableComponentProcessingContext.instance(updatedInstance);
@@ -87,7 +87,7 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
     }
 
     /**
-     * Early configuration of the component. This method is called before the final component is
+     * Early configuration of the component. This method is called before the component is
      * initialized. Early configuration can be used to configure context that is required for the
      * initialization of the component, but is not available in the component itself.
      *
@@ -96,7 +96,7 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @param processingContext the processing context
      * @param <T> the type of the component
      */
-    public <T> void preConfigureComponent(final ApplicationContext context, final @Nullable T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         // Do nothing by default
     }
 
@@ -111,13 +111,13 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @return the initialized component
      * @param <T> the type of the component
      */
-    public <T> T initializeComponent(final ApplicationContext context, final @Nullable T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         // Do nothing by default
         return instance;
     }
 
     /**
-     * Late configuration of the component. This method is called after the final component is
+     * Late configuration of the component. This method is called after the component is
      * initialized. Late configuration can be used to configure context present in the component
      * itself. For example, this method can be used to configure a component that implements
      * specific interfaces or to populate properties.
@@ -127,7 +127,7 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @param processingContext the processing context
      * @param <T> the type of the component
      */
-    public <T> void postConfigureComponent(final ApplicationContext context, final @Nullable T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> void postConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         // Do nothing by default
     }
 
@@ -146,7 +146,7 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      *             of this method
      */
     @Deprecated(forRemoval = true, since = "0.5.0")
-    public <T> T process(final ApplicationContext context, final @Nullable T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> T process(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         throw new UnsupportedOperationException("This method is deprecated, use preConfigureComponent, initializeComponent and postConfigureComponent instead");
     }
 
@@ -161,13 +161,13 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @param modified the modified component instance
      * @param <T> the type of the component
      */
-    private static <T> void checkForModification(final ComponentProcessingContext<T> processingContext,
-                                                 final ComponentPostProcessor postProcessor,
-                                                 final T instance, final T modified) {
+    private static <T> void checkForModification(ComponentProcessingContext<T> processingContext,
+                                                 ComponentPostProcessor postProcessor,
+                                                 T instance, T modified) {
         if (instance != modified) {
             boolean ok = false;
             if (modified instanceof Proxy) {
-                final Proxy<T> proxy = TypeUtils.adjustWildcards(modified, Proxy.class);
+                Proxy<T> proxy = TypeUtils.adjustWildcards(modified, Proxy.class);
                 ok = proxy.manager().delegate().orNull() == instance;
             }
             if (!ok) {

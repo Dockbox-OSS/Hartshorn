@@ -26,14 +26,14 @@ import java.util.function.Function;
 public class MemoryUsageDiagnosticsReporter implements Reportable {
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
-        final Runtime runtime = Runtime.getRuntime();
-        final long total = runtime.totalMemory();
-        final long free = runtime.freeMemory();
-        final long max = runtime.maxMemory();
-        final long used = total - free;
+    public void report(DiagnosticsPropertyCollector collector) {
+        Runtime runtime = Runtime.getRuntime();
+        long total = runtime.totalMemory();
+        long free = runtime.freeMemory();
+        long max = runtime.maxMemory();
+        long used = total - free;
 
-        final Function<Long, Reportable> byteReporter = bytes -> totalCollector -> {
+        Function<Long, Reportable> byteReporter = bytes -> totalCollector -> {
             totalCollector.property("bytes").write(bytes);
             totalCollector.property("si").write(humanReadableByteCountSI(bytes));
             totalCollector.property("iec").write(humanReadableByteCountIEC(bytes));
@@ -49,7 +49,7 @@ public class MemoryUsageDiagnosticsReporter implements Reportable {
         if (-1000 < bytes && bytes < 1000) {
             return bytes + " B";
         }
-        final CharacterIterator iterator = new StringCharacterIterator("kMGTPE");
+        CharacterIterator iterator = new StringCharacterIterator("kMGTPE");
         while (bytes <= -999_950 || bytes >= 999_950) {
             bytes /= 1000;
             iterator.next();
@@ -57,13 +57,13 @@ public class MemoryUsageDiagnosticsReporter implements Reportable {
         return String.format("%.1f %cB", bytes / 1000.0, iterator.current());
     }
 
-    public static String humanReadableByteCountIEC(final long bytes) {
-        final long absoluteBytes = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);
+    public static String humanReadableByteCountIEC(long bytes) {
+        long absoluteBytes = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);
         if (absoluteBytes < 1024) {
             return bytes + " B";
         }
         long value = absoluteBytes;
-        final CharacterIterator iterator = new StringCharacterIterator("KMGTPE");
+        CharacterIterator iterator = new StringCharacterIterator("KMGTPE");
         for (int i = 40; i >= 0 && absoluteBytes > 0xfffccccccccccccL >> i; i -= 10) {
             value >>= 10;
             iterator.next();

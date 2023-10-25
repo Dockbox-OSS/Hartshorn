@@ -60,9 +60,9 @@ public interface CommandExecutorExtension {
      *
      * @return The unique ID
      */
-    default String id(final Identifiable sender, final CommandContext context) {
-        final UUID uuid = sender.uniqueId();
-        final String alias = context.alias();
+    default String id(Identifiable sender, CommandContext context) {
+        UUID uuid = sender.uniqueId();
+        String alias = context.alias();
         return uuid + "$" + alias;
     }
 

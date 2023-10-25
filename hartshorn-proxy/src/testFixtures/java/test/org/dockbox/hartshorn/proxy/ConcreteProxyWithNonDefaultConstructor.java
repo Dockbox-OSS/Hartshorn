@@ -21,7 +21,7 @@ public class ConcreteProxyWithNonDefaultConstructor {
 
     private final String message;
 
-    public ConcreteProxyWithNonDefaultConstructor(final String message) {
+    public ConcreteProxyWithNonDefaultConstructor(String message) {
         this.message = message;
     }
 

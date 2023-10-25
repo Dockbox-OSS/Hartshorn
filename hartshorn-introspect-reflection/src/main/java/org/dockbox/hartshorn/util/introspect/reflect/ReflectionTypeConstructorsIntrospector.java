@@ -34,7 +34,7 @@ public class ReflectionTypeConstructorsIntrospector<T> implements TypeConstructo
 
     private Option<ConstructorView<T>> defaultConstructor;
     private List<ConstructorView<T>> constructors;
-    public ReflectionTypeConstructorsIntrospector(final Class<T> type, final Introspector introspector) {
+    public ReflectionTypeConstructorsIntrospector(Class<T> type, Introspector introspector) {
         this.type = type;
         this.introspector = introspector;
     }
@@ -48,16 +48,16 @@ public class ReflectionTypeConstructorsIntrospector<T> implements TypeConstructo
     }
 
     @Override
-    public List<ConstructorView<T>> annotatedWith(final Class<? extends Annotation> annotation) {
+    public List<ConstructorView<T>> annotatedWith(Class<? extends Annotation> annotation) {
         return this.all()
                 .stream().filter(constructor -> constructor.annotations().has(annotation))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Option<ConstructorView<T>> withParameters(final List<Class<?>> parameters) {
+    public Option<ConstructorView<T>> withParameters(List<Class<?>> parameters) {
         return Option.of(() -> {
-            final Constructor<T> constructor = this.type.getDeclaredConstructor(parameters.toArray(new Class[0]));
+            Constructor<T> constructor = this.type.getDeclaredConstructor(parameters.toArray(new Class[0]));
             return this.introspector.introspect(constructor);
         });
     }

@@ -25,9 +25,9 @@ public class ObjectToStringConverterTests {
 
     @Test
     void testNullCanBeConverted() {
-        final Object element = null;
-        final Converter<Object, String> converter = new ObjectToStringConverter();
-        final Object converted = converter.convert(element);
+        Object element = null;
+        Converter<Object, String> converter = new ObjectToStringConverter();
+        Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof String);
         Assertions.assertEquals("null", converted);
@@ -35,9 +35,9 @@ public class ObjectToStringConverterTests {
 
     @Test
     void testStringElementCanBeConvertedAndNotEscaped() {
-        final String element = "test";
-        final Converter<Object, String> converter = new ObjectToStringConverter();
-        final Object converted = converter.convert(element);
+        String element = "test";
+        Converter<Object, String> converter = new ObjectToStringConverter();
+        Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof String);
         Assertions.assertEquals(element, converted);
@@ -45,9 +45,9 @@ public class ObjectToStringConverterTests {
 
     @Test
     void testNonNullElementCanBeConverted() {
-        final Object element = new Object();
-        final Converter<Object, String> converter = new ObjectToStringConverter();
-        final Object converted = converter.convert(element);
+        Object element = new Object();
+        Converter<Object, String> converter = new ObjectToStringConverter();
+        Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof String);
         Assertions.assertEquals(element.toString(), converted);
@@ -55,9 +55,9 @@ public class ObjectToStringConverterTests {
 
     @Test
     void testToStringIsUsedForObjects() {
-        final Object element = new TestClass("test");
-        final Converter<Object, String> converter = new ObjectToStringConverter();
-        final Object converted = converter.convert(element);
+        Object element = new TestClass("test");
+        Converter<Object, String> converter = new ObjectToStringConverter();
+        Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof String);
         Assertions.assertEquals("{toStringResult:test}", converted);

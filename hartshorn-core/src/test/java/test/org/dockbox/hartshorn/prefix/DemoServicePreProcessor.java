@@ -32,7 +32,7 @@ public class DemoServicePreProcessor extends ComponentPreProcessor {
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().is(DemoService.class)) {
             context.log().debug("Processing %s".formatted(processingContext));
             this.processed++;

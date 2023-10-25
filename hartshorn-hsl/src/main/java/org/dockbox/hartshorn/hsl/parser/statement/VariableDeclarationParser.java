@@ -30,9 +30,9 @@ import java.util.Set;
 public class VariableDeclarationParser implements ASTNodeParser<VariableStatement> {
 
     @Override
-    public Option<VariableStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<VariableStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.VAR)) {
-            final Token name = validator.expect(TokenType.IDENTIFIER, "variable name");
+            Token name = validator.expect(TokenType.IDENTIFIER, "variable name");
 
             Expression initializer = null;
             if (parser.match(TokenType.EQUAL)) {

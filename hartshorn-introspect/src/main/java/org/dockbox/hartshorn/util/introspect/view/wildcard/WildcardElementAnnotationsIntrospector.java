@@ -30,32 +30,32 @@ public class WildcardElementAnnotationsIntrospector implements ElementAnnotation
     }
 
     @Override
-    public Set<Annotation> annotedWith(final Class<? extends Annotation> annotation) {
+    public Set<Annotation> annotedWith(Class<? extends Annotation> annotation) {
         return Collections.emptySet();
     }
 
     @Override
-    public boolean has(final Class<? extends Annotation> annotation) {
+    public boolean has(Class<? extends Annotation> annotation) {
         return false;
     }
 
     @Override
-    public boolean hasAny(final Set<Class<? extends Annotation>> annotations) {
+    public boolean hasAny(Set<Class<? extends Annotation>> annotations) {
         return false;
     }
 
     @Override
-    public boolean hasAll(final Set<Class<? extends Annotation>> annotations) {
+    public boolean hasAll(Set<Class<? extends Annotation>> annotations) {
         return false;
     }
 
     @Override
-    public <T extends Annotation> Option<T> get(final Class<T> annotation) {
+    public <T extends Annotation> Option<T> get(Class<T> annotation) {
         return Option.empty();
     }
 
     @Override
-    public <T extends Annotation> Set<T> all(final Class<T> annotation) {
+    public <T extends Annotation> Set<T> all(Class<T> annotation) {
         return Collections.emptySet();
     }
 

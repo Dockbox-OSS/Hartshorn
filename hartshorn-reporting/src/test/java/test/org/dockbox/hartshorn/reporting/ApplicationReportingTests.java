@@ -42,26 +42,26 @@ public class ApplicationReportingTests {
 
     @Test
     void testApplicationDiagnosticsReportingPasses() {
-        final Reportable configurable = this.applicationContext.get(Reportable.class);
-        final DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
+        Reportable configurable = this.applicationContext.get(Reportable.class);
+        DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
 
-        final DiagnosticsReport report = collector.report(configurable);
+        DiagnosticsReport report = collector.report(configurable);
         Assertions.assertNotNull(report);
     }
 
     @Test
     void testApplicationDiagnosticsIncludeRequiredDiagnostics() {
-        final Reportable configurable = this.applicationContext.get(Reportable.class);
-        final DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
+        Reportable configurable = this.applicationContext.get(Reportable.class);
+        DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
 
-        final DiagnosticsReport report = collector.report(configurable);
-        final Node<?> root = report.root();
+        DiagnosticsReport report = collector.report(configurable);
+        Node<?> root = report.root();
 
         Assertions.assertNotNull(report);
         Assertions.assertNotNull(root);
         Assertions.assertTrue(root instanceof GroupNode);
 
-        final GroupNode group = (GroupNode) root;
+        GroupNode group = (GroupNode) root;
         Assertions.assertFalse(group.value().isEmpty());
 
         Assertions.assertTrue(group.has(ApplicationDiagnosticsReporter.APPLICATION_CATEGORY));

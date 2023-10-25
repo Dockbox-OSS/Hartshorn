@@ -27,16 +27,16 @@ public class AggregateDiagnosticsReporter implements ConfigurableDiagnosticsRepo
     private final AggregateReporterConfiguration configuration = new AggregateReporterConfiguration();
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
-        final Set<CategorizedDiagnosticsReporter> reporters = this.configuration().reporters();
+    public void report(DiagnosticsPropertyCollector collector) {
+        Set<CategorizedDiagnosticsReporter> reporters = this.configuration().reporters();
 
         collector.property("reporters").write(reporterCollector -> {
-            for (final CategorizedDiagnosticsReporter reporter : reporters) {
+            for (CategorizedDiagnosticsReporter reporter : reporters) {
                 reporterCollector.property(reporter.category()).write(reporter.getClass().getCanonicalName());
             }
         });
 
-        for (final CategorizedDiagnosticsReporter reporter : reporters) {
+        for (CategorizedDiagnosticsReporter reporter : reporters) {
             collector.property(reporter.category()).write(reporter);
         }
     }

@@ -20,15 +20,15 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class ConverterException extends ApplicationRuntimeException {
 
-    public ConverterException(final String message) {
+    public ConverterException(String message) {
         super(message);
     }
 
-    public ConverterException(final String message, final Throwable cause) {
+    public ConverterException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ConverterException(final Throwable cause) {
+    public ConverterException(Throwable cause) {
         super(cause);
     }
 }

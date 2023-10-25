@@ -122,7 +122,7 @@ public class AnnotationLookupTests {
 
     @Test
     public void reportErrorWhenMultipleAnnotationsWithSameBaseTypeFound() {
-        final Exception exception = Assertions.assertThrows(Exception.class, () -> this.annotationLookup().find(TestClassWithSameBaseType.class, Base.class));
+        Exception exception = Assertions.assertThrows(Exception.class, () -> this.annotationLookup().find(TestClassWithSameBaseType.class, Base.class));
         Assertions.assertTrue(exception.getMessage().contains("Found more than one annotation on class"));
 
         this.annotationLookup().find(TestClassWithSameBaseType.class, Sub.class);
@@ -130,7 +130,7 @@ public class AnnotationLookupTests {
 
     @Test
     public void jointAnnotationsAreStrictlyOrdered() {
-        final List<Route> routes = this.annotationLookup().findAll(TestClassWithJointAnnotation2.class, Route.class);
+        List<Route> routes = this.annotationLookup().findAll(TestClassWithJointAnnotation2.class, Route.class);
         Assertions.assertEquals(Arrays.asList(HttpMethod.POST, HttpMethod.GET), routes.stream().map(Route::method).collect(Collectors.toList()));
         Assertions.assertEquals(Arrays.asList("abc", ""), routes.stream().map(Route::path).collect(Collectors.toList()));
         Assertions.assertEquals(Arrays.asList("", "jointRegex"), routes.stream().map(Route::regex).collect(Collectors.toList()));

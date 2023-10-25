@@ -44,7 +44,7 @@ public final class DiscoveryService {
             throw new IllegalStateException("Already instantiated");
         }
         // Check that the class is being created by itself
-        final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         if (stackTrace.length < 3 || !stackTrace[2].getClassName().equals(DiscoveryService.class.getName())) {
             throw new IllegalStateException("Cannot instantiate outside of class");
         }
@@ -55,15 +55,15 @@ public final class DiscoveryService {
         return DISCOVERY_SERVICE;
     }
 
-    public boolean contains(final Class<?> type) {
+    public boolean contains(Class<?> type) {
         return this.types.containsKey(type);
     }
 
     @NonNull
-    public <T> T discover(final Class<T> type) throws ServiceDiscoveryException {
-        final String name = type.getName();
+    public <T> T discover(Class<T> type) throws ServiceDiscoveryException {
+        String name = type.getName();
 
-        final Class<?> implementationType = this.types.containsKey(type)
+        Class<?> implementationType = this.types.containsKey(type)
                 ? this.types.get(type)
                 : this.tryLoadDiscoveryFile(type, name);
 
@@ -73,7 +73,7 @@ public final class DiscoveryService {
         throw new ServiceDiscoveryException("No implementation found for type " + name);
     }
 
-    public void override(final Class<?> type, final Class<?> implementation) {
+    public void override(Class<?> type, Class<?> implementation) {
         this.override(type, implementation.getName());
     }
 
@@ -81,19 +81,19 @@ public final class DiscoveryService {
         this.overrideDiscoveryFiles.put(type.getName(), qualifiedName);
     }
 
-    public void addClassLoader(final ClassLoader classLoader) {
+    public void addClassLoader(ClassLoader classLoader) {
         this.classLoaders.add(classLoader);
     }
 
-    private <T> Class<?> tryLoadDiscoveryFile(final Class<T> type, final String name) {
-        final InputStream resource = this.getClass().getClassLoader().getResourceAsStream(getDiscoveryFileName(name));
+    private <T> Class<?> tryLoadDiscoveryFile(Class<T> type, String name) {
+        InputStream resource = this.getClass().getClassLoader().getResourceAsStream(getDiscoveryFileName(name));
 
-        final String resourceString;
+        String resourceString;
         if (resource != null) {
             try {
                 resourceString = new String(resource.readAllBytes());
             }
-            catch (final IOException e) {
+            catch (IOException e) {
                 throw new ServiceDiscoveryException("Failed to read discovery file for type " + name, e);
             }
         }
@@ -105,14 +105,14 @@ public final class DiscoveryService {
         }
 
         try {
-            final Class<?> implementationType = tryLoadClass(resourceString);
+            Class<?> implementationType = tryLoadClass(resourceString);
 
             this.verifyRegistration(type, implementationType);
             this.types.put(type, implementationType);
 
             return implementationType;
         }
-        catch (final ClassNotFoundException e) {
+        catch (ClassNotFoundException e) {
             throw new ServiceDiscoveryException("Failed to load implementation class for type " + name, e);
         }
     }
@@ -122,42 +122,42 @@ public final class DiscoveryService {
             try {
                 return Class.forName(resourceString, true, classLoader);
             }
-            catch (final ClassNotFoundException e) {
+            catch (ClassNotFoundException e) {
                 // Ignore
             }
         }
         throw new ClassNotFoundException(resourceString);
     }
 
-    private void verifyRegistration(final Class<?> type, final Class<?> implementation) {
+    private void verifyRegistration(Class<?> type, Class<?> implementation) {
         if (!type.isAssignableFrom(implementation)) {
             throw new IllegalArgumentException("Implementation " + implementation.getName() + " is not assignable from type " + type.getName());
         }
         try {
             implementation.getConstructor();
         }
-        catch (final NoSuchMethodException e) {
+        catch (NoSuchMethodException e) {
             throw new IllegalArgumentException("Implementation " + implementation.getName() + " does not have a default constructor");
         }
     }
 
-    private <T> T loadServiceInstance(final Class<T> type, final Class<?> implementationClass) {
+    private <T> T loadServiceInstance(Class<T> type, Class<?> implementationClass) {
         try {
-            final Constructor<?> constructor = implementationClass.getConstructor();
+            Constructor<?> constructor = implementationClass.getConstructor();
 
             constructor.setAccessible(true);
-            final Object instance = constructor.newInstance();
+            Object instance = constructor.newInstance();
             constructor.setAccessible(false);
 
             return type.cast(instance);
         }
-        catch (final InstantiationException | NoSuchMethodException | InvocationTargetException |
+        catch (InstantiationException | NoSuchMethodException | InvocationTargetException |
                      IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    static String getDiscoveryFileName(final String name) {
+    static String getDiscoveryFileName(String name) {
         return "META-INF/" + name + ".disco";
     }
 }

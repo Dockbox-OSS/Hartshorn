@@ -27,10 +27,10 @@ public class FunctionStatement extends ParametricExecutableStatement implements 
     private final Token functionType;
     private final Token name;
 
-    public FunctionStatement(final Token functionType,
-                             final Token name,
-                             final List<Parameter> params,
-                             final BlockStatement body) {
+    public FunctionStatement(Token functionType,
+                             Token name,
+                             List<Parameter> params,
+                             BlockStatement body) {
         super(name, params, body);
         this.functionType = functionType;
         this.name = name;
@@ -46,7 +46,7 @@ public class FunctionStatement extends ParametricExecutableStatement implements 
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

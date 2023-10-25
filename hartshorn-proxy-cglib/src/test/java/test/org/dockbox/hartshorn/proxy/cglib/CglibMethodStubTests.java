@@ -16,9 +16,9 @@
 
 package test.org.dockbox.hartshorn.proxy.cglib;
 
-import org.dockbox.hartshorn.proxy.ApplicationProxierLoader;
+import org.dockbox.hartshorn.proxy.ProxyOrchestratorLoader;
 import org.dockbox.hartshorn.util.introspect.NativeProxyLookup;
-import org.dockbox.hartshorn.proxy.cglib.CglibApplicationProxierLoader;
+import org.dockbox.hartshorn.proxy.cglib.CglibProxyOrchestratorLoader;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
@@ -30,8 +30,8 @@ import test.org.dockbox.hartshorn.proxy.MethodStubTests;
 public class CglibMethodStubTests extends MethodStubTests {
 
     @Override
-    protected ApplicationProxierLoader proxierLoader() {
-        return new CglibApplicationProxierLoader();
+    protected ProxyOrchestratorLoader orchestratorLoader() {
+        return new CglibProxyOrchestratorLoader();
     }
 
     @Override

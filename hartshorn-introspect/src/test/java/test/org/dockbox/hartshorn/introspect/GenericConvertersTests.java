@@ -32,47 +32,47 @@ public class GenericConvertersTests {
 
     @Test
     void testGenericConverterWithSingleTypePair() {
-        final GenericConverter converter = new SimpleGenericConverter(Set.of(ConvertibleTypePair.of(Object.class, String.class)));
-        final ConverterCache converters = new GenericConverters();
+        GenericConverter converter = new SimpleGenericConverter(Set.of(ConvertibleTypePair.of(Object.class, String.class)));
+        ConverterCache converters = new GenericConverters();
         converters.addConverter(converter);
 
-        final GenericConverter locatedConverter = converters.getConverter(new Object(), String.class);
+        GenericConverter locatedConverter = converters.getConverter(new Object(), String.class);
         Assertions.assertNotNull(locatedConverter);
         Assertions.assertSame(converter, locatedConverter);
     }
 
     @Test
     void testGenericConverterWithMultipleTypePairs() {
-        final GenericConverter converter = new SimpleGenericConverter(Set.of(
+        GenericConverter converter = new SimpleGenericConverter(Set.of(
                 ConvertibleTypePair.of(Object.class, String.class),
                 ConvertibleTypePair.of(Object.class, Integer.class)
         ));
-        final ConverterCache converters = new GenericConverters();
+        ConverterCache converters = new GenericConverters();
         converters.addConverter(converter);
 
-        final GenericConverter locatedStringConverter = converters.getConverter(new Object(), String.class);
+        GenericConverter locatedStringConverter = converters.getConverter(new Object(), String.class);
         Assertions.assertNotNull(locatedStringConverter);
         Assertions.assertSame(converter, locatedStringConverter);
 
-        final GenericConverter locatedIntegerConverter = converters.getConverter(new Object(), Integer.class);
+        GenericConverter locatedIntegerConverter = converters.getConverter(new Object(), Integer.class);
         Assertions.assertNotNull(locatedIntegerConverter);
         Assertions.assertSame(converter, locatedIntegerConverter);
     }
 
     @Test
     void testGenericConverterWithMultipleTypePairsAndMultipleConverters() {
-        final GenericConverter converter1 = new SimpleGenericConverter(Set.of(
+        GenericConverter converter1 = new SimpleGenericConverter(Set.of(
                 ConvertibleTypePair.of(Object.class, String.class),
                 ConvertibleTypePair.of(Object.class, Integer.class)
         ));
-        final GenericConverter converter2 = new SimpleGenericConverter(Set.of(
+        GenericConverter converter2 = new SimpleGenericConverter(Set.of(
                 ConvertibleTypePair.of(Object.class, String.class),
                 ConvertibleTypePair.of(Object.class, Integer.class),
                 // Additional type to ensure the converters aren't considered equal, as they are implemented
                 // as the same record type.
                 ConvertibleTypePair.of(Object.class, Long.class)
         ));
-        final GenericConverters converters = new GenericConverters();
+        GenericConverters converters = new GenericConverters();
         converters.addConverter(converter1);
         converters.addConverter(converter2);
 
@@ -83,7 +83,7 @@ public class GenericConvertersTests {
 
     private record SimpleGenericConverter(Set<ConvertibleTypePair> convertibleTypes) implements GenericConverter {
         @Override
-        public @Nullable <I, O> Object convert(@Nullable final Object source, @NonNull final Class<I> sourceType, @NonNull final Class<O> targetType) {
+        public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
             throw new UnsupportedOperationException("Not implemented");
         }
     }

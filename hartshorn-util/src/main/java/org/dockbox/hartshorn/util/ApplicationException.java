@@ -23,15 +23,15 @@ package org.dockbox.hartshorn.util;
  */
 public class ApplicationException extends Exception {
 
-    public ApplicationException(final String message) {
+    public ApplicationException(String message) {
         super(message);
     }
 
-    public ApplicationException(final String message, final Throwable cause) {
+    public ApplicationException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ApplicationException(final Throwable cause) {
+    public ApplicationException(Throwable cause) {
         super(cause);
     }
 

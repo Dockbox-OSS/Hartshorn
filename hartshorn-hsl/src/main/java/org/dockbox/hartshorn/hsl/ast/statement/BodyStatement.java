@@ -22,7 +22,7 @@ public abstract class BodyStatement extends Statement {
 
     private final BlockStatement body;
 
-    protected BodyStatement(final ASTNode at, final BlockStatement body) {
+    protected BodyStatement(ASTNode at, BlockStatement body) {
         super(at);
         this.body = body;
     }

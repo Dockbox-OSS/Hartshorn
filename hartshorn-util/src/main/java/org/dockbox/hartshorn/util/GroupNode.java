@@ -21,20 +21,20 @@ import java.util.List;
 
 public class GroupNode extends SimpleNode<List<Node<?>>> {
 
-    public GroupNode(final String name) {
+    public GroupNode(String name) {
         super(name, new ArrayList<>());
     }
 
-    public void add(final Node<?> value) {
+    public void add(Node<?> value) {
         this.value().add(value);
     }
 
-    public boolean has(final String name) {
+    public boolean has(String name) {
         return this.value().stream()
                 .anyMatch(node -> node.name().equals(name));
     }
 
-    public Node<?> get(final String name) {
+    public Node<?> get(String name) {
         return this.value().stream()
                 .filter(node -> node.name().equals(name))
                 .findFirst()
@@ -42,7 +42,7 @@ public class GroupNode extends SimpleNode<List<Node<?>>> {
     }
 
     @Override
-    public <R> R accept(final NodeVisitor<R> visitor) {
+    public <R> R accept(NodeVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

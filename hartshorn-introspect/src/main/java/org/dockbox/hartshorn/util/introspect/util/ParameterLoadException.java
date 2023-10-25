@@ -23,7 +23,7 @@ public class ParameterLoadException extends ApplicationRuntimeException {
 
     private final ParameterView<?> parameter;
 
-    public ParameterLoadException(final ParameterView<?> parameter, final Throwable cause) {
+    public ParameterLoadException(ParameterView<?> parameter, Throwable cause) {
         super("Failed to load parameter '" + parameter.name() + "' of type " + parameter.type().name() + " for " + parameter.declaredBy().qualifiedName(), cause);
         this.parameter = parameter;
     }

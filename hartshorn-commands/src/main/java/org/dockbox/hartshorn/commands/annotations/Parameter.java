@@ -16,17 +16,17 @@
 
 package org.dockbox.hartshorn.commands.annotations;
 
-import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
-import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
-import org.dockbox.hartshorn.component.ComponentType;
-import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.util.introspect.annotations.AliasFor;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
+import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.component.ComponentType;
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
  * Used to indicate that a type can be provided to command definitions. When a type is decorated with this annotation, it can be automatically
@@ -40,9 +40,17 @@ import java.lang.annotation.Target;
 @Component(type = ComponentType.FUNCTIONAL)
 public @interface Parameter {
 
+    /**
+     * The pattern to use for parsing the parameter. Defaults to {@link HashtagParameterPattern}.
+     * @return the pattern
+     */
     Class<? extends CustomParameterPattern> pattern() default HashtagParameterPattern.class;
 
-    @AliasFor("id")
+    /**
+     * The identifier of the parameter.
+     * @return
+     */
+    @AttributeAlias(value = "id", target = Component.class)
     String value();
 
     String usage() default "";

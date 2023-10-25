@@ -30,10 +30,10 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 public class DefaultValueResponseMethodStub<T> implements MethodStub<T> {
 
     @Override
-    public Object invoke(final MethodStubContext<T> stubContext) {
-        final Class<?> returnType = stubContext.target().returnType();
-        final TypeView<?> introspectedType = stubContext.manager()
-                .applicationProxier()
+    public Object invoke(MethodStubContext<T> stubContext) {
+        Class<?> returnType = stubContext.target().returnType();
+        TypeView<?> introspectedType = stubContext.manager()
+                .orchestrator()
                 .introspector()
                 .introspect(returnType);
         return introspectedType.defaultOrNull();

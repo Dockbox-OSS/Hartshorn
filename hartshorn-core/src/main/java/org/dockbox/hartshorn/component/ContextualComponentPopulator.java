@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.component;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.contextual.StaticComponentContext;
 import org.dockbox.hartshorn.context.Context;
@@ -23,9 +27,11 @@ import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.inject.Populate;
+import org.dockbox.hartshorn.inject.Populate.Type;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.Lazy;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
@@ -36,9 +42,6 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Collection;
-import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -59,22 +62,38 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
     public <T> T populate(T instance) {
         if (null != instance) {
             T modifiableInstance = instance;
-            if (this.applicationContext().environment().isProxy(instance)) {
-                modifiableInstance = this.applicationContext().environment()
+            ProxyOrchestrator orchestrator = this.applicationContext().environment().proxyOrchestrator();
+            if (orchestrator.isProxy(instance)) {
+                modifiableInstance = orchestrator
                         .manager(instance)
                         .flatMap(ProxyManager::delegate)
                         .orElse(modifiableInstance);
             }
-            TypeView<T> typeView = this.applicationContext.environment().introspect(modifiableInstance);
-            if (Boolean.TRUE.equals(typeView.annotations().get(Populate.class).map(Populate::fields).orElse(true))) {
+            TypeView<T> typeView = this.applicationContext.environment().introspector().introspect(modifiableInstance);
+            Option<Populate> populate = typeView.annotations().get(Populate.class);
+            if (populate.absent() || shouldPopulateFields(populate.get())) {
                 this.populateFields(typeView, modifiableInstance);
             }
 
-            if (Boolean.TRUE.equals(typeView.annotations().get(Populate.class).map(Populate::executables).orElse(true))) {
+            if (populate.absent() || shouldPopulateMethods(populate.get())) {
                 this.populateMethods(typeView, modifiableInstance);
             }
         }
         return instance;
+    }
+
+    private static <T> boolean shouldPopulateFields(Populate populate) {
+        if (populate.fields()) {
+            return true;
+        }
+        return Arrays.asList(populate.value()).contains(Type.FIELDS);
+    }
+
+    private static <T> boolean shouldPopulateMethods(Populate populate) {
+        if (populate.executables()) {
+            return true;
+        }
+        return Arrays.asList(populate.value()).contains(Type.EXECUTABLES);
     }
 
     private <T> void populateMethods(TypeView<T> type, T instance) {

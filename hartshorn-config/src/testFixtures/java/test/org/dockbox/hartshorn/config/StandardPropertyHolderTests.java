@@ -38,17 +38,17 @@ public abstract class StandardPropertyHolderTests {
 
     @Test
     void testPropertyHolder() {
-        final PropertyHolder propertyHolder = this.propertyHolder(this.applicationContext);
+        PropertyHolder propertyHolder = this.propertyHolder(this.applicationContext);
 
         propertyHolder.set("user.name", "John Doe");
 
-        final Option<User> user = propertyHolder.get("user", User.class);
+        Option<User> user = propertyHolder.get("user", User.class);
         Assertions.assertTrue(user.present());
         Assertions.assertEquals("John Doe", user.get().name());
 
         propertyHolder.set("user.address", new Address("Darwin City", "Darwin Street", 12));
 
-        final Option<Address> address = propertyHolder.get("user.address", Address.class);
+        Option<Address> address = propertyHolder.get("user.address", Address.class);
         Assertions.assertTrue(address.present());
         Assertions.assertEquals("Darwin City", address.get().city());
         Assertions.assertEquals("Darwin Street", address.get().street());
@@ -56,7 +56,7 @@ public abstract class StandardPropertyHolderTests {
 
         propertyHolder.set("user.address.street", "Darwin Lane");
 
-        final Option<Address> address2 = propertyHolder.get("user.address", Address.class);
+        Option<Address> address2 = propertyHolder.get("user.address", Address.class);
         Assertions.assertTrue(address2.present());
         Assertions.assertEquals("Darwin City", address2.get().city());
         Assertions.assertEquals("Darwin Lane", address2.get().street());
@@ -66,13 +66,13 @@ public abstract class StandardPropertyHolderTests {
     @Test
     @TestComponents(components = ComponentWithUserValue.class)
     void testValueComponents() {
-        final PropertyHolder propertyHolder = this.propertyHolder(this.applicationContext);
+        PropertyHolder propertyHolder = this.propertyHolder(this.applicationContext);
         propertyHolder.set("user.name", "John Doe");
         propertyHolder.set("user.address.city", "Darwin City");
         propertyHolder.set("user.address.street", "Darwin Lane");
         propertyHolder.set("user.address.number", 12);
 
-        final ComponentWithUserValue component = this.applicationContext.get(ComponentWithUserValue.class);
+        ComponentWithUserValue component = this.applicationContext.get(ComponentWithUserValue.class);
         Assertions.assertNotNull(component);
         Assertions.assertNotNull(component.user());
 

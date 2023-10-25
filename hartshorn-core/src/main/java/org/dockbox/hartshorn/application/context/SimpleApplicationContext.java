@@ -105,7 +105,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
 
             if (this.componentProvider() instanceof PostProcessingComponentProvider postProcessingComponentProvider) {
                 Set<? extends DependencyDeclarationContext<?>> uninitializedPostProcessorContexts = postProcessingComponentProvider.uninitializedPostProcessors().stream()
-                        .map(this.environment()::introspect)
+                        .map(this.environment().introspector()::introspect)
                         .map(PostProcessorDependencyDeclarationContext::new)
                         .collect(Collectors.toSet());
                 declarationContexts.addAll(uninitializedPostProcessorContexts);

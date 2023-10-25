@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import java.lang.annotation.Annotation;
 
 public class CircularHierarchyException extends ApplicationRuntimeException {
-    public CircularHierarchyException(final Class<? extends Annotation> current) {
+    public CircularHierarchyException(Class<? extends Annotation> current) {
         super("Annotation hierarchy circular inheritance detected: " + current);
     }
 }

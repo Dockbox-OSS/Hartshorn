@@ -16,18 +16,18 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import java.util.Map;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
-import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Map;
 
 /**
  * Represents a single nullable {@link Object} instance that can be accessed from an HSL
@@ -39,12 +39,12 @@ import java.util.Map;
  * @author Guus Lieben
  * @since 0.4.12
  */
-public class ExternalInstance implements InstanceReference, ExternalObjectReference {
+public class ExternalInstance implements ExternalObjectReference {
 
     private final Object instance;
     private final TypeView<Object> type;
 
-    public <T> ExternalInstance(final T instance, final TypeView<T> type) {
+    public <T> ExternalInstance(T instance, TypeView<T> type) {
         if (instance != null && !type.isInstance(instance)) {
             throw new IllegalArgumentException("Instance of type %s is not an instance of %s".formatted(instance.getClass().getName(), type.name()));
         }
@@ -61,15 +61,15 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
     }
 
     @Override
-    public void set(final Token name, final Object value, final VariableScope fromScope, final ExecutionOptions options) {
+    public void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options) {
         this.type.fields().named(name.lexeme())
                 .peek(field -> field.set(this.instance(), value))
                 .orElseThrow(() -> this.propertyDoesNotExist(name));
     }
 
     @Override
-    public Object get(final Token name, final VariableScope fromScope, final ExecutionOptions options) {
-        final Object[] methods = this.type.methods().all().stream()
+    public Object get(Token name, VariableScope fromScope, ExecutionOptions options) {
+        Object[] methods = this.type.methods().all().stream()
                 .filter(method -> method.name().equals(name.lexeme()))
                 .toArray();
 
@@ -86,7 +86,7 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
                 .orElseThrow(() -> this.propertyDoesNotExist(name));
     }
 
-    private RuntimeError propertyDoesNotExist(final Token name) {
+    private RuntimeError propertyDoesNotExist(Token name) {
         return new RuntimeError(name, "Property %s does not exist on external instance of type %s".formatted(name.lexeme(), this.type.name()));
     }
 
@@ -102,7 +102,7 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
     }
 
     @Override
-    public Object externalObject() {
+    public @Nullable Object externalObject() {
         return this.instance();
     }
 }

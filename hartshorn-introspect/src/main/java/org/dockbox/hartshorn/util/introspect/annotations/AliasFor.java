@@ -48,7 +48,10 @@ import java.lang.annotation.Target;
  * @author Guus Lieben
  * @since 0.4.1
  * @see Extends
+ *
+ * @deprecated since 0.5.0, use {@link AttributeAlias} instead.
  */
+@Deprecated(forRemoval = true, since = "0.5.0")
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface AliasFor {
@@ -65,6 +68,6 @@ public @interface AliasFor {
      */
     Class<?> target() default DefaultThis.class;
 
-    final class DefaultThis {
+    class DefaultThis {
     }
 }

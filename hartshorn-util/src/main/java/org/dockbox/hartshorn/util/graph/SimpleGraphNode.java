@@ -26,7 +26,7 @@ public class SimpleGraphNode<T> implements MutableContainableGraphNode<T> {
     private final Set<GraphNode<T>> parents = new HashSet<>();
     private final Set<GraphNode<T>> children = new HashSet<>();
 
-    public SimpleGraphNode(final T value) {
+    public SimpleGraphNode(T value) {
         this.value = value;
     }
 
@@ -46,7 +46,7 @@ public class SimpleGraphNode<T> implements MutableContainableGraphNode<T> {
     }
 
     @Override
-    public void addParent(final GraphNode<T> parent) {
+    public void addParent(GraphNode<T> parent) {
         if (!this.parents.contains(parent)) {
             this.parents.add(parent);
             if (parent instanceof MutableGraphNode<T> parentGraphNode) {
@@ -56,12 +56,12 @@ public class SimpleGraphNode<T> implements MutableContainableGraphNode<T> {
     }
 
     @Override
-    public void addParents(final Collection<GraphNode<T>> parents) {
+    public void addParents(Collection<GraphNode<T>> parents) {
         parents.forEach(this::addParent);
     }
 
     @Override
-    public void addChild(final GraphNode<T> child) {
+    public void addChild(GraphNode<T> child) {
         if (!this.children.contains(child)) {
             this.children.add(child);
             if (child instanceof MutableContainableGraphNode<T> childGraphNode) {
@@ -71,7 +71,7 @@ public class SimpleGraphNode<T> implements MutableContainableGraphNode<T> {
     }
 
     @Override
-    public void addChildren(final Collection<GraphNode<T>> children) {
+    public void addChildren(Collection<GraphNode<T>> children) {
         children.forEach(this::addChild);
     }
 

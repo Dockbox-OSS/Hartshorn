@@ -43,8 +43,8 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T> {
 
-    protected JDKInterfaceProxyFactory(final Class<T> type, final ApplicationProxier applicationProxier) {
-        super(type, applicationProxier);
+    protected JDKInterfaceProxyFactory(Class<T> type, ProxyOrchestrator proxyOrchestrator) {
+        super(type, proxyOrchestrator);
     }
 
     @Override
@@ -55,12 +55,16 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     @Override
-    public Attempt<T, Throwable> createNewProxy(final Constructor<? extends T> constructor, final Object[] args) throws ApplicationException {
+    public Attempt<T, Throwable> createNewProxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
         if (args.length != constructor.getParameterCount()) {
             throw new ApplicationException("Invalid number of arguments for constructor " + constructor);
         }
-        if (this.type().isInterface()) return this.proxy(); // Cannot invoke constructor on interface
-        else return this.createProxy(interceptor -> this.concreteOrAbstractProxy(interceptor, constructor, args));
+        if (this.type().isInterface()) {
+            return this.proxy(); // Cannot invoke constructor on interface
+        }
+        else {
+            return this.createProxy(interceptor -> this.concreteOrAbstractProxy(interceptor, constructor, args));
+        }
     }
 
     /**
@@ -71,15 +75,15 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @return The proxy
      * @throws ApplicationException When the proxy cannot be created
      */
-    protected Attempt<T, Throwable> createProxy(final CheckedFunction<ProxyMethodInterceptor<T>, Attempt<T, Throwable>> instantiate) throws ApplicationException {
-        final LazyProxyManager<T> manager = new LazyProxyManager<>(this);
+    protected Attempt<T, Throwable> createProxy(CheckedFunction<ProxyMethodInterceptor<T>, Attempt<T, Throwable>> instantiate) throws ApplicationException {
+        LazyProxyManager<T> manager = new LazyProxyManager<>(this);
 
         this.contextContainer().contexts().forEach(manager::add);
         this.contextContainer().namedContexts().forEach(manager::add);
 
-        final ProxyMethodInterceptor<T> interceptor = new ProxyAdvisorMethodInterceptor<>(manager, this.applicationProxier());
+        ProxyMethodInterceptor<T> interceptor = new ProxyAdvisorMethodInterceptor<>(manager, this.orchestrator());
 
-        final Attempt<T, Throwable> proxy = instantiate.apply(interceptor);
+        Attempt<T, Throwable> proxy = instantiate.apply(interceptor);
 
         proxy.peek(manager::proxy);
         return proxy;
@@ -92,8 +96,8 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @param interceptor The interceptor to use
      * @return The invocation handler
      */
-    protected InvocationHandler invocationHandler(final ProxyMethodInterceptor<T> interceptor) {
-        return (self, method, args) -> interceptor.intercept(self, new MethodInvokable(method, this.applicationProxier().introspector()), null, args);
+    protected InvocationHandler invocationHandler(ProxyMethodInterceptor<T> interceptor) {
+        return (self, method, args) -> interceptor.intercept(self, new MethodInvokable(method, this.orchestrator().introspector()), null, args);
     }
 
     /**
@@ -113,7 +117,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @return The proxy
      * @throws ApplicationException When the proxy cannot be created
      */
-    protected Attempt<T, Throwable> concreteOrAbstractProxy(final ProxyMethodInterceptor<T> interceptor) throws ApplicationException {
+    protected Attempt<T, Throwable> concreteOrAbstractProxy(ProxyMethodInterceptor<T> interceptor) throws ApplicationException {
         return this.createClassProxy(interceptor, ProxyConstructorFunction::create);
     }
 
@@ -127,7 +131,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @return The proxy
      * @throws ApplicationException When the proxy cannot be created
      */
-    protected Attempt<T, Throwable> concreteOrAbstractProxy(final ProxyMethodInterceptor<T> interceptor, final Constructor<? extends T> constructor, final Object[] args) throws ApplicationException {
+    protected Attempt<T, Throwable> concreteOrAbstractProxy(ProxyMethodInterceptor<T> interceptor, Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
         return this.createClassProxy(interceptor, enhancer -> enhancer.create(constructor, args));
     }
 
@@ -140,14 +144,14 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @return The proxy
      * @throws ApplicationException When the proxy cannot be created
      */
-    protected Attempt<T, Throwable> createClassProxy(final ProxyMethodInterceptor<T> interceptor, final CheckedFunction<ProxyConstructorFunction<T>, T> instantiate) throws ApplicationException {
-        final ProxyConstructorFunction<T> enhancer = this.concreteOrAbstractEnhancer(interceptor);
+    protected Attempt<T, Throwable> createClassProxy(ProxyMethodInterceptor<T> interceptor, CheckedFunction<ProxyConstructorFunction<T>, T> instantiate) throws ApplicationException {
+        ProxyConstructorFunction<T> enhancer = this.concreteOrAbstractEnhancer(interceptor);
         try {
-            final T proxy = instantiate.apply(enhancer);
+            T proxy = instantiate.apply(enhancer);
             this.advisors().type().delegate().peek(delegate -> this.restoreFields(delegate, proxy));
             return Attempt.of(proxy);
         }
-        catch (final RuntimeException e) {
+        catch (RuntimeException e) {
             throw new ApplicationException(e);
         }
     }
@@ -160,8 +164,8 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @param includeType Whether or not to include the target type
      * @return The interfaces to implement
      */
-    protected Class<?>[] proxyInterfaces(final boolean includeType) {
-        final Class<?>[] standardInterfaces = includeType
+    protected Class<?>[] proxyInterfaces(boolean includeType) {
+        Class<?>[] standardInterfaces = includeType
                 ? new Class<?>[] { Proxy.class, this.type() }
                 : new Class<?>[] { Proxy.class };
         return CollectionUtilities.merge(standardInterfaces, this.interfaces().toArray(new Class[0]));
@@ -174,8 +178,8 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @param interceptor The interceptor to use
      * @return The proxy
      */
-    protected Attempt<T, Throwable> interfaceProxy(final ProxyMethodInterceptor<T> interceptor) {
-        final Object proxy = java.lang.reflect.Proxy.newProxyInstance(
+    protected Attempt<T, Throwable> interfaceProxy(ProxyMethodInterceptor<T> interceptor) {
+        Object proxy = java.lang.reflect.Proxy.newProxyInstance(
                 this.defaultClassLoader(),
                 this.proxyInterfaces(true),
                 this.invocationHandler(interceptor));
@@ -189,13 +193,15 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @param existing The existing delegate
      * @param proxy The proxy
      */
-    protected void restoreFields(final T existing, final T proxy) {
-        final TypeView<T> typeView = this.advisors().type().delegate()
-                .map(this.applicationProxier().introspector()::introspect)
-                .orElseGet(() -> this.applicationProxier().introspector().introspect(this.type()));
+    protected void restoreFields(T existing, T proxy) {
+        TypeView<T> typeView = this.advisors().type().delegate()
+                .map(this.orchestrator().introspector()::introspect)
+                .orElseGet(() -> this.orchestrator().introspector().introspect(this.type()));
 
-        for (final FieldView<T, ?> field : typeView.fields().all()) {
-            if (field.modifiers().isStatic()) continue;
+        for (FieldView<T, ?> field : typeView.fields().all()) {
+            if (field.modifiers().isStatic()) {
+                continue;
+            }
             field.set(proxy, field.get(existing).orNull());
         }
     }

@@ -25,12 +25,12 @@ public class StaticNonRegisteredObserver implements LifecycleObserver {
     private static boolean stopped;
 
     @Override
-    public void onStarted(final ApplicationContext applicationContext) {
+    public void onStarted(ApplicationContext applicationContext) {
         started = true;
     }
 
     @Override
-    public void onExit(final ApplicationContext applicationContext) {
+    public void onExit(ApplicationContext applicationContext) {
         stopped = true;
     }
 

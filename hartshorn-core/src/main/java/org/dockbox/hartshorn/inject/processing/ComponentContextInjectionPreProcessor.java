@@ -35,36 +35,40 @@ import java.util.stream.Collectors;
 public class ComponentContextInjectionPreProcessor extends ComponentPreProcessor {
 
     @Override
-    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        for (final FieldView<T, ?> field : processingContext.type().fields().annotatedWith(Context.class))
+    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
+        for (FieldView<T, ?> field : processingContext.type().fields().annotatedWith(Context.class)) {
             this.validate(field, processingContext);
+        }
 
-        final List<ExecutableElementView<T>> constructors = processingContext.type().constructors().injectable()
+        List<ExecutableElementView<T>> constructors = processingContext.type().constructors().injectable()
                 .stream().map(constructor -> (ExecutableElementView<T>) constructor)
                 .collect(Collectors.toList());
 
-        final List<ExecutableElementView<T>> methods = processingContext.type().methods().all().stream()
+        List<ExecutableElementView<T>> methods = processingContext.type().methods().all().stream()
                 .map(method -> (ExecutableElementView<T>) method)
                 .collect(Collectors.toList());
 
-        final Collection<ExecutableElementView<T>> executables = CollectionUtilities.merge(constructors, methods);
+        Collection<ExecutableElementView<T>> executables = CollectionUtilities.merge(constructors, methods);
 
-        for (final ExecutableElementView<T> executable : executables)
-            for (final ParameterView<?> parameter : executable.parameters().annotedWith(Context.class))
+        for (ExecutableElementView<T> executable : executables) {
+            for (ParameterView<?> parameter : executable.parameters().annotedWith(Context.class)) {
                 this.validate(parameter, processingContext);
+            }
+        }
     }
 
-    private void validate(final GenericTypeView<?> context, final ComponentProcessingContext<?> parent) {
-        if (!context.type().isChildOf(org.dockbox.hartshorn.context.Context.class))
+    private void validate(GenericTypeView<?> context, ComponentProcessingContext<?> parent) {
+        if (!context.type().isChildOf(org.dockbox.hartshorn.context.Context.class)) {
             throw new InvalidComponentException("%s is annotated with %s but does not extend %s".formatted(
                     context.qualifiedName(),
                     Context.class.getSimpleName(),
                     org.dockbox.hartshorn.context.Context.class.getSimpleName())
             );
+        }
     }
 
     @Override
-    public final int priority() {
+    public int priority() {
         return ProcessingPriority.HIGHEST_PRECEDENCE;
     }
 }

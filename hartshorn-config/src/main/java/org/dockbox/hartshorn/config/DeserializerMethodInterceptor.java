@@ -32,9 +32,9 @@ public class DeserializerMethodInterceptor<T, R> implements MethodInterceptor<T,
     private final TypeView<R> returnType;
     private final ConversionService conversionService;
 
-    public DeserializerMethodInterceptor(final SerializationSourceConverter converter, final MethodView<T, R> method,
-                                         final ObjectMapper mapper, final TypeView<R> returnType,
-                                         final ConversionService conversionService) {
+    public DeserializerMethodInterceptor(SerializationSourceConverter converter, MethodView<T, R> method,
+                                         ObjectMapper mapper, TypeView<R> returnType,
+                                         ConversionService conversionService) {
         this.converter = converter;
         this.method = method;
         this.mapper = mapper;
@@ -43,9 +43,9 @@ public class DeserializerMethodInterceptor<T, R> implements MethodInterceptor<T,
     }
 
     @Override
-    public R intercept(final MethodInterceptorContext<T, R> interceptorContext) throws Throwable {
-        try (final InputStream inputStream = this.converter.inputStream(this.method, interceptorContext.args())) {
-            final Option<?> result = this.mapper.read(inputStream, this.returnType.type());
+    public R intercept(MethodInterceptorContext<T, R> interceptorContext) throws Throwable {
+        try (InputStream inputStream = this.converter.inputStream(this.method, interceptorContext.args())) {
+            Option<?> result = this.mapper.read(inputStream, this.returnType.type());
             return this.conversionService.convert(result, this.returnType.type());
         }
     }

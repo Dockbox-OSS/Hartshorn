@@ -43,7 +43,7 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     private TypeHierarchyGraph typeHierarchy;
     private TypeParameterList outputParameters;
 
-    protected AbstractReflectionTypeParametersIntrospector(final TypeView<?> type, final Introspector introspector) {
+    protected AbstractReflectionTypeParametersIntrospector(TypeView<?> type, Introspector introspector) {
         this.type = type;
         this.introspector = introspector;
     }
@@ -57,19 +57,19 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     }
 
     @Override
-    public Option<TypeParameterView> atIndex(final int index) {
-        final TypeParameterList parameters = this.allInput();
+    public Option<TypeParameterView> atIndex(int index) {
+        TypeParameterList parameters = this.allInput();
         return parameters.atIndex(index);
     }
 
     @Override
-    public TypeParameterList resolveInputFor(final Class<?> fromParentType) {
+    public TypeParameterList resolveInputFor(Class<?> fromParentType) {
         if (this.type().is(fromParentType)) {
             return this.allInput();
         }
         else if (this.type().isChildOf(fromParentType)) {
-            final TypeView<?> parentType = this.introspector().introspect(fromParentType);
-            final TypeParametersIntrospector typeParameters = parentType.typeParameters();
+            TypeView<?> parentType = this.introspector().introspect(fromParentType);
+            TypeParametersIntrospector typeParameters = parentType.typeParameters();
             // No point in resolving if there are no type parameters
             if (typeParameters.count() > 0) {
                 return this.tryResolveInputForParent(parentType);
@@ -78,20 +78,20 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
         return new SimpleTypeParameterList(List.of());
     }
 
-    private TypeParameterList tryResolveInputForParent(final TypeView<?> parent) {
+    private TypeParameterList tryResolveInputForParent(TypeView<?> parent) {
         if (this.type.isChildOf(parent.type())) {
             return this.resolvedParameters.computeIfAbsent(parent.type(), parentType -> {
-                final TypeHierarchyGraph typeHierarchy = this.getTypeHierarchy();
+                TypeHierarchyGraph typeHierarchy = this.getTypeHierarchy();
                 try {
-                    final Graph<TypeView<?>> inverted = new GraphInverter().invertGraph(typeHierarchy, node -> node.type() == parentType);
-                    final TypeParameterResolver visitor = new TypeParameterResolver(parent);
-                    final List<TypeParameterView> parameters = visitor.tryResolveFromGraph(inverted);
+                    Graph<TypeView<?>> inverted = new GraphInverter().invertGraph(typeHierarchy, node -> node.type() == parentType);
+                    TypeParameterResolver visitor = new TypeParameterResolver(parent);
+                    List<TypeParameterView> parameters = visitor.tryResolveFromGraph(inverted);
                     return new SimpleTypeParameterList(parameters);
                 }
-                catch (final GraphException e) {
+                catch (GraphException e) {
                     throw new IllegalStateException("Unexpected graph exception while inverting type hierarchy", e);
                 }
-                catch (final TypeParameterResolutionException e) {
+                catch (TypeParameterResolutionException e) {
                     // TypeParameterResolverGraphVisitor doesn't throw any exceptions, so this should never happen. If it does,
                     // it indicates something was unexpectedly modified in the implementation.
                     throw new IllegalStateException("Unexpected graph exception while resolving type parameters", e);
@@ -116,35 +116,35 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     }
 
     @Override
-    public Option<TypeView<?>> at(final int index) {
+    public Option<TypeView<?>> at(int index) {
         return this.atIndex(index).flatMap(TypeParameterView::resolvedType);
     }
 
     @Override
     public TypeParameterList all() {
-        final List<TypeParameterView> allParameters = CollectionUtilities.mergeList(this.allInput().asList(), this.allOutput().asList());
+        List<TypeParameterView> allParameters = CollectionUtilities.mergeList(this.allInput().asList(), this.allOutput().asList());
         return new SimpleTypeParameterList(allParameters);
     }
 
     @Override
     public TypeParameterList allOutput() {
         if (this.outputParameters == null) {
-            final TypeView<?> genericSuperClass = this.type().genericSuperClass();
-            final List<TypeParameterView> superInput = genericSuperClass.typeParameters().allInput().asList();
-            final List<TypeParameterView> interfacesInput = this.type().genericInterfaces().stream()
+            TypeView<?> genericSuperClass = this.type().genericSuperClass();
+            List<TypeParameterView> superInput = genericSuperClass.typeParameters().allInput().asList();
+            List<TypeParameterView> interfacesInput = this.type().genericInterfaces().stream()
                     .flatMap(genericInterface -> genericInterface.typeParameters().allInput().stream())
                     .toList();
 
-            final List<TypeParameterView> allInputParameters = CollectionUtilities.mergeList(superInput, interfacesInput);
+            List<TypeParameterView> allInputParameters = CollectionUtilities.mergeList(superInput, interfacesInput);
             this.outputParameters = new SimpleTypeParameterList(allInputParameters);
         }
         return this.outputParameters;
     }
 
     @Override
-    public TypeParameterList outputFor(final Class<?> fromParentType) {
+    public TypeParameterList outputFor(Class<?> fromParentType) {
         if (this.type().isChildOf(fromParentType)) {
-            final List<TypeParameterView> consumedByParent = this.allOutput().stream()
+            List<TypeParameterView> consumedByParent = this.allOutput().stream()
                     .filter(parameter -> parameter.consumedBy().is(fromParentType))
                     .toList();
             return new SimpleTypeParameterList(consumedByParent);

@@ -28,17 +28,17 @@ public class ObjectToCollectionConverterFactory implements ConverterFactory<Obje
 
     private final ConverterFactory<Object[], Collection<?>> helperConverterFactory;
 
-    public ObjectToCollectionConverterFactory(final Introspector introspector) {
+    public ObjectToCollectionConverterFactory(Introspector introspector) {
         this(new ArrayToCollectionConverterFactory(introspector));
     }
 
-    public ObjectToCollectionConverterFactory(final ConverterFactory<Object[], Collection<?>> helperConverterFactory) {
+    public ObjectToCollectionConverterFactory(ConverterFactory<Object[], Collection<?>> helperConverterFactory) {
         this.helperConverterFactory = helperConverterFactory;
     }
 
     @Override
-    public <O extends Collection<?>> Converter<Object, O> create(final Class<O> targetType) {
-        final Converter<Object[], O> converter = ObjectToCollectionConverterFactory.this.helperConverterFactory.create(targetType);
+    public <O extends Collection<?>> Converter<Object, O> create(Class<O> targetType) {
+        Converter<Object[], O> converter = ObjectToCollectionConverterFactory.this.helperConverterFactory.create(targetType);
         return new ObjectToCollectionConverter<>(converter);
     }
 
@@ -46,9 +46,9 @@ public class ObjectToCollectionConverterFactory implements ConverterFactory<Obje
             implements Converter<Object, O> {
 
         @Override
-            public O convert(final @Nullable Object source) {
+            public O convert(@Nullable Object source) {
                 assert source != null;
-                final Object[] array = (Object[]) Array.newInstance(source.getClass(), 1);
+                Object[] array = (Object[]) Array.newInstance(source.getClass(), 1);
                 array[0] = source;
                 return this.helperConverter.convert(array);
             }

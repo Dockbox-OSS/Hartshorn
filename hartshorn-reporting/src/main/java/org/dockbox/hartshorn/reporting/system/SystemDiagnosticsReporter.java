@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.reporting.system;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
 
 public class SystemDiagnosticsReporter implements ConfigurableDiagnosticsReporter<SystemReportingConfiguration>, CategorizedDiagnosticsReporter {
 
@@ -30,8 +30,8 @@ public class SystemDiagnosticsReporter implements ConfigurableDiagnosticsReporte
     private final SystemReportingConfiguration configuration = new SystemReportingConfiguration();
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
-        final RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+    public void report(DiagnosticsPropertyCollector collector) {
+        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         if (this.configuration.includeUptime()) {
             collector.property("uptime").write(runtimeMXBean.getUptime());
         }
@@ -51,7 +51,7 @@ public class SystemDiagnosticsReporter implements ConfigurableDiagnosticsReporte
             collector.property("pid").write(runtimeMXBean.getPid());
         }
         if (this.configuration.includeResponsibleServiceOrUser()) {
-            final String user = System.getProperty("user.name");
+            String user = System.getProperty("user.name");
             collector.property("user").write(user);
         }
         if (this.configuration.includeMemoryUsage()) {

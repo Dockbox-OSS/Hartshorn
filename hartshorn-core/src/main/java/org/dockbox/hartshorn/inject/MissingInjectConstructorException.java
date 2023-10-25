@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class MissingInjectConstructorException extends ApplicationException {
-    public MissingInjectConstructorException(final TypeView<?> type) {
+    public MissingInjectConstructorException(TypeView<?> type) {
         super("No injectable constructors found for " + type.name());
     }
 }

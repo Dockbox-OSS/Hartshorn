@@ -49,7 +49,7 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
     }
 
     @Override
-    public final Option<ObjectContainer<C>> provide(ApplicationContext context) throws ApplicationException {
+    public Option<ObjectContainer<C>> provide(ApplicationContext context) throws ApplicationException {
         Option<? extends ConstructorView<? extends C>> constructor = this.optimalConstructor(context);
         if (constructor.absent()) {
             return Option.empty();
@@ -64,7 +64,7 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
     }
 
     protected Option<? extends ConstructorView<? extends C>> optimalConstructor(ApplicationContext applicationContext) throws ApplicationException {
-        TypeView<? extends C> typeView = applicationContext.environment().introspect(this.type());
+        TypeView<? extends C> typeView = applicationContext.environment().introspector().introspect(this.type());
         if (this.optimalConstructor == null) {
             this.optimalConstructor = ComponentConstructorResolver.create(applicationContext).findConstructor(typeView)
                     .rethrow()

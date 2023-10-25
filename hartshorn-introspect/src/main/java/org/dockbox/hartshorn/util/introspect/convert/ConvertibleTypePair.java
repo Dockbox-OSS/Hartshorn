@@ -45,7 +45,7 @@ public record ConvertibleTypePair(Class<?> sourceType, Class<?> targetType) {
      * @param targetType the target type
      * @return a new {@link ConvertibleTypePair} instance
      */
-    public static ConvertibleTypePair of(final Class<?> sourceType, final Class<?> targetType) {
+    public static ConvertibleTypePair of(Class<?> sourceType, Class<?> targetType) {
         // Default value providers take 'Null' (null) as input, so we need to ensure we consistently use Null.TYPE
         // in the ConvertibleTypePair to avoid unnecessary conversions.
         if (sourceType == null || sourceType == void.class || sourceType == Void.class) {

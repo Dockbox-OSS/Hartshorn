@@ -24,7 +24,7 @@ public class ForEachStatement extends BodyStatement {
     private final VariableStatement selector;
     private final Expression collection;
 
-    public ForEachStatement(final VariableStatement selector, final Expression collection, final BlockStatement body) {
+    public ForEachStatement(VariableStatement selector, Expression collection, BlockStatement body) {
         super(selector, body);
         this.selector = selector;
         this.collection = collection;
@@ -39,7 +39,7 @@ public class ForEachStatement extends BodyStatement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

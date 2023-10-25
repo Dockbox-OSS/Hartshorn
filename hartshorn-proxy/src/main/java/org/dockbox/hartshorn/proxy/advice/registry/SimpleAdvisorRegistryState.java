@@ -29,7 +29,7 @@ public class SimpleAdvisorRegistryState implements AdvisorRegistryState {
     private boolean modified = false;
 
     @Override
-    public void trackState(final boolean trackingState) {
+    public void trackState(boolean trackingState) {
         this.trackingState = trackingState;
     }
 

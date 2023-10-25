@@ -57,10 +57,10 @@ public interface MethodInterceptor<T, R> {
      * @param after the interceptor to chain after the current interceptor.
      * @return the chained interceptor.
      */
-    default MethodInterceptor<T, R> andThen(final MethodInterceptor<T, R> after) {
+    default MethodInterceptor<T, R> andThen(MethodInterceptor<T, R> after) {
         Objects.requireNonNull(after);
         return ctx -> {
-            final R previous = this.intercept(ctx);
+            R previous = this.intercept(ctx);
             return after.intercept(new MethodInterceptorContext<>(ctx, previous));
         };
     }

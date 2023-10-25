@@ -16,25 +16,13 @@
 
 package test.org.dockbox.hartshorn.core.application
 
-import org.dockbox.hartshorn.application.ApplicationContextConstructor
-import org.dockbox.hartshorn.application.DefaultBindingConfigurer
-import org.dockbox.hartshorn.application.ExceptionHandler
-import org.dockbox.hartshorn.application.StandardApplicationBuilder
-import org.dockbox.hartshorn.application.StandardApplicationContextConstructor
+import org.dockbox.hartshorn.application.*
 import org.dockbox.hartshorn.application.context.ApplicationContext
 import org.dockbox.hartshorn.application.context.DelegatingApplicationContext
 import org.dockbox.hartshorn.application.context.DependencyGraphInitializer
 import org.dockbox.hartshorn.application.context.SimpleApplicationContext
-import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment
-import org.dockbox.hartshorn.application.environment.ApplicationFSProvider
-import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator
-import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment
-import org.dockbox.hartshorn.component.ComponentLocator
-import org.dockbox.hartshorn.component.ComponentPostConstructor
-import org.dockbox.hartshorn.component.ComponentPostConstructorImpl
-import org.dockbox.hartshorn.component.ComponentProvider
-import org.dockbox.hartshorn.component.ScopeAwareComponentProvider
+import org.dockbox.hartshorn.application.environment.*
+import org.dockbox.hartshorn.component.*
 import org.dockbox.hartshorn.component.condition.ConditionMatcher
 import org.dockbox.hartshorn.inject.ApplicationDependencyResolver
 import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor
@@ -45,7 +33,7 @@ import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder
 import org.dockbox.hartshorn.introspect.ViewContextAdapter
 import org.dockbox.hartshorn.logging.ApplicationLogger
 import org.dockbox.hartshorn.logging.AutoSwitchingApplicationLogger
-import org.dockbox.hartshorn.proxy.ApplicationProxier
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator
 import org.dockbox.hartshorn.util.ContextualInitializer
 import org.dockbox.hartshorn.util.Customizer
 import org.dockbox.hartshorn.util.Initializer
@@ -109,10 +97,10 @@ class BootstrapConfigurationContractTests {
         assertCustom(instance) { configurer -> configurer.showStacktraces() }
         assertCustom(instance) { configurer -> configurer.hideStacktraces() }
 
-        assertDeferred(instance) { configurer, deferred: ApplicationProxier? -> configurer.applicationProxier(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.applicationProxier(initializer) }
+        assertDeferred(instance) { configurer, deferred: ProxyOrchestrator? -> configurer.applicationOrchestrator(deferred) }
+        assertContextInitializer(instance) { configurer, initializer -> configurer.applicationOrchestrator(initializer) }
 
-        assertDeferred(instance) { configurer, deferred: ApplicationFSProvider? -> configurer.applicationFSProvider(deferred) }
+        assertDeferred(instance) { configurer, deferred: FileSystemProvider? -> configurer.applicationFSProvider(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.applicationFSProvider(initializer) }
 
         assertDeferred(instance) { configurer, deferred: ExceptionHandler? -> configurer.exceptionHandler(deferred) }
@@ -163,7 +151,7 @@ class BootstrapConfigurationContractTests {
         assertDeferred(instance) { configurer, deferred: DefaultBindingConfigurer? -> configurer.defaultBindings(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.defaultBindings(initializer) }
 
-        val biConsumerDefaultBindingsResult = instance.defaultBindings { applicationContext: ApplicationContext, binder: Binder -> }
+        val biConsumerDefaultBindingsResult = instance.defaultBindings { _: ApplicationContext, _: Binder -> }
         Assertions.assertSame(instance, biConsumerDefaultBindingsResult)
     }
 
@@ -212,8 +200,7 @@ class BootstrapConfigurationContractTests {
     fun testStreamableConfigurerContract() {
         val instance = StreamableConfigurer.empty<Any, Any>()
 
-        var result: StreamableConfigurer<Any, Any>? = null
-        result = instance.add(null as Any?)
+        var result: StreamableConfigurer<Any, Any>? = instance.add(null as Any?)
         Assertions.assertSame(instance, result)
 
         result = instance.add(Initializer.of(null))
@@ -244,28 +231,28 @@ class BootstrapConfigurationContractTests {
         Assertions.assertNotNull(stream)
     }
 
-    protected fun <T> assertCustom(configurer: T, deferredFunction: Function<T, T>) {
+    fun <T> assertCustom(configurer: T, deferredFunction: Function<T, T>) {
         val result = deferredFunction.apply(configurer)
         Assertions.assertSame(configurer, result)
     }
 
-    protected fun <T, C> assertDeferred(configurer: T, deferredFunction: BiFunction<T, C?, T>) {
+    fun <T, C> assertDeferred(configurer: T, deferredFunction: BiFunction<T, C?, T>) {
         val result = deferredFunction.apply(configurer, null)
         Assertions.assertSame(configurer, result)
     }
 
-    protected fun <T, I, C> assertContextInitializer(configurer: T, initializerFunction: BiFunction<T, ContextualInitializer<I, C?>, T>) {
+    fun <T, I, C> assertContextInitializer(configurer: T, initializerFunction: BiFunction<T, ContextualInitializer<I, C?>, T>) {
         val result = initializerFunction.apply(configurer) { _ -> null }
         Assertions.assertSame(configurer, result)
     }
 
-    protected fun <T, C> assertInitializer(configurer: T, initializerFunction: BiFunction<T, Initializer<C?>, T>) {
+    fun <T, C> assertInitializer(configurer: T, initializerFunction: BiFunction<T, Initializer<C?>, T>) {
         val result = initializerFunction.apply(configurer) { null }
         Assertions.assertSame(configurer, result)
     }
 
-    protected fun <T, C> assertCustomizer(configurer: T, customizableFunction: BiFunction<T, Customizer<C>, T>) {
-        val result = customizableFunction.apply(configurer) { it: C -> }
+    fun <T, C> assertCustomizer(configurer: T, customizableFunction: BiFunction<T, Customizer<C>, T>) {
+        val result = customizableFunction.apply(configurer) { _: C -> }
         Assertions.assertSame(configurer, result)
     }
 }

@@ -44,7 +44,7 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
 
     @Override
     public <T> T doPostConstruct(T instance) throws ApplicationException {
-        TypeView<T> typeView = this.applicationContext.environment().introspect(instance);
+        TypeView<T> typeView = this.applicationContext.environment().introspector().introspect(instance);
         List<MethodView<T, ?>> postConstructMethods = typeView.methods().annotatedWith(PostConstruct.class);
 
         for (MethodView<T, ?> postConstructMethod : postConstructMethods) {

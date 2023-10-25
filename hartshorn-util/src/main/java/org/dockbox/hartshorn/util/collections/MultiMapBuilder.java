@@ -28,32 +28,38 @@ public class MultiMapBuilder<K, V> {
     private boolean makeSynchronized = false;
     private boolean makeConcurrent = false;
 
-    public MultiMapBuilder<K, V> mapSupplier(final Supplier<Map<K, Collection<V>>> mapSupplier) {
+    public MultiMapBuilder<K, V> mapSupplier(Supplier<Map<K, Collection<V>>> mapSupplier) {
         this.mapSupplier = mapSupplier;
         return this;
     }
 
-    public MultiMapBuilder<K, V> collectionSupplier(final Supplier<Collection<V>> collectionSupplier) {
+    public MultiMapBuilder<K, V> collectionSupplier(Supplier<Collection<V>> collectionSupplier) {
         this.collectionSupplier = collectionSupplier;
         return this;
     }
 
-    public MultiMapBuilder<K, V> makeSynchronized(final boolean makeSynchronized) {
+    public MultiMapBuilder<K, V> makeSynchronized(boolean makeSynchronized) {
         this.makeSynchronized = makeSynchronized;
         return this;
     }
 
-    public MultiMapBuilder<K, V> makeConcurrent(final boolean makeConcurrent) {
+    public MultiMapBuilder<K, V> makeConcurrent(boolean makeConcurrent) {
         this.makeConcurrent = makeConcurrent;
         return this;
     }
 
     public MultiMap<K, V> build() {
-        if (this.mapSupplier == null) throw new IllegalArgumentException("Cannot build new MultiMap without configuring Map<K, V> supplier.");
-        if (this.collectionSupplier == null) throw new IllegalArgumentException("Cannot build new MultiMap without configuring Collection<V> supplier.");
-        if (this.makeSynchronized && this.makeConcurrent) throw new IllegalArgumentException("Cannot build new MultiMap with both synchronized and concurrent capabilities.");
+        if (this.mapSupplier == null) {
+            throw new IllegalArgumentException("Cannot build new MultiMap without configuring Map<K, V> supplier.");
+        }
+        if (this.collectionSupplier == null) {
+            throw new IllegalArgumentException("Cannot build new MultiMap without configuring Collection<V> supplier.");
+        }
+        if (this.makeSynchronized && this.makeConcurrent) {
+            throw new IllegalArgumentException("Cannot build new MultiMap with both synchronized and concurrent capabilities.");
+        }
 
-        final Map<K, Collection<V>> baseMap = this.mapSupplier.get();
+        Map<K, Collection<V>> baseMap = this.mapSupplier.get();
         if (this.makeSynchronized) {
             return new SynchronizedMultiMap<>() {
                 @Override

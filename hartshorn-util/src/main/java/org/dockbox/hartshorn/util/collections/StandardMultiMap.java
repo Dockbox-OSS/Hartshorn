@@ -26,7 +26,7 @@ public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
     protected StandardMultiMap() {
     }
 
-    protected StandardMultiMap(final MultiMap<K, V> map) {
+    protected StandardMultiMap(MultiMap<K, V> map) {
         super(map);
     }
 

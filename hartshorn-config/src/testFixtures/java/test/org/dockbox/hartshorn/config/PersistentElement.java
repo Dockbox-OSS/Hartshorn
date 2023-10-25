@@ -25,7 +25,7 @@ public class PersistentElement implements Element {
     public PersistentElement() {
     }
 
-    public PersistentElement(final String name) {
+    public PersistentElement(String name) {
         this.name = name;
     }
 
@@ -35,16 +35,20 @@ public class PersistentElement implements Element {
     }
 
     @Override
-    public PersistentElement name(final String name) {
+    public PersistentElement name(String name) {
         this.name = name;
         return this;
     }
 
     @Override
-    public boolean equals(final Object other) {
-        if (this == other) return true;
-        if (other == null || this.getClass() != other.getClass()) return false;
-        final PersistentElement element = (PersistentElement) other;
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || this.getClass() != other.getClass()) {
+            return false;
+        }
+        PersistentElement element = (PersistentElement) other;
         return Objects.equals(this.name, element.name);
     }
 

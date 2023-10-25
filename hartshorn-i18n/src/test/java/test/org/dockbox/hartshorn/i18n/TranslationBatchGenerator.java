@@ -81,60 +81,62 @@ public final class TranslationBatchGenerator {
 
     private TranslationBatchGenerator() {}
 
-    public static void main(final String[] args) throws Exception {
-        final ApplicationContext context = HartshornApplication.create(TranslationBatchGenerator.class);
-        final Map<String, String> batches = migrateBatches(context);
-        final String date = SDF.format(LocalDateTime.now());
-        final Path outputPath = existingBatch().toPath().resolve("batches/" + date);
+    public static void main(String[] args) throws Exception {
+        ApplicationContext context = HartshornApplication.create(TranslationBatchGenerator.class);
+        Map<String, String> batches = migrateBatches(context);
+        String date = SDF.format(LocalDateTime.now());
+        Path outputPath = existingBatch().toPath().resolve("batches/" + date);
         outputPath.toFile().mkdirs();
         outputPath.toFile().mkdir();
 
-        for (final Entry<String, String> entry : batches.entrySet()) {
-            final String file = entry.getKey();
-            final String content = entry.getValue();
-            final Path out = outputPath.resolve(file);
+        for (Entry<String, String> entry : batches.entrySet()) {
+            String file = entry.getKey();
+            String content = entry.getValue();
+            Path out = outputPath.resolve(file);
             out.toFile().createNewFile();
 
-            final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(out.toFile()), StandardCharsets.UTF_8);
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(out.toFile()), StandardCharsets.UTF_8);
             writer.write(content);
             writer.close();
         }
     }
 
     // File content identified by file name
-    private static Map<String, String> migrateBatches(final ApplicationContext context) throws IOException {
-        final String batch = TranslationBatchGenerator.createBatch(context);
-        final Properties properties = new Properties();
+    private static Map<String, String> migrateBatches(ApplicationContext context) throws IOException {
+        String batch = TranslationBatchGenerator.createBatch(context);
+        Properties properties = new Properties();
         properties.load(new StringReader(batch));
 
-        final Map<String, String> files = new HashMap<>();
+        Map<String, String> files = new HashMap<>();
 
-        for (final File file : TranslationBatchGenerator.existingFiles()) {
-            final List<String> strings = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-            final Properties cache = new Properties();
+        for (File file : TranslationBatchGenerator.existingFiles()) {
+            List<String> strings = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+            Properties cache = new Properties();
             cache.load(new StringReader(batch));
 
-            for (final String string : strings) {
-                final String[] property = string.split("=");
-                final String key = property[0];
-                if (key.startsWith("$")) continue;
-                final String value = String.join("=", Arrays.copyOfRange(property, 1, property.length));
+            for (String string : strings) {
+                String[] property = string.split("=");
+                String key = property[0];
+                if (key.startsWith("$")) {
+                    continue;
+                }
+                String value = String.join("=", Arrays.copyOfRange(property, 1, property.length));
                 if (properties.containsKey(key)) {
                     // Override any existing, drop retired translations
                     cache.setProperty(key, value);
                 }
             }
 
-            final List<String> content = new ArrayList<>();
+            List<String> content = new ArrayList<>();
             cache.forEach((key, value) -> {
-                final String next = String.valueOf(key) + '=' + value;
+                String next = String.valueOf(key) + '=' + value;
                 content.add(next);
             });
 
             Collections.sort(content);
-            final Collection<String> output = CollectionUtilities.merge(HEADER, content);
+            Collection<String> output = CollectionUtilities.merge(HEADER, content);
 
-            final String fileOut = String.join("\n", output);
+            String fileOut = String.join("\n", output);
             files.put(file.getName(), fileOut);
         }
         return files;
@@ -150,12 +152,16 @@ public final class TranslationBatchGenerator {
                 .toFile();
     }
 
-    private static String createBatch(final ApplicationContext context) {
-        final Map<String, String> collect = collect(context);
-        final List<String> entries = new ArrayList<>();
-        for (final Entry<String, String> entry : collect.entrySet()) {
-            if (entry.getValue().contains("\n")) continue;
-            if (BLACKLIST.contains(entry.getKey())) continue;
+    private static String createBatch(ApplicationContext context) {
+        Map<String, String> collect = collect(context);
+        List<String> entries = new ArrayList<>();
+        for (Entry<String, String> entry : collect.entrySet()) {
+            if (entry.getValue().contains("\n")) {
+                continue;
+            }
+            if (BLACKLIST.contains(entry.getKey())) {
+                continue;
+            }
             String next = entry.getKey() + '=' + entry.getValue();
             next = next.replaceAll("\r", "");
             entries.add(next);
@@ -165,7 +171,7 @@ public final class TranslationBatchGenerator {
     }
 
     private static List<File> existingFiles() {
-        final File batch = TranslationBatchGenerator.existingBatch();
+        File batch = TranslationBatchGenerator.existingBatch();
         if (batch.exists() && batch.isDirectory()) {
             return Stream.of(batch.listFiles())
                     .filter(file -> !file.isDirectory())
@@ -176,15 +182,15 @@ public final class TranslationBatchGenerator {
         }
     }
 
-    public static Map<String, String> collect(final ApplicationContext context) {
-        final Map<String, String> batch = new HashMap<>();
-        final TranslationKeyGenerator keyGenerator = context.get(TranslationKeyGenerator.class);
-        for (final ComponentContainer<?> container : context.get(ComponentLocator.class).containers()) {
-            final TypeView<?> type = container.type();
-            final List<? extends MethodView<?, ?>> methods = type.methods().annotatedWith(InjectTranslation.class);
-            for (final MethodView<?, ?> method : methods) {
-                final InjectTranslation annotation = method.annotations().get(InjectTranslation.class).get();
-                final String key = keyGenerator.key(type, method);
+    public static Map<String, String> collect(ApplicationContext context) {
+        Map<String, String> batch = new HashMap<>();
+        TranslationKeyGenerator keyGenerator = context.get(TranslationKeyGenerator.class);
+        for (ComponentContainer<?> container : context.get(ComponentLocator.class).containers()) {
+            TypeView<?> type = container.type();
+            List<? extends MethodView<?, ?>> methods = type.methods().annotatedWith(InjectTranslation.class);
+            for (MethodView<?, ?> method : methods) {
+                InjectTranslation annotation = method.annotations().get(InjectTranslation.class).get();
+                String key = keyGenerator.key(type, method);
                 batch.put(key, annotation.value());
             }
         }

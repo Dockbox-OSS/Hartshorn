@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  *
  * @author Guus Lieben
  * @since 0.4.1
- * @see AliasFor
+ * @see AttributeAlias
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

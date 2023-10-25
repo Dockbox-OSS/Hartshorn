@@ -42,16 +42,16 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
     private final FieldStatementParser fieldParser;
 
     @Inject
-    public ClassStatementParser(final FieldStatementParser fieldParser) {
+    public ClassStatementParser(FieldStatementParser fieldParser) {
         this.fieldParser = fieldParser;
     }
 
     @Override
-    public Option<ClassStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<ClassStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.CLASS)) {
-            final Token name = validator.expect(TokenType.IDENTIFIER, "class name");
+            Token name = validator.expect(TokenType.IDENTIFIER, "class name");
 
-            final boolean isDynamic = parser.match(TokenType.QUESTION_MARK);
+            boolean isDynamic = parser.match(TokenType.QUESTION_MARK);
 
             VariableExpression superClass = null;
             if (parser.match(TokenType.EXTENDS)) {
@@ -61,11 +61,11 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
 
             validator.expectBefore(TokenType.LEFT_BRACE, "class body");
 
-            final List<FunctionStatement> methods = new ArrayList<>();
-            final List<FieldStatement> fields = new ArrayList<>();
+            List<FunctionStatement> methods = new ArrayList<>();
+            List<FieldStatement> fields = new ArrayList<>();
             ConstructorStatement constructor = null;
             while (!parser.check(TokenType.RIGHT_BRACE) && !parser.isAtEnd()) {
-                final Statement declaration = this.classBodyStatement(parser, validator);
+                Statement declaration = this.classBodyStatement(parser, validator);
                 if (declaration instanceof ConstructorStatement constructorStatement) {
                     constructor = constructorStatement;
                 }
@@ -88,7 +88,7 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
         return Option.empty();
     }
 
-    private Statement classBodyStatement(final TokenParser parser, final TokenStepValidator validator) {
+    private Statement classBodyStatement(TokenParser parser, TokenStepValidator validator) {
         if (parser.check(TokenType.CONSTRUCTOR)) {
             return this.handleDelegate(parser, validator, parser.firstCompatibleParser(ConstructorStatement.class));
         }
@@ -100,8 +100,8 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
         }
     }
 
-    private <T extends Statement> T handleDelegate(final TokenParser parser, final TokenStepValidator validator,
-                                                   final Option<ASTNodeParser<T>> statement) {
+    private <T extends Statement> T handleDelegate(TokenParser parser, TokenStepValidator validator,
+                                                   Option<ASTNodeParser<T>> statement) {
         return statement
                 .flatMap(nodeParser -> nodeParser.parse(parser, validator))
                 .attempt(ScriptEvaluationError.class)

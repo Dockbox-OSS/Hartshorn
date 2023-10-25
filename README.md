@@ -1,8 +1,7 @@
 <p align="center"><img alt="Hartshorn" src="./hartshorn-assembly/images/hartshorn-icon.png" height="125" /></p>
 <h1 align="center">Hartshorn Framework</h1>
 <p align="center">
-<img src="https://img.shields.io/badge/JDK%20source-17-438EAA?style=for-the-badge">
-<img src="https://img.shields.io/badge/JDK%20target-19-438EAA?style=for-the-badge">
+<img src="https://img.shields.io/badge/JDK-21-438EAA?style=for-the-badge">
 <img src="https://img.shields.io/github/v/release/Dockbox-OSS/Hartshorn?style=for-the-badge&color=438EAA">
 </p>
 
@@ -58,7 +57,7 @@ public String helloWorld() {
 }
 ```
 
-Managed components are where injections take place. Components annotated with `@Component` or a stereotype annotation annotated with `@Component`, such as `@Service`, are considered managed.
+Managed components are part of your application structure, meaning they are automatically discovered and registered. Components annotated with `@Component` or a stereotype annotation annotated with `@Component`, such as `@Service`, are considered managed.
 
 ```java
 @Service
@@ -92,7 +91,7 @@ Once you've taken your first steps with Hartshorn, it's essential to expand your
 If you want to build Hartshorn yourself, either to access pre-release versions or to customize the framework, the guide below explains how to build usable JAR artifacts.
 
 > [!IMPORTANT]
-> Note that you will need a Java installation with JDK 17 or a more recent version for all platforms.
+> Note that you will need a Java installation with JDK 21 or a more recent version for all platforms.
 
 Hartshorn uses Maven to automate builds, performing several steps before and after a build has completed. To build all Hartshorn modules at once, run `mvn clean install` in the base directory. This will build all modules and run all tests. If you want to skip tests, you can use the `-DskipTests` flag.
 

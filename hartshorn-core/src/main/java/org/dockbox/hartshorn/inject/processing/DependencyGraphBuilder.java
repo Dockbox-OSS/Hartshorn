@@ -29,38 +29,38 @@ import java.util.Map;
 
 public class DependencyGraphBuilder {
 
-    public Graph<DependencyContext<?>> buildDependencyGraph(final Iterable<DependencyContext<?>> providerContexts) {
-        final Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes = this.createNodeMap(providerContexts);
-        final Graph<DependencyContext<?>> graph = new SimpleGraph<>();
+    public Graph<DependencyContext<?>> buildDependencyGraph(Iterable<DependencyContext<?>> providerContexts) {
+        Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes = this.createNodeMap(providerContexts);
+        Graph<DependencyContext<?>> graph = new SimpleGraph<>();
 
-        for (final DependencyContext<?> providerContext : providerContexts) {
+        for (DependencyContext<?> providerContext : providerContexts) {
             buildSingleDependencyNode(nodes, graph, providerContext);
         }
         return graph;
     }
 
-    private static void buildSingleDependencyNode(final Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes,
-                                                  final Graph<DependencyContext<?>> graph, final DependencyContext<?> providerContext) {
-        final MutableContainableGraphNode<DependencyContext<?>> node = nodes.get(providerContext.componentKey());
+    private static void buildSingleDependencyNode(Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes,
+                                                  Graph<DependencyContext<?>> graph, DependencyContext<?> providerContext) {
+        MutableContainableGraphNode<DependencyContext<?>> node = nodes.get(providerContext.componentKey());
         graph.addRoot(node);
 
-        for (final ComponentKey<?> dependency : providerContext.dependencies()) {
+        for (ComponentKey<?> dependency : providerContext.dependencies()) {
             if (!nodes.containsKey(dependency)) {
                 // provided by existing bindings, or will be dynamically created on request. It is not up to the
                 // graph builder to verify that the dependency is (or will be) available.
                 continue;
             }
 
-            final GraphNode<DependencyContext<?>> dependencyNode = nodes.get(dependency);
+            GraphNode<DependencyContext<?>> dependencyNode = nodes.get(dependency);
             graph.addRoot(dependencyNode);
             node.addParent(dependencyNode);
         }
     }
 
-    public Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> createNodeMap(final Iterable<DependencyContext<?>> providerContexts) {
-        final Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes = new HashMap<>();
-        for (final DependencyContext<?> providerContext : providerContexts) {
-            final MutableContainableGraphNode<DependencyContext<?>> node = new SimpleGraphNode<>(providerContext);
+    public Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> createNodeMap(Iterable<DependencyContext<?>> providerContexts) {
+        Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes = new HashMap<>();
+        for (DependencyContext<?> providerContext : providerContexts) {
+            MutableContainableGraphNode<DependencyContext<?>> node = new SimpleGraphNode<>(providerContext);
             nodes.put(providerContext.componentKey(), node);
         }
         return nodes;

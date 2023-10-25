@@ -28,7 +28,7 @@ public class TypeReferenceCollectorContext extends DefaultContext implements Rep
 
     private final Set<TypeReferenceCollector> collectors = ConcurrentHashMap.newKeySet();
 
-    public void register(final TypeReferenceCollector collector) {
+    public void register(TypeReferenceCollector collector) {
         this.collectors.add(collector);
     }
 
@@ -41,8 +41,8 @@ public class TypeReferenceCollectorContext extends DefaultContext implements Rep
     }
 
     @Override
-    public void report(final DiagnosticsPropertyCollector collector) {
-        final Reportable[] reporters = this.collectors.stream()
+    public void report(DiagnosticsPropertyCollector collector) {
+        Reportable[] reporters = this.collectors.stream()
                 .map(referenceCollector -> (Reportable) trcCollector -> {
                     trcCollector.property("type").write(referenceCollector.getClass().getName());
                     referenceCollector.report(trcCollector);

@@ -30,9 +30,9 @@ import java.util.Set;
 public class ReturnStatementParser implements ASTNodeParser<ReturnStatement> {
 
     @Override
-    public Option<ReturnStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<ReturnStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.RETURN)) {
-            final Token keyword = parser.previous();
+            Token keyword = parser.previous();
             Expression value = null;
             if (!parser.check(TokenType.SEMICOLON)) {
                 value = parser.expression();

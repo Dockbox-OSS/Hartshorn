@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.ConverterException;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
+import org.dockbox.hartshorn.commands.arguments.PrefixedParameterPattern;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.MessageTemplate;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -45,16 +46,16 @@ public class HashtagParameterPatternTests {
 
     @Test
     void testPreconditionsAcceptValidPattern() {
-        final String pattern = "#cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.pattern();
+        String pattern = "#cuboid[1]";
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
-        final Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.present());
         Assertions.assertTrue(result.get());
     }
 
-    private HashtagParameterPattern pattern() {
+    private PrefixedParameterPattern pattern() {
         return new HashtagParameterPattern(this.applicationContext.get(CommandParameterResources.class)) {
             @Override
             protected Message wrongFormat() {
@@ -66,10 +67,10 @@ public class HashtagParameterPatternTests {
 
     @Test
     void testPreconditionsRejectInvalidPrefix() {
-        final String pattern = "@cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.pattern();
+        String pattern = "@cuboid[1]";
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
-        final Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.absent());
         Assertions.assertTrue(result.errorPresent());
@@ -77,10 +78,10 @@ public class HashtagParameterPatternTests {
 
     @Test
     void testPreconditionsRejectInvalidName() {
-        final String pattern = "#sphere[1]";
-        final CustomParameterPattern parameterPattern = this.pattern();
+        String pattern = "#sphere[1]";
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
-        final Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.absent());
         Assertions.assertTrue(result.errorPresent());
@@ -88,10 +89,10 @@ public class HashtagParameterPatternTests {
 
     @Test
     void testSplitArgumentsCreatesCorrectArguments() {
-        final String pattern = "#cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.pattern();
+        String pattern = "#cuboid[1]";
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
-        final List<String> arguments = parameterPattern.splitArguments(pattern);
+        List<String> arguments = parameterPattern.splitArguments(pattern);
 
         Assertions.assertEquals(1, arguments.size());
         Assertions.assertEquals("1", arguments.get(0));
@@ -99,10 +100,10 @@ public class HashtagParameterPatternTests {
 
     @Test
     void testIdentifierParser() {
-        final String pattern = "#cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.pattern();
+        String pattern = "#cuboid[1]";
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
-        final Attempt<String, ConverterException> identifier = parameterPattern.parseIdentifier(pattern);
+        Attempt<String, ConverterException> identifier = parameterPattern.parseIdentifier(pattern);
 
         Assertions.assertTrue(identifier.present());
         Assertions.assertEquals("cuboid", identifier.get());
@@ -110,14 +111,14 @@ public class HashtagParameterPatternTests {
 
     @Test
     void testValidArgumentCanBeRequested() {
-        final String pattern = "#cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.pattern();
+        String pattern = "#cuboid[1]";
+        CustomParameterPattern parameterPattern = this.pattern();
 
-        final Attempt<CuboidArgument, ConverterException> result = parameterPattern.request(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        Attempt<CuboidArgument, ConverterException> result = parameterPattern.request(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.present());
 
-        final CuboidArgument cuboid = result.get();
+        CuboidArgument cuboid = result.get();
         Assertions.assertEquals(1, cuboid.size());
     }
 }

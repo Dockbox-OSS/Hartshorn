@@ -19,13 +19,13 @@ package org.dockbox.hartshorn.component.condition;
 public class ClassCondition implements Condition {
 
     @Override
-    public ConditionResult matches(final ConditionContext context) {
+    public ConditionResult matches(ConditionContext context) {
         return context.annotatedElement().annotations().get(RequiresClass.class).map(condition -> {
-            for (final String name : condition.value()) {
+            for (String name : condition.value()) {
                 try {
                     Class.forName(name);
                 }
-                catch (final ClassNotFoundException e) {
+                catch (ClassNotFoundException e) {
                     return ConditionResult.notFound("Class", name);
                 }
             }

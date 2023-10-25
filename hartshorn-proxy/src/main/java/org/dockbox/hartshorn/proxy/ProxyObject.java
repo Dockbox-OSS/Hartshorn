@@ -36,7 +36,7 @@ public interface ProxyObject<T> {
      * @param invokable the invokable to check
      * @return whether the given {@link Invokable} is the {@link Object#equals(Object)} method
      */
-    default boolean isEqualsMethod(final Invokable invokable) {
+    default boolean isEqualsMethod(Invokable invokable) {
         return "equals".equals(invokable.name())
                 && invokable.returnType().equals(boolean.class)
                 && invokable.parameterTypes().length == 1
@@ -49,7 +49,7 @@ public interface ProxyObject<T> {
      * @param invokable the invokable to check
      * @return whether the given {@link Invokable} is the {@link Object#toString()} method
      */
-    default boolean isToStringMethod(final Invokable invokable) {
+    default boolean isToStringMethod(Invokable invokable) {
         return "toString".equals(invokable.name())
                 && invokable.parameterTypes().length == 0
                 && invokable.returnType().equals(String.class);
@@ -61,7 +61,7 @@ public interface ProxyObject<T> {
      * @param invokable the invokable to check
      * @return whether the given {@link Invokable} is the {@link Object#hashCode()} method
      */
-    default boolean isHashCodeMethod(final Invokable invokable) {
+    default boolean isHashCodeMethod(Invokable invokable) {
         return "hashCode".equals(invokable.name())
                 && invokable.parameterTypes().length == 0
                 && invokable.returnType().equals(int.class);
@@ -74,11 +74,13 @@ public interface ProxyObject<T> {
      * @param obj the object to compare
      * @return whether the given object is equal to the proxy managed by the {@link #manager()}
      */
-    default boolean proxyEquals(final Object obj) {
-        if (obj == null) return false;
+    default boolean proxyEquals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
         return Boolean.TRUE.equals(this.manager().delegate().map(delegate -> {
-            if (this.manager().applicationProxier().isProxy(obj)) {
-                return this.manager().applicationProxier().manager(obj)
+            if (this.manager().orchestrator().isProxy(obj)) {
+                return this.manager().orchestrator().manager(obj)
                         .flatMap(ProxyManager::delegate)
                         .map(delegate::equals)
                         .orElse(false);
@@ -94,9 +96,11 @@ public interface ProxyObject<T> {
      * @param self the proxy to represent
      * @return a logical string representation of the proxy managed by the {@link #manager()}
      */
-    default String proxyToString(final T self) {
-        if (self == null) return "null";
-        final String canonicalName = this.manager().targetClass().getCanonicalName();
+    default String proxyToString(T self) {
+        if (self == null) {
+            return "null";
+        }
+        String canonicalName = this.manager().targetClass().getCanonicalName();
         return "Proxy: " + canonicalName + "@" + Integer.toHexString(this.proxyHashCode(self));
     }
 
@@ -106,7 +110,7 @@ public interface ProxyObject<T> {
      * @param self the proxy to hash
      * @return a hash code for the proxy managed by the {@link #manager()}
      */
-    default int proxyHashCode(final T self) {
+    default int proxyHashCode(T self) {
         return System.identityHashCode(self);
     }
 

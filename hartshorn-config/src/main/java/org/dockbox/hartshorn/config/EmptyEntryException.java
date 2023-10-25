@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.config;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 public class EmptyEntryException extends ApplicationException {
-    public EmptyEntryException(final String message) {
+    public EmptyEntryException(String message) {
         super(message);
     }
 }

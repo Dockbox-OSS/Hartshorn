@@ -102,6 +102,7 @@ public enum TokenType {
     CASE(builder -> builder.keyword(true).ok()),
     DEFAULT(builder -> builder.keyword(true).ok()),
     CONSTRUCTOR(builder -> builder.keyword(true).ok()),
+    FINAL(builder -> builder.keyword(true).ok()),
 
     // Standalone statements
     IF(builder -> builder.keyword(true).standaloneStatement(true).ok()),
@@ -116,9 +117,9 @@ public enum TokenType {
     IMPORT(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     SWITCH(builder -> builder.keyword(true).standaloneStatement(true).ok()),
 
+    // Modifiers
     PUBLIC(builder -> builder.keyword(true).ok()),
     PRIVATE(builder -> builder.keyword(true).ok()),
-    FINAL(builder -> builder.keyword(true).reserved(true).ok()),
 
     // Reserved words/characters
     OPERATOR(builder -> builder.keyword(true).reserved(true).ok()),
@@ -163,7 +164,7 @@ public enum TokenType {
         this(TokenMetaDataBuilder::ok);
     }
 
-    TokenType(final char representation) {
+    TokenType(char representation) {
         this(String.valueOf(representation));
     }
 
@@ -172,7 +173,7 @@ public enum TokenType {
      * will not be a keyword or standalone statement.
      * @param representation The static representation of the token type.
      */
-    TokenType(final String representation) {
+    TokenType(String representation) {
         this(builder -> builder.representation(representation).ok());
     }
 
@@ -181,7 +182,7 @@ public enum TokenType {
      * the new {@link TokenType}.
      * @param builder The builder to use to create the {@link TokenMetaData} of the new {@link TokenType}.
      */
-    TokenType(final Function<TokenMetaDataBuilder, TokenMetaData> builder) {
+    TokenType(Function<TokenMetaDataBuilder, TokenMetaData> builder) {
         this.metaData = builder.apply(TokenMetaData.builder(this));
     }
 
@@ -225,8 +226,8 @@ public enum TokenType {
      * @return All token types which represent keywords.
      */
     public static Map<String, TokenType> keywords() {
-        final Map<String, TokenType> keywords = new ConcurrentHashMap<>();
-        for (final TokenType tokenType : TokenType.values()) {
+        Map<String, TokenType> keywords = new ConcurrentHashMap<>();
+        for (TokenType tokenType : TokenType.values()) {
             if (tokenType.keyword()) {
                 keywords.put(tokenType.representation(), tokenType);
             }

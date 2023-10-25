@@ -37,23 +37,23 @@ import java.util.List;
 public class CommandStaticComponentListener implements StaticComponentObserver {
 
     @Override
-    public void onStaticComponentsCollected(final ApplicationContext applicationContext, final StaticComponentContext staticComponentContext) {
-        final StaticComponentProvider provider = staticComponentContext.provider();
+    public void onStaticComponentsCollected(ApplicationContext applicationContext, StaticComponentContext staticComponentContext) {
+        StaticComponentProvider provider = staticComponentContext.provider();
 
-        final List<ArgumentConverter<?>> argumentConverters = TypeUtils.adjustWildcards(provider.all(ArgumentConverter.class), List.class);
-        final ContextKey<ArgumentConverterContext> converterContextContextKey = ContextKey.builder(ArgumentConverterContext.class)
+        List<ArgumentConverter<?>> argumentConverters = TypeUtils.adjustWildcards(provider.all(ArgumentConverter.class), List.class);
+        ContextKey<ArgumentConverterContext> converterContextContextKey = ContextKey.builder(ArgumentConverterContext.class)
                 .fallback(ArgumentConverterContext::new)
                 .build();
 
-        final ArgumentConverterContext converterContext = applicationContext.first(converterContextContextKey).get();
+        ArgumentConverterContext converterContext = applicationContext.first(converterContextContextKey).get();
         argumentConverters.forEach(converterContext::register);
 
-        final ContextKey<CommandExtensionContext> commandExtensionContextKey = ContextKey.builder(CommandExtensionContext.class)
+        ContextKey<CommandExtensionContext> commandExtensionContextKey = ContextKey.builder(CommandExtensionContext.class)
                 .fallback(CommandExtensionContext::new)
                 .build();
-        final CommandExtensionContext extensionContext = applicationContext.first(commandExtensionContextKey).get();
+        CommandExtensionContext extensionContext = applicationContext.first(commandExtensionContextKey).get();
 
-        for (final CommandExecutorExtension extension : provider.all(CommandExecutorExtension.class)) {
+        for (CommandExecutorExtension extension : provider.all(CommandExecutorExtension.class)) {
             applicationContext.log().debug("Adding extension " + extension.getClass().getSimpleName() + " to command gateway");
             extensionContext.add(extension);
         }

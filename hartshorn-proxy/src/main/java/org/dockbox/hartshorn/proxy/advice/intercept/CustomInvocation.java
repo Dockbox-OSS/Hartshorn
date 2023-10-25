@@ -45,7 +45,7 @@ public interface CustomInvocation<T> {
      * @param args the default arguments to use
      * @return the invocation as a {@link Callable}
      */
-    default Callable<T> toCallable(final Object... args) {
+    default Callable<T> toCallable(Object... args) {
         return () -> this.call(args);
     }
 }

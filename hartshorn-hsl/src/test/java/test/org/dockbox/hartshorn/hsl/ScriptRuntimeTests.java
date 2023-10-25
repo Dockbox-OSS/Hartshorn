@@ -17,8 +17,8 @@
 package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslExpression;
-import org.dockbox.hartshorn.hsl.HslScript;
+import org.dockbox.hartshorn.hsl.ExpressionScript;
+import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.customizer.AbstractCodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
@@ -38,10 +38,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
@@ -54,8 +56,9 @@ public class ScriptRuntimeTests {
     private ApplicationContext applicationContext;
 
     public static Stream<Arguments> scripts() throws IOException {
-        final Path resources = Paths.get("src", "test", "resources");
-        return Files.find(resources, 5, (path, attributes) -> attributes.isRegularFile() && path.getFileName().toString().endsWith(".hsl")).map(Arguments::of);
+        Path resources = Paths.get("src", "test", "resources");
+        BiPredicate<Path, BasicFileAttributes> filter = (path, attributes) -> attributes.isRegularFile() && path.getFileName().toString().endsWith(".hsl");
+        return Files.find(resources, 5, filter).map(Arguments::of);
     }
 
     public static Stream<Arguments> phases() {
@@ -75,14 +78,14 @@ public class ScriptRuntimeTests {
 
     @ParameterizedTest
     @MethodSource("scripts")
-    void testPredefinedScript(final Path path) throws IOException {
-        this.assertNoErrorsReported(HslScript.of(this.applicationContext, path));
+    void testPredefinedScript(Path path) throws IOException {
+        this.assertNoErrorsReported(ExecutableScript.of(this.applicationContext, path));
     }
 
     @ParameterizedTest
     @MethodSource("scripts")
-    void testPredefinedScriptWithOptionalSemicolons(final Path path) throws IOException {
-        final String source = HslScript.sourceFromPath(path).replaceAll(";", "");
+    void testPredefinedScriptWithOptionalSemicolons(Path path) throws IOException {
+        String source = ExecutableScript.sourceFromPath(path).replaceAll(";", "");
         this.assertNoErrorsReported(source);
     }
 
@@ -93,43 +96,43 @@ public class ScriptRuntimeTests {
 
     @Test
     void testComplexExpression() {
-        final String expression = "1 + 3 == 4 && 2 + 2 == 4 && 2 - 2 == 0";
+        String expression = "1 + 3 == 4 && 2 + 2 == 4 && 2 - 2 == 0";
         this.assertValid(expression);
     }
 
     @Test
     void testExpressionWithGlobal() {
-        final HslExpression expression = HslExpression.of(this.applicationContext, "a == 12");
+        ExpressionScript expression = ExpressionScript.of(this.applicationContext, "a == 12");
         expression.runtime().global("a", 12);
         this.assertValid(expression);
     }
 
     @Test
     void testExpressionWithGlobalFunctionAccess() {
-        final String expression = "context != null && context.log() != null";
-        final HslExpression hslExpression = HslExpression.of(this.applicationContext, expression);
-        hslExpression.runtime().global("context", this.applicationContext);
-        this.assertValid(hslExpression);
+        String expression = "context != null && context.log() != null";
+        ExpressionScript script = ExpressionScript.of(this.applicationContext, expression);
+        script.runtime().global("context", this.applicationContext);
+        this.assertValid(script);
     }
 
     @Test
     void testScriptWithGlobalFunctionAccess() {
-        final String expression = "context.log().info(\"Hello world!\")";
-        final HslScript script = HslScript.of(this.applicationContext, expression);
+        String expression = "context.log().info(\"Hello world!\")";
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
         this.assertNoErrorsReported(script);
     }
 
     @Test
     void testExpressionWithNativeAccess() {
-        final HslExpression expression = HslExpression.of(this.applicationContext, "log() != null");
+        ExpressionScript expression = ExpressionScript.of(this.applicationContext, "log() != null");
         expression.runtime().module("application", new InstanceNativeModule(this.applicationContext, this.applicationContext));
         this.assertValid(expression);
     }
 
     @Test
     void testMultilineWithComments() {
-        final String expression = """
+        String expression = """
                 print("Hello world!");
                 
                 # This is a comment
@@ -143,9 +146,9 @@ public class ScriptRuntimeTests {
                 */
                 print("Hello world 5!");
                 """;
-        final ScriptContext context = this.assertNoErrorsReported(expression);
+        ScriptContext context = this.assertNoErrorsReported(expression);
 
-        final List<Comment> comments = context.comments();
+        List<Comment> comments = context.comments();
         Assertions.assertEquals(3, comments.size());
 
         // Comments are not trimmed, so we need to include spaces in the expected result
@@ -156,14 +159,14 @@ public class ScriptRuntimeTests {
 
     @Test
     void testGlobalResultTracking() {
-        final String expression = """
+        String expression = """
                 var a = 12;
                 var b = 13;
                 var c = a + b;
                 """;
-        final ScriptContext context = this.assertNoErrorsReported(expression);
+        ScriptContext context = this.assertNoErrorsReported(expression);
 
-        final Map<String, Object> results = context.interpreter().global();
+        Map<String, Object> results = context.interpreter().global().values();
         Assertions.assertFalse(results.isEmpty());
         Assertions.assertEquals(12.0d, results.get("a"));
         Assertions.assertEquals(13.0d, results.get("b"));
@@ -172,13 +175,13 @@ public class ScriptRuntimeTests {
 
     @ParameterizedTest
     @MethodSource("phases")
-    void testPhaseCustomizers(final Phase phase) {
-        final HslScript script = HslScript.of(this.applicationContext, "1 == 1");
+    void testPhaseCustomizers(Phase phase) {
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, "1 == 1");
 
-        final AtomicBoolean called = new AtomicBoolean(false);
-        final CodeCustomizer customizer = new AbstractCodeCustomizer(phase) {
+        AtomicBoolean called = new AtomicBoolean(false);
+        CodeCustomizer customizer = new AbstractCodeCustomizer(phase) {
             @Override
-            public void call(final ScriptContext context) {
+            public void call(ScriptContext context) {
                 called.set(true);
             }
         };
@@ -189,10 +192,10 @@ public class ScriptRuntimeTests {
 
     @ParameterizedTest
     @MethodSource("bitwise")
-    void testBitwiseOperator(final TokenType token, final int left, final int right, final int expected) {
-        final String expression = "var result = %s %s %s".formatted(left, token.representation(), right);
-        final ScriptContext context = this.assertNoErrorsReported(expression);
-        final Object result = context.interpreter().global().get("result");
+    void testBitwiseOperator(TokenType token, int left, int right, int expected) {
+        String expression = "var result = %s %s %s".formatted(left, token.representation(), right);
+        ScriptContext context = this.assertNoErrorsReported(expression);
+        Object result = context.interpreter().global().values().get("result");
         Assertions.assertNotNull(result);
         Assertions.assertEquals(expected, result);
     }
@@ -204,28 +207,41 @@ public class ScriptRuntimeTests {
 
     @Test
     void testComplement() {
-        final int expected = ~35; // -36
-        final String expression = "~35 == %s".formatted(expected);
+        int expected = ~35; // -36
+        String expression = "~35 == %s".formatted(expected);
         this.assertValid(expression);
     }
 
-    ScriptContext assertValid(final String expression) {
-        final HslExpression hslExpression = HslExpression.of(this.applicationContext, expression);
-        return this.assertValid(hslExpression);
+    @Test
+    void testInterpreterCanBeReused() {
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
+                var x = 1;
+                test ("Variable has not been modified") {
+                    return x == 1;
+                }
+                x = 2;
+                """);
+        script.evaluate();
+        script.evaluate();
     }
 
-    ScriptContext assertValid(final HslExpression expression) {
-        final ScriptContext context = Assertions.assertDoesNotThrow(expression::evaluate);
+    ScriptContext assertValid(String expression) {
+        ExpressionScript script = ExpressionScript.of(this.applicationContext, expression);
+        return this.assertValid(script);
+    }
+
+    ScriptContext assertValid(ExpressionScript expression) {
+        ScriptContext context = Assertions.assertDoesNotThrow(expression::evaluate);
         Assertions.assertTrue(expression.valid(context));
         return context;
     }
 
-    ScriptContext assertNoErrorsReported(final String expression) {
-        final HslScript script = HslScript.of(this.applicationContext, expression);
+    ScriptContext assertNoErrorsReported(String expression) {
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, expression);
         return this.assertNoErrorsReported(script);
     }
 
-    ScriptContext assertNoErrorsReported(final HslScript script) {
+    ScriptContext assertNoErrorsReported(ExecutableScript script) {
         return Assertions.assertDoesNotThrow(script::evaluate);
     }
 }

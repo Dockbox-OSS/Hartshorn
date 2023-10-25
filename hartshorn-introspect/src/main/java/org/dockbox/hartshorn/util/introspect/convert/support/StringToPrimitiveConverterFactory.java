@@ -38,12 +38,12 @@ public class StringToPrimitiveConverterFactory implements ConverterFactory<Strin
 
     @SuppressWarnings("unchecked")
     @Override
-    public <O> Converter<String, O> create(final Class<O> targetType) {
+    public <O> Converter<String, O> create(Class<O> targetType) {
         return (Converter<String, O>) PRIMITIVE_CONVERTERS.get(targetType);
     }
 
     @Override
-    public boolean canConvert(final Object source, final Class<?> targetType) {
+    public boolean canConvert(Object source, Class<?> targetType) {
         if (!targetType.isPrimitive()) {
             return false;
         }

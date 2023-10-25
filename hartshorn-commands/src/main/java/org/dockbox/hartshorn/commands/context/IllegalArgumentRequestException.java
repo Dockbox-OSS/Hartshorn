@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands.context;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class IllegalArgumentRequestException extends ApplicationRuntimeException {
-    public IllegalArgumentRequestException(final String message) {
+    public IllegalArgumentRequestException(String message) {
         super(message);
     }
 }

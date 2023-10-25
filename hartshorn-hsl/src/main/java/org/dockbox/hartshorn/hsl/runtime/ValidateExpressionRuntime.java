@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.runtime;
 import java.util.Set;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslLanguageFactory;
+import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.customizer.ExpressionCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
@@ -36,12 +36,12 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class ValidateExpressionRuntime extends StandardRuntime {
 
-    public ValidateExpressionRuntime(ApplicationContext applicationContext, HslLanguageFactory factory) {
+    public ValidateExpressionRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory) {
         super(applicationContext, factory);
     }
 
-    public ValidateExpressionRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory,
-            final Set<ASTNodeParser<? extends Statement>> statementParsers) {
+    public ValidateExpressionRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory,
+            Set<ASTNodeParser<? extends Statement>> statementParsers) {
         super(applicationContext, factory, statementParsers);
         this.customizer(new ExpressionCustomizer());
     }
@@ -53,8 +53,8 @@ public class ValidateExpressionRuntime extends StandardRuntime {
      * @param collector The result collector in which the validation result may be stored.
      * @return The validation result, or {@code false} if it does not exist.
      */
-    public static boolean valid(final ResultCollector collector) {
-        final Option<Boolean> result = collector.result(ExpressionCustomizer.VALIDATION_ID);
+    public static boolean valid(ResultCollector collector) {
+        Option<Boolean> result = collector.result(ExpressionCustomizer.VALIDATION_ID, Boolean.class);
         return Boolean.TRUE.equals(result.orElse(false));
     }
 }

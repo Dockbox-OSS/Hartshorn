@@ -33,16 +33,16 @@ public class CollectionToObjectConverter implements GenericConverter, Conditiona
     }
 
     @Override
-    public boolean canConvert(final Object source, final Class<?> targetType) {
-        return source instanceof final Collection<?> collection
+    public boolean canConvert(Object source, Class<?> targetType) {
+        return source instanceof Collection<?> collection
                 && collection.size() == 1
                 && collection.iterator().next().getClass().isAssignableFrom(targetType);
     }
 
     @Override
-    public @Nullable <I, O> Object convert(@Nullable final Object source, @NonNull final Class<I> sourceType, @NonNull final Class<O> targetType) {
+    public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
         assert source != null;
-        final Collection<?> collection = (Collection<?>) source;
+        Collection<?> collection = (Collection<?>) source;
         return collection.iterator().next();
     }
 }

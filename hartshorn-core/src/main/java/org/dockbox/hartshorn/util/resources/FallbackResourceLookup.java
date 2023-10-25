@@ -33,7 +33,7 @@ public class FallbackResourceLookup implements ResourceLookup {
     private final ApplicationContext applicationContext;
     private final ResourceLookupStrategy fallbackStrategy;
 
-    public FallbackResourceLookup(final ApplicationContext applicationContext, final ResourceLookupStrategy fallbackStrategy) {
+    public FallbackResourceLookup(ApplicationContext applicationContext, ResourceLookupStrategy fallbackStrategy) {
         this.applicationContext = applicationContext;
         this.fallbackStrategy = fallbackStrategy;
 
@@ -42,9 +42,9 @@ public class FallbackResourceLookup implements ResourceLookup {
     }
 
     @Override
-    public Set<URI> lookup(final String path) {
+    public Set<URI> lookup(String path) {
         String matchedSource = path;
-        final Matcher matcher = STRATEGY_PATTERN.matcher(matchedSource);
+        Matcher matcher = STRATEGY_PATTERN.matcher(matchedSource);
 
         ResourceLookupStrategy strategy = this.fallbackStrategy;
         if (matcher.find()) {
@@ -56,7 +56,7 @@ public class FallbackResourceLookup implements ResourceLookup {
     }
 
     @Override
-    public void addLookupStrategy(final ResourceLookupStrategy strategy) {
+    public void addLookupStrategy(ResourceLookupStrategy strategy) {
         if (this.strategies.containsKey(strategy.name())) {
             throw new IllegalArgumentException("A strategy for source " + strategy.name() + " already exists");
         }
@@ -64,7 +64,7 @@ public class FallbackResourceLookup implements ResourceLookup {
     }
 
     @Override
-    public void removeLookupStrategy(final ResourceLookupStrategy strategy) {
+    public void removeLookupStrategy(ResourceLookupStrategy strategy) {
         this.strategies.remove(strategy.name());
     }
 

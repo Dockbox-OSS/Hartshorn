@@ -28,7 +28,7 @@ import java.util.List;
 public class WildcardTypeFieldsIntrospector implements TypeFieldsIntrospector<Object> {
 
     @Override
-    public Option<FieldView<Object, ?>> named(final String name) {
+    public Option<FieldView<Object, ?>> named(String name) {
         return Option.empty();
     }
 
@@ -38,17 +38,17 @@ public class WildcardTypeFieldsIntrospector implements TypeFieldsIntrospector<Ob
     }
 
     @Override
-    public List<FieldView<Object, ?>> annotatedWith(final Class<? extends Annotation> annotation) {
+    public List<FieldView<Object, ?>> annotatedWith(Class<? extends Annotation> annotation) {
         return Collections.emptyList();
     }
 
     @Override
-    public <F> List<FieldView<Object, ? extends F>> typed(final Class<F> type) {
+    public <F> List<FieldView<Object, ? extends F>> typed(Class<F> type) {
         return Collections.emptyList();
     }
 
     @Override
-    public <F> List<FieldView<Object, ? extends F>> typed(final GenericType<F> type) {
+    public <F> List<FieldView<Object, ? extends F>> typed(GenericType<F> type) {
         return Collections.emptyList();
     }
 }

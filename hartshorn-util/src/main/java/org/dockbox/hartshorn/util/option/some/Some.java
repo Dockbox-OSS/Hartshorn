@@ -41,23 +41,23 @@ public class Some<T> implements Option<T> {
 
     private final T value;
 
-    public Some(final T value) {
+    public Some(T value) {
         this.value = Objects.requireNonNull(value);
     }
 
     @Override
-    public <E extends Throwable> Attempt<T, E> attempt(final Class<E> errorType) {
+    public <E extends Throwable> Attempt<T, E> attempt(Class<E> errorType) {
         return Attempt.of(this.value);
     }
 
     @Override
-    public @NonNull Option<T> peek(final Consumer<T> consumer) {
+    public @NonNull Option<T> peek(Consumer<T> consumer) {
         consumer.accept(this.value);
         return this;
     }
 
     @Override
-    public @NonNull Option<T> onEmpty(final Runnable runnable) {
+    public @NonNull Option<T> onEmpty(Runnable runnable) {
         return this;
     }
 
@@ -72,27 +72,27 @@ public class Some<T> implements Option<T> {
     }
 
     @Override
-    public @Nullable T orElse(@Nullable final T value) {
+    public @Nullable T orElse(@Nullable T value) {
         return this.value;
     }
 
     @Override
-    public @NonNull T orElseGet(@NonNull final Supplier<@NonNull T> supplier) {
+    public @NonNull T orElseGet(@NonNull Supplier<@NonNull T> supplier) {
         return this.value;
     }
 
     @Override
-    public <E extends Throwable> @NonNull T orElseThrow(@NonNull final Supplier<@NonNull E> supplier) throws E {
+    public <E extends Throwable> @NonNull T orElseThrow(@NonNull Supplier<@NonNull E> supplier) throws E {
         return this.value;
     }
 
     @Override
-    public @NonNull Option<T> orCompute(@NonNull final Supplier<@NonNull T> supplier) {
+    public @NonNull Option<T> orCompute(@NonNull Supplier<@NonNull T> supplier) {
         return this;
     }
 
     @Override
-    public @NonNull Option<T> orComputeFlat(@NonNull final Supplier<@NonNull Option<T>> supplier) {
+    public @NonNull Option<T> orComputeFlat(@NonNull Supplier<@NonNull Option<T>> supplier) {
         return this;
     }
 
@@ -112,17 +112,17 @@ public class Some<T> implements Option<T> {
     }
 
     @Override
-    public @NonNull <U> Option<U> map(@NonNull final Function<@NonNull T, @Nullable U> function) {
+    public @NonNull <U> Option<U> map(@NonNull Function<@NonNull T, @Nullable U> function) {
         return Option.of(function.apply(this.value));
     }
 
     @Override
-    public @NonNull <U> Option<U> flatMap(@NonNull final Function<@NonNull T, @NonNull Option<U>> function) {
+    public @NonNull <U> Option<U> flatMap(@NonNull Function<@NonNull T, @NonNull Option<U>> function) {
         return function.apply(this.value);
     }
 
     @Override
-    public @NonNull Option<T> filter(@NonNull final Predicate<@NonNull T> predicate) {
+    public @NonNull Option<T> filter(@NonNull Predicate<@NonNull T> predicate) {
         return predicate.test(this.value) ? this : Option.empty();
     }
 
@@ -132,7 +132,7 @@ public class Some<T> implements Option<T> {
     }
 
     @Override
-    public boolean contains(@Nullable final T value) {
+    public boolean contains(@Nullable T value) {
         return Objects.equals(this.value, value);
     }
 

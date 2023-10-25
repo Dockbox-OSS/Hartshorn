@@ -23,7 +23,7 @@ public abstract class DefaultNamedContext extends DefaultContext implements Name
 
     private final String name;
 
-    protected DefaultNamedContext(final String name) {
+    protected DefaultNamedContext(String name) {
         this.name = name;
     }
 

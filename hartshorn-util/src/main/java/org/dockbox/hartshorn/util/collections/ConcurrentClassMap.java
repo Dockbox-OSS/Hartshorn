@@ -24,7 +24,7 @@ public class ConcurrentClassMap<T> extends ConcurrentHashMap<Class<T>, T> {
     public ConcurrentClassMap() {
     }
 
-    public ConcurrentClassMap(final Map<Class<T>, T> map) {
+    public ConcurrentClassMap(Map<Class<T>, T> map) {
         super(map);
     }
 }

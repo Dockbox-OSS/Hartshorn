@@ -21,9 +21,65 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates that the values of fields and executables should be automatically populated
+ * by {@link org.dockbox.hartshorn.component.ComponentPopulator}s. Note that this annotation
+ * is typically not required, as populating is enabled only if fields or executables are
+ * explicitly marked as injectable.
+ *
+ * <p>If the value of {@link #fields()} is {@code true}, all fields will be populated.
+ *
+ * @author Guus Lieben
+ * @since 0.4.9
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Populate {
+
+    /**
+     * The types of values that should be populated.
+     *
+     * @return The types of values that should be populated.
+     */
+    Type[] value() default {};
+
+    /**
+     * @deprecated since 0.5.0, for removal in 0.6.0. Use {@link #value()} instead.
+     * @return {@code true} if fields should be populated, {@code false} otherwise.
+     */
+    @Deprecated(since = "0.5.0", forRemoval = true)
     boolean fields() default true;
+
+    /**
+     * @deprecated since 0.5.0, for removal in 0.6.0. Use {@link #value()} instead.
+     * @return {@code true} if executables (e.g. methods) should be populated, {@code false} otherwise.
+     */
+    @Deprecated(since = "0.5.0", forRemoval = true)
     boolean executables() default true;
+
+    /**
+     * Types of elements that can be populated. Used as a value for {@link Populate#value()}.
+     *
+     * @author Guus Lieben
+     * @since 0.5.0
+     */
+    enum Type {
+        /**
+         * <pre>{@code
+         * @Inject
+         * private MyComponent component;
+         * }</pre>
+         */
+        FIELDS,
+        /**
+         * <pre>{@code
+         * @Inject
+         * public void setComponent(MyComponent component) {
+         *    this.component = component;
+         *    // ...
+         * }
+         * }</pre>
+         */
+        EXECUTABLES,
+    }
 }

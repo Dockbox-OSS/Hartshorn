@@ -48,7 +48,7 @@ public interface AnnotationLookup {
      * @param <A> The type of the annotation
      * @throws DuplicateAnnotationCompositeException If there are multiple composite annotations matching the given type
      */
-    <A extends Annotation> A find(final AnnotatedElement element, final Class<A> annotationType) throws DuplicateAnnotationCompositeException;
+    <A extends Annotation> A find(AnnotatedElement element, Class<A> annotationType) throws DuplicateAnnotationCompositeException;
 
     /**
      * Returns all (composite) annotations of the given type on the given element, or an empty list if
@@ -73,7 +73,7 @@ public interface AnnotationLookup {
      * @param annotation The annotation to get the backing annotation of
      * @return The backing annotation of the given annotation
      */
-    Annotation unproxy(final Annotation annotation);
+    Annotation unproxy(Annotation annotation);
 
     /**
      * Returns the linear hierarchy of the given annotation. This is the list of annotations which the

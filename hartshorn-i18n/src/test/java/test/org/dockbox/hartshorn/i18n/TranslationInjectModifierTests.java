@@ -36,16 +36,16 @@ public class TranslationInjectModifierTests {
     @Test
     @TestComponents(components = ITestResources.class)
     public void testResourceServiceIsProxied() {
-        final ITestResources resources = this.applicationContext.get(ITestResources.class);
-        final boolean proxy = this.applicationContext.environment().isProxy(resources);
+        ITestResources resources = this.applicationContext.get(ITestResources.class);
+        boolean proxy = this.applicationContext.environment().proxyOrchestrator().isProxy(resources);
         Assertions.assertTrue(proxy);
     }
 
     @Test
     @TestComponents(components = ITestResources.class)
     public void testResourceServiceReturnsValidResourceKey() {
-        final ITestResources resources = this.applicationContext.get(ITestResources.class);
-        final Message testEntry = resources.testEntry();
+        ITestResources resources = this.applicationContext.get(ITestResources.class);
+        Message testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("resource.test.entry", testEntry.key());
@@ -54,8 +54,8 @@ public class TranslationInjectModifierTests {
     @Test
     @TestComponents(components = ITestResources.class)
     public void testResourceServiceReturnsValidResourceValue() {
-        final ITestResources resources = this.applicationContext.get(ITestResources.class);
-        final Message testEntry = resources.testEntry();
+        ITestResources resources = this.applicationContext.get(ITestResources.class);
+        Message testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello world!", testEntry.string());
@@ -64,8 +64,8 @@ public class TranslationInjectModifierTests {
     @Test
     @TestComponents(components = ITestResources.class)
     public void testResourceServiceFormatsParamResource() {
-        final ITestResources resources = this.applicationContext.get(ITestResources.class);
-        final Message testEntry = resources.parameterTestEntry("world");
+        ITestResources resources = this.applicationContext.get(ITestResources.class);
+        Message testEntry = resources.parameterTestEntry("world");
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello world!", testEntry.string());
@@ -74,8 +74,8 @@ public class TranslationInjectModifierTests {
     @Test
     @TestComponents(components = AbstractTestResources.class)
     void testAbstractServiceAbstractMethodIsProxied() {
-        final AbstractTestResources resources = this.applicationContext.get(AbstractTestResources.class);
-        final Message testEntry = resources.abstractEntry();
+        AbstractTestResources resources = this.applicationContext.get(AbstractTestResources.class);
+        Message testEntry = resources.abstractEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello abstract world!", testEntry.string());
@@ -84,8 +84,8 @@ public class TranslationInjectModifierTests {
     @Test
     @TestComponents(components = AbstractTestResources.class)
     void testAbstractServiceConcreteMethodIsProxied() {
-        final AbstractTestResources resources = this.applicationContext.get(AbstractTestResources.class);
-        final Message testEntry = resources.concreteEntry();
+        AbstractTestResources resources = this.applicationContext.get(AbstractTestResources.class);
+        Message testEntry = resources.concreteEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello concrete world!", testEntry.string());
@@ -94,8 +94,8 @@ public class TranslationInjectModifierTests {
     @Test
     @TestComponents(components = TestResources.class)
     void testConcreteServiceMethodIsProxied() {
-        final TestResources resources = this.applicationContext.get(TestResources.class);
-        final Message testEntry = resources.testEntry();
+        TestResources resources = this.applicationContext.get(TestResources.class);
+        Message testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello world!", testEntry.string());

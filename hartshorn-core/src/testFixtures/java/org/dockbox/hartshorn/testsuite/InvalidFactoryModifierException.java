@@ -20,11 +20,11 @@ import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class InvalidFactoryModifierException extends ApplicationRuntimeException {
-    public InvalidFactoryModifierException(final String what, final Class<?> actual) {
+    public InvalidFactoryModifierException(String what, Class<?> actual) {
         super("Invalid " + what + " for @HartshornFactory modifier, expected " + ApplicationBuilder.class.getSimpleName() + " but got " + actual.getSimpleName());
     }
 
-    public InvalidFactoryModifierException(final String message) {
+    public InvalidFactoryModifierException(String message) {
         super(message);
     }
 }

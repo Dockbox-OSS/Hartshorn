@@ -22,15 +22,15 @@ import java.lang.reflect.Method;
 
 public class ProxyMethodBindingException extends RuntimeException {
 
-    public ProxyMethodBindingException(final MethodProxyContext<?> ctx) {
+    public ProxyMethodBindingException(MethodProxyContext<?> ctx) {
         this(ctx.method());
     }
 
-    public ProxyMethodBindingException(final MethodView<?, ?> ctx) {
+    public ProxyMethodBindingException(MethodView<?, ?> ctx) {
         super("Could not bind proxy to " + ctx.name() + " because preconditions failed");
     }
 
-    public ProxyMethodBindingException(final Method method) {
+    public ProxyMethodBindingException(Method method) {
         super("Could not bind proxy to " + method.getName() + " because preconditions failed");
     }
 

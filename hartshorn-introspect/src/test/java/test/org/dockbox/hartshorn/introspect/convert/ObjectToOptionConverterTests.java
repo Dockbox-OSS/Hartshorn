@@ -27,9 +27,9 @@ public class ObjectToOptionConverterTests {
 
     @Test
     void testNonNullElementConvertsToPresentOption() {
-        final String element = "test";
-        final Converter<Object, Option<?>> converter = new ObjectToOptionConverter();
-        final Object converted = converter.convert(element);
+        String element = "test";
+        Converter<Object, Option<?>> converter = new ObjectToOptionConverter();
+        Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Option);
         Assertions.assertTrue(((Option) converted).present());
@@ -38,9 +38,9 @@ public class ObjectToOptionConverterTests {
 
     @Test
     void testNullElementConvertsToEmptyOption() {
-        final Object element = null;
-        final Converter<Object, Option<?>> converter = new ObjectToOptionConverter();
-        final Object converted = converter.convert(element);
+        Object element = null;
+        Converter<Object, Option<?>> converter = new ObjectToOptionConverter();
+        Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Option);
         Assertions.assertFalse(((Option) converted).present());

@@ -55,25 +55,25 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
     private final ProxyManager<T> manager;
     private final ProxyMethodInterceptor<T> interceptor;
 
-    public ReflectionProxyMethodInvoker(final ProxyMethodInterceptor<T> interceptor) {
-        this.introspector = interceptor.manager().applicationProxier().introspector();
+    public ReflectionProxyMethodInvoker(ProxyMethodInterceptor<T> interceptor) {
+        this.introspector = interceptor.manager().orchestrator().introspector();
         this.manager = interceptor.manager();
         this.interceptor = interceptor;
     }
 
     @Override
-    public <R> R invokeInterceptor(final T self, final MethodView<T, R> source, final Object[] args, final MethodInterceptor<T, R> interceptor, final CustomInvocation<R> customInvocation) throws Throwable {
-        final MethodInterceptorContext<T, R> context = new MethodInterceptorContext<>(source, args, self, customInvocation);
+    public <R> R invokeInterceptor(T self, MethodView<T, R> source, Object[] args, MethodInterceptor<T, R> interceptor, CustomInvocation<R> customInvocation) throws Throwable {
+        MethodInterceptorContext<T, R> context = new MethodInterceptorContext<>(source, args, self, customInvocation);
         return interceptor.intercept(context);
     }
 
     @Override
-    public Object invokeDelegate(final T self, final Invokable target, final Object[] args) {
+    public Object invokeDelegate(T self, Invokable target, Object[] args) {
         return this.invokeAccessible(self, target, args, (method, instance, interceptorArgs) -> method.invoke(this.manager.delegate().get(), interceptorArgs));
     }
 
     @Override
-    public Object invokeReal(final T self, final Invokable source, final Invokable target, final Object[] args) throws Throwable {
+    public Object invokeReal(T self, Invokable source, Invokable target, Object[] args) throws Throwable {
         if (target != null) {
             return this.invokeTarget(self, source, target, args);
         }
@@ -91,7 +91,7 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
      * @param args the arguments that are passed to the method
      * @return the result of the method invocation
      */
-    protected Object invokeSelf(final T self, final Invokable target, final Object[] args) {
+    protected Object invokeSelf(T self, Invokable target, Object[] args) {
         return this.invokeAccessible(self, target, args, (method, instance, interceptorArgs) -> method.invoke(self, interceptorArgs));
     }
 
@@ -106,8 +106,8 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
      * @return the result of the method invocation
      * @throws Throwable if the method invocation fails
      */
-    protected Object invokeDefault(final T self, final Invokable source, final Object[] args, final Class<T> declaringType) throws Throwable {
-        final MethodHandle handle;
+    protected Object invokeDefault(T self, Invokable source, Object[] args, Class<T> declaringType) throws Throwable {
+        MethodHandle handle;
         if (METHOD_HANDLE_CACHE.containsKey(source)) {
             handle = METHOD_HANDLE_CACHE.get(source);
         }
@@ -136,24 +136,32 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
      * @return the result of the method invocation
      * @throws Throwable if the method invocation fails
      */
-    protected Object invokeTarget(final T self, final Invokable source, final Invokable target, final Object[] args) throws Throwable {
-        final Class<T> targetClass = this.manager.targetClass();
+    protected Object invokeTarget(T self, Invokable source, Invokable target, Object[] args) throws Throwable {
+        Class<T> targetClass = this.manager.targetClass();
 
         try {
             // If the proxy associated with this handler has a delegate, use it.
-            if (this.manager.delegate().present()) return this.invokeDelegate(this.manager.delegate().get(), target, args);
+            if (this.manager.delegate().present()) {
+                return this.invokeDelegate(this.manager.delegate().get(), target, args);
+            }
 
                 // If the method is default inside an interface, we cannot invoke it directly using a proxy instance. Instead, we
                 // need to look up the method on the class and invoke it through the method handle directly.
-            else if (source.isDefault()) return this.invokeDefault(self, source, args, targetClass);
+            else if (source.isDefault()) {
+                return this.invokeDefault(self, source, args, targetClass);
+            }
 
                 // If the current target instance (self) is not a proxy, we can invoke the method directly using reflections.
-            else if (!(self instanceof Proxy || Proxy.isProxyClass(self.getClass()))) return this.invokeSelf(self, target, args);
+            else if (!(self instanceof Proxy || Proxy.isProxyClass(self.getClass()))) {
+                return this.invokeSelf(self, target, args);
+            }
 
                 // If none of the above conditions are met, we have no way to handle the method.
-            else return this.invokeStub(self, source, target, args);
+            else {
+                return this.invokeStub(self, source, target, args);
+            }
         }
-        catch (final InvocationTargetException e) {
+        catch (InvocationTargetException e) {
             throw e.getCause();
         }
     }
@@ -169,9 +177,9 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
      * @return the result of the method invocation
      * @throws Throwable if the method invocation fails
      */
-    protected Object invokeStub(final T self, final Invokable source, final Invokable target, final Object[] args) throws Throwable {
-        final MethodStub<T> stub = this.manager.advisor().resolver().defaultStub().get();
-        final MethodStubContext<T> stubContext = new MethodStubContext<>(self, source, target, this.interceptor, args);
+    protected Object invokeStub(T self, Invokable source, Invokable target, Object[] args) throws Throwable {
+        MethodStub<T> stub = this.manager.advisor().resolver().defaultStub().get();
+        MethodStubContext<T> stubContext = new MethodStubContext<>(self, source, target, this.interceptor, args);
         return stub.invoke(stubContext);
     }
 
@@ -187,7 +195,7 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
      * @param function the function that is used to invoke the method
      * @return the result of the method invocation
      */
-    protected Object invokeAccessible(final T self, final Invokable target, final Object[] args, final MethodInvoker<Object, T> function) {
+    protected Object invokeAccessible(T self, Invokable target, Object[] args, MethodInvoker<Object, T> function) {
         target.setAccessible(true);
 
         Object result;
@@ -199,7 +207,7 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
             try {
                 result = target.invoke(self, args);
             }
-            catch (final Throwable e) {
+            catch (Throwable e) {
                 result = this.introspector.introspect(target.returnType()).defaultOrNull();
             }
         }

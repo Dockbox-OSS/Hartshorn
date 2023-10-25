@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn;
 
-import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.FileSystemProvider;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
@@ -27,8 +27,8 @@ import java.nio.file.Path;
 public class FSProviderTests {
 
     @InjectTest
-    void testApplicationPathIsAbsolute(final ApplicationFSProvider fsProvider) {
-        final Path path = fsProvider.applicationPath();
+    void testApplicationPathIsAbsolute(FileSystemProvider fsProvider) {
+        Path path = fsProvider.applicationPath();
 
         Assertions.assertNotNull(path);
         Assertions.assertTrue(path.isAbsolute());

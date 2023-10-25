@@ -22,7 +22,7 @@ public class ModifierElement {
 
     private List<String> names;
 
-    public ModifierElement(final List<String> names) {
+    public ModifierElement(List<String> names) {
         this.names = names;
     }
 
@@ -33,7 +33,7 @@ public class ModifierElement {
         return this.names;
     }
 
-    public ModifierElement names(final List<String> names) {
+    public ModifierElement names(List<String> names) {
         this.names = names;
         return this;
     }

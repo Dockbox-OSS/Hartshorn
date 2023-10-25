@@ -19,15 +19,15 @@ package org.dockbox.hartshorn.component;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class ComponentFinalizationException extends ApplicationRuntimeException {
-    public ComponentFinalizationException(final String message) {
+    public ComponentFinalizationException(String message) {
         super(message);
     }
 
-    public ComponentFinalizationException(final String message, final Throwable cause) {
+    public ComponentFinalizationException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ComponentFinalizationException(final Throwable cause) {
+    public ComponentFinalizationException(Throwable cause) {
         super(cause);
     }
 }

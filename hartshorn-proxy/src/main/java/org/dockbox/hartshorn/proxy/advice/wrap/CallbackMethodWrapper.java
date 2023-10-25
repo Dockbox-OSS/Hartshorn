@@ -30,24 +30,30 @@ public class CallbackMethodWrapper<T> implements MethodWrapper<T> {
     private final ProxyCallback<T> after;
     private final ProxyCallback<T> afterThrowing;
 
-    public CallbackMethodWrapper(final ProxyCallback<T> before, final ProxyCallback<T> after, final ProxyCallback<T> afterThrowing) {
+    public CallbackMethodWrapper(ProxyCallback<T> before, ProxyCallback<T> after, ProxyCallback<T> afterThrowing) {
         this.before = before;
         this.after = after;
         this.afterThrowing = afterThrowing;
     }
 
     @Override
-    public void acceptBefore(final ProxyCallbackContext<T> context) {
-        if (this.before != null) this.before.accept(context);
+    public void acceptBefore(ProxyCallbackContext<T> context) {
+        if (this.before != null) {
+            this.before.accept(context);
+        }
     }
 
     @Override
-    public void acceptAfter(final ProxyCallbackContext<T> context) {
-        if (this.after != null) this.after.accept(context);
+    public void acceptAfter(ProxyCallbackContext<T> context) {
+        if (this.after != null) {
+            this.after.accept(context);
+        }
     }
 
     @Override
-    public void acceptError(final ProxyCallbackContext<T> context) {
-        if (this.afterThrowing != null) this.afterThrowing.accept(context);
+    public void acceptError(ProxyCallbackContext<T> context) {
+        if (this.afterThrowing != null) {
+            this.afterThrowing.accept(context);
+        }
     }
 }

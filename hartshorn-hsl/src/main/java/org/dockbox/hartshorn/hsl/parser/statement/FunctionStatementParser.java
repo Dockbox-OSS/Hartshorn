@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.hsl.parser.statement;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.ExtensionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Function;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
@@ -37,11 +36,11 @@ import java.util.Set;
 public class FunctionStatementParser extends AbstractBodyStatementParser<Function> {
 
     @Override
-    public Option<Function> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<Function> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.check(TokenType.PREFIX, TokenType.INFIX, TokenType.FUNCTION)) {
-            final Token functionType = parser.advance();
-            final Token functionToken = functionType.type() == TokenType.FUNCTION ? functionType : parser.advance();
-            final Token name = validator.expect(TokenType.IDENTIFIER, "function name");
+            Token functionType = parser.advance();
+            Token functionToken = functionType.type() == TokenType.FUNCTION ? functionType : parser.advance();
+            Token name = validator.expect(TokenType.IDENTIFIER, "function name");
 
             int expectedNumberOrArguments = Integer.MAX_VALUE;
 
@@ -54,47 +53,34 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
                 expectedNumberOrArguments = 2;
             }
 
-            Token extensionName = null;
+            List<Parameter> parameters = this.functionParameters(parser, validator, "function name", expectedNumberOrArguments, functionToken);
+            BlockStatement body = this.blockStatement("function", name, parser, validator);
 
-            if (parser.peek().type() == TokenType.COLON) {
-                validator.expectAfter(TokenType.COLON, "class name");
-                extensionName = validator.expect(TokenType.IDENTIFIER, "extension name");
-            }
-
-            final List<Parameter> parameters = this.functionParameters(parser, validator, "function name", expectedNumberOrArguments, functionToken);
-            final BlockStatement body = this.blockStatement("function", name, parser, validator);
-
-            if (extensionName != null) {
-                final FunctionStatement function = new FunctionStatement(functionType, extensionName, parameters, body);
-                return Option.of(new ExtensionStatement(name, function));
-            }
-            else {
-                return Option.of(new FunctionStatement(functionType, name, parameters, body));
-            }
+            return Option.of(new FunctionStatement(functionType, name, parameters, body));
         }
         return Option.empty();
     }
 
-    private FunctionParserContext functionParserContext(final TokenParser parser) {
-        final Option<FunctionParserContext> context = parser.first(FunctionParserContext.class);
+    private FunctionParserContext functionParserContext(TokenParser parser) {
+        Option<FunctionParserContext> context = parser.first(FunctionParserContext.class);
         // Compute locally, to avoid auto-creation of this context
         return context.orCompute(() -> {
-            final FunctionParserContext newContext = new FunctionParserContext();
+            FunctionParserContext newContext = new FunctionParserContext();
             parser.add(newContext);
             return newContext;
         }).get();
     }
 
-    private List<Parameter> functionParameters(final TokenParser parser, final TokenStepValidator validator, final String functionName, final int expectedNumberOrArguments, final Token token) {
+    private List<Parameter> functionParameters(TokenParser parser, TokenStepValidator validator, String functionName, int expectedNumberOrArguments, Token token) {
         validator.expectAfter(TokenType.LEFT_PAREN, functionName);
-        final List<Parameter> parameters = new ArrayList<>();
+        List<Parameter> parameters = new ArrayList<>();
         if (!parser.check(TokenType.RIGHT_PAREN)) {
             do {
                 if (parameters.size() >= expectedNumberOrArguments) {
-                    final String message = "Cannot have more than " + expectedNumberOrArguments + " parameters" + (token == null ? "" : " for " + token.type() + " functions");
+                    String message = "Cannot have more than " + expectedNumberOrArguments + " parameters" + (token == null ? "" : " for " + token.type() + " functions");
                     throw new ScriptEvaluationError(message, Phase.PARSING, parser.peek());
                 }
-                final Token parameterName = validator.expect(TokenType.IDENTIFIER, "parameter name");
+                Token parameterName = validator.expect(TokenType.IDENTIFIER, "parameter name");
                 parameters.add(new Parameter(parameterName));
             }
             while (parser.match(TokenType.COMMA));
@@ -106,6 +92,6 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
 
     @Override
     public Set<Class<? extends Function>> types() {
-        return Set.of(ExtensionStatement.class, FunctionStatement.class, Function.class);
+        return Set.of(FunctionStatement.class, Function.class);
     }
 }

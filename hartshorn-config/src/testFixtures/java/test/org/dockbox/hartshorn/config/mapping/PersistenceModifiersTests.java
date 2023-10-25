@@ -35,9 +35,9 @@ public abstract class PersistenceModifiersTests {
 
     @Test
     void testSkipEmptyKeepsNonEmpty() {
-        final ObjectMapper mapper = this.objectMapper().skipBehavior(JsonInclusionRule.SKIP_EMPTY);
-        final ModifierElement element = new ModifierElement(List.of("sample", "other"));
-        final Option<String> out = mapper.write(element);
+        ObjectMapper mapper = this.objectMapper().skipBehavior(JsonInclusionRule.SKIP_EMPTY);
+        ModifierElement element = new ModifierElement(List.of("sample", "other"));
+        Option<String> out = mapper.write(element);
 
         Assertions.assertTrue(out.present());
         Assertions.assertEquals("{\"names\":[\"sample\",\"other\"]}", StringUtilities.strip(out.get()));
@@ -45,9 +45,9 @@ public abstract class PersistenceModifiersTests {
 
     @Test
     void testSkipEmptySkipsEmpty() {
-        final ObjectMapper mapper = this.objectMapper().skipBehavior(JsonInclusionRule.SKIP_EMPTY);
-        final ModifierElement element = new ModifierElement(List.of());
-        final Option<String> out = mapper.write(element);
+        ObjectMapper mapper = this.objectMapper().skipBehavior(JsonInclusionRule.SKIP_EMPTY);
+        ModifierElement element = new ModifierElement(List.of());
+        Option<String> out = mapper.write(element);
 
         Assertions.assertTrue(out.present());
         Assertions.assertEquals("{}", StringUtilities.strip(out.get()));

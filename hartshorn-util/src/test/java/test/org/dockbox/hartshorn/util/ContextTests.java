@@ -31,104 +31,104 @@ public class ContextTests {
 
     @Test
     void testUnnamedContextFirst() {
-        final Context context = new TestContext();
-        final Context child = new TestContext();
+        Context context = new TestContext();
+        Context child = new TestContext();
 
         context.add(child);
 
-        final ContextIdentity<TestContext> key = new SimpleContextIdentity<>(TestContext.class);
-        final Option<TestContext> first = context.first(key);
+        ContextIdentity<TestContext> key = new SimpleContextIdentity<>(TestContext.class);
+        Option<TestContext> first = context.first(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
 
     @Test
     void testUnnamedContextAll() {
-        final Context context = new TestContext();
-        final Context child = new TestContext();
+        Context context = new TestContext();
+        Context child = new TestContext();
 
         context.add(child);
 
-        final ContextIdentity<TestContext> key = new SimpleContextIdentity<>(TestContext.class);
-        final List<TestContext> all = context.all(key);
+        ContextIdentity<TestContext> key = new SimpleContextIdentity<>(TestContext.class);
+        List<TestContext> all = context.all(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }
 
     @Test
     void testNamedContextFirstByName() {
-        final Context context = new TestContext();
-        final NamedTestContext named = new NamedTestContext();
+        Context context = new TestContext();
+        NamedTestContext named = new NamedTestContext();
 
         context.add(named);
 
-        final ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
-        final Option<Context> first = context.first(key);
+        ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
+        Option<Context> first = context.first(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
     }
 
     @Test
     void testNamedContextFirstByNameAndType() {
-        final Context context = new TestContext();
-        final NamedTestContext named = new NamedTestContext();
+        Context context = new TestContext();
+        NamedTestContext named = new NamedTestContext();
 
         context.add(named);
 
-        final ContextIdentity<NamedTestContext> key = new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
-        final Option<NamedTestContext> first = context.first(key);
+        ContextIdentity<NamedTestContext> key = new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
+        Option<NamedTestContext> first = context.first(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
     }
 
     @Test
     void testManuallyNamedContextFirstByName() {
-        final Context context = new TestContext();
-        final Context child = new TestContext();
+        Context context = new TestContext();
+        Context child = new TestContext();
 
         context.add(NamedTestContext.NAME, child);
 
-        final ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
-        final Option<Context> first = context.first(key);
+        ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
+        Option<Context> first = context.first(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
 
     @Test
     void testNamedContextAllByName() {
-        final Context context = new TestContext();
-        final NamedTestContext named = new NamedTestContext();
+        Context context = new TestContext();
+        NamedTestContext named = new NamedTestContext();
 
         context.add(named);
 
-        final ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
-        final List<Context> all = context.all(key);
+        ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
+        List<Context> all = context.all(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }
 
     @Test
     void testNamedContextAllByNameAndType() {
-        final Context context = new TestContext();
-        final NamedTestContext named = new NamedTestContext();
+        Context context = new TestContext();
+        NamedTestContext named = new NamedTestContext();
 
         context.add(named);
 
-        final ContextIdentity<NamedTestContext> key = new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
-        final List<NamedTestContext> all = context.all(key);
+        ContextIdentity<NamedTestContext> key = new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
+        List<NamedTestContext> all = context.all(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }
 
     @Test
     void testManuallyNamedContextAllByName() {
-        final Context context = new TestContext();
-        final Context child = new TestContext();
+        Context context = new TestContext();
+        Context child = new TestContext();
 
         context.add(NamedTestContext.NAME, child);
 
-        final ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
-        final List<Context> all = context.all(key);
+        ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
+        List<Context> all = context.all(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }
@@ -137,7 +137,7 @@ public class ContextTests {
 
     public static class NamedTestContext extends DefaultNamedContext {
 
-        static final String NAME = "JUnitContext";
+        static String NAME = "JUnitContext";
 
         NamedTestContext() {
             super(NAME);

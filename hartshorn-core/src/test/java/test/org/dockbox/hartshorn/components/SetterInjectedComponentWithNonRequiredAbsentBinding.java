@@ -27,7 +27,7 @@ public class SetterInjectedComponentWithNonRequiredAbsentBinding {
     private NotImplemented object;
 
     @Inject
-    public void setObject(final NotImplemented object) {
+    public void setObject(NotImplemented object) {
         this.object = object;
     }
 

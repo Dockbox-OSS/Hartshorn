@@ -33,7 +33,7 @@ public interface ProxyValidator {
      * Adds a constraint to the validator.
      * @param constraint the constraint to add
      */
-    void add(final ProxyConstraint constraint);
+    void add(ProxyConstraint constraint);
 
     /**
      * Returns the constraints that are used to validate the type.
@@ -49,5 +49,5 @@ public interface ProxyValidator {
      * @param type the type to validate
      * @return one or more violations if the type is invalid, an empty set otherwise
      */
-    Set<ProxyConstraintViolation> validate(final TypeView<?> type);
+    Set<ProxyConstraintViolation> validate(TypeView<?> type);
 }

@@ -40,11 +40,11 @@ public class CollectionFactory {
     private final Introspector introspector;
     private final Map<Class<?>, Supplier<Collection<?>>> defaults = new HashMap<>();
 
-    public CollectionFactory(final Introspector introspector) {
+    public CollectionFactory(Introspector introspector) {
         this.introspector = introspector;
     }
 
-    public <T extends Collection<?>> CollectionFactory withDefault(final Class<T> type, final Supplier<T> supplier) {
+    public <T extends Collection<?>> CollectionFactory withDefault(Class<T> type, Supplier<T> supplier) {
         //noinspection unchecked
         this.defaults.put(type, (Supplier<Collection<?>>) supplier);
         return this;
@@ -62,13 +62,13 @@ public class CollectionFactory {
     }
 
     @SuppressWarnings("rawtypes")
-    public <O extends Collection> O createCollection(final Class<O> targetType, final Class<?> elementType, final int length) {
-        final O collection = this.maybeCreateCollectionFromDefaults(targetType, elementType);
+    public <O extends Collection> O createCollection(Class<O> targetType, Class<?> elementType, int length) {
+        O collection = this.maybeCreateCollectionFromDefaults(targetType, elementType);
         if (collection != null) {
             return collection;
         }
 
-        final Option<ConstructorView<O>> defaultConstructor = this.introspector.introspect(targetType).constructors().defaultConstructor();
+        Option<ConstructorView<O>> defaultConstructor = this.introspector.introspect(targetType).constructors().defaultConstructor();
         if (defaultConstructor.present()) {
             return defaultConstructor.get().create().orNull();
         }
@@ -78,8 +78,8 @@ public class CollectionFactory {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private <O extends Collection> O maybeCreateCollectionFromDefaults(final Class<O> targetType, final Class<?> elementType) {
-        final Supplier<Collection<?>> supplier = this.defaults.get(targetType);
+    private <O extends Collection> O maybeCreateCollectionFromDefaults(Class<O> targetType, Class<?> elementType) {
+        Supplier<Collection<?>> supplier = this.defaults.get(targetType);
         if (supplier != null) {
             return (O) supplier.get();
         }

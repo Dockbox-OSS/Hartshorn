@@ -31,7 +31,7 @@ public enum FileFormats implements FileFormat {
     private final DataStorageType type;
     private final String[] aliases;
 
-    FileFormats(final DataStorageType type, final String extension, final String... aliases) {
+    FileFormats(DataStorageType type, String extension, String... aliases) {
         this.extension = extension;
         this.type = type;
         this.aliases = aliases;
@@ -47,17 +47,17 @@ public enum FileFormats implements FileFormat {
         return this.type;
     }
 
-    public static FileFormats lookup(final String source) {
-        final int i = source.lastIndexOf('.');
+    public static FileFormats lookup(String source) {
+        int i = source.lastIndexOf('.');
         if (i == -1) {
             return null;
         }
-        final String extension = source.substring(i + 1);
-        for (final FileFormats format : FileFormats.values()) {
+        String extension = source.substring(i + 1);
+        for (FileFormats format : FileFormats.values()) {
             if (format.extension.equalsIgnoreCase(extension)) {
                 return format;
             } else {
-                for (final String alias : format.aliases) {
+                for (String alias : format.aliases) {
                     if (alias.equalsIgnoreCase(extension)) {
                         return format;
                     }
@@ -79,7 +79,7 @@ public enum FileFormats implements FileFormat {
      *
      * @return The {@link Path} reference to a file
      */
-    public Path asPath(final Path parent, final String file) {
+    public Path asPath(Path parent, String file) {
         return parent.resolve(this.asFileName(file));
     }
 
@@ -92,7 +92,7 @@ public enum FileFormats implements FileFormat {
      * @return The generated filename with extension
      */
     @Override
-    public String asFileName(final String file) {
+    public String asFileName(String file) {
         return file + '.' + this.extension;
     }
 }

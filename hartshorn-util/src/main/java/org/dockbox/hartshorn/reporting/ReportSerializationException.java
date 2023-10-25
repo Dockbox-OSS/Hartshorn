@@ -20,15 +20,15 @@ import org.dockbox.hartshorn.util.ApplicationException;
 
 public class ReportSerializationException extends ApplicationException {
 
-    public ReportSerializationException(final String message) {
+    public ReportSerializationException(String message) {
         super(message);
     }
 
-    public ReportSerializationException(final String message, final Throwable cause) {
+    public ReportSerializationException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ReportSerializationException(final Throwable cause) {
+    public ReportSerializationException(Throwable cause) {
         super(cause);
     }
 }

@@ -43,7 +43,7 @@ import org.dockbox.hartshorn.component.ComponentLocator;
 public abstract non-sealed class ComponentPreProcessor implements ComponentProcessor {
 
     @Override
-    public <T> T process(final ComponentProcessingContext<T> processingContext) {
+    public <T> T process(ComponentProcessingContext<T> processingContext) {
         this.process(processingContext.applicationContext(), processingContext);
         return processingContext.instance();
     }

@@ -27,11 +27,11 @@ public class FunctionParserContext extends DefaultProvisionContext {
     private final Set<String> prefixFunctions = new HashSet<>();
     private final Set<String> infixFunctions = new HashSet<>();
 
-    public void addPrefixFunction(final String name) {
+    public void addPrefixFunction(String name) {
         this.prefixFunctions.add(name);
     }
 
-    public void addInfixFunction(final String name) {
+    public void addInfixFunction(String name) {
         this.infixFunctions.add(name);
     }
 

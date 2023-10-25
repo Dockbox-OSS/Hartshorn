@@ -16,36 +16,54 @@
 
 package org.dockbox.hartshorn.application.environment;
 
-import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.logging.ApplicationLogger;
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+import org.dockbox.hartshorn.application.ExceptionHandler;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.logging.ApplicationLogger;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
 /**
  * The environment of an active application. The environment can only be responsible for one {@link ApplicationContext},
  * and will never be bound to multiple contexts at the same time.
  */
-public interface ApplicationEnvironment extends
-        Introspector,
-        ContextCarrier,
-        ApplicationLogger,
-        ApplicationProxier,
-        ApplicationFSProvider,
-        ExceptionHandler,
-        AnnotationLookup,
-        ClasspathResourceLocator
-{
+public interface ApplicationEnvironment extends ContextCarrier, ApplicationLogger, ExceptionHandler {
+
+    /**
+     * Gets the {@link ProxyOrchestrator} for the current environment. The orchestrator is responsible for all proxy
+     * operations within the environment. Proxies may be created outside of the orchestrator, and depending on the
+     * supported {@link org.dockbox.hartshorn.util.introspect.ProxyLookup proxy lookups} the orchestrator may or may not
+     * support these external proxies.
+     *
+     * @return The proxy orchestrator
+     */
+    ProxyOrchestrator proxyOrchestrator();
+
+    /**
+     * Gets the {@link FileSystemProvider file system provider} for the current environment. The provider is
+     * responsible for all file system operations within the environment. This may or may not be the same as the binding
+     * for {@link FileSystemProvider}, but is typically the same.
+     *
+     * @return The file system provider
+     */
+    FileSystemProvider fileSystem();
+
+    /**
+     * Gets the {@link ClasspathResourceLocator} for the current environment. The locator is responsible for locating
+     * resources on the classpath, and is typically used for loading configuration files and similar bundled resources.
+     * This may or may not be the same as the binding for {@link ClasspathResourceLocator}, but is typically the same.
+     *
+     * @return The classpath resource locator
+     */
+    ClasspathResourceLocator classpath();
 
     /**
      * Gets the primary {@link Introspector} for this {@link ApplicationEnvironment}. The introspector is responsible
@@ -53,7 +71,6 @@ public interface ApplicationEnvironment extends
      * {@link Introspector}, but is typically the same.
      * @return The primary {@link Introspector}
      */
-    @Override
     Introspector introspector();
 
     /**
@@ -63,7 +80,7 @@ public interface ApplicationEnvironment extends
      *
      * @return {@code true} if the environment is a CI environment, {@code false} otherwise.
      */
-    boolean isCI();
+    boolean isBuildEnvironment();
 
     /**
      * Indicates whether the current environment is running in batch mode. Batch mode is typically used for
@@ -80,7 +97,7 @@ public interface ApplicationEnvironment extends
      * @param annotation The annotation expected to be present on one or more types
      * @return The annotated types
      */
-    <A extends Annotation> Collection<TypeView<?>> types(final Class<A> annotation);
+    <A extends Annotation> Collection<TypeView<?>> types(Class<A> annotation);
 
     /**
      * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist for the given type,
@@ -90,7 +107,7 @@ public interface ApplicationEnvironment extends
      * @param <T> The type of the parent
      * @return The list of sub-types, or an empty list
      */
-    <T> Collection<TypeView<? extends T>> children(final Class<T> parent);
+    <T> Collection<TypeView<? extends T>> children(Class<T> parent);
 
     /**
      * Gets annotations of the given type, which are decorated with the given annotation. For example, given the
@@ -111,7 +128,7 @@ public interface ApplicationEnvironment extends
      * @param annotation The annotation expected to be present on zero or more annotations
      * @return The annotated annotations
      */
-    List<Annotation> annotationsWith(final TypeView<?> type, final Class<? extends Annotation> annotation);
+    List<Annotation> annotationsWith(TypeView<?> type, Class<? extends Annotation> annotation);
 
     /**
      * Gets annotations of the given type, which are decorated with the given annotation. For example, given the
@@ -132,7 +149,7 @@ public interface ApplicationEnvironment extends
      * @param annotation The annotation expected to be present on zero or more annotations
      * @return The annotated annotations
      */
-    List<Annotation> annotationsWith(final Class<?> type, final Class<? extends Annotation> annotation);
+    List<Annotation> annotationsWith(Class<?> type, Class<? extends Annotation> annotation);
 
     /**
      * Indicates whether the given type should be treated as a singleton. How this is determined is up to the

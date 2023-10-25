@@ -32,12 +32,12 @@ public class ObjectToVoidConverter implements GenericConverter, ConditionalConve
     }
 
     @Override
-    public boolean canConvert(final Object source, final Class<?> targetType) {
+    public boolean canConvert(Object source, Class<?> targetType) {
         return targetType == Void.class || targetType == void.class;
     }
 
     @Override
-    public @Nullable <I, O> Object convert(@Nullable final Object source, @NonNull final Class<I> sourceType, @NonNull final Class<O> targetType) {
+    public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
         // Void should never be instantiated, so we can safely return null
         return null;
     }

@@ -28,7 +28,7 @@ public class DependencyPresenceValidationVisitor extends BreadthFirstGraphVisito
     private final Set<GraphNode<DependencyContext<?>>> missingDependencies = new HashSet<>();
     private final Set<GraphNode<DependencyContext<?>>> visitedDependencies;
 
-    public DependencyPresenceValidationVisitor(final Set<GraphNode<DependencyContext<?>>> visitedDependencies) {
+    public DependencyPresenceValidationVisitor(Set<GraphNode<DependencyContext<?>>> visitedDependencies) {
         this.visitedDependencies = visitedDependencies;
     }
 
@@ -37,7 +37,7 @@ public class DependencyPresenceValidationVisitor extends BreadthFirstGraphVisito
     }
 
     @Override
-    protected boolean visit(final GraphNode<DependencyContext<?>> node) throws GraphException {
+    protected boolean visit(GraphNode<DependencyContext<?>> node) throws GraphException {
         if (!this.visitedDependencies.contains(node)) {
             this.missingDependencies.add(node);
         }

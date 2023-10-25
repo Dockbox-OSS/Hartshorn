@@ -24,7 +24,7 @@ public class ModuleStatement extends Statement implements NamedNode {
 
     private final Token name;
 
-    public ModuleStatement(final Token name) {
+    public ModuleStatement(Token name) {
         super(name);
         this.name = name;
     }
@@ -35,7 +35,7 @@ public class ModuleStatement extends Statement implements NamedNode {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

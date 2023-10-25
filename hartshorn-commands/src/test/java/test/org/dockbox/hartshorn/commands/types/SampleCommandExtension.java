@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 public class SampleCommandExtension {
 
     @Command(value = "second", arguments = "<name>")
-    public void second(final CommandContext context) {
+    public void second(CommandContext context) {
     }
 
 }

@@ -23,7 +23,7 @@ public class ExpressionStatement extends Statement {
 
     private final Expression expression;
 
-    public ExpressionStatement(final Expression expression) {
+    public ExpressionStatement(Expression expression) {
         super(expression);
         this.expression = expression;
     }
@@ -33,7 +33,7 @@ public class ExpressionStatement extends Statement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

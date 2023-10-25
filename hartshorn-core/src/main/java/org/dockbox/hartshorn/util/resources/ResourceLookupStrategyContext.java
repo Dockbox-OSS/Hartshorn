@@ -26,11 +26,11 @@ public class ResourceLookupStrategyContext extends DefaultProvisionContext {
 
     private final Set<ResourceLookupStrategy> strategies = ConcurrentHashMap.newKeySet();
 
-    public void addLookupStrategy(final ResourceLookupStrategy strategy) {
+    public void addLookupStrategy(ResourceLookupStrategy strategy) {
         this.strategies.add(strategy);
     }
 
-    public void removeLookupStrategy(final ResourceLookupStrategy strategy) {
+    public void removeLookupStrategy(ResourceLookupStrategy strategy) {
         this.strategies.remove(strategy);
     }
 

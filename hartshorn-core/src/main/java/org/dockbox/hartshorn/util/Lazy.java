@@ -25,20 +25,20 @@ public final class Lazy<T> {
     private final ComponentKey<T> type;
     private T value;
 
-    private Lazy(final ApplicationContext applicationContext, final ComponentKey<T> type) {
+    private Lazy(ApplicationContext applicationContext, ComponentKey<T> type) {
         this.applicationContext = applicationContext;
         this.type = type;
     }
 
-    public static <T> Lazy<T> of(final ApplicationContext applicationContext, final Class<T> type) {
+    public static <T> Lazy<T> of(ApplicationContext applicationContext, Class<T> type) {
         return new Lazy<>(applicationContext, ComponentKey.of(type));
     }
 
-    public static <T> Lazy<T> of(final ApplicationContext applicationContext, final ComponentKey<T> type) {
+    public static <T> Lazy<T> of(ApplicationContext applicationContext, ComponentKey<T> type) {
         return new Lazy<>(applicationContext, type);
     }
 
-    public static <T> Lazy<T> ofInstance(final Class<T> type, final T instance) {
+    public static <T> Lazy<T> ofInstance(Class<T> type, T instance) {
         Lazy<T> lazy = of(null, type);
         lazy.value = instance;
         return lazy;

@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.util;
 
+import java.util.UUID;
+
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.UUID;
 
 /**
  * A collection of built-in string type adapters.

@@ -35,97 +35,97 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
     private final StandardDiagnosticsReportCollector collector;
     private final GroupNode group;
 
-    public StandardDiagnosticsPropertyWriter(final String name, final StandardDiagnosticsReportCollector collector, final GroupNode group) {
+    public StandardDiagnosticsPropertyWriter(String name, StandardDiagnosticsReportCollector collector, GroupNode group) {
         this.name = name;
         this.collector = collector;
         this.group = group;
     }
 
     @Override
-    public DiagnosticsReportCollector write(final String value) {
+    public DiagnosticsReportCollector write(String value) {
         this.checkClosed();
         return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final int value) {
+    public DiagnosticsReportCollector write(int value) {
         this.checkClosed();
         return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final long value) {
+    public DiagnosticsReportCollector write(long value) {
         this.checkClosed();
         return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final float value) {
+    public DiagnosticsReportCollector write(float value) {
         this.checkClosed();
         return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final double value) {
+    public DiagnosticsReportCollector write(double value) {
         this.checkClosed();
         return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final boolean value) {
+    public DiagnosticsReportCollector write(boolean value) {
         this.checkClosed();
         return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final Reportable reportable) {
+    public DiagnosticsReportCollector write(Reportable reportable) {
         this.checkClosed();
-        final GroupNode group = new GroupNode(this.name);
+        GroupNode group = new GroupNode(this.name);
         reportable.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
         return this.exit(group);
     }
 
     @Override
-    public DiagnosticsReportCollector write(final String... values) {
+    public DiagnosticsReportCollector write(String... values) {
         this.checkClosed();
         return this.exit(new ArrayNode<>(this.name, values));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final int... values) {
+    public DiagnosticsReportCollector write(int... values) {
         this.checkClosed();
         return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final long... values) {
+    public DiagnosticsReportCollector write(long... values) {
         this.checkClosed();
         return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final float... values) {
+    public DiagnosticsReportCollector write(float... values) {
         this.checkClosed();
         return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final double... values) {
+    public DiagnosticsReportCollector write(double... values) {
         this.checkClosed();
         return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final boolean... values) {
+    public DiagnosticsReportCollector write(boolean... values) {
         this.checkClosed();
         return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
-    public DiagnosticsReportCollector write(final Reportable... reportables) {
-        final List<Node<?>> nodes = new ArrayList<>();
-        for (final Reportable reportable : reportables) {
-            final GroupNode group = new GroupNode(this.name);
+    public DiagnosticsReportCollector write(Reportable... reportables) {
+        List<Node<?>> nodes = new ArrayList<>();
+        for (Reportable reportable : reportables) {
+            GroupNode group = new GroupNode(this.name);
             reportable.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
             nodes.add(group);
         }
@@ -138,7 +138,7 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
         }
     }
     
-    private DiagnosticsReportCollector exit(final Node<?> node) {
+    private DiagnosticsReportCollector exit(Node<?> node) {
         this.group.add(node);
         this.closed = true;
         return this.collector;

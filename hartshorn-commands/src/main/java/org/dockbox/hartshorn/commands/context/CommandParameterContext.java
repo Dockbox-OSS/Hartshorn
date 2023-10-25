@@ -31,7 +31,7 @@ public record CommandParameterContext(ParameterView<?> parameter, int index) {
      *
      * @return {@code true} if the provided type is equal or a supertype, else {@code false}
      */
-    public boolean is(final Class<?> type) {
+    public boolean is(Class<?> type) {
         return this.parameter().type().isChildOf(type);
     }
 

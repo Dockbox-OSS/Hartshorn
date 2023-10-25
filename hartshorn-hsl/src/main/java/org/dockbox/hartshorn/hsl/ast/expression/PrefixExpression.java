@@ -24,7 +24,7 @@ public class PrefixExpression extends Expression {
     private final Token prefixFunName;
     private final Expression rightExpression;
 
-    public PrefixExpression(final Token prefixFunName, final Expression rightExpression) {
+    public PrefixExpression(Token prefixFunName, Expression rightExpression) {
         super(prefixFunName);
         this.prefixFunName = prefixFunName;
         this.rightExpression = rightExpression;
@@ -39,7 +39,7 @@ public class PrefixExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

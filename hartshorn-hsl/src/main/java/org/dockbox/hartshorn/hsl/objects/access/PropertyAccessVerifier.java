@@ -21,6 +21,27 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.token.Token;
 
+/**
+ * A verifier that checks if a property access is allowed. This is used to check if a property
+ * can be accessed from a given scope. For example, a private property can only be accessed
+ * from within the class that defines it.
+ *
+ * @author Guus Lieben
+ * @since 0.4.12
+ */
+@FunctionalInterface
 public interface PropertyAccessVerifier {
+
+    /**
+     * Verifies if the given property can be accessed from the given scope. If the property
+     * is not accessible, {@code false} is returned. If the property is accessible, {@code true}
+     * is returned.
+     *
+     * @param at The name of the property.
+     * @param field The field statement that defines the property.
+     * @param instance The instance that the property is accessed on.
+     * @param fromScope The scope from which the property is accessed.
+     * @return {@code true} if the property can be accessed, {@code false} otherwise.
+     */
     boolean verify(Token at, FieldStatement field, InstanceReference instance, VariableScope fromScope);
 }

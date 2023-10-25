@@ -31,7 +31,7 @@ public class JavassistProxyConstructorFunction<T> implements ProxyConstructorFun
     private final ProxyFactory factory;
     private final MethodHandler methodHandler;
 
-    public JavassistProxyConstructorFunction(final Class<T> type, final ProxyFactory factory, final MethodHandler methodHandler) {
+    public JavassistProxyConstructorFunction(Class<T> type, ProxyFactory factory, MethodHandler methodHandler) {
         this.type = type;
         this.factory = factory;
         this.methodHandler = methodHandler;
@@ -41,17 +41,17 @@ public class JavassistProxyConstructorFunction<T> implements ProxyConstructorFun
     public T create() throws ApplicationException {
         try {
             return this.type.cast(this.factory.create(new Class<?>[0], new Object[0], this.methodHandler));
-        } catch (final RuntimeException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+        } catch (RuntimeException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             throw new ApplicationException(e);
         }
     }
 
     @Override
-    public T create(final Constructor<? extends T> constructor, final Object[] args) throws ApplicationException {
+    public T create(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
         try {
-            final Class<?>[] parameterTypes = constructor.getParameterTypes();
+            Class<?>[] parameterTypes = constructor.getParameterTypes();
             return this.type.cast(this.factory.create(parameterTypes, args, this.methodHandler));
-        } catch (final RuntimeException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+        } catch (RuntimeException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             throw new ApplicationException(e);
         }
     }

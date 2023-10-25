@@ -27,7 +27,7 @@ import java.util.Collection;
 public abstract class ServiceAnnotatedMethodInterceptorPostProcessor<M extends Annotation> extends ServiceMethodInterceptorPostProcessor {
 
     @Override
-    public <T> void preConfigureComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().methods().annotatedWith(this.annotation()).isEmpty()) {
             return;
         }
@@ -37,7 +37,7 @@ public abstract class ServiceAnnotatedMethodInterceptorPostProcessor<M extends A
     public abstract Class<M> annotation();
 
     @Override
-    protected <T> Collection<MethodView<T, ?>> modifiableMethods(final ComponentProcessingContext<T> processingContext) {
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(ComponentProcessingContext<T> processingContext) {
         return processingContext.type().methods().annotatedWith(this.annotation());
     }
 }

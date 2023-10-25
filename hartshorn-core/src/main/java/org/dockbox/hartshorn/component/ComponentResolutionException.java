@@ -20,11 +20,11 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class ComponentResolutionException extends ApplicationRuntimeException {
 
-    public ComponentResolutionException(final String message) {
+    public ComponentResolutionException(String message) {
         super(message);
     }
 
-    public ComponentResolutionException(final String message, final Throwable cause) {
+    public ComponentResolutionException(String message, Throwable cause) {
         super(message, cause);
     }
 }

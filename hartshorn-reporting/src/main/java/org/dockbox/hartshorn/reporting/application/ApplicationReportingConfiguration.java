@@ -29,7 +29,7 @@ public class ApplicationReportingConfiguration {
         return this.includeVersion;
     }
 
-    public ApplicationReportingConfiguration includeVersion(final boolean includeVersion) {
+    public ApplicationReportingConfiguration includeVersion(boolean includeVersion) {
         this.includeVersion = includeVersion;
         return this;
     }
@@ -38,7 +38,7 @@ public class ApplicationReportingConfiguration {
         return this.includeJarLocation;
     }
 
-    public ApplicationReportingConfiguration includeJarLocation(final boolean includeJarLocation) {
+    public ApplicationReportingConfiguration includeJarLocation(boolean includeJarLocation) {
         this.includeJarLocation = includeJarLocation;
         return this;
     }
@@ -47,7 +47,7 @@ public class ApplicationReportingConfiguration {
         return this.includeEnvironmentVariables;
     }
 
-    public ApplicationReportingConfiguration includeApplicationProperties(final boolean includeEnvironmentVariables) {
+    public ApplicationReportingConfiguration includeApplicationProperties(boolean includeEnvironmentVariables) {
         this.includeEnvironmentVariables = includeEnvironmentVariables;
         return this;
     }
@@ -56,7 +56,7 @@ public class ApplicationReportingConfiguration {
         return this.includeServiceActivators;
     }
 
-    public ApplicationReportingConfiguration includeServiceActivators(final boolean includeServiceActivators) {
+    public ApplicationReportingConfiguration includeServiceActivators(boolean includeServiceActivators) {
         this.includeServiceActivators = includeServiceActivators;
         return this;
     }
@@ -65,7 +65,7 @@ public class ApplicationReportingConfiguration {
         return this.includeObservers;
     }
 
-    public ApplicationReportingConfiguration includeObservers(final boolean includeObservers) {
+    public ApplicationReportingConfiguration includeObservers(boolean includeObservers) {
         this.includeObservers = includeObservers;
         return this;
     }
@@ -74,7 +74,7 @@ public class ApplicationReportingConfiguration {
         return this.includeContexts;
     }
 
-    public ApplicationReportingConfiguration includeContexts(final boolean includeContexts) {
+    public ApplicationReportingConfiguration includeContexts(boolean includeContexts) {
         this.includeContexts = includeContexts;
         return this;
     }

@@ -33,7 +33,7 @@ public class SystemReportingConfiguration {
         return this.includeUptime;
     }
 
-    public SystemReportingConfiguration includeUptime(final boolean includeUptime) {
+    public SystemReportingConfiguration includeUptime(boolean includeUptime) {
         this.includeUptime = includeUptime;
         return this;
     }
@@ -42,7 +42,7 @@ public class SystemReportingConfiguration {
         return this.includeJavaDiagnostics;
     }
 
-    public SystemReportingConfiguration includeJavaDiagnostics(final boolean includeJavaDiagnostics) {
+    public SystemReportingConfiguration includeJavaDiagnostics(boolean includeJavaDiagnostics) {
         this.includeJavaDiagnostics = includeJavaDiagnostics;
         return this;
     }
@@ -51,7 +51,7 @@ public class SystemReportingConfiguration {
         return this.includeJvmDiagnostics;
     }
 
-    public SystemReportingConfiguration includeJvmDiagnostics(final boolean includeJvmDiagnostics) {
+    public SystemReportingConfiguration includeJvmDiagnostics(boolean includeJvmDiagnostics) {
         this.includeJvmDiagnostics = includeJvmDiagnostics;
         return this;
     }
@@ -60,7 +60,7 @@ public class SystemReportingConfiguration {
         return this.includeOsDiagnostics;
     }
 
-    public SystemReportingConfiguration includeOsDiagnostics(final boolean includeOsDiagnostics) {
+    public SystemReportingConfiguration includeOsDiagnostics(boolean includeOsDiagnostics) {
         this.includeOsDiagnostics = includeOsDiagnostics;
         return this;
     }
@@ -69,7 +69,7 @@ public class SystemReportingConfiguration {
         return this.includeJvmFlags;
     }
 
-    public SystemReportingConfiguration includeJvmFlags(final boolean includeJvmFlags) {
+    public SystemReportingConfiguration includeJvmFlags(boolean includeJvmFlags) {
         this.includeJvmFlags = includeJvmFlags;
         return this;
     }
@@ -78,7 +78,7 @@ public class SystemReportingConfiguration {
         return this.includeDeviceName;
     }
 
-    public SystemReportingConfiguration includeDeviceName(final boolean includeDeviceName) {
+    public SystemReportingConfiguration includeDeviceName(boolean includeDeviceName) {
         this.includeDeviceName = includeDeviceName;
         return this;
     }
@@ -87,7 +87,7 @@ public class SystemReportingConfiguration {
         return this.includeProcessId;
     }
 
-    public SystemReportingConfiguration includeProcessId(final boolean includeProcessId) {
+    public SystemReportingConfiguration includeProcessId(boolean includeProcessId) {
         this.includeProcessId = includeProcessId;
         return this;
     }
@@ -96,7 +96,7 @@ public class SystemReportingConfiguration {
         return this.includeResponsibleServiceOrUser;
     }
 
-    public SystemReportingConfiguration includeResponsibleServiceOrUser(final boolean includeResponsibleServiceOrUser) {
+    public SystemReportingConfiguration includeResponsibleServiceOrUser(boolean includeResponsibleServiceOrUser) {
         this.includeResponsibleServiceOrUser = includeResponsibleServiceOrUser;
         return this;
     }
@@ -105,7 +105,7 @@ public class SystemReportingConfiguration {
         return this.includeMemoryUsage;
     }
 
-    public SystemReportingConfiguration includeMemoryUsage(final boolean includeMemoryUsage) {
+    public SystemReportingConfiguration includeMemoryUsage(boolean includeMemoryUsage) {
         this.includeMemoryUsage = includeMemoryUsage;
         return this;
     }

@@ -25,13 +25,13 @@ public class TestExceptionHandle extends LoggingExceptionHandler {
     private Throwable exception;
 
     @Override
-    public void handle(final String message, final Throwable throwable) {
+    public void handle(String message, Throwable throwable) {
         this.message = message;
         this.exception = throwable;
     }
 
     @Override
-    public TestExceptionHandle stacktraces(final boolean stacktraces) {
+    public TestExceptionHandle printStacktraces(boolean stacktraces) {
         this.stacktrace = stacktraces;
         return this;
     }

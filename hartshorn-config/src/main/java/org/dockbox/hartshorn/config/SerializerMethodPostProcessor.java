@@ -34,21 +34,23 @@ public class SerializerMethodPostProcessor extends AbstractSerializerPostProcess
     }
 
     @Override
-    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
-        final SerializationSourceConverter converter = this.findConverter(context, methodContext, processingContext);
+    public <T, R> MethodInterceptor<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
+        SerializationSourceConverter converter = this.findConverter(context, methodContext, processingContext);
         //noinspection unchecked
-        final MethodView<T, R> method = (MethodView<T, R>) methodContext.method();
-        final Serialize serialize = method.annotations().get(Serialize.class).get();
-        final ObjectMapper mapper = context.get(ObjectMapper.class).fileType(serialize.fileType());
-        final boolean returnsStringOrWrapper = this.returnsStringOrWrapper(method);
-        final ConversionService conversionService = context.get(ConversionService.class);
+        MethodView<T, R> method = (MethodView<T, R>) methodContext.method();
+        Serialize serialize = method.annotations().get(Serialize.class).get();
+        ObjectMapper mapper = context.get(ObjectMapper.class).fileType(serialize.fileType());
+        boolean returnsStringOrWrapper = this.returnsStringOrWrapper(method);
+        ConversionService conversionService = context.get(ConversionService.class);
 
         return new SerializerMethodInterceptor<>(converter, method, returnsStringOrWrapper, mapper, conversionService);
     }
 
-    private boolean returnsStringOrWrapper(final MethodView<?, ?> method) {
-        if (method.returnType().is(String.class)) return true;
-        final TypeParameterList typeParameters = method.genericReturnType().typeParameters().allInput();
+    private boolean returnsStringOrWrapper(MethodView<?, ?> method) {
+        if (method.returnType().is(String.class)) {
+            return true;
+        }
+        TypeParameterList typeParameters = method.genericReturnType().typeParameters().allInput();
         return typeParameters.count() == 1 && Boolean.TRUE.equals(typeParameters.atIndex(0)
                 .flatMap(TypeParameterView::resolvedType)
                 .map(type -> type.is(String.class))

@@ -32,20 +32,22 @@ import java.util.Collection;
 public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalComponentPostProcessor {
 
     @Override
-    public <T> void preConfigureComponent(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        final Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext);
+    public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+        Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext);
 
-        final ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
+        ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
         if (factory == null) {
             return;
         }
 
-        for (final MethodView<T, ?> method : methods) {
-            final MethodProxyContext<T> ctx = new MethodProxyContextImpl<>(context, processingContext.type(), method);
+        for (MethodView<T, ?> method : methods) {
+            MethodProxyContext<T> ctx = new MethodProxyContextImpl<>(context, processingContext.type(), method);
 
             if (this.preconditions(context, ctx, processingContext)) {
-                final MethodInterceptor<T, ?> function = this.process(context, ctx, processingContext);
-                if (function != null) factory.advisors().method(method).intercept(TypeUtils.adjustWildcards(function, MethodInterceptor.class));
+                MethodInterceptor<T, ?> function = this.process(context, ctx, processingContext);
+                if (function != null) {
+                    factory.advisors().method(method).intercept(TypeUtils.adjustWildcards(function, MethodInterceptor.class));
+                }
             }
             else {
                 if (this.failOnPrecondition()) {

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.config;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 public class IdentifierMismatchException extends ApplicationException {
-    public IdentifierMismatchException(final String message) {
+    public IdentifierMismatchException(String message) {
         super(message);
     }
 }

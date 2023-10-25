@@ -26,9 +26,9 @@ import org.slf4j.Logger;
 public class HartshornTests {
 
     @InjectTest
-    void testLoggersAreReused(final ApplicationContext applicationContext) {
-        final Logger l1 = applicationContext.log();
-        final Logger l2 = applicationContext.log();
+    void testLoggersAreReused(ApplicationContext applicationContext) {
+        Logger l1 = applicationContext.log();
+        Logger l2 = applicationContext.log();
 
         Assertions.assertNotNull(l1);
         Assertions.assertNotNull(l2);

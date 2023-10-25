@@ -38,5 +38,5 @@ public interface ApplicationLogger {
      * Sets whether the logger should log at debug level.
      * @param active Whether the logger should log at debug level.
      */
-    void setDebugActive(boolean active);
+    void enableDebugLogging(boolean active);
 }

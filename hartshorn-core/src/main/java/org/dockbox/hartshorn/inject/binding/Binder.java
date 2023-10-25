@@ -42,7 +42,7 @@ public interface Binder {
      * @return The binding function
      * @param <C> The type of the binding
      */
-    default <C> BindingFunction<C> bind(final Class<C> type) {
+    default <C> BindingFunction<C> bind(Class<C> type) {
         return this.bind(ComponentKey.of(type));
     }
 

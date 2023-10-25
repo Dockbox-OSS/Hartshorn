@@ -173,7 +173,7 @@ public class HartshornLifecycleExtension implements
             return false;
         }
 
-        MethodView<?, ?> method = this.applicationContext.environment().introspect(testMethod.get());
+        MethodView<?, ?> method = this.applicationContext.environment().introspector().introspect(testMethod.get());
         return method.annotations().has(Inject.class);
     }
 
@@ -190,7 +190,7 @@ public class HartshornLifecycleExtension implements
         }
 
         ParameterLoader<ApplicationBoundParameterLoaderContext> parameterLoader = new ExecutableElementContextParameterLoader();
-        MethodView<?, ?> executable = this.applicationContext.environment().introspect(testMethod.get());
+        MethodView<?, ?> executable = this.applicationContext.environment().introspector().introspect(testMethod.get());
         ApplicationBoundParameterLoaderContext parameterLoaderContext = new ApplicationBoundParameterLoaderContext(executable,
                 extensionContext.getTestInstance().orElse(null), this.applicationContext);
 
@@ -252,10 +252,10 @@ public class HartshornLifecycleExtension implements
         @Override
         public void configure(Configurer constructor) {
             Customizer<ContextualApplicationEnvironment.Configurer> environmentCustomizer = environment -> {
-                environment.enableBanner(); // Disable banner for tests, to avoid unnecessary noise
+                environment.disableBanner(); // Disable banner for tests, to avoid unnecessary noise
                 environment.enableBatchMode(); // Enable batch mode, to make use of additional caching
                 environment.showStacktraces(); // Enable stacktraces for tests, to make debugging easier
-                environment.applicationFSProvider(new JUnitFSProvider());
+                environment.applicationFSProvider(new TemporaryFileSystemProvider());
 
                 Customizer<SimpleApplicationContext.Configurer> applicationContextCustomizer = applicationContext -> {
                     configureDefaultBindings(applicationContext, testComponentSources);

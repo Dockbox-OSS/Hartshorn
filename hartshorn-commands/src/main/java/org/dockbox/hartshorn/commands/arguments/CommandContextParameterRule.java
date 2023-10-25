@@ -25,13 +25,13 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 public class CommandContextParameterRule implements ParameterLoaderRule<CommandParameterLoaderContext> {
 
     @Override
-    public boolean accepts(final ParameterView<?> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
-        final TypeView<CommandContext> typeView = context.applicationContext().environment().introspect(context.commandContext());
+    public boolean accepts(ParameterView<?> parameter, int index, CommandParameterLoaderContext context, Object... args) {
+        TypeView<CommandContext> typeView = context.applicationContext().environment().introspector().introspect(context.commandContext());
         return typeView.isChildOf(parameter.type().type());
     }
 
     @Override
-    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
+    public <T> Option<T> load(ParameterView<T> parameter, int index, CommandParameterLoaderContext context, Object... args) {
         return Option.of(parameter.type().cast(context.commandContext()));
     }
 }

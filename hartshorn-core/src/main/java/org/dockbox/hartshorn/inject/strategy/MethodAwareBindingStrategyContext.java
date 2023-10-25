@@ -26,7 +26,7 @@ public class MethodAwareBindingStrategyContext<T> extends DefaultApplicationAwar
     private final DependencyDeclarationContext<T> componentContainer;
     private final MethodView<T, ?> method;
 
-    public MethodAwareBindingStrategyContext(final ApplicationContext applicationContext, final DependencyDeclarationContext<T> componentContainer, final MethodView<T, ?> method) {
+    public MethodAwareBindingStrategyContext(ApplicationContext applicationContext, DependencyDeclarationContext<T> componentContainer, MethodView<T, ?> method) {
         super(applicationContext);
         this.componentContainer = componentContainer;
         this.method = method;

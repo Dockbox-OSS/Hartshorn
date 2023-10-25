@@ -23,7 +23,7 @@ public class BreakStatement extends Statement {
 
     private final Token keyword;
 
-    public BreakStatement(final Token keyword) {
+    public BreakStatement(Token keyword) {
         super(keyword);
         this.keyword = keyword;
     }
@@ -33,7 +33,7 @@ public class BreakStatement extends Statement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

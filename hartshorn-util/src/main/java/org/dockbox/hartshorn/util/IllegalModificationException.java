@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.util;
 
 public class IllegalModificationException extends ApplicationRuntimeException {
-    public IllegalModificationException(final String message) {
+    public IllegalModificationException(String message) {
         super(message);
     }
 }

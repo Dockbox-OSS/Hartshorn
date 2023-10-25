@@ -16,19 +16,28 @@
 
 package org.dockbox.hartshorn.context;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.List;
 
+import org.dockbox.hartshorn.util.option.Option;
+
+/**
+ * A {@link Context} which uses {@link ContextKey}s to store and retrieve values instead
+ * of {@link SimpleContextIdentity simple identities}. This allows for more flexibility
+ * in the retrieval of values, as context keys support fallback functions and access to
+ * the {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
+ *
+ * @author Guus Lieben
+ * @since 0.5.0
+ */
 public interface ProvisionContext extends Context {
 
     @Override
-    default <C extends Context> Option<C> first(final Class<C> context) {
+    default <C extends Context> Option<C> first(Class<C> context) {
         return this.first(ContextKey.of(context));
     }
 
     @Override
-    default <C extends Context> List<C> all(final Class<C> context) {
+    default <C extends Context> List<C> all(Class<C> context) {
         return this.all(ContextKey.of(context));
     }
 }
