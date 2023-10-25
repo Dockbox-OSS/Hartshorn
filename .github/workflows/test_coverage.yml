@@ -1,10 +1,10 @@
-name: Hartshorn
+name: Tests
 
 on: pull_request
 
 jobs:
   coverage:
-    name: Code coverage
+    name: Code coverage (JDK 21, Ubuntu)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, macos-latest]
-    name: Unit tests (JDK 21, ${{ matrix.os }})
+    name: Unit tests (Compatibility, JDK 21, ${{ matrix.os }})
     runs-on: "${{ matrix.os }}"
     steps:
       - uses: actions/checkout@v3
