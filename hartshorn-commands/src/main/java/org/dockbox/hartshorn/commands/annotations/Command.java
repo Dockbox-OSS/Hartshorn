@@ -34,6 +34,7 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Extends(Service.class)
 public @interface Command {
+
     /**
      * The aliases for the command.
      *

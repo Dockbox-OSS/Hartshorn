@@ -16,20 +16,20 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
-
-import java.util.ArrayList;
-import java.util.List;
 /**
  * Converts prefixed patterns into type instances used by command executors. The
  * pattern is decided on by any implementation of this type.
  */
-public abstract class PrefixedParameterPattern implements CustomParameterPattern {
+public abstract class PrefixedParameterPattern extends AbstractParameterPattern {
 
     @Override
     public <T> Attempt<Boolean, ConverterException> preconditionsMatch(Class<T> type, CommandSource source, String raw) {

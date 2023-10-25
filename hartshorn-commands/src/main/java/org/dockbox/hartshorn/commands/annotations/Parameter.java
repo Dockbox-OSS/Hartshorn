@@ -40,9 +40,17 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 @Component(type = ComponentType.FUNCTIONAL)
 public @interface Parameter {
 
+    /**
+     * The pattern to use for parsing the parameter. Defaults to {@link HashtagParameterPattern}.
+     * @return the pattern
+     */
     Class<? extends CustomParameterPattern> pattern() default HashtagParameterPattern.class;
 
-    @AttributeAlias("id")
+    /**
+     * The identifier of the parameter.
+     * @return
+     */
+    @AttributeAlias(value = "id", target = Component.class)
     String value();
 
     String usage() default "";
