@@ -31,7 +31,7 @@ import java.util.Set;
 
 import jakarta.inject.Inject;
 
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 public class ResourceLookupTests {
 
     @Inject

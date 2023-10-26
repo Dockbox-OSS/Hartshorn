@@ -16,10 +16,10 @@
 
 package test.org.dockbox.hartshorn;
 
-import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextKey;
+import org.dockbox.hartshorn.testsuite.HartshornTestApplication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -66,7 +66,7 @@ public class ContextKeyTests {
                 .fallback(applicationContext -> null)
                 .build();
 
-        ApplicationContext applicationContext = HartshornApplication.create();
+        ApplicationContext applicationContext = HartshornTestApplication.createWithoutBasePackages();
         Assertions.assertNull(key.create(applicationContext));
     }
 
@@ -76,7 +76,7 @@ public class ContextKeyTests {
                 .fallback(() -> null)
                 .build();
 
-        ApplicationContext applicationContext = HartshornApplication.create();
+        ApplicationContext applicationContext = HartshornTestApplication.createWithoutBasePackages();
         Assertions.assertNull(key.create(applicationContext));
     }
 
