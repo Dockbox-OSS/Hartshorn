@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.Binds;
@@ -24,15 +28,11 @@ import org.dockbox.hartshorn.inject.strategy.BindingStrategyRegistry;
 import org.dockbox.hartshorn.inject.strategy.MethodAwareBindingStrategyContext;
 import org.dockbox.hartshorn.inject.strategy.MethodInstanceBindingStrategy;
 import org.dockbox.hartshorn.inject.strategy.SimpleBindingStrategyRegistry;
-import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class BindsMethodDependencyResolver extends AbstractContainerDependencyResolver {
 
@@ -44,6 +44,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
     }
 
     public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher, BindingStrategyRegistry registry) {
+        super(conditionMatcher.applicationContext());
         this.conditionMatcher = conditionMatcher;
         this.registry = registry;
     }

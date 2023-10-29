@@ -3,6 +3,7 @@ package org.dockbox.hartshorn.application.context.validate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.component.ComponentKey;
@@ -42,10 +43,27 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
         if (knownNodes.contains(node)) {
             return List.of(node);
         }
+
+        // Defaults to true, as we should assume that the node needs immediate resolution unless proven otherwise.
+        boolean needsImmediateResolution = true;
+        if (node instanceof ContainableGraphNode<DependencyContext<?>> containableGraphNode) {
+            ComponentKey<?> dependencyCandidate = node.value().componentKey();
+            // If none of the parents need immediate resolution, then we can cut potential cyclic graphs short.
+            needsImmediateResolution = containableGraphNode.children().stream()
+                    .anyMatch(parent -> parent.value().needsImmediateResolution(dependencyCandidate));
+        }
+
+        // If the node doesn't need immediate resolution, then we can skip it. Note that this does not affect potential grandchild
+        // dependencies, as this validator goes over all nodes in the graph, and not just the roots.
+        if (!needsImmediateResolution) {
+            return List.of();
+        }
+
         knownNodes.add(node);
-        for (GraphNode<DependencyContext<?>> child : node.children()) {
+
+        for(GraphNode<DependencyContext<?>> child : node.children()) {
             List<GraphNode<DependencyContext<?>>> graphNodes = this.checkNodeNotCyclicRecursive(child, knownNodes);
-            if (!graphNodes.isEmpty()) {
+            if(!graphNodes.isEmpty()) {
                 List<GraphNode<DependencyContext<?>>> path = new ArrayList<>();
                 path.add(node);
                 path.addAll(graphNodes);

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.Set;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
@@ -27,10 +28,10 @@ import org.dockbox.hartshorn.util.introspect.view.View;
 public class ManagedComponentDependencyContext<T> implements DependencyContext<T> {
 
     private final ComponentKey<T> componentKey;
-    private final Set<ComponentKey<?>> dependencies;
+    private final DependencyMap dependencies;
     private final ConstructorView<? extends T> constructorView;
 
-    public ManagedComponentDependencyContext(ComponentKey<T> componentKey, Set<ComponentKey<?>> dependencies, ConstructorView<? extends T> constructorView) {
+    public ManagedComponentDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies, ConstructorView<? extends T> constructorView) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.constructorView = constructorView;
@@ -43,7 +44,17 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
 
     @Override
     public Set<ComponentKey<?>> dependencies() {
-        return this.dependencies;
+        return Set.copyOf(this.dependencies.allValues());
+    }
+
+    @Override
+    public Set<ComponentKey<?>> dependencies(DependencyResolutionType resolutionType) {
+        return Set.copyOf(this.dependencies.get(resolutionType));
+    }
+
+    @Override
+    public boolean needsImmediateResolution(ComponentKey<?> dependencyCandidate) {
+        return this.dependencies(DependencyResolutionType.IMMEDIATE).contains(dependencyCandidate);
     }
 
     @Override

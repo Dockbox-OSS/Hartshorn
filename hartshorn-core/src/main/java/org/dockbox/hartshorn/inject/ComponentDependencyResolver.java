@@ -21,11 +21,14 @@ import java.util.Set;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.strategy.DependencyResolverUtils;
-import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class ComponentDependencyResolver extends AbstractContainerDependencyResolver {
+
+    protected ComponentDependencyResolver(ApplicationContext applicationContext) {
+        super(applicationContext);
+    }
 
     @Override
     protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> componentContainer, ApplicationContext applicationContext) throws DependencyResolutionException {
@@ -42,9 +45,11 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
         Set<ComponentKey<?>> constructorDependencies = DependencyResolverUtils.resolveDependencies(constructorView);
         Set<ComponentKey<?>> typeDependencies = DependencyResolverUtils.resolveDependencies(type);
 
-        ComponentKey<T> componentKey = ComponentKey.of(type);
-        Set<ComponentKey<?>> dependencies = CollectionUtilities.merge(constructorDependencies, typeDependencies);
+        DependencyMap dependencies = DependencyMap.create()
+                .immediate(constructorDependencies)
+                .delayed(typeDependencies);
 
+        ComponentKey<T> componentKey = ComponentKey.of(type);
         return Set.of(new ManagedComponentDependencyContext<>(componentKey, dependencies, constructorView));
     }
 }

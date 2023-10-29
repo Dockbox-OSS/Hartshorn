@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.inject.strategy;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.InstallTo;
@@ -24,14 +26,13 @@ import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.DependencyContext;
+import org.dockbox.hartshorn.inject.DependencyMap;
 import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
 
 import jakarta.inject.Singleton;
 
@@ -74,7 +75,9 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         boolean singleton = this.isSingleton(applicationContext, bindsMethod, componentKey);
         boolean processAfterInitialization = bindingDecorator.processAfterInitialization();
 
-        return new AutoConfiguringDependencyContext<>(componentKey, dependencies, scope, priority, supplier, bindsMethod)
+        DependencyMap dependenciesMap = DependencyMap.create().immediate(dependencies);
+
+        return new AutoConfiguringDependencyContext<>(componentKey, dependenciesMap, scope, priority, supplier, bindsMethod)
                 .lazy(lazy)
                 .singleton(singleton)
                 .processAfterInitialization(processAfterInitialization);

@@ -16,26 +16,26 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 
 import java.util.Set;
 
+import org.dockbox.hartshorn.component.ComponentKey;
 public abstract class AbstractDependencyContext<T> implements DependencyContext<T> {
 
     private final ComponentKey<T> componentKey;
-    private final Set<ComponentKey<?>> dependencies;
     private final Class<? extends Scope> scope;
+    private final DependencyMap dependencies;
     private final int priority;
 
     private boolean lazy;
     private boolean singleton;
     private boolean processAfterInitialization = true;
 
-    protected AbstractDependencyContext(ComponentKey<T> componentKey, Set<ComponentKey<?>> dependencies,
                                         Class<? extends Scope> scope, int priority) {
+    protected AbstractDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies,
         this.componentKey = componentKey;
-        this.dependencies = Set.copyOf(dependencies);
+        this.dependencies = dependencies;
         this.scope = scope;
         this.priority = priority;
     }
@@ -62,7 +62,17 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
 
     @Override
     public Set<ComponentKey<?>> dependencies() {
-        return this.dependencies;
+        return Set.copyOf(this.dependencies.allValues());
+    }
+
+    @Override
+    public Set<ComponentKey<?>> dependencies(DependencyResolutionType resolutionType) {
+        return Set.copyOf(this.dependencies.get(resolutionType));
+    }
+
+    @Override
+    public boolean needsImmediateResolution(ComponentKey<?> dependencyCandidate) {
+        return this.dependencies(DependencyResolutionType.IMMEDIATE).contains(dependencyCandidate);
     }
 
     @Override

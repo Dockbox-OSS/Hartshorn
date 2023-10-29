@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
 import java.util.Collection;
 import java.util.Set;
 
-public interface DependencyResolver {
+import org.dockbox.hartshorn.context.ContextCarrier;
 
-    Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers, ApplicationContext applicationContext) throws DependencyResolutionException;
+public interface DependencyResolver extends ContextCarrier {
+
+    Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException;
 
 }

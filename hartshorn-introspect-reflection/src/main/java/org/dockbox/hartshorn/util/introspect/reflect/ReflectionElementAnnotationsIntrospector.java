@@ -19,12 +19,12 @@ package org.dockbox.hartshorn.util.introspect.reflect;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
@@ -57,9 +57,7 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
 
     @Override
     public Set<Annotation> all() {
-        // First wrap in HashSet as annotationCache may contain same value for different keys, which would cause a duplicate
-        // entry exception when wrapping in an immutable set.
-        return Set.copyOf(new HashSet<>(this.annotationCache().values()));
+        return Set.copyOf(this.annotationCache().values());
     }
 
     @Override

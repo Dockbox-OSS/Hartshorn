@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.application.context;
 
+import java.util.Collection;
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.validate.CompositeDependencyGraphValidator;
 import org.dockbox.hartshorn.application.context.validate.CyclicDependencyGraphValidator;
 import org.dockbox.hartshorn.application.context.validate.DependenciesVisitedGraphValidator;
@@ -35,9 +38,6 @@ import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 
-import java.util.Collection;
-import java.util.Set;
-
 public class DependencyGraphInitializer {
 
     private final DependencyGraphBuilder graphBuilder;
@@ -49,7 +49,7 @@ public class DependencyGraphInitializer {
     public DependencyGraphInitializer(SingleElementContext<? extends ApplicationContext> initializerContext, Configurer configurer) {
         this.applicationContext = initializerContext.input();
         this.dependencyResolver = configurer.dependencyResolver.initialize(initializerContext);
-        this.graphBuilder = configurer.dependencyGraphBuilder.initialize(initializerContext);
+        this.graphBuilder = configurer.dependencyGraphBuilder.initialize(initializerContext.transform(this.dependencyResolver));
         this.dependencyVisitor = configurer.dependencyVisitor.initialize(initializerContext);
         this.graphValidator = new CompositeDependencyGraphValidator(configurer.graphValidator.initialize(initializerContext));
     }
@@ -64,9 +64,8 @@ public class DependencyGraphInitializer {
         this.applicationContext.log().debug("Visited %d dependencies".formatted(visitedDependencies.size()));
     }
 
-    private DependencyGraph buildDependencyGraph(Collection<DependencyDeclarationContext<?>> containers)
-        throws DependencyResolutionException {
-        Collection<DependencyContext<?>> dependencyContexts = this.dependencyResolver.resolve(containers, this.applicationContext);
+    private DependencyGraph buildDependencyGraph(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException {
+        Collection<DependencyContext<?>> dependencyContexts = this.dependencyResolver.resolve(containers);
         return this.graphBuilder.buildDependencyGraph(dependencyContexts);
     }
 
@@ -81,7 +80,7 @@ public class DependencyGraphInitializer {
     public static class Configurer {
 
         private ContextualInitializer<ApplicationContext, DependencyResolver> dependencyResolver = ApplicationDependencyResolver.create(Customizer.useDefaults());
-        private ContextualInitializer<ApplicationContext, DependencyGraphBuilder> dependencyGraphBuilder = ContextualInitializer.of(DependencyGraphBuilder::new);
+        private ContextualInitializer<DependencyResolver, DependencyGraphBuilder> dependencyGraphBuilder = ContextualInitializer.of(DependencyGraphBuilder::create);
         private ContextualInitializer<ApplicationContext, ConfigurationDependencyVisitor> dependencyVisitor = ContextualInitializer.of(ConfigurationDependencyVisitor::new);
         private final LazyStreamableConfigurer<ApplicationContext, DependencyGraphValidator> graphValidator = LazyStreamableConfigurer.of(Set.of(
             new DependenciesVisitedGraphValidator(),
@@ -101,7 +100,7 @@ public class DependencyGraphInitializer {
             return this.dependencyGraphBuilder(ContextualInitializer.of(dependencyGraphBuilder));
         }
 
-        public Configurer dependencyGraphBuilder(ContextualInitializer<ApplicationContext, DependencyGraphBuilder> dependencyGraphBuilder) {
+        public Configurer dependencyGraphBuilder(ContextualInitializer<DependencyResolver, DependencyGraphBuilder> dependencyGraphBuilder) {
             this.dependencyGraphBuilder = dependencyGraphBuilder;
             return this;
         }

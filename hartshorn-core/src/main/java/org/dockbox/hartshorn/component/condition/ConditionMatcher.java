@@ -20,9 +20,10 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
-public class ConditionMatcher {
+public class ConditionMatcher implements ContextCarrier {
 
     private final ApplicationContext applicationContext;
 
@@ -55,4 +56,8 @@ public class ConditionMatcher {
         return result.matches();
     }
 
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
 }

@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.inject;
 
-import java.util.Set;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
@@ -31,8 +30,8 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
     private final CheckedSupplier<T> supplier;
     private final View view;
 
-    public AutoConfiguringDependencyContext(ComponentKey<T> componentKey, Set<ComponentKey<?>> dependencies,
                                             Class<? extends Scope> scope, int priority,
+    public AutoConfiguringDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies,
                                             CheckedSupplier<T> supplier, View view) {
         super(componentKey, dependencies, scope, priority);
         this.supplier = supplier;
