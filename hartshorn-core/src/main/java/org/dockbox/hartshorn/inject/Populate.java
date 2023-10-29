@@ -41,21 +41,21 @@ public @interface Populate {
      *
      * @return The types of values that should be populated.
      */
-    Type[] value() default {};
+    Type[] value();
 
     /**
      * @deprecated since 0.5.0, for removal in 0.6.0. Use {@link #value()} instead.
      * @return {@code true} if fields should be populated, {@code false} otherwise.
      */
     @Deprecated(since = "0.5.0", forRemoval = true)
-    boolean fields() default true;
+    boolean fields() default false;
 
     /**
      * @deprecated since 0.5.0, for removal in 0.6.0. Use {@link #value()} instead.
      * @return {@code true} if executables (e.g. methods) should be populated, {@code false} otherwise.
      */
     @Deprecated(since = "0.5.0", forRemoval = true)
-    boolean executables() default true;
+    boolean executables() default false;
 
     /**
      * Types of elements that can be populated. Used as a value for {@link Populate#value()}.
