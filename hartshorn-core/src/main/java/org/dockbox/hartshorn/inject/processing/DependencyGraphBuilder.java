@@ -56,12 +56,12 @@ public class DependencyGraphBuilder {
 
     public DependencyGraph buildDependencyGraph(Collection<DependencyContext<?>> dependencyContexts) {
         Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes = this.createNodeMap(
-                hierarchicalComponentProvider,
+            this.hierarchicalComponentProvider,
                 dependencyContexts
         );
         DependencyGraph graph = new DependencyGraph();
         for (DependencyContext<?> dependencyContext : dependencyContexts) {
-            buildSingleDependencyNode(nodes, graph, dependencyContext);
+            this.buildSingleDependencyNode(nodes, graph, dependencyContext);
         }
         return graph;
     }
@@ -74,7 +74,7 @@ public class DependencyGraphBuilder {
         MutableContainableGraphNode<DependencyContext<?>> node = nodes.get(dependencyContext.componentKey());
         graph.addRoot(node);
 
-        Set<ComponentKey<?>> implementationKeys = lookupHierarchyDeclarations(dependencyContext);
+        Set<ComponentKey<?>> implementationKeys = this.lookupHierarchyDeclarations(dependencyContext);
         // TODO: Use resolver to resolve additional dependencies here
 
         for (ComponentKey<?> dependency : dependencyContext.dependencies()) {
@@ -96,7 +96,7 @@ public class DependencyGraphBuilder {
     ) {
         Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes = new HashMap<>();
         for (DependencyContext<?> dependencyContext : dependencyContexts) {
-            visitContextForNodeMapping(hierarchicalComponentProvider, dependencyContext, nodes);
+            this.visitContextForNodeMapping(hierarchicalComponentProvider, dependencyContext, nodes);
         }
         return nodes;
     }
@@ -106,7 +106,7 @@ public class DependencyGraphBuilder {
             DependencyContext<?> dependencyContext,
             Map<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes
     ) {
-        visitForDirectBindingKey(dependencyContext, nodes);
+        this.visitForDirectBindingKey(dependencyContext, nodes);
     }
 
     protected void visitForDirectBindingKey(
@@ -119,7 +119,7 @@ public class DependencyGraphBuilder {
 
     protected <T> Set<ComponentKey<?>> lookupHierarchyDeclarations(DependencyContext<T> dependencyContext) {
         ComponentKey<T> componentKey = dependencyContext.componentKey();
-        BindingHierarchy<T> hierarchy = hierarchicalComponentProvider.hierarchy(componentKey);
+        BindingHierarchy<T> hierarchy = this.hierarchicalComponentProvider.hierarchy(componentKey);
         return hierarchy.highestPriority().map(provider -> {
             Provider<T> actualProvider = provider;
             if (provider instanceof ComposedProvider<T> composedProvider) {

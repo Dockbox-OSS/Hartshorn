@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
 import org.dockbox.hartshorn.component.ContextualComponentPopulator;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.inject.ApplicationDependencyResolver;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentConstructorResolver;
 import org.dockbox.hartshorn.inject.ComponentDiscoveryList;
@@ -41,6 +42,7 @@ import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.DependencyResolutionType;
 import org.dockbox.hartshorn.inject.DependencyMap;
+import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.TypePathNode;
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
 import org.dockbox.hartshorn.inject.processing.UseContextInjection;
@@ -51,6 +53,8 @@ import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestBinding;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.SimpleSingleElementContext;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -466,16 +470,20 @@ public class ApplicationContextTests {
             TypeView<?> typeView = this.applicationContext.environment().introspector().introspect(component);
 
             DependencyMap dependencyMap = DependencyMap.create()
+                    // Fields and methods are always delayed
                     .delayed(DependencyResolverUtils.resolveDependencies(typeView));
 
             View origin = typeView;
             if (!typeView.isInterface()) {
                 List<? extends ConstructorView<?>> constructorViews = typeView.constructors().injectable();
-                Assertions.assertEquals(1, constructorViews.size());
-                ConstructorView<?> constructorView = constructorViews.get(0);
-                origin = constructorView;
-                Set<ComponentKey<?>> immediateDependencies = DependencyResolverUtils.resolveDependencies(constructorView);
-                dependencyMap.putAll(DependencyResolutionType.IMMEDIATE, immediateDependencies);
+                if (!constructorViews.isEmpty()) {
+                    Assertions.assertEquals(1, constructorViews.size());
+                    ConstructorView<?> constructorView = constructorViews.get(0);
+                    origin = constructorView;
+                    // Constructors are always immediate
+                    Set<ComponentKey<?>> immediateDependencies = DependencyResolverUtils.resolveDependencies(constructorView);
+                    dependencyMap.putAll(DependencyResolutionType.IMMEDIATE, immediateDependencies);
+                }
             }
 
             DependencyContext<?> dependencyContext = new AutoConfiguringDependencyContext<>(componentKey,
@@ -483,7 +491,9 @@ public class ApplicationContextTests {
             dependencyContexts.add(dependencyContext);
         }
 
-        DependencyGraphBuilder dependencyGraphBuilder = new DependencyGraphBuilder(this.applicationContext);
+        SimpleSingleElementContext<ApplicationContext> context = SimpleSingleElementContext.create(this.applicationContext);
+        DependencyResolver resolver = ApplicationDependencyResolver.create(Customizer.useDefaults()).initialize(context);
+        DependencyGraphBuilder dependencyGraphBuilder = DependencyGraphBuilder.create(resolver);
         return dependencyGraphBuilder.buildDependencyGraph(dependencyContexts);
     }
 
