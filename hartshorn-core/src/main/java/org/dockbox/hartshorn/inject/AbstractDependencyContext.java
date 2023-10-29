@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.inject;
 
 import java.util.Set;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 
@@ -38,15 +38,15 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 public abstract class AbstractDependencyContext<T> implements DependencyContext<T> {
 
     private final ComponentKey<T> componentKey;
-    private final Class<? extends Scope> scope;
     private final DependencyMap dependencies;
+    private final ScopeKey<?> scope;
     private final int priority;
 
     private boolean lazy;
     private boolean singleton;
     private boolean processAfterInitialization = true;
 
-    protected AbstractDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies, Class<? extends Scope> scope, int priority) {
+    protected AbstractDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies, ScopeKey<?> scope, int priority) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.scope = scope;
@@ -119,7 +119,7 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     }
 
     @Override
-    public Class<? extends Scope> scope() {
+    public ScopeKey<?> scope() {
         return this.scope;
     }
 

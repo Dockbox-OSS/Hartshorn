@@ -218,7 +218,7 @@ public final class ComponentKey<T> {
      */
     public String qualifiedName(boolean qualifyType) {
         String nameSuffix = StringUtilities.empty(this.name) ? "" : ":" + this.name;
-        String scopeName = this.scope.installableScopeType().getSimpleName();
+        String scopeName = this.scope.installableScopeType().name();
         String typeName = qualifyType ? this.type.type().getCanonicalName() : this.type.type().getSimpleName();
         return typeName + nameSuffix + " @ " + scopeName;
     }

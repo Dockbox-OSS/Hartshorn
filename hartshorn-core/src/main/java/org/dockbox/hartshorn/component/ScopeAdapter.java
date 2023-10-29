@@ -18,11 +18,11 @@ package org.dockbox.hartshorn.component;
 
 import java.util.Objects;
 
-public final class ScopeAdapter<T> implements Scope {
+public class ScopeAdapter<T> implements Scope {
 
     private final T adaptee;
 
-    private ScopeAdapter(T adaptee) {
+    protected ScopeAdapter(T adaptee) {
         this.adaptee = adaptee;
     }
 
@@ -52,7 +52,7 @@ public final class ScopeAdapter<T> implements Scope {
     }
 
     @Override
-    public Class<? extends Scope> installableScopeType() {
-        return Scope.class;
+    public ScopeKey<ScopeAdapter<T>> installableScopeType() {
+        return ScopeAdapterKey.of(this);
     }
 }

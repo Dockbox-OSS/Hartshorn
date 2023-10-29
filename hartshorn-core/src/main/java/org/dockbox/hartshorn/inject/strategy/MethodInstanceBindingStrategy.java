@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.InstallTo;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
@@ -62,7 +63,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
     private <T> DependencyContext<T> resolveInstanceBinding(MethodView<?, T> bindsMethod, Binds bindingDecorator, ApplicationContext applicationContext) {
         ComponentKey<T> componentKey = this.constructInstanceComponentKey(bindsMethod, bindingDecorator);
         Set<ComponentKey<?>> dependencies = DependencyResolverUtils.resolveDependencies(bindsMethod);
-        Class<? extends Scope> scope = this.resolveComponentScope(bindsMethod);
+        ScopeKey<?> scope = this.resolveComponentScope(bindsMethod);
         int priority = bindingDecorator.priority();
 
         ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
@@ -89,10 +90,10 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
                 || applicationContext.environment().singleton(componentKey.type());
     }
 
-    private Class<? extends Scope> resolveComponentScope(MethodView<?, ?> bindsMethod) {
+    private ScopeKey<?> resolveComponentScope(MethodView<?, ?> bindsMethod) {
         Option<InstallTo> installToCandidate = bindsMethod.annotations().get(InstallTo.class);
         return installToCandidate.present()
-                ? installToCandidate.get().value()
+                ? ScopeKey.of(installToCandidate.get().value())
                 : Scope.DEFAULT_SCOPE.installableScopeType();
     }
 
