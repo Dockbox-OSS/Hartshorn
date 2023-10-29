@@ -47,7 +47,7 @@ import jakarta.inject.Inject;
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(HartshornLifecycleExtension.class)
 @Extends(Populate.class)
-@Populate(executables = false)
+@Populate(Populate.Type.FIELDS)
 public @interface HartshornTest {
 
     /**
