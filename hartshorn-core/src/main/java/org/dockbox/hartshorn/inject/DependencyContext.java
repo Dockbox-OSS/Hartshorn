@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
@@ -89,7 +90,7 @@ public interface DependencyContext<T> {
      *
      * @see Scope
      */
-    Class<? extends Scope> scope();
+    ScopeKey<?> scope();
 
     /**
      * Returns whether the dependency is a singleton. The implementation may decide whether

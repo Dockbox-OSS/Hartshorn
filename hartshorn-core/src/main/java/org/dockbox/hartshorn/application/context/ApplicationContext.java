@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
@@ -58,6 +59,8 @@ public interface ApplicationContext extends
         ActivatorHolder,
         Scope,
         AutoCloseable {
+
+    ScopeKey<ApplicationContext> SCOPE_KEY = ScopeKey.of(ApplicationContext.class);
 
     /**
      * Registers a component processor with the application context. The processor will be invoked when
@@ -95,8 +98,8 @@ public interface ApplicationContext extends
     boolean isClosed();
 
     @Override
-    default Class<? extends Scope> installableScopeType() {
-        return ApplicationContext.class;
+    default ScopeKey<ApplicationContext> installableScopeType() {
+        return SCOPE_KEY;
     }
 
     @Override

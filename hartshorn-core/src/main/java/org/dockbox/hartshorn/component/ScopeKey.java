@@ -18,41 +18,39 @@ package org.dockbox.hartshorn.component;
 
 import java.util.Objects;
 
-public class ScopeAdapter<T> implements Scope {
+public class ScopeKey<T extends Scope> {
 
-    private final T adaptee;
+    private final Class<T> scopeType;
 
-    protected ScopeAdapter(T adaptee) {
-        this.adaptee = adaptee;
+    protected ScopeKey(Class<T> scopeType) {
+        this.scopeType = scopeType;
     }
 
-    public T adaptee() {
-        return this.adaptee;
+    public String name() {
+        return this.scopeType.getSimpleName();
     }
 
-    public static <T> ScopeAdapter<T> of(T adaptee) {
-        return new ScopeAdapter<>(adaptee);
+    public Class<T> scopeType() {
+        return this.scopeType;
+    }
+
+    public static <T extends Scope> ScopeKey<T> of(Class<T> scopeType) {
+        return new ScopeKey<>(scopeType);
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) {
+    public boolean equals(Object object) {
+        if(this == object) {
             return true;
         }
-        if (other == null || this.getClass() != other.getClass()) {
+        if(!(object instanceof ScopeKey<?> scopeKey)) {
             return false;
         }
-        ScopeAdapter<?> adapter = (ScopeAdapter<?>) other;
-        return this.adaptee.equals(adapter.adaptee);
+        return Objects.equals(scopeType, scopeKey.scopeType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.adaptee);
-    }
-
-    @Override
-    public ScopeKey<ScopeAdapter<T>> installableScopeType() {
-        return ScopeAdapterKey.of(this);
+        return Objects.hash(scopeType);
     }
 }

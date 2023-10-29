@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
@@ -29,7 +29,7 @@ public interface BindingFunction<T> {
      * @return The binding function
      * @throws IllegalScopeException When the scope is not valid, or cannot be modified safely
      */
-    BindingFunction<T> installTo(Class<? extends Scope> scope) throws IllegalScopeException;
+    BindingFunction<T> installTo(ScopeKey<?> scope) throws IllegalScopeException;
 
     /**
      * Sets the priority of the binding. This will determine the order in which the binding is
