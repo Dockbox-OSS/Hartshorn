@@ -20,14 +20,16 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.component.ComponentPopulator;
 
 /**
  * Indicates that the values of fields and executables should be automatically populated
  * by {@link org.dockbox.hartshorn.component.ComponentPopulator}s. Note that this annotation
- * is typically not required, as populating is enabled only if fields or executables are
- * explicitly marked as injectable.
+ * is typically not required, however {@link ComponentPopulator}s can decide to either not
+ * populate at all if this annotation is absent, or to populate all targets by default.
  *
- * <p>If the value of {@link #fields()} is {@code true}, all fields will be populated.
+ * <p>Population targets can be specified by using the {@link Populate#value()} attribute. By
+ * default, nothing is populated. All targets are therefore opt-in when using this annotation.
  *
  * @author Guus Lieben
  * @since 0.4.9
