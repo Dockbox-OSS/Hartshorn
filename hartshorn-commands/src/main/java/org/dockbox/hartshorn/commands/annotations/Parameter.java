@@ -48,11 +48,18 @@ public @interface Parameter {
 
     /**
      * The identifier of the parameter.
-     * @return
+     * @return the identifier
      */
     @AttributeAlias(value = "id", target = Component.class)
     String value();
 
+    /**
+     * Descriptor of the parameter. This is used for generating help pages.
+     *
+     * @deprecated since 0.5.0, for removal in 0.6.0. No longer used, should be part of Javadocs of the parameter type or
+     *             the given {@link #pattern()} implementation.
+     */
+    @Deprecated(forRemoval = true, since = "0.5.0")
     String usage() default "";
 
 }
