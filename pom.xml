@@ -111,6 +111,7 @@
                 <module>hartshorn-assembly/parent/pom.parent.xml</module>
                 <module>hartshorn-util</module>
                 <module>hartshorn-discovery</module>
+                <module>hartshorn-profiles</module>
                 <module>hartshorn-proxy</module>
                 <module>hartshorn-proxy-javassist</module>
                 <module>hartshorn-introspect</module>
