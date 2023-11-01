@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -64,12 +65,15 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
         }
 
         if ("hashCode".equals(method.getName())) {
-            return this.owner.unproxy(this.actual).hashCode();
+            return Objects.hash(
+                    this.owner.unproxy(this.actual),
+                    this.targetAnnotationClass
+            );
         }
 
         if ("equals".equals(method.getName()) && method.getParameters().length == 1) {
-            if (args[0] instanceof Annotation) {
-                return this.actual.equals(this.owner.unproxy((Annotation) args[0]));
+            if (args[0] instanceof Annotation annotation) {
+                return this.targetAnnotationClass == annotation.annotationType() && this.actual.equals(this.owner.unproxy(annotation));
             }
             else {
                 return this.actual.equals(args[0]);
