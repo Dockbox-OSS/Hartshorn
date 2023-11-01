@@ -16,6 +16,11 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import java.util.Collection;
+import java.util.Set;
+
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
@@ -23,37 +28,34 @@ import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToCollectionC
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.Set;
-
 @SuppressWarnings("rawtypes")
 public class ObjectToCollectionConverterFactoryTests {
 
     @Test
     void testNonNullElementCanBeConverted() {
         String element = "test";
-        Converter<Object, Set> converter = createConverter();
+        Converter<Object, Set<String>> converter = createConverter();
         Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Set);
         Assertions.assertEquals(1, ((Collection) converted).size());
-        Assertions.assertEquals(element, ((Iterable) converted).iterator().next());
+        Assertions.assertEquals(element, CollectionUtilities.first((Iterable) converted));
     }
 
     @Test
     void testPrimitiveCanBeConverted() {
         int element = 1;
-        Converter<Object, Set> converter = createConverter();
+        Converter<Object, Set<String>> converter = createConverter();
         Object converted = converter.convert(element);
         Assertions.assertNotNull(converted);
         Assertions.assertTrue(converted instanceof Set);
         Assertions.assertEquals(1, ((Collection) converted).size());
-        Assertions.assertEquals(element, ((Iterable) converted).iterator().next());
+        Assertions.assertEquals(element, CollectionUtilities.first((Iterable) converted));
     }
 
-    private static Converter<Object, Set> createConverter() {
+    private static Converter<Object, Set<String>> createConverter() {
         Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(Set.class);
         ConverterFactory<Object, Collection<?>> factory = new ObjectToCollectionConverterFactory(introspector);
-        return factory.create(Set.class);
+        return factory.create(new GenericType<Set<String>>() {}).orNull();
     }
 }

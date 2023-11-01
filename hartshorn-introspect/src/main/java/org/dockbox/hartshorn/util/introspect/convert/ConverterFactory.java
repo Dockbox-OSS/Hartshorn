@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
+import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.option.Option;
+
 /**
  * A factory for creating {@link Converter} instances. This is the main interface used to create
  * converters for a specific target type, which can be especially useful when working with types
@@ -25,6 +28,10 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * @param <R> the parent of targeted types (e.g. {@link Number} for {@link Integer}, {@link Long}, etc.)
  */
 public interface ConverterFactory<I, R> {
+
+    default <O extends R> Option<Converter<I, O>> create(GenericType<O> targetType) {
+        return targetType.asClass().map(this::create);
+    }
 
     /**
      * Returns a converter to convert from the source type to the target type, or {@code null} if

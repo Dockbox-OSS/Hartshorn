@@ -83,7 +83,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
             this.isChild = false;
         }
 
-        this.add(new CommandDefinitionContextImpl(this.applicationContext(), this.command(), this.method()));
+        this.add(new CommandDefinitionContextImpl(this.applicationContext(), converterRegistry, this.command(), this.method()));
 
         this.parentAliases = new CopyOnWriteArrayList<>();
         if (parent != null) {

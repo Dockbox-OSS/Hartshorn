@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.commands;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.CommandGatewayImpl;
@@ -23,6 +26,7 @@ import org.dockbox.hartshorn.commands.ParsingException;
 import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContextImpl;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
@@ -33,9 +37,6 @@ import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.lang.annotation.Annotation;
-import java.util.List;
 
 import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.commands.types.CommandValueEnum;
@@ -136,7 +137,8 @@ public class CommandDefinitionContextTests {
     @Test
     void testContainerContext() {
         Command command = new TestCommand();
-        CommandDefinitionContext context = new CommandDefinitionContextImpl(this.applicationContext, command, null);
+        ArgumentConverterRegistry converterRegistry = this.applicationContext.get(ArgumentConverterRegistry.class);
+        CommandDefinitionContext context = new CommandDefinitionContextImpl(this.applicationContext, converterRegistry, command, null);
 
         Assertions.assertEquals(1, context.aliases().size());
         Assertions.assertEquals("demo", context.aliases().get(0));

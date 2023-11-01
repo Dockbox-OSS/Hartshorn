@@ -16,14 +16,15 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 
 public class GenericConverters implements ConverterCache {
 
@@ -142,7 +143,7 @@ public class GenericConverters implements ConverterCache {
             }
         }
         if (candidateConverters.size() == 1) {
-            return candidateConverters.iterator().next();
+            return CollectionUtilities.first(candidateConverters);
         }
         else if (candidateConverters.size() > 1) {
             return this.findMatchingConverter(source, targetType, candidateConverters);

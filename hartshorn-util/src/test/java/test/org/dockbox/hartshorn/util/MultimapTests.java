@@ -16,21 +16,22 @@
 
 package test.org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.util.collections.MultiMap;
+import java.util.Collection;
+import java.util.stream.Stream;
+
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.CopyOnWriteArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.SynchronizedArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.SynchronizedHashSetMultiMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.Collection;
-import java.util.stream.Stream;
 
 public class MultimapTests {
 
@@ -71,7 +72,7 @@ public class MultimapTests {
         Assertions.assertFalse(collection.isEmpty());
         Assertions.assertEquals(1, collection.size());
 
-        String value = collection.iterator().next();
+        String value = CollectionUtilities.first(collection);
         Assertions.assertEquals("test", value);
     }
 
@@ -101,7 +102,7 @@ public class MultimapTests {
         Assertions.assertFalse(collection.isEmpty());
         Assertions.assertEquals(1, collection.size());
 
-        String value = collection.iterator().next();
+        String value = CollectionUtilities.first(collection);
         Assertions.assertEquals("test", value);
     }
 

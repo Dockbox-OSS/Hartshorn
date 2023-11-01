@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -80,8 +79,9 @@ public final class ParameterizableType {
                 }).map(ParameterizableType::create)
                 .orCompute(() -> ParameterizableType.create(Object.class))
                 .stream()
-            ).collect(Collectors.toList());
-        return builder(type.type()).parameters(parameters);
+            )
+            .collect(Collectors.toList());
+        return new Builder(type.type()).parameters(parameters);
     }
 
     /**
