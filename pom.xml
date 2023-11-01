@@ -93,6 +93,10 @@
                 <module>hartshorn-i18n</module>
                 <module>hartshorn-commands</module>
                 <module>hartshorn-assembly/pom.assembly.xml</module>
+
+                <!-- Launchpad configurations -->
+                <module>hartshorn-launchpad</module>
+                <module>hartshorn-launchpad/launchpad-sample</module>
             </modules>
         </profile>
         <profile>
