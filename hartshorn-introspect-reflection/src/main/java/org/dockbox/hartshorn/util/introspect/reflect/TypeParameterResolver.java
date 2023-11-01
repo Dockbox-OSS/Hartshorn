@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
@@ -47,7 +48,7 @@ public class TypeParameterResolver {
         if (roots.size() != 1) {
             throw new TypeParameterResolutionException("Expected exactly one root node, found " + roots.size());
         }
-        GraphNode<TypeView<?>> root = roots.iterator().next();
+        GraphNode<TypeView<?>> root = CollectionUtilities.first(roots);
         // Compare type, not view, as the view is likely parameterized and thus a different non-equal instance
         if (root.value().type() != this.lookForParent.type()) {
             throw new TypeParameterResolutionException("Expected root node to be " + this.lookForParent.type().getName() + ", found " + root.value().type().getName());

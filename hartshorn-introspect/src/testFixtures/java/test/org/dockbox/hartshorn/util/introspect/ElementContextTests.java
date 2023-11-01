@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.util.introspect;
 import java.lang.annotation.Annotation;
 import java.util.stream.Stream;
 
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
@@ -311,7 +312,7 @@ public abstract class ElementContextTests {
     void testAnnotatedTypeHasAnnotations() {
         TypeView<AnnotatedElement> type = this.introspector().introspect(AnnotatedElement.class);
         Assertions.assertEquals(1, type.annotations().count());
-        Assertions.assertSame(Sample.class, type.annotations().all().iterator().next().annotationType());
+        Assertions.assertSame(Sample.class, CollectionUtilities.first(type.annotations().all()).annotationType());
     }
 
     @Test

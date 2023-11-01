@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NavigableSet;
+import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -108,11 +110,37 @@ public final class CollectionUtilities {
         }
     }
 
-    public static <T> List<T> distinct(List<T> collection) {
+    public static <T> List<T> distinct(Collection<T> collection) {
         return collection.stream().distinct().toList();
     }
 
-    public static <T> T last(List<T> values) {
-        return values.get(values.size() - 1);
+    public static <T> T last(Collection<T> collection) {
+        if (collection == null || collection.isEmpty()) {
+            return null;
+        }
+        else if (collection instanceof NavigableSet<T> navigableSet) {
+            return navigableSet.last();
+        }
+        else if (collection instanceof SequencedCollection<T> sequencedCollection) {
+            return sequencedCollection.getLast();
+        }
+        else {
+            return collection.stream().skip(collection.size() - 1).findFirst().orElse(null);
+        }
+    }
+
+    public static <T> T first(Iterable<T> iterable) {
+        if (iterable == null || (iterable instanceof Collection<T> collection && collection.isEmpty())) {
+            return null;
+        }
+        else if (iterable instanceof NavigableSet<T> navigableSet) {
+            return navigableSet.first();
+        }
+        else if (iterable instanceof SequencedCollection<T> sequencedCollection) {
+            return sequencedCollection.getFirst();
+        }
+        else {
+            return iterable.iterator().next();
+        }
     }
 }

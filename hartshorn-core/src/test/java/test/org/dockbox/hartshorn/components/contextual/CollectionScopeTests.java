@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -141,7 +142,7 @@ public class CollectionScopeTests {
             componentKey = componentKey.mutable().name(name).build();
             collection = applicationContext.get(componentKey);
             Assertions.assertEquals(1, collection.size());
-            Assertions.assertEquals(name, collection.iterator().next().name());
+            Assertions.assertEquals(name, CollectionUtilities.first(collection).name());
         }
     }
 }

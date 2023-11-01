@@ -16,16 +16,17 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
+
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionalToCollectionConverterFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
 
 public class OptionalToCollectionConverterFactoryTests {
 
@@ -48,7 +49,7 @@ public class OptionalToCollectionConverterFactoryTests {
         Assertions.assertNotNull(converted);
         Assertions.assertFalse(converted.isEmpty());
         Assertions.assertEquals(1, converted.size());
-        Assertions.assertEquals("test", converted.iterator().next());
+        Assertions.assertEquals("test", CollectionUtilities.first(converted));
     }
 
     private static Converter<Optional<?>, ArrayList> createConverter() {

@@ -16,14 +16,15 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Collection;
+import java.util.Set;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
-
-import java.util.Collection;
-import java.util.Set;
 
 public class CollectionToObjectConverter implements GenericConverter, ConditionalConverter {
 
@@ -36,13 +37,13 @@ public class CollectionToObjectConverter implements GenericConverter, Conditiona
     public boolean canConvert(Object source, Class<?> targetType) {
         return source instanceof Collection<?> collection
                 && collection.size() == 1
-                && collection.iterator().next().getClass().isAssignableFrom(targetType);
+                && CollectionUtilities.first(collection).getClass().isAssignableFrom(targetType);
     }
 
     @Override
     public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
         assert source != null;
         Collection<?> collection = (Collection<?>) source;
-        return collection.iterator().next();
+        return CollectionUtilities.first(collection);
     }
 }

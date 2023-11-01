@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -511,7 +512,7 @@ public abstract class IntrospectorTests {
 
         Set<TypeView<?>> upperBounds = typeParameter.upperBounds();
         Assertions.assertEquals(1, upperBounds.size());
-        Assertions.assertSame(Object.class, upperBounds.iterator().next().type());
+        Assertions.assertSame(Object.class, CollectionUtilities.first(upperBounds).type());
     }
 
     @SuppressWarnings("unused") // Used by testGenericTypeWithWildcardUsesUpperbounds
