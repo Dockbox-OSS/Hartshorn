@@ -23,6 +23,7 @@ import java.util.Objects;
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 

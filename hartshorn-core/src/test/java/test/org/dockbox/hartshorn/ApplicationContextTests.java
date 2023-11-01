@@ -487,7 +487,7 @@ public class ApplicationContextTests {
             }
 
             DependencyContext<?> dependencyContext = new AutoConfiguringDependencyContext<>(componentKey,
-                    dependencyMap, Scope.DEFAULT_SCOPE_KEY, -1, () -> null, origin);
+                    dependencyMap, Scope.DEFAULT_SCOPE.installableScopeType(), -1, () -> null, origin);
             dependencyContexts.add(dependencyContext);
         }
 

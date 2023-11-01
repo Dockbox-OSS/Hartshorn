@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class ParameterizableType<T> {
 
@@ -58,6 +59,10 @@ public class ParameterizableType<T> {
         return this.parameters;
     }
 
+    public ParameterizedType asParameterizedType() {
+        return new ParameterizableParameterizedTypeWrapper<>(this);
+    }
+
     @Override
     public boolean equals(Object o) {
         if(this == o) {
@@ -82,5 +87,4 @@ public class ParameterizableType<T> {
                 .collect(Collectors.joining(", "));
         return this.type.getSimpleName() + (parameters.isEmpty() ? "" : "<" + parameters + ">");
     }
-
 }

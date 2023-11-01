@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.component.Scope;
-
 import java.util.Set;
 
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.Scope;
+
 public abstract class AbstractDependencyContext<T> implements DependencyContext<T> {
 
     private final ComponentKey<T> componentKey;
@@ -32,8 +32,7 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     private boolean singleton;
     private boolean processAfterInitialization = true;
 
-                                        Class<? extends Scope> scope, int priority) {
-    protected AbstractDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies,
+    protected AbstractDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies, Class<? extends Scope> scope, int priority) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.scope = scope;

@@ -25,8 +25,10 @@ import java.util.stream.Collectors;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
+import org.dockbox.hartshorn.inject.ComponentKeyDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.ComposedProvider;
 import org.dockbox.hartshorn.inject.DependencyContext;
+import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.TypeAwareProvider;
@@ -35,6 +37,7 @@ import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.graph.MutableContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 
 public class DependencyGraphBuilder {
 
@@ -75,7 +78,11 @@ public class DependencyGraphBuilder {
         graph.addRoot(node);
 
         Set<ComponentKey<?>> implementationKeys = this.lookupHierarchyDeclarations(dependencyContext);
-        // TODO: Use resolver to resolve additional dependencies here
+        Introspector introspector = resolver.applicationContext().environment().introspector();
+        Set<DependencyDeclarationContext<?>> declarationContexts = implementationKeys.stream()
+                .map(key -> new ComponentKeyDependencyDeclarationContext<>(introspector, key))
+                .collect(Collectors.toSet());
+        Set<DependencyContext<?>> dependencyContexts = resolver.resolve(declarationContexts);
 
         for (ComponentKey<?> dependency : dependencyContext.dependencies()) {
             if (!nodes.containsKey(dependency)) {
