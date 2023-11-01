@@ -143,7 +143,9 @@ public final class ClassPathScanner {
             throws ClassPathWalkingException {
         try {
             FileSystem fileSystem = FileSystems.newFileSystem(Paths.get(url.toURI()), (ClassLoader) null);
-            Files.walkFileTree(fileSystem.getRootDirectories().iterator().next(), new JarFileWalker(this, handler, classLoader));
+            for(Path rootDirectory : fileSystem.getRootDirectories()) {
+                Files.walkFileTree(rootDirectory, new JarFileWalker(this, handler, classLoader));
+            }
         }
         catch (IOException | URISyntaxException e) {
             throw new ClassPathWalkingException("Error while scanning jar file " + jarFile, e);
