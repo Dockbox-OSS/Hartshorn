@@ -15,8 +15,8 @@ jobs:
           distribution: temurin
       - name: Run tests
         id: test
-        run: "mvn clean verify -Djacoco.skip=false -Dcoverage.skip=false -P ci,all -Djacoco.haltOnFailure=true"
-        continue-on-error: true # Don't fail the build while coverage is known to be low. #967 will fix this.
+        # Skip coverage while it is known to be too low. To be followed up in #967
+        run: "mvn clean verify -Djacoco.skip=false -Dcoverage.skip=true -P ci,all -Djacoco.haltOnFailure=true"
   testSourceCompat:
     needs: [coverage]
     strategy:
@@ -33,5 +33,6 @@ jobs:
           java-version: 21
           distribution: temurin
       - name: "Unit testing (OS: ${{ matrix.os }}, source JDK)"
-        run: mvn clean test -P ci,all
+        # Skip coverage while testing compatibility, already tested in coverage job
+        run: "mvn clean verify -Djacoco.skip=false -Dcoverage.skip=true -P ci,all -Djacoco.haltOnFailure=true"
         shell: bash
