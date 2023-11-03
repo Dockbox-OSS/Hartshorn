@@ -26,6 +26,15 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 
 import java.util.Set;
 
+/**
+ * A validator that checks whether all dependencies in the graph have been visited. If not, it will throw an exception.
+ * This validator is intended to be used after the configuration phase, so it can check that all dependencies have been
+ * configured correctly.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class DependenciesVisitedGraphValidator implements DependencyGraphValidator {
 
     @Override

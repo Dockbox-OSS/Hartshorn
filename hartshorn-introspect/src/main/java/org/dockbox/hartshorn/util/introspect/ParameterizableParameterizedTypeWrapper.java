@@ -19,6 +19,18 @@ package org.dockbox.hartshorn.util.introspect;
 import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
+/**
+ * A wrapper for {@link ParameterizableType} to be used as a {@link ParameterizedType}, that allows for easy introspection.
+ *
+ * @param type the parameterized type to wrap
+ * @param <T> the type of the parameterized type
+ *
+ * @see ParameterizableType
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 record ParameterizableParameterizedTypeWrapper<T>(ParameterizableType<T> type) implements ParameterizedType {
 
     @Override
@@ -46,11 +58,11 @@ record ParameterizableParameterizedTypeWrapper<T>(ParameterizableType<T> type) i
         if(!(object instanceof ParameterizableParameterizedTypeWrapper<?> that)) {
             return false;
         }
-        return Objects.equals(type, that.type);
+        return Objects.equals(this.type, that.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type);
+        return Objects.hash(this.type);
     }
 }

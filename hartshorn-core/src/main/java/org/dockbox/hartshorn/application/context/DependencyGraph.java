@@ -16,8 +16,27 @@
 
 package org.dockbox.hartshorn.application.context;
 
+import org.dockbox.hartshorn.application.context.validate.DependencyGraphValidator;
 import org.dockbox.hartshorn.inject.DependencyContext;
+import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
 import org.dockbox.hartshorn.util.graph.SimpleContentAwareGraph;
 
+/**
+ * A dependency graph is a graph of {@link DependencyContext} instances. It is used to resolve dependencies
+ * and to determine the order in which they should be resolved. This can also be used by
+ * {@link DependencyGraphValidator validators} to validate whether dependencies are valid.
+ *
+ * <p>You should not use this class directly, but instead use the {@link DependencyGraphBuilder} to build
+ * a dependency graph from a collection of {@link DependencyContext} instances. This will ensure the graph
+ * contains valid references internally.
+ *
+ * @see DependencyContext
+ * @see DependencyGraphValidator
+ * @see DependencyGraphBuilder
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class DependencyGraph extends SimpleContentAwareGraph<DependencyContext<?>> {
 }

@@ -19,9 +19,28 @@ package org.dockbox.hartshorn.inject.processing;
 import org.dockbox.hartshorn.inject.AbstractDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentConfigurationException;
 import org.dockbox.hartshorn.inject.DependencyContext;
+import org.dockbox.hartshorn.inject.TypeAwareProvider;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
+/**
+ * A {@link DependencyContext} implementation that is used for implementation components. Implementation components are
+ * components that have a known implementation specification for which a {@link DependencyContext} is available. Typically,
+ * these are obtained through {@link TypeAwareProvider}s that are registered with the {@link BindingHierarchy} of the
+ * container.
+ *
+ * @param <T> the type of the component that is implemented
+ * @param <I> the type of the component that is the implementation
+ *
+ * @see DependencyContext
+ * @see TypeAwareProvider
+ * @see BindingHierarchy
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ImplementationDependencyContext<T, I extends T> extends AbstractDependencyContext<I> {
 
     private final DependencyContext<I> implementationContext;
@@ -33,12 +52,25 @@ public class ImplementationDependencyContext<T, I extends T> extends AbstractDep
         this.declarationContext = declarationContext;
     }
 
+    /**
+     * Returns the {@link DependencyContext} of the implementation component. This is the component that is created by
+     * the container.
+     *
+     * @return the {@link DependencyContext} of the implementation component
+     */
     public DependencyContext<I> implementationContext() {
-        return implementationContext;
+        return this.implementationContext;
     }
 
+    /**
+     * Returns the {@link DependencyContext} of the declaration component. This is the component that is declared by the
+     * user, and is being implemented by the {@link #implementationContext()}. This component is not created by the
+     * container.
+     *
+     * @return the {@link DependencyContext} of the declaration component
+     */
     public DependencyContext<T> declarationContext() {
-        return declarationContext;
+        return this.declarationContext;
     }
 
     @Override
@@ -48,6 +80,6 @@ public class ImplementationDependencyContext<T, I extends T> extends AbstractDep
 
     @Override
     public View origin() {
-        return implementationContext.origin();
+        return this.implementationContext.origin();
     }
 }

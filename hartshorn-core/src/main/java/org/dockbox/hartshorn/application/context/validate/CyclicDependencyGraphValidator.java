@@ -35,6 +35,26 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
+/**
+ * A validator that can be used to detect cyclic dependencies in a {@link DependencyGraph}. A cyclic dependency is a
+ * dependency that is required by a component, but is also a dependency of that same component. This is a problem,
+ * as it would require the component to be instantiated before it can be instantiated.
+ *
+ * <p>This validator will detect cyclic dependencies by traversing the graph, and checking if any of the dependencies
+ * of a component are also dependencies of that same component. If that is the case, a {@link CyclicComponentException}
+ * is thrown. The exception contains a {@link ComponentDiscoveryList} that describes the cyclic dependency.
+ *
+ * <p>Dependencies are checked to any depth. This means that if component A depends on component B, and component B
+ * depends on component C, and component C depends on component A, a cyclic dependency is detected. This is true
+ * even if component A does not directly depend on component C.
+ *
+ * @see CyclicComponentException
+ * @see ComponentDiscoveryList
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class CyclicDependencyGraphValidator implements DependencyGraphValidator {
 
     @Override
@@ -56,6 +76,15 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
         }
     }
 
+    /**
+     * Checks if a node is part of a cyclic dependency. This will ignore any nodes that do not need immediate
+     * resolution, as they can be lazily initialized and therefore do not pose a problem.
+     *
+     * @param node the node to check
+     * @param knownNodes the nodes that have already been checked
+     *
+     * @return a list of nodes that are part of a cyclic dependency, or an empty list if no cyclic dependency was found
+     */
     public List<GraphNode<DependencyContext<?>>> checkNodeNotCyclicRecursive(GraphNode<DependencyContext<?>> node, List<GraphNode<DependencyContext<?>>> knownNodes) {
         if (knownNodes.contains(node)) {
             return List.of(node);
@@ -90,6 +119,19 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
         return List.of();
     }
 
+    /**
+     * Creates a {@link ComponentDiscoveryList} from a path of {@link GraphNode}s. The path is expected to be a path
+     * of nodes that are part of a cyclic dependency. The path is traversed, and the {@link ComponentKey}s of the
+     * nodes are added to the discovery list.
+     *
+     * @param path the path of nodes
+     * @param applicationContext the application context
+     *
+     * @return a discovery list that describes the cyclic dependency
+     *
+     * @implNote The use of {@link ImplementationDependencyContext}s is supported, and will result in appropriate
+     *           {@link TypePathNode}s being added to the discovery list.
+     */
     public ComponentDiscoveryList createDiscoveryList(List<GraphNode<DependencyContext<?>>> path, ApplicationContext applicationContext) {
         ComponentDiscoveryList discoveryList = new ComponentDiscoveryList();
         Introspector introspector = applicationContext.environment().introspector();

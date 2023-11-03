@@ -22,6 +22,19 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
+/**
+ * A simple implementation of {@link DependencyResolver} that delegates bulk resolution to a single
+ * {@link #resolveSingle(DependencyDeclarationContext, ApplicationContext) resolution method}. This method is called for each
+ * {@link DependencyDeclarationContext} that is passed to {@link #resolve(Collection)}.
+ *
+ * @see DependencyResolver
+ * @see DependencyDeclarationContext
+ * @see DependencyContext
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class AbstractContainerDependencyResolver implements DependencyResolver {
 
     private final ApplicationContext applicationContext;
@@ -44,6 +57,19 @@ public abstract class AbstractContainerDependencyResolver implements DependencyR
         return dependencyContexts;
     }
 
+    /**
+     * Resolves a single {@link DependencyDeclarationContext} into a collection of {@link DependencyContext} instances. The result
+     * of this method may contain zero or more {@link DependencyContext} instances, each representing a dependency that was declared
+     * by the {@link DependencyDeclarationContext} that was passed to this method.
+     *
+     * @param componentContainer the declaration to resolve
+     * @param applicationContext the application context
+     *
+     * @return a collection of {@link DependencyContext} instances
+     *
+     * @param <T> the type of the component that is declared by the declaration
+     * @throws DependencyResolutionException when the resolution fails
+     */
     protected abstract <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> componentContainer, ApplicationContext applicationContext) throws DependencyResolutionException;
 
 }

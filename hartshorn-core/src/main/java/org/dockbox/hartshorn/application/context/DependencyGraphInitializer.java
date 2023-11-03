@@ -38,6 +38,19 @@ import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 
+/**
+ * The dependency graph initializer is responsible for initializing the dependency graph. It does so by first
+ * resolving all dependency declarations, and then building a graph from the resolved dependencies. The graph
+ * is then validated before and after the configuration phase.
+ *
+ * @see DependencyGraph
+ * @see DependencyDeclarationContext
+ * @see DependencyContext
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class DependencyGraphInitializer {
 
     private final DependencyGraphBuilder graphBuilder;
@@ -46,7 +59,7 @@ public class DependencyGraphInitializer {
     private final DependencyResolver dependencyResolver;
     private final DependencyGraphValidator graphValidator;
 
-    public DependencyGraphInitializer(SingleElementContext<? extends ApplicationContext> initializerContext, Configurer configurer) {
+    private DependencyGraphInitializer(SingleElementContext<? extends ApplicationContext> initializerContext, Configurer configurer) {
         this.applicationContext = initializerContext.input();
         this.dependencyResolver = configurer.dependencyResolver.initialize(initializerContext);
         this.graphBuilder = configurer.dependencyGraphBuilder.initialize(initializerContext.transform(this.dependencyResolver));
@@ -54,6 +67,14 @@ public class DependencyGraphInitializer {
         this.graphValidator = new CompositeDependencyGraphValidator(configurer.graphValidator.initialize(initializerContext));
     }
 
+    /**
+     * Initializes the dependency graph. This method will first resolve all dependency declarations, and then
+     * build and validate the dependency graph. The graph is not returned, as it should not be used directly for
+     * anything other than validation.
+     *
+     * @param containers the dependency declarations
+     * @throws ApplicationException when the graph is invalid, or when the validation fails
+     */
     public void initializeDependencyGraph(Collection<DependencyDeclarationContext<?>> containers) throws ApplicationException {
         DependencyGraph dependencyGraph = this.buildDependencyGraph(containers);
         this.graphValidator.validateBeforeConfiguration(dependencyGraph, this.applicationContext);
@@ -61,7 +82,7 @@ public class DependencyGraphInitializer {
         Set<GraphNode<DependencyContext<?>>> visitedDependencies = this.dependencyVisitor.iterate(dependencyGraph);
         this.graphValidator.validateAfterConfiguration(dependencyGraph, this.applicationContext, visitedDependencies);
 
-        this.applicationContext.log().debug("Visited %d dependencies".formatted(visitedDependencies.size()));
+        this.applicationContext.log().debug("Validated %d dependencies".formatted(visitedDependencies.size()));
     }
 
     private DependencyGraph buildDependencyGraph(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException {

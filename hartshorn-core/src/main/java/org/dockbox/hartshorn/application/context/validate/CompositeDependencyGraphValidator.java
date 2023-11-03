@@ -26,6 +26,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * A composite validator that can be used to combine multiple validators into a single validator.
+ *
+ * @see DependencyGraphValidator
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class CompositeDependencyGraphValidator implements DependencyGraphValidator {
 
     private final Set<DependencyGraphValidator> validators = new HashSet<>();
@@ -34,6 +43,11 @@ public class CompositeDependencyGraphValidator implements DependencyGraphValidat
         this.validators.addAll(validators);
     }
 
+    /**
+     * Adds a validator to the composite. If the validator is already present, it will not be added again.
+     *
+     * @param validator the validator to add
+     */
     public void add(DependencyGraphValidator validator) {
         this.validators.add(validator);
     }
