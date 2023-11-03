@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
@@ -28,8 +30,6 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
 
 /**
  * Represents one or more Java methods that can be called from an HSL runtime. The methods
@@ -125,13 +125,14 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         ClassReference classReference = virtualClass;
         ExternalClass<?> externalClass = null;
 
-        while (classReference != null) {
-            if (classReference instanceof ExternalClass<?> external) {
+        do {
+            if(classReference instanceof ExternalClass<?> external) {
                 externalClass = external;
                 break;
             }
             classReference = classReference.superClass();
         }
+        while(classReference != null);
 
         if (externalClass == null) {
             throw new RuntimeError(null, "Cannot bind external function to virtual instance of type " + virtualClass.name());

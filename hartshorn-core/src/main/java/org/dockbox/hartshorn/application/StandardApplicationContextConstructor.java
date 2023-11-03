@@ -84,7 +84,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         if (applicationContext instanceof ProcessableApplicationContext activatingApplicationContext) {
             activatingApplicationContext.loadContext();
         }
-        this.finalize(applicationContext);
+        this.finalizeContext(applicationContext);
 
         return applicationContext;
     }
@@ -219,7 +219,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         }
     }
 
-    private void finalize(ApplicationContext applicationContext) {
+    private void finalizeContext(ApplicationContext applicationContext) {
         this.buildContext.logger().debug("Finalizing application context before releasing to application");
         if (applicationContext.environment() instanceof ObservableApplicationEnvironment observable) {
             this.buildContext.logger().debug("Notifying application environment observers of application context creation");

@@ -65,10 +65,8 @@ public class DiscoveryServiceProcessor extends AbstractProcessor {
                 continue;
             }
 
-            try {
-                Writer writer = resource.openWriter();
+            try(Writer writer = resource.openWriter()) {
                 writer.write(implementationType.toString());
-                writer.close();
             }
             catch (IOException e) {
                 System.err.println("Failed to create service loader file for " + annotation.value().getName() + " with implementation " + implementationType.toString());
