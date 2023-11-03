@@ -16,15 +16,9 @@
 
 package org.dockbox.hartshorn.util.graph;
 
-public abstract class AbstractGraphVisitor<T> implements GraphIterator<T> {
+import java.util.Set;
 
-    protected abstract boolean visit(GraphNode<T> node) throws GraphException;
+public interface ContentAwareGraph<T> extends Graph<T> {
 
-    protected void beforePathVisited() {
-        // Do nothing by default, can be overridden
-    }
-
-    protected void afterPathVisited() {
-        // Do nothing by default, can be overridden
-    }
+    Set<GraphNode<T>> nodes();
 }

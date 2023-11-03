@@ -19,10 +19,10 @@ package org.dockbox.hartshorn.util.graph;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class BreadthFirstGraphVisitor<T> extends AbstractGraphVisitor<T> {
+public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
 
     @Override
-    public Set<GraphNode<T>> iterate(Graph<T> graph) throws GraphException {
+    default Set<GraphNode<T>> iterate(Graph<T> graph) throws GraphException {
         Set<GraphNode<T>> visited = new HashSet<>();
 
         Set<GraphNode<T>> nodes = graph.roots();
@@ -33,6 +33,12 @@ public abstract class BreadthFirstGraphVisitor<T> extends AbstractGraphVisitor<T
             this.afterPathVisited();
         }
         return visited;
+    }
+
+    default void visitSingle(Set<GraphNode<T>> visited, GraphNode<T> node) throws GraphException {
+        if (visited.add(node)) {
+            this.visitRow(visited, Set.of(node));
+        }
     }
 
     private Set<GraphNode<T>> visitRow(Set<GraphNode<T>> visited, Set<GraphNode<T>> currentRow) throws GraphException {

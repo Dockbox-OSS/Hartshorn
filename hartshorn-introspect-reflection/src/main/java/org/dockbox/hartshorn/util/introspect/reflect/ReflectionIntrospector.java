@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.ConcurrentIntrospectionViewCache;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionConstructorView;
@@ -143,6 +144,11 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     public TypeView<?> introspect(ParameterizedType type) {
         // Do not use cache here, as the type is parameterized
         return new ReflectionTypeView<>(this, type);
+    }
+
+    @Override
+    public <T> TypeView<T> introspect(ParameterizableType<T> type) {
+        return (TypeView<T>) this.introspect(type.asParameterizedType());
     }
 
     @Override

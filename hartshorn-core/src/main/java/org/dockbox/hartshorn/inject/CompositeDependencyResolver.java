@@ -16,18 +16,20 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+
 public class CompositeDependencyResolver implements DependencyResolver {
 
     private final Set<DependencyResolver> resolvers;
+    private final ApplicationContext applicationContext;
 
-    public CompositeDependencyResolver(Set<DependencyResolver> resolvers) {
+    public CompositeDependencyResolver(Set<DependencyResolver> resolvers, ApplicationContext applicationContext) {
         this.resolvers = resolvers;
+        this.applicationContext = applicationContext;
     }
 
     public Set<DependencyResolver> resolvers() {
@@ -35,12 +37,17 @@ public class CompositeDependencyResolver implements DependencyResolver {
     }
 
     @Override
-    public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers, ApplicationContext applicationContext) throws DependencyResolutionException {
+    public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException {
         Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
         for (DependencyResolver resolver : this.resolvers()) {
-            Set<DependencyContext<?>> resolvedDependencies = resolver.resolve(containers, applicationContext);
+            Set<DependencyContext<?>> resolvedDependencies = resolver.resolve(containers);
             dependencyContexts.addAll(resolvedDependencies);
         }
         return dependencyContexts;
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
     }
 }

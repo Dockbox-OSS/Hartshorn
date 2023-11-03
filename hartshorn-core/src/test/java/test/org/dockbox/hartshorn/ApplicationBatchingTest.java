@@ -17,12 +17,13 @@
 package test.org.dockbox.hartshorn;
 
 import org.dockbox.hartshorn.application.HartshornApplication;
+import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-
 import test.org.dockbox.hartshorn.components.SimpleComponent;
 
 @Execution(ExecutionMode.CONCURRENT)
@@ -34,9 +35,15 @@ public class ApplicationBatchingTest {
     @RepeatedTest(1)
     void testApplicationContextBatching() {
         ApplicationContext applicationContext = Assertions.assertDoesNotThrow(() ->
-                HartshornApplication.create(ApplicationBatchingTest.class, builder ->
-                        builder.arguments("--hartshorn:debug=true", "--hartshorn.batch.enabled=true")
-                )
+                HartshornApplication.create(ApplicationBatchingTest.class, builder -> {
+                    builder.constructor(StandardApplicationContextConstructor.create(constructor -> {
+                        constructor.includeBasePackages(false);
+                        constructor.standaloneComponents(components -> {
+                            components.add(SimpleComponent.class);
+                        });
+                        constructor.environment(ContextualApplicationEnvironment.create(ContextualApplicationEnvironment.Configurer::enableBatchMode));
+                    }));
+                })
         );
         Assertions.assertNotNull(applicationContext);
 

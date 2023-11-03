@@ -16,9 +16,17 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.util.TypeConversionException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
@@ -32,13 +40,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
 
 public abstract class IntrospectorTests {
 
@@ -515,4 +516,22 @@ public abstract class IntrospectorTests {
 
     @SuppressWarnings("unused") // Used by testGenericTypeWithWildcardUsesUpperbounds
     private final List<?> genericType = new ArrayList<>();
+
+    @Test
+    void testParameterizableTypeCanBeIntrospected() {
+        ParameterizableType<String> argumentType = new ParameterizableType<>(String.class);
+        ParameterizableType<List> collectionType = new ParameterizableType<>(List.class, List.of(argumentType));
+
+        TypeView<List> typeView = introspector().introspect(collectionType);
+        Assertions.assertTrue(typeView.is(List.class));
+        Assertions.assertEquals(1, typeView.typeParameters().allInput().count());
+
+        TypeParameterView typeParameterView = typeView.typeParameters().atIndex(0)
+                .orElseGet(Assertions::fail);
+
+        TypeView<?> argumentView = typeParameterView.resolvedType()
+                .orElseGet(Assertions::fail);
+
+        Assertions.assertTrue(argumentView.is(String.class));
+    }
 }

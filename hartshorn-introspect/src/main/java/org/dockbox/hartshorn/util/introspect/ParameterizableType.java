@@ -14,14 +14,34 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+/**
+ * A wrapper for parameterized types that allows for the retrieval of the type and its parameters. This is a
+ * simple representation of a {@link ParameterizedType} that allows for easy comparison, which is especially
+ * useful for keys such as the {@code org.dockbox.hartshorn.component.ComponentKey}.
+ *
+ * <p>{@link ParameterizableType}s can be introspected with {@link Introspector introspectors}, retaining
+ * complete type information.
+ *
+ * @param <T> the type of the parameterized type
+ *
+ * @see TypeView
+ * @see Introspector
+ * @see ParameterizedType
+ * @see ParameterizableParameterizedTypeWrapper
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ParameterizableType<T> {
 
     private final Class<T> type;
@@ -46,16 +66,51 @@ public class ParameterizableType<T> {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Sets the parameters of this type, overriding all existing parameters. The number of parameters must
+     * match the number of type parameters of the type. If the type has no type parameters, the given
+     * parameters must be empty.
+     *
+     * @param parameters the new parameters
+     *
+     * @throws IllegalArgumentException if the number of parameters does not match the number of type parameters
+     */
     public void parameters(List<ParameterizableType<?>> parameters) {
+        int expectedSize = this.type().getTypeParameters().length;
+        if(parameters.size() != expectedSize) {
+            throw new IllegalArgumentException("Expected " + expectedSize + " parameters, but got " + parameters.size());
+        }
         this.parameters = parameters;
     }
 
+    /**
+     * Returns the type of this parameterized type. This is only the raw type, and does not include any
+     * type parameters.
+     *
+     * @return the type of this parameterized type
+     */
     public Class<T> type() {
         return this.type;
     }
 
+    /**
+     * Returns the parameters of this parameterized type. If the type has no type parameters, this list
+     * will be empty, but never {@code null}.
+     *
+     * @return the parameters of this parameterized type
+     */
     public List<ParameterizableType<?>> parameters() {
-        return this.parameters;
+        return List.copyOf(this.parameters);
+    }
+
+    /**
+     * Returns a {@link ParameterizedType} representation of this parameterized type. This can be used for
+     * reflective operations.
+     *
+     * @return a {@link ParameterizedType} representation of this parameterized type
+     */
+    public ParameterizedType asParameterizedType() {
+        return new ParameterizableParameterizedTypeWrapper<>(this);
     }
 
     @Override
@@ -82,5 +137,4 @@ public class ParameterizableType<T> {
                 .collect(Collectors.joining(", "));
         return this.type.getSimpleName() + (parameters.isEmpty() ? "" : "<" + parameters + ">");
     }
-
 }

@@ -23,11 +23,30 @@ import java.util.Objects;
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import jakarta.inject.Named;
 
+/**
+ * A key that can be used to identify a component. This contains required metadata to identify a component, such as
+ * its type, name, scope and whether it should be enabled on provisioning.
+ *
+ * <p>Component keys contain a {@link ParameterizableType} that describes the type of the component. This type can
+ * be parameterized. Therefore, key instances differentiate between e.g. {@code List<String>} and {@code List<Integer>}.
+ *
+ * <p>Keys are immutable, to build a new key based on an existing key, use {@link #mutable()}.
+ *
+ * @see ComponentProvider#get(ComponentKey)
+ * @see ComponentKey#builder(Class)
+ *
+ * @param <T> the type of the component
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public final class ComponentKey<T> {
 
     private final ParameterizableType<T> type;
@@ -42,18 +61,50 @@ public final class ComponentKey<T> {
         this.enable = enable;
     }
 
+    /**
+     * Creates a new builder for a component key of the given type. If the type is parameterized, the key will
+     * be for the raw type.
+     *
+     * @param type the type of the component
+     * @return a new builder
+     * @param <T> the type of the component
+     */
     public static <T> Builder<T> builder(Class<T> type) {
         return new Builder<>(new ParameterizableType<>(type));
     }
 
+    /**
+     * Creates a new builder for a component key of the given type. If the type is parameterized, the key will
+     * retain its parameterization.
+     *
+     * @param type the type of the component
+     * @return a new builder
+     * @param <T> the type of the component
+     */
     public static <T> Builder<T> builder(TypeView<T> type) {
         return new Builder<>(new ParameterizableType<>(type));
     }
 
+    /**
+     * Creates a new builder for a component key of the given type. If the type is parameterized, the key will
+     * retain its parameterization.
+     *
+     * @param type the type of the component
+     * @return a new builder
+     * @param <T> the type of the component
+     */
     public static <T> Builder<T> builder(ParameterizableType<T> type) {
         return new Builder<>(type);
     }
 
+    /**
+     * Creates a new builder for a component key of the given type. If the type is parameterized, the key will
+     * retain its parameterization.
+     *
+     * @param parameter the parameter of the component
+     * @return a new builder
+     * @param <T> the type of the component
+     */
     public static <T> Builder<T> builder(ParameterView<T> parameter) {
         Builder<T> builder = builder(parameter.genericType());
         ElementAnnotationsIntrospector annotations = parameter.annotations();
@@ -62,38 +113,109 @@ public final class ComponentKey<T> {
         return builder;
     }
 
+    /**
+     * Creates a new component key of the given type. If the type is parameterized, the key will be for the raw type.
+     *
+     * @param type the type of the component
+     * @return a new component key
+     * @param <T> the type of the component
+     */
     public static <T> ComponentKey<T> of(Class<T> type) {
         return ComponentKey.builder(type).build();
     }
 
+    /**
+     * Creates a new component key of the given type. If the type is parameterized, the key will retain its
+     * parameterization.
+     *
+     * @param type the type of the component
+     * @return a new component key
+     * @param <T> the type of the component
+     */
     public static <T> ComponentKey<T> of(TypeView<T> type) {
         return ComponentKey.builder(type).build();
     }
 
+    /**
+     * Creates a new component key of the given type. If the type is parameterized, the key will retain its
+     * parameterization.
+     *
+     * @param type the type of the component
+     * @return a new component key
+     * @param <T> the type of the component
+     */
     public static <T> ComponentKey<T> of(ParameterizableType<T> type) {
         return ComponentKey.builder(type).build();
     }
 
-    public static <T> ComponentKey<T> of(TypeView<T> type, String named) {
-        return ComponentKey.of(type.type(), named);
-    }
-
+    /**
+     * Creates a new named component key of the given type. If the type is parameterized, the key will be for the raw type.
+     *
+     * @param key the type of the component
+     * @param name the name of the component
+     * @return a new component key
+     * @param <T> the type of the component
+     */
     public static <T> ComponentKey<T> of(Class<T> key, String name) {
         return ComponentKey.builder(key).name(name).build();
     }
 
+    /**
+     * Creates a new named component key of the given type. If the type is parameterized, the key will retain its
+     * parameterization.
+     *
+     * @param type the type of the component
+     * @param named the name of the component
+     * @return a new component key
+     * @param <T> the type of the component
+     */
+    public static <T> ComponentKey<T> of(TypeView<T> type, String named) {
+        return ComponentKey.of(type.type(), named);
+    }
+
+    /**
+     * Creates a new named component key of the given type. If the type is parameterized, the key will retain its
+     * parameterization.
+     *
+     * @param parameter the parameter of the component
+     * @return a new component key
+     * @param <T> the type of the component
+     */
     public static <T> ComponentKey<T> of(ParameterView<T> parameter) {
         return ComponentKey.builder(parameter).build();
     }
 
+    /**
+     * Creates a new key builder based on this key. The builder will have the same type, name, scope and enable
+     * values as this key. The builder can be used to create a new key with different values.
+     *
+     * @return a new builder
+     */
     public Builder<T> mutable() {
         return new Builder<>(this);
     }
 
+    /**
+     * Creates a new view of this key. The view will have the same type and name as this key. Views are not attached
+     * to a scope, and do not indicate whether the component should be enabled. This method is useful for comparing
+     * keys, or for use in maps.
+     *
+     * <p>Views always retain the parameterization of the key.
+     *
+     * @return a new view
+     */
     public ComponentKeyView<T> view() {
         return new ComponentKeyView<>(this);
     }
 
+    /**
+     * Returns the qualified name of this key. The qualified name is the name of the type, followed by the name of
+     * the component, followed by the name of the scope. If the component has no name, the name is omitted. If the
+     * component has no explicit scope, the default scope is {@link Scope#DEFAULT_SCOPE}.
+     *
+     * @param qualifyType whether the type should be qualified with its package name
+     * @return the qualified name
+     */
     public String qualifiedName(boolean qualifyType) {
         String nameSuffix = StringUtilities.empty(this.name) ? "" : ":" + this.name;
         String scopeName = this.scope.installableScopeType().getSimpleName();
@@ -126,26 +248,66 @@ public final class ComponentKey<T> {
         return Objects.hash(this.type, this.name, this.scope, this.enable);
     }
 
+    /**
+     * Returns the raw type of the component, excluding any type parameters.
+     *
+     * @return the raw type of the component
+     */
     public Class<T> type() {
-        return type.type();
+        return this.type.type();
     }
 
+    /**
+     * Returns the parameterized type of the component, including any type parameters.
+     *
+     * @return the parameterized type of the component
+     */
     public ParameterizableType<T> parameterizedType() {
         return this.type;
     }
 
+    /**
+     * Returns the name of the component. If the component has no name, {@code null} is returned.
+     *
+     * @return the name of the component, or {@code null} if the component has no name
+     */
     public String name() {
-        return name;
+        return this.name;
     }
 
+    /**
+     * Returns the scope of the component. If the component has no explicit scope, the default scope is
+     * {@link Scope#DEFAULT_SCOPE}.
+     *
+     * @return the scope of the component
+     */
     public Scope scope() {
-        return scope;
+        return this.scope;
     }
 
+    /**
+     * Returns whether the component should be enabled on provisioning. If the component has no explicit enable
+     * value, {@code true} is returned.
+     *
+     * @return whether the component should be enabled on provisioning
+     */
     public boolean enable() {
-        return enable;
+        return this.enable;
     }
 
+    /**
+     * A builder for {@link ComponentKey}s. The builder can be used to create a new key based on an existing key,
+     * or to create a new key from scratch.
+     *
+     * @param <T> the type of the component
+     *
+     * @see ComponentKey
+     * @see ComponentKey#builder(Class)
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static final class Builder<T> {
 
         private final ParameterizableType<T> type;
@@ -174,9 +336,9 @@ public final class ComponentKey<T> {
 
         public <U> Builder<U> type(ParameterizableType<U> type) {
             return builder(type)
-                    .name(name)
-                    .scope(scope)
-                    .enable(enable);
+                    .name(this.name)
+                    .scope(this.scope)
+                    .enable(this.enable);
         }
 
         public Builder<T> parameterClasses(Class<?>... parameterTypes) {

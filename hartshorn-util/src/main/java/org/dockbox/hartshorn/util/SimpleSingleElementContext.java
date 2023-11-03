@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.components;
+package org.dockbox.hartshorn.util;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
-import org.dockbox.hartshorn.component.Component;
+public class SimpleSingleElementContext<I> extends AbstractSingleElementContext<I> {
 
-@Singleton
-@Component
-public class CircularConstructorB {
-
-    private final CircularConstructorA constructorA;
-
-    @Inject
-    public CircularConstructorB(CircularConstructorA constructorA) {
-        this.constructorA = constructorA;
+    protected SimpleSingleElementContext(I input) {
+        super(input);
     }
 
-    public CircularConstructorA constructorA() {
-        return this.constructorA;
+    public static <I> SimpleSingleElementContext<I> create(I input) {
+        return new SimpleSingleElementContext<>(input);
+    }
+
+    @Override
+    protected <T> SingleElementContext<T> clone(T input) {
+        return new SimpleSingleElementContext<>(input);
     }
 }

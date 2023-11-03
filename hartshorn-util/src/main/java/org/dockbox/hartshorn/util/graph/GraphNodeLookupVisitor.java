@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.util.graph;
 
 import java.util.function.Predicate;
 
-public class GraphNodeLookupVisitor<T> extends BreadthFirstGraphVisitor<T> {
+public class GraphNodeLookupVisitor<T> implements BreadthFirstGraphVisitor<T> {
 
     private final Predicate<T> rule;
     private GraphNode<T> foundNode;
@@ -36,7 +36,7 @@ public class GraphNodeLookupVisitor<T> extends BreadthFirstGraphVisitor<T> {
     }
 
     @Override
-    protected boolean visit(GraphNode<T> node) throws GraphException {
+    public boolean visit(GraphNode<T> node) throws GraphException {
         if (this.rule.test(node.value())) {
             this.foundNode = node;
             return false;

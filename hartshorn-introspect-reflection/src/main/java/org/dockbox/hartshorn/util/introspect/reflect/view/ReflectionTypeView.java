@@ -16,6 +16,16 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -37,16 +47,6 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeMethodsIntros
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implements ReflectionModifierCarrierView, TypeView<T> {
 
@@ -461,5 +461,21 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public String toString() {
         return this.qualifiedName();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if(this == object) {
+            return true;
+        }
+        if(!(object instanceof ReflectionTypeView<?> that)) {
+            return false;
+        }
+        return Objects.equals(type, that.type) && Objects.equals(parameterizedType, that.parameterizedType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, parameterizedType);
     }
 }

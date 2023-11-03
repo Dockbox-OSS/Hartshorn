@@ -18,8 +18,10 @@ package test.org.dockbox.hartshorn.components;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import org.dockbox.hartshorn.component.Component;
 
 @Singleton
+@Component
 public class CircularConstructorA {
 
     private final CircularConstructorB constructorB;

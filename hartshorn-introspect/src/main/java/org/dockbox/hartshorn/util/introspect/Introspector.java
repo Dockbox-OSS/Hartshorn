@@ -59,6 +59,8 @@ public interface Introspector extends ReferenceIntrospector {
 
     TypeView<?> introspect(ParameterizedType type);
 
+    <T> TypeView<T> introspect(ParameterizableType<T> type);
+
     <T> TypeView<T> introspect(GenericType<T> type);
 
     MethodView<?, ?> introspect(Method method);

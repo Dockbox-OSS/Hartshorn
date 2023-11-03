@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.inject;
 
-import java.util.Set;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
@@ -24,16 +23,39 @@ import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.IllegalScopeException;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.View;
 
+/**
+ * A {@link DependencyContext} implementation that is used for auto-configuring components. Auto-configuring components
+ * are components that are created by the container, based on a {@link BindingFunction} that is registered with the
+ * container.
+ *
+ * <p>Typically, this represents a {@link MethodView} that is invoked when the component is requested from the container.
+ *
+ * @param <T> the type of the component that is auto-configured
+ *
+ * @see DependencyContext
+ * @see BindingFunction
+ * @see MethodView
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class AutoConfiguringDependencyContext<T> extends AbstractDependencyContext<T> {
 
     private final CheckedSupplier<T> supplier;
+    private final View view;
 
-    public AutoConfiguringDependencyContext(ComponentKey<T> componentKey, Set<ComponentKey<?>> dependencies,
-                                            Class<? extends Scope> scope, int priority,
-                                            CheckedSupplier<T> supplier) {
+    public AutoConfiguringDependencyContext(
+            ComponentKey<T> componentKey, DependencyMap dependencies,
+            Class<? extends Scope> scope, int priority,
+            CheckedSupplier<T> supplier, View view
+    ) {
         super(componentKey, dependencies, scope, priority);
         this.supplier = supplier;
+        this.view = view;
     }
 
     @Override
@@ -62,6 +84,11 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
         }
     }
 
+    @Override
+    public View origin() {
+        return this.view;
+    }
+
     private InstanceType instanceType() {
         if (this.singleton() && this.lazy()) {
             return InstanceType.LAZY_SINGLETON;
@@ -74,5 +101,8 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
         }
     }
 
+    /**
+     * The type of instance that is created by the container. This is either a supplier, a singleton or a lazy singleton.
+     */
     enum InstanceType { SUPPLIER, SINGLETON, LAZY_SINGLETON }
 }

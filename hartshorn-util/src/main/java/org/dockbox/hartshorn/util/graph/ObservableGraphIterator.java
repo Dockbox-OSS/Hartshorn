@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.util.graph;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+public interface ObservableGraphIterator<T> extends GraphIterator<T> {
 
-import java.util.Collection;
-import java.util.Set;
+    boolean visit(GraphNode<T> node) throws GraphException;
 
-public class PostProcessorDependencyResolver implements DependencyResolver {
+    default void beforePathVisited() {
+        // Do nothing by default, can be overridden
+    }
 
-    @Override
-    public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers, ApplicationContext applicationContext) throws DependencyResolutionException {
-
-        return null;
+    default void afterPathVisited() {
+        // Do nothing by default, can be overridden
     }
 }

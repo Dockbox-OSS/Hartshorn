@@ -16,7 +16,12 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.strategy.BindingStrategyContext;
@@ -24,28 +29,27 @@ import org.dockbox.hartshorn.inject.strategy.BindingStrategyRegistry;
 import org.dockbox.hartshorn.inject.strategy.MethodAwareBindingStrategyContext;
 import org.dockbox.hartshorn.inject.strategy.MethodInstanceBindingStrategy;
 import org.dockbox.hartshorn.inject.strategy.SimpleBindingStrategyRegistry;
-import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class BindsMethodDependencyResolver extends AbstractContainerDependencyResolver {
 
     private final ConditionMatcher conditionMatcher;
     private final BindingStrategyRegistry registry;
+    private final ComponentLocator componentLocator;
 
     public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher) {
         this(conditionMatcher, new SimpleBindingStrategyRegistry());
     }
 
     public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher, BindingStrategyRegistry registry) {
+        super(conditionMatcher.applicationContext());
         this.conditionMatcher = conditionMatcher;
         this.registry = registry;
+        this.componentLocator = conditionMatcher.applicationContext().get(ComponentLocator.class);
     }
 
     public BindingStrategyRegistry registry() {
@@ -56,10 +60,21 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
     protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> componentContainer, ApplicationContext applicationContext) {
         TypeView<T> componentType = componentContainer.type();
         List<? extends MethodView<T, ?>> bindsMethods = componentType.methods().annotatedWith(Binds.class);
-        return bindsMethods.stream()
-                .filter(this.conditionMatcher::match)
-                .flatMap(bindsMethod -> this.resolve(applicationContext, componentContainer, bindsMethod).stream())
-                .collect(Collectors.toSet());
+
+        // Binds methods are only processed on managed components. If the component container is not present, there is nothing to do but check that there
+        // is no incorrect usage of the @Binds annotation.
+        if (this.componentLocator.container(componentType.type()).absent()) {
+            if (!bindsMethods.isEmpty()) {
+                throw new IllegalStateException("Component " + componentType.type().getName() + " is not a managed component, but contains @Binds methods.");
+            }
+            return Set.of();
+        }
+        else {
+            return bindsMethods.stream()
+                    .filter(this.conditionMatcher::match)
+                    .flatMap(bindsMethod -> this.resolve(applicationContext, componentContainer, bindsMethod).stream())
+                    .collect(Collectors.toSet());
+        }
     }
 
     private <T> Option<DependencyContext<?>> resolve(ApplicationContext applicationContext, DependencyDeclarationContext<T> componentContainer, MethodView<T, ?> method) {

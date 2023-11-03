@@ -46,6 +46,7 @@ import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.SingleElementContext;
+import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
@@ -98,6 +99,9 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         SingleElementContext<Properties> argumentsInitializerContext = context.transform(this.arguments);
         this.printStacktraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
         this.isBatchMode = configurer.enableBatchMode.initialize(argumentsInitializerContext);
+        if (this.introspector() instanceof BatchCapableIntrospector batchCapableIntrospector) {
+            batchCapableIntrospector.enableBatchMode(this.isBatchMode);
+        }
 
         Boolean isBuildEnvironment = configurer.isBuildEnvironment.initialize(environmentInitializerContext);
         if (isBuildEnvironment == null) {

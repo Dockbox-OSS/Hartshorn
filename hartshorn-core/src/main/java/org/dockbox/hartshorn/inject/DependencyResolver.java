@@ -16,13 +16,28 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
 import java.util.Collection;
 import java.util.Set;
 
-public interface DependencyResolver {
+import org.dockbox.hartshorn.context.ContextCarrier;
 
-    Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers, ApplicationContext applicationContext) throws DependencyResolutionException;
+/**
+ * A dependency resolver is responsible for resolving a collection of {@link DependencyDeclarationContext} instances
+ * into a collection of {@link DependencyContext} instances. This is done by visiting the declarations, and resolving
+ * any dependencies that are declared by the declarations.
+ *
+ * <p>Note that the resulting collection of {@link DependencyContext} instances will typically not only contain
+ * dependencies of the declarations that were passed to the resolver, but also dependencies of those dependencies.
+ *
+ * @see DependencyDeclarationContext
+ * @see DependencyContext
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+public interface DependencyResolver extends ContextCarrier {
+
+    Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException;
 
 }

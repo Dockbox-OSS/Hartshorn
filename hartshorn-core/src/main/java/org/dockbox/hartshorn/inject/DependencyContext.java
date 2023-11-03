@@ -21,6 +21,7 @@ import java.util.Set;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.util.introspect.view.View;
 
 /**
  * A dependency context represents the definition of a single dependency, along with its
@@ -29,8 +30,9 @@ import org.dockbox.hartshorn.inject.binding.BindingFunction;
  *
  * @param <T> the type of the dependency
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface DependencyContext<T> {
 
@@ -43,12 +45,33 @@ public interface DependencyContext<T> {
     ComponentKey<T> componentKey();
 
     /**
-     * Returns the dependencies of the dependency. These dependencies are required to be
-     * available before the dependency can be instantiated.
+     * Returns all dependencies of the dependency. This includes dependencies of all
+     * {@link DependencyResolutionType resolution types}.
      *
-     * @return the dependencies of the dependency
+     * @return all dependencies of the dependency
      */
-    Set<ComponentKey<?>> dependencies();
+    DependencyMap dependencies();
+
+    /**
+     * Returns all dependencies of the dependency, of the given {@link DependencyResolutionType}.
+     * If the dependency does not have any dependencies of the given type, an empty set is
+     * returned.
+     *
+     * @param resolutionType the type of dependencies to return
+     * @return all dependencies of the dependency, of the given type
+     */
+    Set<ComponentKey<?>> dependencies(DependencyResolutionType resolutionType);
+
+    /**
+     * Returns whether the dependency needs to be resolved immediately. If the dependency
+     * is not part of this context, {@code false} is returned.
+     *
+     * @param dependencyCandidate the dependency to check
+     * @return whether the dependency needs to be resolved immediately
+     *
+     * @see DependencyResolutionType#IMMEDIATE
+     */
+    boolean needsImmediateResolution(ComponentKey<?> dependencyCandidate);
 
     /**
      * Returns the priority of the dependency. This priority is used to determine the order
@@ -76,4 +99,12 @@ public interface DependencyContext<T> {
      * @throws ComponentConfigurationException when the binding could not be configured
      */
     void configure(BindingFunction<T> function) throws ComponentConfigurationException;
+
+    /**
+     * Returns the origin of the dependency. The origin is the location where the dependency
+     * is defined. This is typically a constructor, field or method.
+     *
+     * @return the origin of the dependency
+     */
+    View origin();
 }

@@ -14,23 +14,30 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.graph;
+package test.org.dockbox.hartshorn.util;
 
 import java.util.List;
 import java.util.Set;
+import org.dockbox.hartshorn.util.graph.DepthFirstGraphVisitor;
+import org.dockbox.hartshorn.util.graph.Graph;
+import org.dockbox.hartshorn.util.graph.GraphException;
+import org.dockbox.hartshorn.util.graph.GraphIterator;
+import org.dockbox.hartshorn.util.graph.GraphNode;
+import org.dockbox.hartshorn.util.graph.MutableGraphNode;
+import org.dockbox.hartshorn.util.graph.SimpleGraph;
+import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class SimpleGraphTest {
 
-    public static void main(String[] args) throws GraphException {
-        testGraphsWithDefinedRoots();
-//        testGraphsWithUndefinedRoots();
-    }
-
     /**
      * <img src="https://static.javatpoint.com/ds/images/tree-vs-graph-data-structure3.png"/>
      */
-    private static void testGraphsWithUndefinedRoots() throws GraphException {
+    @Test
+    @Disabled("Sample usage for verification, not a functional test")
+    void testGraphsWithUndefinedRoots() throws GraphException {
         GraphIterator<String> integerVisitor = new PrintGraphVisitor<>();
 
         System.out.println("Unknown roots:");
@@ -41,7 +48,9 @@ public class SimpleGraphTest {
     /**
      * <img src="https://techdifferences.com/wp-content/uploads/2018/03/Untitled-1.jpg" />
      */
-    private static void testGraphsWithDefinedRoots() throws GraphException {
+    @Test
+    @Disabled("Sample usage for verification, not a functional test")
+    void testGraphsWithDefinedRoots() throws GraphException {
         GraphIterator<String> visitor = new PrintGraphVisitor<>();
 
         // BFS: A -> BC -> D -> EH -> F -> G
@@ -60,14 +69,14 @@ public class SimpleGraphTest {
     private static Graph<String> createGraph() {
         Graph<String> graph = new SimpleGraph<>();
 
-        MutableContainableGraphNode<String> nodeA = new SimpleGraphNode<>("A");
-        MutableContainableGraphNode<String> nodeB = new SimpleGraphNode<>("B");
-        MutableContainableGraphNode<String> nodeC = new SimpleGraphNode<>("C");
-        MutableContainableGraphNode<String> nodeD = new SimpleGraphNode<>("D");
-        MutableContainableGraphNode<String> nodeE = new SimpleGraphNode<>("E");
-        MutableContainableGraphNode<String> nodeF = new SimpleGraphNode<>("F");
-        MutableContainableGraphNode<String> nodeG = new SimpleGraphNode<>("G");
-        MutableContainableGraphNode<String> nodeH = new SimpleGraphNode<>("H");
+        MutableGraphNode<String> nodeA = new SimpleGraphNode<>("A");
+        MutableGraphNode<String> nodeB = new SimpleGraphNode<>("B");
+        GraphNode<String> nodeC = new SimpleGraphNode<>("C");
+        MutableGraphNode<String> nodeD = new SimpleGraphNode<>("D");
+        MutableGraphNode<String> nodeE = new SimpleGraphNode<>("E");
+        MutableGraphNode<String> nodeF = new SimpleGraphNode<>("F");
+        GraphNode<String> nodeG = new SimpleGraphNode<>("G");
+        MutableGraphNode<String> nodeH = new SimpleGraphNode<>("H");
 
         nodeA.addChildren(List.of(nodeB, nodeC));
         nodeB.addChild(nodeD);
@@ -82,14 +91,14 @@ public class SimpleGraphTest {
 
     private static Graph<String> createTree() {
         Graph<String> graph = new SimpleGraph<>();
-        MutableContainableGraphNode<String> nodeA = new SimpleGraphNode<>("A");
-        MutableContainableGraphNode<String> nodeB = new SimpleGraphNode<>("B");
-        MutableContainableGraphNode<String> nodeC = new SimpleGraphNode<>("C");
-        MutableContainableGraphNode<String> nodeD = new SimpleGraphNode<>("D");
-        MutableContainableGraphNode<String> nodeE = new SimpleGraphNode<>("E");
-        MutableContainableGraphNode<String> nodeF = new SimpleGraphNode<>("F");
-        MutableContainableGraphNode<String> nodeG = new SimpleGraphNode<>("G");
-        MutableContainableGraphNode<String> nodeH = new SimpleGraphNode<>("H");
+        MutableGraphNode<String> nodeA = new SimpleGraphNode<>("A");
+        MutableGraphNode<String> nodeB = new SimpleGraphNode<>("B");
+        MutableGraphNode<String> nodeC = new SimpleGraphNode<>("C");
+        GraphNode<String> nodeD = new SimpleGraphNode<>("D");
+        MutableGraphNode<String> nodeE = new SimpleGraphNode<>("E");
+        GraphNode<String> nodeF = new SimpleGraphNode<>("F");
+        GraphNode<String> nodeG = new SimpleGraphNode<>("G");
+        GraphNode<String> nodeH = new SimpleGraphNode<>("H");
 
         nodeA.addChildren(List.of(nodeB, nodeC));
         nodeB.addChildren(List.of(nodeD, nodeE));
@@ -103,13 +112,13 @@ public class SimpleGraphTest {
 
     private static Graph<String> createUnknownRootsGraph() {
         Graph<String> graph = new SimpleGraph<>();
-        MutableContainableGraphNode<String> nodeA = new SimpleGraphNode<>("A");
-        MutableContainableGraphNode<String> nodeB = new SimpleGraphNode<>("B");
-        MutableContainableGraphNode<String> nodeC = new SimpleGraphNode<>("C");
-        MutableContainableGraphNode<String> nodeD = new SimpleGraphNode<>("D");
-        MutableContainableGraphNode<String> nodeE = new SimpleGraphNode<>("E");
-        MutableContainableGraphNode<String> nodeF = new SimpleGraphNode<>("F");
-        MutableContainableGraphNode<String> nodeG = new SimpleGraphNode<>("G");
+        MutableGraphNode<String> nodeA = new SimpleGraphNode<>("A");
+        MutableGraphNode<String> nodeB = new SimpleGraphNode<>("B");
+        GraphNode<String> nodeC = new SimpleGraphNode<>("C");
+        MutableGraphNode<String> nodeD = new SimpleGraphNode<>("D");
+        MutableGraphNode<String> nodeE = new SimpleGraphNode<>("E");
+        MutableGraphNode<String> nodeF = new SimpleGraphNode<>("F");
+        MutableGraphNode<String> nodeG = new SimpleGraphNode<>("G");
 
         nodeA.addChildren(List.of(nodeE, nodeF, nodeB));
         nodeB.addChild(nodeC);
@@ -131,16 +140,16 @@ public class SimpleGraphTest {
         return graph;
     }
 
-    private static class PrintGraphVisitor<T> extends DepthFirstGraphVisitor<T> {
+    private static class PrintGraphVisitor<T> implements DepthFirstGraphVisitor<T> {
 
         @Override
-        protected boolean visit(GraphNode<T> node) {
+        public boolean visit(GraphNode<T> node) {
             System.out.print(node.value() + " ");
             return true;
         }
 
         @Override
-        protected void afterPathVisited() {
+        public void afterPathVisited() {
             System.out.println();
         }
     }

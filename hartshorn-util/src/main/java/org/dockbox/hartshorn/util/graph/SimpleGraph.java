@@ -21,39 +21,39 @@ import java.util.Set;
 
 public class SimpleGraph<T> implements Graph<T> {
 
-    private final Set<GraphNode<T>> nodes;
+    private final Set<GraphNode<T>> roots;
 
     public SimpleGraph() {
         this(new HashSet<>());
     }
 
-    public SimpleGraph(Set<GraphNode<T>> nodes) {
-        this.nodes = new HashSet<>();
-        this.addRoots(Set.copyOf(nodes));
+    public SimpleGraph(Set<GraphNode<T>> roots) {
+        this.roots = new HashSet<>();
+        this.addRoots(Set.copyOf(roots));
     }
 
     @Override
     public Set<GraphNode<T>> roots() {
         // Node could have been modified to no longer be a root, so filter out any non-root nodes
-        this.nodes.removeIf(node -> {
+        this.roots.removeIf(node -> {
             if (node instanceof ContainableGraphNode<T> containable) {
                 return !containable.isRoot();
             }
             return false;
         });
-        return Set.copyOf(this.nodes);
+        return Set.copyOf(this.roots);
     }
 
     @Override
     public void addRoot(GraphNode<T> root) {
         if (root instanceof ContainableGraphNode<T> containable) {
             if (containable.isRoot()) {
-                this.nodes.add(containable);
+                this.roots.add(containable);
             }
         }
         else {
             // If the node is not a ContainableGraphNode, then it is a root by default
-            this.nodes.add(root);
+            this.roots.add(root);
         }
     }
 
@@ -66,11 +66,11 @@ public class SimpleGraph<T> implements Graph<T> {
 
     @Override
     public void clear() {
-        this.nodes.clear();
+        this.roots.clear();
     }
 
     @Override
     public boolean isEmpty() {
-        return this.nodes.isEmpty();
+        return this.roots.isEmpty();
     }
 }
