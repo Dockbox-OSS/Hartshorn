@@ -35,13 +35,12 @@ import org.dockbox.hartshorn.component.ContextualComponentPopulator;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.inject.ApplicationDependencyResolver;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
-import org.dockbox.hartshorn.inject.ComponentConstructorResolver;
 import org.dockbox.hartshorn.inject.ComponentDiscoveryList;
 import org.dockbox.hartshorn.inject.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.DependencyContext;
-import org.dockbox.hartshorn.inject.DependencyResolutionType;
 import org.dockbox.hartshorn.inject.DependencyMap;
+import org.dockbox.hartshorn.inject.DependencyResolutionType;
 import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.TypePathNode;
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
@@ -76,8 +75,6 @@ import test.org.dockbox.hartshorn.components.CircularDependencyA;
 import test.org.dockbox.hartshorn.components.CircularDependencyB;
 import test.org.dockbox.hartshorn.components.ComponentType;
 import test.org.dockbox.hartshorn.components.ContextInjectedType;
-import test.org.dockbox.hartshorn.components.ImplicitCircularDependencyA;
-import test.org.dockbox.hartshorn.components.ImplicitCircularDependencyB;
 import test.org.dockbox.hartshorn.components.InterfaceCircularDependencyA;
 import test.org.dockbox.hartshorn.components.InterfaceCircularDependencyB;
 import test.org.dockbox.hartshorn.components.LongCycles.LongCycleA;
@@ -494,11 +491,11 @@ public class ApplicationContextTests {
         SimpleSingleElementContext<ApplicationContext> context = SimpleSingleElementContext.create(this.applicationContext);
         DependencyResolver resolver = ApplicationDependencyResolver.create(Customizer.useDefaults()).initialize(context);
         DependencyGraphBuilder dependencyGraphBuilder = DependencyGraphBuilder.create(resolver);
-        return dependencyGraphBuilder.buildDependencyGraph(dependencyContexts);
+        return Assertions.assertDoesNotThrow(() -> dependencyGraphBuilder.buildDependencyGraph(dependencyContexts));
     }
 
     @Test
-    void testCircularDependencyPathOnExplicitBoundTypeCanBeDetermined() {
+    void testCircularDependencyPathOnBoundTypeCanBeDetermined() {
         // Bindings should be resolved during graph construction.
         this.applicationContext
                 .bind(InterfaceCircularDependencyA.class).to(BoundCircularDependencyA.class)
@@ -511,45 +508,34 @@ public class ApplicationContextTests {
         Assertions.assertEquals(0, roots.size()); // Cyclic, thus no roots
 
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
-        Assertions.assertEquals(2, nodes.size()); // N nodes, no duplicates, but does contain all nodes
+        Assertions.assertEquals(4, nodes.size()); // 4 nodes, 2 interfaces, 2 implementations
 
         Map<? extends Class<?>, GraphNode<DependencyContext<?>>> nodesByType = nodes.stream()
                 .collect(Collectors.toMap(node -> node.value().componentKey().type(), Function.identity()));
-        GraphNode<DependencyContext<?>> firstNode = nodesByType.get(InterfaceCircularDependencyA.class);
+        GraphNode<DependencyContext<?>> firstNode = nodesByType.get(BoundCircularDependencyA.class);
 
         List<GraphNode<DependencyContext<?>>> recursivePath = validator.checkNodeNotCyclicRecursive(firstNode, new ArrayList<>());
+
         ComponentDiscoveryList discoveryList = validator.createDiscoveryList(recursivePath, this.applicationContext);
+        List<DiscoveredComponent> discoveredComponentsNonCyclic = discoveryList.discoveredComponents();
+        Assertions.assertEquals(2, discoveredComponentsNonCyclic.size());
 
-        TypeView<?> typeView = this.applicationContext.environment().introspector().introspect(InterfaceCircularDependencyA.class);
-        ComponentDiscoveryList path = ComponentConstructorResolver.create(this.applicationContext).findCyclicPath(typeView);
-        Assertions.assertNotNull(path);
-
-        List<DiscoveredComponent> discoveredComponents = path.discoveredComponents();
+        List<DiscoveredComponent> discoveredComponents = discoveryList.discoveredComponentsCyclic();
         Assertions.assertEquals(3, discoveredComponents.size());
-        Assertions.assertSame(BoundCircularDependencyA.class, discoveredComponents.get(0).node().type().type());
-        Assertions.assertSame(BoundCircularDependencyB.class, discoveredComponents.get(1).node().type().type());
-        Assertions.assertSame(InterfaceCircularDependencyA.class, discoveredComponents.get(2).node().type().type());
-    }
 
-    @Test
-    @TestComponents(bindings = {
-            @TestBinding(type = InterfaceCircularDependencyA.class, implementation = ImplicitCircularDependencyA.class),
-            @TestBinding(type = InterfaceCircularDependencyB.class, implementation = ImplicitCircularDependencyB.class)
-    })
-    void testCircularDependencyPathOnImplicitBoundTypeCanBeDetermined() {
-        TypeView<?> typeView = this.applicationContext.environment().introspector().introspect(InterfaceCircularDependencyA.class);
-        ComponentDiscoveryList path = ComponentConstructorResolver.create(this.applicationContext).findCyclicPath(typeView);
-        Assertions.assertNotNull(path);
+        DiscoveredComponent discoveredComponentA1 = discoveredComponents.get(0);
+        Assertions.assertSame(InterfaceCircularDependencyA.class, discoveredComponentA1.node().type().type());
+        Assertions.assertSame(BoundCircularDependencyA.class, discoveredComponentA1.actualType().type());
 
-        List<DiscoveredComponent> discoveredComponents = path.discoveredComponents();
-        Assertions.assertEquals(2, discoveredComponents.size());
-        DiscoveredComponent componentA = discoveredComponents.get(0);
-        Assertions.assertSame(InterfaceCircularDependencyA.class, componentA.node().type().type());
-        Assertions.assertSame(ImplicitCircularDependencyA.class, componentA.actualType().type());
+        DiscoveredComponent discoveredComponentB = discoveredComponents.get(1);
+        Assertions.assertSame(InterfaceCircularDependencyB.class, discoveredComponentB.node().type().type());
+        Assertions.assertSame(BoundCircularDependencyB.class, discoveredComponentB.actualType().type());
 
-        DiscoveredComponent componentB = discoveredComponents.get(1);
-        Assertions.assertSame(InterfaceCircularDependencyB.class, componentB.node().type().type());
-        Assertions.assertSame(ImplicitCircularDependencyB.class, componentB.actualType().type());
+        DiscoveredComponent discoveredComponentA2 = discoveredComponents.get(2);
+        Assertions.assertSame(InterfaceCircularDependencyA.class, discoveredComponentA2.node().type().type());
+        Assertions.assertSame(BoundCircularDependencyA.class, discoveredComponentA2.actualType().type());
+
+        Assertions.assertEquals(discoveredComponentA1, discoveredComponentA2);
     }
 
     @Test

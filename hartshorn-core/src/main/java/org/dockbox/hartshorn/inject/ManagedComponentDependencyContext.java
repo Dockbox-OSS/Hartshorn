@@ -17,11 +17,10 @@
 package org.dockbox.hartshorn.inject;
 
 import java.util.Set;
+
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
-
-import java.util.Set;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
@@ -43,8 +42,8 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
     }
 
     @Override
-    public Set<ComponentKey<?>> dependencies() {
-        return Set.copyOf(this.dependencies.allValues());
+    public DependencyMap dependencies() {
+        return this.dependencies;
     }
 
     @Override
@@ -76,4 +75,5 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
     public View origin() {
         return this.constructorView;
     }
+
 }

@@ -60,8 +60,8 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     }
 
     @Override
-    public Set<ComponentKey<?>> dependencies() {
-        return Set.copyOf(this.dependencies.allValues());
+    public DependencyMap dependencies() {
+        return this.dependencies;
     }
 
     @Override

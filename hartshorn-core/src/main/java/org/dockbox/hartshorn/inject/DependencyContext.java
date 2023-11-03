@@ -50,7 +50,7 @@ public interface DependencyContext<T> {
      *
      * @return all dependencies of the dependency
      */
-    Set<ComponentKey<?>> dependencies();
+    DependencyMap dependencies();
 
     /**
      * Returns all dependencies of the dependency, of the given {@link DependencyResolutionType}.

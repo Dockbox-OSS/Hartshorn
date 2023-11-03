@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.strategy.BindingStrategyContext;
@@ -38,6 +39,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
 
     private final ConditionMatcher conditionMatcher;
     private final BindingStrategyRegistry registry;
+    private final ComponentLocator componentLocator;
 
     public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher) {
         this(conditionMatcher, new SimpleBindingStrategyRegistry());
@@ -47,6 +49,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
         super(conditionMatcher.applicationContext());
         this.conditionMatcher = conditionMatcher;
         this.registry = registry;
+        this.componentLocator = conditionMatcher.applicationContext().get(ComponentLocator.class);
     }
 
     public BindingStrategyRegistry registry() {
@@ -57,10 +60,21 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
     protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> componentContainer, ApplicationContext applicationContext) {
         TypeView<T> componentType = componentContainer.type();
         List<? extends MethodView<T, ?>> bindsMethods = componentType.methods().annotatedWith(Binds.class);
-        return bindsMethods.stream()
-                .filter(this.conditionMatcher::match)
-                .flatMap(bindsMethod -> this.resolve(applicationContext, componentContainer, bindsMethod).stream())
-                .collect(Collectors.toSet());
+
+        // Binds methods are only processed on managed components. If the component container is not present, there is nothing to do but check that there
+        // is no incorrect usage of the @Binds annotation.
+        if (this.componentLocator.container(componentType.type()).absent()) {
+            if (!bindsMethods.isEmpty()) {
+                throw new IllegalStateException("Component " + componentType.type().getName() + " is not a managed component, but contains @Binds methods.");
+            }
+            return Set.of();
+        }
+        else {
+            return bindsMethods.stream()
+                    .filter(this.conditionMatcher::match)
+                    .flatMap(bindsMethod -> this.resolve(applicationContext, componentContainer, bindsMethod).stream())
+                    .collect(Collectors.toSet());
+        }
     }
 
     private <T> Option<DependencyContext<?>> resolve(ApplicationContext applicationContext, DependencyDeclarationContext<T> componentContainer, MethodView<T, ?> method) {

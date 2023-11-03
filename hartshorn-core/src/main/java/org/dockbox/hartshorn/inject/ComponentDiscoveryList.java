@@ -56,6 +56,10 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
         return CollectionUtilities.distinct(this.discoveredComponents);
     }
 
+    public List<DiscoveredComponent> discoveredComponentsCyclic() {
+        return List.copyOf(this.discoveredComponents);
+    }
+
     public boolean isEmpty() {
         return this.discoveredComponents.isEmpty();
     }

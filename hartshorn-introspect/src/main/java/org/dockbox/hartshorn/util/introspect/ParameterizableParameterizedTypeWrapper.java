@@ -1,6 +1,7 @@
 package org.dockbox.hartshorn.util.introspect;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.Objects;
 
 record ParameterizableParameterizedTypeWrapper<T>(ParameterizableType<T> type) implements ParameterizedType {
 
@@ -19,5 +20,21 @@ record ParameterizableParameterizedTypeWrapper<T>(ParameterizableType<T> type) i
     @Override
     public java.lang.reflect.Type getOwnerType() {
         return null;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if(this == object) {
+            return true;
+        }
+        if(!(object instanceof ParameterizableParameterizedTypeWrapper<?> that)) {
+            return false;
+        }
+        return Objects.equals(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }
