@@ -26,7 +26,8 @@ import org.dockbox.hartshorn.util.collections.StandardMultiMap;
 
 public class DependencyMap extends StandardMultiMap<DependencyResolutionType, ComponentKey<?>> {
 
-    public DependencyMap() {
+    private DependencyMap() {
+        // Use static factory method
     }
 
     @Override

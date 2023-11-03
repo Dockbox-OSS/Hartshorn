@@ -84,7 +84,7 @@ public class CyclicComponentException extends ApplicationException {
 
         DiscoveredComponent origin = path.getOrigin();
         String typeName = origin.fromBinding() ? origin.actualType().name() : origin.node().qualifiedName();
-        return "Cyclic dependency detected in declaration of %s (in %s). Complete dependency path:\n%s".formatted(
+        return "Cyclic dependency detected in declaration of %s (in %s). Complete dependency path:%n%s".formatted(
             typeName,
             view.qualifiedName(),
             builder.toString()

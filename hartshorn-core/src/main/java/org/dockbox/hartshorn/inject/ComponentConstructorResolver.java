@@ -48,7 +48,7 @@ public final class ComponentConstructorResolver {
         BindingHierarchy<C> hierarchy = this.applicationContext.hierarchy(node.componentKey());
         Option<Provider<C>> providerOption = hierarchy.highestPriority();
         return providerOption.absent()
-            ? this.findConstructor(node, node.type())
+            ? this.findConstructorInImplementation(node.type())
             : this.findConstructorInHierarchy(node, providerOption);
     }
 
@@ -60,12 +60,12 @@ public final class ComponentConstructorResolver {
 
         if (provider instanceof TypeAwareProvider<C> typeAwareProvider) {
             TypeView<? extends C> typeView = this.applicationContext.environment().introspector().introspect(typeAwareProvider.type());
-            return this.findConstructor(node, typeView);
+            return this.findConstructorInImplementation(typeView);
         }
         return Attempt.of(new NoSuchProviderException(ProviderType.TYPE_AWARE, node.componentKey()));
     }
 
-    private <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructor(TypePathNode<C> node, TypeView<? extends C> type) {
+    private <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructorInImplementation(TypeView<? extends C> type) {
         if (type.modifiers().isAbstract()) {
             return Attempt.empty();
         }
@@ -100,10 +100,5 @@ public final class ComponentConstructorResolver {
             }
         }
         return constructors;
-    }
-
-    @Deprecated(forRemoval = true)
-    public <T> ComponentDiscoveryList findCyclicPath(TypeView<T> type) {
-        return new ComponentDiscoveryList();
     }
 }
