@@ -73,11 +73,11 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                     return result.toString();
                 }
                 else if (left instanceof Array array && right instanceof Double) {
-                    final int times = (int) ((double) right);
-                    final int finalLen = array.length() * times;
-                    final Array result = new Array(finalLen);
+                    int times = (int) ((double) right);
+                    int finalLen = array.length() * times;
+                    Array result = new Array(finalLen);
                     for (int i = 0; i < times; i++) {
-                        final int originalIndex = times % array.length();
+                        int originalIndex = times % array.length();
                         result.value(array.value(originalIndex), i);
                     }
                     return result;

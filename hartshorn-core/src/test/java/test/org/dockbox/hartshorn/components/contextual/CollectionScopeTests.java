@@ -137,11 +137,15 @@ public class CollectionScopeTests {
         Assertions.assertNotNull(collection);
         Assertions.assertEquals(0, collection.size());
 
-        String[] names = { "user", "admin", "guest" };
+        String[] names = {
+                StaticComponentService.USER,
+                StaticComponentService.ADMIN,
+                StaticComponentService.GUEST
+        };
         for(String name : names) {
             componentKey = componentKey.mutable().name(name).build();
             collection = applicationContext.get(componentKey);
-            Assertions.assertEquals(1, collection.size());
+            Assertions.assertEquals(1, collection.size());//TODO: Failing?
             Assertions.assertEquals(name, CollectionUtilities.first(collection).name());
         }
     }

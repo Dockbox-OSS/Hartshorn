@@ -42,6 +42,7 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.graph.MutableContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.jetbrains.annotations.NotNull;
 
 public class DependencyGraphBuilder {
@@ -146,18 +147,17 @@ public class DependencyGraphBuilder {
             DependencyGraph graph,
             DependencyContext<?> dependencyContext
     ) {
+        // TODO: This is still broken. Dependencies look for ComponentKey<X> but need ComponentKey<ComponentCollection<X>>. E.g. statement parsers!
         Collection<MutableContainableGraphNode<DependencyContext<?>>> componentNodes = nodes.get(dependencyContext.componentKey());
-        graph.addRoots(Set.copyOf(componentNodes));
+        ComponentKey<? extends ComponentCollection<?>> collectionComponentKey = dependencyContext.componentKey().mutable().collector().build();
+        Collection<MutableContainableGraphNode<DependencyContext<?>>> collectionComponentNodes = nodes.get(collectionComponentKey);
 
-        for(MutableContainableGraphNode<DependencyContext<?>> componentNode : componentNodes) {
+        Collection<MutableContainableGraphNode<DependencyContext<?>>> allComponentNodes = CollectionUtilities.merge(componentNodes, collectionComponentNodes);
+        graph.addRoots(Set.copyOf(allComponentNodes));
+
+        for(MutableContainableGraphNode<DependencyContext<?>> componentNode : allComponentNodes) {
             DependencyContext<?> componentDependencyContext = componentNode.value();
             for(ComponentKey<?> dependency : componentDependencyContext.dependencies().allValues()) {
-                if(!nodes.containsKey(dependency)) {
-                    // provided by existing bindings, or will be dynamically created on request. It is not up to the
-                    // graph builder to verify that the dependency is (or will be) available.
-                    continue;
-                }
-
                 Set<GraphNode<DependencyContext<?>>> dependencyNodes = Set.copyOf(nodes.get(dependency));
                 if (dependencyNodes.size() > 1) {
                     boolean collectionsOnly = dependencyNodes.stream().allMatch(node -> node.value().type() == BindingType.COLLECTION);
@@ -167,7 +167,7 @@ public class DependencyGraphBuilder {
                     }
                 }
                 graph.addRoots(dependencyNodes);
-                componentNodes.forEach(node -> node.addParents(dependencyNodes));
+                allComponentNodes.forEach(node -> node.addParents(dependencyNodes));
             }
         }
     }

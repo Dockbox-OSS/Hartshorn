@@ -71,7 +71,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
 
     @Override
     public BindingHierarchy<T> merge(final BindingHierarchy<T> hierarchy) {
-        final BindingHierarchy<T> merged = new NativeBindingHierarchy<>(this.key(), this.applicationContext());
+        BindingHierarchy<T> merged = new NativeBindingHierarchy<>(this.key(), this.applicationContext());
         // Low priority, other
         for (final Entry<Integer, Provider<T>> entry : hierarchy) {
             merged.add(entry.getKey(), entry.getValue());
@@ -106,20 +106,20 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
 
     @Override
     public String toString() {
-        final String contract = this.key().type().getSimpleName();
-        final String keyName = this.key().name();
+        String contract = contractTypeToString();
+        String keyName = this.key().name();
         String name = "";
         if (keyName != null) {
             name = "::" + keyName;
         }
 
         // The priorities are stored high to low, however we want to display them as low-to-high.
-        final List<Entry<Integer, Provider<T>>> entries = new ArrayList<>(this.priorityProviders().entrySet());
+        List<Entry<Integer, Provider<T>>> entries = new ArrayList<>(this.priorityProviders().entrySet());
         Collections.reverse(entries);
 
-        final String hierarchy = entries.stream()
+        String hierarchy = entries.stream()
                 .map(entry -> {
-                    final Provider<T> value = entry.getValue();
+                    Provider<T> value = entry.getValue();
                     String target = value.toString();
                     if (value instanceof TypeAwareProvider<?> typeAwareProvider) {
                         target = typeAwareProvider.type().getSimpleName();
@@ -129,5 +129,9 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
                 .collect(Collectors.joining(" -> "));
 
         return "Hierarchy[%s%s]: %s".formatted(contract, name, hierarchy);
+    }
+
+    protected String contractTypeToString() {
+        return this.key().parameterizedType().toString();
     }
 }

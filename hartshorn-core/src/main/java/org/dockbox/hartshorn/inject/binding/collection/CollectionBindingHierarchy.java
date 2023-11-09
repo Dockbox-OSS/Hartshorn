@@ -16,10 +16,13 @@
 
 package org.dockbox.hartshorn.inject.binding.collection;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.AbstractBindingHierarchy;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
 public class CollectionBindingHierarchy<T> extends AbstractBindingHierarchy<ComponentCollection<T>> {
 
@@ -52,6 +55,18 @@ public class CollectionBindingHierarchy<T> extends AbstractBindingHierarchy<Comp
         }
         else {
             throw new IllegalStateException("Existing provider is not a CollectionProvider");
+        }
+    }
+
+    @Override
+    protected String contractTypeToString() {
+        ParameterizableType<ComponentCollection<T>> collectionParameterizableType = this.key().parameterizedType();
+        List<ParameterizableType<?>> parameters = collectionParameterizableType.parameters();
+        if (parameters.size() == 1) {
+            return parameters.get(0).toString();
+        }
+        else {
+            throw new IllegalStateException("Component key is not typed correctly");
         }
     }
 }

@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
-
-import java.util.List;
 
 public class ArrayLiteralExpressionInterpreter implements ASTNodeInterpreter<Object, ArrayLiteralExpression> {
 
@@ -31,7 +31,7 @@ public class ArrayLiteralExpressionInterpreter implements ASTNodeInterpreter<Obj
         Object[] values = new Object[node.elements().size()];
         List<Expression> elements = node.elements();
         for (int i = 0, elementsSize = elements.size(); i < elementsSize; i++) {
-            final Expression expression = elements.get(i);
+            Expression expression = elements.get(i);
             values[i] = adapter.evaluate(expression);
         }
         return new Array(values);

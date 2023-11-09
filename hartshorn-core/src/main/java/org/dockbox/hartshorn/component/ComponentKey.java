@@ -113,13 +113,14 @@ public final class ComponentKey<T> {
     }
 
     public static <T> ComponentKey<ComponentCollection<T>> collect(final Class<T> type) {
-        return collect(new ParameterizableType<>(type));
+        return TypeUtils.adjustWildcards(collect(ParameterizableType.create(type)), ComponentKey.class);
     }
 
-    public static <T> ComponentKey<ComponentCollection<T>> collect(final ParameterizableType<T> type) {
-        return TypeUtils.adjustWildcards(ComponentKey.builder(ComponentCollection.class)
-                .parameterTypes(type)
-                .build(), ComponentKey.class);
+    public static ComponentKey<ComponentCollection<?>> collect(final ParameterizableType type) {
+        ParameterizableType collectionType = ParameterizableType.builder(ComponentCollection.class)
+            .parameters(type)
+            .build();
+        return TypeUtils.adjustWildcards(ComponentKey.of(collectionType), ComponentKey.class);
     }
 
     /**
@@ -227,7 +228,7 @@ public final class ComponentKey<T> {
     public String qualifiedName(boolean qualifyType) {
         String nameSuffix = StringUtilities.empty(this.name) ? "" : ":" + this.name;
         String scopeName = this.scope.installableScopeType().name();
-        String typeName = qualifyType ? this.type.type().getCanonicalName() : this.type.type().getSimpleName();
+        String typeName = qualifyType ? this.type.toQualifiedString() : this.type.toString();
         return typeName + nameSuffix + " @ " + scopeName;
     }
 
@@ -376,8 +377,10 @@ public final class ComponentKey<T> {
         }
 
         public Builder<ComponentCollection<T>> collector() {
-            Builder<ComponentCollection> builder = builder(ComponentCollection.class)
-                    .parameterTypes(this.type)
+            ParameterizableType collectionType = ParameterizableType.builder(ComponentCollection.class)
+                    .parameters(this.type)
+                    .build();
+            Builder<?> builder = builder(collectionType)
                     .name(this.name)
                     .scope(this.scope)
                     .enable(this.enable);

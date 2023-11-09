@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
@@ -101,6 +101,6 @@ public class OptionToCollectionConverterFactoryTests {
     private static Converter<Option<?>, ArrayList<String>> createConverter() {
         Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
         ConverterFactory<Option<?>, Collection<?>> factory = new OptionToCollectionConverterFactory(introspector);
-        return factory.create(new GenericType<ArrayList<String>>() {}).orNull();
+        return TypeUtils.adjustWildcards(factory.create(ArrayList.class), Converter.class);
     }
 }
