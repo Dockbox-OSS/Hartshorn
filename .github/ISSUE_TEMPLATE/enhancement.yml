@@ -1,5 +1,5 @@
-name: 'Feature request'
-description: 'If you want to add a feature to the project, please create an issue here.'
+name: 'Enhancement'
+description: 'If you want to improve an already existing feature, please create an issue here.'
 labels: ['type: enhancement']
 body:
   - type: textarea
