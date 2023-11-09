@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import jakarta.inject.Singleton;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.LoggingExceptionHandler;
@@ -39,10 +39,12 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.discovery.DiscoveryService;
+import org.dockbox.hartshorn.discovery.ServiceDiscoveryException;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.AutoSwitchingApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.SingleElementContext;
@@ -57,8 +59,6 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jakarta.inject.Singleton;
 
 @LogExclude
 public final class ContextualApplicationEnvironment implements ObservableApplicationEnvironment, ModifiableContextCarrier {
@@ -179,9 +179,14 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         if (this.introspector == null) {
             // Lazy, as the proxy orchestrator may not yet be initialized
             ProxyLookup proxyLookup = new SupplierAdapterProxyLookup(() -> this.proxyOrchestrator);
-            this.introspector = DiscoveryService.instance()
+            try {
+                this.introspector = DiscoveryService.instance()
                     .discover(IntrospectorLoader.class)
                     .create(proxyLookup, this.annotationLookup());
+            }
+            catch (ServiceDiscoveryException e) {
+                throw new ApplicationRuntimeException(e);
+            }
         }
         return this.introspector;
     }

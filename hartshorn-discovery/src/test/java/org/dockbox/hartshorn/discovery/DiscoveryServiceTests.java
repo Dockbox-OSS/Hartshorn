@@ -64,7 +64,7 @@ public class DiscoveryServiceTests {
     }
 
     @Test
-    void testDiscoveryServiceWithOverride() throws IOException {
+    void testDiscoveryServiceWithOverride() throws IOException, ServiceDiscoveryException {
         ByteClassLoader classLoader = createImplementationAwareClassLoader();
 
         DiscoveryService.instance().addClassLoader(classLoader);
