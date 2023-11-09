@@ -17,8 +17,10 @@
 package org.dockbox.hartshorn.application.environment;
 
 import org.dockbox.hartshorn.discovery.DiscoveryService;
+import org.dockbox.hartshorn.discovery.ServiceDiscoveryException;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.ProxyOrchestratorLoader;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -33,8 +35,13 @@ public final class DefaultProxyOrchestratorLoader {
         return context -> {
             // Call, but ignore the result of the customizer for now
             customizer.configure(new Configurer());
-            ProxyOrchestratorLoader loader = DiscoveryService.instance().discover(ProxyOrchestratorLoader.class);
-            return loader.create(context.input());
+            try {
+                ProxyOrchestratorLoader loader = DiscoveryService.instance().discover(ProxyOrchestratorLoader.class);
+                return loader.create(context.input());
+            }
+            catch (ServiceDiscoveryException e) {
+                throw new ApplicationRuntimeException(e);
+            }
         };
     }
 

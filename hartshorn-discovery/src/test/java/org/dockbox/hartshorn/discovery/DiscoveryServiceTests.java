@@ -16,27 +16,24 @@
 
 package org.dockbox.hartshorn.discovery;
 
-import java.io.BufferedReader;
+import com.google.common.collect.ImmutableList;
+import com.google.testing.compile.Compilation;
+import com.google.testing.compile.Compiler;
+import com.google.testing.compile.JavaFileObjects;
 import java.io.IOException;
-import java.io.Reader;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
-import javax.tools.StandardLocation;
-
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.ImmutableList;
-import com.google.testing.compile.Compilation;
-import com.google.testing.compile.Compiler;
-import com.google.testing.compile.JavaFileObjects;
 
 public class DiscoveryServiceTests {
 
@@ -45,8 +42,7 @@ public class DiscoveryServiceTests {
     private static final String HELLO_WORLD_MESSAGE = "Hello World!";
     private static final String HELLO_WORLD_SERVICE_IMPLEMENTATION_SOURCE = """
             package org.dockbox.hartshorn.discovery;
-                        
-            @ServiceLoader(HelloWorldService.class)
+
             public class HelloWorldServiceImplementation implements HelloWorldService {
                         
                 @Override
@@ -56,35 +52,20 @@ public class DiscoveryServiceTests {
             }
             """.formatted(HELLO_WORLD_MESSAGE);
 
-    @Test
-    void testProcessorCreatesValidDiscoveryFile() throws IOException {
-        Map<Kind, List<JavaFileObject>> generatedByKind = compileAndGetGeneratedFiles();
-        JavaFileObject discoFile = generatedByKind.get(Kind.OTHER).get(0);
-
-        String servicePackageName = HelloWorldService.class.getPackageName();
-        String outputLocation = StandardLocation.CLASS_OUTPUT.getName();
-        String expectedName = "/%s/META-INF/%s.%s.disco".formatted(
-                outputLocation, servicePackageName,
-                HelloWorldService.class.getSimpleName());
-        Assertions.assertEquals(expectedName, discoFile.getName());
-
-        Reader reader = discoFile.openReader(false);
-        BufferedReader in = new BufferedReader(reader);
-        String discoFileContent = in.lines().collect(Collectors.joining());
-
-        Assertions.assertEquals(IMPLEMENTATION_QUALIFIED_NAME, discoFileContent);
+    @AfterEach
+    void tearDown() throws NoSuchFieldException {
+        Field discoveryService = DiscoveryService.class.getDeclaredField("DISCOVERY_SERVICE");
+        discoveryService.setAccessible(true);
+        try {
+            discoveryService.set(null, null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    void testDiscoveryServiceWithOverride() throws IOException {
-        Map<Kind, List<JavaFileObject>> generatedByKind = compileAndGetGeneratedFiles();
-        JavaFileObject implementationClassFile = generatedByKind.get(Kind.CLASS).get(0);
-
-        // Class is compiled, but not loaded, so we need to load it manually.
-        ByteClassLoader classLoader = new ByteClassLoader(
-                new URL[]{},
-                DiscoveryServiceTests.class.getClassLoader(),
-                Collections.singletonMap(IMPLEMENTATION_QUALIFIED_NAME, implementationClassFile.openInputStream().readAllBytes()));
+    void testDiscoveryServiceWithOverride() throws IOException, ServiceDiscoveryException {
+        ByteClassLoader classLoader = createImplementationAwareClassLoader();
 
         DiscoveryService.instance().addClassLoader(classLoader);
         DiscoveryService.instance().override(HelloWorldService.class, IMPLEMENTATION_QUALIFIED_NAME);
@@ -93,20 +74,65 @@ public class DiscoveryServiceTests {
         Assertions.assertEquals(HELLO_WORLD_MESSAGE, helloWorldService.getHelloWorld());
     }
 
-    private static Map<Kind, List<JavaFileObject>> compileAndGetGeneratedFiles() {
-        Compilation compilation = Compiler.javac()
-                .withProcessors(new DiscoveryServiceProcessor())
-                .compile(JavaFileObjects.forSourceString(IMPLEMENTATION_NAME, HELLO_WORLD_SERVICE_IMPLEMENTATION_SOURCE));
+    @NonNull
+    private static ByteClassLoader createImplementationAwareClassLoader() throws IOException {
+        JavaFileObject implementationClassFile = compileAndGetRuntimeImplementation();
+
+        // Class is compiled, but not loaded, so we need to load it manually.
+        return new ByteClassLoader(
+                new URL[]{},
+                DiscoveryServiceTests.class.getClassLoader(),
+                Collections.singletonMap(IMPLEMENTATION_QUALIFIED_NAME, implementationClassFile.openInputStream().readAllBytes()));
+    }
+
+    @Test
+    void testRegistryContainsTypeAfterRegistration() throws IOException {
+        ByteClassLoader classLoader = createImplementationAwareClassLoader();
+        DiscoveryService.instance().addClassLoader(classLoader);
+
+        Assertions.assertFalse(DiscoveryService.instance().contains(HelloWorldService.class));
+
+        DiscoveryService.instance().override(HelloWorldService.class, IMPLEMENTATION_QUALIFIED_NAME);
+        Assertions.assertTrue(DiscoveryService.instance().contains(HelloWorldService.class));
+    }
+
+    @Test
+    void testDiscoveryFailsIfNoImplementationExists() {
+        Assertions.assertThrows(ServiceDiscoveryException.class, () -> DiscoveryService.instance().discover(HelloWorldService.class));
+    }
+
+    @Test
+    void testDiscoveryFailsIfImplementationClassDoesNotExist() {
+        Assertions.assertThrows(ServiceDiscoveryException.class, () -> {
+            DiscoveryService.instance().override(HelloWorldService.class, "org.dockbox.hartshorn.discovery.DoesNotExist");
+            DiscoveryService.instance().discover(HelloWorldService.class);
+        });
+    }
+
+    @Test
+    void testOverrideFailsIfImplementationNotAssignable() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> DiscoveryService.instance().override(HelloWorldService.class, DiscoveryServiceTests.class));
+    }
+
+    @Test
+    void testDiscoveryFailsIfImplementationHasNoDefaultConstructor() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            DiscoveryService.instance().override(HelloWorldService.class, HelloWorldServiceImplementationWithNoDefaultConstructor.class);
+            DiscoveryService.instance().discover(HelloWorldService.class);
+        });
+    }
+
+    private static JavaFileObject compileAndGetRuntimeImplementation() {
+        Compilation compilation = Compiler.javac().compile(JavaFileObjects.forSourceString(IMPLEMENTATION_NAME, HELLO_WORLD_SERVICE_IMPLEMENTATION_SOURCE));
         Assertions.assertTrue(compilation.errors().isEmpty());
 
         ImmutableList<JavaFileObject> generatedFiles = compilation.generatedFiles();
-        Assertions.assertEquals(2, generatedFiles.size());
+        Assertions.assertEquals(1, generatedFiles.size());
 
         Map<Kind, List<JavaFileObject>> generatedByKind = generatedFiles.stream().collect(Collectors.groupingBy(JavaFileObject::getKind));
         Assertions.assertEquals(1, generatedByKind.get(Kind.CLASS).size()); // HelloWorldServiceImplementation.class
-        Assertions.assertEquals(1, generatedByKind.get(Kind.OTHER).size()); // HelloWorldService.disco
 
-        return generatedByKind;
+        return generatedByKind.get(Kind.CLASS).get(0);
     }
 
     public static class ByteClassLoader extends URLClassLoader {
@@ -124,6 +150,19 @@ public class DiscoveryServiceTests {
                 return defineClass(name, classBytes, 0, classBytes.length);
             }
             return super.findClass(name);
+        }
+    }
+
+    public static class HelloWorldServiceImplementationWithNoDefaultConstructor implements HelloWorldService {
+        private final String arg;
+
+        public HelloWorldServiceImplementationWithNoDefaultConstructor(String arg) {
+            this.arg = arg;
+        }
+
+        @Override
+        public String getHelloWorld() {
+            return this.arg;
         }
     }
 }

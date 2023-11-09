@@ -16,21 +16,50 @@
 
 package org.dockbox.hartshorn.discovery;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceConfigurationError;
+import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
+/**
+ * A service that allows for the discovery of implementations of a given type. This service is a utility wrapper around
+ * {@link ServiceLoader}, and allows for the discovery of implementations of a given type in a more convenient way.
+ *
+ * <p>This service allows for the discovery of implementations through SPI, as well as manual overrides through
+ * {@link #override(Class, Class)} (or {@link #override(Class, String)} if the implementation is not available at compile
+ * time. This service also allows for the addition of additional class loaders, which allows for the discovery of
+ * implementations that are not available through the class loader of the service itself.
+ *
+ * <p>Implementations are expected to have a default constructor, and be assignable from the type that is being discovered.
+ *
+ * <p>Implementations are resolved in the following order:
+ * <ol>
+ *     <li>Cached implementations from prior discovery</li>
+ *     <li>Manual override with a qualified name or loaded {@link Class}</li>
+ *     <li>Service discovery through SPI</li>
+ * </ol>
+ *
+ * <p>Implementations are cached, and will only be released if an override is modified.
+ *
+ * @see ServiceLoader
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public final class DiscoveryService {
 
-    private static final DiscoveryService DISCOVERY_SERVICE = new DiscoveryService();
+    private static DiscoveryService DISCOVERY_SERVICE = new DiscoveryService();
 
     private final Map<Class<?>, Class<?>> types = new ConcurrentHashMap<>();
     private final Map<String, String> overrideDiscoveryFiles = new ConcurrentHashMap<>();
@@ -52,81 +81,170 @@ public final class DiscoveryService {
 
     @NonNull
     public static DiscoveryService instance() {
+        if (DISCOVERY_SERVICE == null) {
+            DISCOVERY_SERVICE = new DiscoveryService();
+        }
         return DISCOVERY_SERVICE;
     }
 
+    /**
+     * Indicates whether the current service has an implementation for the given type. The implementation may
+     * have been cached from a prior discovery, or may be available through overrides or SPI. This method does not
+     * indicate whether the implementation is sufficiently available to be loaded.
+     *
+     * @param type the type to check for
+     * @return {@code true} if an implementation is available, {@code false} otherwise
+     */
     public boolean contains(Class<?> type) {
-        return this.types.containsKey(type);
+        if (this.types.containsKey(type) || this.overrideDiscoveryFiles.containsKey(type.getName())) {
+            return true;
+        }
+        for (ClassLoader classLoader : this.classLoaders) {
+            ServiceLoader<?> serviceLoader = ServiceLoader.load(type, classLoader);
+            // Stream, to get the Provider instead of an instance of the implementation.
+            if (serviceLoader.stream().findFirst().isPresent()) {
+                return true;
+            }
+        }
+        return false;
     }
 
+    /**
+     * Discovers an implementation of the given type. If an implementation is available through overrides or SPI, it
+     * will be returned. If no implementation is available, a {@link ServiceDiscoveryException} will be thrown. As such,
+     * this method is not suitable for optional dependencies, and should only be used for required dependencies. If
+     * optional dependencies are required, use {@link #contains(Class)} to check for availability.
+     *
+     * @param type the type to discover an implementation for
+     * @return an implementation of the given type
+     * @param <T> the type to discover an implementation for
+     * @throws ServiceDiscoveryException if no implementation is available, or an error occurs during discovery
+     */
     @NonNull
     public <T> T discover(Class<T> type) throws ServiceDiscoveryException {
-        String name = type.getName();
-
-        Class<?> implementationType = this.types.containsKey(type)
-                ? this.types.get(type)
-                : this.tryLoadDiscoveryFile(type, name);
-
-        if (implementationType != null) {
-            return this.loadServiceInstance(type, implementationType);
+        try {
+            T object = this.tryLoadDiscoveryFile(type);
+            if (object != null) {
+                return object;
+            }
         }
-        throw new ServiceDiscoveryException("No implementation found for type " + name);
+        catch(NoAvailableImplementationException e) {
+            throw new ServiceDiscoveryException(e.getMessage(), e);
+        }
+        throw new ServiceDiscoveryException("No implementation found for type " + type.getCanonicalName());
     }
 
+    /**
+     * Overrides the discovery of an implementation for the given type. The implementation must be assignable from the
+     * given type, and must have a default constructor. If the implementation is not available at compile time, use
+     * {@link #override(Class, String)} instead.
+     *
+     * @param type the type to override
+     * @param implementation the implementation to use
+     */
     public void override(Class<?> type, Class<?> implementation) {
-        this.override(type, implementation.getName());
+        if (type.isAssignableFrom(implementation)) {
+            this.override(type, implementation.getName());
+        }
+        else {
+            throw new IllegalArgumentException("Implementation " + implementation.getName() + " is not assignable from type " + type.getName());
+        }
     }
 
+    /**
+     * Overrides the discovery of an implementation for the given type. The implementation must be assignable from the
+     * given type, and must have a default constructor. As the implementation is not available at compile time, these
+     * rules are validated at discovery time.
+     *
+     * @param type the type to override
+     * @param qualifiedName the qualified name of the implementation to use
+     */
     public void override(Class<?> type, String qualifiedName) {
         this.overrideDiscoveryFiles.put(type.getName(), qualifiedName);
+        // Release cached implementation, if any exists
+        this.types.remove(type);
     }
 
+    /**
+     * Adds a class loader to the service. This allows for the discovery of implementations that are not available
+     * through the class loader of the service itself.
+     *
+     * @param classLoader the class loader to add
+     */
     public void addClassLoader(ClassLoader classLoader) {
         this.classLoaders.add(classLoader);
     }
 
-    private <T> Class<?> tryLoadDiscoveryFile(Class<T> type, String name) {
-        InputStream resource = this.getClass().getClassLoader().getResourceAsStream(getDiscoveryFileName(name));
-
-        String resourceString;
-        if (resource != null) {
-            try {
-                resourceString = new String(resource.readAllBytes());
+    private <T> T tryLoadDiscoveryFile(Class<T> type) throws ServiceDiscoveryException {
+        Class<?> implementationClass = this.tryLoadImplementationClass(type);
+        if (implementationClass != null) {
+            if (type.isAssignableFrom(implementationClass)) {
+                this.verifyAndStoreType(type, implementationClass);
+                return this.loadServiceInstance(type, implementationClass);
             }
-            catch (IOException e) {
-                throw new ServiceDiscoveryException("Failed to read discovery file for type " + name, e);
+            else {
+                throw new ServiceDiscoveryException("Implementation " + implementationClass.getName() + " is not assignable from type " + type.getName());
             }
         }
+        else {
+            return this.tryLoadFromSPI(type);
+        }
+    }
+
+    @Nullable
+    private <T> Class<?> tryLoadImplementationClass(Class<T> type) throws NoAvailableImplementationException {
+        if (this.types.containsKey(type)) {
+            return this.types.get(type);
+        }
         else if (this.overrideDiscoveryFiles.containsKey(type.getName())) {
-            resourceString = this.overrideDiscoveryFiles.get(type.getName());
+            String resourceString = this.overrideDiscoveryFiles.get(type.getName());
+            return this.tryLoadClassFromName(resourceString);
         }
         else {
             return null;
         }
-
-        try {
-            Class<?> implementationType = tryLoadClass(resourceString);
-
-            this.verifyRegistration(type, implementationType);
-            this.types.put(type, implementationType);
-
-            return implementationType;
-        }
-        catch (ClassNotFoundException e) {
-            throw new ServiceDiscoveryException("Failed to load implementation class for type " + name, e);
-        }
     }
 
-    private Class<?> tryLoadClass(String resourceString) throws ClassNotFoundException {
-        for(ClassLoader classLoader : classLoaders) {
+    private <T> void verifyAndStoreType(Class<T> type, Class<?> implementationType) {
+        this.verifyRegistration(type, implementationType);
+        this.types.put(type, implementationType);
+    }
+
+    private Class<?> tryLoadClassFromName(String qualifiedName) throws NoAvailableImplementationException {
+        for(ClassLoader classLoader : this.classLoaders) {
             try {
-                return Class.forName(resourceString, true, classLoader);
+                return Class.forName(qualifiedName, true, classLoader);
             }
             catch (ClassNotFoundException e) {
-                // Ignore
+                // Ignore, may be in another class loader
             }
         }
-        throw new ClassNotFoundException(resourceString);
+        throw new NoAvailableImplementationException("No implementation found for type " + qualifiedName);
+    }
+
+    private <T> T tryLoadFromSPI(Class<T> type) throws NoAvailableImplementationException {
+        for(ClassLoader classLoader : this.classLoaders) {
+            ServiceLoader<T> serviceLoader = this.getServiceLoader(type, classLoader);
+            Set<? extends Provider<T>> providers = serviceLoader.stream().collect(Collectors.toSet());
+            for(Provider<T> provider : providers) {
+                try {
+                    return provider.get();
+                }
+                catch(ServiceConfigurationError e) {
+                    // Ignore, may be in another class loader or provider
+                }
+            }
+        }
+        throw new NoAvailableImplementationException("No implementation found for type " + type.getName());
+    }
+
+    private <T> ServiceLoader<T> getServiceLoader(Class<T> type, ClassLoader classLoader) throws NoAvailableImplementationException {
+        try {
+            return ServiceLoader.load(type, classLoader);
+        }
+        catch(ServiceConfigurationError e) {
+            throw new NoAvailableImplementationException("Cannot access service loader for type " + type.getName(), e);
+        }
     }
 
     private void verifyRegistration(Class<?> type, Class<?> implementation) {
@@ -141,7 +259,7 @@ public final class DiscoveryService {
         }
     }
 
-    private <T> T loadServiceInstance(Class<T> type, Class<?> implementationClass) {
+    private <T> T loadServiceInstance(Class<T> type, Class<?> implementationClass) throws NoAvailableImplementationException {
         try {
             Constructor<?> constructor = implementationClass.getConstructor();
 
@@ -151,13 +269,11 @@ public final class DiscoveryService {
 
             return type.cast(instance);
         }
-        catch (InstantiationException | NoSuchMethodException | InvocationTargetException |
-                     IllegalAccessException e) {
-            throw new IllegalStateException(e);
+        catch (NoSuchMethodException e) {
+            throw new NoAvailableImplementationException("Implementation " + implementationClass.getName() + " does not have a default constructor", e);
         }
-    }
-
-    static String getDiscoveryFileName(String name) {
-        return "META-INF/" + name + ".disco";
+        catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            throw new NoAvailableImplementationException("Cannot instantiate implementation " + implementationClass.getName(), e);
+        }
     }
 }

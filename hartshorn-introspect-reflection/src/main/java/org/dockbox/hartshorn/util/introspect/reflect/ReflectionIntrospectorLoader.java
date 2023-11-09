@@ -16,13 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.discovery.ServiceLoader;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 
-@ServiceLoader(IntrospectorLoader.class)
 public class ReflectionIntrospectorLoader implements IntrospectorLoader {
 
     @Override

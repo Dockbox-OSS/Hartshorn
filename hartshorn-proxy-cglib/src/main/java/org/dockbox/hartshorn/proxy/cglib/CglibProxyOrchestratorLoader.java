@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.proxy.cglib;
 
-import org.dockbox.hartshorn.discovery.ServiceLoader;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.ProxyOrchestratorLoader;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -27,7 +26,6 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
  *             {@code org.dockbox.hartshorn.proxy.javassist.JavassistProxyOrchestratorLoader}.
  */
 @Deprecated(since = "0.5.0")
-@ServiceLoader(ProxyOrchestratorLoader.class)
 public class CglibProxyOrchestratorLoader implements ProxyOrchestratorLoader {
     @Override
     public ProxyOrchestrator create(Introspector introspector) {
