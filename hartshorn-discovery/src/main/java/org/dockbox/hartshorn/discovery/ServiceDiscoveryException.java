@@ -16,9 +16,19 @@
 
 package org.dockbox.hartshorn.discovery;
 
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.ApplicationException;
 
-public class ServiceDiscoveryException extends ApplicationRuntimeException {
+/**
+ * Thrown when an error occurs during service discovery. This may indicate the absence of a service
+ * provider, or an error during the discovery process.
+ *
+ * @see DiscoveryService
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+public class ServiceDiscoveryException extends ApplicationException {
 
     public ServiceDiscoveryException(String message) {
         super(message);

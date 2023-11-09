@@ -31,6 +31,32 @@ import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+/**
+ * A service that allows for the discovery of implementations of a given type. This service is a utility wrapper around
+ * {@link ServiceLoader}, and allows for the discovery of implementations of a given type in a more convenient way.
+ *
+ * <p>This service allows for the discovery of implementations through SPI, as well as manual overrides through
+ * {@link #override(Class, Class)} (or {@link #override(Class, String)} if the implementation is not available at compile
+ * time. This service also allows for the addition of additional class loaders, which allows for the discovery of
+ * implementations that are not available through the class loader of the service itself.
+ *
+ * <p>Implementations are expected to have a default constructor, and be assignable from the type that is being discovered.
+ *
+ * <p>Implementations are resolved in the following order:
+ * <ol>
+ *     <li>Cached implementations from prior discovery</li>
+ *     <li>Manual override with a qualified name or loaded {@link Class}</li>
+ *     <li>Service discovery through SPI</li>
+ * </ol>
+ *
+ * <p>Implementations are cached, and will only be released if an override is modified.
+ *
+ * @see ServiceLoader
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public final class DiscoveryService {
 
     private static DiscoveryService DISCOVERY_SERVICE = new DiscoveryService();
@@ -61,10 +87,39 @@ public final class DiscoveryService {
         return DISCOVERY_SERVICE;
     }
 
+    /**
+     * Indicates whether the current service has an implementation for the given type. The implementation may
+     * have been cached from a prior discovery, or may be available through overrides or SPI. This method does not
+     * indicate whether the implementation is sufficiently available to be loaded.
+     *
+     * @param type the type to check for
+     * @return {@code true} if an implementation is available, {@code false} otherwise
+     */
     public boolean contains(Class<?> type) {
-        return this.types.containsKey(type) || this.overrideDiscoveryFiles.containsKey(type.getName());
+        if (this.types.containsKey(type) || this.overrideDiscoveryFiles.containsKey(type.getName())) {
+            return true;
+        }
+        for (ClassLoader classLoader : this.classLoaders) {
+            ServiceLoader<?> serviceLoader = ServiceLoader.load(type, classLoader);
+            // Stream, to get the Provider instead of an instance of the implementation.
+            if (serviceLoader.stream().findFirst().isPresent()) {
+                return true;
+            }
+        }
+        return false;
     }
 
+    /**
+     * Discovers an implementation of the given type. If an implementation is available through overrides or SPI, it
+     * will be returned. If no implementation is available, a {@link ServiceDiscoveryException} will be thrown. As such,
+     * this method is not suitable for optional dependencies, and should only be used for required dependencies. If
+     * optional dependencies are required, use {@link #contains(Class)} to check for availability.
+     *
+     * @param type the type to discover an implementation for
+     * @return an implementation of the given type
+     * @param <T> the type to discover an implementation for
+     * @throws ServiceDiscoveryException if no implementation is available, or an error occurs during discovery
+     */
     @NonNull
     public <T> T discover(Class<T> type) throws ServiceDiscoveryException {
         try {
@@ -79,19 +134,48 @@ public final class DiscoveryService {
         throw new ServiceDiscoveryException("No implementation found for type " + type.getCanonicalName());
     }
 
+    /**
+     * Overrides the discovery of an implementation for the given type. The implementation must be assignable from the
+     * given type, and must have a default constructor. If the implementation is not available at compile time, use
+     * {@link #override(Class, String)} instead.
+     *
+     * @param type the type to override
+     * @param implementation the implementation to use
+     */
     public void override(Class<?> type, Class<?> implementation) {
-        this.override(type, implementation.getName());
+        if (type.isAssignableFrom(implementation)) {
+            this.override(type, implementation.getName());
+        }
+        else {
+            throw new IllegalArgumentException("Implementation " + implementation.getName() + " is not assignable from type " + type.getName());
+        }
     }
 
+    /**
+     * Overrides the discovery of an implementation for the given type. The implementation must be assignable from the
+     * given type, and must have a default constructor. As the implementation is not available at compile time, these
+     * rules are validated at discovery time.
+     *
+     * @param type the type to override
+     * @param qualifiedName the qualified name of the implementation to use
+     */
     public void override(Class<?> type, String qualifiedName) {
         this.overrideDiscoveryFiles.put(type.getName(), qualifiedName);
+        // Release cached implementation, if any exists
+        this.types.remove(type);
     }
 
+    /**
+     * Adds a class loader to the service. This allows for the discovery of implementations that are not available
+     * through the class loader of the service itself.
+     *
+     * @param classLoader the class loader to add
+     */
     public void addClassLoader(ClassLoader classLoader) {
         this.classLoaders.add(classLoader);
     }
 
-    private <T> T tryLoadDiscoveryFile(Class<T> type) throws NoAvailableImplementationException {
+    private <T> T tryLoadDiscoveryFile(Class<T> type) throws ServiceDiscoveryException {
         Class<?> implementationClass = this.tryLoadImplementationClass(type);
         if (implementationClass != null) {
             if (type.isAssignableFrom(implementationClass)) {
@@ -175,7 +259,7 @@ public final class DiscoveryService {
         }
     }
 
-    private <T> T loadServiceInstance(Class<T> type, Class<?> implementationClass) {
+    private <T> T loadServiceInstance(Class<T> type, Class<?> implementationClass) throws NoAvailableImplementationException {
         try {
             Constructor<?> constructor = implementationClass.getConstructor();
 
@@ -185,9 +269,11 @@ public final class DiscoveryService {
 
             return type.cast(instance);
         }
-        catch (InstantiationException | NoSuchMethodException | InvocationTargetException |
-                     IllegalAccessException e) {
-            throw new IllegalStateException(e);
+        catch (NoSuchMethodException e) {
+            throw new NoAvailableImplementationException("Implementation " + implementationClass.getName() + " does not have a default constructor", e);
+        }
+        catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            throw new NoAvailableImplementationException("Cannot instantiate implementation " + implementationClass.getName(), e);
         }
     }
 }

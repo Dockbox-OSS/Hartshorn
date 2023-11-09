@@ -110,11 +110,8 @@ public class DiscoveryServiceTests {
     }
 
     @Test
-    void testDiscoveryFailsIfImplementationNotAssignable() {
-        Assertions.assertThrows(ServiceDiscoveryException.class, () -> {
-            DiscoveryService.instance().override(HelloWorldService.class, DiscoveryServiceTests.class);
-            DiscoveryService.instance().discover(HelloWorldService.class);
-        });
+    void testOverrideFailsIfImplementationNotAssignable() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> DiscoveryService.instance().override(HelloWorldService.class, DiscoveryServiceTests.class));
     }
 
     @Test
