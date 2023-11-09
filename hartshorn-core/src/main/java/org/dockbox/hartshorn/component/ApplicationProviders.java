@@ -57,7 +57,7 @@ public class ApplicationProviders {
             ComponentCollection<ConverterFactory<?, ?>> converterFactories,
             ComponentCollection<Converter<?, ?>> converters
     ) {
-        final StandardConversionService service = new StandardConversionService(introspector).withDefaults();
+        StandardConversionService service = new StandardConversionService(introspector).withDefaults();
         
         genericConverters.forEach(service::addConverter);
         converterFactories.forEach(service::addConverterFactory);

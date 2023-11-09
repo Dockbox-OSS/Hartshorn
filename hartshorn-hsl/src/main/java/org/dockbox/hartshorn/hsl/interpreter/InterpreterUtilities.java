@@ -44,7 +44,7 @@ public final class InterpreterUtilities {
         }
         if (a instanceof Number na && b instanceof Number nb) {
             BigDecimal ba = BigDecimal.valueOf(na.doubleValue());
-            final BigDecimal bb = BigDecimal.valueOf(nb.doubleValue());
+            BigDecimal bb = BigDecimal.valueOf(nb.doubleValue());
             return ba.compareTo(bb) == 0;
         }
         return a.equals(b);

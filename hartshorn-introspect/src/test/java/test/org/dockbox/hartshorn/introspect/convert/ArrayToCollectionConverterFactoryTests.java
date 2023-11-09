@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
@@ -70,7 +70,7 @@ public class ArrayToCollectionConverterFactoryTests {
         Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(Collection.class);
         ConverterFactory<Object[], Collection<?>> factory = new ArrayToCollectionConverterFactory(introspector);
 
-        Converter<Object[], Collection<String>> converter = factory.create(new GenericType<Collection<String>>() {}).orNull();
+        Converter<Object[], Collection<String>> converter = TypeUtils.adjustWildcards(factory.create(Collection.class), Converter.class);
         Assertions.assertNotNull(converter);
 
         return converter;

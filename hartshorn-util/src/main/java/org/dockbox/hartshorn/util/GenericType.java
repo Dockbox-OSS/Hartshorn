@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Generic type reference, allowing for generic type reading. This is derived
@@ -30,7 +30,7 @@ import java.lang.reflect.Type;
  */
 public abstract class GenericType<T> implements Comparable<GenericType<T>> {
 
-    protected Type type;
+    protected final Type type;
 
     protected GenericType() {
         Type superClass = this.getClass().getGenericSuperclass();

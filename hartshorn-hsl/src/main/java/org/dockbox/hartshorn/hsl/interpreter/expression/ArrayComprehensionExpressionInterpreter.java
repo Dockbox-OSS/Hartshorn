@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpreter<Object, ArrayComprehensionExpression> {
 
@@ -46,22 +46,22 @@ public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpret
     }
 
     private static void visitIterable(ArrayComprehensionExpression node, InterpreterAdapter adapter,
-                                      final List<Object> values, Iterable<?> iterable) {
+                                      List<Object> values, Iterable<?> iterable) {
         for (Object element : iterable) {
             adapter.visitingScope().assign(node.selector(), element);
 
             if (node.condition() != null) {
-                final Object condition = adapter.evaluate(node.condition());
+                Object condition = adapter.evaluate(node.condition());
                 if (!InterpreterUtilities.isTruthy(condition)) {
                     if (node.elseExpression() != null) {
-                        final Object elseValue = adapter.evaluate(node.elseExpression());
+                        Object elseValue = adapter.evaluate(node.elseExpression());
                         values.add(elseValue);
                     }
                     continue;
                 }
             }
 
-            final Object result = adapter.evaluate(node.expression());
+            Object result = adapter.evaluate(node.expression());
             values.add(result);
         }
     }

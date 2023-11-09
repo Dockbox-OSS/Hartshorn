@@ -131,6 +131,13 @@ public final class ParameterizableType {
         return Objects.hash(this.type, this.parameters);
     }
 
+    public String toQualifiedString() {
+        String parameters = this.parameters.stream()
+                .map(ParameterizableType::toQualifiedString)
+                .collect(Collectors.joining(", "));
+        return this.type.getName() + (parameters.isEmpty() ? "" : "<" + parameters + ">");
+    }
+
     @Override
     public String toString() {
         String parameters = this.parameters.stream()

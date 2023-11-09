@@ -227,7 +227,7 @@ public class CommandDefinitionContextImpl extends DefaultProvisionContext implem
     }
 
     private <E extends Enum<E>> CommandElement<?> lookupElement(String type, String name, boolean optional) {
-        final Option<ArgumentConverter<?>> converter = this.converterRegistry.converter(type.toLowerCase());
+        Option<ArgumentConverter<?>> converter = this.converterRegistry.converter(type.toLowerCase());
 
         if (converter.present()) {
             this.context.log().debug("Found converter for element type " + type);

@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.semantic;
 
+import java.util.Map;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
@@ -73,8 +75,6 @@ import org.dockbox.hartshorn.hsl.semantic.Resolver.FunctionType;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-
-import java.util.Map;
 
 public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisitor<Void> {
 
@@ -233,7 +233,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(WhileStatement statement) {
-        final MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
         this.resolver.currentScopeType(MoveKeyword.ScopeType.LOOP);
         this.resolve(statement.condition());
         this.resolve(statement.body());
@@ -243,7 +243,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(DoWhileStatement statement) {
-        final MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
         this.resolver.currentScopeType(MoveKeyword.ScopeType.LOOP);
         this.resolver.beginScope();
         this.resolve(statement.condition());
@@ -255,7 +255,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(ForStatement statement) {
-        final MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
         this.resolver.currentScopeType(MoveKeyword.ScopeType.LOOP);
         this.resolver.beginScope();
         this.resolve(statement.initializer());
@@ -269,7 +269,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(ForEachStatement statement) {
-        final MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
         this.resolver.currentScopeType(MoveKeyword.ScopeType.LOOP);
         this.resolver.beginScope();
         this.resolver.declare(statement.selector().name());
@@ -281,7 +281,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(RepeatStatement statement) {
-        final MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
         this.resolver.currentScopeType(MoveKeyword.ScopeType.LOOP);
         this.resolver.beginScope();
         this.resolve(statement.value());
@@ -361,7 +361,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(ClassStatement statement) {
-        final ClassType enclosingClass = this.resolver.currentClass();
+        ClassType enclosingClass = this.resolver.currentClass();
         this.resolver.currentClass(ClassType.CLASS);
 
         this.resolver.declare(statement.name());
@@ -415,7 +415,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(TestStatement statement) {
-        final FunctionType enclosingFunction = this.resolver.currentFunction();
+        FunctionType enclosingFunction = this.resolver.currentFunction();
         this.resolver.currentFunction(FunctionType.TEST);
         this.resolver.declare(statement.name());
         this.resolve(statement.body());
@@ -425,8 +425,8 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(ModuleStatement statement) {
-        final Map<String, NativeModule> modules = this.resolver.interpreter().state().externalModules();
-        final String module = statement.name().lexeme();
+        Map<String, NativeModule> modules = this.resolver.interpreter().state().externalModules();
+        String module = statement.name().lexeme();
         if (!modules.containsKey(module)) {
             throw new ScriptEvaluationError("Cannot find module named '" + module + "'", Phase.RESOLVING, statement.name());
         }
@@ -474,7 +474,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     @Override
     public Void visit(ArrayComprehensionExpression expr) {
         this.resolve(expr.collection());
-        final MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
         this.resolver.currentScopeType(MoveKeyword.ScopeType.LOOP);
 
         this.resolver.beginScope();
@@ -539,7 +539,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
             this.resolve(statement.expression());
         }
 
-        final MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
         this.resolver.currentScopeType(MoveKeyword.ScopeType.SWITCH);
         this.resolver.beginScope();
         this.resolve(statement.body());

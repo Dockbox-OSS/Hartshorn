@@ -50,7 +50,14 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     private boolean processAfterInitialization = true;
 
     protected AbstractDependencyContext(DependencyContext<T> dependencyContext) {
-        this(dependencyContext.componentKey(), dependencyContext.dependencies(), dependencyContext.scope(), dependencyContext.priority(), dependencyContext.type());
+        this(
+            dependencyContext.componentKey(),
+            dependencyContext.dependencies(),
+            dependencyContext.scope(),
+            dependencyContext.priority(),
+            dependencyContext.type()
+        );
+        
         if (dependencyContext instanceof AbstractDependencyContext<T> abstractDependencyContext) {
             this.lazy = abstractDependencyContext.lazy();
             this.singleton = abstractDependencyContext.singleton();

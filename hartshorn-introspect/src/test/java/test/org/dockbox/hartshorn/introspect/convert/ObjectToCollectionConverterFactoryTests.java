@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
@@ -56,6 +56,6 @@ public class ObjectToCollectionConverterFactoryTests {
     private static Converter<Object, Set<String>> createConverter() {
         Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(Set.class);
         ConverterFactory<Object, Collection<?>> factory = new ObjectToCollectionConverterFactory(introspector);
-        return factory.create(new GenericType<Set<String>>() {}).orNull();
+        return TypeUtils.adjustWildcards(factory.create(Set.class), Converter.class);
     }
 }

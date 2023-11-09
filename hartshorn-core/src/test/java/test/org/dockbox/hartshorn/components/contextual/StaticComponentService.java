@@ -23,18 +23,22 @@ import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 @Service
 public class StaticComponentService {
 
-    @Binds(value = "user", type = BindingType.COLLECTION)
+    public static final String USER = "user";
+    public static final String ADMIN = "admin";
+    public static final String GUEST = "guest";
+
+    @Binds(value = USER, type = BindingType.COLLECTION, priority = 12)
     public StaticComponent userComponent() {
-        return new StaticComponent("user");
+        return new StaticComponent(USER);
     }
 
-    @Binds(value = "admin", type = BindingType.COLLECTION)
+    @Binds(value = ADMIN, type = BindingType.COLLECTION)
     public StaticComponent adminComponent() {
-        return new StaticComponent("admin");
+        return new StaticComponent(ADMIN);
     }
 
-    @Binds(value = "guest", type = BindingType.COLLECTION)
+    @Binds(value = GUEST, type = BindingType.COLLECTION)
     public StaticComponent guestComponent() {
-        return new StaticComponent("guest");
+        return new StaticComponent(GUEST);
     }
 }
