@@ -16,13 +16,15 @@
 
 package org.dockbox.hartshorn.discovery;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dockbox.hartshorn.util.ApplicationException;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
-public @interface ServiceLoader {
-    Class<?> value();
+public class NoAvailableImplementationException extends ApplicationException {
+
+    public NoAvailableImplementationException(String message) {
+        super(message);
+    }
+
+    public NoAvailableImplementationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

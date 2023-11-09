@@ -16,12 +16,10 @@
 
 package org.dockbox.hartshorn.proxy.javassist;
 
-import org.dockbox.hartshorn.discovery.ServiceLoader;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.ProxyOrchestratorLoader;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
-@ServiceLoader(ProxyOrchestratorLoader.class)
 public class JavassistProxyOrchestratorLoader implements ProxyOrchestratorLoader {
 
     @Override
