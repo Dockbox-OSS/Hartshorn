@@ -16,26 +16,57 @@
 
 package org.dockbox.hartshorn.component;
 
+import java.util.List;
 import java.util.Objects;
-
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
+/**
+ * Specialized {@link ScopeKey} for {@link ScopeAdapter} instances. This tracks both the adaptee type
+ * and the scope adapter type.
+ *
+ * @param <T> the adaptee type
+ *
+ * @see ScopeAdapter
+ * @see ScopeKey
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ScopeAdapterKey<T> extends ScopeKey<ScopeAdapter<T>> {
 
-    private final Class<T> adapteeType;
+    private final ParameterizableType<T> adapteeType;
 
-    protected ScopeAdapterKey(Class<ScopeAdapter<T>> type, Class<T> adapteeType) {
+    protected ScopeAdapterKey(ParameterizableType<ScopeAdapter<T>> type, ParameterizableType<T> adapteeType) {
         super(type);
         this.adapteeType = adapteeType;
     }
 
-    public Class<T> adapteeType() {
-        return adapteeType;
+    /**
+     * Returns the type of the adaptee. This contains the full type information, including any type
+     * parameters. This is not the type of the scope itself, but of the instance that is wrapped by
+     * the adapter.
+     *
+     * @return the type of the adaptee
+     */
+    public ParameterizableType<T> adapteeType() {
+        return this.adapteeType;
     }
 
+    /**
+     * Creates a new key for the given adapter. The adaptee type is derived from the adapter.
+     *
+     * @param adapter the adapter to create a key for
+     * @return the key
+     * @param <T> the adaptee type
+     */
     public static <T> ScopeAdapterKey<T> of(ScopeAdapter<T> adapter) {
-        Class<ScopeAdapter<T>> adapterType = TypeUtils.adjustWildcards(adapter.getClass(), Class.class);
-        Class<T> adapteeType = TypeUtils.adjustWildcards(adapter.adaptee().getClass(), Class.class);
+        ParameterizableType<T> adapteeType = adapter.adapteeType();
+        ParameterizableType<ScopeAdapter<T>> adapterType = TypeUtils.adjustWildcards(
+            new ParameterizableType<>(ScopeAdapter.class, List.of(adapteeType)),
+            ParameterizableType.class
+        );
         return new ScopeAdapterKey<>(adapterType, adapteeType);
     }
 
@@ -50,11 +81,11 @@ public class ScopeAdapterKey<T> extends ScopeKey<ScopeAdapter<T>> {
         if(!super.equals(object)) {
             return false;
         }
-        return Objects.equals(adapteeType, that.adapteeType);
+        return Objects.equals(this.adapteeType, that.adapteeType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), adapteeType);
+        return Objects.hash(super.hashCode(), this.adapteeType);
     }
 }

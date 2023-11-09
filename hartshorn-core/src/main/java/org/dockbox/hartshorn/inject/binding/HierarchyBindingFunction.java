@@ -97,10 +97,10 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     @Override
     public BindingFunction<T> installTo(ScopeKey<?> scope) throws IllegalScopeException {
         if (this.scope != null && this.scope != Scope.DEFAULT_SCOPE && (!(this.scope instanceof ApplicationContext))) {
-            throw new IllegalScopeException("Cannot install binding to scope " + scope.name() + " as the binding is already installed to scope " + this.scope.getClass().getName());
+            throw new IllegalScopeException("Cannot install binding to scope " + scope.name() + " as the binding is already installed to scope " + this.scope.installableScopeType().name());
         }
         // Permitted, as default application scope may be expanded. Defined child scopes can not be expanded, so this is a safe check
-        if (this.scope instanceof ApplicationContext && !ApplicationContext.class.isAssignableFrom(scope.scopeType())) {
+        if (this.scope instanceof ApplicationContext && !ApplicationContext.class.isAssignableFrom(scope.scopeType().type())) {
             this.scope = null;
         }
         this.scopeModule = scope;

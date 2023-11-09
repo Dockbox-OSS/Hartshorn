@@ -17,24 +17,88 @@
 package org.dockbox.hartshorn.component;
 
 import java.util.Objects;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * A key that can be used to identify a {@link Scope}. This contains the required metadata to
+ * identify a scope, and can be used to manage scoped components in a {@link ScopeAwareComponentProvider}.
+ *
+ * <p>Scope keys contain a {@link ParameterizableType} that describes the type of the scope. This type can
+ * be parameterized. Therefore, key instances differentiate between e.g. {@code TypeScope<String>} and {@code TypeScope<Integer>}.
+ *
+ * <p>Keys are always immutable.
+ *
+ * @see ScopeAwareComponentProvider
+ * @see Scope
+ *
+ * @param <T> the type of the scope
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ScopeKey<T extends Scope> {
 
-    private final Class<T> scopeType;
+    private final ParameterizableType<T> scopeType;
 
-    protected ScopeKey(Class<T> scopeType) {
+    protected ScopeKey(ParameterizableType<T> scopeType) {
         this.scopeType = scopeType;
     }
 
+    /**
+     * Returns the name of the scope type. This is the simple name of the type, without any package
+     * information, but including any type parameters.
+     *
+     * @return the name of the scope type
+     */
     public String name() {
-        return this.scopeType.getSimpleName();
+        return this.scopeType.toString();
     }
 
-    public Class<T> scopeType() {
+    /**
+     * Returns the type of the scope. This contains the full type information, including any type
+     * parameters.
+     *
+     * @return the type of the scope
+     */
+    public ParameterizableType<T> scopeType() {
         return this.scopeType;
     }
 
+    /**
+     * Creates a new {@link ScopeKey} for the given type. This is a convenience method that allows for
+     * the creation of a key without having to specify type parameters.
+     *
+     * @param scopeType the type of the scope
+     * @return a new {@link ScopeKey} instance
+     * @param <T> the type of the scope
+     */
     public static <T extends Scope> ScopeKey<T> of(Class<T> scopeType) {
+        return new ScopeKey<>(new ParameterizableType<>(scopeType));
+    }
+
+    /**
+     * Creates a new {@link ScopeKey} for the given type. This is a convenience method that allows for
+     * the creation of a key from existing type metadata.
+     *
+     * @param scopeType the type of the scope
+     * @return a new {@link ScopeKey} instance
+     * @param <T> the type of the scope
+     */
+    public static <T extends Scope> ScopeKey<T> of(TypeView<T> scopeType) {
+        return new ScopeKey<>(new ParameterizableType<>(scopeType));
+    }
+
+    /**
+     * Creates a new {@link ScopeKey} for the given type. This is a convenience method that allows for
+     * the creation of a key from existing type metadata.
+     *
+     * @param scopeType the type of the scope
+     * @return a new {@link ScopeKey} instance
+     * @param <T> the type of the scope
+     */
+    public static <T extends Scope> ScopeKey<T> of(ParameterizableType<T> scopeType) {
         return new ScopeKey<>(scopeType);
     }
 
@@ -46,11 +110,11 @@ public class ScopeKey<T extends Scope> {
         if(!(object instanceof ScopeKey<?> scopeKey)) {
             return false;
         }
-        return Objects.equals(scopeType, scopeKey.scopeType);
+        return Objects.equals(this.scopeType, scopeKey.scopeType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(scopeType);
+        return Objects.hash(this.scopeType);
     }
 }

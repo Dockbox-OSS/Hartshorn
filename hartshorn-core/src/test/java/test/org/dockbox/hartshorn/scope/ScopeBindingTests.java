@@ -16,16 +16,16 @@
 
 package test.org.dockbox.hartshorn.scope;
 
+import jakarta.inject.Inject;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeAdapter;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.scope.ScopedBindingProvider.SampleScope;
 
 @HartshornTest
@@ -47,7 +47,7 @@ public class ScopeBindingTests {
 
     @Test
     void testScopeBindingIsNotAccessibleFromApplication() {
-        Scope scope = ScopeAdapter.of(new Object());
+        Scope scope = ScopeAdapter.of(new Object(), new ParameterizableType<>(Object.class));
         ComponentKey<String> key = ComponentKey.builder(String.class)
                 .scope(scope)
                 .build();
@@ -68,7 +68,7 @@ public class ScopeBindingTests {
     void testApplicationBindingIsAccessibleFromScope() {
         this.applicationContext.bind(String.class).singleton("test");
 
-        Scope scope = ScopeAdapter.of(new Object());
+        Scope scope = ScopeAdapter.of(new Object(), new ParameterizableType<>(Object.class));
         ComponentKey<String> key = ComponentKey.builder(String.class)
                 .scope(scope)
                 .build();
