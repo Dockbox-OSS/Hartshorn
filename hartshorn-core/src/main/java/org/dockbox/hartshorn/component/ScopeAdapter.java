@@ -63,7 +63,7 @@ public class ScopeAdapter<T> implements Scope {
     }
 
     @Override
-    public ScopeAdapterKey<T> installableScopeType() {
+    public ScopeAdapterKey installableScopeType() {
         return ScopeAdapterKey.of(this);
     }
 }

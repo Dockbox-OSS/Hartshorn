@@ -77,7 +77,7 @@ public class ScopeKeyTests {
             ParameterizableType type = ParameterizableType.builder(ScopeAdapter.class)
                     .parameters(ParameterizableType.create(String.class))
                     .build();
-            ScopeAdapterKey<?> scopeAdapterKey = ScopeAdapterKey.of(type);
+            ScopeAdapterKey scopeAdapterKey = ScopeAdapterKey.of(type);
             Assertions.assertNotNull(scopeAdapterKey);
         });
     }
@@ -85,10 +85,10 @@ public class ScopeKeyTests {
     @Test
     void testScopeAdapterKeysOfSameTypeEqual() {
         ScopeAdapter<Object> adapter1 = ScopeAdapter.of(new Object());
-        ScopeAdapterKey<Object> key1 = ScopeAdapterKey.of(adapter1);
+        ScopeAdapterKey key1 = ScopeAdapterKey.of(adapter1);
 
         ScopeAdapter<Object> adapter2 = ScopeAdapter.of(new Object());
-        ScopeAdapterKey<Object> key2 = ScopeAdapterKey.of(adapter2);
+        ScopeAdapterKey key2 = ScopeAdapterKey.of(adapter2);
 
         Assertions.assertNotEquals(adapter1, adapter2);
         Assertions.assertEquals(key1, key2);

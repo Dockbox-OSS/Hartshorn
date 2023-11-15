@@ -24,13 +24,11 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * Simple implementation of a {@link ScopeKey}, to be used for direct implementations of
  * {@link Scope}. For {@link ScopeAdapter}s, use {@link ScopeAdapterKey} instead.
  *
- * @param <T> the type of the scope
- *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public class DirectScopeKey<T extends Scope> implements ScopeKey {
+public class DirectScopeKey implements ScopeKey {
 
     private final ParameterizableType scopeType;
 
@@ -59,8 +57,8 @@ public class DirectScopeKey<T extends Scope> implements ScopeKey {
      * @return a new {@link DirectScopeKey} instance
      * @param <T> the type of the scope
      */
-    public static <T extends Scope> DirectScopeKey<T> of(Class<T> scopeType) {
-        return new DirectScopeKey<>(ParameterizableType.create(scopeType));
+    public static <T extends Scope> DirectScopeKey of(Class<T> scopeType) {
+        return new DirectScopeKey(ParameterizableType.create(scopeType));
     }
 
     /**
@@ -71,8 +69,8 @@ public class DirectScopeKey<T extends Scope> implements ScopeKey {
      * @return a new {@link DirectScopeKey} instance
      * @param <T> the type of the scope
      */
-    public static <T extends Scope> DirectScopeKey<T> of(TypeView<T> scopeType) {
-        return new DirectScopeKey<>(ParameterizableType.create(scopeType));
+    public static <T extends Scope> DirectScopeKey of(TypeView<T> scopeType) {
+        return new DirectScopeKey(ParameterizableType.create(scopeType));
     }
 
     /**
@@ -82,9 +80,9 @@ public class DirectScopeKey<T extends Scope> implements ScopeKey {
      * @param scopeType the type of the scope
      * @return a new {@link DirectScopeKey} instance
      */
-    public static DirectScopeKey<?> of(ParameterizableType scopeType) {
+    public static DirectScopeKey of(ParameterizableType scopeType) {
         // Note that type is not checked here, as constructor already does this.
-        return new DirectScopeKey<>(scopeType);
+        return new DirectScopeKey(scopeType);
     }
 
     @Override
@@ -92,7 +90,7 @@ public class DirectScopeKey<T extends Scope> implements ScopeKey {
         if(this == object) {
             return true;
         }
-        if(!(object instanceof DirectScopeKey<?> scopeKey)) {
+        if(!(object instanceof DirectScopeKey scopeKey)) {
             return false;
         }
         return Objects.equals(this.scopeType, scopeKey.scopeType);

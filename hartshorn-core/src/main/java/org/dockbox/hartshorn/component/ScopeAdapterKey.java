@@ -25,8 +25,6 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
  * Specialized {@link ScopeKey} for {@link ScopeAdapter} instances. This tracks both the adaptee type
  * and the scope adapter type.
  *
- * @param <T> the adaptee type
- *
  * @see ScopeAdapter
  * @see ScopeKey
  *
@@ -34,7 +32,7 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
  *
  * @author Guus Lieben
  */
-public class ScopeAdapterKey<T> implements ScopeKey {
+public class ScopeAdapterKey implements ScopeKey {
 
     private final ParameterizableType adapterType;
     private final ParameterizableType adapteeType;
@@ -57,14 +55,14 @@ public class ScopeAdapterKey<T> implements ScopeKey {
      * @return the key
      * @param <T> the adaptee type
      */
-    public static <T> ScopeAdapterKey<T> of(ScopeAdapter<T> adapter) {
+    public static <T> ScopeAdapterKey of(ScopeAdapter<T> adapter) {
         ParameterizableType adapteeType = adapter.adapteeType();
         ParameterizableType adapterType = ParameterizableType.builder(ScopeAdapter.class).parameters(adapteeType).build();
-        return new ScopeAdapterKey<>(TypeUtils.adjustWildcards(adapterType, ParameterizableType.class));
+        return new ScopeAdapterKey(TypeUtils.adjustWildcards(adapterType, ParameterizableType.class));
     }
 
-    public static ScopeAdapterKey<?> of(ParameterizableType type) {
-        return new ScopeAdapterKey<>(type);
+    public static ScopeAdapterKey of(ParameterizableType type) {
+        return new ScopeAdapterKey(type);
     }
 
     /**
@@ -93,7 +91,7 @@ public class ScopeAdapterKey<T> implements ScopeKey {
         if(this == object) {
             return true;
         }
-        if(!(object instanceof ScopeAdapterKey<?> that)) {
+        if(!(object instanceof ScopeAdapterKey that)) {
             return false;
         }
         // Note that adapterType already contains adaptee type, so no need to check that separately

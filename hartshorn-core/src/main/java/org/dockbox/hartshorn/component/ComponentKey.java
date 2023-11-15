@@ -331,7 +331,7 @@ public final class ComponentKey<T> {
             return copyProperties(builder(type));
         }
 
-        public <U> Builder<?> type(ParameterizableType type) {
+        public Builder<?> type(ParameterizableType type) {
             return copyProperties(builder(type));
         }
 
