@@ -97,24 +97,20 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
 
     @Override
     public <T> Attempt<T, Throwable> load(GenericTypeView<T> element) {
-        if (element instanceof TypeView<?> typeView) {
-            ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(typeView.type(), Class.class));
-            return Attempt.of(this.applicationContext().get(key));
-        }
-        else if (element instanceof FieldView<?, ?> fieldView) {
-            return this.load(TypeUtils.adjustWildcards(fieldView, FieldView.class));
-        }
-        else if (element instanceof MethodView<?, ?> methodView) {
-            return this.invoke(TypeUtils.adjustWildcards(methodView, MethodView.class));
-        }
-        else if (element instanceof ConstructorView<?> constructorView) {
-            return this.create(TypeUtils.adjustWildcards(constructorView, ConstructorView.class));
-        }
-        else if (element instanceof ParameterView<?> parameterView) {
-            ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(parameterView.type().type(), Class.class));
-            return Attempt.of(this.applicationContext().get(key));
-        }
-        return Attempt.of(new IllegalArgumentException("Unsupported element type: " + element.getClass().getName()));
+        return switch(element) {
+            case TypeView<?> typeView -> {
+                ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(typeView.type(), Class.class));
+                yield Attempt.of(this.applicationContext().get(key));
+            }
+            case FieldView<?, ?> fieldView -> this.load(TypeUtils.adjustWildcards(fieldView, FieldView.class));
+            case MethodView<?, ?> methodView -> this.invoke(TypeUtils.adjustWildcards(methodView, MethodView.class));
+            case ConstructorView<?> constructorView -> this.create(TypeUtils.adjustWildcards(constructorView, ConstructorView.class));
+            case ParameterView<?> parameterView -> {
+                ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(parameterView.type().type(), Class.class));
+                yield Attempt.of(this.applicationContext().get(key));
+            }
+            default -> Attempt.of(new IllegalArgumentException("Unsupported element type: " + element.getClass().getName()));
+        };
     }
 
     @Override

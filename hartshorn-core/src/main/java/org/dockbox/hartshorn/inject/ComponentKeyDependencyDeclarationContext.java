@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -27,7 +28,7 @@ public class ComponentKeyDependencyDeclarationContext<T> implements DependencyDe
 
     public ComponentKeyDependencyDeclarationContext(Introspector introspector, ComponentKey<T> key) {
         this.key = key;
-        this.type = introspector.introspect(key.parameterizedType());
+        this.type = TypeUtils.adjustWildcards(introspector.introspect(key.parameterizedType()), TypeView.class);
     }
 
     @Override

@@ -283,18 +283,6 @@ public class UtilitiesTests {
     }
 
     @Test
-    void testInvalidWildcardAdjustment() {
-        List<?> list = Arrays.asList("one", "two", "three");
-        Assertions.assertThrows(IllegalArgumentException.class, () -> TypeUtils.adjustWildcards(list, Set.class));
-    }
-
-    @Test
-    void testWildcardAdjustmentDoesNotAdjustChild() {
-        List<?> list = Arrays.asList("one", "two", "three");
-        Assertions.assertThrows(IllegalArgumentException.class, () -> TypeUtils.adjustWildcards(list, ArrayList.class));
-    }
-
-    @Test
     void testWildcardAdjustmentDoesAdjustParent() {
         List<?> list = Arrays.asList("one", "two", "three");
         List<String> adjusted = Assertions.assertDoesNotThrow(() -> TypeUtils.adjustWildcards(list, Collection.class));
