@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 public class ScopeAdapter<T> implements Scope {
 
     private final T adaptee;
-    private final ParameterizableType<T> adapteeType;
+    private final ParameterizableType adapteeType;
 
-    protected ScopeAdapter(T adaptee, ParameterizableType<T> adapteeType) {
+    protected ScopeAdapter(T adaptee, ParameterizableType adapteeType) {
         this.adaptee = adaptee;
         this.adapteeType = adapteeType;
     }
@@ -33,12 +33,16 @@ public class ScopeAdapter<T> implements Scope {
         return this.adaptee;
     }
 
-    public ParameterizableType<T> adapteeType() {
+    public ParameterizableType adapteeType() {
         return this.adapteeType;
     }
 
-    public static <T> ScopeAdapter<T> of(T adaptee, ParameterizableType<T> type) {
+    public static <T> ScopeAdapter<T> of(T adaptee, ParameterizableType type) {
         return new ScopeAdapter<>(adaptee, type);
+    }
+
+    public static <T> ScopeAdapter<T> of(T adaptee) {
+        return new ScopeAdapter<>(adaptee, ParameterizableType.create(adaptee.getClass()));
     }
 
     @Override
@@ -59,7 +63,7 @@ public class ScopeAdapter<T> implements Scope {
     }
 
     @Override
-    public ScopeKey<ScopeAdapter<T>> installableScopeType() {
+    public ScopeAdapterKey<T> installableScopeType() {
         return ScopeAdapterKey.of(this);
     }
 }

@@ -147,8 +147,8 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     }
 
     @Override
-    public <T> TypeView<T> introspect(ParameterizableType<T> type) {
-        return (TypeView<T>) this.introspect(type.asParameterizedType());
+    public TypeView<?> introspect(ParameterizableType type) {
+        return this.introspect(type.asParameterizedType());
     }
 
     @Override

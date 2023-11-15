@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.component.DirectScopeKey;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
@@ -60,11 +61,15 @@ public interface ApplicationContext extends
         Scope,
         AutoCloseable {
 
-    ScopeKey<ApplicationContext> SCOPE_KEY = ScopeKey.of(ApplicationContext.class);
+    /**
+     * The scope key for the application context. This key is used to register the application context
+     * as a global scope.
+     */
+    ScopeKey<ApplicationContext> SCOPE_KEY = DirectScopeKey.of(ApplicationContext.class);
 
     /**
      * Registers a component processor with the application context. The processor will be invoked when
-     * a component is added to the application context.
+     * a component is loaded by the application context.
      *
      * @param processor The component processor to register.
      * @see ComponentProcessor
@@ -73,6 +78,14 @@ public interface ApplicationContext extends
      */
     void add(ComponentProcessor processor);
 
+    /**
+     * Registers a lazy-loaded component post-processor with the application context. The processor will be instantiated
+     * when it is first used. The processor will be invoked when a component is loaded by the application context.
+     *
+     * @param processor The component processor to register.
+     * @see ComponentProcessor
+     * @see org.dockbox.hartshorn.component.processing.ComponentPostProcessor
+     */
     void add(Class<? extends ComponentPostProcessor> processor);
 
     /**

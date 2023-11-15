@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import java.util.Set;
+
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.processing.Binds;

@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.component;
 
-import java.util.List;
 import java.util.Objects;
+
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
@@ -34,24 +34,20 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
  *
  * @author Guus Lieben
  */
-public class ScopeAdapterKey<T> extends ScopeKey<ScopeAdapter<T>> {
+public class ScopeAdapterKey<T> implements ScopeKey<ScopeAdapter<T>> {
 
-    private final ParameterizableType<T> adapteeType;
+    private final ParameterizableType adapterType;
+    private final ParameterizableType adapteeType;
 
-    protected ScopeAdapterKey(ParameterizableType<ScopeAdapter<T>> type, ParameterizableType<T> adapteeType) {
-        super(type);
-        this.adapteeType = adapteeType;
-    }
-
-    /**
-     * Returns the type of the adaptee. This contains the full type information, including any type
-     * parameters. This is not the type of the scope itself, but of the instance that is wrapped by
-     * the adapter.
-     *
-     * @return the type of the adaptee
-     */
-    public ParameterizableType<T> adapteeType() {
-        return this.adapteeType;
+    protected ScopeAdapterKey(ParameterizableType adapterType) {
+        if (!ScopeAdapter.class.isAssignableFrom(adapterType.type())) {
+            throw new IllegalArgumentException("The given type is not a ScopeAdapter");
+        }
+        if (adapterType.parameters().isEmpty()) {
+            throw new IllegalArgumentException("The given type is not a parameterized ScopeAdapter");
+        }
+        this.adapterType = adapterType;
+        this.adapteeType = adapterType.parameters().get(0);
     }
 
     /**
@@ -62,12 +58,34 @@ public class ScopeAdapterKey<T> extends ScopeKey<ScopeAdapter<T>> {
      * @param <T> the adaptee type
      */
     public static <T> ScopeAdapterKey<T> of(ScopeAdapter<T> adapter) {
-        ParameterizableType<T> adapteeType = adapter.adapteeType();
-        ParameterizableType<ScopeAdapter<T>> adapterType = TypeUtils.adjustWildcards(
-            new ParameterizableType<>(ScopeAdapter.class, List.of(adapteeType)),
-            ParameterizableType.class
-        );
-        return new ScopeAdapterKey<>(adapterType, adapteeType);
+        ParameterizableType adapteeType = adapter.adapteeType();
+        ParameterizableType adapterType = ParameterizableType.builder(ScopeAdapter.class).parameters(adapteeType).build();
+        return new ScopeAdapterKey<>(TypeUtils.adjustWildcards(adapterType, ParameterizableType.class));
+    }
+
+    public static ScopeAdapterKey<?> of(ParameterizableType type) {
+        return new ScopeAdapterKey<>(type);
+    }
+
+    /**
+     * Returns the type of the adaptee. This contains the full type information, including any type
+     * parameters. This is not the type of the scope itself, but of the instance that is wrapped by
+     * the adapter.
+     *
+     * @return the type of the adaptee
+     */
+    public ParameterizableType adapteeType() {
+        return this.adapteeType;
+    }
+
+    @Override
+    public String name() {
+        return this.adapterType.toString();
+    }
+
+    @Override
+    public ParameterizableType scopeType() {
+        return this.adapterType;
     }
 
     @Override
@@ -78,14 +96,12 @@ public class ScopeAdapterKey<T> extends ScopeKey<ScopeAdapter<T>> {
         if(!(object instanceof ScopeAdapterKey<?> that)) {
             return false;
         }
-        if(!super.equals(object)) {
-            return false;
-        }
-        return Objects.equals(this.adapteeType, that.adapteeType);
+        // Note that adapterType already contains adaptee type, so no need to check that separately
+        return Objects.equals(adapterType, that.adapterType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), this.adapteeType);
+        return Objects.hash(adapterType);
     }
 }

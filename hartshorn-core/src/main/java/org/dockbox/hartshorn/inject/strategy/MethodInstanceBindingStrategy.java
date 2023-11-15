@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.DirectScopeKey;
 import org.dockbox.hartshorn.component.InstallTo;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
@@ -93,7 +94,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
     private ScopeKey<?> resolveComponentScope(MethodView<?, ?> bindsMethod) {
         Option<InstallTo> installToCandidate = bindsMethod.annotations().get(InstallTo.class);
         return installToCandidate.present()
-                ? ScopeKey.of(installToCandidate.get().value())
+                ? DirectScopeKey.of(installToCandidate.get().value())
                 : Scope.DEFAULT_SCOPE.installableScopeType();
     }
 

@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
@@ -49,12 +48,12 @@ import jakarta.inject.Named;
  */
 public final class ComponentKey<T> {
 
-    private final ParameterizableType<T> type;
+    private final ParameterizableType type;
     private final String name;
     private final Scope scope;
     private final boolean enable;
 
-    private ComponentKey(ParameterizableType<T> type, String name, Scope scope, boolean enable) {
+    private ComponentKey(ParameterizableType type, String name, Scope scope, boolean enable) {
         this.type = type;
         this.name = name;
         this.scope = scope;
@@ -70,7 +69,7 @@ public final class ComponentKey<T> {
      * @param <T> the type of the component
      */
     public static <T> Builder<T> builder(Class<T> type) {
-        return new Builder<>(new ParameterizableType<>(type));
+        return new Builder<>(ParameterizableType.create(type));
     }
 
     /**
@@ -82,7 +81,7 @@ public final class ComponentKey<T> {
      * @param <T> the type of the component
      */
     public static <T> Builder<T> builder(TypeView<T> type) {
-        return new Builder<>(new ParameterizableType<>(type));
+        return new Builder<>(ParameterizableType.create(type));
     }
 
     /**
@@ -91,9 +90,8 @@ public final class ComponentKey<T> {
      *
      * @param type the type of the component
      * @return a new builder
-     * @param <T> the type of the component
      */
-    public static <T> Builder<T> builder(ParameterizableType<T> type) {
+    public static Builder<?> builder(ParameterizableType type) {
         return new Builder<>(type);
     }
 
@@ -142,9 +140,8 @@ public final class ComponentKey<T> {
      *
      * @param type the type of the component
      * @return a new component key
-     * @param <T> the type of the component
      */
-    public static <T> ComponentKey<T> of(ParameterizableType<T> type) {
+    public static ComponentKey<?> of(ParameterizableType type) {
         return ComponentKey.builder(type).build();
     }
 
@@ -254,7 +251,7 @@ public final class ComponentKey<T> {
      * @return the raw type of the component
      */
     public Class<T> type() {
-        return this.type.type();
+        return TypeUtils.adjustWildcards(this.type.type(), Class.class);
     }
 
     /**
@@ -262,7 +259,7 @@ public final class ComponentKey<T> {
      *
      * @return the parameterized type of the component
      */
-    public ParameterizableType<T> parameterizedType() {
+    public ParameterizableType parameterizedType() {
         return this.type;
     }
 
@@ -310,7 +307,7 @@ public final class ComponentKey<T> {
      */
     public static final class Builder<T> {
 
-        private final ParameterizableType<T> type;
+        private final ParameterizableType type;
         private String name;
         private Scope scope = Scope.DEFAULT_SCOPE;
         private boolean enable = true;
@@ -322,44 +319,27 @@ public final class ComponentKey<T> {
             this.enable = key.enable;
         }
 
-        private Builder(ParameterizableType<T> type) {
+        private Builder(ParameterizableType type) {
             this.type = type;
         }
 
         public <U> Builder<U> type(Class<U> type) {
-            return this.type(new ParameterizableType<>(type));
+            return copyProperties(builder(type));
         }
 
         public <U> Builder<U> type(TypeView<U> type) {
-            return this.type(new ParameterizableType<>(type));
+            return copyProperties(builder(type));
         }
 
-        public <U> Builder<U> type(ParameterizableType<U> type) {
-            return builder(type)
+        public <U> Builder<?> type(ParameterizableType type) {
+            return copyProperties(builder(type));
+        }
+
+        private <U> Builder<U> copyProperties(Builder<U> builder) {
+            return builder
                     .name(this.name)
                     .scope(this.scope)
                     .enable(this.enable);
-        }
-
-        public Builder<T> parameterClasses(Class<?>... parameterTypes) {
-            return this.parameterClasses(List.of(parameterTypes));
-        }
-
-        public Builder<T> parameterClasses(List<Class<?>> parameterTypes) {
-            List<ParameterizableType<?>> types = new ArrayList<>();
-            for (Class<?> parameterType : parameterTypes) {
-                types.add(new ParameterizableType<>(parameterType));
-            }
-            return this.parameterTypes(types);
-        }
-
-        public Builder<T> parameterTypes(ParameterizableType<?>... parameterTypes) {
-            return this.parameterTypes(List.of(parameterTypes));
-        }
-
-        public Builder<T> parameterTypes(List<ParameterizableType<?>> parameterTypes) {
-            this.type.parameters(parameterTypes);
-            return this;
         }
 
         public Builder<T> name(String name) {
@@ -391,7 +371,7 @@ public final class ComponentKey<T> {
 
     public static final class ComponentKeyView<T> {
 
-        private final ParameterizableType<T> type;
+        private final ParameterizableType type;
         private final String name;
 
         private ComponentKeyView(ComponentKey<T> key) {

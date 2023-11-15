@@ -519,10 +519,12 @@ public abstract class IntrospectorTests {
 
     @Test
     void testParameterizableTypeCanBeIntrospected() {
-        ParameterizableType<String> argumentType = new ParameterizableType<>(String.class);
-        ParameterizableType<List> collectionType = new ParameterizableType<>(List.class, List.of(argumentType));
+        ParameterizableType argumentType = ParameterizableType.create(String.class);
+        ParameterizableType collectionType = ParameterizableType.builder(List.class)
+                .parameters(argumentType)
+                .build();
 
-        TypeView<List> typeView = introspector().introspect(collectionType);
+        TypeView<?> typeView = introspector().introspect(collectionType);
         Assertions.assertTrue(typeView.is(List.class));
         Assertions.assertEquals(1, typeView.typeParameters().allInput().count());
 

@@ -47,7 +47,7 @@ package org.dockbox.hartshorn.component;
 @FunctionalInterface
 public interface Scope {
 
-    ScopeKey<Scope> DEFAULT_SCOPE_KEY = ScopeKey.of(Scope.class);
+    ScopeKey<Scope> DEFAULT_SCOPE_KEY = DirectScopeKey.of(Scope.class);
 
     /**
      * A common standard scope for applications. Internally this will refer to
