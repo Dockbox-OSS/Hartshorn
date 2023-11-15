@@ -49,7 +49,7 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
     private final View view;
 
     public AutoConfiguringDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies,
-                                            ScopeKey<?> scope, int priority,
+                                            ScopeKey scope, int priority,
                                             CheckedSupplier<T> supplier, View view) {
         super(componentKey, dependencies, scope, priority);
         this.supplier = supplier;

@@ -77,7 +77,7 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
     }
 
     @Override
-    public ScopeKey<?> scope() {
+    public ScopeKey scope() {
         return Scope.DEFAULT_SCOPE_KEY;
     }
 

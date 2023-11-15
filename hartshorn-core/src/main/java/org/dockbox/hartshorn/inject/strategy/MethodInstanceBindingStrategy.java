@@ -64,7 +64,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
     private <T> DependencyContext<T> resolveInstanceBinding(MethodView<?, T> bindsMethod, Binds bindingDecorator, ApplicationContext applicationContext) {
         ComponentKey<T> componentKey = this.constructInstanceComponentKey(bindsMethod, bindingDecorator);
         Set<ComponentKey<?>> dependencies = DependencyResolverUtils.resolveDependencies(bindsMethod);
-        ScopeKey<?> scope = this.resolveComponentScope(bindsMethod);
+        ScopeKey scope = this.resolveComponentScope(bindsMethod);
         int priority = bindingDecorator.priority();
 
         ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
@@ -91,7 +91,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
                 || applicationContext.environment().singleton(componentKey.type());
     }
 
-    private ScopeKey<?> resolveComponentScope(MethodView<?, ?> bindsMethod) {
+    private ScopeKey resolveComponentScope(MethodView<?, ?> bindsMethod) {
         Option<InstallTo> installToCandidate = bindsMethod.annotations().get(InstallTo.class);
         return installToCandidate.present()
                 ? DirectScopeKey.of(installToCandidate.get().value())

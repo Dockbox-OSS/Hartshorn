@@ -65,7 +65,7 @@ public interface ApplicationContext extends
      * The scope key for the application context. This key is used to register the application context
      * as a global scope.
      */
-    ScopeKey<ApplicationContext> SCOPE_KEY = DirectScopeKey.of(ApplicationContext.class);
+    ScopeKey SCOPE_KEY = DirectScopeKey.of(ApplicationContext.class);
 
     /**
      * Registers a component processor with the application context. The processor will be invoked when
@@ -111,7 +111,7 @@ public interface ApplicationContext extends
     boolean isClosed();
 
     @Override
-    default ScopeKey<ApplicationContext> installableScopeType() {
+    default ScopeKey installableScopeType() {
         return SCOPE_KEY;
     }
 

@@ -34,7 +34,7 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
  *
  * @author Guus Lieben
  */
-public class ScopeAdapterKey<T> implements ScopeKey<ScopeAdapter<T>> {
+public class ScopeAdapterKey<T> implements ScopeKey {
 
     private final ParameterizableType adapterType;
     private final ParameterizableType adapteeType;

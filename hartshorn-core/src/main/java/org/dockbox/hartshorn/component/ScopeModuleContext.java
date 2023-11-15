@@ -33,14 +33,14 @@ import jakarta.inject.Inject;
 @InstallIfAbsent
 public class ScopeModuleContext extends DefaultApplicationAwareContext {
 
-    private final MultiMap<ScopeKey<?>, BindingHierarchy<?>> scopeModules = new ConcurrentSetMultiMap<>();
+    private final MultiMap<ScopeKey, BindingHierarchy<?>> scopeModules = new ConcurrentSetMultiMap<>();
 
     @Inject
     public ScopeModuleContext(ApplicationContext applicationContext) {
         super(applicationContext);
     }
 
-    public <T> BindingHierarchy<T> hierarchy(ScopeKey<?> scope, ComponentKey<T> key) {
+    public <T> BindingHierarchy<T> hierarchy(ScopeKey scope, ComponentKey<T> key) {
         BindingHierarchy<?> bindingHierarchy = this.scopeModules.get(scope).stream()
                 .filter(hierarchy -> hierarchy.key().equals(key))
                 .findFirst()
@@ -53,7 +53,7 @@ public class ScopeModuleContext extends DefaultApplicationAwareContext {
         return TypeUtils.adjustWildcards(bindingHierarchy, BindingHierarchy.class);
     }
 
-    public Collection<BindingHierarchy<?>> hierarchies(ScopeKey<?> type) {
+    public Collection<BindingHierarchy<?>> hierarchies(ScopeKey type) {
         if (type == Scope.DEFAULT_SCOPE_KEY) {
             return Collections.emptyList();
         }

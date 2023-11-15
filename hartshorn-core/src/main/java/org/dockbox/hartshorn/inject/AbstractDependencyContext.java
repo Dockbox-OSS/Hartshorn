@@ -40,14 +40,14 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
 
     private final ComponentKey<T> componentKey;
     private final DependencyMap dependencies;
-    private final ScopeKey<?> scope;
+    private final ScopeKey scope;
     private final int priority;
 
     private boolean lazy;
     private boolean singleton;
     private boolean processAfterInitialization = true;
 
-    protected AbstractDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies, ScopeKey<?> scope, int priority) {
+    protected AbstractDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies, ScopeKey scope, int priority) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.scope = scope;
@@ -120,7 +120,7 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     }
 
     @Override
-    public ScopeKey<?> scope() {
+    public ScopeKey scope() {
         return this.scope;
     }
 

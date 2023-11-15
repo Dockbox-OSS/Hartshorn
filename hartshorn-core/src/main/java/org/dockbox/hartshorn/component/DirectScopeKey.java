@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public class DirectScopeKey<T extends Scope> implements ScopeKey<T> {
+public class DirectScopeKey<T extends Scope> implements ScopeKey {
 
     private final ParameterizableType scopeType;
 

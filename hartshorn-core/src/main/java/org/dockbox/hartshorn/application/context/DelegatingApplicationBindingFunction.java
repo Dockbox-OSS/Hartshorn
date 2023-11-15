@@ -49,7 +49,7 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
     }
 
     @Override
-    public BindingFunction<T> installTo(ScopeKey<?> scope) throws IllegalScopeException {
+    public BindingFunction<T> installTo(ScopeKey scope) throws IllegalScopeException {
         return this.delegate.installTo(scope);
     }
 

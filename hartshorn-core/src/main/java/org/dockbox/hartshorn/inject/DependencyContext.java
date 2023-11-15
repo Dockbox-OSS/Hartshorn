@@ -90,7 +90,7 @@ public interface DependencyContext<T> {
      *
      * @see Scope
      */
-    ScopeKey<?> scope();
+    ScopeKey scope();
 
     /**
      * Returns whether the dependency is a singleton. The implementation may decide whether

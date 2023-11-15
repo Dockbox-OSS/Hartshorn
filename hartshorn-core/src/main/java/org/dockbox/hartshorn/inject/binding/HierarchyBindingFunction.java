@@ -53,7 +53,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     private final ScopeModuleContext moduleContext;
     private Scope scope;
 
-    private ScopeKey<?> scopeModule;
+    private ScopeKey scopeModule;
     private int priority = -1;
     private boolean processAfterInitialization = true;
 
@@ -95,7 +95,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public BindingFunction<T> installTo(ScopeKey<?> scope) throws IllegalScopeException {
+    public BindingFunction<T> installTo(ScopeKey scope) throws IllegalScopeException {
         if (this.scope != null && this.scope != Scope.DEFAULT_SCOPE && (!(this.scope instanceof ApplicationContext))) {
             throw new IllegalScopeException("Cannot install binding to scope " + scope.name() + " as the binding is already installed to scope " + this.scope.installableScopeType().name());
         }

@@ -35,7 +35,7 @@ public class ScopedBindingProvider {
     public static class SampleScope implements Scope {
 
         @Override
-        public ScopeKey<SampleScope> installableScopeType() {
+        public ScopeKey installableScopeType() {
             return DirectScopeKey.of(SampleScope.class);
         }
     }
