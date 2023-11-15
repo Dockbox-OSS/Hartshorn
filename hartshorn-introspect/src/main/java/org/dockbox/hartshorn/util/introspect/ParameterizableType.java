@@ -66,8 +66,10 @@ public final class ParameterizableType {
         List<ParameterizableType> parameters = type.typeParameters().allInput()
                 .asList()
                 .stream()
-                .flatMap(parameter -> parameter.resolvedType().stream())
-                .map(ParameterizableType::create)
+                .map(parameter -> parameter.resolvedType()
+                    .map(ParameterizableType::create)
+                    .orElseGet(() -> ParameterizableType.create(Object.class))
+                )
                 .collect(Collectors.toList());
         return builder(type.type()).parameters(parameters);
     }
