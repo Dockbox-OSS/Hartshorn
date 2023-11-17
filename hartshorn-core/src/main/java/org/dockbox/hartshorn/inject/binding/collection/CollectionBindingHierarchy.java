@@ -60,8 +60,8 @@ public class CollectionBindingHierarchy<T> extends AbstractBindingHierarchy<Comp
 
     @Override
     protected String contractTypeToString() {
-        ParameterizableType<ComponentCollection<T>> collectionParameterizableType = this.key().parameterizedType();
-        List<ParameterizableType<?>> parameters = collectionParameterizableType.parameters();
+        ParameterizableType collectionParameterizableType = this.key().parameterizedType();
+        List<ParameterizableType> parameters = collectionParameterizableType.parameters();
         if (parameters.size() == 1) {
             return parameters.get(0).toString();
         }

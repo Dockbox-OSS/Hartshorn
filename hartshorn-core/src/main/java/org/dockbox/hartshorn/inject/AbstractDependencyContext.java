@@ -57,7 +57,7 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
             dependencyContext.priority(),
             dependencyContext.type()
         );
-        
+
         if (dependencyContext instanceof AbstractDependencyContext<T> abstractDependencyContext) {
             this.lazy = abstractDependencyContext.lazy();
             this.singleton = abstractDependencyContext.singleton();
