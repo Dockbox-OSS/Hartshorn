@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -31,9 +34,6 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents one or more Java methods that can be called from an HSL runtime. The methods
@@ -71,7 +71,8 @@ public abstract class AbstractNativeModule implements NativeModule {
     @Override
     public Object call(Token at, Interpreter interpreter, NativeFunctionStatement function, List<Object> arguments) throws NativeExecutionException {
         try {
-            TypeView<Object> type = TypeUtils.adjustWildcards(this.applicationContext().environment().introspector().introspect(this.moduleClass()), TypeView.class);
+            TypeView<?> typeView = this.applicationContext().environment().introspector().introspect(this.moduleClass());
+            TypeView<Object> type = TypeUtils.adjustWildcards(typeView, TypeView.class);
             MethodView<Object, ?> method;
             if (function.method() == null) {
                 String functionName = function.name().lexeme();

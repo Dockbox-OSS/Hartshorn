@@ -16,6 +16,13 @@
 
 package test.org.dockbox.hartshorn.util;
 
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.NotPrimitiveException;
 import org.dockbox.hartshorn.util.StringUtilities;
@@ -27,15 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Stream;
 
 public class UtilitiesTests {
 
@@ -280,18 +278,6 @@ public class UtilitiesTests {
         List<String> adjusted = Assertions.assertDoesNotThrow(() -> TypeUtils.adjustWildcards(list, List.class));
         Assertions.assertNotNull(adjusted);
         Assertions.assertSame(list, adjusted);
-    }
-
-    @Test
-    void testInvalidWildcardAdjustment() {
-        List<?> list = Arrays.asList("one", "two", "three");
-        Assertions.assertThrows(IllegalArgumentException.class, () -> TypeUtils.adjustWildcards(list, Set.class));
-    }
-
-    @Test
-    void testWildcardAdjustmentDoesNotAdjustChild() {
-        List<?> list = Arrays.asList("one", "two", "three");
-        Assertions.assertThrows(IllegalArgumentException.class, () -> TypeUtils.adjustWildcards(list, ArrayList.class));
     }
 
     @Test

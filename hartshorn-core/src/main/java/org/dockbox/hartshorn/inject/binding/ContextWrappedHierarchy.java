@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @author Guus Lieben
  * @since 0.4.3
  */
-public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
+public class ContextWrappedHierarchy<C> implements PrunableBindingHierarchy<C> {
 
     private final ApplicationContext applicationContext;
     private final Consumer<BindingHierarchy<C>> onUpdate;
@@ -130,5 +130,29 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
     @Override
     public String toString() {
         return this.real().toString();
+    }
+
+    @Override
+    public boolean prune(int priority) {
+        if (this.real() instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
+            return prunableBindingHierarchy.prune(priority);
+        }
+        return false;
+    }
+
+    @Override
+    public int pruneAbove(int priority) {
+        if (this.real() instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
+            return prunableBindingHierarchy.pruneAbove(priority);
+        }
+        return 0;
+    }
+
+    @Override
+    public int pruneBelow(int priority) {
+        if (this.real() instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
+            return prunableBindingHierarchy.pruneBelow(priority);
+        }
+        return 0;
     }
 }

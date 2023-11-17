@@ -40,7 +40,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @since 0.4.3
  * @see BindingHierarchy
  */
-public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
+public class NativeBindingHierarchy<C> implements PrunableBindingHierarchy<C> {
 
     private final ComponentKey<C> key;
     private final ApplicationContext applicationContext;
@@ -152,5 +152,32 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
     @Override
     public Iterator<Entry<Integer, Provider<C>>> iterator() {
         return this.bindings.entrySet().iterator();
+    }
+
+    @Override
+    public boolean prune(int priority) {
+        return this.bindings.remove(priority) != null;
+    }
+
+    @Override
+    public int pruneAbove(int priority) {
+        int count = 0;
+        for (Entry<Integer, Provider<C>> entry : this.bindings.entrySet()) {
+            if (entry.getKey() > priority && this.prune(entry.getKey())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    @Override
+    public int pruneBelow(int priority) {
+        int count = 0;
+        for (Entry<Integer, Provider<C>> entry : this.bindings.entrySet()) {
+            if (entry.getKey() < priority && this.prune(entry.getKey())) {
+                count++;
+            }
+        }
+        return count;
     }
 }

@@ -23,7 +23,6 @@ import java.util.Objects;
  * A wrapper for {@link ParameterizableType} to be used as a {@link ParameterizedType}, that allows for easy introspection.
  *
  * @param type the parameterized type to wrap
- * @param <T> the type of the parameterized type
  *
  * @see ParameterizableType
  *
@@ -31,7 +30,7 @@ import java.util.Objects;
  *
  * @author Guus Lieben
  */
-record ParameterizableParameterizedTypeWrapper<T>(ParameterizableType<T> type) implements ParameterizedType {
+record ParameterizableParameterizedTypeWrapper(ParameterizableType type) implements ParameterizedType {
 
     @Override
     public java.lang.reflect.Type[] getActualTypeArguments() {
@@ -55,7 +54,7 @@ record ParameterizableParameterizedTypeWrapper<T>(ParameterizableType<T> type) i
         if(this == object) {
             return true;
         }
-        if(!(object instanceof ParameterizableParameterizedTypeWrapper<?> that)) {
+        if(!(object instanceof ParameterizableParameterizedTypeWrapper that)) {
             return false;
         }
         return Objects.equals(this.type, that.type);

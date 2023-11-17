@@ -16,20 +16,20 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.component.contextual.StaticComponentContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Collection;
-import java.util.List;
 
 public class StaticComponentPostProcessor extends ComponentPostProcessor {
 
@@ -40,8 +40,8 @@ public class StaticComponentPostProcessor extends ComponentPostProcessor {
 
         if (Collection.class.isAssignableFrom(componentKey.type())) {
             TypeView<T> componentType = context.environment().introspector().introspect(componentKey.type());
-            List<ParameterizableType<?>> parameters = componentKey.parameterizedType().parameters();
-            ParameterizableType<?> elementType;
+            List<ParameterizableType> parameters = componentKey.parameterizedType().parameters();
+            ParameterizableType elementType;
             if(parameters.size() == 1) {
                 elementType = parameters.get(0);
             }
@@ -50,7 +50,7 @@ public class StaticComponentPostProcessor extends ComponentPostProcessor {
                         .resolveInputFor(Collection.class);
                 TypeParameterView parameterView = collectionParameters.atIndex(0)
                         .orElseThrow(() -> new IllegalArgumentException(String.format("Cannot determine collection type for %s", componentKey.type())));
-                elementType = new ParameterizableType<>(parameterView.resolvedType().get());
+                elementType = ParameterizableType.create(parameterView.resolvedType().get());
             }
 
             ComponentKey<?> elementKey = ComponentKey.builder(elementType)

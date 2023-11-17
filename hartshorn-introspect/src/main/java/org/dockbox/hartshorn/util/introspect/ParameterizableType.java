@@ -31,8 +31,6 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * <p>{@link ParameterizableType}s can be introspected with {@link Introspector introspectors}, retaining
  * complete type information.
  *
- * @param <T> the type of the parameterized type
- *
  * @see TypeView
  * @see Introspector
  * @see ParameterizedType
@@ -42,45 +40,38 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public class ParameterizableType<T> {
+public final class ParameterizableType {
 
-    private final Class<T> type;
-    private List<ParameterizableType<?>> parameters;
+    private final Class<?> type;
+    private final List<ParameterizableType> parameters;
 
-    public ParameterizableType(Class<T> type, List<ParameterizableType<?>> parameters) {
+    private ParameterizableType(Class<?> type, List<ParameterizableType> parameters) {
         this.type = type;
         this.parameters = parameters;
     }
 
-    public ParameterizableType(Class<T> type) {
-        this(type, List.of());
+    public static ParameterizableType create(Class<?> type) {
+        return builder(type).build();
     }
 
-    public ParameterizableType(TypeView<T> type) {
-        this.type = type.type();
-        this.parameters = type.typeParameters().allInput()
+    public static ParameterizableType create(TypeView<?> type) {
+        return builder(type).build();
+    }
+
+    public static Builder builder(Class<?> type) {
+        return new Builder(type);
+    }
+
+    public static Builder builder(TypeView<?> type) {
+        List<ParameterizableType> parameters = type.typeParameters().allInput()
                 .asList()
                 .stream()
-                .flatMap(parameter -> parameter.resolvedType().stream())
-                .map(ParameterizableType::new)
+                .map(parameter -> parameter.resolvedType()
+                    .map(ParameterizableType::create)
+                    .orElseGet(() -> ParameterizableType.create(Object.class))
+                )
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Sets the parameters of this type, overriding all existing parameters. The number of parameters must
-     * match the number of type parameters of the type. If the type has no type parameters, the given
-     * parameters must be empty.
-     *
-     * @param parameters the new parameters
-     *
-     * @throws IllegalArgumentException if the number of parameters does not match the number of type parameters
-     */
-    public void parameters(List<ParameterizableType<?>> parameters) {
-        int expectedSize = this.type().getTypeParameters().length;
-        if(parameters.size() != expectedSize) {
-            throw new IllegalArgumentException("Expected " + expectedSize + " parameters, but got " + parameters.size());
-        }
-        this.parameters = parameters;
+        return builder(type.type()).parameters(parameters);
     }
 
     /**
@@ -89,7 +80,7 @@ public class ParameterizableType<T> {
      *
      * @return the type of this parameterized type
      */
-    public Class<T> type() {
+    public Class<?> type() {
         return this.type;
     }
 
@@ -99,7 +90,7 @@ public class ParameterizableType<T> {
      *
      * @return the parameters of this parameterized type
      */
-    public List<ParameterizableType<?>> parameters() {
+    public List<ParameterizableType> parameters() {
         return List.copyOf(this.parameters);
     }
 
@@ -110,7 +101,7 @@ public class ParameterizableType<T> {
      * @return a {@link ParameterizedType} representation of this parameterized type
      */
     public ParameterizedType asParameterizedType() {
-        return new ParameterizableParameterizedTypeWrapper<>(this);
+        return new ParameterizableParameterizedTypeWrapper(this);
     }
 
     @Override
@@ -121,7 +112,7 @@ public class ParameterizableType<T> {
         if(o == null || this.getClass() != o.getClass()) {
             return false;
         }
-        ParameterizableType<?> that = (ParameterizableType<?>) o;
+        ParameterizableType that = (ParameterizableType) o;
         return Objects.equals(this.type, that.type) && Objects.equals(this.parameters, that.parameters);
     }
 
@@ -136,5 +127,41 @@ public class ParameterizableType<T> {
                 .map(ParameterizableType::toString)
                 .collect(Collectors.joining(", "));
         return this.type.getSimpleName() + (parameters.isEmpty() ? "" : "<" + parameters + ">");
+    }
+
+    public static class Builder {
+
+        private final Class<?> type;
+        private List<ParameterizableType> parameters = List.of();
+
+        public Builder(Class<?> type) {
+            this.type = type;
+        }
+
+        /**
+         * Sets the parameters of this type, overriding all existing parameters. The number of parameters must
+         * match the number of type parameters of the type. If the type has no type parameters, the given
+         * parameters must be empty.
+         *
+         * @param parameters the new parameters
+         *
+         * @throws IllegalArgumentException if the number of parameters does not match the number of type parameters
+         */
+        public Builder parameters(List<ParameterizableType> parameters) {
+            int expectedSize = this.type.getTypeParameters().length;
+            if(parameters.size() != expectedSize) {
+                throw new IllegalArgumentException("Expected " + expectedSize + " parameters, but got " + parameters.size());
+            }
+            this.parameters = parameters;
+            return this;
+        }
+
+        public Builder parameters(ParameterizableType... parameters) {
+            return this.parameters(List.of(parameters));
+        }
+
+        public ParameterizableType build() {
+            return new ParameterizableType(this.type, this.parameters);
+        }
     }
 }

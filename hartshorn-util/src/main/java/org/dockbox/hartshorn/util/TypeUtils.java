@@ -114,13 +114,12 @@ public class TypeUtils {
         return PRIMITIVE_WRAPPERS.get(primitive) == targetClass;
     }
 
-    public static <InstanceType, KeyType extends InstanceType, AdjustedType extends KeyType> AdjustedType adjustWildcards(InstanceType obj, Class<KeyType> type) {
+    public static <InstanceType extends KeyType, KeyType, AdjustedType extends KeyType> AdjustedType adjustWildcards(InstanceType obj, Class<KeyType> type) {
         if (obj == null) {
             return null;
         }
-        if (type.isAssignableFrom(obj.getClass()))
+        if (type.isAssignableFrom(obj.getClass())) {
             //noinspection unchecked
-        {
             return (AdjustedType) obj;
         }
         throw new IllegalArgumentException("Cannot adjust wildcards for " + obj.getClass().getName() + " to " + type.getName());
@@ -134,7 +133,7 @@ public class TypeUtils {
         Object instance = Proxy.newProxyInstance(annotationType.getClassLoader(),
                 new Class[]{ annotationType },
                 new MapBackedAnnotationInvocationHandler(annotationType, values == null ? Collections.emptyMap() : values));
-        return adjustWildcards(instance, annotationType);
+        return annotationType.cast(instance);
     }
 
     public static Stream<Integer> stream(int[] array) {

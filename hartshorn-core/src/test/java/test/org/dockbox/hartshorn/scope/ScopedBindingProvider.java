@@ -16,8 +16,10 @@
 
 package test.org.dockbox.hartshorn.scope;
 
+import org.dockbox.hartshorn.component.DirectScopeKey;
 import org.dockbox.hartshorn.component.InstallTo;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.processing.Binds;
 
@@ -33,8 +35,8 @@ public class ScopedBindingProvider {
     public static class SampleScope implements Scope {
 
         @Override
-        public Class<? extends Scope> installableScopeType() {
-            return SampleScope.class;
+        public ScopeKey installableScopeType() {
+            return DirectScopeKey.of(SampleScope.class);
         }
     }
 }

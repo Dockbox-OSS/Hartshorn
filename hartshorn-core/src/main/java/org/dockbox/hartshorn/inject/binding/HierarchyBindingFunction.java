@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
@@ -52,7 +53,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     private final ScopeModuleContext moduleContext;
     private Scope scope;
 
-    private Class<? extends Scope> scopeModule;
+    private ScopeKey scopeModule;
     private int priority = -1;
     private boolean processAfterInitialization = true;
 
@@ -94,12 +95,12 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public BindingFunction<T> installTo(Class<? extends Scope> scope) throws IllegalScopeException {
+    public BindingFunction<T> installTo(ScopeKey scope) throws IllegalScopeException {
         if (this.scope != null && this.scope != Scope.DEFAULT_SCOPE && (!(this.scope instanceof ApplicationContext))) {
-            throw new IllegalScopeException("Cannot install binding to scope " + scope.getName() + " as the binding is already installed to scope " + this.scope.getClass().getName());
+            throw new IllegalScopeException("Cannot install binding to scope " + scope.name() + " as the binding is already installed to scope " + this.scope.installableScopeType().name());
         }
         // Permitted, as default application scope may be expanded. Defined child scopes can not be expanded, so this is a safe check
-        if (this.scope instanceof ApplicationContext && !ApplicationContext.class.isAssignableFrom(scope)) {
+        if (this.scope instanceof ApplicationContext && !ApplicationContext.class.isAssignableFrom(scope.scopeType().type())) {
             this.scope = null;
         }
         this.scopeModule = scope;

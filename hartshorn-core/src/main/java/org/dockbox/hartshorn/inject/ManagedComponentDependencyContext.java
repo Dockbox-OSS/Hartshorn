@@ -21,6 +21,7 @@ import java.util.Set;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.View;
@@ -76,8 +77,8 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
     }
 
     @Override
-    public Class<? extends Scope> scope() {
-        return Scope.DEFAULT_SCOPE.installableScopeType();
+    public ScopeKey scope() {
+        return Scope.DEFAULT_SCOPE_KEY;
     }
 
     @Override

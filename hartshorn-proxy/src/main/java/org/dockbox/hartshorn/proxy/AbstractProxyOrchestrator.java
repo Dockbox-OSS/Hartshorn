@@ -60,8 +60,8 @@ public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
 
     @Override
     public <T> Option<ProxyManager<T>> manager(T instance) {
-        if (instance instanceof Proxy) {
-            Proxy<T> proxy = TypeUtils.adjustWildcards(instance, Proxy.class);
+        if (instance instanceof Proxy<?> proxyInstance) {
+            Proxy<T> proxy = TypeUtils.adjustWildcards(proxyInstance, Proxy.class);
             return Option.of(proxy.manager());
         }
         return Option.empty();

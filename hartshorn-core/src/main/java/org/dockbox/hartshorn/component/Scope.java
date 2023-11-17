@@ -47,11 +47,13 @@ package org.dockbox.hartshorn.component;
 @FunctionalInterface
 public interface Scope {
 
+    ScopeKey DEFAULT_SCOPE_KEY = DirectScopeKey.of(Scope.class);
+
     /**
      * A common standard scope for applications. Internally this will refer to
      * the active {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
      */
-    Scope DEFAULT_SCOPE = () -> Scope.class;
+    Scope DEFAULT_SCOPE = () -> DEFAULT_SCOPE_KEY;
 
     /**
      * The type of the scope, or a parent scope. This is used to determine which
@@ -60,6 +62,6 @@ public interface Scope {
      *
      * @return The type of the scope, or a parent scope.
      */
-    Class<? extends Scope> installableScopeType();
+    ScopeKey installableScopeType();
 
 }

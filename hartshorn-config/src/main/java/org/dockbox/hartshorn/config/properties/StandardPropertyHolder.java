@@ -16,15 +16,6 @@
 
 package org.dockbox.hartshorn.config.properties;
 
-import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.config.FileFormats;
-import org.dockbox.hartshorn.config.ObjectMapper;
-import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collection;
@@ -34,6 +25,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.function.Function;
+
+import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.config.FileFormats;
+import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
 
@@ -113,9 +113,9 @@ public class StandardPropertyHolder implements PropertyHolder {
             String part = split[i];
             if (i == split.length - 1) {
                 Object origin = current.get(part);
-                if (origin instanceof Map && patch instanceof Map) {
-                    Map<String, Object> adjustedOrigin = TypeUtils.adjustWildcards(origin, Map.class);
-                    Map<String, Object> adjustedPatch = TypeUtils.adjustWildcards(patch, Map.class);
+                if (origin instanceof Map<?, ?> originMap && patch instanceof Map<?, ?> patchMap) {
+                    Map<String, Object> adjustedOrigin = TypeUtils.adjustWildcards(originMap, Map.class);
+                    Map<String, Object> adjustedPatch = TypeUtils.adjustWildcards(patchMap, Map.class);
                     this.patchConfigurationMap(adjustedOrigin, adjustedPatch);
                     return;
                 }
@@ -128,7 +128,7 @@ public class StandardPropertyHolder implements PropertyHolder {
             if (!(current.get(part) instanceof Map)) {
                 current.put(part, this.createConfigurationMap());
             }
-            current = TypeUtils.adjustWildcards(current.get(part), Map.class);
+            current = TypeUtils.adjustWildcards((Map<?, ?>) current.get(part), Map.class);
         }
     }
 

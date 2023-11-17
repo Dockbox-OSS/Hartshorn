@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.inject;
 
-
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.IllegalScopeException;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -48,11 +48,9 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
     private final CheckedSupplier<T> supplier;
     private final View view;
 
-    public AutoConfiguringDependencyContext(
-            ComponentKey<T> componentKey, DependencyMap dependencies,
-            Class<? extends Scope> scope, int priority,
-            CheckedSupplier<T> supplier, View view
-    ) {
+    public AutoConfiguringDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies,
+                                            ScopeKey scope, int priority,
+                                            CheckedSupplier<T> supplier, View view) {
         super(componentKey, dependencies, scope, priority);
         this.supplier = supplier;
         this.view = view;
@@ -62,7 +60,7 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
     public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
         InstanceType instanceType = this.instanceType();
         function.priority(this.priority());
-        if (this.scope() != Scope.DEFAULT_SCOPE.installableScopeType()) {
+        if (!this.scope().equals(Scope.DEFAULT_SCOPE.installableScopeType())) {
             try {
                 function.installTo(this.scope());
             }
