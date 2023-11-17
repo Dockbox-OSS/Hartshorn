@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -121,7 +122,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return Option.empty();
     }
 
-    protected <T> T process(ComponentKey<T> key, ObjectContainer<T> objectContainer, ComponentContainer<?> container) {
+    protected <T> T process(ComponentKey<T> key, ObjectContainer<T> objectContainer, @Nullable ComponentContainer<?> container) {
         if (container != null && !container.permitsProcessing()) {
             return objectContainer.instance();
         }
@@ -139,12 +140,12 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
                 .build(), ComponentKey.class);
 
         for(ObjectContainer<E> container : collection.containers()) {
-            E processed = process(build, container, null);
+            E processed = this.process(build, container, null);
         }
         return collection;
     }
 
-    protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, T instance, ComponentContainer<?> container) {
+    protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, T instance, @Nullable ComponentContainer<?> container) {
         ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(
                 this.applicationContext(), key, instance, latest -> this.storeSingletons(key, latest));
 
@@ -278,11 +279,11 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             if (ComponentCollection.class != componentKey.type()) {
                 throw new IllegalArgumentException("Component collection key must be of type ComponentCollection, specific implementations are not supported");
             }
-            ComponentCollection<Object> collection = processComponentCollection(
+            ComponentCollection<Object> collection = this.processComponentCollection(
                     TypeUtils.adjustWildcards(componentKey, ComponentKey.class),
                     TypeUtils.adjustWildcards(objectContainer, ObjectContainer.class)
             );
-            return TypeUtils.adjustWildcards(collection, componentKey.type());
+            return componentKey.type().cast(collection);
         }
         return this.process(componentKey, objectContainer, null);
     }

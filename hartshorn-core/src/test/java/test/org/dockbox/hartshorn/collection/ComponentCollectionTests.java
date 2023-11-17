@@ -37,25 +37,25 @@ public class ComponentCollectionTests {
     @Test
     void testPriority() {
         Set<String> strings = Set.of("Hello", "World", "!");
-        applicationContext.bind(String.class).collect(collector -> {
+        this.applicationContext.bind(String.class).collect(collector -> {
             for(String string : strings) {
                 collector.singleton(string);
             }
         });
 
-        applicationContext.bind(String.class).singleton("Hello world!");
+        this.applicationContext.bind(String.class).singleton("Hello world!");
 
-        ComponentCollection<String> collection = applicationContext.get(ComponentKey.collect(String.class));
+        ComponentCollection<String> collection = this.applicationContext.get(ComponentKey.collect(String.class));
         Assertions.assertEquals(3, collection.size());
         Assertions.assertTrue(collection.containsAll(strings));
 
-        String hello = applicationContext.get(String.class);
+        String hello = this.applicationContext.get(String.class);
         Assertions.assertEquals("Hello world!", hello);
     }
 
     @Test
     @TestComponents(components = CollectionProviders.class)
     void name() {
-        ComponentCollection<String> collection = applicationContext.get(ComponentKey.collect(String.class));
+        ComponentCollection<String> collection = this.applicationContext.get(ComponentKey.collect(String.class));
     }
 }
