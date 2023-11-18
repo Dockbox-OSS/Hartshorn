@@ -189,7 +189,7 @@ public class HartshornLifecycleExtension implements
             throw new ParameterResolutionException("Test method was not provided to runner");
         }
 
-        ParameterLoader<ApplicationBoundParameterLoaderContext> parameterLoader = new ExecutableElementContextParameterLoader();
+        ParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
         MethodView<?, ?> executable = this.applicationContext.environment().introspector().introspect(testMethod.get());
         ApplicationBoundParameterLoaderContext parameterLoaderContext = new ApplicationBoundParameterLoaderContext(executable,
                 extensionContext.getTestInstance().orElse(null), this.applicationContext);

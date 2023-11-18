@@ -23,6 +23,11 @@ import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 import java.util.Set;
 
 public class RuleBasedParameterLoaderImpl extends RuleBasedParameterLoader<ParameterLoaderContext> {
+
+    public RuleBasedParameterLoaderImpl() {
+        super(ParameterLoaderContext.class);
+    }
+
     @Override // Override for access level
     public Set<ParameterLoaderRule<ParameterLoaderContext>> rules() {
         return super.rules();
