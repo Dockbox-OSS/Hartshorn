@@ -80,7 +80,7 @@ public class CollectionScopeTests {
                 .collect(collector -> names.forEach(collector::singleton));
 
         ComponentKey<ComponentCollection<String>> collectionKey = nameKey.mutable().collector().build();
-        ComponentCollection<String> nameCollection = applicationContext.get(collectionKey);
+        ComponentCollection<String> nameCollection = this.applicationContext.get(collectionKey);
 
         Assertions.assertEquals(3, nameCollection.size());
         Assertions.assertTrue(nameCollection.contains("John"));
@@ -132,7 +132,7 @@ public class CollectionScopeTests {
     @TestComponents(components = StaticComponentService.class)
     void testCollectionsAreCollected() {
         ComponentKey<ComponentCollection<StaticComponent>> componentKey = ComponentKey.collect(StaticComponent.class);
-        ComponentCollection<StaticComponent> collection = applicationContext.get(componentKey);
+        ComponentCollection<StaticComponent> collection = this.applicationContext.get(componentKey);
         // Even if no bindings are present, the collection should be created
         Assertions.assertNotNull(collection);
         Assertions.assertEquals(0, collection.size());
@@ -144,7 +144,7 @@ public class CollectionScopeTests {
         };
         for(String name : names) {
             componentKey = componentKey.mutable().name(name).build();
-            collection = applicationContext.get(componentKey);
+            collection = this.applicationContext.get(componentKey);
             Assertions.assertEquals(1, collection.size());//TODO: Failing?
             Assertions.assertEquals(name, CollectionUtilities.first(collection).name());
         }

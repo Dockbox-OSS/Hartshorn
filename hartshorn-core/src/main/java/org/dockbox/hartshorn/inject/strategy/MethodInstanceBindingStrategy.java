@@ -100,7 +100,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
     }
 
     private <T> ComponentKey<T> constructInstanceComponentKey(MethodView<?, T> bindsMethod, Binds bindingDecorator) {
-        ComponentKey.Builder<T> keyBuilder = ComponentKey.builder(bindsMethod.returnType().type());
+        ComponentKey.Builder<T> keyBuilder = ComponentKey.builder(bindsMethod.genericReturnType());
         if (StringUtilities.notEmpty(bindingDecorator.value())) {
             keyBuilder = keyBuilder.name(bindingDecorator.value());
         }
