@@ -22,6 +22,8 @@ import org.dockbox.hartshorn.util.option.Option;
 
 public interface ArgumentConverterRegistry {
 
+    void registerConverter(ArgumentConverter<?> converter);
+
     /**
      * Indicates if any converter with the given {@code key} is registered.
      *

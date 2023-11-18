@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.hsl;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.modules.InstanceNativeModule;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import jakarta.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
+@UseExpressionValidation
 public class InterpreterTests {
 
     @Inject

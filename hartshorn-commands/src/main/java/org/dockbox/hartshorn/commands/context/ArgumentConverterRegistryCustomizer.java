@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.introspect.util;
+package org.dockbox.hartshorn.commands.context;
 
-import java.util.List;
+@FunctionalInterface
+public interface ArgumentConverterRegistryCustomizer {
 
-public abstract class ParameterLoader {
-
-    public abstract boolean isCompatible(ParameterLoaderContext context);
-
-    public abstract Object loadArgument(ParameterLoaderContext context, int index, Object... args);
-
-    public abstract List<Object> loadArguments(ParameterLoaderContext context, Object... args);
+    void customize(ArgumentConverterRegistry registry);
 }

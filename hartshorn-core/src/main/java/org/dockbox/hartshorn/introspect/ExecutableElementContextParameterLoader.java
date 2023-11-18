@@ -29,6 +29,7 @@ import jakarta.inject.Named;
 public class ExecutableElementContextParameterLoader extends RuleBasedParameterLoader<ApplicationBoundParameterLoaderContext> {
 
     public ExecutableElementContextParameterLoader() {
+        super(ApplicationBoundParameterLoaderContext.class);
         this.add(new ContextParameterLoaderRule());
     }
 

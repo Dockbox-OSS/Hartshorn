@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 public class UnproxyingParameterLoader extends RuleBasedParameterLoader<ProxyParameterLoaderContext> {
 
     public UnproxyingParameterLoader() {
+        super(ProxyParameterLoaderContext.class);
         this.add(new UnproxyParameterLoaderRule());
         this.add(new ObjectEqualsParameterLoaderRule());
     }

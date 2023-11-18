@@ -18,22 +18,15 @@ package org.dockbox.hartshorn.commands.context;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-public class ComponentCollectionArgumentConverterRegistry implements ArgumentConverterRegistry {
+public class SimpleArgumentConverterRegistry implements ArgumentConverterRegistry {
 
     private final transient Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();
 
-    public ComponentCollectionArgumentConverterRegistry(ComponentCollection<ArgumentConverter<?>> converters) {
-        for(ArgumentConverter<?> converter : converters) {
-            registerConverter(converter);
-        }
-    }
-
+    @Override
     public void registerConverter(ArgumentConverter<?> converter) {
         for (String key : converter.keys()) {
             key = key.toLowerCase();

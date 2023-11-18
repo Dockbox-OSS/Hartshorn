@@ -56,13 +56,13 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
     private final ProxyResultValidator resultValidator;
     private final ProxyMethodInterceptHandler<T> interceptHandler;
     private final ProxyOrchestrator proxyOrchestrator;
-    private final ParameterLoader<ProxyParameterLoaderContext> parameterLoader = new UnproxyingParameterLoader();
+    private final ParameterLoader parameterLoader = new UnproxyingParameterLoader();
 
     public ProxyAdvisorMethodInterceptor(ProxyManager<T> manager, ProxyOrchestrator proxyOrchestrator) {
         this.manager = manager;
         this.introspector = proxyOrchestrator.introspector();
         this.proxyOrchestrator = proxyOrchestrator;
-        this.resultValidator = new IntrospectionProxyResultValidator(introspector);
+        this.resultValidator = new IntrospectionProxyResultValidator(this.introspector);
         this.interceptHandler = new ReflectionProxyMethodInterceptHandler<>(this);
         this.methodInvoker = this.interceptHandler.methodInvoker();
     }
@@ -120,11 +120,11 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
 
     protected Object[] resolveArgs(MethodInvokable method, Object instance, Object[] args) {
         MethodView<?, ?> methodView = method.toIntrospector();
-        ProxyParameterLoaderContext context = new ProxyParameterLoaderContext(methodView, instance, proxyOrchestrator);
+        ProxyParameterLoaderContext context = new ProxyParameterLoaderContext(methodView, instance, this.proxyOrchestrator);
         return this.parameterLoader().loadArguments(context, args).toArray();
     }
 
-    protected ParameterLoader<ProxyParameterLoaderContext> parameterLoader() {
+    protected ParameterLoader parameterLoader() {
         return this.parameterLoader;
     }
 }

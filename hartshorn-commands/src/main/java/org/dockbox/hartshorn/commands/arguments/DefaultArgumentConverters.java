@@ -21,15 +21,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistryCustomizer;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.util.StringUtilities;
@@ -45,21 +44,38 @@ import org.dockbox.hartshorn.util.option.Option;
 @RequiresActivator(UseCommands.class)
 public class DefaultArgumentConverters {
 
-    @Binds(type = BindingType.COLLECTION)
+    @Binds
+    public ArgumentConverterRegistryCustomizer converterRegistryCustomizer() {
+        return registry -> {
+            registry.registerConverter(this.stringArgumentConverter());
+            registry.registerConverter(this.characterArgumentConverter());
+            registry.registerConverter(this.booleanArgumentConverter());
+            registry.registerConverter(this.doubleArgumentConverter());
+            registry.registerConverter(this.floatArgumentConverter());
+            registry.registerConverter(this.integerArgumentConverter());
+            registry.registerConverter(this.longArgumentConverter());
+            registry.registerConverter(this.shortArgumentConverter());
+            registry.registerConverter(this.uuidArgumentConverter());
+            registry.registerConverter(this.durationArgumentConverter());
+            registry.registerConverter(this.messageArgumentConverter());
+            registry.registerConverter(this.componentContainerArgumentConverter());
+            registry.registerConverter(this.remainingStringArgumentConverter());
+            registry.registerConverter(this.remainingIntegersArgumentConverter());
+        };
+    }
+
     public ArgumentConverter<String> stringArgumentConverter() {
         return ArgumentConverterImpl.builder(String.class, "string")
                 .withConverter((String input) -> Option.of(input))
                 .build();
     }
 
-    @Binds(type = BindingType.COLLECTION)
     public ArgumentConverter<Character> characterArgumentConverter() {
         return ArgumentConverterImpl.builder(Character.class, "char", "character")
                 .withConverter(new StringToCharacterConverter())
                 .build();
     }
 
-    @Binds(type = BindingType.COLLECTION)
     public ArgumentConverter<Boolean> booleanArgumentConverter() {
         return ArgumentConverterImpl.builder(Boolean.class, "bool", "boolean")
                 .withConverter(new StringToBooleanConverter())
@@ -67,56 +83,48 @@ public class DefaultArgumentConverters {
                 .build();
     }
 
-    @Binds(type = BindingType.COLLECTION)
     public ArgumentConverter<Double> doubleArgumentConverter() {
         return ArgumentConverterImpl.builder(Double.class, "double")
                 .withConverter(new StringToNumberConverterFactory().create(Double.class))
                 .build();
     }
 
-    @Binds(type = BindingType.COLLECTION)
     public ArgumentConverter<Float> floatArgumentConverter() {
         return ArgumentConverterImpl.builder(Float.class, "float")
                 .withConverter(new StringToNumberConverterFactory().create(Float.class))
                 .build();
     }
 
-    @Binds(type = BindingType.COLLECTION)
     public ArgumentConverter<Integer> integerArgumentConverter() {
         return ArgumentConverterImpl.builder(Integer.class, "int", "integer")
                 .withConverter(new StringToNumberConverterFactory().create(Integer.class))
                 .build();
     }
 
-    @Binds(type = BindingType.COLLECTION)
     public ArgumentConverter<Long> longArgumentConverter() {
         return ArgumentConverterImpl.builder(Long.class, "long")
                 .withConverter(new StringToNumberConverterFactory().create(Long.class))
                 .build();
     }
 
-    @Binds(type = BindingType.COLLECTION)
     public ArgumentConverter<Short> shortArgumentConverter() {
         return ArgumentConverterImpl.builder(Short.class, "short")
                 .withConverter(new StringToNumberConverterFactory().create(Short.class))
                 .build();
     }
 
-    @Binds(type = BindingType.COLLECTION)
     public ArgumentConverter<UUID> uuidArgumentConverter() {
         return ArgumentConverterImpl.builder(UUID.class, "uuid", "uniqueId")
                 .withConverter(new StringToUUIDConverter())
                 .build();
     }
 
-    @Binds(type = BindingType.COLLECTION)
     public ArgumentConverter<Duration> durationArgumentConverter() {
         return ArgumentConverterImpl.builder(Duration.class, "duration")
                 .withConverter(StringUtilities::durationOf)
                 .build();
     }
 
-    @Binds(type = BindingType.COLLECTION)
     public ArgumentConverter<Message> messageArgumentConverter() {
         return ArgumentConverterImpl.builder(Message.class, "resource", "i18n", "translation")
                 .withConverter((src, in) -> {
@@ -131,7 +139,6 @@ public class DefaultArgumentConverters {
                 }).build();
     }
 
-    @Binds(type = BindingType.COLLECTION)
     public ArgumentConverter<ComponentContainer<?>> componentContainerArgumentConverter() {
         return ArgumentConverterImpl.<ComponentContainer<?>>builder(TypeUtils.adjustWildcards(ComponentContainer.class, Class.class), "service")
                 .withConverter((src, in) -> Option.of(src.applicationContext()
@@ -146,7 +153,6 @@ public class DefaultArgumentConverters {
                 .build();
     }
 
-    @Binds(type = BindingType.COLLECTION)
     public ArgumentConverter<String> remainingStringArgumentConverter() {
         return ArgumentConverterImpl.builder(String.class, "remaining", "remainingString")
                 .withConverter((String input) -> Option.of(input))
@@ -154,7 +160,6 @@ public class DefaultArgumentConverters {
                 .build();
     }
 
-    @Binds(type = BindingType.COLLECTION)
     public ArgumentConverter<Integer[]> remainingIntegersArgumentConverter() {
         Converter<String, Integer> integerConverter = new StringToNumberConverterFactory().create(Integer.class);
         return ArgumentConverterImpl.builder(Integer[].class, "remainingInt")

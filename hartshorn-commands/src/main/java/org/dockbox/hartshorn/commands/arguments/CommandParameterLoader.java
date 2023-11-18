@@ -25,6 +25,7 @@ import java.util.ArrayList;
 public class CommandParameterLoader extends RuleBasedParameterLoader<CommandParameterLoaderContext> {
 
     public CommandParameterLoader() {
+        super(CommandParameterLoaderContext.class);
         this.add(new CommandContextParameterRule());
         this.add(new CommandSubjectParameterRule());
     }
