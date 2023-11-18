@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
@@ -38,6 +39,7 @@ import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.graph.MutableContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
@@ -144,18 +146,14 @@ public class DependencyGraphBuilder {
 
     private void buildSingleDependencyNode(
             MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes,
-            DependencyGraph graph,
+            Graph<DependencyContext<?>> graph,
             DependencyContext<?> dependencyContext
     ) {
         // TODO: This is still broken. Dependencies look for ComponentKey<X> but need ComponentKey<ComponentCollection<X>>. E.g. statement parsers!
-        Collection<MutableContainableGraphNode<DependencyContext<?>>> componentNodes = nodes.get(dependencyContext.componentKey());
-        ComponentKey<? extends ComponentCollection<?>> collectionComponentKey = dependencyContext.componentKey().mutable().collector().build();
-        Collection<MutableContainableGraphNode<DependencyContext<?>>> collectionComponentNodes = nodes.get(collectionComponentKey);
+        Collection<MutableContainableGraphNode<DependencyContext<?>>> dependencyContexts = collectDependencyContexts(nodes, dependencyContext);
+        graph.addRoots(Set.copyOf(dependencyContexts));
 
-        Collection<MutableContainableGraphNode<DependencyContext<?>>> allComponentNodes = CollectionUtilities.merge(componentNodes, collectionComponentNodes);
-        graph.addRoots(Set.copyOf(allComponentNodes));
-
-        for(MutableContainableGraphNode<DependencyContext<?>> componentNode : allComponentNodes) {
+        for(MutableContainableGraphNode<DependencyContext<?>> componentNode : dependencyContexts) {
             DependencyContext<?> componentDependencyContext = componentNode.value();
             for(ComponentKey<?> dependency : componentDependencyContext.dependencies().allValues()) {
                 Set<GraphNode<DependencyContext<?>>> dependencyNodes = Set.copyOf(nodes.get(dependency));
@@ -167,9 +165,21 @@ public class DependencyGraphBuilder {
                     }
                 }
                 graph.addRoots(dependencyNodes);
-                allComponentNodes.forEach(node -> node.addParents(dependencyNodes));
+                dependencyContexts.forEach(node -> node.addParents(dependencyNodes));
             }
         }
+    }
+
+    @NonNull
+    private static Collection<MutableContainableGraphNode<DependencyContext<?>>> collectDependencyContexts(
+        MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes, DependencyContext<?> dependencyContext) {
+        Collection<MutableContainableGraphNode<DependencyContext<?>>> componentNodes = nodes.get(dependencyContext.componentKey());
+
+        ComponentKey<? extends ComponentCollection<?>> collectionComponentKey = dependencyContext.componentKey().mutable().collector().build();
+        Collection<MutableContainableGraphNode<DependencyContext<?>>> collectionComponentNodes = nodes.get(collectionComponentKey);
+
+        Collection<MutableContainableGraphNode<DependencyContext<?>>> allComponentNodes = CollectionUtilities.merge(componentNodes, collectionComponentNodes);
+        return allComponentNodes;
     }
 
     private static boolean containsAllDependencies(DependencyContext<?> dependencyContext, MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes) {
