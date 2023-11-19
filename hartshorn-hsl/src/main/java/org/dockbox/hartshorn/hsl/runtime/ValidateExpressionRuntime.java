@@ -16,14 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
-import java.util.Set;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.hsl.ParserCustomizer;
 import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
-import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.customizer.ExpressionCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -36,13 +33,19 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class ValidateExpressionRuntime extends StandardRuntime {
 
-    public ValidateExpressionRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory) {
+    public ValidateExpressionRuntime(
+        ApplicationContext applicationContext,
+        ScriptComponentFactory factory
+    ) {
         super(applicationContext, factory);
     }
 
-    public ValidateExpressionRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory,
-            Set<ASTNodeParser<? extends Statement>> statementParsers) {
-        super(applicationContext, factory, statementParsers);
+    public ValidateExpressionRuntime(
+        ApplicationContext applicationContext,
+        ScriptComponentFactory factory,
+        ParserCustomizer parserCustomizer
+    ) {
+        super(applicationContext, factory, parserCustomizer);
         this.customizer(new ExpressionCustomizer());
     }
 
