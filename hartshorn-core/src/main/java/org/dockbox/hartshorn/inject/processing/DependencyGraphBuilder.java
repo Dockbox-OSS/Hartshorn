@@ -66,7 +66,7 @@ public class DependencyGraphBuilder {
     }
 
     public DependencyGraph buildDependencyGraph(Iterable<DependencyContext<?>> dependencyContexts) throws DependencyResolutionException {
-        Set<DependencyContext<?>> contexts = inflateDependencyContexts(dependencyContexts);
+        Set<DependencyContext<?>> contexts = this.inflateDependencyContexts(dependencyContexts);
         MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes = this.computeNodeMap(contexts);
         DependencyGraph graph = new DependencyGraph();
         // Don't use inflated contexts here, as we want to keep the original context for the graph. If the inflated contexts are relevant,
@@ -75,8 +75,10 @@ public class DependencyGraphBuilder {
         return graph;
     }
 
-    private void buildDependencyNodes(Iterable<DependencyContext<?>> dependencyContexts,
-            MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes, DependencyGraph graph
+    private void buildDependencyNodes(
+        Iterable<DependencyContext<?>> dependencyContexts,
+        MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes,
+        Graph<DependencyContext<?>> graph
     ) {
         for (DependencyContext<?> dependencyContext : dependencyContexts) {
             this.buildSingleDependencyNode(nodes, graph, dependencyContext);
@@ -86,7 +88,8 @@ public class DependencyGraphBuilder {
     protected <T> Set<ComponentKey<? extends T>> lookupHierarchyDeclarations(DependencyContext<T> dependencyContext) {
         ComponentKey<T> componentKey = dependencyContext.componentKey();
         BindingHierarchy<T> hierarchy = this.hierarchicalComponentProvider.hierarchy(componentKey);
-        return hierarchy.highestPriority().map(provider -> {
+        int highestPriority = hierarchy.highestPriority();
+        return hierarchy.get(highestPriority).map(provider -> {
             Provider<T> actualProvider = provider;
             if(provider instanceof ComposedProvider<T> composedProvider) {
                 actualProvider = composedProvider.provider();
@@ -103,7 +106,7 @@ public class DependencyGraphBuilder {
         for (DependencyContext<?> dependencyContext : dependencyContexts) {
             contexts.add(dependencyContext);
             Class<?> dependencyType = dependencyContext.componentKey().type();
-            Set<DependencyContext<?>> resolvedContexts = resolver.resolve(getImplementationContexts(dependencyContext)).stream()
+            Set<DependencyContext<?>> resolvedContexts = this.resolver.resolve(this.getImplementationContexts(dependencyContext)).stream()
                     .map(implementationContext -> {
                         Class<?> implementationType = implementationContext.componentKey().type();
                         if (dependencyType.isAssignableFrom(implementationType)) {
@@ -119,7 +122,7 @@ public class DependencyGraphBuilder {
     @NotNull
     private <T> Set<DependencyDeclarationContext<?>> getImplementationContexts(DependencyContext<T> dependencyContext) {
         Set<ComponentKey<? extends T>> implementationKeys = this.lookupHierarchyDeclarations(dependencyContext);
-        Introspector introspector = resolver.applicationContext().environment().introspector();
+        Introspector introspector = this.resolver.applicationContext().environment().introspector();
         return implementationKeys.stream()
                 .map(key -> new ComponentKeyDependencyDeclarationContext<>(introspector, key))
                 .collect(Collectors.toSet());
@@ -149,7 +152,6 @@ public class DependencyGraphBuilder {
             Graph<DependencyContext<?>> graph,
             DependencyContext<?> dependencyContext
     ) {
-        // TODO: This is still broken. Dependencies look for ComponentKey<X> but need ComponentKey<ComponentCollection<X>>. E.g. statement parsers!
         Collection<MutableContainableGraphNode<DependencyContext<?>>> dependencyContexts = collectDependencyContexts(nodes, dependencyContext);
         graph.addRoots(Set.copyOf(dependencyContexts));
 
@@ -178,8 +180,7 @@ public class DependencyGraphBuilder {
         ComponentKey<? extends ComponentCollection<?>> collectionComponentKey = dependencyContext.componentKey().mutable().collector().build();
         Collection<MutableContainableGraphNode<DependencyContext<?>>> collectionComponentNodes = nodes.get(collectionComponentKey);
 
-        Collection<MutableContainableGraphNode<DependencyContext<?>>> allComponentNodes = CollectionUtilities.merge(componentNodes, collectionComponentNodes);
-        return allComponentNodes;
+        return CollectionUtilities.merge(componentNodes, collectionComponentNodes);
     }
 
     private static boolean containsAllDependencies(DependencyContext<?> dependencyContext, MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes) {

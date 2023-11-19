@@ -109,7 +109,7 @@ public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>
      *
      * @return The provider with the highest priority, or {@link Option#empty()}.
      */
-    Option<Provider<C>> highestPriority();
+    int highestPriority();
 
     /**
      * Gets the {@link ComponentKey} of the current hierarchy, containing a {@link Class}

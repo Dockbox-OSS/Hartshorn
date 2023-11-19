@@ -101,7 +101,7 @@ public class ContextWrappedHierarchy<C> implements PrunableBindingHierarchy<C> {
     }
 
     @Override
-    public Option<Provider<C>> highestPriority() {
+    public int highestPriority() {
         return this.real().highestPriority();
     }
 

@@ -46,7 +46,8 @@ public final class ComponentConstructorResolver {
 
     public <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructor(TypePathNode<C> node) {
         BindingHierarchy<C> hierarchy = this.applicationContext.hierarchy(node.componentKey());
-        Option<Provider<C>> providerOption = hierarchy.highestPriority();
+        int highestPriority = hierarchy.highestPriority();
+        Option<Provider<C>> providerOption = hierarchy.get(highestPriority);
         return providerOption.absent()
             ? this.findConstructorInImplementation(node.type())
             : this.findConstructorInHierarchy(node, providerOption);

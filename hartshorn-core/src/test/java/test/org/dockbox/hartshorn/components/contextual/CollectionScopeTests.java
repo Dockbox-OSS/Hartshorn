@@ -57,10 +57,10 @@ public class CollectionScopeTests {
         BindingHierarchy<ComponentCollection<String>> hierarchy = this.applicationContext.hierarchy(componentKey);
         Assertions.assertTrue(hierarchy instanceof CollectionBindingHierarchy<String>);
 
-        CollectionBindingHierarchy<String> collectionBindingHierarchy = (CollectionBindingHierarchy<String>) hierarchy;
-        Assertions.assertEquals(1, collectionBindingHierarchy.size());
+        Assertions.assertEquals(1, hierarchy.size());
 
-        Option<Provider<ComponentCollection<String>>> candidateProvider = collectionBindingHierarchy.highestPriority();
+        int highestPriority = hierarchy.highestPriority();
+        Option<Provider<ComponentCollection<String>>> candidateProvider = hierarchy.get(highestPriority);
         Assertions.assertTrue(candidateProvider.present());
 
         Provider<ComponentCollection<String>> provider = candidateProvider.get();

@@ -21,8 +21,10 @@ import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.HandledInjection;
+import org.dockbox.hartshorn.inject.Strict;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
@@ -54,13 +56,18 @@ public class DependencyResolverUtils {
     public static <T, E extends AnnotatedElementView & GenericTypeView<T>> ComponentKey<T> resolveComponentKey(E element) {
         TypeView<T> type = element.genericType();
         ComponentKey.Builder<T> keyBuilder = ComponentKey.builder(type);
-        element.annotations().get(Named.class)
+
+        ElementAnnotationsIntrospector annotations = element.annotations();
+        annotations.get(Named.class)
                 .filter(qualifier -> StringUtilities.notEmpty(qualifier.value()))
                 .peek(qualifier -> {
                     if (StringUtilities.notEmpty(qualifier.value())) {
                         keyBuilder.name(qualifier);
                     }
                 });
+        annotations.get(Strict.class)
+            .peek(strict -> keyBuilder.strict(strict.value()));
+
         return keyBuilder.build();
     }
 }

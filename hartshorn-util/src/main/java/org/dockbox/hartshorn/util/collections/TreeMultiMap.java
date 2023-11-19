@@ -17,20 +17,63 @@
 package org.dockbox.hartshorn.util.collections;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 public abstract class TreeMultiMap<K extends Comparable<K>, V> extends StandardMultiMap<K, V> {
 
-    protected TreeMultiMap() {
+    private final Comparator<? super K> comparator;
+
+    protected TreeMultiMap(Comparator<? super K> comparator) {
+        this.comparator = comparator;
     }
 
-    protected TreeMultiMap(MultiMap<K, V> map) {
+    protected TreeMultiMap(Comparator<? super K> comparator, MultiMap<K, V> map) {
         super(map);
+        this.comparator = comparator;
+    }
+
+    public Collection<V> firstEntry() {
+        return this.map().firstEntry().getValue();
+    }
+
+    public Collection<V> lastEntry() {
+        return this.map().lastEntry().getValue();
+    }
+
+    public Collection<V> floorEntry(K key) {
+        return this.map().floorEntry(key).getValue();
+    }
+
+    public Collection<V> ceilingEntry(K key) {
+        return this.map().ceilingEntry(key).getValue();
+    }
+
+    public Collection<V> lowerEntry(K key) {
+        return this.map().lowerEntry(key).getValue();
+    }
+
+    public Collection<V> higherEntry(K key) {
+        return this.map().higherEntry(key).getValue();
+    }
+
+    public Collection<V> pollFirstEntry() {
+        return this.map().pollFirstEntry().getValue();
+    }
+
+    public Collection<V> pollLastEntry() {
+        return this.map().pollLastEntry().getValue();
+    }
+
+    @Override
+    protected NavigableMap<K, Collection<V>> map() {
+        return (NavigableMap<K, Collection<V>>) super.map();
     }
 
     @Override
     protected Map<K, Collection<V>> createEmptyMap() {
-        return new TreeMap<>();
+        return new TreeMap<>(this.comparator);
     }
 }

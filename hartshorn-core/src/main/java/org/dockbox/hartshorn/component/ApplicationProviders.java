@@ -16,10 +16,12 @@
 
 package org.dockbox.hartshorn.component;
 
+import jakarta.inject.Singleton;
 import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.inject.Strict;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -30,11 +32,9 @@ import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.slf4j.Logger;
 
-import jakarta.inject.Singleton;
-
 /**
- * The {@link ApplicationProviders} class is responsible for providing the default {@link Logger}
- * for the application.
+ * Configuration for core components that are required by the framework. This includes the {@link Logger} and
+ * {@link ConversionService}.
  *
  * @author Guus Lieben
  * @since 0.4.6
@@ -53,9 +53,9 @@ public class ApplicationProviders {
     @Singleton
     public ConversionService conversionService(
             Introspector introspector,
-            ComponentCollection<GenericConverter> genericConverters,
-            ComponentCollection<ConverterFactory<?, ?>> converterFactories,
-            ComponentCollection<Converter<?, ?>> converters
+            @Strict(false) ComponentCollection<GenericConverter> genericConverters,
+            @Strict(false) ComponentCollection<ConverterFactory<?, ?>> converterFactories,
+            @Strict(false) ComponentCollection<Converter<?, ?>> converters
     ) {
         StandardConversionService service = new StandardConversionService(introspector).withDefaults();
         

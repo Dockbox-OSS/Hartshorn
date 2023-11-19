@@ -56,6 +56,7 @@ public class ComponentCollectionTests {
     @Test
     @TestComponents(components = CollectionProviders.class)
     void name() {
+        // TODO: Implement tests
         ComponentCollection<String> collection = this.applicationContext.get(ComponentKey.collect(String.class));
     }
 }
