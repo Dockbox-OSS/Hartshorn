@@ -20,9 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.hsl.ParserCustomizer;
 import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -32,28 +31,33 @@ import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.jetbrains.annotations.NotNull;
 
 public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime {
 
-    private final Set<ASTNodeParser<? extends Statement>> statementParsers;
+    private final ParserCustomizer parserCustomizer;
 
     private final ApplicationContext applicationContext;
     private final ScriptComponentFactory factory;
 
-    protected AbstractScriptRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory) {
-        this(applicationContext, factory, Set.of());
+    protected AbstractScriptRuntime(
+        ApplicationContext applicationContext,
+        ScriptComponentFactory factory
+    ) {
+        this(applicationContext, factory, parser -> {});
     }
 
-    protected AbstractScriptRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory,
-                                    Set<ASTNodeParser<? extends Statement>> statementParsers) {
+    protected AbstractScriptRuntime(
+        ApplicationContext applicationContext,
+        ScriptComponentFactory factory,
+        ParserCustomizer parserCustomizer
+    ) {
         super(applicationContext);
         this.applicationContext = applicationContext;
         this.factory = factory;
-        this.statementParsers = statementParsers;
+        this.parserCustomizer = parserCustomizer;
     }
 
     @Override
@@ -143,7 +147,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
 
     protected void parse(ScriptContext context) {
         TokenParser parser = this.factory.parser(context.tokens());
-        this.statementParsers.forEach(parser::statementParser);
+        this.parserCustomizer.configure(parser);
 
         context.parser(parser);
         this.customizePhase(Phase.PARSING, context);

@@ -16,18 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
+import java.util.Map;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.hsl.ParserCustomizer;
 import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
-import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.InlineStandardLibraryCustomizer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.modules.StandardLibrary;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
-
-import java.util.Map;
-import java.util.Set;
 
 /**
  * The default runtime implementation, which follows the evaluation phases and order as
@@ -43,13 +40,19 @@ import java.util.Set;
  */
 public class StandardRuntime extends AbstractScriptRuntime {
 
-    public StandardRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory) {
-        this(applicationContext, factory, Set.of());
+    public StandardRuntime(
+        ApplicationContext applicationContext,
+        ScriptComponentFactory factory
+    ) {
+        this(applicationContext, factory, parser -> {});
     }
 
-    public StandardRuntime(ApplicationContext applicationContext, ScriptComponentFactory factory,
-                           Set<ASTNodeParser<? extends Statement>> statementParsers) {
-        super(applicationContext, factory, statementParsers);
+    public StandardRuntime(
+        ApplicationContext applicationContext,
+        ScriptComponentFactory factory,
+        ParserCustomizer parserCustomizer
+    ) {
+        super(applicationContext, factory, parserCustomizer);
         this.customizer(new InlineStandardLibraryCustomizer());
     }
 
