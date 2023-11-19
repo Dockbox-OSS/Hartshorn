@@ -190,12 +190,12 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     @Override
     public Binder collect(Customizer<CollectorBindingFunction<T>> collector) {
         BindingHierarchy<T> existingHierarchy = this.hierarchy();
-        ComponentKey<ComponentCollection<T>> collectionComponentKey = createCollectionComponentKey();
+        ComponentKey<ComponentCollection<T>> collectionComponentKey = this.createCollectionComponentKey();
 
         BindingHierarchy<ComponentCollection<T>> existingCollectionHierarchy = this.binder.hierarchy(collectionComponentKey);
         if (existingCollectionHierarchy instanceof CollectionBindingHierarchy<T> collectionBindingHierarchy) {
             Binder updatedBinder = this.binder.bind(collectionBindingHierarchy);
-            HierarchyCollectorBindingFunction<T> function = new HierarchyCollectorBindingFunction<>(updatedBinder, collectionBindingHierarchy, this.priority);
+            CollectorBindingFunction<T> function = new HierarchyCollectorBindingFunction<>(updatedBinder, collectionBindingHierarchy, this.priority);
             collector.configure(function);
             return updatedBinder;
         }

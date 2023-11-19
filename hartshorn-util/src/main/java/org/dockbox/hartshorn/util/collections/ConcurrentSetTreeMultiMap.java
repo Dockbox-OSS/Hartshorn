@@ -17,15 +17,21 @@
 package org.dockbox.hartshorn.util.collections;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConcurrentSetTreeMultiMap<K extends Comparable<K>, V> extends TreeMultiMap<K, V> {
 
     public ConcurrentSetTreeMultiMap() {
+        this(Comparator.naturalOrder());
     }
 
-    public ConcurrentSetTreeMultiMap(MultiMap<K, V> map) {
-        super(map);
+    public ConcurrentSetTreeMultiMap(Comparator<? super K> comparator) {
+        super(comparator);
+    }
+
+    public ConcurrentSetTreeMultiMap(Comparator<? super K> comparator, MultiMap<K, V> map) {
+        super(comparator, map);
     }
 
     @Override

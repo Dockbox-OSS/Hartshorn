@@ -182,7 +182,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
             beanKey = beanKey.mutable().name(field.annotations().get(Named.class).get()).build();
         }
 
-        ComponentCollection<?> collection = applicationContext.get(beanKey);
+        ComponentCollection<?> collection = this.applicationContext.get(beanKey);
         //noinspection unchecked
         Collection<Object> fieldValue = field.get(instance)
                 .cast(Collection.class)

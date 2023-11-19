@@ -46,7 +46,7 @@ public class CollectionBindingHierarchy<T> extends AbstractBindingHierarchy<Comp
 
     public CollectionProvider<T> getOrCreateProvider(int priority) {
         Provider<ComponentCollection<T>> existingProvider = this.get(priority).orCompute(() -> {
-            CollectionProvider<T> collectionProvider = new CollectionProvider<>();
+            Provider<ComponentCollection<T>> collectionProvider = new CollectionProvider<>();
             this.add(priority, collectionProvider);
             return collectionProvider;
         }).orNull();

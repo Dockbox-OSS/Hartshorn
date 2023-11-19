@@ -40,7 +40,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
 
     @Override
     public List<Provider<T>> providers() {
-        return List.copyOf(priorityProviders().values());
+        return List.copyOf(this.priorityProviders().values());
     }
 
     @Override
@@ -89,8 +89,9 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     }
 
     @Override
-    public Option<Provider<T>> highestPriority() {
-        return Option.of(this.priorityProviders().firstEntry()).map(Entry::getValue);
+    public int highestPriority() {
+        NavigableMap<Integer, Provider<T>> providers = this.priorityProviders();
+        return providers.isEmpty() ? -1 : providers.firstKey();
     }
 
     @Override
@@ -106,7 +107,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
 
     @Override
     public String toString() {
-        String contract = contractTypeToString();
+        String contract = this.contractTypeToString();
         String keyName = this.key().name();
         String name = "";
         if (keyName != null) {

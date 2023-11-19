@@ -16,10 +16,12 @@
 
 package org.dockbox.hartshorn.component;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
+import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
@@ -33,6 +35,7 @@ import org.dockbox.hartshorn.inject.ComponentObjectContainer;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.inject.binding.AbstractBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
@@ -41,19 +44,23 @@ import org.dockbox.hartshorn.inject.binding.ContextWrappedHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchyBindingFunction;
 import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.SingletonCache;
-import org.dockbox.hartshorn.inject.binding.collection.SimpleComponentCollection;
 import org.dockbox.hartshorn.inject.binding.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.binding.collection.ContainerAwareComponentCollection;
+import org.dockbox.hartshorn.inject.binding.collection.SimpleComponentCollection;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.TreeMultiMap;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -140,7 +147,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
                 .build(), ComponentKey.class);
 
         for(ObjectContainer<E> container : collection.containers()) {
-            E processed = this.process(build, container, null);
+            this.process(build, container, null);
         }
         return collection;
     }
@@ -208,7 +215,8 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         }
 
         if (this.singletonCache.contains(componentKey)) {
-            return this.singletonCache.get(componentKey).orNull();
+            return this.singletonCache.get(componentKey)
+                .orElseThrow(() -> new ComponentResolutionException("No instance found for key " + componentKey + ", but the key was present in the singleton cache"));
         }
 
         this.owner.componentLocator().validate(componentKey);
@@ -335,23 +343,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             throw new IllegalArgumentException("Cannot create a binding hierarchy for a component key with a different scope");
         }
 
-        BindingHierarchy<?> hierarchy = this.hierarchies.computeIfAbsent(key.view(), componentKey -> {
-            // If we don't have an explicit hierarchy on the key, we can try to use the hierarchy of
-            // the application context. This is useful for components that are not explicitly scoped,
-            // but are still accessed through a scope.
-            if (useParentIfAbsent && this.owner.applicationProvider() != this) {
-                return this.owner.applicationProvider().hierarchy(key);
-            }
-            if (ComponentCollection.class.isAssignableFrom(key.type())) {
-                return new CollectionBindingHierarchy<>(
-                        TypeUtils.adjustWildcards(key, ComponentKey.class),
-                        this.applicationContext()
-                );
-            }
-            else {
-                return new NativeBindingHierarchy<>(key, this.applicationContext());
-            }
-        });
+        BindingHierarchy<?> hierarchy = this.getOrComputeHierarchy(key, useParentIfAbsent);
         BindingHierarchy<T> adjustedHierarchy = TypeUtils.adjustWildcards(hierarchy, BindingHierarchy.class);
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
         if (adjustedHierarchy instanceof ContextWrappedHierarchy || adjustedHierarchy instanceof CollectionBindingHierarchy<?>) {
@@ -360,5 +352,95 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         else {
             return new ContextWrappedHierarchy<>(adjustedHierarchy, this.applicationContext(), updated -> this.hierarchies.put(key.view(), updated));
         }
+    }
+
+    private <T> BindingHierarchy<?> getOrComputeHierarchy(ComponentKey<T> key, boolean useParentIfAbsent) {
+        return this.hierarchies.computeIfAbsent(key.view(), componentKey -> {
+            // If we don't have an explicit hierarchy on the key, we can try to use the hierarchy of
+            // the application context. This is useful for components that are not explicitly scoped,
+            // but are still accessed through a scope.
+            if (useParentIfAbsent && this.owner.applicationProvider() != this) {
+                return this.owner.applicationProvider().hierarchy(key);
+            }
+
+            BindingHierarchy<?> hierarchy = key.strict()
+                ? this.createHierarchy(key)
+                : this.looseLookupHierarchy(key, useParentIfAbsent);
+            return Objects.requireNonNullElseGet(hierarchy, () -> new NativeBindingHierarchy<>(key, this.applicationContext()));
+        });
+    }
+
+    @Nullable
+    private <T> AbstractBindingHierarchy<?> createHierarchy(ComponentKey<T> key) {
+        if (ComponentCollection.class.isAssignableFrom(key.type())) {
+            return new CollectionBindingHierarchy<>(
+                TypeUtils.adjustWildcards(key, ComponentKey.class),
+                this.applicationContext()
+            );
+        }
+        else {
+            return null;
+        }
+    }
+
+    @Nullable
+    private <T> BindingHierarchy<?> looseLookupHierarchy(ComponentKey<T> key, boolean useParentIfAbsent) {
+        if (ComponentCollection.class.isAssignableFrom(key.type())) {
+            return this.composeCollectionHierarchy(key, useParentIfAbsent);
+        }
+        else {
+            Set<ComponentKeyView<?>> hierarchyKeys = this.hierarchies.keySet();
+            Set<ComponentKeyView<?>> compatibleKeys = hierarchyKeys.stream()
+                .filter(hierarchyKey -> this.isCompatible(key, hierarchyKey))
+                .collect(Collectors.toSet());
+            if (compatibleKeys.size() == 1) {
+                ComponentKeyView<?> compatibleKey = CollectionUtilities.first(compatibleKeys);
+                return this.hierarchies.get(compatibleKey);
+            }
+            else {
+                // Acceptable, as long as there is a single highest priority binding. If multiple match, it's an error.
+                return this.lookupHighestPriorityHierarchy(key, compatibleKeys);
+            }
+        }
+    }
+
+    @Nullable
+    private BindingHierarchy<?> lookupHighestPriorityHierarchy(ComponentKey<?> key, Set<ComponentKeyView<?>> compatibleKeys) {
+        Set<BindingHierarchy<?>> compatibleHierarchies = compatibleKeys.stream()
+            .map(this.hierarchies::get)
+            .collect(Collectors.toSet());
+
+        // Track entire hierarchy, so potential duplicate top-priority hierarchies can be reported
+        TreeMultiMap<Integer, BindingHierarchy<?>> providers = new ConcurrentSetTreeMultiMap<>();
+        for (BindingHierarchy<?> compatibleHierarchy : compatibleHierarchies) {
+            int highestPriority = compatibleHierarchy.highestPriority();
+            compatibleHierarchy.get(highestPriority).peek(provider -> {
+                providers.put(highestPriority, compatibleHierarchy);
+            });
+        }
+        Collection<BindingHierarchy<?>> highestPriority = providers.lastEntry();
+        if (highestPriority.size() > 1) {
+            Set<ComponentKey<?>> foundKeys = highestPriority.stream()
+                .map(BindingHierarchy::key)
+                .collect(Collectors.toSet());
+            throw new AmbiguousComponentException(key, foundKeys);
+        }
+        return CollectionUtilities.first(highestPriority);
+    }
+
+    private boolean isCompatible(ComponentKey<?> key, ComponentKeyView<?> other) {
+        ParameterizableType originType = key.parameterizedType();
+        ParameterizableType targetType = other.type();
+        if (!originType.type().isAssignableFrom(targetType.type())) {
+            return false;
+        }
+        // TODO: Compare type parameters
+        return true;
+    }
+
+    @Nullable
+    private <T> BindingHierarchy<?> composeCollectionHierarchy(ComponentKey<T> key, boolean includeParent) {
+        // TODO: Implement me!
+        return null;
     }
 }

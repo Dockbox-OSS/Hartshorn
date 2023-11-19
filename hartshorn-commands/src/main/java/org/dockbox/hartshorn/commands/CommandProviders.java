@@ -19,16 +19,15 @@ package org.dockbox.hartshorn.commands;
 import jakarta.inject.Singleton;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
-import org.dockbox.hartshorn.commands.arguments.CommandParameterLoader;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistryCustomizer;
 import org.dockbox.hartshorn.commands.context.SimpleArgumentConverterRegistry;
+import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.CooldownExtension;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
-import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 
 @Service
 @RequiresActivator(UseCommands.class)
@@ -61,7 +60,7 @@ public class CommandProviders {
     }
 
     @Binds(type = BindingType.COLLECTION)
-    public CooldownExtension cooldownExtension(ApplicationContext applicationContext) {
+    public CommandExecutorExtension cooldownExtension(ApplicationContext applicationContext) {
         return new CooldownExtension(applicationContext);
     }
     

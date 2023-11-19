@@ -53,6 +53,6 @@ public class ContainerAwareComponentCollection<T> extends SimpleComponentCollect
      * @return the containers that were used to populate this collection
      */
     public Set<ObjectContainer<T>> containers() {
-        return Set.copyOf(containers);
+        return Set.copyOf(this.containers);
     }
 }

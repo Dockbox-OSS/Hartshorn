@@ -53,12 +53,14 @@ public final class ComponentKey<T> {
     private final String name;
     private final Scope scope;
     private final boolean enable;
+    private final boolean strict;
 
-    private ComponentKey(ParameterizableType type, String name, Scope scope, boolean enable) {
+    private ComponentKey(ParameterizableType type, String name, Scope scope, boolean enable, boolean strict) {
         this.type = type;
         this.name = name;
         this.scope = scope;
         this.enable = enable;
+        this.strict = strict;
     }
 
     /**
@@ -305,6 +307,17 @@ public final class ComponentKey<T> {
     }
 
     /**
+     * Returns whether the lookup for this component should be strict. If the lookup is strict, the type of the
+     * hierarchy has to match this key exactly. If the lookup is not strict, the type of the hierarchy can be a
+     * sub-type of this key.
+     *
+     * @return whether the component should be enabled on provisioning
+     */
+    public boolean strict() {
+        return this.strict;
+    }
+
+    /**
      * A builder for {@link ComponentKey}s. The builder can be used to create a new key based on an existing key,
      * or to create a new key from scratch.
      *
@@ -323,6 +336,7 @@ public final class ComponentKey<T> {
         private String name;
         private Scope scope = Scope.DEFAULT_SCOPE;
         private boolean enable = true;
+        private boolean strict = true;
 
         private Builder(ComponentKey<T> key) {
             this.type = key.type;
@@ -376,6 +390,11 @@ public final class ComponentKey<T> {
             return this;
         }
 
+        public Builder<T> strict(boolean strict) {
+            this.strict = strict;
+            return this;
+        }
+
         public Builder<ComponentCollection<T>> collector() {
             ParameterizableType collectionType = ParameterizableType.builder(ComponentCollection.class)
                     .parameters(this.type)
@@ -388,7 +407,7 @@ public final class ComponentKey<T> {
         }
 
         public ComponentKey<T> build() {
-            return new ComponentKey<>(this.type, this.name, this.scope, this.enable);
+            return new ComponentKey<>(this.type, this.name, this.scope, this.enable, this.strict);
         }
     }
 
@@ -400,6 +419,14 @@ public final class ComponentKey<T> {
         private ComponentKeyView(ComponentKey<T> key) {
             this.type = key.type;
             this.name = key.name;
+        }
+
+        public ParameterizableType type() {
+            return this.type;
+        }
+
+        public String name() {
+            return this.name;
         }
 
         @Override
