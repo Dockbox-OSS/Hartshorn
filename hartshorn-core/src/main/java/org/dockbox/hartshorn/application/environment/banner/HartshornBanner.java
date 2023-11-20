@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.application.environment.banner;
 
 import java.util.List;
+
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.logging.AnsiColor;
 import org.dockbox.hartshorn.logging.AnsiMessage;
@@ -33,6 +34,7 @@ import org.dockbox.hartshorn.logging.AnsiStyle;
 public class HartshornBanner extends AbstractConsoleBanner {
 
     private static final List<String> BANNER_LINES = List.of(
+            "",
             "     _   _            _       _",
             "    | | | | __ _ _ __| |_ ___| |__   ___  _ __ _ __",
             "    | |_| |/ _` | '__| __/ __| '_ \\ / _ \\| '__| '_ \\",

@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.application;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -35,7 +37,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public enum HartshornVersion {
+public enum HartshornVersion implements Reportable {
 
     // Release 0.4.x 'Antelope' series
     V0_4_0("Antelope", 0, 4, 0, ReleaseStatus.RELEASED),
@@ -198,8 +200,18 @@ public enum HartshornVersion {
     @Override
     public String toString() {
         return this.major + "." + this.minor + "." + this.patch
-                + (this.releaseStatus != ReleaseStatus.RELEASED ? "-" + this.releaseStatus.name().toLowerCase() : "")
+                + (this.releaseStatus.suffix() != null ? "-" + this.releaseStatus.suffix() : "")
                 + (this.alias != null ? " (" + this.alias + ")" : "");
+    }
+
+    @Override
+    public void report(DiagnosticsPropertyCollector collector) {
+        collector.property("formatted").write(this.toString());
+        collector.property("major").write(this.major);
+        collector.property("minor").write(this.minor);
+        collector.property("patch").write(this.patch);
+        collector.property("alias").write(this.alias);
+        collector.property("status").write(this.releaseStatus.name());
     }
 
     /**
@@ -216,27 +228,39 @@ public enum HartshornVersion {
          * and are not suitable for production use. Development versions may be suitable for
          * bleeding-edge development use.
          */
-        DEVELOPMENT,
+        DEVELOPMENT("dev"),
         /**
          * Indicates that a version is a snapshot. Snapshot versions are considered stable but are
          * also considered experimental. Snapshot versions are suitable for development use.
          */
-        SNAPSHOT,
+        SNAPSHOT("snapshot"),
         /**
          * Indicates that a version is a release candidate. Release candidate versions are considered
          * stable and no longer subject to change. Release candidate versions are suitable for
          * QA use and early adoption.
          */
-        CANDIDATE,
+        CANDIDATE("rc"),
         /**
          * Indicates that a version is released. Released versions are considered stable, and are
          * suitable for production use.
          */
-        RELEASED,
+        RELEASED(null),
         /**
          * Indicates that a version is planned. Planned versions are not yet released or actively
          * developed. Planned versions serve as placeholders for future releases.
          */
-        PLANNED,
+        PLANNED(null),
+
+        ;
+
+        private final String suffix;
+
+        ReleaseStatus(String suffix) {
+            this.suffix = suffix;
+        }
+
+        public String suffix() {
+            return this.suffix;
+        }
     }
 }

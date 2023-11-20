@@ -72,7 +72,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         if (this.configuration.includeVersion()) {
-            collector.property("version").write(Hartshorn.VERSION.toString());
+            collector.property("version").write(Hartshorn.VERSION);
         }
         if (this.configuration.includeJarLocation()) {
             reportJarLocation(collector);
