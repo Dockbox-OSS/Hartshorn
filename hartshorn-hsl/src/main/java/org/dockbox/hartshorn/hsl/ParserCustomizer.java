@@ -32,6 +32,7 @@ import org.dockbox.hartshorn.util.Customizer;
  *
  * @author Guus Lieben
  */
+@FunctionalInterface
 public interface ParserCustomizer extends Customizer<TokenParser> {
 
     @Override

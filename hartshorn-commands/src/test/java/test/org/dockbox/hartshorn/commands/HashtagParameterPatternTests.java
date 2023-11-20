@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.commands;
 
+import java.util.List;
+import java.util.Locale;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.commands.SystemSubject;
@@ -24,15 +27,13 @@ import org.dockbox.hartshorn.commands.arguments.ConverterException;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.PrefixedParameterPattern;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.MessageTemplate;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Locale;
 
 import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.commands.types.CuboidArgument;
@@ -43,6 +44,12 @@ public class HashtagParameterPatternTests {
 
     @Inject
     private ApplicationContext applicationContext;
+
+    @Inject
+    private ArgumentConverterRegistry registry;
+
+    @Inject
+    private CommandParameterResources resources;
 
     @Test
     void testPreconditionsAcceptValidPattern() {
@@ -56,7 +63,7 @@ public class HashtagParameterPatternTests {
     }
 
     private PrefixedParameterPattern pattern() {
-        return new HashtagParameterPattern(this.applicationContext.get(CommandParameterResources.class)) {
+        return new HashtagParameterPattern(registry, resources) {
             @Override
             protected Message wrongFormat() {
                 // Override resources as these are otherwise requested through bound resource references

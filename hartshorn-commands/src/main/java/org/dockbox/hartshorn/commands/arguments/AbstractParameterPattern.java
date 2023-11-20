@@ -18,19 +18,23 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 public abstract class AbstractParameterPattern implements CustomParameterPattern {
+
+    private final ArgumentConverterRegistry argumentConverterRegistry;
+
+    protected AbstractParameterPattern(ArgumentConverterRegistry argumentConverterRegistry) {
+        this.argumentConverterRegistry = argumentConverterRegistry;
+    }
 
     @Override
     public <T> Attempt<T, ConverterException> request(Class<T> type, CommandSource source, String raw) {
@@ -63,13 +67,7 @@ public abstract class AbstractParameterPattern implements CustomParameterPattern
             }
             String typeIdentifier = argumentIdentifier.get();
 
-            ContextKey<ArgumentConverterContext> argumentConverterContextKey = ContextKey.builder(ArgumentConverterContext.class)
-                    .fallback(ArgumentConverterContext::new)
-                    .build();
-            Option<ArgumentConverter<?>> converter = context
-                    .first(argumentConverterContextKey)
-                    .flatMap(argumentConverterContext -> argumentConverterContext.converter(typeIdentifier));
-
+            Option<ArgumentConverter<?>> converter = this.argumentConverterRegistry.converter(typeIdentifier);
             if (converter.absent()) {
                 context.log().debug("Could not locate converter for identifier '%s'".formatted(typeIdentifier));
                 return Attempt.of(new MissingConverterException(context, typeView));
@@ -106,14 +104,7 @@ public abstract class AbstractParameterPattern implements CustomParameterPattern
                 Class<?> argument = argumentTypes.get(i);
 
                 if (argument == null) {
-                    ContextKey<ArgumentConverterContext> argumentConverterContextKey = ContextKey.builder(ArgumentConverterContext.class)
-                            .fallback(ArgumentConverterContext::new)
-                            .build();
-
-                    Option<? extends ArgumentConverter<?>> converter = source.applicationContext()
-                            .first(argumentConverterContextKey)
-                            .flatMap(context -> context.converter(parameter));
-
+                    Option<? extends ArgumentConverter<?>> converter = this.argumentConverterRegistry.converter(parameter);
                     if (converter.present()) {
                         Option<?> result = converter.get().convert(source, (String) arguments.get(i));
                         if (result.present()) {

@@ -16,8 +16,17 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-@FunctionalInterface
-public interface ArgumentConverterRegistryCustomizer {
+import org.dockbox.hartshorn.util.Customizer;
 
-    void customize(ArgumentConverterRegistry registry);
+@FunctionalInterface
+public interface ArgumentConverterRegistryCustomizer extends Customizer<ArgumentConverterRegistry> {
+
+    @Override
+    default ArgumentConverterRegistryCustomizer compose(Customizer<ArgumentConverterRegistry> before) {
+        // Override for type, for convenience.
+        return parser -> {
+            before.configure(parser);
+            this.configure(parser);
+        };
+    }
 }

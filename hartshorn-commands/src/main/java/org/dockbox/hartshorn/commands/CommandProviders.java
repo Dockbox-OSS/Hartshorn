@@ -16,9 +16,10 @@
 
 package org.dockbox.hartshorn.commands;
 
-import jakarta.inject.Singleton;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
+import org.dockbox.hartshorn.commands.arguments.ParameterTypeArgumentConverterRegistryCustomizer;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistryCustomizer;
 import org.dockbox.hartshorn.commands.context.SimpleArgumentConverterRegistry;
@@ -28,6 +29,8 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+
+import jakarta.inject.Singleton;
 
 @Service
 @RequiresActivator(UseCommands.class)
@@ -65,9 +68,14 @@ public class CommandProviders {
     }
     
     @Binds
-    public ArgumentConverterRegistry converterRegistry(ArgumentConverterRegistryCustomizer customizer) {
+    public ArgumentConverterRegistry converterRegistry(ApplicationEnvironment environment, ArgumentConverterRegistryCustomizer customizer) {
         ArgumentConverterRegistry registry = new SimpleArgumentConverterRegistry();
-        customizer.customize(registry);
+        customizer.configure(registry);
         return registry;
+    }
+
+    @Binds(priority = 0)
+    public ArgumentConverterRegistryCustomizer converterRegistryCustomizer(ApplicationEnvironment environment, ArgumentConverterRegistryCustomizer customizer) {
+        return customizer.compose(new ParameterTypeArgumentConverterRegistryCustomizer(environment));
     }
 }
