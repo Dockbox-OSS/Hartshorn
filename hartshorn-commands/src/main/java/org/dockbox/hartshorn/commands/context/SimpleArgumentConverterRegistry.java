@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.option.Option;
 
 public class SimpleArgumentConverterRegistry implements ArgumentConverterRegistry {
 
-    private final transient Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();
+    private final Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();
 
     @Override
     public void registerConverter(ArgumentConverter<?> converter) {

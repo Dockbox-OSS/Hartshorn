@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.util.option.Attempt;
  */
 public abstract class PrefixedParameterPattern extends AbstractParameterPattern {
 
-    public PrefixedParameterPattern(ArgumentConverterRegistry argumentConverterRegistry) {
+    protected PrefixedParameterPattern(ArgumentConverterRegistry argumentConverterRegistry) {
         super(argumentConverterRegistry);
     }
 

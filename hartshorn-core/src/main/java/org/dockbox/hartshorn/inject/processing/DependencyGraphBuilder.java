@@ -183,15 +183,6 @@ public class DependencyGraphBuilder {
         return CollectionUtilities.merge(componentNodes, collectionComponentNodes);
     }
 
-    private static boolean containsAllDependencies(DependencyContext<?> dependencyContext, MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> nodes) {
-        for (ComponentKey<?> dependency : dependencyContext.dependencies().allValues()) {
-            if (!nodes.containsKey(dependency)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     @NotNull
     private MultiMap<ComponentKey<?>, MutableContainableGraphNode<DependencyContext<?>>> computeNodeMap(
             Iterable<DependencyContext<?>> allDependencyContexts

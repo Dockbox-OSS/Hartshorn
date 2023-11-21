@@ -29,7 +29,16 @@ import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
+/**
+ * A collection of utility methods for working with collections. This class is not meant to be
+ * instantiated.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public final class CollectionUtilities {
 
     private CollectionUtilities() {
@@ -64,6 +73,16 @@ public final class CollectionUtilities {
         }
     }
 
+    /**
+     * Constructs a new unique set from the given collections. If no collections are provided an
+     * empty {@link Set} is returned.
+     *
+     * @param collections The collections to use while constructing a new set
+     * @return The new set
+     * @param <T> The type of the elements in the set
+     *
+     * @see #mergeList(Collection[])
+     */
     @SafeVarargs
     public static <T> Set<T> merge(Collection<T>... collections) {
         Set<T> merged = new HashSet<>();
@@ -73,6 +92,16 @@ public final class CollectionUtilities {
         return merged;
     }
 
+    /**
+     * Constructs a new list from the given collections. If no collections are provided an
+     * empty {@link List} is returned.
+     *
+     * @param collections The collections to use while constructing a new list
+     * @return The new list
+     * @param <T> The type of the elements in the list
+     *
+     * @see #merge(Collection[])
+     */
     @SafeVarargs
     public static <T> List<T> mergeList(Collection<T>... collections) {
         List<T> merged = new ArrayList<>();
@@ -82,12 +111,32 @@ public final class CollectionUtilities {
         return merged;
     }
 
+    /**
+     * Combines two arrays into a single array. The first array is copied and the second array is
+     * appended to the end of the first array. The returned array is a new array and does not
+     * modify the original arrays.
+     *
+     * @param arrayOne The first array
+     * @param arrayTwo The second array
+     * @return The merged array
+     * @param <T> The type of the elements in the arrays
+     */
     public static <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
         T[] merged = Arrays.copyOf(arrayOne, arrayOne.length + arrayTwo.length);
         System.arraycopy(arrayTwo, 0, merged, arrayOne.length, arrayTwo.length);
         return merged;
     }
 
+    /**
+     * Collects the difference between two collections. The returned set contains all elements
+     * that are in either of the collections but not in both. The returned set is a new set and
+     * does not modify the original collections.
+     *
+     * @param collectionOne The first collection
+     * @param collectionTwo The second collection
+     * @return The difference between the two collections
+     * @param <T> The type of the elements in the collections
+     */
     public static <T> Set<T> difference(Collection<T> collectionOne, Collection<T> collectionTwo) {
         BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
                 .filter(element -> !c2.contains(element))
@@ -103,6 +152,14 @@ public final class CollectionUtilities {
         return Set.copyOf(mergedDifference);
     }
 
+    /**
+     * Iterates over all collections and applies the given consumer to each element in each
+     * collection. Effectively this is a shorthand for {@link Collection#forEach(Consumer)}.
+     *
+     * @param consumer The consumer to apply to each element
+     * @param collections The collections to iterate over
+     * @param <T> The type of the elements in the collections
+     */
     @SafeVarargs
     public static <T> void forEach(Consumer<T> consumer, Collection<T>... collections) {
         for (Collection<T> collection : collections) {
@@ -110,10 +167,30 @@ public final class CollectionUtilities {
         }
     }
 
+    /**
+     * Returns a new list containing all distinct elements of the given collection. The returned
+     * list is a new list and does not modify the original collection. The advantage of this
+     * compared to {@link Set#of(Object...)} is that the order of the elements is preserved.
+     *
+     * @param collection The collection to get the distinct elements from
+     * @return The new list containing all distinct elements
+     * @param <T> The type of the elements in the collection
+     */
     public static <T> List<T> distinct(Collection<T> collection) {
         return collection.stream().distinct().toList();
     }
 
+    /**
+     * Returns the last element of the given collection. If the collection is empty or null
+     * null is returned. If the collection indicates a given order, this information is used
+     * to determine the last element. Otherwise the collection is iterated over and the last
+     * element is returned.
+     *
+     * @param collection The collection to get the last element from
+     * @return The last element of the collection
+     * @param <T> The type of the elements in the collection
+     */
+    @Nullable
     public static <T> T last(Collection<T> collection) {
         if (collection == null || collection.isEmpty()) {
             return null;
@@ -125,10 +202,24 @@ public final class CollectionUtilities {
             return sequencedCollection.getLast();
         }
         else {
-            return collection.stream().skip(collection.size() - 1).findFirst().orElse(null);
+            return collection.stream()
+                .skip(collection.size() - 1L)
+                .findFirst()
+                .orElse(null);
         }
     }
 
+    /**
+     * Returns the first element of the given iterable. If the iterable is empty or null
+     * null is returned. If the iterable indicates a given order, this information is used
+     * to determine the first element. Otherwise the {@link Iterable#iterator() iterator}
+     * is used to get the first element.
+     *
+     * @param iterable The collection to get the first element from
+     * @return The first element of the collection
+     * @param <T> The type of the elements in the collection
+     */
+    @Nullable
     public static <T> T first(Iterable<T> iterable) {
         if (iterable == null || (iterable instanceof Collection<T> collection && collection.isEmpty())) {
             return null;

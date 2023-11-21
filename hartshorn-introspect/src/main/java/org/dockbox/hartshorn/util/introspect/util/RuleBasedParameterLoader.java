@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.util;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -51,13 +52,13 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
     }
 
     @Override
-    public Object loadArgument(ParameterLoaderContext context, int index, Object... args) {
+    public @Nullable Object loadArgument(ParameterLoaderContext context, int index, Object... args) {
         if (!this.isCompatible(context)) {
             return null;
         }
         Option<ParameterView<?>> parameterCandidate = context.executable().parameters().at(index);
         if (parameterCandidate.present()) {
-            C adjustedContext = contextType.cast(context);
+            C adjustedContext = this.contextType.cast(context);
             ParameterView<?> parameter = parameterCandidate.get();
             for (ParameterLoaderRule<C> rule : this.rules()) {
                 if (rule.accepts(parameter, index, adjustedContext, args)) {
@@ -75,9 +76,9 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
     @Override
     public List<Object> loadArguments(ParameterLoaderContext context, Object... args) {
         if (!this.isCompatible(context)) {
-            return null;
+            return List.of(args);
         }
-        C adjustedContext = contextType.cast(context);
+        C adjustedContext = this.contextType.cast(context);
         List<Object> arguments = new ArrayList<>();
         List<ParameterView<?>> parameters = context.executable().parameters().all();
         parameters:
