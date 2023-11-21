@@ -6,8 +6,6 @@ import org.dockbox.hartshorn.util.option.Option;
 
 public interface ProfilePropertyRegistry {
 
-    ApplicationProfile profile();
-
     Set<ProfilePropertyRegistry> inherited();
 
     Set<ProfileProperty> properties();

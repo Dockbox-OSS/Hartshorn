@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.application.context;
 
 import java.lang.annotation.Annotation;
-import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
@@ -40,13 +39,22 @@ import org.dockbox.hartshorn.component.TypeReferenceLookupComponentLocator;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.profiles.ApplicationProfile;
+import org.dockbox.hartshorn.profiles.ComposableProfileHolder;
+import org.dockbox.hartshorn.profiles.SimpleComposableProfileHolder;
+import org.dockbox.hartshorn.profiles.loader.ApplicationProfileLoader;
+import org.dockbox.hartshorn.profiles.loader.CompositeProfileLoader;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
+import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.SingleElementContext;
+import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
@@ -82,15 +90,14 @@ import org.slf4j.LoggerFactory;
  *
  * @since 0.5.0
  */
-public abstract class DelegatingApplicationContext extends DefaultApplicationAwareContext implements
-        ApplicationContext {
+public abstract class DelegatingApplicationContext extends DefaultApplicationAwareContext implements ApplicationContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(DelegatingApplicationContext.class);
 
-    private final transient Properties environmentValues;
     private final transient ComponentProvider componentProvider;
     private final transient ComponentLocator locator;
     private final transient ApplicationEnvironment environment;
+    private final transient ComposableProfileHolder profileHolder;
 
     private boolean isClosed = false;
     protected boolean isRunning = false;
@@ -105,9 +112,9 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
         this.prepareInitialization();
 
-        this.environmentValues = this.environment.rawArguments();
-
         SingleElementContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this);
+        this.profileHolder = loadProfiles(configurer, applicationInitializerContext);
+
         this.locator = configurer.componentLocator.initialize(applicationInitializerContext);
         this.componentProvider = configurer.componentProvider.initialize(initializerContext.transform(this.locator));
 
@@ -118,6 +125,18 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
             bindingConfigurer = bindingConfigurer.compose(configurerContext.configurer());
         }
         configuration.configureBindings(this.environment, bindingConfigurer, this);
+    }
+
+    private ComposableProfileHolder loadProfiles(Configurer configurer, SingleElementContext<ApplicationContext> applicationInitializerContext) {
+        List<ApplicationProfileLoader> profileLoaders = configurer.profileLoaders.initialize(applicationInitializerContext);
+        CompositeProfileLoader compositeProfileLoader = new CompositeProfileLoader(Set.copyOf(profileLoaders));
+        try {
+            Set<ApplicationProfile> profiles = compositeProfileLoader.loadProfiles();
+            return new SimpleComposableProfileHolder(profiles);
+        }
+        catch(ApplicationException e) {
+            throw new ComponentInitializationException("Failed to load profiles", e);
+        }
     }
 
     /**
@@ -139,13 +158,13 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public Properties properties() {
-        return this.environmentValues;
+    public Set<ApplicationProfile> profiles() {
+        return this.profileHolder.profiles();
     }
 
     @Override
-    public Option<String> property(String key) {
-        return Option.of(this.environmentValues.get(key)).map(String::valueOf);
+    public Option<ApplicationProfile> profile(String name) {
+        return this.profileHolder.profile(name);
     }
 
     @Override

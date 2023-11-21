@@ -6,23 +6,15 @@ import org.dockbox.hartshorn.util.option.Option;
 
 public class SimpleProfilePropertyRegistry implements ProfilePropertyRegistry {
 
-    private final ApplicationProfile applicationProfile;
     private final Set<ProfilePropertyRegistry> inheritedRegistries;
     private final Set<ProfileProperty> properties;
 
     public SimpleProfilePropertyRegistry(
-            ApplicationProfile applicationProfile,
             Set<ProfilePropertyRegistry> inheritedRegistries,
             Set<ProfileProperty> properties
     ) {
-        this.applicationProfile = applicationProfile;
         this.inheritedRegistries = inheritedRegistries;
         this.properties = properties;
-    }
-
-    @Override
-    public ApplicationProfile profile() {
-        return this.applicationProfile;
     }
 
     @Override

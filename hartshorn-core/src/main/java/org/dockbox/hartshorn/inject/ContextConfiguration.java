@@ -38,6 +38,12 @@ import jakarta.inject.Singleton;
 @RequiresActivator(UseBootstrap.class)
 public class ContextConfiguration {
 
+    /**
+     * Delegate binding for the {@link org.dockbox.hartshorn.component.processing.proxy.ContextCarrierDelegationPostProcessor}.
+     *
+     * @param applicationContext the application context
+     * @return the context carrier
+     */
     @Binds
     @Singleton
     public ContextCarrier contextCarrier(ApplicationContext applicationContext) {

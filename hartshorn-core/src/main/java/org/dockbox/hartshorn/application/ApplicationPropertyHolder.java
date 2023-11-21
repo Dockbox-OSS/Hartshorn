@@ -27,7 +27,10 @@ import org.dockbox.hartshorn.util.option.Option;
  * @since 0.4.7
  *
  * @author Guus Lieben
+ *
+ * @deprecated in favor of the Profiles API. See {@link org.dockbox.hartshorn.profiles.ProfileHolder}.
  */
+@Deprecated(forRemoval = true, since = "0.5.0")
 public interface ApplicationPropertyHolder {
 
     /**

@@ -17,7 +17,12 @@
     <dependencies>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-util</artifactId>
+            <artifactId>hartshorn-introspect</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dockbox.hartshorn</groupId>
+            <artifactId>hartshorn-introspect-reflection</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

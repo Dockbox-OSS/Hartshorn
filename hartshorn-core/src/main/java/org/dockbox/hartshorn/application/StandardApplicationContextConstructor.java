@@ -92,7 +92,10 @@ public final class StandardApplicationContextConstructor implements ApplicationC
     private void registerHooks(ApplicationContext applicationContext) {
         this.buildContext.logger().debug("Registering shutdown hook for application context");
         ApplicationContextShutdownHook shutdownHook = new ApplicationContextShutdownHook(this.buildContext.logger(), applicationContext);
-        Runtime.getRuntime().addShutdownHook(new Thread(shutdownHook, "ShutdownHook"));
+        Thread shutdownHookThread = Thread.ofVirtual()
+                .name("hartshorn-shutdown-hook")
+                .unstarted(shutdownHook);
+        Runtime.getRuntime().addShutdownHook(shutdownHookThread);
     }
 
     private void configure(ApplicationContext applicationContext, SingleElementContext<ApplicationBootstrapContext> initializerContext) {

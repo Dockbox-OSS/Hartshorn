@@ -1,5 +1,35 @@
 package org.dockbox.hartshorn.profiles;
 
-public record SimpleApplicationProfile(String name, ProfilePropertyRegistry registry) implements ApplicationProfile {
+import org.dockbox.hartshorn.util.option.Option;
 
+public final class SimpleApplicationProfile implements ApplicationProfile {
+
+    private final String name;
+    private final ProfilePropertyRegistry registry;
+    private final ApplicationProfile parent;
+
+    public SimpleApplicationProfile(
+            String name,
+            ProfilePropertyRegistry registry,
+            ApplicationProfile parent
+    ) {
+        this.name = name;
+        this.registry = registry;
+        this.parent = parent;
+    }
+
+    @Override
+    public String name() {
+        return name;
+    }
+
+    @Override
+    public ProfilePropertyRegistry registry() {
+        return registry;
+    }
+
+    @Override
+    public Option<ApplicationProfile> parent() {
+        return Option.of(parent);
+    }
 }

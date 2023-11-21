@@ -25,6 +25,8 @@ import org.slf4j.Logger;
  *
  * @since 0.5.0
  *
+ * @see ApplicationContext#close()
+ *
  * @author Guus Lieben
  */
 public class ApplicationContextShutdownHook implements Runnable {

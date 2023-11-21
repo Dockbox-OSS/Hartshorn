@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.application.ActivatorHolder;
 import org.dockbox.hartshorn.application.ApplicationBuilder;
-import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.DirectScopeKey;
@@ -49,7 +48,6 @@ import org.dockbox.hartshorn.util.ApplicationException;
  */
 public interface ApplicationContext extends
         HierarchicalComponentProvider,
-        ApplicationPropertyHolder,
         ApplicationAwareContext,
         ExceptionHandler,
         ActivatorHolder,

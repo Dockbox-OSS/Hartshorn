@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironm
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.inject.binding.Binder;
+import org.dockbox.hartshorn.profiles.ProfileHolder;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
@@ -63,6 +64,7 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
         binder.bind(ExceptionHandler.class).singleton(environment.applicationContext());
         binder.bind(ApplicationContext.class).singleton(environment.applicationContext());
         binder.bind(ApplicationPropertyHolder.class).singleton(environment.applicationContext());
+        binder.bind(ProfileHolder.class).singleton(environment.applicationContext());
 
         if (environment.applicationContext() instanceof DelegatingApplicationContext delegatingApplicationContext) {
             binder.bind(ComponentLocator.class)

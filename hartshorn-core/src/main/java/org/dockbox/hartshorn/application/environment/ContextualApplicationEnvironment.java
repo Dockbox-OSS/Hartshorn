@@ -30,6 +30,8 @@ import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.LoggingExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.DelegatingApplicationContext;
+import org.dockbox.hartshorn.application.context.DelegatingApplicationContext.Configurer;
 import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
 import org.dockbox.hartshorn.application.environment.banner.Banner;
 import org.dockbox.hartshorn.application.environment.banner.HartshornBanner;
@@ -45,12 +47,15 @@ import org.dockbox.hartshorn.discovery.DiscoveryService;
 import org.dockbox.hartshorn.discovery.ServiceDiscoveryException;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
+import org.dockbox.hartshorn.profiles.loader.ApplicationProfileLoader;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.Initializer;
+import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.SingleElementContext;
+import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
@@ -351,6 +356,8 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     }
 
     public static class Configurer {
+
+        private final LazyStreamableConfigurer<ApplicationContext, ApplicationProfileLoader> profileLoaders = LazyStreamableConfigurer.empty();
 
         private ContextualInitializer<Properties, Boolean> enableBanner = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.banner.enabled", "true")));
         private ContextualInitializer<Properties, Boolean> enableBatchMode = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.batch.enabled", "false")));
@@ -713,6 +720,19 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
         public Configurer componentKeyResolver(ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver) {
             this.componentKeyResolver = componentKeyResolver;
+            return this;
+        }
+
+        public Configurer profileLoader(ApplicationProfileLoader profileLoader) {
+            return this.profileLoaders(loaders -> loaders.add(profileLoader));
+        }
+
+        public Configurer profileLoaders(Collection<? extends ApplicationProfileLoader> profileLoaders) {
+            return this.profileLoaders(loaders -> loaders.addAll(profileLoaders));
+        }
+
+        public Configurer profileLoaders(Customizer<StreamableConfigurer<ApplicationContext, ApplicationProfileLoader>> customizer) {
+            this.profileLoaders.customizer(customizer);
             return this;
         }
     }

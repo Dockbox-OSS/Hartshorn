@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
+import org.dockbox.hartshorn.profiles.ProfileHolder;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -41,7 +42,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public interface ApplicationEnvironment extends ContextCarrier, ExceptionHandler {
+public interface ApplicationEnvironment extends ContextCarrier, ExceptionHandler, ProfileHolder {
 
     /**
      * Gets the {@link ProxyOrchestrator} for the current environment. The orchestrator is responsible for all proxy
