@@ -17,6 +17,8 @@
 package org.dockbox.hartshorn.component;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -42,11 +44,12 @@ import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.ConcurrentHashSingletonCache;
 import org.dockbox.hartshorn.inject.binding.ContextWrappedHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchyBindingFunction;
-import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.SingletonCache;
 import org.dockbox.hartshorn.inject.binding.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.binding.collection.ContainerAwareComponentCollection;
+import org.dockbox.hartshorn.inject.binding.collection.ImmutableCompositeBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.collection.SimpleComponentCollection;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
@@ -356,17 +359,19 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
     private <T> BindingHierarchy<?> getOrComputeHierarchy(ComponentKey<T> key, boolean useParentIfAbsent) {
         return this.hierarchies.computeIfAbsent(key.view(), componentKey -> {
-            // If we don't have an explicit hierarchy on the key, we can try to use the hierarchy of
-            // the application context. This is useful for components that are not explicitly scoped,
-            // but are still accessed through a scope.
-            if (useParentIfAbsent && this.owner.applicationProvider() != this) {
-                return this.owner.applicationProvider().hierarchy(key);
-            }
-
             BindingHierarchy<?> hierarchy = key.strict()
                 ? this.createHierarchy(key)
-                : this.looseLookupHierarchy(key, useParentIfAbsent);
-            return Objects.requireNonNullElseGet(hierarchy, () -> new NativeBindingHierarchy<>(key, this.applicationContext()));
+                : this.looseLookupHierarchy(key);
+
+            return Objects.requireNonNullElseGet(hierarchy, () -> {
+                // If we don't have an explicit hierarchy on the key, we can try to use the hierarchy of
+                // the application context. This is useful for components that are not explicitly scoped,
+                // but are still accessed through a scope.
+                if (useParentIfAbsent && this.owner.applicationProvider() != this) {
+                    return this.owner.applicationProvider().hierarchy(key);
+                }
+                return new NativePrunableBindingHierarchy<>(key, this.applicationContext());
+            });
         });
     }
 
@@ -384,15 +389,16 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     }
 
     @Nullable
-    private <T> BindingHierarchy<?> looseLookupHierarchy(ComponentKey<T> key, boolean useParentIfAbsent) {
+    private <T> BindingHierarchy<?> looseLookupHierarchy(ComponentKey<T> key) {
+        Set<ComponentKeyView<?>> hierarchyKeys = this.hierarchies.keySet();
+        Set<ComponentKeyView<?>> compatibleKeys = hierarchyKeys.stream()
+            .filter(hierarchyKey -> this.isCompatible(key, hierarchyKey))
+            .collect(Collectors.toSet());
+
         if (ComponentCollection.class.isAssignableFrom(key.type())) {
-            return this.composeCollectionHierarchy(key, useParentIfAbsent);
+            return this.composeCollectionHierarchy(TypeUtils.adjustWildcards(key, ComponentKey.class), compatibleKeys);
         }
         else {
-            Set<ComponentKeyView<?>> hierarchyKeys = this.hierarchies.keySet();
-            Set<ComponentKeyView<?>> compatibleKeys = hierarchyKeys.stream()
-                .filter(hierarchyKey -> this.isCompatible(key, hierarchyKey))
-                .collect(Collectors.toSet());
             if (compatibleKeys.size() == 1) {
                 ComponentKeyView<?> compatibleKey = CollectionUtilities.first(compatibleKeys);
                 return this.hierarchies.get(compatibleKey);
@@ -431,16 +437,42 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     private boolean isCompatible(ComponentKey<?> key, ComponentKeyView<?> other) {
         ParameterizableType originType = key.parameterizedType();
         ParameterizableType targetType = other.type();
+        return this.isCompatible(originType, targetType);
+    }
+
+    private boolean isCompatible(ParameterizableType originType, ParameterizableType targetType) {
         if (!originType.type().isAssignableFrom(targetType.type())) {
             return false;
         }
-        // TODO: Compare type parameters
+        List<ParameterizableType> originalParameters = originType.parameters();
+        List<ParameterizableType> targetParameters = targetType.parameters();
+        if (originalParameters.size() != targetParameters.size()) {
+            return false;
+        }
+        for (int i = 0; i < originalParameters.size(); i++) {
+            ParameterizableType originalParameter = originalParameters.get(i);
+            ParameterizableType targetParameter = targetParameters.get(i);
+            if (!this.isCompatible(originalParameter, targetParameter)) {
+                return false;
+            }
+        }
         return true;
     }
 
-    @Nullable
-    private <T> BindingHierarchy<?> composeCollectionHierarchy(ComponentKey<T> key, boolean includeParent) {
-        // TODO: Implement me!
-        return null;
+    private <T> BindingHierarchy<?> composeCollectionHierarchy(ComponentKey<ComponentCollection<T>> key, Set<ComponentKeyView<?>> compatibleKeys) {
+        Set<CollectionBindingHierarchy<?>> hierarchies = new HashSet<>();
+        for (ComponentKeyView<?> compatibleKey : compatibleKeys) {
+            BindingHierarchy<?> hierarchy = this.hierarchies.get(compatibleKey);
+            if (hierarchy instanceof CollectionBindingHierarchy<?> collectionBindingHierarchy) {
+                hierarchies.add(collectionBindingHierarchy);
+            }
+            else {
+                throw new IllegalStateException("Found incompatible hierarchy for key " + compatibleKey +". Expected CollectionBindingHierarchy, but found " + hierarchy.getClass().getSimpleName());
+            }
+        }
+        return new ImmutableCompositeBindingHierarchy<>(
+            key, this.applicationContext(),
+            TypeUtils.adjustWildcards(hierarchies, Collection.class)
+        );
     }
 }

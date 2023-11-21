@@ -31,69 +31,69 @@ public class AbstractDelegatingCollection<E> implements Collection<E> {
 
     @Override
     public int size() {
-        return delegate.size();
+        return this.delegate.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return delegate.isEmpty();
+        return this.delegate.isEmpty();
     }
 
     @Override
     public boolean contains(Object o) {
-        return delegate.contains(o);
+        return this.delegate.contains(o);
     }
 
     @NotNull
     @Override
     public Iterator<E> iterator() {
-        return delegate.iterator();
+        return this.delegate.iterator();
     }
 
     @NotNull
     @Override
     public Object[] toArray() {
-        return delegate.toArray();
+        return this.delegate.toArray();
     }
 
     @NotNull
     @Override
     public <T> T[] toArray(@NotNull T[] a) {
-        return delegate.toArray(a);
+        return this.delegate.toArray(a);
     }
 
     @Override
     public boolean add(E e) {
-        return delegate.add(e);
+        return this.delegate.add(e);
     }
 
     @Override
     public boolean remove(Object o) {
-        return delegate.remove(o);
+        return this.delegate.remove(o);
     }
 
     @Override
     public boolean containsAll(@NotNull Collection<?> c) {
-        return delegate.containsAll(c);
+        return this.delegate.containsAll(c);
     }
 
     @Override
     public boolean addAll(@NotNull Collection<? extends E> c) {
-        return delegate.addAll(c);
+        return this.delegate.addAll(c);
     }
 
     @Override
     public boolean removeAll(@NotNull Collection<?> c) {
-        return delegate.removeAll(c);
+        return this.delegate.removeAll(c);
     }
 
     @Override
     public boolean retainAll(@NotNull Collection<?> c) {
-        return delegate.retainAll(c);
+        return this.delegate.retainAll(c);
     }
 
     @Override
     public void clear() {
-        delegate.clear();
+        this.delegate.clear();
     }
 }

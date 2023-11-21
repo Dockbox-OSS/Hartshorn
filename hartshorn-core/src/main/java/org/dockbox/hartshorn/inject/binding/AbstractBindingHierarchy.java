@@ -25,6 +25,8 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.TypeAwareProvider;
 import org.dockbox.hartshorn.util.option.Option;
@@ -34,8 +36,26 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
 
     private final NavigableMap<Integer, Provider<T>> providers = new TreeMap<>(Collections.reverseOrder());
 
+    private final ComponentKey<T> key;
+    private final ApplicationContext applicationContext;
+
+    public AbstractBindingHierarchy(ComponentKey<T> key, ApplicationContext applicationContext) {
+        this.key = key;
+        this.applicationContext = applicationContext;
+    }
+
     protected NavigableMap<Integer, Provider<T>> priorityProviders() {
         return this.providers;
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
+
+    @Override
+    public ComponentKey<T> key() {
+        return this.key;
     }
 
     @Override
@@ -71,7 +91,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
 
     @Override
     public BindingHierarchy<T> merge(final BindingHierarchy<T> hierarchy) {
-        BindingHierarchy<T> merged = new NativeBindingHierarchy<>(this.key(), this.applicationContext());
+        BindingHierarchy<T> merged = new NativePrunableBindingHierarchy<>(this.key(), this.applicationContext());
         // Low priority, other
         for (final Entry<Integer, Provider<T>> entry : hierarchy) {
             merged.add(entry.getKey(), entry.getValue());

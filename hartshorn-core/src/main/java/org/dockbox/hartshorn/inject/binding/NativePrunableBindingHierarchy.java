@@ -16,9 +16,11 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import java.util.Map;
 import java.util.TreeMap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.Provider;
 
 /**
  * The default implementation of the {@link BindingHierarchy} interface. This uses a specified {@link ComponentKey}
@@ -29,23 +31,36 @@ import org.dockbox.hartshorn.component.ComponentKey;
  * @since 0.4.3
  * @see BindingHierarchy
  */
-public class NativeBindingHierarchy<C> extends AbstractPrunableBindingHierarchy<C> {
+public class NativePrunableBindingHierarchy<C> extends AbstractBindingHierarchy<C> implements PrunableBindingHierarchy<C> {
 
-    private final ComponentKey<C> key;
-    private final ApplicationContext applicationContext;
-
-    public NativeBindingHierarchy(ComponentKey<C> key, ApplicationContext applicationContext) {
-        this.key = key;
-        this.applicationContext = applicationContext;
+    public NativePrunableBindingHierarchy(ComponentKey<C> key, ApplicationContext applicationContext) {
+        super(key, applicationContext);
     }
 
     @Override
-    public ComponentKey<C> key() {
-        return this.key;
+    public boolean prune(int priority) {
+        return this.priorityProviders().remove(priority) != null;
     }
 
     @Override
-    public ApplicationContext applicationContext() {
-        return this.applicationContext;
+    public int pruneAbove(int priority) {
+        int count = 0;
+        for (Map.Entry<Integer, Provider<C>> entry : this.priorityProviders().entrySet()) {
+            if (entry.getKey() > priority && this.prune(entry.getKey())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    @Override
+    public int pruneBelow(int priority) {
+        int count = 0;
+        for (Map.Entry<Integer, Provider<C>> entry : this.priorityProviders().entrySet()) {
+            if (entry.getKey() < priority && this.prune(entry.getKey())) {
+                count++;
+            }
+        }
+        return count;
     }
 }

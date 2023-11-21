@@ -16,8 +16,11 @@
 
 package org.dockbox.hartshorn.inject.binding.collection;
 
+import java.util.Iterator;
 import java.util.List;
 
+import java.util.Map;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.Provider;
@@ -26,22 +29,8 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
 public class CollectionBindingHierarchy<T> extends AbstractBindingHierarchy<ComponentCollection<T>> {
 
-    private final ComponentKey<ComponentCollection<T>> componentKey;
-    private final ApplicationContext applicationContext;
-
     public CollectionBindingHierarchy(ComponentKey<ComponentCollection<T>> componentKey, ApplicationContext applicationContext) {
-        this.componentKey = componentKey;
-        this.applicationContext = applicationContext;
-    }
-
-    @Override
-    public ComponentKey<ComponentCollection<T>> key() {
-        return this.componentKey;
-    }
-
-    @Override
-    public ApplicationContext applicationContext() {
-        return this.applicationContext;
+        super(componentKey, applicationContext);
     }
 
     public CollectionProvider<T> getOrCreateProvider(int priority) {
@@ -68,5 +57,11 @@ public class CollectionBindingHierarchy<T> extends AbstractBindingHierarchy<Comp
         else {
             throw new IllegalStateException("Component key is not typed correctly");
         }
+    }
+
+    @NonNull
+    @Override
+    public Iterator<Map.Entry<Integer, Provider<ComponentCollection<T>>>> iterator() {
+        return super.iterator();
     }
 }
