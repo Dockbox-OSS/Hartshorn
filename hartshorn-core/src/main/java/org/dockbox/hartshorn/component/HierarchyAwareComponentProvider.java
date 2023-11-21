@@ -121,12 +121,9 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     public <T> Option<ObjectContainer<T>> provide(ComponentKey<T> key) throws ApplicationException {
         Option<BindingHierarchy<T>> hierarchy = Option.of(this.hierarchy(key, true));
         if (hierarchy.present()) {
-            // Will continue going through each provider until a provider was successful or no other providers remain
-            for (Provider<T> provider : hierarchy.get().providers()) {
-                Option<ObjectContainer<T>> provided = provider.provide(this.applicationContext());
-                if (provided.present()) {
-                    return provided;
-                }
+            Provider<T> provider = key.strategy().selectProvider(hierarchy.get());
+            if (provider != null) {
+                return provider.provide(this.applicationContext());
             }
         }
         return Option.empty();

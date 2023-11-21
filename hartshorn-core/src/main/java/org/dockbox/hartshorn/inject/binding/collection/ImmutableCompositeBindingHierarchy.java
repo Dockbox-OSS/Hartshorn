@@ -22,7 +22,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -94,6 +96,13 @@ public class ImmutableCompositeBindingHierarchy<T> implements BindingHierarchy<C
             .mapToInt(BindingHierarchy::highestPriority)
             .max()
             .orElse(-1);
+    }
+
+    @Override
+    public SortedSet<Integer> priorities() {
+        return this.hierarchies.stream()
+            .flatMap(hierarchy -> hierarchy.priorities().stream())
+            .collect(Collectors.toCollection(TreeSet::new));
     }
 
     @Override

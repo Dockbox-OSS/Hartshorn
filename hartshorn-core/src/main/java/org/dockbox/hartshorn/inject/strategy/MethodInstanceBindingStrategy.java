@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
 import org.dockbox.hartshorn.component.DirectScopeKey;
 import org.dockbox.hartshorn.component.InstallTo;
 import org.dockbox.hartshorn.component.Scope;
@@ -28,8 +29,10 @@ import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.ComponentKeyCustomizerContext;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.DependencyMap;
+import org.dockbox.hartshorn.inject.MaximumPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.StringUtilities;
@@ -68,18 +71,30 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         ScopeKey scope = this.resolveComponentScope(bindsMethod);
         int priority = bindingDecorator.priority();
 
-        ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
-        CheckedSupplier<T> supplier = () -> contextAdapter.load(bindsMethod)
-                .mapError(error -> new ComponentInitializationException("Failed to obtain instance for " + bindsMethod.qualifiedName(), error))
-                .rethrow()
-                .orNull();
-
         boolean lazy = bindingDecorator.lazy();
         boolean singleton = this.isSingleton(applicationContext, bindsMethod, componentKey);
         boolean processAfterInitialization = bindingDecorator.processAfterInitialization();
         BindingType bindingType = bindingDecorator.type();
 
         DependencyMap dependenciesMap = DependencyMap.create().immediate(dependencies);
+
+        ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
+        boolean hasSelfDependency = dependenciesMap.containsValue(componentKey);
+        if (hasSelfDependency) {
+            contextAdapter.add(new ComponentKeyCustomizerContext(key -> {
+                // TODO: Provide access to parameter to allow checking for @Priority, use ExactPriorityProviderSelectionStrategy
+                //  if present.
+                ComponentKeyView<?> view = key.view();
+                if(view.matches(componentKey)) {
+                    key.strategy(new MaximumPriorityProviderSelectionStrategy(priority));
+                }
+            }));
+        }
+        CheckedSupplier<T> supplier = () -> contextAdapter.load(bindsMethod)
+                .mapError(error -> new ComponentInitializationException("Failed to obtain instance for " + bindsMethod.qualifiedName(), error))
+                .rethrow()
+                .orNull();
+
         return new AutoConfiguringDependencyContext<>(componentKey, dependenciesMap, scope, priority, bindingType, bindsMethod, supplier)
                 .lazy(lazy)
                 .singleton(singleton)

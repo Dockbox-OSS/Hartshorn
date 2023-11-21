@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.introspect;
 
 import org.dockbox.hartshorn.component.Scope;
-import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
 
-public interface ViewContextAdapter extends ContextCarrier {
+public interface ViewContextAdapter extends ApplicationAwareContext {
 
     ViewContextAdapter scope(Scope scope);
 

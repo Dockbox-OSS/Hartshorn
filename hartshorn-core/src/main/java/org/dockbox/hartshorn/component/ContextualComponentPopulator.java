@@ -150,6 +150,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
 
         Object fieldInstance;
         try {
+            //Failing because DependencyGraph doesn't recognize ArgumentConverterRegistry as root due to self-dependency in binding method.
             fieldInstance = this.applicationContext().get(componentKey);
         }
         catch (ComponentResolutionException e) {

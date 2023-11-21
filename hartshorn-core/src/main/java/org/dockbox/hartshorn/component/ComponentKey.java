@@ -19,6 +19,8 @@ package org.dockbox.hartshorn.component;
 import java.util.Objects;
 
 import org.dockbox.hartshorn.inject.Enable;
+import org.dockbox.hartshorn.inject.HighestPriorityProviderSelectionStrategy;
+import org.dockbox.hartshorn.inject.ProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -49,13 +51,22 @@ import jakarta.inject.Named;
  */
 public final class ComponentKey<T> {
 
+    private final ProviderSelectionStrategy strategy;
     private final ParameterizableType type;
     private final String name;
     private final Scope scope;
     private final boolean enable;
     private final boolean strict;
 
-    private ComponentKey(ParameterizableType type, String name, Scope scope, boolean enable, boolean strict) {
+    private ComponentKey(
+            ProviderSelectionStrategy strategy,
+            ParameterizableType type,
+            String name,
+            Scope scope,
+            boolean enable,
+            boolean strict
+    ) {
+        this.strategy = strategy;
         this.type = type;
         this.name = name;
         this.scope = scope;
@@ -317,6 +328,10 @@ public final class ComponentKey<T> {
         return this.strict;
     }
 
+    public ProviderSelectionStrategy strategy() {
+        return this.strategy;
+    }
+
     /**
      * A builder for {@link ComponentKey}s. The builder can be used to create a new key based on an existing key,
      * or to create a new key from scratch.
@@ -333,6 +348,7 @@ public final class ComponentKey<T> {
     public static final class Builder<T> {
 
         private final ParameterizableType type;
+        private ProviderSelectionStrategy strategy = HighestPriorityProviderSelectionStrategy.INSTANCE;
         private String name;
         private Scope scope = Scope.DEFAULT_SCOPE;
         private boolean enable = true;
@@ -366,6 +382,11 @@ public final class ComponentKey<T> {
                     .name(this.name)
                     .scope(this.scope)
                     .enable(this.enable);
+        }
+
+        public Builder<T> strategy(ProviderSelectionStrategy strategy) {
+            this.strategy = strategy;
+            return this;
         }
 
         public Builder<T> name(String name) {
@@ -407,7 +428,11 @@ public final class ComponentKey<T> {
         }
 
         public ComponentKey<T> build() {
-            return new ComponentKey<>(this.type, this.name, this.scope, this.enable, this.strict);
+            return new ComponentKey<>(this.strategy, this.type, this.name, this.scope, this.enable, this.strict);
+        }
+
+        public ComponentKeyView<T> view() {
+            return new ComponentKeyView<>(this.type, this.name);
         }
     }
 
@@ -415,6 +440,11 @@ public final class ComponentKey<T> {
 
         private final ParameterizableType type;
         private final String name;
+
+        public ComponentKeyView(ParameterizableType type, String name) {
+            this.type = type;
+            this.name = name;
+        }
 
         private ComponentKeyView(ComponentKey<T> key) {
             this.type = key.type;
@@ -444,6 +474,10 @@ public final class ComponentKey<T> {
         @Override
         public int hashCode() {
             return Objects.hash(this.type, this.name);
+        }
+
+        public boolean matches(ComponentKey<?> componentKey) {
+            return this.type.equals(componentKey.type) && Objects.equals(this.name, componentKey.name);
         }
     }
 
