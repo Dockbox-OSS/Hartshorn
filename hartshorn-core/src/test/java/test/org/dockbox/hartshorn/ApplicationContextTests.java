@@ -127,7 +127,7 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(this.applicationContext);
     }
 
-    // TODO: Restore, types were moved to test fixtures, so need new test components
+    // TODO #1003: Restore, types were moved to test fixtures, so need new test components
 //    @Test
 //    @HartshornTest(includeBasePackages = false, processors = DemoProxyDelegationPostProcessor.class)
 //    @TestComponents({AbstractProxy.class, ProxyProviders.class})

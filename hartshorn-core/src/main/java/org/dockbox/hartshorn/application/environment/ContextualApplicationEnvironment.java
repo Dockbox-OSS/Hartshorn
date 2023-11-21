@@ -282,7 +282,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     }
 
     private void checkForDebugging() {
-        // TODO: Better property? This does not align with current property definition standard
+        // TODO #1002: Better property? This does not align with current property definition standard
         boolean debug = Boolean.TRUE.equals(Option.of(this.arguments.get("hartshorn:debug"))
                 .cast(String.class)
                 .map(Boolean::valueOf)

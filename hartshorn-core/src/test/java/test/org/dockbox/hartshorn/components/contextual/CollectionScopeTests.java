@@ -145,7 +145,7 @@ public class CollectionScopeTests {
         for(String name : names) {
             componentKey = componentKey.mutable().name(name).build();
             collection = this.applicationContext.get(componentKey);
-            Assertions.assertEquals(1, collection.size());//TODO: Failing?
+            Assertions.assertEquals(1, collection.size());
             Assertions.assertEquals(name, CollectionUtilities.first(collection).name());
         }
     }
