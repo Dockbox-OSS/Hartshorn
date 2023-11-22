@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
@@ -34,7 +35,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-public class ReflectionTypeParameterView implements TypeParameterView {
+public class ReflectionTypeParameterView extends DefaultContext implements TypeParameterView {
 
     private final Type type;
     private final TypeView<?> consumedBy;

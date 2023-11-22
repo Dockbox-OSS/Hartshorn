@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.component;
 
 import java.util.Objects;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.inject.HighestPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.ProviderSelectionStrategy;
@@ -394,7 +395,7 @@ public final class ComponentKey<T> {
             return this;
         }
 
-        public Builder<T> name(Named named) {
+        public Builder<T> name(@Nullable Named named) {
             if(named != null) {
                 return this.name(named.value());
             }

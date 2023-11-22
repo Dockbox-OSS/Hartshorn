@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.IntrospectorAwareView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 
-public class ReflectionPackageView implements PackageView, IntrospectorAwareView {
+public class ReflectionPackageView extends DefaultContext implements PackageView, IntrospectorAwareView {
 
     private final Introspector introspector;
     private final Package pkg;

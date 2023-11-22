@@ -16,19 +16,19 @@
 
 package org.dockbox.hartshorn.introspect;
 
+import jakarta.inject.Named;
 import java.util.List;
-
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentKey.Builder;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.inject.ComponentKeyCustomizerContext;
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-
-import jakarta.inject.Named;
 
 public class ExecutableElementContextParameterLoader extends RuleBasedParameterLoader<ApplicationBoundParameterLoaderContext> {
 
@@ -40,11 +40,14 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
     @Override
     protected <T> T loadDefault(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
         Named named = parameter.annotations().get(Named.class).orNull();
-        ComponentKey<T> key = ComponentKey.builder(parameter.genericType()).name(named).build();
-        boolean enable = requiresEnabling(parameter);
+        ComponentKey<T> key = ComponentKey.builder(parameter.genericType())
+            .name(named)
+            .build();
 
+        boolean enable = requiresEnabling(parameter);
         Builder<T> keyBuilder = key.mutable().enable(enable);
-        configureKeyBuilder(context, keyBuilder);
+
+        this.configureKeyBuilder(parameter, context, keyBuilder);
 
         ComponentKey<T> componentKey = keyBuilder.build();
         T out = context.provider().get(componentKey);
@@ -58,20 +61,20 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
         return out;
     }
 
-    private static <T> void configureKeyBuilder(ApplicationBoundParameterLoaderContext context, Builder<T> keyBuilder) {
+    private <T> void configureKeyBuilder(ParameterView<T> parameter, Context context, Builder<T> keyBuilder) {
         List<ComponentKeyCustomizerContext> customizerContexts = context.all(ComponentKeyCustomizerContext.class);
         for(ComponentKeyCustomizerContext customizerContext : customizerContexts) {
-            customizerContext.customizer().configure(keyBuilder);
+            customizerContext.customizer().configure(parameter, keyBuilder);
         }
     }
 
-    private static <T> boolean requiresEnabling(ParameterView<T> parameter) {
+    private static <T> boolean requiresEnabling(AnnotatedElementView parameter) {
         return Boolean.TRUE.equals(parameter.annotations().get(Enable.class)
                 .map(Enable::value)
                 .orElse(true));
     }
 
-    private static <T> boolean isRequired(ParameterView<T> parameter) {
+    private static <T> boolean isRequired(AnnotatedElementView parameter) {
         return Boolean.TRUE.equals(parameter.annotations().get(Required.class)
                 .map(Required::value)
                 .orElse(false));

@@ -16,20 +16,19 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentKey.Builder;
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.ContextualCustomizer;
 
 public class ComponentKeyCustomizerContext extends DefaultContext {
 
-    private final Customizer<ComponentKey.Builder<?>> customizer;
+    private final ContextualCustomizer<Builder<?>> customizer;
 
-    public ComponentKeyCustomizerContext(Customizer<Builder<?>> customizer) {
+    public ComponentKeyCustomizerContext(ContextualCustomizer<Builder<?>> customizer) {
         this.customizer = customizer;
     }
 
-    public Customizer<Builder<?>> customizer() {
-        return customizer;
+    public ContextualCustomizer<Builder<?>> customizer() {
+        return this.customizer;
     }
 }

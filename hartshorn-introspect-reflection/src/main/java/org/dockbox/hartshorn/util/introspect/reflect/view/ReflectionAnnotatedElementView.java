@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementAnnotationsIntrospector;
@@ -25,7 +26,7 @@ import org.dockbox.hartshorn.util.introspect.view.IntrospectorAwareView;
 
 import java.lang.reflect.AnnotatedElement;
 
-public abstract class ReflectionAnnotatedElementView implements AnnotatedElementView, IntrospectorAwareView {
+public abstract class ReflectionAnnotatedElementView extends DefaultContext implements AnnotatedElementView, IntrospectorAwareView {
 
     private final ReflectionIntrospector introspector;
     private ElementAnnotationsIntrospector annotationsIntrospector;

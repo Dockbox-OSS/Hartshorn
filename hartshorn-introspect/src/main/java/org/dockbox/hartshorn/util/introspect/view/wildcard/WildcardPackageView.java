@@ -16,10 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 
-public class WildcardPackageView implements PackageView {
+public class WildcardPackageView extends DefaultContext implements PackageView {
+
     @Override
     public String name() {
         return "";
