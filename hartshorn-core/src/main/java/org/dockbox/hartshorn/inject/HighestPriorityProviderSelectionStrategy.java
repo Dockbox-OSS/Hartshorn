@@ -20,8 +20,22 @@ import java.util.List;
 
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 
+/**
+ * A strategy for selecting the provider with the highest priority from a {@link BindingHierarchy}.
+ * If the hierarchy is empty, {@code null} is returned.
+ *
+ * @see ProviderSelectionStrategy
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class HighestPriorityProviderSelectionStrategy implements ProviderSelectionStrategy {
 
+    /**
+     * A singleton instance of this strategy. This instance can be used to avoid unnecessary
+     * object creation.
+     */
     public static final ProviderSelectionStrategy INSTANCE = new HighestPriorityProviderSelectionStrategy();
 
     @Override

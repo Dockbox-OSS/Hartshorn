@@ -20,6 +20,18 @@ import java.util.SortedSet;
 
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 
+/**
+ * A {@link ProviderSelectionStrategy} which selects the provider with the highest priority, as long
+ * as that priority is lower than the provided maximum priority. If no provider is found, {@code null}
+ * is returned.
+ *
+ * @see ProviderSelectionStrategy
+ * @see BindingHierarchy#priorities()
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class MaximumPriorityProviderSelectionStrategy implements ProviderSelectionStrategy {
 
     private final long maximumPriorityExclusive;
