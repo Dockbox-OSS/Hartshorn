@@ -28,6 +28,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.component.processing.CompositeComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ModifiableComponentProcessingContext;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextKey;
@@ -67,6 +68,22 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A {@link ComponentProvider} which is aware of the {@link Scope} in which it is installed, and tracks bindings
+ * based on available {@link BindingHierarchy binding hierarchies}. This allows for the creation of a hierarchy of
+ * bindings, which can be used to resolve components at specific priorities.
+ *
+ * <p>As this provider is aware of the {@link Scope} in which it is installed, it is constrained to be part of a
+ * {@link ScopedProviderOwner}. This owner is responsible for providing the {@link Scope} in which this provider is
+ * installed.
+ *
+ * @see ScopedProviderOwner
+ * @see HierarchicalComponentProvider
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class HierarchyAwareComponentProvider extends DefaultProvisionContext implements HierarchicalComponentProvider, ContextCarrier {
 
     private final transient ScopedProviderOwner owner;
@@ -74,10 +91,12 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
     private final transient SingletonCache singletonCache = new ConcurrentHashSingletonCache();
     private final transient Map<ComponentKeyView<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
+    private final transient ComponentPostProcessor processor;
 
     public HierarchyAwareComponentProvider(ScopedProviderOwner owner, Scope scope) {
         this.owner = owner;
         this.scope = scope;
+        this.processor = new CompositeComponentPostProcessor(owner::postProcessors);
     }
 
     private <T> Option<ObjectContainer<T>> create(ComponentKey<T> key) {
@@ -173,14 +192,8 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     }
 
     protected <T> ModifiableComponentProcessingContext<T> process(ModifiableComponentProcessingContext<T> processingContext) {
-        ComponentKey<T> key = processingContext.key();
-
-        for (Integer priority : this.owner.postProcessors().keySet()) {
-            for (ComponentPostProcessor postProcessor : this.owner.postProcessors().get(priority)) {
-                postProcessor.process(processingContext);
-            }
-        }
-        this.storeSingletons(key, processingContext.instance());
+        this.processor.process(processingContext);
+        this.storeSingletons(processingContext.key(), processingContext.instance());
         return processingContext;
     }
 
