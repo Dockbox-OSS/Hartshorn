@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.component.populate.inject;
 
-public interface ComponentPopulator {
+@FunctionalInterface
+public interface RequireInjectionPointRule {
 
-    <T> T populate(T instance);
+    boolean isRequired(InjectionPoint injectionPoint);
+
 }

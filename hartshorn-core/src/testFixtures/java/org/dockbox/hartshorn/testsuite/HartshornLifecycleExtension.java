@@ -34,8 +34,8 @@ import org.dockbox.hartshorn.application.StandardApplicationContextConstructor.C
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
-import org.dockbox.hartshorn.component.ContextualComponentPopulator;
-import org.dockbox.hartshorn.component.processing.ComponentFinalizingPostProcessor;
+import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
@@ -45,6 +45,7 @@ import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.SimpleSingleElementContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -198,8 +199,9 @@ public class HartshornLifecycleExtension implements
     }
 
     protected void populateTestInstance(Object instance, ApplicationContext applicationContext) {
-        ContextualComponentPopulator componentPopulator = ComponentFinalizingPostProcessor.createComponentPopulator(applicationContext);
-        componentPopulator.populate(instance);
+        SimpleSingleElementContext<ApplicationContext> elementContext = SimpleSingleElementContext.create(applicationContext);
+        ComponentPopulator populator = StrategyComponentPopulator.create(Customizer.useDefaults()).initialize(elementContext);
+        populator.populate(instance);
     }
 
     private ApplicationBuilder<?> prepareFactory(Class<?> testClass, List<AnnotatedElement> testComponentSources) {

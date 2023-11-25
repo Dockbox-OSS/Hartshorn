@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.component.populate;
 
-public interface ComponentPopulator {
+import java.util.Set;
 
-    <T> T populate(T instance);
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+public interface ComponentInjectionPointsResolver {
+
+    Set<AnnotatedElementView> resolve(TypeView<?> type);
 }

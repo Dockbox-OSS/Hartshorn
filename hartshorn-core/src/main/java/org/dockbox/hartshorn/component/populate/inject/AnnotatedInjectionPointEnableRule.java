@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.component.populate.inject;
 
-public interface ComponentPopulator {
+import org.dockbox.hartshorn.inject.Enable;
+import org.dockbox.hartshorn.util.option.Option;
 
-    <T> T populate(T instance);
+public class AnnotatedInjectionPointEnableRule implements EnableInjectionPointRule {
+
+    @Override
+    public boolean shouldEnable(InjectionPoint injectionPoint) {
+        Option<Enable> enableAnnotation = injectionPoint.injectionPoint().annotations().get(Enable.class);
+        return enableAnnotation.absent() || enableAnnotation.get().value();
+    }
 }

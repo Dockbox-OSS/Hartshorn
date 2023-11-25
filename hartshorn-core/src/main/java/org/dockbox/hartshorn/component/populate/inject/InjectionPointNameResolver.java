@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.component.populate.inject;
 
-public interface ComponentPopulator {
+@FunctionalInterface
+public interface InjectionPointNameResolver {
 
-    <T> T populate(T instance);
+    String resolve(InjectionPoint injectionPoint);
 }

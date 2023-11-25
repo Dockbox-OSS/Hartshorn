@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.component.populate.inject;
 
-public interface ComponentPopulator {
+import org.dockbox.hartshorn.inject.Required;
+import org.dockbox.hartshorn.util.option.Option;
 
-    <T> T populate(T instance);
+public class AnnotatedInjectionPointRequireRule implements RequireInjectionPointRule {
+
+    @Override
+    public boolean isRequired(InjectionPoint injectionPoint) {
+        Option<Required> required = injectionPoint.injectionPoint().annotations().get(Required.class);
+        return required.present() && required.get().value();
+    }
 }

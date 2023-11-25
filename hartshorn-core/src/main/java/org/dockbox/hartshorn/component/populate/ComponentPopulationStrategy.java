@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.component.populate;
 
-public interface ComponentPopulator {
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
-    <T> T populate(T instance);
+public interface ComponentPopulationStrategy {
+
+    <T> void populate(PopulateComponentContext<T> context, AnnotatedElementView injectionPoint) throws ApplicationException;
 }

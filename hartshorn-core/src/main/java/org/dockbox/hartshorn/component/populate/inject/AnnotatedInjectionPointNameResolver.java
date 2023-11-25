@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.component.populate.inject;
 
-public interface ComponentPopulator {
+import jakarta.inject.Named;
 
-    <T> T populate(T instance);
+public class AnnotatedInjectionPointNameResolver implements InjectionPointNameResolver {
+
+    @Override
+    public String resolve(InjectionPoint injectionPoint) {
+        return injectionPoint.injectionPoint().annotations()
+                .get(Named.class)
+                .map(Named::value)
+                .orNull();
+    }
 }
