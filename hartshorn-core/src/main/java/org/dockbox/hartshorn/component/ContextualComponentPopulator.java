@@ -61,7 +61,10 @@ import jakarta.inject.Named;
  * @since 0.5.0
  *
  * @author Guus Lieben
+ *
+ * @deprecated Use {@link org.dockbox.hartshorn.component.populate.StrategyComponentPopulator} instead.
  */
+@Deprecated(forRemoval = true, since = "0.5.0")
 public class ContextualComponentPopulator implements ComponentPopulator, ContextCarrier {
 
     private final ApplicationContext applicationContext;
