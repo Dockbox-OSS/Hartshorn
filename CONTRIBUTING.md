@@ -2,7 +2,9 @@
 
 Thank you for considering contributing to Hartshorn. We welcome your bug reports, feature requests, enhancements, and code contributions.
 
-## Reporting Bugs
+## Issues
+
+### Reporting Bugs
 
 If you encounter a bug in Hartshorn, please follow these steps to report it:
 
@@ -11,7 +13,7 @@ If you encounter a bug in Hartshorn, please follow these steps to report it:
 3. Include steps to reproduce the bug, the expected behavior, and the actual behavior.
 4. If applicable, provide screenshots, error messages, and your environment details (OS, Java version, etc.).
 
-## Requesting New Features
+### Requesting New Features
 
 If you have a new feature in mind, please follow these steps:
 
@@ -19,7 +21,7 @@ If you have a new feature in mind, please follow these steps:
 2. [Create a new issue](https://github.com/Dockbox-OSS/Hartshorn/issues/new?assignees=&labels=type%3A+feature+request&projects=&template=feature_request.yml), describing the feature you'd like to see, including its use case and expected behavior.
 3. Provide any additional context or information that might help in understanding the request.
 
-## Requesting Enhancements to Existing Features
+### Requesting Enhancements to Existing Features
 
 If you have suggestions to enhance existing features, please follow these steps:
 
@@ -27,13 +29,30 @@ If you have suggestions to enhance existing features, please follow these steps:
 2. [Create a new issue](https://github.com/Dockbox-OSS/Hartshorn/issues/new?assignees=&labels=type%3A+enhancement&projects=&template=enhancement.yml), describing the current behavior, the proposed enhancements, and expected behavior.
 3. Include a use case and any additional context that can help us understand your request.
 
-## Pull Requests (PRs)
+## Git
+
+### Branches
+
+- We follow a version-based branching model for development and releases, and a feature-based branching model for specific functionality.
+- Feature branches should be named with the issue number and a brief description, like `feature/#123-sample-feature`.
+- Access to development and release branches is limited to project maintainers.
+- Bugfixes should use a `bugfix/` branch prefix.
+- Chores should use a `chore/` branch prefix.
+- New or enhanced functionality development should use a `feature/` branch prefix.
+
+### Commits
+
+- Always start commits with the related issue number, e.g., "#123".
+- Provide a clear and concise message summarizing the purpose of the commit.
+- Optionally, include a description for complex changes to enhance understanding.
+
+### Pull Requests (PRs)
 
 We welcome contributions in the form of pull requests. To submit a PR, always follow the [Pull Request Template](https://github.com/Dockbox-OSS/Hartshorn/blob/develop/.github/PULL_REQUEST_TEMPLATE.md).
 
-### General notes
+#### General notes
+
 - Try to limit pull requests to a few commits which resolve a specific issue
-- Make sure commit messages are descriptive of the changes made
 - All proposed changes must be reviewed and approved by at least one organization member
 - Describe the proposed changes with a relevant motivation and additional context
 - Link to the original issue(s) which your changes relate to
