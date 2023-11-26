@@ -16,10 +16,27 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentKey.Builder;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.ContextualCustomizer;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 
+/**
+ * A context used to store a {@link ContextualCustomizer} for a {@link ComponentKey.Builder}. This allows
+ * any context-driven customizations to be applied to the builder when the component is registered. This
+ * context is not specific to any implementation, but is typically used for {@link ParameterLoader}s or
+ * {@link ParameterLoaderRule}s.
+ *
+ * @see Builder
+ * @see ParameterLoader
+ * @see ParameterLoaderRule
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ComponentKeyCustomizerContext extends DefaultContext {
 
     private final ContextualCustomizer<Builder<?>> customizer;
@@ -28,6 +45,12 @@ public class ComponentKeyCustomizerContext extends DefaultContext {
         this.customizer = customizer;
     }
 
+    /**
+     * Returns the {@link ContextualCustomizer} stored in this context. This customizer can be applied to
+     * a {@link Builder} to customize the builder.
+     *
+     * @return The contextual customizer
+     */
     public ContextualCustomizer<Builder<?>> customizer() {
         return this.customizer;
     }
