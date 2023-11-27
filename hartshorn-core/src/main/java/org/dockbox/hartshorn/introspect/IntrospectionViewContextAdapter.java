@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.introspect;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
@@ -32,7 +33,7 @@ import org.dockbox.hartshorn.util.option.Attempt;
 
 import jakarta.inject.Inject;
 
-public class IntrospectionViewContextAdapter implements ViewContextAdapter {
+public class IntrospectionViewContextAdapter extends DefaultContext implements ViewContextAdapter {
 
     private final ApplicationContext applicationContext;
     private final Scope scope;
@@ -67,6 +68,7 @@ public class IntrospectionViewContextAdapter implements ViewContextAdapter {
     public Object[] loadParameters(ExecutableElementView<?> element) {
         ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
         ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.applicationContext(), this.scope);
+        this.copyTo(loaderContext);
         return parameterLoader.loadArguments(loaderContext).toArray();
     }
 

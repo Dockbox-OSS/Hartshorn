@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -113,6 +114,23 @@ public interface ContextualInitializer<I, T> {
         return (input) -> {
             T instance = ContextualInitializer.this.initialize(input);
             consumer.accept(instance);
+            return instance;
+        };
+    }
+
+    /**
+     * Returns an initializer that invokes this initializer, and then invokes the given consumer with the original
+     * input and the result. This is useful for listening to the result of an initializer, without needing to invoke
+     * the initializer directly.
+     *
+     * @param consumer The consumer to invoke with the original input and the result of this initializer.
+     * @return An initializer that invokes this initializer, and then invokes the given consumer with the original
+     *         input and the result.
+     */
+    default ContextualInitializer<I, T> subscribe(BiConsumer<I, T> consumer) {
+        return (input) -> {
+            T instance = ContextualInitializer.this.initialize(input);
+            consumer.accept(input.input(), instance);
             return instance;
         };
     }

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.AccessModifier;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
@@ -31,7 +32,7 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WildcardTypeView implements TypeView<Object> {
+public class WildcardTypeView extends DefaultContext implements TypeView<Object> {
 
     @Override
     public ElementAnnotationsIntrospector annotations() {

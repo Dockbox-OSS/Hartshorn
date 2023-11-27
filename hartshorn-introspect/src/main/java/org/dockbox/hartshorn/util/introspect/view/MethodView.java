@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * Represents a view of a {@link Method} instance. This view provides access various properties of
@@ -138,4 +138,8 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
     @Deprecated(forRemoval = true, since = "0.5.0")
     boolean isDefault();
 
+    @Override
+    default TypeView<?> resultType() {
+        return this.returnType();
+    }
 }

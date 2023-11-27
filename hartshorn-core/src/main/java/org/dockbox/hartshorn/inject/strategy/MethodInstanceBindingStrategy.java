@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.inject.strategy;
 
+import jakarta.inject.Singleton;
 import java.util.Set;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.DirectScopeKey;
@@ -26,18 +26,22 @@ import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.ComponentKeyCustomizerContext;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.DependencyMap;
+import org.dockbox.hartshorn.inject.ExactPriorityProviderSelectionStrategy;
+import org.dockbox.hartshorn.inject.MaximumPriorityProviderSelectionStrategy;
+import org.dockbox.hartshorn.inject.Priority;
 import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import jakarta.inject.Singleton;
 
 public class MethodInstanceBindingStrategy implements BindingStrategy {
 
@@ -68,32 +72,58 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         ScopeKey scope = this.resolveComponentScope(bindsMethod);
         int priority = bindingDecorator.priority();
 
-        ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
-        CheckedSupplier<T> supplier = () -> contextAdapter.load(bindsMethod)
-                .mapError(error -> new ComponentInitializationException("Failed to obtain instance for " + bindsMethod.qualifiedName(), error))
-                .rethrow()
-                .orNull();
-
         boolean lazy = bindingDecorator.lazy();
         boolean singleton = this.isSingleton(applicationContext, bindsMethod, componentKey);
         boolean processAfterInitialization = bindingDecorator.processAfterInitialization();
         BindingType bindingType = bindingDecorator.type();
 
         DependencyMap dependenciesMap = DependencyMap.create().immediate(dependencies);
+
+        ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
+        boolean hasSelfDependency = dependenciesMap.containsValue(componentKey);
+        if (hasSelfDependency) {
+            ComponentKeyCustomizerContext customizerContext = new ComponentKeyCustomizerContext(
+                (context, key) -> configureParameterPriority(context, key, componentKey, priority)
+            );
+            contextAdapter.add(customizerContext);
+        }
+        CheckedSupplier<T> supplier = () -> contextAdapter.load(bindsMethod)
+                .mapError(error -> new ComponentInitializationException("Failed to obtain instance for " + bindsMethod.qualifiedName(), error))
+                .rethrow()
+                .orNull();
+
         return new AutoConfiguringDependencyContext<>(componentKey, dependenciesMap, scope, priority, bindingType, bindsMethod, supplier)
                 .lazy(lazy)
                 .singleton(singleton)
                 .processAfterInitialization(processAfterInitialization);
     }
 
-    private boolean isSingleton(ApplicationContext applicationContext, MethodView<?, ?> methodView,
-                                ComponentKey<?> componentKey) {
-        return methodView.annotations().has(Singleton.class)
+    private static <T> void configureParameterPriority(Context context, ComponentKey.Builder<?> key, ComponentKey<T> componentKey, int priority) {
+        ComponentKey.ComponentKeyView<?> view = key.view();
+        boolean selfProvision = view.matches(componentKey);
+        if (selfProvision) {
+            key.strategy(new MaximumPriorityProviderSelectionStrategy(priority));
+        }
+
+        if (context instanceof AnnotatedElementView annotatedElementView) {
+            Option<Priority> priorityOption = annotatedElementView.annotations().get(Priority.class);
+            if (priorityOption.present()) {
+                int parameterPriority = priorityOption.get().value();
+                if (selfProvision && parameterPriority >= priority) {
+                    throw new ComponentInitializationException("Priority of parameter " + componentKey.type().getName() + " is the equal to- or higher than the priority of the method " + componentKey.type().getName());
+                }
+                key.strategy(new ExactPriorityProviderSelectionStrategy(parameterPriority));
+            }
+        }
+    }
+
+    private boolean isSingleton(ApplicationContext applicationContext, AnnotatedElementView view, ComponentKey<?> componentKey) {
+        return view.annotations().has(Singleton.class)
                 || applicationContext.environment().singleton(componentKey.type());
     }
 
-    private ScopeKey resolveComponentScope(MethodView<?, ?> bindsMethod) {
-        Option<InstallTo> installToCandidate = bindsMethod.annotations().get(InstallTo.class);
+    private ScopeKey resolveComponentScope(AnnotatedElementView view) {
+        Option<InstallTo> installToCandidate = view.annotations().get(InstallTo.class);
         return installToCandidate.present()
                 ? DirectScopeKey.of(installToCandidate.get().value())
                 : Scope.DEFAULT_SCOPE.installableScopeType();

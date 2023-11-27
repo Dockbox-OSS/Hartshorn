@@ -52,4 +52,6 @@ public interface ExecutableElementView<Parent> extends AnnotatedElementView, Mod
      * @return the element's declaring type
      */
     TypeView<Parent> declaredBy();
+
+    TypeView<?> resultType();
 }

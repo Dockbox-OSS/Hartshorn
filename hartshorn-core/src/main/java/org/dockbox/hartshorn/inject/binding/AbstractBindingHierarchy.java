@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
+import java.util.NavigableSet;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -112,6 +114,13 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     public int highestPriority() {
         NavigableMap<Integer, Provider<T>> providers = this.priorityProviders();
         return providers.isEmpty() ? -1 : providers.firstKey();
+    }
+
+    @Override
+    public SortedSet<Integer> priorities() {
+        NavigableSet<Integer> integers = this.priorityProviders().navigableKeySet();
+        // Reverse, as keys are in descending order, and this method should return ascending order
+        return integers.descendingSet();
     }
 
     @Override

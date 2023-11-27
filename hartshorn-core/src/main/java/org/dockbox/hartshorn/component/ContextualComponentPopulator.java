@@ -45,6 +45,23 @@ import org.dockbox.hartshorn.util.option.Option;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+/**
+ * A component populator that uses the {@link ApplicationContext} to populate components. By default, all
+ * fields and methods annotated with {@link Inject} are populated. This behaviour can be changed by annotating
+ * the type with {@link Populate}, and configuring the {@link Populate#value() population targets}.
+ *
+ * <p>If a field is a {@link Collection}, the collection is populated with all components of the collection's
+ * generic type. Collection lookups are performed for {@link ComponentCollection}s, and will be converted to
+ * the compatible collection type if required.
+ *
+ * @see Populate
+ * @see ComponentCollection
+ * @see Context
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ContextualComponentPopulator implements ComponentPopulator, ContextCarrier {
 
     private final ApplicationContext applicationContext;
@@ -81,14 +98,14 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         return instance;
     }
 
-    private static <T> boolean shouldPopulateFields(Populate populate) {
+    private static boolean shouldPopulateFields(Populate populate) {
         if (populate.fields()) {
             return true;
         }
         return Arrays.asList(populate.value()).contains(Type.FIELDS);
     }
 
-    private static <T> boolean shouldPopulateMethods(Populate populate) {
+    private static boolean shouldPopulateMethods(Populate populate) {
         if (populate.executables()) {
             return true;
         }
@@ -150,6 +167,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
 
         Object fieldInstance;
         try {
+            //Failing because DependencyGraph doesn't recognize ArgumentConverterRegistry as root due to self-dependency in binding method.
             fieldInstance = this.applicationContext().get(componentKey);
         }
         catch (ComponentResolutionException e) {
