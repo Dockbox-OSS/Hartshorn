@@ -20,7 +20,6 @@ import jakarta.inject.Singleton;
 import java.util.Set;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
 import org.dockbox.hartshorn.component.DirectScopeKey;
 import org.dockbox.hartshorn.component.InstallTo;
 import org.dockbox.hartshorn.component.Scope;
@@ -100,28 +99,31 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
     }
 
     private static <T> void configureParameterPriority(Context context, ComponentKey.Builder<?> key, ComponentKey<T> componentKey, int priority) {
+        ComponentKey.ComponentKeyView<?> view = key.view();
+        boolean selfProvision = view.matches(componentKey);
+        if (selfProvision) {
+            key.strategy(new MaximumPriorityProviderSelectionStrategy(priority));
+        }
+
         if (context instanceof AnnotatedElementView annotatedElementView) {
             Option<Priority> priorityOption = annotatedElementView.annotations().get(Priority.class);
             if (priorityOption.present()) {
-                key.strategy(new ExactPriorityProviderSelectionStrategy(priorityOption.get().value()));
-                return;
+                int parameterPriority = priorityOption.get().value();
+                if (selfProvision && parameterPriority >= priority) {
+                    throw new ComponentInitializationException("Priority of parameter " + componentKey.type().getName() + " is the equal to- or higher than the priority of the method " + componentKey.type().getName());
+                }
+                key.strategy(new ExactPriorityProviderSelectionStrategy(parameterPriority));
             }
-        }
-
-        ComponentKeyView<?> view = key.view();
-        if (view.matches(componentKey)) {
-            key.strategy(new MaximumPriorityProviderSelectionStrategy(priority));
         }
     }
 
-    private boolean isSingleton(ApplicationContext applicationContext, MethodView<?, ?> methodView,
-                                ComponentKey<?> componentKey) {
-        return methodView.annotations().has(Singleton.class)
+    private boolean isSingleton(ApplicationContext applicationContext, AnnotatedElementView view, ComponentKey<?> componentKey) {
+        return view.annotations().has(Singleton.class)
                 || applicationContext.environment().singleton(componentKey.type());
     }
 
-    private ScopeKey resolveComponentScope(MethodView<?, ?> bindsMethod) {
-        Option<InstallTo> installToCandidate = bindsMethod.annotations().get(InstallTo.class);
+    private ScopeKey resolveComponentScope(AnnotatedElementView view) {
+        Option<InstallTo> installToCandidate = view.annotations().get(InstallTo.class);
         return installToCandidate.present()
                 ? DirectScopeKey.of(installToCandidate.get().value())
                 : Scope.DEFAULT_SCOPE.installableScopeType();

@@ -68,13 +68,13 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
         }
     }
 
-    private static <T> boolean requiresEnabling(AnnotatedElementView parameter) {
+    private static boolean requiresEnabling(AnnotatedElementView parameter) {
         return Boolean.TRUE.equals(parameter.annotations().get(Enable.class)
                 .map(Enable::value)
                 .orElse(true));
     }
 
-    private static <T> boolean isRequired(AnnotatedElementView parameter) {
+    private static boolean isRequired(AnnotatedElementView parameter) {
         return Boolean.TRUE.equals(parameter.annotations().get(Required.class)
                 .map(Required::value)
                 .orElse(false));
