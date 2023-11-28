@@ -22,6 +22,18 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A simple Map based implementation of {@link ArgumentConverterRegistry}. This implementation is thread-safe.
+ * Argument converters are case-insensitively registered by their {@link ArgumentConverter#keys() keys}, which
+ * are expected to be unique.
+ *
+ * @see ArgumentConverter
+ * @see ArgumentConverterRegistry
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SimpleArgumentConverterRegistry implements ArgumentConverterRegistry {
 
     private final Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();

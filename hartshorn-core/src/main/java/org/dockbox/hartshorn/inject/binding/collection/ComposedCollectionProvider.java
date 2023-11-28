@@ -22,10 +22,22 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.CollectionObjectContainer;
 import org.dockbox.hartshorn.inject.NonTypeAwareProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
+import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A {@link Provider} that composes multiple {@link CollectionProvider} instances into a single {@link ComponentCollection}.
+ * This is useful when using non-strict lookups on a {@link ComponentCollection} that may contain multiple components for the
+ * same key.
+ *
+ * @param <T> the type of the elements in the collection
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ComposedCollectionProvider<T> implements NonTypeAwareProvider<ComponentCollection<T>> {
 
     private final Set<CollectionProvider<T>> providers;

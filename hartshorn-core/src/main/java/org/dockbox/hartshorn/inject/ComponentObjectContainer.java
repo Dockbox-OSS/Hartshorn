@@ -16,6 +16,16 @@
 
 package org.dockbox.hartshorn.inject;
 
+/**
+ * A specialized {@link ObjectContainer} for singular instances. This is a basic implementation,
+ * and only tracks the instance and whether the instance has already been processed.
+ *
+ * @param <T> the type of the object instance
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ComponentObjectContainer<T> extends ObjectContainer<T> {
 
     private boolean processed = false;

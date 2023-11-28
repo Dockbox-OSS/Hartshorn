@@ -16,17 +16,24 @@
 
 package org.dockbox.hartshorn.inject.binding.collection;
 
-import java.util.Iterator;
 import java.util.List;
-
-import java.util.Map;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.AbstractBindingHierarchy;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
+/**
+ * A specialized {@link AbstractBindingHierarchy} for {@link ComponentCollection} instances. The primary
+ * difference being that this hierarchy is constrained to only permit {@link CollectionProvider} instances
+ * which can delegate to zero or more other {@link Provider}s.
+ *
+ * @param <T> the type of the elements in the collection
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class CollectionBindingHierarchy<T> extends AbstractBindingHierarchy<ComponentCollection<T>> {
 
     public CollectionBindingHierarchy(ComponentKey<ComponentCollection<T>> componentKey, ApplicationContext applicationContext) {
@@ -57,11 +64,5 @@ public class CollectionBindingHierarchy<T> extends AbstractBindingHierarchy<Comp
         else {
             throw new IllegalStateException("Component key is not typed correctly");
         }
-    }
-
-    @NonNull
-    @Override
-    public Iterator<Map.Entry<Integer, Provider<ComponentCollection<T>>>> iterator() {
-        return super.iterator();
     }
 }

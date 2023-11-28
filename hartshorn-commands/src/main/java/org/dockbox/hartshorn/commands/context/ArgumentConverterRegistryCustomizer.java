@@ -18,6 +18,13 @@ package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.util.Customizer;
 
+/**
+ * A specialized {@link Customizer} for {@link ArgumentConverterRegistry} instances.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 @FunctionalInterface
 public interface ArgumentConverterRegistryCustomizer extends Customizer<ArgumentConverterRegistry> {
 

@@ -24,9 +24,20 @@ import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.SingletonProvider;
 import org.dockbox.hartshorn.inject.SupplierProvider;
 import org.dockbox.hartshorn.inject.binding.Binder;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
+/**
+ * A {@link CollectorBindingFunction} that configures a {@link BindingHierarchy} for a compatible
+ * {@link CollectionBindingHierarchy}. The hierarchy is provided by the owning {@link Binder}.
+ *
+ * @param <T> The type of the component that is bound.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFunction<T> {
 
     private final Binder binder;
@@ -41,8 +52,8 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
 
     @Override
     public Binder provider(Provider<T> provider) {
-        hierarchy.getOrCreateProvider(priority).add(provider);
-        return binder;
+        this.hierarchy.getOrCreateProvider(this.priority).add(provider);
+        return this.binder;
     }
 
     @Override
@@ -57,7 +68,7 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
 
     @Override
     public Binder type(Class<? extends T> type) {
-        ComponentKey<? extends T> componentKey = hierarchy.key().mutable().type(type).build();
+        ComponentKey<? extends T> componentKey = this.hierarchy.key().mutable().type(type).build();
         return this.provider(new ContextDrivenProvider<>(componentKey));
     }
 

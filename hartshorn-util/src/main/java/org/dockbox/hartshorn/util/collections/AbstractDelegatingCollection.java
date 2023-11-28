@@ -20,6 +20,17 @@ import java.util.Collection;
 import java.util.Iterator;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * A basic implementation of {@link Collection} that delegates all operations to a backing {@link Collection} instance.
+ * This class is intended to be extended by classes that need to implement {@link Collection}, but do not need to
+ * implement all methods.
+ *
+ * @param <E> the type of elements in this collection
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class AbstractDelegatingCollection<E> implements Collection<E> {
 
     private final Collection<E> delegate;

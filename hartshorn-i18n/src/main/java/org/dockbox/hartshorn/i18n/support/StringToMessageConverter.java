@@ -21,6 +21,17 @@ import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 
+/**
+ * A {@link Converter} that converts a {@link String} to a {@link Message} using the {@link TranslationService}.
+ * The provided {@link String} is used as the key to retrieve the {@link Message} from the {@link TranslationService}.
+ * If no {@link Message} is found, {@code null} is returned.
+ *
+ * @see TranslationService#get(String)
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class StringToMessageConverter implements Converter<String, Message> {
 
     private final TranslationService translationService;
@@ -31,6 +42,6 @@ public class StringToMessageConverter implements Converter<String, Message> {
 
     @Override
     public @Nullable Message convert(@Nullable String input) {
-        return translationService.get(input).orNull();
+        return this.translationService.get(input).orNull();
     }
 }

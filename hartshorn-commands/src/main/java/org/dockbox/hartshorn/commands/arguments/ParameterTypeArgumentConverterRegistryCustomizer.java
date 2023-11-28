@@ -22,8 +22,17 @@ import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistryCustomizer;
+import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * Registers all {@link Parameter} annotated types as argument converters. This allows for dynamic
+ * argument conversion based on complex patterns.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ParameterTypeArgumentConverterRegistryCustomizer implements ArgumentConverterRegistryCustomizer {
 
     private final ApplicationEnvironment environment;
@@ -34,12 +43,12 @@ public class ParameterTypeArgumentConverterRegistryCustomizer implements Argumen
 
     @Override
     public void configure(ArgumentConverterRegistry registry) {
-        Collection<TypeView<?>> parameterDeclarations = environment.types(Parameter.class);
+        Collection<TypeView<?>> parameterDeclarations = this.environment.types(Parameter.class);
         for(TypeView<?> parameterDeclaration : parameterDeclarations) {
             Parameter meta = parameterDeclaration.annotations().get(Parameter.class).get();
-            CustomParameterPattern pattern = environment.applicationContext().get(meta.pattern());
+            CustomParameterPattern pattern = this.environment.applicationContext().get(meta.pattern());
             String parameterKey = meta.value();
-            DynamicPatternConverter<?> dynamicPatternConverter = new DynamicPatternConverter<>(parameterDeclaration.type(), pattern, parameterKey);
+            ArgumentConverter<?> dynamicPatternConverter = new DynamicPatternConverter<>(parameterDeclaration.type(), pattern, parameterKey);
             registry.registerConverter(dynamicPatternConverter);
         }
     }

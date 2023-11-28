@@ -18,6 +18,17 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.inject.binding.collection.ContainerAwareComponentCollection;
 
+/**
+ * A specialized {@link ObjectContainer} for {@link ContainerAwareComponentCollection} instances. This container
+ * acts as a composite container, in that it delegates all operations to the containers of the collection.
+ *
+ * @param <T> The type of the collection
+ * @param <E> The type of the elements in the collection
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class CollectionObjectContainer<T extends ContainerAwareComponentCollection<E>, E> extends ObjectContainer<T> {
 
     public CollectionObjectContainer(T instance) {

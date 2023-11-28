@@ -35,6 +35,17 @@ import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A {@link BindingHierarchy} that composes multiple {@link CollectionBindingHierarchy} instances into a single hierarchy.
+ * This implementation differs from {@link CollectionBindingHierarchy} in that it is immutable. It is used to represent
+ * the composition of two non-strictly matching hierarchies, and are thus not expected to be bound to a key.
+ *
+ * @param <T> the type of the elements in the collection
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ImmutableCompositeBindingHierarchy<T> implements BindingHierarchy<ComponentCollection<T>> {
 
     private final Set<CollectionBindingHierarchy<T>> hierarchies;

@@ -20,6 +20,15 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A registry for {@link ArgumentConverter} instances. This registry can be used throughout command handlers
+ * and definitions to convert raw input into typed arguments. This registry is also used to register custom
+ * converters.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public interface ArgumentConverterRegistry {
 
     void registerConverter(ArgumentConverter<?> converter);

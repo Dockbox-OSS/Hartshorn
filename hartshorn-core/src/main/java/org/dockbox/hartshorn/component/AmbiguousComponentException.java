@@ -18,8 +18,21 @@ package org.dockbox.hartshorn.component;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
+/**
+ * Thrown when two or more non-strict components match a lookup key. This indicates that two equally
+ * qualified components are compatible with the lookup key, and that there is no strict binding for
+ * the lookup key.
+ *
+ * @see ApplicationEnvironment#isStrictMode()
+ * @see ComponentKey
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class AmbiguousComponentException extends ApplicationRuntimeException {
     public AmbiguousComponentException(ComponentKey<?> lookupKey, Set<ComponentKey<?>> foundKeys) {
         super(

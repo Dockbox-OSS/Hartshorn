@@ -16,12 +16,23 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.collection.CollectorBindingFunction;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
+/**
+ * A binding function is used to bind a provider to a specific {@link ComponentKey}. This should
+ * be used by {@link Binder}s to provide a fluent API for binding providers.
+ *
+ * @param <T> The type of the component that is bound.
+ *
+ * @since 0.4.11
+ *
+ * @author Guus Lieben
+ */
 public interface BindingFunction<T> {
 
     /**
@@ -113,5 +124,15 @@ public interface BindingFunction<T> {
      */
     Binder lazySingleton(CheckedSupplier<T> supplier);
 
+    /**
+     * Transforms the current binding function into a {@link CollectorBindingFunction} which
+     * allows for collecting multiple bindings into a single {@link org.dockbox.hartshorn.inject.binding.collection.ComponentCollection}.
+     *
+     * <p>This does not affect the current binding function, but provides a new binding function
+     * that can be used to collect multiple bindings.
+     *
+     * @param collector The collector to use
+     * @return The binder
+     */
     Binder collect(Customizer<CollectorBindingFunction<T>> collector);
 }
