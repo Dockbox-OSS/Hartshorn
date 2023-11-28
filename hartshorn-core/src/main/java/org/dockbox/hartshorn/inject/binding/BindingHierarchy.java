@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.binding;
 
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.SortedSet;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.ContextCarrier;
@@ -104,12 +105,18 @@ public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>
     Option<Provider<C>> get(int priority);
 
     /**
-     * Gets the {@link Provider} with the highest priority. If no providers are registered, an
-     * {@link Option#empty()} will be returned.
+     * Gets the priority of the highest priority provider in the hierarchy.
      *
-     * @return The provider with the highest priority, or {@link Option#empty()}.
+     * @return The highest priority, or {@code -1} if the hierarchy is empty.
      */
-    Option<Provider<C>> highestPriority();
+    int highestPriority();
+
+    /**
+     * Gets all priorities in the hierarchy, in ascending order.
+     *
+     * @return All priorities.
+     */
+    SortedSet<Integer> priorities();
 
     /**
      * Gets the {@link ComponentKey} of the current hierarchy, containing a {@link Class}

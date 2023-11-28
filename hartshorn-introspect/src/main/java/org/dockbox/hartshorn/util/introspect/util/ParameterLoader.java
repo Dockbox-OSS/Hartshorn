@@ -18,9 +18,11 @@ package org.dockbox.hartshorn.util.introspect.util;
 
 import java.util.List;
 
-public abstract class ParameterLoader<C extends ParameterLoaderContext> {
+public abstract class ParameterLoader {
 
-    public abstract Object loadArgument(C context, int index, Object... args);
+    public abstract boolean isCompatible(ParameterLoaderContext context);
 
-    public abstract List<Object> loadArguments(C context, Object... args);
+    public abstract Object loadArgument(ParameterLoaderContext context, int index, Object... args);
+
+    public abstract List<Object> loadArguments(ParameterLoaderContext context, Object... args);
 }

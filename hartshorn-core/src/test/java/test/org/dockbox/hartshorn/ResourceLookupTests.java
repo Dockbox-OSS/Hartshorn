@@ -16,18 +16,19 @@
 
 package test.org.dockbox.hartshorn;
 
-import org.dockbox.hartshorn.application.environment.FileSystemProvider;
-import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.resources.ResourceLookup;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
+
+import org.dockbox.hartshorn.application.environment.FileSystemProvider;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.resources.ResourceLookup;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
 
@@ -62,7 +63,7 @@ public class ResourceLookupTests {
         Assertions.assertFalse(lookup.isEmpty());
         Assertions.assertEquals(1, lookup.size());
 
-        URI uri = lookup.iterator().next();
+        URI uri = CollectionUtilities.first(lookup);
         File file = new File(uri);
 
         Assertions.assertEquals("sample.txt", file.getName());

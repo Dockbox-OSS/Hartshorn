@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.scope.ScopedBindingProvider.SampleScope;
 
-@HartshornTest
+@HartshornTest(includeBasePackages = false)
 public class ScopeBindingTests {
 
     @Inject

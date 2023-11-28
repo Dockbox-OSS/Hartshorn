@@ -19,9 +19,10 @@ package org.dockbox.hartshorn.util.introspect;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A wrapper for parameterized types that allows for the retrieval of the type and its parameters. This is a
@@ -63,15 +64,24 @@ public final class ParameterizableType {
     }
 
     public static Builder builder(TypeView<?> type) {
-        List<ParameterizableType> parameters = type.typeParameters().allInput()
-                .asList()
+        List<ParameterizableType> parameters = type.typeParameters()
+            .allInput()
+            .asList()
+            .stream()
+            .flatMap(parameter -> parameter.resolvedType()
+                .filter(typeView -> !typeView.isWildcard())
+                .orComputeFlat(() -> {
+                    Set<TypeView<?>> bounds = parameter.upperBounds();
+                    if (bounds.size() == 1) {
+                        return Option.of(bounds.iterator().next());
+                    }
+                    return Option.empty();
+                }).map(ParameterizableType::create)
+                .orCompute(() -> ParameterizableType.create(Object.class))
                 .stream()
-                .map(parameter -> parameter.resolvedType()
-                    .map(ParameterizableType::create)
-                    .orElseGet(() -> ParameterizableType.create(Object.class))
-                )
-                .collect(Collectors.toList());
-        return builder(type.type()).parameters(parameters);
+            )
+            .collect(Collectors.toList());
+        return new Builder(type.type()).parameters(parameters);
     }
 
     /**
@@ -119,6 +129,13 @@ public final class ParameterizableType {
     @Override
     public int hashCode() {
         return Objects.hash(this.type, this.parameters);
+    }
+
+    public String toQualifiedString() {
+        String parameters = this.parameters.stream()
+                .map(ParameterizableType::toQualifiedString)
+                .collect(Collectors.joining(", "));
+        return this.type.getName() + (parameters.isEmpty() ? "" : "<" + parameters + ">");
     }
 
     @Override

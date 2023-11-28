@@ -16,16 +16,18 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.ArrayToCollectionConverterFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @SuppressWarnings("rawtypes")
 public class ArrayToCollectionConverterFactoryTests {
@@ -46,29 +48,29 @@ public class ArrayToCollectionConverterFactoryTests {
 
     @Test
     void testFactoryCreatesConverterForInterfaceCollectionTarget() {
-        Converter<Object[], Collection> converter = createConverter();
+        Converter<Object[], Collection<String>> converter = createConverter();
         Assertions.assertNotNull(converter);
 
-        Collection list = converter.convert(new Object[]{ "test" });
+        Collection<String> list = converter.convert(new Object[]{ "test" });
         Assertions.assertNotNull(list);
         Assertions.assertEquals(1, list.size());
-        Assertions.assertEquals("test", list.iterator().next());
+        Assertions.assertEquals("test", CollectionUtilities.first(list));
     }
 
     @Test
     void testFactoryCreatesEmptyCollectionIfArrayEmpty() {
-        Converter<Object[], Collection> converter = createConverter();
+        Converter<Object[], Collection<String>> converter = createConverter();
 
         Collection list = converter.convert(new Object[0]);
         Assertions.assertNotNull(list);
         Assertions.assertEquals(0, list.size());
     }
 
-    private static Converter<Object[], Collection> createConverter() {
+    private static Converter<Object[], Collection<String>> createConverter() {
         Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(Collection.class);
         ConverterFactory<Object[], Collection<?>> factory = new ArrayToCollectionConverterFactory(introspector);
 
-        Converter<Object[], Collection> converter = factory.create(Collection.class);
+        Converter<Object[], Collection<String>> converter = TypeUtils.adjustWildcards(factory.create(Collection.class), Converter.class);
         Assertions.assertNotNull(converter);
 
         return converter;

@@ -22,6 +22,7 @@ import java.util.List;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -30,6 +31,10 @@ import org.dockbox.hartshorn.util.option.Attempt;
  * pattern is decided on by any implementation of this type.
  */
 public abstract class PrefixedParameterPattern extends AbstractParameterPattern {
+
+    protected PrefixedParameterPattern(ArgumentConverterRegistry argumentConverterRegistry) {
+        super(argumentConverterRegistry);
+    }
 
     @Override
     public <T> Attempt<Boolean, ConverterException> preconditionsMatch(Class<T> type, CommandSource source, String raw) {

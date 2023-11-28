@@ -16,15 +16,11 @@
 
 package org.dockbox.hartshorn.hsl;
 
-import java.util.Set;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapter;
@@ -33,8 +29,6 @@ import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
-
-import jakarta.inject.Named;
 
 @Service
 @RequiresActivator(UseExpressionValidation.class)
@@ -64,17 +58,22 @@ public class ScriptLanguageProviders {
     public ScriptRuntime runtime(
             ApplicationContext applicationContext,
             ScriptComponentFactory factory,
-            @Named(StatementStaticProviders.STATEMENT_BEAN) Set<ASTNodeParser<? extends Statement>> statementParsers
+            ParserCustomizer parserCustomizer
     ) {
-        return new StandardRuntime(applicationContext, factory, statementParsers);
+        return new StandardRuntime(applicationContext, factory, parserCustomizer);
     }
 
     @Binds
     public ValidateExpressionRuntime expressionRuntime(
             ApplicationContext applicationContext,
             ScriptComponentFactory factory,
-            @Named(StatementStaticProviders.STATEMENT_BEAN) Set<ASTNodeParser<? extends Statement>> statementParsers
+            ParserCustomizer parserCustomizer
     ) {
-        return new ValidateExpressionRuntime(applicationContext, factory, statementParsers);
+        return new ValidateExpressionRuntime(applicationContext, factory, parserCustomizer);
+    }
+
+    @Binds
+    public ParserCustomizer parserCustomizer() {
+        return new DefaultScriptStatementsParserCustomizer();
     }
 }

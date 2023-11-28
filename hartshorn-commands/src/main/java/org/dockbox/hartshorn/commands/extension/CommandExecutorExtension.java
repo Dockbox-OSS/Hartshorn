@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.commands.extension;
 
-import org.dockbox.hartshorn.util.Identifiable;
+import java.util.UUID;
+
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-
-import java.util.UUID;
+import org.dockbox.hartshorn.util.Identifiable;
 
 /**
  * Type to allow for commands to be extended without modifying the underlying
@@ -65,5 +65,4 @@ public interface CommandExecutorExtension {
         String alias = context.alias();
         return uuid + "$" + alias;
     }
-
 }

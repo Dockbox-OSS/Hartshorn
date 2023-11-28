@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject.binding;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.SortedSet;
 import java.util.function.Consumer;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -101,8 +102,13 @@ public class ContextWrappedHierarchy<C> implements PrunableBindingHierarchy<C> {
     }
 
     @Override
-    public Option<Provider<C>> highestPriority() {
+    public int highestPriority() {
         return this.real().highestPriority();
+    }
+
+    @Override
+    public SortedSet<Integer> priorities() {
+        return this.real().priorities();
     }
 
     @Override

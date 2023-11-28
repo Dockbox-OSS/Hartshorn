@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.inject.Populate;
+import org.dockbox.hartshorn.inject.Populate.Type;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +48,7 @@ import jakarta.inject.Inject;
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(HartshornLifecycleExtension.class)
 @Extends(Populate.class)
-@Populate(Populate.Type.FIELDS)
+@Populate(Type.FIELDS)
 public @interface HartshornTest {
 
     /**

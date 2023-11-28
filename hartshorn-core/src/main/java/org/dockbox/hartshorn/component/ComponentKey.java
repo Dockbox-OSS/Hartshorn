@@ -18,8 +18,13 @@ package org.dockbox.hartshorn.component;
 
 import java.util.Objects;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.Enable;
+import org.dockbox.hartshorn.inject.HighestPriorityProviderSelectionStrategy;
+import org.dockbox.hartshorn.inject.ProviderSelectionStrategy;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
@@ -48,16 +53,27 @@ import jakarta.inject.Named;
  */
 public final class ComponentKey<T> {
 
+    private final ProviderSelectionStrategy strategy;
     private final ParameterizableType type;
     private final String name;
     private final Scope scope;
     private final boolean enable;
+    private final Tristate strict;
 
-    private ComponentKey(ParameterizableType type, String name, Scope scope, boolean enable) {
+    private ComponentKey(
+            ProviderSelectionStrategy strategy,
+            ParameterizableType type,
+            String name,
+            Scope scope,
+            boolean enable,
+            Tristate strict
+    ) {
+        this.strategy = strategy;
         this.type = type;
         this.name = name;
         this.scope = scope;
         this.enable = enable;
+        this.strict = strict;
     }
 
     /**
@@ -109,6 +125,17 @@ public final class ComponentKey<T> {
         annotations.get(Named.class).peek(builder::name);
         annotations.get(Enable.class).peek(enable -> builder.enable(enable.value()));
         return builder;
+    }
+
+    public static <T> ComponentKey<ComponentCollection<T>> collect(final Class<T> type) {
+        return TypeUtils.adjustWildcards(collect(ParameterizableType.create(type)), ComponentKey.class);
+    }
+
+    public static ComponentKey<ComponentCollection<?>> collect(final ParameterizableType type) {
+        ParameterizableType collectionType = ParameterizableType.builder(ComponentCollection.class)
+            .parameters(type)
+            .build();
+        return TypeUtils.adjustWildcards(ComponentKey.of(collectionType), ComponentKey.class);
     }
 
     /**
@@ -216,7 +243,7 @@ public final class ComponentKey<T> {
     public String qualifiedName(boolean qualifyType) {
         String nameSuffix = StringUtilities.empty(this.name) ? "" : ":" + this.name;
         String scopeName = this.scope.installableScopeType().name();
-        String typeName = qualifyType ? this.type.type().getCanonicalName() : this.type.type().getSimpleName();
+        String typeName = qualifyType ? this.type.toQualifiedString() : this.type.toString();
         return typeName + nameSuffix + " @ " + scopeName;
     }
 
@@ -293,6 +320,24 @@ public final class ComponentKey<T> {
     }
 
     /**
+     * Returns whether the lookup for this component should be strict. If the lookup is strict, the type of the
+     * hierarchy has to match this key exactly. If the lookup is not strict, the type of the hierarchy can be a
+     * sub-type of this key.
+     *
+     * <p>If strict-mode is not explicitly set, {@link Tristate#UNDEFINED} is returned. In this case it remains
+     * up to the component provider to decide whether strict-mode should be applied.
+     *
+     * @return whether the component should be enabled on provisioning
+     */
+    public Tristate strict() {
+        return this.strict;
+    }
+
+    public ProviderSelectionStrategy strategy() {
+        return this.strategy;
+    }
+
+    /**
      * A builder for {@link ComponentKey}s. The builder can be used to create a new key based on an existing key,
      * or to create a new key from scratch.
      *
@@ -308,9 +353,11 @@ public final class ComponentKey<T> {
     public static final class Builder<T> {
 
         private final ParameterizableType type;
+        private ProviderSelectionStrategy strategy = HighestPriorityProviderSelectionStrategy.INSTANCE;
         private String name;
         private Scope scope = Scope.DEFAULT_SCOPE;
         private boolean enable = true;
+        private Tristate strict = Tristate.UNDEFINED;
 
         private Builder(ComponentKey<T> key) {
             this.type = key.type;
@@ -342,12 +389,17 @@ public final class ComponentKey<T> {
                     .enable(this.enable);
         }
 
+        public Builder<T> strategy(ProviderSelectionStrategy strategy) {
+            this.strategy = strategy;
+            return this;
+        }
+
         public Builder<T> name(String name) {
             this.name = StringUtilities.nullIfEmpty(name);
             return this;
         }
 
-        public Builder<T> name(Named named) {
+        public Builder<T> name(@Nullable Named named) {
             if(named != null) {
                 return this.name(named.value());
             }
@@ -364,8 +416,28 @@ public final class ComponentKey<T> {
             return this;
         }
 
+        public Builder<T> strict(boolean strict) {
+            this.strict = Tristate.valueOf(strict);
+            return this;
+        }
+
+        public Builder<ComponentCollection<T>> collector() {
+            ParameterizableType collectionType = ParameterizableType.builder(ComponentCollection.class)
+                    .parameters(this.type)
+                    .build();
+            Builder<?> builder = builder(collectionType)
+                    .name(this.name)
+                    .scope(this.scope)
+                    .enable(this.enable);
+            return TypeUtils.adjustWildcards(builder, Builder.class);
+        }
+
         public ComponentKey<T> build() {
-            return new ComponentKey<>(this.type, this.name, this.scope, this.enable);
+            return new ComponentKey<>(this.strategy, this.type, this.name, this.scope, this.enable, this.strict);
+        }
+
+        public ComponentKeyView<T> view() {
+            return new ComponentKeyView<>(this.type, this.name);
         }
     }
 
@@ -374,9 +446,22 @@ public final class ComponentKey<T> {
         private final ParameterizableType type;
         private final String name;
 
+        public ComponentKeyView(ParameterizableType type, String name) {
+            this.type = type;
+            this.name = name;
+        }
+
         private ComponentKeyView(ComponentKey<T> key) {
             this.type = key.type;
             this.name = key.name;
+        }
+
+        public ParameterizableType type() {
+            return this.type;
+        }
+
+        public String name() {
+            return this.name;
         }
 
         @Override
@@ -394,6 +479,10 @@ public final class ComponentKey<T> {
         @Override
         public int hashCode() {
             return Objects.hash(this.type, this.name);
+        }
+
+        public boolean matches(ComponentKey<?> componentKey) {
+            return this.type.equals(componentKey.type) && Objects.equals(this.name, componentKey.name);
         }
     }
 

@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.CommandParameterResources;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.i18n.Message;
 
 import jakarta.inject.Inject;
@@ -28,6 +29,7 @@ import jakarta.inject.Inject;
  *
  * <p>An example of this pattern is as follows: if we have a constructor for a Shape type
  * <pre>{@code
+ * @Parameter("shape")
  * public Shape(String name, int sides) { ... }
  * }</pre>
  * The pattern for this type is expected to be <pre>#shape[square][4]</pre>
@@ -37,7 +39,8 @@ public class HashtagParameterPattern extends PrefixedParameterPattern {
     private final CommandParameterResources resources;
 
     @Inject
-    public HashtagParameterPattern(CommandParameterResources resources) {
+    public HashtagParameterPattern(ArgumentConverterRegistry argumentConverterRegistry, CommandParameterResources resources) {
+        super(argumentConverterRegistry);
         this.resources = resources;
     }
 

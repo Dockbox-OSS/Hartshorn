@@ -16,21 +16,19 @@
 
 package test.org.dockbox.hartshorn;
 
+import jakarta.inject.Inject;
+import java.util.Map.Entry;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.ComposedProvider;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map.Entry;
-
-import jakarta.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
 public class BindingHierarchyTests {
@@ -40,7 +38,7 @@ public class BindingHierarchyTests {
 
     @Test
     void testToString() {
-        BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(ComponentKey.of(Contract.class), this.applicationContext);
+        BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class), this.applicationContext);
         hierarchy.add(0, new ContextDrivenProvider<>(ComponentKey.of(ImplementationA.class)));
         hierarchy.add(1, new ContextDrivenProvider<>(ComponentKey.of(ImplementationB.class)));
         hierarchy.add(2, new ContextDrivenProvider<>(ComponentKey.of(ImplementationC.class)));
@@ -50,7 +48,7 @@ public class BindingHierarchyTests {
 
     @Test
     void testToStringNamed() {
-        BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(ComponentKey.of(Contract.class, "sample"), this.applicationContext);
+        BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class, "sample"), this.applicationContext);
         hierarchy.add(0, new ContextDrivenProvider<>(ComponentKey.of(ImplementationA.class)));
         hierarchy.add(1, new ContextDrivenProvider<>(ComponentKey.of(ImplementationB.class)));
         hierarchy.add(2, new ContextDrivenProvider<>(ComponentKey.of(ImplementationC.class)));
@@ -60,7 +58,7 @@ public class BindingHierarchyTests {
 
     @Test
     void testIteratorIsSorted() {
-        BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(ComponentKey.of(Contract.class), this.applicationContext);
+        BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class), this.applicationContext);
         hierarchy.add(0, new ContextDrivenProvider<>(ComponentKey.of(ImplementationA.class)));
         hierarchy.add(1, new ContextDrivenProvider<>(ComponentKey.of(ImplementationB.class)));
         hierarchy.add(2, new ContextDrivenProvider<>(ComponentKey.of(ImplementationC.class)));
@@ -77,7 +75,7 @@ public class BindingHierarchyTests {
     void testApplicationContextHierarchyControl() {
         ComponentKey<Contract> key = ComponentKey.of(Contract.class);
 
-        BindingHierarchy<Contract> secondHierarchy = new NativeBindingHierarchy<>(key, this.applicationContext);
+        BindingHierarchy<Contract> secondHierarchy = new NativePrunableBindingHierarchy<>(key, this.applicationContext);
         secondHierarchy.add(2, new ContextDrivenProvider<>(ComponentKey.of(ImplementationC.class)));
 
         this.applicationContext.hierarchy(key)

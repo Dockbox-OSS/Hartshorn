@@ -24,7 +24,7 @@ public class SingletonProvider<T> implements NonTypeAwareProvider<T> {
     private final ObjectContainer<T> container;
 
     public SingletonProvider(T instance) {
-        this.container = new ObjectContainer<>(instance);
+        this.container = new ComponentObjectContainer<>(instance);
     }
 
     @Override
@@ -32,4 +32,8 @@ public class SingletonProvider<T> implements NonTypeAwareProvider<T> {
         return Option.of(this.container);
     }
 
+    @Override
+    public String toString() {
+        return "Singleton: " + container;
+    }
 }

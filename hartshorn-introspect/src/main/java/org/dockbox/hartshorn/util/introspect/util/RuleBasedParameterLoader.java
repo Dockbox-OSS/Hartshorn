@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.util;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -26,9 +27,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends ParameterLoader<C> {
+public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends ParameterLoader {
 
     private final Set<ParameterLoaderRule<C>> rules = ConcurrentHashMap.newKeySet();
+
+    private final Class<C> contextType;
+
+    public RuleBasedParameterLoader(Class<C> contextType) {
+        this.contextType = contextType;
+    }
 
     public RuleBasedParameterLoader<?> add(ParameterLoaderRule<? super C> rule) {
         this.rules.add((ParameterLoaderRule<C>) rule);
@@ -40,25 +47,38 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
     }
 
     @Override
-    public Object loadArgument(C context, int index, Object... args) {
+    public boolean isCompatible(ParameterLoaderContext context) {
+        return context != null && this.contextType.isAssignableFrom(context.getClass());
+    }
+
+    @Override
+    public @Nullable Object loadArgument(ParameterLoaderContext context, int index, Object... args) {
+        if (!this.isCompatible(context)) {
+            return null;
+        }
         Option<ParameterView<?>> parameterCandidate = context.executable().parameters().at(index);
         if (parameterCandidate.present()) {
+            C adjustedContext = this.contextType.cast(context);
             ParameterView<?> parameter = parameterCandidate.get();
             for (ParameterLoaderRule<C> rule : this.rules()) {
-                if (rule.accepts(parameter, index, context, args)) {
-                    Option<?> argument = rule.load(parameter, index, context, args);
+                if (rule.accepts(parameter, index, adjustedContext, args)) {
+                    Option<?> argument = rule.load(parameter, index, adjustedContext, args);
                     if (argument.present()) {
                         return argument.get();
                     }
                 }
             }
-            return this.loadDefault(parameter, index, context, args);
+            return this.loadDefault(parameter, index, adjustedContext, args);
         }
         return null;
     }
 
     @Override
-    public List<Object> loadArguments(C context, Object... args) {
+    public List<Object> loadArguments(ParameterLoaderContext context, Object... args) {
+        if (!this.isCompatible(context)) {
+            return List.of(args);
+        }
+        C adjustedContext = this.contextType.cast(context);
         List<Object> arguments = new ArrayList<>();
         List<ParameterView<?>> parameters = context.executable().parameters().all();
         parameters:
@@ -66,13 +86,13 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
             ParameterView<?> parameter = parameters.get(i);
             try {
                 for (ParameterLoaderRule<C> rule : this.rules) {
-                    if (rule.accepts(parameter, i, context, args)) {
-                        Option<?> argument = rule.load(parameter, i, context, args);
+                    if (rule.accepts(parameter, i, adjustedContext, args)) {
+                        Option<?> argument = rule.load(parameter, i, adjustedContext, args);
                         arguments.add(argument.orNull());
                         continue parameters;
                     }
                 }
-                arguments.add(this.loadDefault(parameter, i, context, args));
+                arguments.add(this.loadDefault(parameter, i, adjustedContext, args));
             }
             catch (ApplicationRuntimeException e) {
                 throw new ParameterLoadException(parameter, e);

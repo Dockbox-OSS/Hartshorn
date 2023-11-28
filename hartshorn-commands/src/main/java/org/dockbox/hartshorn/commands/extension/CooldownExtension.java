@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.commands.extension;
 
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalUnit;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandResources;
 import org.dockbox.hartshorn.commands.CommandSource;
@@ -24,11 +29,6 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.util.Identifiable;
-
-import java.time.LocalDateTime;
-import java.time.temporal.TemporalUnit;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.inject.Inject;
 
@@ -46,6 +46,11 @@ public class CooldownExtension implements CommandExecutorExtension {
     @Inject
     public CooldownExtension(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public boolean extend(final CommandExecutorContext context) {
+        return context.element().annotations().has(Cooldown.class);
     }
 
     @Override
@@ -70,11 +75,6 @@ public class CooldownExtension implements CommandExecutorExtension {
 
     protected Message activeCooldownMessage() {
         return this.applicationContext.get(CommandResources.class).cooldownActive();
-    }
-
-    @Override
-    public boolean extend(CommandExecutorContext context) {
-        return context.element().annotations().has(Cooldown.class);
     }
 
     /**
@@ -110,7 +110,6 @@ public class CooldownExtension implements CommandExecutorExtension {
             LocalDateTime endTime = timeCooledDown.plus(duration, timeUnit);
 
             return endTime.isAfter(now);
-
         }
         else {
             return false;

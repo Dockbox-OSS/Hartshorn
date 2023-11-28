@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
 import org.dockbox.hartshorn.component.ContextualComponentPopulator;
 import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.inject.ApplicationDependencyResolver;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentDiscoveryList;
@@ -126,7 +127,7 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(this.applicationContext);
     }
 
-    // TODO: Restore, types were moved to test fixtures, so need new test components
+    // TODO #1003: Restore, types were moved to test fixtures, so need new test components
 //    @Test
 //    @HartshornTest(includeBasePackages = false, processors = DemoProxyDelegationPostProcessor.class)
 //    @TestComponents({AbstractProxy.class, ProxyProviders.class})
@@ -484,7 +485,7 @@ public class ApplicationContextTests {
             }
 
             DependencyContext<?> dependencyContext = new AutoConfiguringDependencyContext<>(componentKey,
-                    dependencyMap, Scope.DEFAULT_SCOPE.installableScopeType(), -1, () -> null, origin);
+                    dependencyMap, Scope.DEFAULT_SCOPE.installableScopeType(), -1, BindingType.COMPONENT, origin, () -> null);
             dependencyContexts.add(dependencyContext);
         }
 

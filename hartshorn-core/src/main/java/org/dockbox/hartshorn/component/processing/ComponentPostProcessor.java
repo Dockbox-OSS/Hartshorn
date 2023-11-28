@@ -59,7 +59,7 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
     }
 
     @Override
-    public <T> T process(ComponentProcessingContext<T> processingContext) {
+    public final <T> T process(ComponentProcessingContext<T> processingContext) {
         T instance = processingContext.instance();
 
         if (!this.isCompatible(processingContext)) {

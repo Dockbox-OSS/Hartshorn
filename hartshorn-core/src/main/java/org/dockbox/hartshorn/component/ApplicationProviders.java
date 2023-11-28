@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.component;
 
+import jakarta.inject.Singleton;
 import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.contextual.StaticComponentContext;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.inject.Context;
+import org.dockbox.hartshorn.inject.Strict;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
@@ -31,11 +32,9 @@ import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.slf4j.Logger;
 
-import jakarta.inject.Singleton;
-
 /**
- * The {@link ApplicationProviders} class is responsible for providing the default {@link Logger}
- * for the application.
+ * Configuration for core components that are required by the framework. This includes the {@link Logger} and
+ * {@link ConversionService}.
  *
  * @author Guus Lieben
  * @since 0.4.6
@@ -52,11 +51,18 @@ public class ApplicationProviders {
 
     @Binds
     @Singleton
-    public ConversionService conversionService(Introspector introspector, @Context StaticComponentContext staticComponentContext) {
+    public ConversionService conversionService(
+            Introspector introspector,
+            @Strict(false) ComponentCollection<GenericConverter> genericConverters,
+            @Strict(false) ComponentCollection<ConverterFactory<?, ?>> converterFactories,
+            @Strict(false) ComponentCollection<Converter<?, ?>> converters
+    ) {
         StandardConversionService service = new StandardConversionService(introspector).withDefaults();
-        staticComponentContext.provider().all(GenericConverter.class).forEach(service::addConverter);
-        staticComponentContext.provider().all(ConverterFactory.class).forEach(service::addConverterFactory);
-        staticComponentContext.provider().all(Converter.class).forEach(service::addConverter);
+        
+        genericConverters.forEach(service::addConverter);
+        converterFactories.forEach(service::addConverterFactory);
+        converters.forEach(service::addConverter);
+
         return service;
     }
 }

@@ -25,6 +25,7 @@ import java.util.Properties;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
@@ -89,6 +90,15 @@ public interface ApplicationEnvironment extends ContextCarrier, ApplicationLogge
      * @return {@code true} if the environment is running in batch mode, {@code false} otherwise.
      */
     boolean isBatchMode();
+
+    /**
+     * Indicates whether strict mode is enabled. Strict mode is typically used to indicate that a lookup should only
+     * return a value if it is explicitly bound to the key, and not if it is bound to a sub-type of the key. This value
+     * is typically the default value of {@link ComponentKey#strict()} if it is not explicitly set.
+     *
+     * @return {@code true} if strict mode is enabled, {@code false} otherwise.
+     */
+    boolean isStrictMode();
 
     /**
      * Gets types decorated with a given annotation, both classes and annotations.

@@ -16,19 +16,17 @@
 
 package org.dockbox.hartshorn.component;
 
+import jakarta.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-
-import jakarta.inject.Inject;
 
 @InstallIfAbsent
 public class ScopeModuleContext extends DefaultApplicationAwareContext {
@@ -45,7 +43,7 @@ public class ScopeModuleContext extends DefaultApplicationAwareContext {
                 .filter(hierarchy -> hierarchy.key().equals(key))
                 .findFirst()
                 .orElseGet(() -> {
-                    BindingHierarchy<T> hierarchy = new NativeBindingHierarchy<>(key, this.applicationContext());
+                    BindingHierarchy<T> hierarchy = new NativePrunableBindingHierarchy<>(key, this.applicationContext());
                     this.scopeModules.put(scope, hierarchy);
                     return hierarchy;
                 });

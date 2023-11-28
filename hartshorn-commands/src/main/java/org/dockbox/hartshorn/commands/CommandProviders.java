@@ -17,14 +17,18 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.contextual.StaticBinds;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
-import org.dockbox.hartshorn.commands.arguments.CommandParameterLoader;
+import org.dockbox.hartshorn.commands.arguments.ParameterTypeArgumentConverterRegistryCustomizer;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistryCustomizer;
+import org.dockbox.hartshorn.commands.context.SimpleArgumentConverterRegistry;
+import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.CooldownExtension;
+import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 
 import jakarta.inject.Singleton;
 
@@ -45,8 +49,12 @@ public class CommandProviders {
 
     @Binds
     @Singleton
-    public CommandGateway commandGateway(CommandParser parser, CommandResources resources, ApplicationContext context) {
-        return new CommandGatewayImpl(parser, resources, context);
+    public CommandGateway commandGateway(
+        CommandParser parser,
+        CommandResources resources,
+        ApplicationContext context,
+        ArgumentConverterRegistry converterRegistry) {
+        return new CommandGatewayImpl(parser, resources, context, converterRegistry);
     }
 
     @Binds
@@ -54,13 +62,20 @@ public class CommandProviders {
         return new CommandParserImpl(resources);
     }
 
-    @StaticBinds
-    public static CooldownExtension cooldownExtension(ApplicationContext applicationContext) {
+    @Binds(type = BindingType.COLLECTION)
+    public CommandExecutorExtension cooldownExtension(ApplicationContext applicationContext) {
         return new CooldownExtension(applicationContext);
     }
+    
+    @Binds
+    public ArgumentConverterRegistry converterRegistry(ApplicationEnvironment environment, ArgumentConverterRegistryCustomizer customizer) {
+        ArgumentConverterRegistry registry = new SimpleArgumentConverterRegistry();
+        customizer.configure(registry);
+        return registry;
+    }
 
-    @Binds("command_loader")
-    public ParameterLoader<?> parameterLoader() {
-        return new CommandParameterLoader();
+    @Binds(priority = 0)
+    public ArgumentConverterRegistryCustomizer converterRegistryCustomizer(ApplicationEnvironment environment, ArgumentConverterRegistryCustomizer customizer) {
+        return customizer.compose(new ParameterTypeArgumentConverterRegistryCustomizer(environment));
     }
 }

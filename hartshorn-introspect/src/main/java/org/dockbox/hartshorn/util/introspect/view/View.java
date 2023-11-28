@@ -16,10 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.Named;
 
-public interface View extends Named, Reportable {
+public interface View extends Named, Reportable, Context {
 
     /**
      * Returns the qualified name of the element. For example, if the element is a field,

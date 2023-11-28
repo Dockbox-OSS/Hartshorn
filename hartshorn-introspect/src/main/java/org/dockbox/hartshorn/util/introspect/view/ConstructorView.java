@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.util.option.Attempt;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Collection;
+
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents a view of a constructor. This view can be used to invoke the constructor and to
@@ -71,4 +71,9 @@ public interface ConstructorView<T> extends ExecutableElementView<T> {
      * @return the type of the class that declares the constructor
      */
     TypeView<T> type();
+
+    @Override
+    default TypeView<?> resultType() {
+        return this.type();
+    }
 }

@@ -16,30 +16,29 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.commands.CommandExecutor;
-import org.dockbox.hartshorn.commands.CommandParser;
-import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.arguments.CommandParameterLoaderContext;
-import org.dockbox.hartshorn.commands.definition.CommandElement;
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.condition.ConditionMatcher;
-import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
-import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.commands.CommandExecutor;
+import org.dockbox.hartshorn.commands.CommandParser;
+import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.arguments.CommandParameterLoader;
+import org.dockbox.hartshorn.commands.definition.CommandElement;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Simple implementation of {@link CommandExecutorContext} targeting {@link MethodView} based executors.
@@ -52,11 +51,16 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
     private final List<String> parentAliases;
     private final Command command;
     private final boolean isChild;
-    private final ParameterLoader<CommandParameterLoaderContext> parameterLoader;
+    private final ParameterLoader parameterLoader;
 
     private Map<String, CommandParameterContext> parameters;
 
-    public MethodCommandExecutorContext(ApplicationContext context, MethodView<T, ?> method, ComponentKey<T> key) {
+    public MethodCommandExecutorContext(
+            ApplicationContext context,
+            ArgumentConverterRegistry converterRegistry,
+            MethodView<T, ?> method,
+            ComponentKey<T> key
+    ) {
         super(context);
         Option<Command> annotated = method.annotations().get(Command.class);
         if (annotated.absent()) {
@@ -78,7 +82,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
             this.isChild = false;
         }
 
-        this.add(new CommandDefinitionContextImpl(this.applicationContext(), this.command(), this.method()));
+        this.add(new CommandDefinitionContextImpl(this.applicationContext(), converterRegistry, this.command(), this.method()));
 
         this.parentAliases = new CopyOnWriteArrayList<>();
         if (parent != null) {
@@ -86,7 +90,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
             this.parentAliases.addAll(List.of(parent.value()));
         }
         this.parameters = this.parameters();
-        this.parameterLoader = context.get(ComponentKey.builder(ParameterLoader.class).name("command_loader").build());
+        this.parameterLoader = new CommandParameterLoader();
     }
 
     protected MethodView<T, ?> method() {
@@ -109,7 +113,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
         return this.isChild;
     }
 
-    protected ParameterLoader<CommandParameterLoaderContext> parameterLoader() {
+    protected ParameterLoader parameterLoader() {
         return this.parameterLoader;
     }
 

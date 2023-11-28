@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
@@ -25,9 +28,6 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class InterpreterState {
 
@@ -88,7 +88,7 @@ public class InterpreterState {
     }
 
     public void withScope(VariableScope scope, Runnable runnable) {
-        final VariableScope previous = this.visitingScope();
+        VariableScope previous = this.visitingScope();
         try {
             this.enterScope(scope);
             runnable.run();
@@ -99,7 +99,7 @@ public class InterpreterState {
     }
 
     public void withNextScope(Runnable runnable) {
-        final VariableScope nextScope = new VariableScope(this.visitingScope());
+        VariableScope nextScope = new VariableScope(this.visitingScope());
         this.withScope(nextScope, runnable);
     }
 
@@ -116,7 +116,7 @@ public class InterpreterState {
             return this.visitingScope().getAt(name, 1);
         }
 
-        final Integer distance = this.locals.get(expr);
+        Integer distance = this.locals.get(expr);
         if (distance != null) {
             // Find variable value in locales score
             return this.visitingScope().getAt(name, distance);

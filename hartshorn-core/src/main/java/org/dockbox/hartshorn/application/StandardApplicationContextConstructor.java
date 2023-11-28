@@ -36,7 +36,6 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentType;
 import org.dockbox.hartshorn.component.UseProxying;
-import org.dockbox.hartshorn.component.contextual.UseStaticBinding;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
@@ -251,8 +250,8 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, Annotation> activators = LazyStreamableConfigurer.of(
                 TypeUtils.annotation(UseBootstrap.class),
                 TypeUtils.annotation(UseProxying.class),
-                TypeUtils.annotation(UseContextInjection.class),
-                TypeUtils.annotation(UseStaticBinding.class)
+                TypeUtils.annotation(UseContextInjection.class)
+//                TypeUtils.annotation(UseCollectionInjection.class)
         );
 
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, ComponentPreProcessor> componentPreProcessors = LazyStreamableConfigurer.empty();

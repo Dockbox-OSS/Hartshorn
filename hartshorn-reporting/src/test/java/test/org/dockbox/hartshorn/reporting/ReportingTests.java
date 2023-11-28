@@ -18,7 +18,6 @@ package test.org.dockbox.hartshorn.reporting;
 
 import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.contextual.UseStaticBinding;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.ReportSerializationException;
@@ -28,7 +27,6 @@ import org.dockbox.hartshorn.util.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-@UseStaticBinding
 public class ReportingTests {
 
     @Test

@@ -16,6 +16,16 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.collections.BiMultiMap;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -26,15 +36,6 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @SuppressWarnings({"rawtypes", "InterfaceMayBeAnnotatedFunctional"})
 public abstract class TypeParameterIntrospectionTests {
@@ -117,7 +118,7 @@ public abstract class TypeParameterIntrospectionTests {
 
         Set<TypeView<?>> upperBounds = parameterView.upperBounds();
         Assertions.assertEquals(1, upperBounds.size());
-        Assertions.assertSame(Number.class, upperBounds.iterator().next().type());
+        Assertions.assertSame(Number.class, CollectionUtilities.first(upperBounds).type());
     }
 
     @Test
@@ -136,7 +137,7 @@ public abstract class TypeParameterIntrospectionTests {
         Set<TypeParameterView> represents = parameterView.represents();
         Assertions.assertEquals(1, represents.size());
 
-        TypeParameterView representing = represents.iterator().next();
+        TypeParameterView representing = CollectionUtilities.first(represents);
         Assertions.assertTrue(representing.isVariable());
         Assertions.assertSame(Predicate.class, representing.consumedBy().type());
     }
@@ -231,7 +232,7 @@ public abstract class TypeParameterIntrospectionTests {
         Set<TypeParameterView> parameterRepresents = parameterView.represents();
         Assertions.assertEquals(1, parameterRepresents.size());
 
-        TypeParameterView parameterRepresentsView = parameterRepresents.iterator().next();
+        TypeParameterView parameterRepresentsView = CollectionUtilities.first(parameterRepresents);
         Assertions.assertEquals(outputIndex, parameterRepresentsView.index());
     }
 
@@ -337,7 +338,7 @@ public abstract class TypeParameterIntrospectionTests {
         Assertions.assertEquals(inputParameters.count(), keys.size());
 
         Assertions.assertEquals(1, keys.size());
-        Collection<TypeParameterView> values = multiMap.get(keys.iterator().next());
+        Collection<TypeParameterView> values = multiMap.get(CollectionUtilities.first(keys));
         TypeParameterList outputParameters = typeParameters.allOutput();
         Assertions.assertEquals(outputParameters.count(), values.size());
 

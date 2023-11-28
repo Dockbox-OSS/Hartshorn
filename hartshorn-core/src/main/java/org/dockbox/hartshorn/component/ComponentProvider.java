@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.contextual.StaticComponentProvider;
 
 import jakarta.inject.Named;
 
@@ -36,10 +35,6 @@ import jakarta.inject.Named;
  * <p>Components may be provided from a configured scope, as defined in {@link ComponentKey#scope()}, or from
  * the default scope configured by the provider. The default scope is typically the same as the scope of the provider
  * itself, but this is not required.
- *
- * <p>Component providers typically do not support static components as they are not bound to an active
- * {@link ApplicationContext}. Usually, static components are provided by {@link StaticComponentProvider}s, which
- * are initialized in earlier stages of the application lifecycle.
  *
  * @see ComponentKey
  * @author Guus Lieben

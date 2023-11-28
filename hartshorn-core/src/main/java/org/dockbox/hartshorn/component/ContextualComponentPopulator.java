@@ -18,10 +18,8 @@ package org.dockbox.hartshorn.component;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.contextual.StaticComponentContext;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextKey;
@@ -29,6 +27,7 @@ import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.inject.Populate.Type;
 import org.dockbox.hartshorn.inject.Required;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
@@ -46,6 +45,23 @@ import org.dockbox.hartshorn.util.option.Option;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+/**
+ * A component populator that uses the {@link ApplicationContext} to populate components. By default, all
+ * fields and methods annotated with {@link Inject} are populated. This behaviour can be changed by annotating
+ * the type with {@link Populate}, and configuring the {@link Populate#value() population targets}.
+ *
+ * <p>If a field is a {@link Collection}, the collection is populated with all components of the collection's
+ * generic type. Collection lookups are performed for {@link ComponentCollection}s, and will be converted to
+ * the compatible collection type if required.
+ *
+ * @see Populate
+ * @see ComponentCollection
+ * @see Context
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ContextualComponentPopulator implements ComponentPopulator, ContextCarrier {
 
     private final ApplicationContext applicationContext;
@@ -82,14 +98,14 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         return instance;
     }
 
-    private static <T> boolean shouldPopulateFields(Populate populate) {
+    private static boolean shouldPopulateFields(Populate populate) {
         if (populate.fields()) {
             return true;
         }
         return Arrays.asList(populate.value()).contains(Type.FIELDS);
     }
 
-    private static <T> boolean shouldPopulateMethods(Populate populate) {
+    private static boolean shouldPopulateMethods(Populate populate) {
         if (populate.executables()) {
             return true;
         }
@@ -151,6 +167,7 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
 
         Object fieldInstance;
         try {
+            //Failing because DependencyGraph doesn't recognize ArgumentConverterRegistry as root due to self-dependency in binding method.
             fieldInstance = this.applicationContext().get(componentKey);
         }
         catch (ComponentResolutionException e) {
@@ -178,19 +195,18 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
             throw new ComponentPopulateException("Failed to populate field " + field.name() + " in " + type.qualifiedName() + ", could not resolve bean type", null);
         }
 
-        ComponentKey<?> beanKey = ComponentKey.of(beanType.get());
+        ComponentKey<? extends ComponentCollection<?>> beanKey = ComponentKey.collect(beanType.get().type());
         if (field.annotations().has(Named.class)) {
             beanKey = beanKey.mutable().name(field.annotations().get(Named.class).get()).build();
         }
 
-        StaticComponentContext staticComponentContext = this.applicationContext().first(StaticComponentContext.CONTEXT_KEY).get();
-        List<?> beans = staticComponentContext.provider().all(beanKey);
+        ComponentCollection<?> collection = this.applicationContext.get(beanKey);
         //noinspection unchecked
         Collection<Object> fieldValue = field.get(instance)
                 .cast(Collection.class)
                 .orCompute(() -> (Collection<Object>) this.conversionService.get().convert(null, field.type().type()))
                 .get();
-        fieldValue.addAll(beans);
+        fieldValue.addAll(collection);
 
         this.applicationContext().log().debug("Injecting bean collection of type {} into field {}", field.type().name(), field.qualifiedName());
         field.set(instance, fieldValue);

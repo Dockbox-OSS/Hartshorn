@@ -16,6 +16,11 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
@@ -25,14 +30,11 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 public class OptionToCollectionConverterFactoryTests {
 
     @Test
     void testEmptyOptionalConvertsToEmptyCollection() {
-        Converter<Option<?>, ArrayList> converter = createConverter();
+        Converter<Option<?>, ArrayList<String>> converter = createConverter();
         Option<String> option = Option.empty();
 
         Collection<?> converted = converter.convert(option);
@@ -42,43 +44,43 @@ public class OptionToCollectionConverterFactoryTests {
 
     @Test
     void testPresentOptionalConvertsToCollectionWithElement() {
-        Converter<Option<?>, ArrayList> converter = createConverter();
+        Converter<Option<?>, ArrayList<String>> converter = createConverter();
         Option<String> option = Option.of("test");
 
         Collection<?> converted = converter.convert(option);
         Assertions.assertNotNull(converted);
         Assertions.assertFalse(converted.isEmpty());
         Assertions.assertEquals(1, converted.size());
-        Assertions.assertEquals("test", converted.iterator().next());
+        Assertions.assertEquals("test", CollectionUtilities.first(converted));
     }
 
     @Test
     void testSuccessSomeConvertsToCollectionWithElement() {
-        Converter<Option<?>, ArrayList> converter = createConverter();
+        Converter<Option<?>, ArrayList<String>> converter = createConverter();
         Option<String> option = Attempt.of("test");
 
         Collection<?> converted = converter.convert(option);
         Assertions.assertNotNull(converted);
         Assertions.assertFalse(converted.isEmpty());
         Assertions.assertEquals(1, converted.size());
-        Assertions.assertEquals("test", converted.iterator().next());
+        Assertions.assertEquals("test", CollectionUtilities.first(converted));
     }
 
     @Test
     void testFailureSomeConvertsToCollectionWithElement() {
-        Converter<Option<?>, ArrayList> converter = createConverter();
+        Converter<Option<?>, ArrayList<String>> converter = createConverter();
         Option<String> option = Attempt.of("test", new Exception());
 
         Collection<?> converted = converter.convert(option);
         Assertions.assertNotNull(converted);
         Assertions.assertFalse(converted.isEmpty());
         Assertions.assertEquals(1, converted.size());
-        Assertions.assertEquals("test", converted.iterator().next());
+        Assertions.assertEquals("test", CollectionUtilities.first(converted));
     }
 
     @Test
     void testFailureNoneConvertsToEmptyCollection() {
-        Converter<Option<?>, ArrayList> converter = createConverter();
+        Converter<Option<?>, ArrayList<String>> converter = createConverter();
         Option<String> option = Attempt.of(new Exception());
 
         Collection<?> converted = converter.convert(option);
@@ -88,7 +90,7 @@ public class OptionToCollectionConverterFactoryTests {
 
     @Test
     void testSuccessNoneConvertsToEmptyCollection() {
-        Converter<Option<?>, ArrayList> converter = createConverter();
+        Converter<Option<?>, ArrayList<String>> converter = createConverter();
         Option<String> option = Attempt.empty();
 
         Collection<?> converted = converter.convert(option);
@@ -96,9 +98,9 @@ public class OptionToCollectionConverterFactoryTests {
         Assertions.assertTrue(converted.isEmpty());
     }
 
-    private static Converter<Option<?>, ArrayList> createConverter() {
+    private static Converter<Option<?>, ArrayList<String>> createConverter() {
         Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
         ConverterFactory<Option<?>, Collection<?>> factory = new OptionToCollectionConverterFactory(introspector);
-        return factory.create(ArrayList.class);
+        return TypeUtils.adjustWildcards(factory.create(ArrayList.class), Converter.class);
     }
 }

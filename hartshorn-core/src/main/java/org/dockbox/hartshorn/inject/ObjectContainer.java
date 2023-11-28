@@ -24,12 +24,11 @@ package org.dockbox.hartshorn.inject;
  * @author Guus Lieben
  * @since 0.4.12
  */
-public class ObjectContainer<T> {
+public abstract class ObjectContainer<T> {
 
     private final T instance;
-    private boolean processed = false;
 
-    public ObjectContainer(T instance) {
+    protected ObjectContainer(T instance) {
         this.instance = instance;
     }
 
@@ -47,9 +46,7 @@ public class ObjectContainer<T> {
      *
      * @return {@code true} if the object instance has been processed, {@code false} otherwise
      */
-    public boolean processed() {
-        return this.processed;
-    }
+    public abstract boolean processed();
 
     /**
      * Sets whether the object instance has been processed or not. This method is intended to be used by
@@ -57,7 +54,10 @@ public class ObjectContainer<T> {
      *
      * @param processed whether the object instance has been processed or not
      */
-    public void processed(boolean processed) {
-        this.processed = processed;
+    public abstract void processed(boolean processed);
+
+    @Override
+    public String toString() {
+        return this.instance.toString();
     }
 }

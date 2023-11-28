@@ -16,14 +16,15 @@
 
 package test.org.dockbox.hartshorn;
 
-import org.dockbox.hartshorn.util.resources.Resources;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Set;
+
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.resources.Resources;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ResourcesTests {
 
@@ -59,7 +60,7 @@ public class ResourcesTests {
         Assertions.assertFalse(urls.isEmpty());
         Assertions.assertEquals(1, urls.size());
 
-        URL url = urls.iterator().next();
+        URL url = CollectionUtilities.first(urls);
         Assertions.assertNotNull(url);
     }
 
@@ -77,7 +78,7 @@ public class ResourcesTests {
         Assertions.assertFalse(files.isEmpty());
         Assertions.assertEquals(1, files.size());
 
-        File file = files.iterator().next();
+        File file = CollectionUtilities.first(files);
         Assertions.assertNotNull(file);
         Assertions.assertTrue(file.exists());
     }

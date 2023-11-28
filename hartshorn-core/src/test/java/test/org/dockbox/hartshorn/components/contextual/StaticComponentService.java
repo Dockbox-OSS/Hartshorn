@@ -16,24 +16,29 @@
 
 package test.org.dockbox.hartshorn.components.contextual;
 
-import org.dockbox.hartshorn.component.contextual.StaticBinds;
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 
 @Service
 public class StaticComponentService {
 
-    @StaticBinds(id = "user")
-    public static StaticComponent userComponent() {
-        return new StaticComponent("user");
+    public static final String USER = "user";
+    public static final String ADMIN = "admin";
+    public static final String GUEST = "guest";
+
+    @Binds(value = USER, type = BindingType.COLLECTION, priority = 12)
+    public StaticComponent userComponent() {
+        return new StaticComponent(USER);
     }
 
-    @StaticBinds(id = "admin")
-    public static StaticComponent adminComponent() {
-        return new StaticComponent("admin");
+    @Binds(value = ADMIN, type = BindingType.COLLECTION)
+    public StaticComponent adminComponent() {
+        return new StaticComponent(ADMIN);
     }
 
-    @StaticBinds(id = "guest")
-    public static StaticComponent guestComponent() {
-        return new StaticComponent("guest");
+    @Binds(value = GUEST, type = BindingType.COLLECTION)
+    public StaticComponent guestComponent() {
+        return new StaticComponent(GUEST);
     }
 }
