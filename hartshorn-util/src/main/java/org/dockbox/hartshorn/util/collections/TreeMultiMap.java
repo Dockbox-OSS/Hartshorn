@@ -18,7 +18,9 @@ package org.dockbox.hartshorn.util.collections;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
@@ -36,34 +38,50 @@ public abstract class TreeMultiMap<K extends Comparable<K>, V> extends StandardM
     }
 
     public Collection<V> firstEntry() {
+        if (this.isEmpty()) {
+            return List.of();
+        }
         return this.map().firstEntry().getValue();
     }
 
     public Collection<V> lastEntry() {
+        if (this.isEmpty()) {
+            return List.of();
+        }
         return this.map().lastEntry().getValue();
     }
 
     public Collection<V> floorEntry(K key) {
-        return this.map().floorEntry(key).getValue();
+        Entry<K, Collection<V>> entry = this.map().floorEntry(key);
+        return entry == null ? List.of() : entry.getValue();
     }
 
     public Collection<V> ceilingEntry(K key) {
-        return this.map().ceilingEntry(key).getValue();
+        Entry<K, Collection<V>> entry = this.map().ceilingEntry(key);
+        return entry == null ? List.of() : entry.getValue();
     }
 
     public Collection<V> lowerEntry(K key) {
-        return this.map().lowerEntry(key).getValue();
+        Entry<K, Collection<V>> entry = this.map().lowerEntry(key);
+        return entry == null ? List.of() : entry.getValue();
     }
 
     public Collection<V> higherEntry(K key) {
-        return this.map().higherEntry(key).getValue();
+        Entry<K, Collection<V>> entry = this.map().higherEntry(key);
+        return entry == null ? List.of() : entry.getValue();
     }
 
     public Collection<V> pollFirstEntry() {
+        if (this.isEmpty()) {
+            return List.of();
+        }
         return this.map().pollFirstEntry().getValue();
     }
 
     public Collection<V> pollLastEntry() {
+        if (this.isEmpty()) {
+            return List.of();
+        }
         return this.map().pollLastEntry().getValue();
     }
 

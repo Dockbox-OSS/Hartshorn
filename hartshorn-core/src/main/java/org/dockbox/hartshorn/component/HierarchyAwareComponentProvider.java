@@ -24,6 +24,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey.ComponentKeyView;
@@ -59,6 +61,7 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
@@ -348,7 +351,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return map;
     }
 
-    private <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key, boolean useParentIfAbsent) {
+    private <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key, boolean permitFallbackResolution) {
         // If the scope is default, it means that the binding is not explicitly scoped, so it can be
         // installed in any scope. If our active scope is the active application context, it means
         // the requested scope is not installed, so we can fall back to the application scope.
@@ -356,7 +359,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             throw new IllegalArgumentException("Cannot create a binding hierarchy for a component key with a different scope");
         }
 
-        BindingHierarchy<?> hierarchy = this.getOrComputeHierarchy(key, useParentIfAbsent);
+        BindingHierarchy<?> hierarchy = this.getOrComputeHierarchy(key, permitFallbackResolution);
         BindingHierarchy<T> adjustedHierarchy = TypeUtils.adjustWildcards(hierarchy, BindingHierarchy.class);
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
         if (adjustedHierarchy instanceof ContextWrappedHierarchy || adjustedHierarchy instanceof CollectionBindingHierarchy<?>) {
@@ -367,27 +370,66 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         }
     }
 
-    private <T> BindingHierarchy<?> getOrComputeHierarchy(ComponentKey<T> key, boolean useParentIfAbsent) {
-        return this.hierarchies.computeIfAbsent(key.view(), componentKey -> {
-            BindingHierarchy<?> hierarchy = key.strict()
-                ? this.createHierarchy(key)
-                : this.looseLookupHierarchy(key);
+    private <T> BindingHierarchy<?> getOrComputeHierarchy(ComponentKey<T> key, boolean permitFallbackResolution) {
+        ComponentKeyView<T> view = key.view();
+        if (this.hierarchies.containsKey(view)) {
+            return this.hierarchies.get(view);
+        }
+        else {
+            return this.computeHierarchy(key, permitFallbackResolution);
+        }
+    }
 
-            return Objects.requireNonNullElseGet(hierarchy, () -> {
-                // If we don't have an explicit hierarchy on the key, we can try to use the hierarchy of
-                // the application context. This is useful for components that are not explicitly scoped,
-                // but are still accessed through a scope.
-                if (useParentIfAbsent && this.owner.applicationProvider() != this) {
-                    return this.owner.applicationProvider().hierarchy(key);
-                }
-                return new NativePrunableBindingHierarchy<>(key, this.applicationContext());
-            });
+    @NonNull
+    private <T> BindingHierarchy<?> computeHierarchy(ComponentKey<T> key, boolean permitFallbackResolution) {
+        BindingHierarchy<?> hierarchy = this.tryCreateHierarchy(key, permitFallbackResolution);
+
+        return Objects.requireNonNullElseGet(hierarchy, () -> {
+            // If we don't have an explicit hierarchy on the key, we can try to use the hierarchy of
+            // the application context. This is useful for components that are not explicitly scoped,
+            // but are still accessed through a scope.
+            if(permitFallbackResolution && this.owner.applicationProvider() != this) {
+                return this.owner.applicationProvider().hierarchy(key);
+            }
+            return new NativePrunableBindingHierarchy<>(key, this.applicationContext());
         });
     }
 
     @Nullable
+    private <T> BindingHierarchy<?> tryCreateHierarchy(ComponentKey<T> key, boolean permitFallbackResolution) {
+        BindingHierarchy<?> hierarchy;
+        if(this.isStrict(key)) {
+            hierarchy = this.createHierarchy(key);
+            if (hierarchy != null) {
+                this.hierarchies.put(key.view(), hierarchy);
+            }
+        }
+        else if (permitFallbackResolution) {
+            // Don't bind this hierarchy, as it's a loose match. If the configuration changes, the loose
+            // match may not be valid anymore, so we don't want to cache it.
+            hierarchy = this.looseLookupHierarchy(key);
+        }
+        else if (this.isCollectionComponentKey(key)) {
+            hierarchy = new CollectionBindingHierarchy<>(TypeUtils.adjustWildcards(key, ComponentKey.class), this.applicationContext());
+        }
+        else {
+            hierarchy = null;
+        }
+        return hierarchy;
+    }
+
+    protected boolean isStrict(ComponentKey<?> key) {
+        if (key.strict() == Tristate.UNDEFINED) {
+            return this.applicationContext().environment().isStrictMode();
+        }
+        else {
+            return key.strict().booleanValue();
+        }
+    }
+
+    @Nullable
     private <T> AbstractBindingHierarchy<?> createHierarchy(ComponentKey<T> key) {
-        if (ComponentCollection.class.isAssignableFrom(key.type())) {
+        if (this.isCollectionComponentKey(key)) {
             return new CollectionBindingHierarchy<>(
                 TypeUtils.adjustWildcards(key, ComponentKey.class),
                 this.applicationContext()
@@ -405,7 +447,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             .filter(hierarchyKey -> this.isCompatible(key, hierarchyKey))
             .collect(Collectors.toSet());
 
-        if (ComponentCollection.class.isAssignableFrom(key.type())) {
+        if (this.isCollectionComponentKey(key)) {
             return this.composeCollectionHierarchy(TypeUtils.adjustWildcards(key, ComponentKey.class), compatibleKeys);
         }
         else {
@@ -418,6 +460,10 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
                 return this.lookupHighestPriorityHierarchy(key, compatibleKeys);
             }
         }
+    }
+
+    private boolean isCollectionComponentKey(ComponentKey<?> key) {
+        return ComponentCollection.class.isAssignableFrom(key.type());
     }
 
     @Nullable

@@ -21,4 +21,5 @@ import org.dockbox.hartshorn.component.ComponentKey;
 public interface HierarchicalBinder extends Binder {
 
     <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key);
+
 }

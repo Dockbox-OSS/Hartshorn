@@ -46,7 +46,6 @@ import org.dockbox.hartshorn.util.graph.MutableContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.View;
-import org.jetbrains.annotations.NotNull;
 
 public class DependencyGraphBuilder {
 
@@ -122,7 +121,7 @@ public class DependencyGraphBuilder {
         return contexts;
     }
 
-    @NotNull
+    @NonNull
     private <T> Set<DependencyDeclarationContext<?>> getImplementationContexts(DependencyContext<T> dependencyContext) {
         Set<ComponentKey<? extends T>> implementationKeys = this.lookupHierarchyDeclarations(dependencyContext);
         Introspector introspector = this.resolver.applicationContext().environment().introspector();
@@ -257,7 +256,7 @@ public class DependencyGraphBuilder {
         return CollectionUtilities.merge(componentNodes, collectionComponentNodes);
     }
 
-    @NotNull
+    @NonNull
     private MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> computeNodeMap(
         Iterable<DependencyContext<?>> allDependencyContexts
     ) {

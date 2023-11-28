@@ -20,11 +20,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.jetbrains.annotations.NotNull;
 
 public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
 
@@ -68,7 +68,7 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
         return this.discoveredComponents.stream().anyMatch(component -> component.node().equals(pathNode));
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Iterator<DiscoveredComponent> iterator() {
         return this.discoveredComponents().iterator();

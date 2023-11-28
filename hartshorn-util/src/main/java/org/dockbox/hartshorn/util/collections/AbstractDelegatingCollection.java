@@ -18,8 +18,7 @@ package org.dockbox.hartshorn.util.collections;
 
 import java.util.Collection;
 import java.util.Iterator;
-
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class AbstractDelegatingCollection<E> implements Collection<E> {
 
@@ -44,21 +43,21 @@ public class AbstractDelegatingCollection<E> implements Collection<E> {
         return this.delegate.contains(o);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Iterator<E> iterator() {
         return this.delegate.iterator();
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Object[] toArray() {
         return this.delegate.toArray();
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public <T> T[] toArray(@NotNull T[] a) {
+    public <T> T[] toArray(@NonNull T[] a) {
         return this.delegate.toArray(a);
     }
 
@@ -73,22 +72,22 @@ public class AbstractDelegatingCollection<E> implements Collection<E> {
     }
 
     @Override
-    public boolean containsAll(@NotNull Collection<?> c) {
+    public boolean containsAll(@NonNull Collection<?> c) {
         return this.delegate.containsAll(c);
     }
 
     @Override
-    public boolean addAll(@NotNull Collection<? extends E> c) {
+    public boolean addAll(@NonNull Collection<? extends E> c) {
         return this.delegate.addAll(c);
     }
 
     @Override
-    public boolean removeAll(@NotNull Collection<?> c) {
+    public boolean removeAll(@NonNull Collection<?> c) {
         return this.delegate.removeAll(c);
     }
 
     @Override
-    public boolean retainAll(@NotNull Collection<?> c) {
+    public boolean retainAll(@NonNull Collection<?> c) {
         return this.delegate.retainAll(c);
     }
 

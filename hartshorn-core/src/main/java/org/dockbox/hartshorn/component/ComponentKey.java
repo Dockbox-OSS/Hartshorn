@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.inject.HighestPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.ProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
@@ -57,7 +58,7 @@ public final class ComponentKey<T> {
     private final String name;
     private final Scope scope;
     private final boolean enable;
-    private final boolean strict;
+    private final Tristate strict;
 
     private ComponentKey(
             ProviderSelectionStrategy strategy,
@@ -65,7 +66,7 @@ public final class ComponentKey<T> {
             String name,
             Scope scope,
             boolean enable,
-            boolean strict
+            Tristate strict
     ) {
         this.strategy = strategy;
         this.type = type;
@@ -323,9 +324,12 @@ public final class ComponentKey<T> {
      * hierarchy has to match this key exactly. If the lookup is not strict, the type of the hierarchy can be a
      * sub-type of this key.
      *
+     * <p>If strict-mode is not explicitly set, {@link Tristate#UNDEFINED} is returned. In this case it remains
+     * up to the component provider to decide whether strict-mode should be applied.
+     *
      * @return whether the component should be enabled on provisioning
      */
-    public boolean strict() {
+    public Tristate strict() {
         return this.strict;
     }
 
@@ -353,7 +357,7 @@ public final class ComponentKey<T> {
         private String name;
         private Scope scope = Scope.DEFAULT_SCOPE;
         private boolean enable = true;
-        private boolean strict = true;
+        private Tristate strict = Tristate.UNDEFINED;
 
         private Builder(ComponentKey<T> key) {
             this.type = key.type;
@@ -413,7 +417,7 @@ public final class ComponentKey<T> {
         }
 
         public Builder<T> strict(boolean strict) {
-            this.strict = strict;
+            this.strict = Tristate.valueOf(strict);
             return this;
         }
 

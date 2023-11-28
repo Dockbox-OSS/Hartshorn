@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.application.environment;
 
-import jakarta.inject.Singleton;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +24,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.LoggingExceptionHandler;
@@ -60,6 +60,8 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.inject.Singleton;
+
 @LogExclude
 public final class ContextualApplicationEnvironment implements ObservableApplicationEnvironment, ModifiableContextCarrier {
 
@@ -76,6 +78,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
     private final boolean isBuildEnvironment;
     private final boolean isBatchMode;
+    private final boolean isStrictMode;
 
     private final ApplicationArgumentParser argumentParser;
     private final Properties arguments;
@@ -99,6 +102,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         SingleElementContext<Properties> argumentsInitializerContext = context.transform(this.arguments);
         this.printStacktraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
         this.isBatchMode = configurer.enableBatchMode.initialize(argumentsInitializerContext);
+        this.isStrictMode = configurer.enableStrictMode.initialize(argumentsInitializerContext);
         if (this.introspector() instanceof BatchCapableIntrospector batchCapableIntrospector) {
             batchCapableIntrospector.enableBatchMode(this.isBatchMode);
         }
@@ -199,6 +203,11 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     @Override
     public boolean isBatchMode() {
         return this.isBatchMode;
+    }
+
+    @Override
+    public boolean isStrictMode() {
+        return isStrictMode;
     }
 
     @Override
@@ -352,6 +361,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
         private ContextualInitializer<Properties, Boolean> enableBanner = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.banner.enabled", "true")));
         private ContextualInitializer<Properties, Boolean> enableBatchMode = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.batch.enabled", "false")));
+        private ContextualInitializer<Properties, Boolean> enableStrictMode = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.strict.enabled", "true")));
         private ContextualInitializer<Properties, Boolean> showStacktraces = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.exceptions.stacktraces", "true")));
 
         private ContextualInitializer<Introspector, ? extends ProxyOrchestrator> proxyOrchestrator = context -> DefaultProxyOrchestratorLoader.create(Customizer.useDefaults()).initialize(context);
@@ -406,6 +416,38 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          */
         public Configurer enableBatchMode(ContextualInitializer<Properties, Boolean> enableBatchMode) {
             this.enableBatchMode = enableBatchMode;
+            return this;
+        }
+
+        /**
+         * Enables strict mode. Strict mode is typically used to indicate that a lookup should only return a value if
+         * it is explicitly bound to the key, and not if it is bound to a sub-type of the key.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer enableStrictMode() {
+            return this.enableStrictMode(ContextualInitializer.of(true));
+        }
+
+        /**
+         * Disables strict mode. Strict mode is typically used to indicate that a lookup should only return a value if
+         * it is explicitly bound to the key, and not if it is bound to a sub-type of the key.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer disableStrictMode() {
+            return this.enableStrictMode(ContextualInitializer.of(false));
+        }
+
+        /**
+         * Enables or disables strict mode. Strict mode is typically used to indicate that a lookup should only return a
+         * value if it is explicitly bound to the key, and not if it is bound to a sub-type of the key.
+         *
+         * @param enableStrictMode whether to enable or disable strict mode
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer enableStrictMode(ContextualInitializer<Properties, Boolean> enableStrictMode) {
+            this.enableStrictMode = enableStrictMode;
             return this;
         }
 

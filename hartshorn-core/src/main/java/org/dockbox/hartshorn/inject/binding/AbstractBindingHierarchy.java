@@ -27,12 +27,12 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.TypeAwareProvider;
 import org.dockbox.hartshorn.util.option.Option;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T> {
 
@@ -128,7 +128,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
         return this.priorityProviders().size();
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Iterator<Entry<Integer, Provider<T>>> iterator() {
         return this.priorityProviders().entrySet().iterator();
