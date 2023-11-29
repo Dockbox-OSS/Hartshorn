@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.slf4j.Logger;
  * of the logger used throughout an active application.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 @LogExclude
 public interface ApplicationLogger {
@@ -38,5 +38,5 @@ public interface ApplicationLogger {
      * Sets whether the logger should log at debug level.
      * @param active Whether the logger should log at debug level.
      */
-    void setDebugActive(boolean active);
+    void enableDebugLogging(boolean active);
 }

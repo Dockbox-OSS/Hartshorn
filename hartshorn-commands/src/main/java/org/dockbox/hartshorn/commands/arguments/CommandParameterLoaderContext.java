@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,20 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 
-public class CommandParameterLoaderContext extends ParameterLoaderContext {
+public class CommandParameterLoaderContext extends ApplicationBoundParameterLoaderContext {
 
     private final CommandContext commandContext;
     private final MethodCommandExecutorContext<?> executorContext;
 
-    public CommandParameterLoaderContext(final MethodView<?, ?> method, final TypeView<?> type, final Object instance, final ApplicationContext applicationContext, final CommandContext commandContext,
-                                         final MethodCommandExecutorContext<?> executorContext) {
-        super(method, type, instance, applicationContext);
+    public CommandParameterLoaderContext(ExecutableElementView<?> element, Object instance,
+                                         ApplicationContext applicationContext, CommandContext commandContext,
+                                         MethodCommandExecutorContext<?> executorContext) {
+        super(element, instance, applicationContext);
         this.commandContext = commandContext;
         this.executorContext = executorContext;
     }

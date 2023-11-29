@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,12 @@
 package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
-
-import jakarta.inject.Inject;
 
 /**
  * A concrete implementation of {@link ContextCarrier}.
+ *
+ * @author Guus Lieben
+ * @since 0.4.8
  */
-@Component
-public class ConcreteContextCarrier implements ContextCarrier {
-
-    @Inject
-    private ApplicationContext applicationContext;
-
-    public ApplicationContext applicationContext() {
-        return this.applicationContext;
-    }
+public record ConcreteContextCarrier(ApplicationContext applicationContext) implements ContextCarrier {
 }

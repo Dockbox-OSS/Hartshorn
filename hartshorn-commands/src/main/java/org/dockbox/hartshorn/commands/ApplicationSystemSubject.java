@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,20 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.Message;
 
-@Component
+import jakarta.inject.Inject;
+
 public class ApplicationSystemSubject extends SystemSubject {
 
+    @Inject
+    public ApplicationSystemSubject(ApplicationContext applicationContext) {
+        super(applicationContext);
+    }
+
     @Override
-    public void send(final Message text) {
+    public void send(Message text) {
         this.applicationContext().log().info("-> %s".formatted(text.string()));
     }
 }

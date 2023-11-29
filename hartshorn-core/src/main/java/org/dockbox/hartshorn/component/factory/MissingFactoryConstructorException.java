@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,19 @@
 
 package org.dockbox.hartshorn.component.factory;
 
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * @deprecated See {@link Factory}.
+ */
+@Deprecated(since = "0.5.0", forRemoval = true)
 public class MissingFactoryConstructorException extends ApplicationRuntimeException {
 
-    public MissingFactoryConstructorException(final Key<?> key, final MethodView<?, ?> method) {
+    public MissingFactoryConstructorException(ComponentKey<?> key, ExecutableElementView<?> elementView) {
         super("No matching bound constructor found for %s with parameters: %s"
-                .formatted(key, method.parameters().types().stream().map(TypeView::name).toList()));
+                .formatted(key, elementView.parameters().types().stream().map(TypeView::name).toList()));
     }
 }

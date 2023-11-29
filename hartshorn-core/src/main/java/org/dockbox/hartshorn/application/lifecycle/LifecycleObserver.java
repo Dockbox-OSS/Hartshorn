@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
  * application-wide logic that needs to be executed when the application starts or stops.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public interface LifecycleObserver extends Observer {
     /**
@@ -32,7 +32,7 @@ public interface LifecycleObserver extends Observer {
      *
      * @param applicationContext The application context
      */
-    default void onStarted(final ApplicationContext applicationContext) {}
+    default void onStarted(ApplicationContext applicationContext) {}
 
     /**
      * Called when the application is stopped. This is called directly when the {@link Runtime#getRuntime() runtime}
@@ -40,5 +40,5 @@ public interface LifecycleObserver extends Observer {
      *
      * @param applicationContext The application context
      */
-    default void onExit(final ApplicationContext applicationContext) {}
+    default void onExit(ApplicationContext applicationContext) {}
 }

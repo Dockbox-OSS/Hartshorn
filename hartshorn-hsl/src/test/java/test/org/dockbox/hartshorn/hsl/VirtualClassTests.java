@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.HslScript;
+import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -75,17 +75,17 @@ public class VirtualClassTests {
 
     @ParameterizedTest
     @MethodSource("propertyAccessors")
-    void test(final String modifier, final String accessor, final boolean shouldFail, final String message) {
-        final HslScript script = HslScript.of(this.applicationContext, """
+    void test(String modifier, String accessor, boolean shouldFail, String message) {
+        ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 class User {
                     %s name;
                     constructor(name) {
                         this.name = name;
                     }
-                    fun getName() {
+                    function getName() {
                         return this.name;
                     }
-                    fun setName(name) {
+                    function setName(name) {
                         this.name = name;
                     }
                 }
@@ -94,7 +94,7 @@ public class VirtualClassTests {
                 """.formatted(modifier, accessor));
 
         if (shouldFail) {
-            final ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
+            ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
             String errorMessage = error.getMessage();
             errorMessage = errorMessage.substring(0, errorMessage.indexOf("."));
             Assertions.assertEquals(message, errorMessage);

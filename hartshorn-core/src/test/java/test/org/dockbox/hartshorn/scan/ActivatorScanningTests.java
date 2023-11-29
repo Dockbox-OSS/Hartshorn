@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package test.org.dockbox.hartshorn.scan;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.scan.TypeReferenceCollector;
-import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
-import org.dockbox.hartshorn.application.scan.classpath.ClasspathTypeReferenceCollector;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
+import org.dockbox.hartshorn.util.introspect.scan.classpath.ClasspathTypeReferenceCollector;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
@@ -31,12 +31,12 @@ import org.junit.jupiter.api.Assertions;
 public class ActivatorScanningTests {
 
     @InjectTest
-    void testPrefixFromActivatorIsRegistered(final ApplicationContext applicationContext) {
-        final Option<TypeReferenceCollectorContext> contextCandidate = applicationContext.first(TypeReferenceCollectorContext.class);
+    void testPrefixFromActivatorIsRegistered(ApplicationContext applicationContext) {
+        Option<TypeReferenceCollectorContext> contextCandidate = applicationContext.first(TypeReferenceCollectorContext.class);
         Assertions.assertTrue(contextCandidate.present());
 
-        final TypeReferenceCollectorContext context = contextCandidate.get();
-        for (final TypeReferenceCollector collector : context.collectors()) {
+        TypeReferenceCollectorContext context = contextCandidate.get();
+        for (TypeReferenceCollector collector : context.collectors()) {
             if (collector instanceof ClasspathTypeReferenceCollector referenceCollector) {
                 if ("test.org.dockbox.hartshorn.scan".equals(referenceCollector.packageName())) {
                     return;
@@ -47,19 +47,19 @@ public class ActivatorScanningTests {
     }
 
     @InjectTest
-    @TestComponents(DemoProvider.class)
-    void testBindingsFromActivatorPrefixArePresent(final ApplicationContext applicationContext) {
-        final Demo demo = applicationContext.get(Demo.class);
+    @TestComponents(components = DemoProvider.class)
+    void testBindingsFromActivatorPrefixArePresent(ApplicationContext applicationContext) {
+        Demo demo = applicationContext.get(Demo.class);
         Assertions.assertNotNull(demo);
         Assertions.assertEquals("Demo", demo.demo());
         Assertions.assertTrue(demo instanceof DemoImpl);
     }
 
     @InjectTest
-    @TestComponents(DemoService.class)
-    void testServicesFromActivatorPrefixArePresent(final ApplicationContext applicationContext) {
-        final DemoService demoService = applicationContext.get(DemoService.class);
+    @TestComponents(components = DemoService.class)
+    void testServicesFromActivatorPrefixArePresent(ApplicationContext applicationContext) {
+        DemoService demoService = applicationContext.get(DemoService.class);
         Assertions.assertNotNull(demoService);
-        Assertions.assertTrue(applicationContext.environment().isProxy(demoService));
+        Assertions.assertTrue(applicationContext.environment().proxyOrchestrator().isProxy(demoService));
     }
 }

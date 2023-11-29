@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,55 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 
+/**
+ * A binder is used to bind types or keys to various targets, and is capable of importing existing
+ * {@link BindingHierarchy binding hierarchies}.
+ *
+ * <p>Binders may be delegated to other binders, and may be used to create new bindings or override
+ * existing bindings. Often, you should use {@link org.dockbox.hartshorn.application.context.ApplicationContext}
+ * to create new bindings, so it can delegate to the correct binders of the current context.
+ *
+ * @author Guus Lieben
+ * @since 0.4.1
+ *
+ * @see org.dockbox.hartshorn.application.context.ApplicationContext
+ */
 public interface Binder {
 
-    <C> BindingFunction<C> bind(Key<C> key);
-
-    default <C> BindingFunction<C> bind(final Class<C> type) {
-        return this.bind(Key.of(type));
+    /**
+     * Open a new binding function for the given type. This will create a new binding function that
+     * will bind to the given type as an unnamed key in the default scope of the binder.
+     *
+     * @param type The type to bind to
+     * @return The binding function
+     * @param <C> The type of the binding
+     */
+    default <C> BindingFunction<C> bind(Class<C> type) {
+        return this.bind(ComponentKey.of(type));
     }
+
+    /**
+     * Open a new binding function for the given key. This will create a new binding function that
+     * will bind to the given key. The key may be named or unnamed, and may contain a scope.
+     *
+     * @param key The key to bind to
+     * @return The binding function
+     * @param <C> The type of the binding
+     */
+    <C> BindingFunction<C> bind(ComponentKey<C> key);
+
+    /**
+     * Imports the given hierarchy into the current binder. This will override any existing bindings
+     * in the current binder with the bindings from the given hierarchy. If you wish to keep both
+     * the existing and new bindings, obtain the active bindings from the current {@link HierarchicalComponentProvider}
+     * and merge them with {@link BindingHierarchy#merge(BindingHierarchy)}.
+     *
+     * @param hierarchy The hierarchy to import
+     * @return The binder
+     * @param <C> The type of the binding
+     */
+    <C> Binder bind(BindingHierarchy<C> hierarchy);
 }

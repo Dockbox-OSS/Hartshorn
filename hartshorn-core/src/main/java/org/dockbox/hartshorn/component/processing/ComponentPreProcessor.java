@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,26 +31,26 @@ import org.dockbox.hartshorn.component.ComponentLocator;
  *
  * <p>To specify when a component post processor should be active, and when the application should ignore
  * it, the processor will always require an activator annotation to be specified as type parameter
- * <code>A</code>. If the specified annotation is not annotated with {@link ServiceActivator}, it is up to
+ * {@code A}. If the specified annotation is not annotated with {@link ServiceActivator}, it is up to
  * the active {@link ApplicationContext} to decide whether this should be considered an error or not.
  *
  * <p>The component pre-processor will be called for each component that is added to the application.
  * It is executed during application construction.
  *
  * @author Guus Lieben
- * @since 22.1
+ * @since 0.4.9
  */
 public abstract non-sealed class ComponentPreProcessor implements ComponentProcessor {
 
     @Override
-    public <T> T process(final ComponentProcessingContext<T> processingContext) {
+    public <T> T process(ComponentProcessingContext<T> processingContext) {
         this.process(processingContext.applicationContext(), processingContext);
         return processingContext.instance();
     }
 
     /**
      * Processes a given component. As component instances will not exist yet, this method does not expect
-     * the <code>instance</code> to be specified.
+     * the {@code instance} to be specified.
      *
      * @param context The application context.
      * @param processingContext The type context of the component.

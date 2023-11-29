@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.application.environment;
 
 import org.dockbox.hartshorn.application.Hartshorn;
-import org.dockbox.hartshorn.util.Resources;
+import org.dockbox.hartshorn.util.resources.Resources;
 import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.io.File;
@@ -36,39 +36,40 @@ import java.util.stream.Collectors;
  * location and return the path to the temporary location.
  *
  * @author Guus Lieben
- * @since 22.1
+ * @since 0.4.9
  */
 public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLocator {
 
     private final ApplicationEnvironment environment;
 
-    public ClassLoaderClasspathResourceLocator(final ApplicationEnvironment environment) {
+    public ClassLoaderClasspathResourceLocator(ApplicationEnvironment environment) {
         this.environment = environment;
     }
 
     @Override
-    public Attempt<Path, IOException> resource(final String name) {
+    public Attempt<Path, IOException> resource(String name) {
         return Attempt.of(() -> Resources.getResourceAsFile(name), IOException.class).map(File::toPath);
     }
 
     @Override
-    public Set<Path> resources(final String name) {
+    public Set<Path> resources(String name) {
         try {
-            final String normalizedPath = name.replaceAll("\\\\", "/");
-            final int lastIndex = normalizedPath.lastIndexOf("/");
-            final String path = lastIndex == -1 ? "" : normalizedPath.substring(0, lastIndex + 1);
-            final String fileName = lastIndex == -1 ? normalizedPath : normalizedPath.substring(lastIndex + 1);
+            String normalizedPath = name.replaceAll("\\\\", "/");
+            int lastIndex = normalizedPath.lastIndexOf("/");
+            String path = lastIndex == -1 ? "" : normalizedPath.substring(0, lastIndex + 1);
+            String fileName = lastIndex == -1 ? normalizedPath : normalizedPath.substring(lastIndex + 1);
 
-            final Set<File> files = new HashSet<>();
-            final Set<File> resources = Resources.getResourcesAsFiles(path);
-            for (final File parent : resources) {
-                final File[] filteredResources = parent.listFiles((dir, file) -> file.startsWith(fileName));
-                if (filteredResources != null)
+            Set<File> files = new HashSet<>();
+            Set<File> resources = Resources.getResourcesAsFiles(path);
+            for (File parent : resources) {
+                File[] filteredResources = parent.listFiles((dir, file) -> file.startsWith(fileName));
+                if (filteredResources != null) {
                     files.addAll(Arrays.asList(filteredResources));
+                }
             }
             return files.stream().map(File::toPath).collect(Collectors.toUnmodifiableSet());
         }
-        catch (final NullPointerException | IOException e) {
+        catch (NullPointerException | IOException e) {
             return new HashSet<>();
         }
     }
@@ -76,11 +77,13 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
     @Override
     public URI classpathUri() {
         try {
-            final URL resource = Hartshorn.class.getClassLoader().getResource("");
-            if (resource == null) return null;
+            URL resource = Hartshorn.class.getClassLoader().getResource("");
+            if (resource == null) {
+                return null;
+            }
             return resource.toURI();
         }
-        catch (final URISyntaxException e) {
+        catch (URISyntaxException e) {
             this.environment.handle("Could not look up classpath base", e);
             return null;
         }

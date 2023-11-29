@@ -1,37 +1,26 @@
-<p align="center"><img alt="Hartshorn" src="./hartshorn-assembly/images/logo_shadow.png" height="150" /></p>
+<p align="center"><img alt="Hartshorn" src="./hartshorn-assembly/images/hartshorn-icon.png" height="125" /></p>
 <h1 align="center">Hartshorn Framework</h1>
-<p align="center"><img src="https://github.com/GuusLieben/Hartshorn/actions/workflows/hartshorn.yml/badge.svg"> <img src="https://img.shields.io/badge/JDK-17-blue"></p>
+<p align="center">
+<img src="https://img.shields.io/badge/JDK-21-438EAA?style=for-the-badge">
+<img src="https://img.shields.io/github/v/release/Dockbox-OSS/Hartshorn?style=for-the-badge&color=438EAA">
+</p>
 
-[Hartshorn](https://hartshorn.dockbox.org/) is a modern JVM-based full stack Java framework. It is capable of aiding developers while building modular, testable, and scalable applications with support for Java and other JVM languages.  
+<hr>
 
-Hartshorn is an umbrella term for the Hartshorn Framework and all official [modules](https://hartshorn.dockbox.org/modules/modules/). Hartshorn Framework itself is a service- and dependency management framework which complements [JSR 330](https://www.jcp.org/en/jsr/detail?id=330), but does not embrace the Java EE specification. You can read more about Hartshorn's core technologies and principles in the [core technologies](https://hartshorn.dockbox.org/core/cdi/) topic.  
+[Hartshorn](https://hartshorn.dockbox.org/) is a cutting-edge Java framework built on the JVM platform that offers comprehensive support for modular, scalable, and testable application development using Java and other JVM-based languages. Its main objective is to simplify the creation and administration of intricate JVM applications by providing developers with the necessary tools. To learn more about Hartshorn's fundamental technologies and principles, you can refer to the dedicated topic on [core technologies](https://hartshorn.dockbox.org/core/cdi/).
 
-Hartshorn aims to ease the creation and management of complex JVM applications, this is done by providing tools necessary to build these applications. These tools include:
-- Context and Dependency Injection (CDI) and Inversion of Control (IoC)
-- Automatic application configuration
-- Component lifecycle management
-
-### Philosophy
-Hartshorn follows a range of technical [core principles](https://hartshorn.dockbox.org/core/cdi/), as well as a specific design philosophy. Here are the guiding principles of the Hartshorn Framework:
-- Extensibility and flexibility. Hartshorn puts an emphasis on enabling developers to extend and switch between implementations at every level, without requiring changes to your code.
-- Allow for diverse usages. Hartshorn allows for a large amount of flexibility, by providing a template for you to develop your application in.
-- High standards for code quality. Hartshorn aims to use modern language features in combination with a meaningful and future-proof API to allow developers to intuitively use the framework.
-
-### Why use Hartshorn?
-Hartshorn is capable of being as complex or simplistic as you need it to be, remaining largely unbiased to allow you to build applications in the way you see fit. It aims to avoid some of the downsides of frameworks like Spring, Ktor, and Quarkus:
-- Fast startup time
-- Reduced memory footprint
-- Full component customization
-- Easy unit testing
-
-<br>  
+<hr>
 
 ## Getting started
-If you are just getting started with hartshorn, you'll want to view the [Getting Started](https://hartshorn.dockbox.org/getting-started/setup/) guides on the official documentation website. The provided guides use Hartshorn's application starter which enables you to get started quickly. If you are just looking for the Maven dependencies, these are listed below.
+
+If you are new to Hartshorn, the official documentation website has a [Getting Started](https://hartshorn.dockbox.org/getting-started/setup/) section that provides comprehensive guides to help you get started quickly. The guides use Hartshorn's application starter to facilitate your initial setup. Additionally, if you only need the Maven dependencies for your project, they are listed below for your convenience.
 
 ### Maven configuration
-Each module has its own dedicated dependency, so you have the freedom to use only the modules you actually need.  
-To get started, add the Maven dependency:
+
+The framework provides the flexibility to selectively utilize the required modules by including their dedicated dependencies. You can access all the modules and their corresponding releases on [Maven Central](https://central.sonatype.dev/namespace/org.dockbox.hartshorn).
+
+To begin, add the following Maven dependency:
+
 ```xml
 <dependency>
   <groupId>org.dockbox.hartshorn</groupId>
@@ -39,102 +28,83 @@ To get started, add the Maven dependency:
   <version>${version}</version>
 </dependency>
 ```
-Or if you are using Gradle:
+
+If you are using Gradle, use this implementation:
+
 ```groovy
 implementation "org.dockbox.hartshorn:hartshorn-core:$version"
 ```
 
 ### Starting your first application
-Getting started with Hartshorn is easy, the example below will introduce you to the application starter as well as showing you how to create a simple REST controller. You can find a full guide on this topic on the [Getting started section](https://hartshorn.dockbox.org/getting-started/first-application/) of the documentation website.  
 
-Before creating a REST controller, we'll first need a domain object representing our response. In this example we will use a simple `Greeting` object, which contains a single message. This will result in the following response from the REST API:
-```json
-{
-    "content": "Hello, World!"
-}
-```
-To model the greeting, you can use a Plain Old Java Object (POJO), no annotations required.
+The process of starting with Hartshorn is straightforward, and the example below will help you understand the basic steps of setting up and executing your first application.
+
+The `HartshornApplication` class is used to build Hartshorn applications. It serves as the entry point of your application and performs the bootstrapping process. The process initiates a self-contained `ApplicationContext` that manages your application's lifecycle.
 
 ```java
-public class Greeting {
-
-    private final String content;
-
-    public Greeting(final String content) {
-        this.content = content;
-    }
-
-    public String getContent() {
-        return this.content;
-    }
+public static void main(String[] args) {
+    ApplicationContext applicationContext = HartshornApplication.create();
+    // ...
 }
 ```
-Next we'll create a REST controller capable of handling HTTP requests. In Hartshorn, REST controllers are a component stereotype, meaning they are automatically managed by the application. This allows you to simply mark the controller with `@RestController`, without needing to register the component manually.
+
+`ApplicationContext` is at the heart of Hartshorn, and its primary responsibility is to manage your application's lifecycle. It also manages your application's dependency injection container, which enables the injection of dependencies. The `@Binds` annotation is used to declare dependencies, which binds a type to its implementation. To inject dependencies, you can use the @Inject annotation.
 
 ```java
-
-@RestController
-public class GreetingController {
-
-    @HttpGet("/greeting")
-    public Greeting greeting(@RequestParam(value = "name", or = "World") final String name) {
-        return new Greeting("Hello, %s!".formatted(name)); // If no value is provided for 'name', the default value 'World' will be used
-
-    }
+@Binds
+public String helloWorld() {
+    return "Hello World!";
 }
 ```
-Finally, we start the application from our main application class. Here we can use the `HartshornApplication` starter, which will automatically perform all steps required to bootstrap your application and start the RESTful web service.
+
+Managed components are part of your application structure, meaning they are automatically discovered and registered. Components annotated with `@Component` or a stereotype annotation annotated with `@Component`, such as `@Service`, are considered managed.
 
 ```java
-
-@Activator
-// Indicates this class is allowed to be used as an application starter. You can also define additional metadata here
-@UseHttpServer // Indicates we should start a web server and process controllers
-public class GreetingApplication {
-
-    public static void main(final String[] args) {
-        HartshornApplication.create(GreetingApplication.class, args);
+@Service
+public class SampleService {
+    
+    @Inject
+    private String helloWorld;
+    
+    public void sayHelloWorld() {
+        System.out.println(helloWorld);
     }
 }
 ```
-That's it! You can now navigate to http://localhost:8080/greeting, which will result in the following response:
-```json
-{
-    "content": "Hello, World!"
+
+Finally, we can bring everything together and print "Hello World!" to the console using our `SampleService`.
+
+```java
+public static void main(String[] args) {
+    ApplicationContext applicationContext = HartshornApplication.create();
+    SampleService sampleService = applicationContext.get(SampleService.class);
+    sampleService.sayHelloWorld();
 }
 ```
-Additionally, if you go to http://localhost:8080/greeting?name=YourName, the response will greet you instead of the entire world! For example, adding `?name=Hartshorn` will result in:
-```json
-{
-    "content": "Hello, Hartshorn!"
-}
-```
-  
-<br>  
-  
+
+### Next steps
+
+Once you've taken your first steps with Hartshorn, it's essential to expand your knowledge of the framework. The [documentation](https://hartshorn.dockbox.org/) is an excellent starting point that will help you become more familiar with the framework. Additionally, you can explore the [examples repository](https://github.com/Dockbox-OSS/Hartshorn-Examples) for more comprehensive examples.
+
 ## Building Hartshorn
-If you wish to build Hartshorn yourself, either to get access to pre-release versions, or to add customizations, the guide below explains how to set up your Gradle environment.  All platforms require a Java installation, with JDK 17 or more recent version.
 
-Set the JAVA\_HOME environment variable. For example:
+If you want to build Hartshorn yourself, either to access pre-release versions or to customize the framework, the guide below explains how to build usable JAR artifacts.
 
-| Platform | Command                                              |
-| :---: |------------------------------------------------------|
-|  Unix    | ``export JAVA_HOME=/usr/lib/jvm/openjdk-17-jdk``     |
-|  OSX     | ``export JAVA_HOME=`/usr/libexec/java_home -v 17` `` |
-|  Windows | ``set JAVA_HOME="C:\Program Files\Java\jdk-17.0.3"`` |
+> [!IMPORTANT]
+> Note that you will need a Java installation with JDK 21 or a more recent version for all platforms.
 
-Hartshorn uses a custom Gradle wrapper to automate builds, performing several steps before and after a build has completed.  
-Depending on your IDE the Gradle wrapper may be automatically used. If you encounter any issues, use `./gradlew` for Unix systems or Git Bash and `gradlew.bat` for Windows systems in place of any 'gradle' command.  
+Hartshorn uses Maven to automate builds, performing several steps before and after a build has completed. To build all Hartshorn modules at once, run `mvn clean install` in the base directory. This will build all modules and run all tests. If you want to skip tests, you can use the `-DskipTests` flag.
 
-Within the directory containing the unpacked source code, run the gradle build:
-```bash
-./gradlew build
-```
-
-Once the build completes, the project distribution archives will be installed at `/hartshorn-assembly/distributions` in the base directory. 
-Builds are versioned by date and by commit hash, with the artifact following the format `$archivesBaseName-$commitHash-$date.jar`.
-
-<br>  
-  
 ## Contributing
-Interested in contributing to Hartshorn, want to report a bug, or have a question? Before you do, please read the [contribution guidelines](https://hartshorn.dockbox.org/contributing/)
+
+Looking to get involved with Hartshorn? We would love to have you on board! Whether you want to report a bug, have a question, or even contribute code, your help is greatly appreciated. Before you start, please take a moment to read through our [contribution guidelines](https://hartshorn.dockbox.org/contributing/) to ensure that your efforts align with our community standards and development practices.
+
+At Dockbox, we value our community of contributors and strive to maintain an open and collaborative environment. Our project is powered by the contributions of individuals like you, who are passionate about building high-quality software and sharing their knowledge with others.
+
+If you're looking for ways to contribute, we have plenty of opportunities available. You can help us by reporting bugs, reviewing code, writing documentation, or even contributing your own code changes. No contribution is too small, and we welcome all levels of experience.
+
+We also welcome QA testers who try out Hartshorn in their own projects to see what works and what doesn't. Your feedback can help us improve the quality of the framework and make it even more valuable for our users.
+
+## License
+
+Hartshorn is Open Source software released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.html).

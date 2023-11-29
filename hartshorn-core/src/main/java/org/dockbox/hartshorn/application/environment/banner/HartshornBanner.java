@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ public class HartshornBanner implements Banner {
             """.formatted(Hartshorn.VERSION);
 
     @Override
-    public void print(final Logger logger) {
-        for (final String line : BANNER.split("\n")) {
+    public void print(Logger logger) {
+        for (String line : BANNER.split("\n")) {
             logger.info(line);
         }
         logger.info("");

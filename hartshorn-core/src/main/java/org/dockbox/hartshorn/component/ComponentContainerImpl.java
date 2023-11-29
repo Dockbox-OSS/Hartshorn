@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,19 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Objects;
 
-public class ComponentContainerImpl implements ComponentContainer {
+public class ComponentContainerImpl<T> implements ComponentContainer<T> {
 
     private final Component annotation;
     private final Class<?> component;
-    private final TypeView<?> introspectedComponent;
+    private final TypeView<T> introspectedComponent;
     private final ApplicationContext context;
 
-    public ComponentContainerImpl(final ApplicationContext context, final Class<?> component) {
-        this.introspectedComponent = context.environment().introspect(component);
-        final Option<Component> annotated = this.introspectedComponent.annotations().get(Component.class);
-        if (annotated.absent()) throw new InvalidComponentException("Provided component candidate (" + component.getCanonicalName() + ") is not annotated with @" + Component.class.getSimpleName());
+    public ComponentContainerImpl(ApplicationContext context, Class<T> component) {
+        this.introspectedComponent = context.environment().introspector().introspect(component);
+        Option<Component> annotated = this.introspectedComponent.annotations().get(Component.class);
+        if (annotated.absent()) {
+            throw new InvalidComponentException("Provided component candidate (" + component.getCanonicalName() + ") is not annotated with @" + Component.class.getSimpleName());
+        }
 
         this.component = component;
         this.annotation = annotated.get();
@@ -53,20 +55,24 @@ public class ComponentContainerImpl implements ComponentContainer {
 
     @Override
     public String id() {
-        final String id = this.annotation().id();
-        if ("".equals(id)) return ComponentUtilities.id(this.context, this.component, true);
+        String id = this.annotation().id();
+        if (id != null && id.isEmpty()) {
+            return ComponentUtilities.id(this.context, this.component, true);
+        }
         return id;
     }
 
     @Override
     public String name() {
-        final String name = this.annotation().name();
-        if ("".equals(name)) return ComponentUtilities.name(this.context, this.component, true);
+        String name = this.annotation().name();
+        if (name != null && name.isEmpty()) {
+            return ComponentUtilities.name(this.context, this.component, true);
+        }
         return name;
     }
 
     @Override
-    public TypeView<?> type() {
+    public TypeView<T> type() {
         return this.introspectedComponent;
     }
 
@@ -96,11 +102,15 @@ public class ComponentContainerImpl implements ComponentContainer {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
-        final ComponentContainerImpl that = (ComponentContainerImpl) o;
-        return this.component.equals(that.component);
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || this.getClass() != other.getClass()) {
+            return false;
+        }
+        ComponentContainerImpl container = (ComponentContainerImpl) other;
+        return this.component.equals(container.component);
     }
 
     @Override

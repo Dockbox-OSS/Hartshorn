@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,67 +16,63 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.commands.CommandExecutor;
-import org.dockbox.hartshorn.commands.CommandParser;
-import org.dockbox.hartshorn.commands.CommandResources;
-import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.arguments.CommandParameterLoaderContext;
-import org.dockbox.hartshorn.commands.definition.CommandElement;
-import org.dockbox.hartshorn.commands.events.CommandEvent;
-import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
-import org.dockbox.hartshorn.component.condition.ConditionMatcher;
-import org.dockbox.hartshorn.component.condition.ProvidedParameterContext;
-import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.events.annotations.Posting;
-import org.dockbox.hartshorn.events.parents.Cancellable;
-import org.dockbox.hartshorn.i18n.Message;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.commands.CommandExecutor;
+import org.dockbox.hartshorn.commands.CommandParser;
+import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.arguments.CommandParameterLoader;
+import org.dockbox.hartshorn.commands.definition.CommandElement;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * Simple implementation of {@link CommandExecutorContext} targeting {@link Method} based executors.
+ * Simple implementation of {@link CommandExecutorContext} targeting {@link MethodView} based executors.
  */
-@Posting({ CommandEvent.Before.class, CommandEvent.After.class })
 public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareContext implements CommandExecutorContext {
 
     private final MethodView<T, ?> method;
     private final TypeView<T> type;
-    private final Key<T> key;
+    private final ComponentKey<T> key;
     private final List<String> parentAliases;
     private final Command command;
     private final boolean isChild;
-    private final ParameterLoader<CommandParameterLoaderContext> parameterLoader;
+    private final ParameterLoader parameterLoader;
 
     private Map<String, CommandParameterContext> parameters;
 
-    public MethodCommandExecutorContext(final ApplicationContext context, final MethodView<T, ?> method, final Key<T> key) {
+    public MethodCommandExecutorContext(
+            ApplicationContext context,
+            ArgumentConverterRegistry converterRegistry,
+            MethodView<T, ?> method,
+            ComponentKey<T> key
+    ) {
         super(context);
-        final Option<Command> annotated = method.annotations().get(Command.class);
+        Option<Command> annotated = method.annotations().get(Command.class);
         if (annotated.absent()) {
             throw new IllegalArgumentException("Provided method is not a command handler");
         }
         this.method = method;
         this.key = key;
         this.command = annotated.get();
-        this.type = context.environment().introspect(key.type());
+        this.type = context.environment().introspector().introspect(key.type());
 
-        final Option<Command> annotation = this.type.annotations().get(Command.class);
-        final Command parent;
+        Option<Command> annotation = this.type.annotations().get(Command.class);
+        Command parent;
         if (annotation.present()) {
             parent = annotation.get();
             this.isChild = true;
@@ -86,7 +82,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
             this.isChild = false;
         }
 
-        this.add(new CommandDefinitionContextImpl(this.applicationContext(), this.command(), this.method()));
+        this.add(new CommandDefinitionContextImpl(this.applicationContext(), converterRegistry, this.command(), this.method()));
 
         this.parentAliases = new CopyOnWriteArrayList<>();
         if (parent != null) {
@@ -94,14 +90,14 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
             this.parentAliases.addAll(List.of(parent.value()));
         }
         this.parameters = this.parameters();
-        this.parameterLoader = context.get(Key.of(ParameterLoader.class, "command_loader"));
+        this.parameterLoader = new CommandParameterLoader();
     }
 
     protected MethodView<T, ?> method() {
         return this.method;
     }
 
-    protected Key<T> key() {
+    protected ComponentKey<T> key() {
         return this.key;
     }
 
@@ -117,18 +113,16 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
         return this.isChild;
     }
 
-
-
-    protected ParameterLoader<CommandParameterLoaderContext> parameterLoader() {
+    protected ParameterLoader parameterLoader() {
         return this.parameterLoader;
     }
 
     public Map<String, CommandParameterContext> parameters() {
         if (this.parameters == null) {
             this.parameters = new HashMap<>();
-            final List<ParameterView<?>> parameters = this.method().parameters().all();
+            List<ParameterView<?>> parameters = this.method().parameters().all();
             for (int i = 0; i < parameters.size(); i++) {
-                final ParameterView<?> parameter = parameters.get(i);
+                ParameterView<?> parameter = parameters.get(i);
                 this.parameters.put(parameter.name(), new CommandParameterContext(parameter, i));
             }
 
@@ -138,54 +132,30 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
 
     @Override
     public CommandExecutor executor() {
-        final ConditionMatcher conditionMatcher = this.applicationContext().get(ConditionMatcher.class);
-        final TypeView<T> typeView = this.applicationContext().environment().introspect(this.key().type());
-
-        return (ctx) -> {
-            final Cancellable before = new Before(ctx.source(), ctx).with(this.applicationContext()).post();
-            if (before.cancelled()) {
-                this.applicationContext().log().debug("Execution cancelled for " + this.method().qualifiedName());
-                final Message cancelled = this.applicationContext().get(CommandResources.class).cancelled();
-                ctx.source().send(cancelled);
-                return;
-            }
-
-            final T instance = this.applicationContext().get(this.key());
-            final CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method(), typeView, null, this.applicationContext(), ctx, this);
-            final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
-
-            if (conditionMatcher.match(this.method(), ProvidedParameterContext.of(this.method(), arguments))) {
-                this.applicationContext().log().debug("Invoking command method %s with %d arguments".formatted(this.method().qualifiedName(), arguments.size()));
-                this.method().invoke(instance, arguments.toArray())
-                        .peekError(error -> this.applicationContext().handle("Encountered unexpected error while performing command executor", error));
-                new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext()).post();
-            }
-            else {
-                this.applicationContext().log().debug("Conditions didn't match for " + this.method().qualifiedName());
-                final Message cancelled = this.applicationContext().get(CommandResources.class).cancelled();
-                ctx.source().send(cancelled);
-            }
-        };
+        ConditionMatcher conditionMatcher = this.applicationContext().get(ConditionMatcher.class);
+        return new MethodCommandExecutor<>(conditionMatcher, this);
     }
 
     @Override
-    public boolean accepts(final String command) {
-        final CommandDefinitionContext context = this.definition();
+    public boolean accepts(String command) {
+        CommandDefinitionContext context = this.definition();
         return context.matches(this.strip(command, true));
     }
 
     @Override
-    public String strip(String command, final boolean parentOnly) {
+    public String strip(String command, boolean parentOnly) {
         command = this.stripAny(command, this.parentAliases);
-        if (!parentOnly) command = this.stripAny(command, this.definition().aliases());
+        if (!parentOnly) {
+            command = this.stripAny(command, this.definition().aliases());
+        }
         return command;
     }
 
     @Override
     public List<String> aliases() {
-        final List<String> aliases = new ArrayList<>();
-        for (final String parentAlias : this.parentAliases()) {
-            for (final String alias : this.command().value()) {
+        List<String> aliases = new ArrayList<>();
+        for (String parentAlias : this.parentAliases()) {
+            for (String alias : this.command().value()) {
                 aliases.add(parentAlias + ' ' + alias);
             }
         }
@@ -206,17 +176,22 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
     }
 
     @Override
-    public List<String> suggestions(final CommandSource source, final String command, final CommandParser parser) {
-        final String stripped = this.strip(command, false);
+    public List<String> suggestions(CommandSource source, String command, CommandParser parser) {
+        String stripped = this.strip(command, false);
         this.applicationContext().log().debug("Collecting suggestions for stripped input %s (was %s)".formatted(stripped, command));
-        final List<CommandElement<?>> elements = this.definition().elements();
-        final List<String> tokens = new ArrayList<>(List.of(stripped.split(" ")));
-        if (command.endsWith(" ") && !"".equals(tokens.get(tokens.size() - 1))) tokens.add("");
+
+        List<CommandElement<?>> elements = this.definition().elements();
+        List<String> tokens = new ArrayList<>(List.of(stripped.split(" ")));
+        if (command.endsWith(" ") && !"".equals(CollectionUtilities.last(tokens))) {
+            tokens.add("");
+        }
 
         CommandElement<?> last = null;
-        for (final CommandElement<?> element : elements) {
+        for (CommandElement<?> element : elements) {
             int size = element.size();
-            if (size == -1) return List.of();
+            if (size == -1) {
+                return List.of();
+            }
 
             if (tokens.size() <= size) {
                 last = element;
@@ -233,22 +208,28 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
             this.applicationContext().log().debug("Could not locate last command element to collect suggestions");
             return List.of();
         }
-        final Collection<String> suggestions = last.suggestions(source, String.join(" ", tokens));
+        Collection<String> suggestions = last.suggestions(source, String.join(" ", tokens));
         this.applicationContext().log().debug("Found " + suggestions.size() + " suggestions");
         return List.copyOf(suggestions);
     }
 
     private CommandDefinitionContext definition() {
-        final Option<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
-        if (definition.absent()) throw new DefinitionContextLostException();
+        Option<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
+        if (definition.absent()) {
+            throw new DefinitionContextLostException();
+        }
         return definition.get();
     }
 
-    private String stripAny(String command, final Iterable<String> aliases) {
-        for (final String alias : aliases) {
+    private String stripAny(String command, Iterable<String> aliases) {
+        for (String alias : aliases) {
             // Equality is expected when no required arguments are present afterwards
-            if (command.equals(alias)) command = "";
-            else if (command.startsWith(alias + ' ')) command = command.substring(alias.length() + 1);
+            if (command.equals(alias)) {
+                command = "";
+            }
+            else if (command.startsWith(alias + ' ')) {
+                command = command.substring(alias.length() + 1);
+            }
         }
         return command;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn;
 
-import org.dockbox.hartshorn.application.environment.ApplicationFSProvider;
+import org.dockbox.hartshorn.application.environment.FileSystemProvider;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
@@ -27,8 +27,8 @@ import java.nio.file.Path;
 public class FSProviderTests {
 
     @InjectTest
-    void testApplicationPathIsAbsolute(final ApplicationFSProvider fsProvider) {
-        final Path path = fsProvider.applicationPath();
+    void testApplicationPathIsAbsolute(FileSystemProvider fsProvider) {
+        Path path = fsProvider.applicationPath();
 
         Assertions.assertNotNull(path);
         Assertions.assertTrue(path.isAbsolute());

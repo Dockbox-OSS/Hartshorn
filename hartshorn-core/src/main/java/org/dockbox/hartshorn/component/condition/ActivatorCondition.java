@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import java.lang.annotation.Annotation;
 public class ActivatorCondition implements Condition {
 
     @Override
-    public ConditionResult matches(final ConditionContext context) {
+    public ConditionResult matches(ConditionContext context) {
         return context.annotatedElement().annotations().get(RequiresActivator.class).map(condition -> {
-            for (final Class<? extends Annotation> activator : condition.value()) {
+            for (Class<? extends Annotation> activator : condition.value()) {
                 if (!context.applicationContext().hasActivator(activator)) {
                     return ConditionResult.notFound("Activator", activator.getName());
                 }

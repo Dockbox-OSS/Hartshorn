@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
  * {@link LogbackEncoder} to offer the PID to the log message.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  * @see LogbackEncoder
  */
 public class LogbackPIDConverter extends ClassicConverter {
@@ -34,7 +34,7 @@ public class LogbackPIDConverter extends ClassicConverter {
     private static final long PROCESS_ID = ManagementFactory.getRuntimeMXBean().getPid();
 
     @Override
-    public String convert(final ILoggingEvent event) {
-        return "" + PROCESS_ID;
+    public String convert(ILoggingEvent event) {
+        return String.valueOf(PROCESS_ID);
     }
 }

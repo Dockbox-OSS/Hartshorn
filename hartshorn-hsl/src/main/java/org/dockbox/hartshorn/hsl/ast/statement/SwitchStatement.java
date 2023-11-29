@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ public class SwitchStatement extends Statement {
     private final List<SwitchCase> cases;
     private final SwitchCase defaultCase;
 
-    public SwitchStatement(final Token switchToken, final Expression expression, final List<SwitchCase> cases, final SwitchCase defaultCase) {
+    public SwitchStatement(Token switchToken, Expression expression, List<SwitchCase> cases, SwitchCase defaultCase) {
         super(switchToken);
         this.expression = expression;
         this.cases = cases;
@@ -48,7 +48,7 @@ public class SwitchStatement extends Statement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

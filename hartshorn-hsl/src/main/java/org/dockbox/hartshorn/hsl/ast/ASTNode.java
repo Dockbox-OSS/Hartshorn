@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ public abstract class ASTNode {
     private final int line;
     private final int column;
 
-    protected ASTNode(final ASTNode at) {
+    protected ASTNode(ASTNode at) {
         this(at.line, at.column);
     }
 
-    protected ASTNode(final int line, final int column) {
+    protected ASTNode(int line, int column) {
         this.line = line;
         this.column = column;
     }

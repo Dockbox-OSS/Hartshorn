@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@ public class GroupCommandElement implements CommandElement<List<CommandElement<?
     private final boolean optional;
     private final int size;
 
-    public GroupCommandElement(final List<CommandElement<?>> elements, final boolean optional) {
+    public GroupCommandElement(List<CommandElement<?>> elements, boolean optional) {
         this.elements = elements;
-        final List<String> names = elements.stream().map(CommandElement::name).toList();
+        List<String> names = elements.stream().map(CommandElement::name).toList();
         this.name = "group: " + String.join(", ", names);
         this.size = elements.stream().mapToInt(CommandElement::size).sum();
         this.optional = optional;
@@ -52,12 +52,12 @@ public class GroupCommandElement implements CommandElement<List<CommandElement<?
     }
 
     @Override
-    public Option<List<CommandElement<?>>> parse(final CommandSource source, final String argument) {
+    public Option<List<CommandElement<?>>> parse(CommandSource source, String argument) {
         return Option.of(this.elements);
     }
 
     @Override
-    public Collection<String> suggestions(final CommandSource source, final String argument) {
+    public Collection<String> suggestions(CommandSource source, String argument) {
         throw new UnsupportedOperationException("Collecting suggestions from element groups is not supported, target singular elements instead.");
     }
 

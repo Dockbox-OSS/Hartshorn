@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,13 @@ import org.dockbox.hartshorn.hsl.token.Token;
 public class StandardPropertyAccessVerifier implements PropertyAccessVerifier {
 
     @Override
-    public boolean verify(final Token at, final FieldStatement field, final InstanceReference instance, final VariableScope fromScope) {
-        if (field.isPublic()) return true;
+    public boolean verify(Token at, FieldStatement field, InstanceReference instance, VariableScope fromScope) {
+        if (field.isPublic()) {
+            return true;
+        }
 
         if (instance instanceof VirtualInstance virtualInstance) {
-            final VariableScope classScope = virtualInstance.type().variableScope();
+            VariableScope classScope = virtualInstance.type().variableScope();
             VariableScope currentScope = fromScope;
             while (currentScope != null) {
                 if (currentScope == classScope) {

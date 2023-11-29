@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,7 @@ import org.dockbox.hartshorn.util.StringUtilities;
 /**
  * Simple implementation of {@link CommandFlag}.
  */
-public class CommandFlagImpl implements CommandFlag {
-
-    private final String name;
-
-    public CommandFlagImpl(final String name) {
-        this.name = name;
-    }
+public record CommandFlagImpl(String name) implements CommandFlag {
 
     @Override
     public String name() {

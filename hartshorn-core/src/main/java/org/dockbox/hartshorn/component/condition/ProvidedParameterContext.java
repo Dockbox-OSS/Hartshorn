@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.component.condition;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
@@ -25,28 +25,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-public class ProvidedParameterContext extends DefaultContext {
+public final class ProvidedParameterContext extends DefaultProvisionContext {
 
     private final Map<ParameterView<?>, Object> arguments = new HashMap<>();
 
-    private ProvidedParameterContext(final Map<ParameterView<?>, Object> arguments) {
+    private ProvidedParameterContext(Map<ParameterView<?>, Object> arguments) {
         this.arguments.putAll(arguments);
     }
 
-    public static ProvidedParameterContext of(final Map<ParameterView<?>, Object> arguments) {
+    public static ProvidedParameterContext of(Map<ParameterView<?>, Object> arguments) {
         return new ProvidedParameterContext(arguments);
     }
 
-    public static ProvidedParameterContext of(final List<ParameterView<?>> parameters, final List<Object> arguments) {
+    public static ProvidedParameterContext of(List<ParameterView<?>> parameters, List<Object> arguments) {
         if (parameters.size() != arguments.size()) {
             throw new IllegalArgumentException("Parameters and arguments must be of the same size");
         }
-        final Map<ParameterView<?>, Object> argumentMap = IntStream.range(0, parameters.size()).boxed()
-                .collect(HashMap::new, (m, v) -> m.put(parameters.get(v), arguments.get(v)), Map::putAll);
+        Map<ParameterView<?>, Object> argumentMap = IntStream.range(0, parameters.size()).boxed()
+                .collect(
+                        HashMap::new,
+                        (parameterViews, index) -> parameterViews.put(parameters.get(index), arguments.get(index)),
+                        Map::putAll
+                );
         return new ProvidedParameterContext(argumentMap);
     }
 
-    public static ProvidedParameterContext of(final ExecutableElementView<?> executable, final List<Object> arguments) {
+    public static ProvidedParameterContext of(ExecutableElementView<?> executable, List<Object> arguments) {
         return of(executable.parameters().all(), arguments);
     }
 

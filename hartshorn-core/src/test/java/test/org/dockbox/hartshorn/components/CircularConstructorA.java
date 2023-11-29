@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,20 @@ package test.org.dockbox.hartshorn.components;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import org.dockbox.hartshorn.component.Component;
 
 @Singleton
+@Component
 public class CircularConstructorA {
 
-    private final CircularConstructorB b;
+    private final CircularConstructorB constructorB;
 
     @Inject
-    public CircularConstructorA(final CircularConstructorB b) {
-        this.b = b;
+    public CircularConstructorA(CircularConstructorB constructorB) {
+        this.constructorB = constructorB;
     }
 
-    public CircularConstructorB b() {
-        return this.b;
+    public CircularConstructorB constructorB() {
+        return this.constructorB;
     }
 }

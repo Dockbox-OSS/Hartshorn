@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public class ModuleStatement extends Statement implements NamedNode {
 
     private final Token name;
 
-    public ModuleStatement(final Token name) {
+    public ModuleStatement(Token name) {
         super(name);
         this.name = name;
     }
@@ -35,7 +35,7 @@ public class ModuleStatement extends Statement implements NamedNode {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

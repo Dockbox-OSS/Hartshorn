@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,24 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.dockbox.hartshorn.component.ComponentRequiredException;
+
 /**
- * Indicates that a field or parameter is required. If the output of a binding is {@code null} during population phases, this will
- * yield an exception.
+ * Indicates that a field or parameter is required. If the output of a binding is {@code null} after a
+ * {@link org.dockbox.hartshorn.component.ComponentPopulator} has attempted to populate it, a
+ * {@link ComponentRequiredException} will be thrown.
  *
  * @author Guus Lieben
- * @since 22.1
+ * @since 0.4.9
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER, ElementType.FIELD})
 public @interface Required {
+    /**
+     * If {@code true}, the annotated element will be required. If {@code false}, the annotated element will not be
+     * required.
+     *
+     * @return {@code true} if the annotated element is required, {@code false} otherwise.
+     */
     boolean value() default true;
 }

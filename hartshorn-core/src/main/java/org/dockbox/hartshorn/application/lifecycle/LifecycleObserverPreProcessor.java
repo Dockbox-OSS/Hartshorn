@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,21 @@ package org.dockbox.hartshorn.application.lifecycle;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 
 public class LifecycleObserverPreProcessor extends ComponentPreProcessor {
 
     @Override
-    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        if (processingContext.type().isChildOf(Observer.class)) {
-            context.environment().register((Class<? extends Observer>) processingContext.type().type());
+    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
+        if (context.environment() instanceof ObservableApplicationEnvironment observableEnvironment) {
+            if (processingContext.type().isChildOf(Observer.class)) {
+                observableEnvironment.register((Class<? extends Observer>) processingContext.type().type());
+            }
         }
     }
 
     @Override
-    public Integer order() {
-        return (Integer.MIN_VALUE / 2) - 1024;
+    public int priority() {
+        return ProcessingPriority.HIGH_PRECEDENCE - 1024;
     }
 }

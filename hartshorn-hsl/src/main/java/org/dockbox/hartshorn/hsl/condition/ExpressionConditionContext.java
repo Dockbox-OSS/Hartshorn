@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,10 @@
 package org.dockbox.hartshorn.hsl.condition;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
@@ -33,9 +34,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link ExpressionCondition} to allow for customization of the runtime.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
-public class ExpressionConditionContext extends DefaultContext implements ConditionContext {
+public class ExpressionConditionContext extends DefaultProvisionContext implements ConditionContext {
 
     private final Map<String, Object> globalVariables = new ConcurrentHashMap<>();
     private final Map<String, TypeView<?>> imports = new ConcurrentHashMap<>();
@@ -43,9 +44,10 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
     private final Map<String, NativeModule> externalModules = new ConcurrentHashMap<>();
     private final ApplicationContext applicationContext;
 
+    private ExecutionOptions executionOptions = new ExecutionOptions();
     private boolean includeApplicationContext;
 
-    public ExpressionConditionContext(final ApplicationContext applicationContext) {
+    public ExpressionConditionContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
@@ -55,7 +57,7 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
     }
 
     @Override
-    public ExpressionConditionContext includeApplicationContext(final boolean includeApplicationContext) {
+    public ExpressionConditionContext includeApplicationContext(boolean includeApplicationContext) {
         this.includeApplicationContext = includeApplicationContext;
         return this;
     }
@@ -65,7 +67,7 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
      * @param customizers The customizers to add.
      */
     @Override
-    public void customizers(final Collection<CodeCustomizer> customizers) {
+    public void customizers(Collection<CodeCustomizer> customizers) {
         this.customizers.addAll(customizers);
     }
 
@@ -74,7 +76,7 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
      * @param customizer The customizer to add.
      */
     @Override
-    public void customizer(final CodeCustomizer customizer) {
+    public void customizer(CodeCustomizer customizer) {
         this.customizers.add(customizer);
     }
 
@@ -85,7 +87,7 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
      * @param module The module to add.
      */
     @Override
-    public void module(final String name, final NativeModule module) {
+    public void module(String name, NativeModule module) {
         this.externalModules.put(name, module);
     }
 
@@ -95,7 +97,7 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
      * @param modules The modules to add, identified by their alias.
      */
     @Override
-    public void modules(final Map<String, NativeModule> modules) {
+    public void modules(Map<String, NativeModule> modules) {
         this.externalModules.putAll(modules);
     }
 
@@ -106,7 +108,7 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
      * @param value The variable value to add.
      */
     @Override
-    public void global(final String name, final Object value) {
+    public void global(String name, Object value) {
         this.globalVariables.put(name, value);
     }
 
@@ -116,7 +118,7 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
      * @param values The variables to add, identified by their alias.
      */
     @Override
-    public void global(final Map<String, Object> values) {
+    public void global(Map<String, Object> values) {
         this.globalVariables.putAll(values);
     }
 
@@ -128,12 +130,12 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
      * @param type The class to import.
      */
     @Override
-    public void imports(final String name, final Class<?> type) {
-        this.imports.put(name, this.applicationContext.environment().introspect(type));
+    public void imports(String name, Class<?> type) {
+        this.imports.put(name, this.applicationContext.environment().introspector().introspect(type));
     }
 
     @Override
-    public void imports(final String name, final TypeView<?> type) {
+    public void imports(String name, TypeView<?> type) {
         this.imports.put(name, type);
     }
 
@@ -145,12 +147,12 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
      * @param type The class to import.
      */
     @Override
-    public void imports(final Class<?> type) {
+    public void imports(Class<?> type) {
         this.imports(type.getSimpleName(), type);
     }
 
     @Override
-    public void imports(final TypeView<?> type) {
+    public void imports(TypeView<?> type) {
         this.imports(type.name(), type);
     }
 
@@ -160,7 +162,7 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
      * @param imports The classes to import, identified by their alias.
      */
     @Override
-    public void imports(final Map<String, TypeView<?>> imports) {
+    public void imports(Map<String, TypeView<?>> imports) {
         this.imports.putAll(imports);
     }
 
@@ -198,5 +200,23 @@ public class ExpressionConditionContext extends DefaultContext implements Condit
     @Override
     public Map<String, NativeModule> externalModules() {
         return this.externalModules;
+    }
+
+    /**
+     * Gets the interpreter options for this context, overriding any existing settings.
+     * @param executionOptions The interpreter options.
+     */
+    @Override
+    public void interpreterOptions(ExecutionOptions executionOptions) {
+        this.executionOptions = executionOptions;
+    }
+
+    /**
+     * Gets the interpreter options for this context.
+     * @return The interpreter options.
+     */
+    @Override
+    public ExecutionOptions interpreterOptions() {
+        return this.executionOptions;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,12 @@ import java.util.Set;
 public class RepeatStatementParser extends AbstractBodyStatementParser<RepeatStatement> {
 
     @Override
-    public Option<RepeatStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<RepeatStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.REPEAT)) {
             validator.expectAfter(TokenType.LEFT_PAREN, "repeat");
-            final Expression value = parser.expression();
+            Expression value = parser.expression();
             validator.expectAfter(TokenType.RIGHT_PAREN, "repeat value");
-            final BlockStatement loopBody = this.blockStatement("repeat", value, parser, validator);
+            BlockStatement loopBody = this.blockStatement("repeat", value, parser, validator);
             return Option.of(new RepeatStatement(value, loopBody));
         }
         return Option.empty();

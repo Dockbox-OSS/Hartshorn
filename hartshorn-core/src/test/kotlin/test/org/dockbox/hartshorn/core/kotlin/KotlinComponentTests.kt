@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import java.util.stream.Stream
  * This is done to provide a simple example of how to use Hartshorn's Test Suite with each language.
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 @HartshornTest(includeBasePackages = false, scanPackages = ["test.org.dockbox.hartshorn.core.kotlin"])
 class KotlinComponentTests {
@@ -70,7 +70,7 @@ class KotlinComponentTests {
         fun components(): Stream<Arguments> = Stream.of(
                 Arguments.of(KotlinClassComponent::class.java, KotlinClassComponent::applicationContext, KotlinClassComponent::environment),
                 Arguments.of(KotlinInterfaceComponent::class.java, null, null),
-                Arguments.of(KotlinObjectComponent::class.java, { it: KotlinObjectComponent -> KotlinObjectComponent.applicationContext() }, null),
+                Arguments.of(KotlinObjectComponent::class.java, { _: KotlinObjectComponent -> KotlinObjectComponent.applicationContext() }, null),
                 Arguments.of(KotlinSealedInterfaceComponent::class.java, null, null),
         )
     }

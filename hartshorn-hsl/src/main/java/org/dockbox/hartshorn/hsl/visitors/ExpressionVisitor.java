@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,9 +46,10 @@ import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
  * @param <R> The return type for the visitor.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public interface ExpressionVisitor<R> {
+
     R visit(BinaryExpression expr);
 
     R visit(RangeExpression expr);

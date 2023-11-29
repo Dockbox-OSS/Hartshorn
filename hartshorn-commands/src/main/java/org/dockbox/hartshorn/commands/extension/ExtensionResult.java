@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,7 @@ import org.dockbox.hartshorn.i18n.Message;
 /**
  * Indicates the result of a {@link CommandExecutorExtension}.
  */
-public final class ExtensionResult {
-
-    private final boolean proceed;
-    private final Message reason;
-    private final boolean send;
-
-    public ExtensionResult(final boolean proceed, final Message reason, final boolean send) {
-        this.proceed = proceed;
-        this.reason = reason;
-        this.send = send;
-    }
+public record ExtensionResult(boolean proceed, Message reason, boolean send) {
 
     /**
      * Gets a new {@link ExtensionResult} which allows the {@link org.dockbox.hartshorn.commands.CommandExecutor} to
@@ -52,21 +42,21 @@ public final class ExtensionResult {
      *
      * @return The {@link ExtensionResult}
      */
-    public static ExtensionResult reject(final Message reason) {
+    public static ExtensionResult reject(Message reason) {
         return reject(reason, true);
     }
 
     /**
      * Gets a new {@link ExtensionResult} which rejects the {@link org.dockbox.hartshorn.commands.CommandExecutor} to
-     * proceed. This result will send the provided {@link Message} to the {@link CommandSource}
-     * if <code>send</code> is <code>true</code>.
+     * proceed. This result will send the provided {@link Message} to the {@link CommandSource} if {@code send} is
+     * {@code true}.
      *
      * @param reason The reason
      * @param send Whether to send the reason to the {@link CommandSource}
      *
      * @return The {@link ExtensionResult}
      */
-    public static ExtensionResult reject(final Message reason, final boolean send) {
+    public static ExtensionResult reject(Message reason, boolean send) {
         return new ExtensionResult(false, reason, send);
     }
 
@@ -74,8 +64,9 @@ public final class ExtensionResult {
      * Gets whether the {@link org.dockbox.hartshorn.commands.CommandExecutor} requesting
      * the extension should proceed to perform the command directly.
      *
-     * @return <code>true</code> if the executor should proceed, or <code>false</code>
+     * @return {@code true} if the executor should proceed, or {@code false}
      */
+    @Override
     public boolean proceed() {
         return this.proceed;
     }
@@ -83,10 +74,11 @@ public final class ExtensionResult {
     /**
      * Gets the reason an extension has been performed. This will only be sent to the
      * {@link CommandSource} if {@link #send()} is
-     * <code>true</code>.
+     * {@code true}.
      *
      * @return The reason
      */
+    @Override
     public Message reason() {
         return this.reason;
     }
@@ -95,8 +87,9 @@ public final class ExtensionResult {
      * Gets whether the {@link #reason()} should be sent to the {@link CommandSource}
      * of the executor.
      *
-     * @return <code>true</code> if the {@link #reason()} should be sent, or <code>false</code>
+     * @return {@code true} if the {@link #reason()} should be sent, or {@code false}
      */
+    @Override
     public boolean send() {
         return this.send;
     }

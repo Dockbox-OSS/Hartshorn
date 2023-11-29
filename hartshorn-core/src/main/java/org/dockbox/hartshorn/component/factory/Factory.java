@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.component.factory;
 
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.binding.Bound;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
- * The above example will create a factory method for the {@code CustomType} type. The
+ * <p>The above example will create a factory method for the {@code CustomType} type. The
  * implementation of this type can be configured through the active {@link ApplicationContext}.
  *
  * <pre>{@code
@@ -54,17 +54,27 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
+ * <p>Factory methods do not natively support {@link org.dockbox.hartshorn.component.Scope scopes},
+ * as the hierarchy of the component to be provided is determined during initialization, and scopes
+ * are only defined as context at that point. If you wish to use scopes, you should use post-construct
+ * actions to configure a scope-provided component.
+ *
+ * @deprecated Use of implicit factories is discouraged. Instead, create a factory interface and
+ *            bind it to the implementation. This allows for more control over the factory, and
+ *            ensures type safety.
+ *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
+@Deprecated(since = "0.5.0", forRemoval = true)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(java.lang.annotation.ElementType.METHOD)
 public @interface Factory {
 
     /**
      * If the binding of a factory method is based on a named dependency, this method returns the
-     * name of the {@link Key} to use.
-     * @return The name of the {@link Key} to use.
+     * name of the {@link ComponentKey} to use.
+     * @return The name of the {@link ComponentKey} to use.
      */
     String value() default "";
 

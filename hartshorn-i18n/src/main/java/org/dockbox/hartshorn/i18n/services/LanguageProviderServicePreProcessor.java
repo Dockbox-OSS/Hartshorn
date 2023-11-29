@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationBundle;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.TranslationProvider;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 import java.util.List;
@@ -30,18 +31,26 @@ import java.util.List;
 public class LanguageProviderServicePreProcessor extends ComponentPreProcessor {
 
     @Override
-    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
-        final List<MethodView<T, ?>> translationProviderMethods = processingContext.type().methods().annotatedWith(TranslationProvider.class);
+    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
+        List<MethodView<T, ?>> translationProviderMethods = processingContext.type().methods().annotatedWith(TranslationProvider.class);
+
         if (!translationProviderMethods.isEmpty()) {
-            final TranslationService translationService = context.get(TranslationService.class);
-            for (final MethodView<T, ?> method : translationProviderMethods) {
-                if (method.returnType().isChildOf(TranslationBundle.class)) {
-                    final TranslationBundle bundle = (TranslationBundle) method.invokeWithContext().rethrowUnchecked().get();
-                    translationService.add(bundle);
-                }
-                else if (method.returnType().isChildOf(Message.class)) {
-                    final Message message = (Message) method.invokeWithContext().rethrowUnchecked().get();
-                    translationService.add(message);
+            TranslationService translationService = context.get(TranslationService.class);
+            ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
+
+            for (MethodView<T, ?> method : translationProviderMethods) {
+                Object value = adapter.invoke(method)
+                        .mapError(error -> new IllegalStateException("Failed to invoke translation provider method " + method, error))
+                        .rethrow()
+                        .orNull();
+
+                if (value != null) {
+                    if (value instanceof TranslationBundle bundle) {
+                        translationService.add(bundle);
+                    }
+                    else if (value instanceof Message message) {
+                        translationService.add(message);
+                    }
                 }
             }
         }

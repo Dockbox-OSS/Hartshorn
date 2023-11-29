@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -23,9 +24,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * an expression or script.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
-public interface ResultCollector {
+public interface ResultCollector extends ContextCarrier {
 
     /**
      * Adds a global result to the stack, if a global result already exists it will be
@@ -48,7 +49,9 @@ public interface ResultCollector {
      * @return The result value, or {@link Option#empty()}.
      * @param <T> The type of the result.
      */
-    <T> Option<T> result();
+    <T> Option<T> result(Class<T> type);
+
+    Option<?> result();
 
     /**
      * Gets a result with the given ID. If no result with the given ID exists
@@ -57,7 +60,9 @@ public interface ResultCollector {
      * @return The result value, or {@link Option#empty()}.
      * @param <T> The type of the result.
      */
-    <T> Option<T> result(String id);
+    <T> Option<T> result(String id, Class<T> type);
+
+    Option<?> result(String id);
 
     /**
      * Removes all stored results from the collector instance. If no results exist

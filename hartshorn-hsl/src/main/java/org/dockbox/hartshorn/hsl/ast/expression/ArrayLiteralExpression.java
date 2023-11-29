@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public class ArrayLiteralExpression extends Expression {
     private final Token open;
     private final Token close;
 
-    public ArrayLiteralExpression(final Token open, final Token close, final List<Expression> elements) {
+    public ArrayLiteralExpression(Token open, Token close, List<Expression> elements) {
         super(open);
         this.open = open;
         this.close = close;
@@ -47,7 +47,7 @@ public class ArrayLiteralExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

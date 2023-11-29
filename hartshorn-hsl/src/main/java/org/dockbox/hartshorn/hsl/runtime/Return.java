@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@ package org.dockbox.hartshorn.hsl.runtime;
  * scope, even if there are more statements to evaluate.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class Return extends RuntimeException {
 
     private final Object value;
 
-    public Return(final Object value) {
+    public Return(Object value) {
         super(null, null, false, false);
         this.value = value;
     }

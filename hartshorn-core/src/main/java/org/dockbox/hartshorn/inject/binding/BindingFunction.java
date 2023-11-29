@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,54 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import java.util.function.Supplier;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.ScopeKey;
+import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.inject.binding.collection.CollectorBindingFunction;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
+/**
+ * A binding function is used to bind a provider to a specific {@link ComponentKey}. This should
+ * be used by {@link Binder}s to provide a fluent API for binding providers.
+ *
+ * @param <T> The type of the component that is bound.
+ *
+ * @since 0.4.11
+ *
+ * @author Guus Lieben
+ */
 public interface BindingFunction<T> {
 
+    /**
+     * Binds the current function to the given scope.
+     *
+     * @param scope The scope to bind to
+     * @return The binding function
+     * @throws IllegalScopeException When the scope is not valid, or cannot be modified safely
+     */
+    BindingFunction<T> installTo(ScopeKey scope) throws IllegalScopeException;
+
+    /**
+     * Sets the priority of the binding. This will determine the order in which the binding is
+     * processed. The higher the priority, the earlier the binding is processed. It remains up
+     * to the {@link org.dockbox.hartshorn.component.ComponentProvider} to determine how to
+     * process the bindings.
+     *
+     * @param priority The priority to set
+     * @return The binding function
+     */
     BindingFunction<T> priority(int priority);
+
+    /**
+     * Sets whether the result of the binding should be processed after initialization. This
+     * will determine whether the result of the binding should be enhanced by
+     * {@link org.dockbox.hartshorn.component.processing.ComponentProcessor}s.
+     *
+     * @param processAfterInitialization Whether to process after initialization
+     * @return The binding function
+     */
+    BindingFunction<T> processAfterInitialization(boolean processAfterInitialization);
 
     /**
      * Binds to the given type, this will create a new instance of the given type
@@ -38,17 +81,26 @@ public interface BindingFunction<T> {
      * @param supplier The supplier to bind to
      * @return The binder
      */
-    Binder to(Supplier<T> supplier);
+    Binder to(CheckedSupplier<T> supplier);
+
+    /**
+     * Binds to the given provider, this will call the provider every time it is
+     * requested.
+     *
+     * @param provider The provider to bind to
+     * @return The binder
+     */
+    Binder to(Provider<T> provider);
 
     /**
      * Binds to the given instance, this will always return the same instance
      * every time it is requested. This may not enhance the instance before it
      * is returned.
      *
-     * @param t The instance to bind to
+     * @param instance The instance to bind to
      * @return The binder
      */
-    Binder singleton(T t);
+    Binder singleton(T instance);
 
     /**
      * Binds to a supplier that will provide a lazy instance of the given type
@@ -70,5 +122,17 @@ public interface BindingFunction<T> {
      * @param supplier The supplier to bind to
      * @return The binder
      */
-    Binder lazySingleton(Supplier<T> supplier);
+    Binder lazySingleton(CheckedSupplier<T> supplier);
+
+    /**
+     * Transforms the current binding function into a {@link CollectorBindingFunction} which
+     * allows for collecting multiple bindings into a single {@link org.dockbox.hartshorn.inject.binding.collection.ComponentCollection}.
+     *
+     * <p>This does not affect the current binding function, but provides a new binding function
+     * that can be used to collect multiple bindings.
+     *
+     * @param collector The collector to use
+     * @return The binder
+     */
+    Binder collect(Customizer<CollectorBindingFunction<T>> collector);
 }

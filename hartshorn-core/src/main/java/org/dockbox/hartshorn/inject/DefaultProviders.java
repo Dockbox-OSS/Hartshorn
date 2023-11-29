@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,10 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.UseBootstrap;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.inject.processing.UseContextInjection;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.context.ConcreteContextCarrier;
 import org.dockbox.hartshorn.context.ContextCarrier;
@@ -27,12 +28,12 @@ import org.dockbox.hartshorn.context.ContextCarrier;
 import jakarta.inject.Singleton;
 
 @Service
-@RequiresActivator({ UseBootstrap.class, UseServiceProvision.class })
+@RequiresActivator({ UseBootstrap.class, UseContextInjection.class })
 public class DefaultProviders {
 
-    @Provider
+    @Binds
     @Singleton
-    public Class<? extends ContextCarrier> contextCarrier() {
-        return ConcreteContextCarrier.class;
+    public ContextCarrier contextCarrier(ApplicationContext applicationContext) {
+        return new ConcreteContextCarrier(applicationContext);
     }
 }

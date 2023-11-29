@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class IllegalComponentModificationException extends ApplicationRuntimeException {
 
-    public IllegalComponentModificationException(final String name, final int priority, final ComponentPostProcessor processor) {
+    public IllegalComponentModificationException(String name, int priority, ComponentPostProcessor processor) {
         super("""
               Component %s was modified during phase with priority %s by %s.
               Component processors are only able to discard existing instances in phases with priority < 0.

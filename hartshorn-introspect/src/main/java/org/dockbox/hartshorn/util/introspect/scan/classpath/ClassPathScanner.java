@@ -1,0 +1,251 @@
+/*
+ * Copyright 2019-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.dockbox.hartshorn.util.introspect.scan.classpath;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+public final class ClassPathScanner {
+
+    private final Set<String> classNames = new HashSet<>();
+    private final Set<ClassLoader> classLoaders = new HashSet<>();
+    private final Set<String> prefixFilters = new HashSet<>();
+
+    private boolean resourcesOnly = false;
+    private boolean classesOnly = true;
+    private boolean excludeInnerClasses = false;
+    private boolean excludePackageInfo = true;
+    private long scanTime = -1;
+
+    private ClassPathScanner() {
+        // Private constructor to prevent instantiation outside of #create()
+    }
+
+    public static ClassPathScanner create() {
+        return new ClassPathScanner();
+    }
+
+    public ClassPathScanner addSystemPropertyPaths(String key) {
+        String value = System.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return this;
+        }
+
+        for (String path : value.split(String.valueOf(File.pathSeparatorChar), -1)) {
+            if (path == null || path.trim().isEmpty()) {
+                continue;
+            }
+            File file = new File(path);
+            if (!file.exists()) {
+                continue;
+            }
+
+            try {
+                URL url = file.toURI().toURL();
+                this.addUrlForScanning(url);
+            }
+            catch (MalformedURLException e) {
+                // Ignore
+            }
+        }
+        return this;
+    }
+
+    public ClassPathScanner addUrlForScanning(URL url) {
+        return this.addClassLoaderForScanning(new URLClassLoader(new URL[] { url }) {
+            public String toString() {
+                return super.toString() + " [url=" + url.toExternalForm() + "]";
+            }
+        });
+    }
+
+    public ClassPathScanner addClassLoaderForScanning(URLClassLoader classLoader) {
+        this.classLoaders.add(classLoader);
+        return this;
+    }
+
+    public ClassPathScanner scan(ResourceHandler handler) throws ClassPathWalkingException {
+        this.reset();
+
+        long start = System.currentTimeMillis();
+        for (ClassLoader classLoader : this.classLoaders) {
+            if (classLoader instanceof URLClassLoader) {
+                this.scanClassLoaderResources(handler, (URLClassLoader) classLoader);
+            }
+            else {
+                throw new ClassPathWalkingException("Classloader " + classLoader + " is not supported");
+            }
+        }
+
+        this.scanTime = System.currentTimeMillis() - start;
+        return this;
+    }
+
+    private void reset() {
+        this.classNames.clear();
+    }
+
+    private void scanClassLoaderResources(ResourceHandler handler, URLClassLoader classLoader) throws ClassPathWalkingException {
+        for (URL url : classLoader.getURLs()) {
+            if (url.getFile() != null && !url.getFile().isEmpty()) {
+
+                // Physical files can have escaped characters in the URL representation. The simplest form of this is
+                // %20 instead of a space. This is not valid in a URI, so we need to decode the URL to get the correct
+                // file path.
+                String decodedUrl = URLDecoder.decode(url.getFile(), Charset.defaultCharset());
+                File file = new File(decodedUrl);
+                if (file.exists()) {
+                    if (file.isDirectory()) {
+                        this.processDirectoryResource(handler, classLoader, file);
+                    }
+                    else if (file.isFile() && file.getName().toLowerCase().endsWith(".jar")) {
+                        this.processJarFileResource(handler, classLoader, url, file);
+                    }
+                }
+                else {
+                    throw new ClassPathWalkingException("Unsupported classpath resource: " + url);
+                }
+            }
+        }
+    }
+
+    private void processJarFileResource(ResourceHandler handler, URLClassLoader classLoader, URL url, File jarFile)
+            throws ClassPathWalkingException {
+        try {
+            FileSystem fileSystem = FileSystems.newFileSystem(Paths.get(url.toURI()), (ClassLoader) null);
+            for(Path rootDirectory : fileSystem.getRootDirectories()) {
+                Files.walkFileTree(rootDirectory, new JarFileWalker(this, handler, classLoader));
+            }
+        }
+        catch (IOException | URISyntaxException e) {
+            throw new ClassPathWalkingException("Error while scanning jar file " + jarFile, e);
+        }
+    }
+
+    private void processDirectoryResource(ResourceHandler handler, URLClassLoader classLoader, File directory) throws ClassPathWalkingException {
+        try {
+            File rootDir = directory.getCanonicalFile();
+            int rootDirNameLen = rootDir.getCanonicalPath().length();
+            Files.walkFileTree(rootDir.toPath(), new DirectoryFileTreeWalker(this, rootDirNameLen, handler, classLoader));
+        }
+        catch (IOException e) {
+            throw new ClassPathWalkingException("Could not process directory resource " + directory.getPath(), e);
+        }
+    }
+
+    public void processPathResource(ResourceHandler handler, URLClassLoader classLoader, String resourceName, Path path) {
+        if (handler == null) {
+            return;
+        }
+
+        boolean isClassResource = resourceName.toLowerCase().endsWith(".class");
+        String checkedResourceName = !isClassResource
+                ? resourceName
+                : this.resourceToCanonicalName(resourceName);
+
+        if (isClassResource && this.classesOnly && this.classNames.contains(checkedResourceName)) {
+            return;
+        }
+
+        if (this.classesOnly && !isClassResource) {
+            return;
+        }
+        if (this.resourcesOnly && isClassResource) {
+            return;
+        }
+        if (this.excludeInnerClasses && isClassResource && checkedResourceName.indexOf('$') > -1) {
+            return;
+        }
+        if (this.excludePackageInfo && isClassResource && checkedResourceName.endsWith("package-info")) {
+            return;
+        }
+
+        for (String beginFilterName : this.prefixFilters) {
+            if (!checkedResourceName.startsWith(beginFilterName)) {
+                return;
+            }
+        }
+
+        ClassPathResource resource = new ClassCandidateResource(classLoader, path, checkedResourceName, isClassResource);
+        handler.handle(resource);
+    }
+
+    @NonNull
+    private String resourceToCanonicalName(String resourceName) {
+        return resourceName.substring(0, resourceName.length() - 6)
+                .replace('/', '.')
+                .replace('\\', '.');
+    }
+
+    public ClassPathScanner filterPrefix(String prefix) {
+        if (prefix != null) {
+            this.prefixFilters.add(prefix);
+        }
+        return this;
+    }
+
+    public ClassPathScanner includeDefaultClassPath() {
+        this.addSystemPropertyPaths("java.class.path");
+        return this;
+    }
+
+    public ClassPathScanner classesOnly() {
+        this.classesOnly = true;
+        this.resourcesOnly = false;
+        return this;
+    }
+
+    public ClassPathScanner resourcesOnly() {
+        this.classesOnly = false;
+        this.resourcesOnly = true;
+        return this;
+    }
+
+    public ClassPathScanner excludeInnerClasses() {
+        this.excludeInnerClasses = true;
+        return this;
+    }
+
+    public ClassPathScanner includePackageInfo() {
+        this.excludePackageInfo = false;
+        return this;
+    }
+
+    public Set<ClassLoader> classLoaders() {
+        return Collections.unmodifiableSet(this.classLoaders);
+    }
+
+    public long scanTime() {
+        return this.scanTime;
+    }
+}

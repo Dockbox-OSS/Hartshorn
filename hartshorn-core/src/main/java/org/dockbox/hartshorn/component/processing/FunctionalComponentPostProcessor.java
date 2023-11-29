@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,27 @@
 package org.dockbox.hartshorn.component.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentType;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.ComponentType;
 
 public abstract class FunctionalComponentPostProcessor extends ComponentPostProcessor {
 
     @Override
-    public final <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        final ComponentContainer container = processingContext.get(Key.of(ComponentContainer.class));
-        if (container.componentType() == ComponentType.FUNCTIONAL) {
-            return this.process(context, instance, container, processingContext);
-        }
-        return instance;
+    public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
+        ComponentContainer<?> container = processingContext.get(ComponentKey.of(ComponentContainer.class));
+        return container != null && container.componentType() == ComponentType.FUNCTIONAL;
     }
 
-    public abstract  <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentContainer container, final ComponentProcessingContext<T> processingContext);
+    /**
+     * @deprecated This method is deprecated and will be removed in a future release. Instead use
+     * {@link #preConfigureComponent(ApplicationContext, Object, ComponentProcessingContext)},
+     * {@link #postConfigureComponent(ApplicationContext, Object, ComponentProcessingContext)} or
+     * {@link #initializeComponent(ApplicationContext, Object, ComponentProcessingContext)}
+     */
+    @Deprecated(forRemoval = true, since = "0.5.0")
+    public <T> T process(ApplicationContext context, @Nullable T instance, ComponentContainer<?> container, ComponentProcessingContext<T> processingContext) {
+        throw new UnsupportedOperationException("This method is deprecated and will be removed in a future release");
+    }
 }

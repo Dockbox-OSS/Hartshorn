@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,13 @@ public class TestExceptionHandle extends LoggingExceptionHandler {
     private Throwable exception;
 
     @Override
-    public void handle(final String message, final Throwable throwable) {
+    public void handle(String message, Throwable throwable) {
         this.message = message;
         this.exception = throwable;
     }
 
     @Override
-    public TestExceptionHandle stacktraces(final boolean stacktraces) {
+    public TestExceptionHandle printStacktraces(boolean stacktraces) {
         this.stacktrace = stacktraces;
         return this;
     }

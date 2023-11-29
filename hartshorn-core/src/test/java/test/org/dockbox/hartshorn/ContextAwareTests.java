@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,12 +33,12 @@ public class ContextAwareTests {
     private ApplicationContext applicationContext;
 
     @Test
-    @TestComponents(SampleContextAwareType.class)
+    @TestComponents(components = SampleContextAwareType.class)
     void testApplicationContextIsBound() {
-        final ApplicationContext applicationContext = this.applicationContext.get(ApplicationContext.class);
+        ApplicationContext applicationContext = this.applicationContext.get(ApplicationContext.class);
         Assertions.assertNotNull(applicationContext);
 
-        final SampleContextAwareType sampleContextAwareType = this.applicationContext.get(SampleContextAwareType.class);
+        SampleContextAwareType sampleContextAwareType = this.applicationContext.get(SampleContextAwareType.class);
         Assertions.assertNotNull(sampleContextAwareType);
         Assertions.assertNotNull(sampleContextAwareType.context());
 
@@ -47,7 +47,7 @@ public class ContextAwareTests {
 
     @Test
     void testServiceLocatorIsBound() {
-        final ComponentLocator componentLocator = this.applicationContext.get(ComponentLocator.class);
+        ComponentLocator componentLocator = this.applicationContext.get(ComponentLocator.class);
         Assertions.assertNotNull(componentLocator);
     }
 }

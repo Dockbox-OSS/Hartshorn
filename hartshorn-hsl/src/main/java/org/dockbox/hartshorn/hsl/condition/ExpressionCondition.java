@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.condition;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.Condition;
 import org.dockbox.hartshorn.component.condition.ConditionContext;
@@ -41,36 +42,41 @@ import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
  * active {@link ApplicationContext}. If a conflict arises a warning is logged, but the runtime will proceed as usual.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class ExpressionCondition implements Condition {
 
     public static final String GLOBAL_APPLICATION_CONTEXT_NAME = "applicationContext";
 
     @Override
-    public ConditionResult matches(final ConditionContext context) {
-        return context.annotatedElement().annotations().get(RequiresExpression.class).map(condition -> {
-            final String expression = condition.value();
-            final ValidateExpressionRuntime runtime = this.createRuntime(context);
-
-            try {
-                final ScriptContext scriptContext = runtime.run(expression);
-                final boolean result = ValidateExpressionRuntime.valid(scriptContext);
-                return ConditionResult.of(result);
-            }
-            catch (final ScriptEvaluationError e) {
-                context.applicationContext().handle("Failed to evaluate expression '%s'".formatted(expression), e);
-                return ConditionResult.notMatched(e.getMessage());
-            }
-        }).orElse(ConditionResult.invalidCondition("expression"));
+    public ConditionResult matches(ConditionContext context) {
+        return context.annotatedElement().annotations().get(RequiresExpression.class)
+                .map(condition -> this.calculateResult(context, condition))
+                .orElse(ConditionResult.invalidCondition("expression"));
     }
 
-    protected ValidateExpressionRuntime createRuntime(final ConditionContext context) {
-        final ValidateExpressionRuntime runtime = context.applicationContext().get(ValidateExpressionRuntime.class);
+    @NonNull
+    private ConditionResult calculateResult(ConditionContext context, RequiresExpression condition) {
+        String expression = condition.value();
+        ValidateExpressionRuntime runtime = this.createRuntime(context);
+
+        try {
+            ScriptContext scriptContext = runtime.interpret(expression);
+            boolean result = ValidateExpressionRuntime.valid(scriptContext);
+            return ConditionResult.of(result);
+        }
+        catch (ScriptEvaluationError e) {
+            context.applicationContext().handle("Failed to evaluate expression '%s'".formatted(expression), e);
+            return ConditionResult.notMatched(e.getMessage());
+        }
+    }
+
+    protected ValidateExpressionRuntime createRuntime(ConditionContext context) {
+        ValidateExpressionRuntime runtime = context.applicationContext().get(ValidateExpressionRuntime.class);
         return this.enhance(runtime, context);
     }
 
-    protected ValidateExpressionRuntime enhance(final ValidateExpressionRuntime runtime, final ConditionContext context) {
+    protected ValidateExpressionRuntime enhance(ValidateExpressionRuntime runtime, ConditionContext context) {
         // Load parameters first, so they can be overwritten by the customizers and imports.
         context.first(ProvidedParameterContext.class).peek(parameterContext -> {
             parameterContext.arguments().forEach((parameter, value) -> runtime.global(parameter.name(), value));
@@ -90,9 +96,11 @@ public class ExpressionCondition implements Condition {
         return runtime;
     }
 
-    private void enhanceWithApplicationContext(final ScriptRuntime runtime, final ApplicationContext applicationContext) {
+    private void enhanceWithApplicationContext(ScriptRuntime runtime, ApplicationContext applicationContext) {
         if (runtime.globalVariables().containsKey(GLOBAL_APPLICATION_CONTEXT_NAME)) {
-            if (runtime.globalVariables().get(GLOBAL_APPLICATION_CONTEXT_NAME) != applicationContext) applicationContext.log().warn("Runtime contains mismatched application context reference");
+            if (runtime.globalVariables().get(GLOBAL_APPLICATION_CONTEXT_NAME) != applicationContext) {
+                applicationContext.log().warn("Runtime contains mismatched application context reference");
+            }
             // Ignore if the global applicationContext is equal to our active context
         }
         else {

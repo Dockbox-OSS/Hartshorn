@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,23 +35,23 @@ public class DynamicPatternConverter<T> extends DefaultArgumentConverter<T> {
 
     private final CustomParameterPattern pattern;
 
-    public DynamicPatternConverter(final Class<T> type, final CustomParameterPattern pattern, final String... keys) {
+    public DynamicPatternConverter(Class<T> type, CustomParameterPattern pattern, String... keys) {
         super(type, keys);
         this.pattern = pattern;
     }
 
     @Override
-    public Option<T> convert(final CommandSource source, final String argument) {
+    public Option<T> convert(CommandSource source, String argument) {
         return this.pattern.request(this.type(), source, argument);
     }
 
     @Override
-    public Option<T> convert(final CommandSource source, final CommandParameter<String> value) {
+    public Option<T> convert(CommandSource source, CommandParameter<String> value) {
         return this.pattern.request(this.type(), source, value.value());
     }
 
     @Override
-    public Collection<String> suggestions(final CommandSource source, final String argument) {
+    public Collection<String> suggestions(CommandSource source, String argument) {
         return List.of();
     }
 }

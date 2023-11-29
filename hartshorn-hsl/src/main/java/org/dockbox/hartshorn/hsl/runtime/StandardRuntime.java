@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
+import java.util.Map;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.hsl.HslLanguageFactory;
-import org.dockbox.hartshorn.hsl.modules.NativeModule;
-import org.dockbox.hartshorn.hsl.modules.StandardLibrary;
+import org.dockbox.hartshorn.hsl.ParserCustomizer;
+import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.InlineStandardLibraryCustomizer;
-
-import java.util.Map;
-
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.modules.StandardLibrary;
 
 /**
  * The default runtime implementation, which follows the evaluation phases and order as
@@ -38,15 +35,24 @@ import jakarta.inject.Inject;
  * to allow each executor to be customized through standard DI principles.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  * @see ExpressionConditionContext
  */
-@Component
 public class StandardRuntime extends AbstractScriptRuntime {
 
-    @Inject
-    public StandardRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
-        super(applicationContext, factory);
+    public StandardRuntime(
+        ApplicationContext applicationContext,
+        ScriptComponentFactory factory
+    ) {
+        this(applicationContext, factory, parser -> {});
+    }
+
+    public StandardRuntime(
+        ApplicationContext applicationContext,
+        ScriptComponentFactory factory,
+        ParserCustomizer parserCustomizer
+    ) {
+        super(applicationContext, factory, parserCustomizer);
         this.customizer(new InlineStandardLibraryCustomizer());
     }
 

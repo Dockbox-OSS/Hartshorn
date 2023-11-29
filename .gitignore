@@ -1,28 +1,23 @@
-# Generic build outputs
-build
-subject
-lib
-out
-hartshorn-assembly/publications
-*/generated
+# Maven output
+target/
 
-# Project specifics
-.gradle/
+# IntelliJ IDEA
 .idea/
 *.iml
-*.hprof
-dependency-reduced-pom.xml
+*.ipr
+*.iws
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Logs and Temporary Files
+log/
+logs/
+*.log
+*.log.*
+*.tmp
 
 # Generated directories
-servers
 hartshorn-assembly/distributions
-
-# Test resources
-module/src/test/resources/storage.db-journal
-*/.mixin.out
-*/testRuns
-*/logs
-*.log
-
-# Miscellaneous
-.jpb

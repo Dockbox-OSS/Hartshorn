@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,35 @@
 
 package org.dockbox.hartshorn.hsl.visitors;
 
-import org.dockbox.hartshorn.hsl.ast.statement.*;
+import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
+import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 
 /**
  * Visitor interface for all supported {@link org.dockbox.hartshorn.hsl.ast.statement.Statement}s.
  * @param <R> The return type for the visitor.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public interface StatementVisitor<R> {
     R visit(ExpressionStatement statement);
@@ -53,8 +74,6 @@ public interface StatementVisitor<R> {
     R visit(FieldStatement statement);
 
     R visit(ConstructorStatement statement);
-
-    R visit(ExtensionStatement statement);
 
     R visit(VariableStatement statement);
 

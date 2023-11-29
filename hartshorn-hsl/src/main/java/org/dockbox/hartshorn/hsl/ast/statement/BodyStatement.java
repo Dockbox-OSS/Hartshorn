@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ public abstract class BodyStatement extends Statement {
 
     private final BlockStatement body;
 
-    protected BodyStatement(final ASTNode at, final BlockStatement body) {
+    protected BodyStatement(ASTNode at, BlockStatement body) {
         super(at);
         this.body = body;
     }

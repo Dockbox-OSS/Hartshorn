@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,51 @@
 
 package org.dockbox.hartshorn.component.condition;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
-
 import java.util.Set;
 
-public class ConditionMatcher {
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
-    private final ApplicationContext applicationContext;
+/**
+ * A matcher that can be used to match {@link RequiresCondition} annotations against a given set of contexts.
+ * This matcher will use the {@link ApplicationContext} to resolve the {@link Condition} instances that are
+ * referenced by the {@link RequiresCondition} annotations.
+ *
+ * <p>Condition matching can be used for a variety of purposes. For example, it can be used to determine whether
+ * a component should be registered, a binding method should be invoked, or an event should be dispatched.
+ *
+ * @see RequiresCondition
+ * @see Condition
+ * @see ConditionContext
+ * @see ConditionResult
+ *
+ * @param applicationContext the application context, used to resolve {@link Condition} instances
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+public record ConditionMatcher(ApplicationContext applicationContext) implements ContextCarrier {
 
-    public ConditionMatcher(final ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
+    /**
+     * Matches the {@link RequiresCondition} annotations of the given {@link AnnotatedElementView}, providing
+     * any additional {@link Context} instances to the {@link ConditionContext} that is used to match the
+     * {@link Condition condition implementations}. If any of the conditions does not match, this method will
+     * return {@code false}. If all conditions match, this method will return {@code true}.
+     *
+     * @param annotatedElementContext the annotated element to match against
+     * @param contexts the additional contexts to provide to the condition context
+     *
+     * @return {@code true} if all conditions match, {@code false} otherwise
+     */
+    public boolean match(AnnotatedElementView annotatedElementContext, Context... contexts) {
+        Set<RequiresCondition> conditions = annotatedElementContext.annotations().all(RequiresCondition.class);
+        for (RequiresCondition condition : conditions) {
+            Class<? extends Condition> conditionClass = condition.condition();
 
-    public boolean match(final AnnotatedElementView annotatedElementContext, final Context... contexts) {
-        final Set<RequiresCondition> conditions = annotatedElementContext.annotations().all(RequiresCondition.class);
-        for (final RequiresCondition condition : conditions) {
-            final Class<? extends Condition> conditionClass = condition.condition();
-
-            final Condition conditionInstance = this.applicationContext.get(conditionClass);
+            Condition conditionInstance = this.applicationContext.get(conditionClass);
             if (!this.match(annotatedElementContext, conditionInstance, condition, contexts)) {
                 return false;
             }
@@ -43,14 +68,28 @@ public class ConditionMatcher {
         return true;
     }
 
-    public boolean match(final AnnotatedElementView element, final Condition condition, final RequiresCondition requiresCondition, final Context... contexts) {
-        final ConditionContext context = new ConditionContext(this.applicationContext, element, requiresCondition);
-        for (final Context child : contexts) context.add(child);
-        final ConditionResult result = condition.matches(context);
+    /**
+     * Matches the given {@link Condition} against the given {@link AnnotatedElementView}, providing any additional
+     * {@link Context} instances to the {@link ConditionContext} that is used to match the {@link Condition condition
+     * implementations}. If the condition does not match, this method will return {@code false}. If the condition
+     * matches, this method will return {@code true}.
+     *
+     * @param element the annotated element to match against
+     * @param condition the condition to match
+     * @param requiresCondition the {@link RequiresCondition} annotation that references the condition
+     * @param contexts the additional contexts to provide to the condition context
+     *
+     * @return {@code true} if the condition matches, {@code false} otherwise
+     */
+    public boolean match(AnnotatedElementView element, Condition condition, RequiresCondition requiresCondition, Context... contexts) {
+        ConditionContext context = new ConditionContext(this.applicationContext, element, requiresCondition);
+        for (Context child : contexts) {
+            context.add(child);
+        }
+        ConditionResult result = condition.matches(context);
         if (!result.matches() && requiresCondition.failOnNoMatch()) {
             throw new ConditionFailedException(condition, result);
         }
         return result.matches();
     }
-
 }

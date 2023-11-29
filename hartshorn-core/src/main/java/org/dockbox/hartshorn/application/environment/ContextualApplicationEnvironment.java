@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,54 +17,44 @@
 package org.dockbox.hartshorn.application.environment;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.application.InitializingContext;
+import org.dockbox.hartshorn.application.LoggingExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.IllegalModificationException;
+import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
 import org.dockbox.hartshorn.application.environment.banner.Banner;
 import org.dockbox.hartshorn.application.environment.banner.HartshornBanner;
 import org.dockbox.hartshorn.application.environment.banner.ResourcePathBanner;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.Observer;
-import org.dockbox.hartshorn.application.scan.ClassReferenceLoadException;
-import org.dockbox.hartshorn.application.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
+import org.dockbox.hartshorn.discovery.DiscoveryService;
+import org.dockbox.hartshorn.discovery.ServiceDiscoveryException;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
+import org.dockbox.hartshorn.logging.AutoSwitchingApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
-import org.dockbox.hartshorn.proxy.ApplicationProxier;
-import org.dockbox.hartshorn.proxy.ProxyManager;
-import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.SingleElementContext;
+import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
+import org.dockbox.hartshorn.util.introspect.SupplierAdapterProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
-import org.dockbox.hartshorn.util.introspect.annotations.DuplicateAnnotationCompositeException;
-import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
@@ -73,63 +63,96 @@ import org.slf4j.LoggerFactory;
 import jakarta.inject.Singleton;
 
 @LogExclude
-public class ContextualApplicationEnvironment implements ObservableApplicationEnvironment, ModifiableContextCarrier {
+public final class ContextualApplicationEnvironment implements ObservableApplicationEnvironment, ModifiableContextCarrier {
 
     private final Set<Observer> observers = ConcurrentHashMap.newKeySet();
     private final Set<Class<? extends Observer>> lazyObservers = ConcurrentHashMap.newKeySet();
-    private final ApplicationFSProvider applicationFSProvider;
+    private final EnvironmentTypeCollector typeCollector = new EnvironmentTypeCollector(this);
+
+    private final FileSystemProvider fileSystemProvider;
     private final ApplicationLogger applicationLogger;
-    private final ApplicationProxier applicationProxier;
+    private final ProxyOrchestrator proxyOrchestrator;
     private final ExceptionHandler exceptionHandler;
     private final AnnotationLookup annotationLookup;
-    private final boolean isCI;
+    private final ClasspathResourceLocator resourceLocator;
+
+    private final boolean isBuildEnvironment;
     private final boolean isBatchMode;
+    private final boolean isStrictMode;
+
+    private final ApplicationArgumentParser argumentParser;
+    private final Properties arguments;
 
     private ApplicationContext applicationContext;
     private Introspector introspector;
 
-    public ContextualApplicationEnvironment(final InitializingContext initializingContext) {
-        final InitializingContext context = new InitializingContext(this, null, initializingContext.builder());
+    private ContextualApplicationEnvironment(SingleElementContext<? extends ApplicationBootstrapContext> context, Configurer configurer) {
+        SingleElementContext<ApplicationEnvironment> environmentInitializerContext = context.transform(this);
 
-        this.exceptionHandler = this.configure(context.exceptionHandler());
-        this.applicationFSProvider = this.configure(context.applicationFSProvider());
-        this.applicationLogger = this.configure(context.applicationLogger());
-        this.applicationProxier = this.configure(context.applicationProxier());
-        this.annotationLookup = this.configure(context.annotationLookup());
+        this.exceptionHandler = this.configure(environmentInitializerContext, configurer.exceptionHandler);
+        this.annotationLookup = this.configure(environmentInitializerContext, configurer.annotationLookup);
+        this.proxyOrchestrator = this.configure(environmentInitializerContext.transform(this.introspector()), configurer.proxyOrchestrator);
+        this.applicationLogger = this.configure(environmentInitializerContext, configurer.applicationLogger);
+        this.fileSystemProvider = this.configure(environmentInitializerContext, configurer.applicationFSProvider);
+        this.argumentParser = this.configure(environmentInitializerContext, configurer.applicationArgumentParser);
+        this.resourceLocator = this.configure(environmentInitializerContext, configurer.classpathResourceLocator);
 
-        this.isBatchMode = context.builder().enableBatchMode();
+        this.arguments = this.argumentParser.parse(context.input().arguments());
 
-        this.isCI = this.checkCI();
-        this.checkForDebugging(context);
+        SingleElementContext<Properties> argumentsInitializerContext = context.transform(this.arguments);
+        this.printStacktraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
+        this.isBatchMode = configurer.enableBatchMode.initialize(argumentsInitializerContext);
+        this.isStrictMode = configurer.enableStrictMode.initialize(argumentsInitializerContext);
+        if (this.introspector() instanceof BatchCapableIntrospector batchCapableIntrospector) {
+            batchCapableIntrospector.enableBatchMode(this.isBatchMode);
+        }
 
-        if (!this.isCI() && context.builder().enableBanner())
-            this.printBanner(context);
+        Boolean isBuildEnvironment = configurer.isBuildEnvironment.initialize(environmentInitializerContext);
+        if (isBuildEnvironment == null) {
+            isBuildEnvironment = false;
+        }
+        this.isBuildEnvironment = isBuildEnvironment;
+        this.checkForDebugging();
+
+        if (!this.isBuildEnvironment && configurer.enableBanner.initialize(argumentsInitializerContext)) {
+            this.printBanner(context.input().mainClass());
+        }
+
+        ApplicationContext initializedContext = configurer.applicationContext.initialize(environmentInitializerContext);
+        // This will handle two aspects:
+        // 1. If the context was not initialized through the implementation of ModifiableContextCarrier, it
+        //    will be set here to the initialized context.
+        // 2. If the context was initialized through the implementation of ModifiableContextCarrier, it will
+        //    verify that the context is the same as the initialized context, or throw an exception to prevent
+        //    the context from being overwritten and leaving the application in an inconsistent state.
+        if (initializedContext != null) {
+            this.applicationContext(initializedContext);
+        }
     }
 
-    private <T> T configure(final T instance) {
-        if (instance instanceof ApplicationManaged managed)
+    private <I, T> T configure(SingleElementContext<I> context, ContextualInitializer<I, T> initializer) {
+        T instance = initializer.initialize(context);
+        return this.configure(instance);
+    }
+
+    @Override
+    public Properties rawArguments() {
+        return this.arguments;
+    }
+
+    private <T> T configure(T instance) {
+        if (instance instanceof ApplicationManaged managed) {
             managed.environment(this);
+        }
         return instance;
     }
 
-    protected boolean checkCI() {
-        return System.getenv().containsKey("GITLAB_CI")
-                || System.getenv().containsKey("JENKINS_HOME")
-                || System.getenv().containsKey("TRAVIS")
-                || System.getenv().containsKey("GITHUB_ACTIONS")
-                || System.getenv().containsKey("APPVEYOR");
-    }
-
-    public ApplicationFSProvider applicationFSProvider() {
-        return this.applicationFSProvider;
+    public FileSystemProvider applicationFSProvider() {
+        return this.fileSystemProvider;
     }
 
     public ApplicationLogger applicationLogger() {
         return this.applicationLogger;
-    }
-
-    public ApplicationProxier applicationProxier() {
-        return this.applicationProxier;
     }
 
     public ExceptionHandler exceptionHandler() {
@@ -141,16 +164,40 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
+    public FileSystemProvider fileSystem() {
+        return this.fileSystemProvider;
+    }
+
+    @Override
+    public ClasspathResourceLocator classpath() {
+        return this.resourceLocator;
+    }
+
+    @Override
+    public ProxyOrchestrator proxyOrchestrator() {
+        return this.proxyOrchestrator;
+    }
+
+    @Override
     public Introspector introspector() {
         if (this.introspector == null) {
-            this.introspector = new ReflectionIntrospector(this.applicationContext());
+            // Lazy, as the proxy orchestrator may not yet be initialized
+            ProxyLookup proxyLookup = new SupplierAdapterProxyLookup(() -> this.proxyOrchestrator);
+            try {
+                this.introspector = DiscoveryService.instance()
+                    .discover(IntrospectorLoader.class)
+                    .create(proxyLookup, this.annotationLookup());
+            }
+            catch (ServiceDiscoveryException e) {
+                throw new ApplicationRuntimeException(e);
+            }
         }
         return this.introspector;
     }
 
     @Override
-    public boolean isCI() {
-        return this.isCI;
+    public boolean isBuildEnvironment() {
+        return this.isBuildEnvironment;
     }
 
     @Override
@@ -159,39 +206,25 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
-    public <A extends Annotation> Collection<TypeView<?>> types(final Class<A> annotation) {
-        return this.types(type -> type.annotations().has(annotation));
+    public boolean isStrictMode() {
+        return isStrictMode;
     }
 
     @Override
-    public <T> Collection<TypeView<? extends T>> children(final Class<T> parent) {
-        return this.types(type -> type.isChildOf(parent) && !type.is(parent));
-    }
-
-    private <T> Collection<TypeView<? extends T>> types(final Predicate<TypeView<?>> predicate) {
-        return TypeUtils.adjustWildcards(this.applicationContext().first(TypeReferenceCollectorContext.class)
-                .map(collectorContext -> collectorContext.collector().collect().stream()
-                        .map(reference -> {
-                            try {
-                                return reference.getOrLoad();
-                            }
-                            catch (final ClassReferenceLoadException e) {
-                                this.handle(e);
-                                return null;
-                            }
-                        })
-                        .filter(Objects::nonNull)
-                        .map(this::introspect)
-                        .filter(predicate)
-                        .collect(Collectors.toSet()))
-                .orElseThrow(() -> new IllegalStateException("TypeReferenceCollectorContext not available")), Collection.class);
+    public <A extends Annotation> Collection<TypeView<?>> types(Class<A> annotation) {
+        return this.typeCollector.types(type -> type.annotations().has(annotation));
     }
 
     @Override
-    public List<Annotation> annotationsWith(final TypeView<?> type, final Class<? extends Annotation> annotation) {
-        final Collection<Annotation> annotations = new ArrayList<>();
-        for (final Annotation typeAnnotation : type.annotations().all()) {
-            if (this.introspect(typeAnnotation.annotationType()).annotations().has(annotation)) {
+    public <T> Collection<TypeView<? extends T>> children(Class<T> parent) {
+        return this.typeCollector.types(type -> type.isChildOf(parent) && !type.is(parent));
+    }
+
+    @Override
+    public List<Annotation> annotationsWith(TypeView<?> type, Class<? extends Annotation> annotation) {
+        Collection<Annotation> annotations = new ArrayList<>();
+        for (Annotation typeAnnotation : type.annotations().all()) {
+            if (this.introspector().introspect(typeAnnotation.annotationType()).annotations().has(annotation)) {
                 annotations.add(typeAnnotation);
             }
         }
@@ -199,72 +232,22 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
-    public List<Annotation> annotationsWith(final Class<?> type, final Class<? extends Annotation> annotation) {
-        return this.annotationsWith(this.introspect(type), annotation);
+    public List<Annotation> annotationsWith(Class<?> type, Class<? extends Annotation> annotation) {
+        return this.annotationsWith(this.introspector().introspect(type), annotation);
     }
 
     @Override
-    public boolean singleton(final Class<?> type) {
-        final TypeView<?> typeView = this.introspect(type);
+    public boolean singleton(Class<?> type) {
+        TypeView<?> typeView = this.introspector().introspect(type);
         return this.singleton(typeView);
     }
 
     @Override
-    public boolean singleton(final TypeView<?> type) {
-        final ComponentLocator componentLocator = this.applicationContext().get(ComponentLocator.class);
+    public boolean singleton(TypeView<?> type) {
+        ComponentLocator componentLocator = this.applicationContext().get(ComponentLocator.class);
         return Boolean.TRUE.equals(componentLocator.container(type.type())
                 .map(ComponentContainer::singleton)
                 .orElseGet(() -> type.annotations().has(Singleton.class)));
-    }
-
-    @Override
-    public <T> TypeView<T> introspect(final Class<T> type) {
-        return this.introspector().introspect(type);
-    }
-
-    @Override
-    public <T> TypeView<T> introspect(final T instance) {
-        return this.introspector().introspect(instance);
-    }
-
-    @Override
-    public TypeView<?> introspect(final Type type) {
-        return this.introspector().introspect(type);
-    }
-
-    @Override
-    public TypeView<?> introspect(final ParameterizedType type) {
-        return this.introspector().introspect(type);
-    }
-
-    @Override
-    public TypeView<?> introspect(final String type) {
-        return this.introspector().introspect(type);
-    }
-
-    @Override
-    public MethodView<?, ?> introspect(final Method method) {
-        return this.introspector().introspect(method);
-    }
-
-    @Override
-    public <T> ConstructorView<T> introspect(final Constructor<T> method) {
-        return this.introspector().introspect(method);
-    }
-
-    @Override
-    public FieldView<?, ?> introspect(final Field field) {
-        return this.introspector().introspect(field);
-    }
-
-    @Override
-    public ParameterView<?> introspect(final Parameter parameter) {
-        return this.introspector().introspect(parameter);
-    }
-
-    @Override
-    public ElementAnnotationsIntrospector introspect(final AnnotatedElement annotatedElement) {
-        return this.introspector().introspect(annotatedElement);
     }
 
     @Override
@@ -273,32 +256,27 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
-    public void handle(final Throwable throwable) {
+    public void handle(Throwable throwable) {
         this.exceptionHandler.handle(throwable);
     }
 
     @Override
-    public void handle(final String message, final Throwable throwable) {
+    public void handle(String message, Throwable throwable) {
         this.exceptionHandler.handle(message, throwable);
     }
 
     @Override
-    public ExceptionHandler stacktraces(final boolean stacktraces) {
-        return this.exceptionHandler.stacktraces(stacktraces);
+    public ExceptionHandler printStacktraces(boolean stacktraces) {
+        return this.exceptionHandler.printStacktraces(stacktraces);
     }
 
     @Override
-    public Path applicationPath() {
-        return this.applicationFSProvider.applicationPath();
-    }
-
-    @Override
-    public void register(final Observer observer) {
+    public void register(Observer observer) {
         this.observers.add(observer);
     }
 
     @Override
-    public void register(final Class<? extends Observer> observer) {
+    public void register(Class<? extends Observer> observer) {
         this.lazyObservers.add(observer);
     }
 
@@ -308,72 +286,27 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
     }
 
     @Override
-    public void setDebugActive(final boolean active) {
-        this.applicationLogger.setDebugActive(active);
+    public void enableDebugLogging(boolean active) {
+        this.applicationLogger.enableDebugLogging(active);
     }
 
-    private void checkForDebugging(final InitializingContext context) {
-        final Set<String> arguments = context.builder().arguments();
-        final ApplicationArgumentParser parser = context.argumentParser();
-
-        final boolean debug = Boolean.TRUE.equals(Option.of(parser.parse(arguments).get("hartshorn:debug"))
-                .map(String.class::cast)
+    private void checkForDebugging() {
+        // TODO #1002: Better property? This does not align with current property definition standard
+        boolean debug = Boolean.TRUE.equals(Option.of(this.arguments.get("hartshorn:debug"))
+                .cast(String.class)
                 .map(Boolean::valueOf)
                 .orElse(false));
 
-        this.setDebugActive(debug);
+        this.enableDebugLogging(debug);
     }
 
     @Override
-    public <T> Option<Class<T>> real(final T instance) {
-        return this.applicationProxier.real(instance);
-    }
+    public <T extends Observer> Set<T> observers(Class<T> type) {
+        if (type == null) {
+            throw new IllegalArgumentException("type cannot be null");
+        }
 
-    @Override
-    public <T> Option<ProxyManager<T>> manager(final T instance) {
-        return this.applicationProxier.manager(instance);
-    }
-
-    @Override
-    public <D, T extends D> Option<D> delegate(final TypeView<D> type, final T instance) {
-        return this.applicationProxier.delegate(type, instance);
-    }
-
-    @Override
-    public <D, T extends D> Option<D> delegate(final Class<D> type, final T instance) {
-        return this.applicationProxier.delegate(type, instance);
-    }
-
-    @Override
-    public <T> StateAwareProxyFactory<T, ?> factory(final TypeView<T> type) {
-        return this.applicationProxier.factory(type);
-    }
-
-    @Override
-    public <T> StateAwareProxyFactory<T, ?> factory(final Class<T> type) {
-        return this.applicationProxier.factory(type);
-    }
-
-    @Override
-    public <T> Class<T> unproxy(final T instance) {
-        return this.applicationProxier.unproxy(instance);
-    }
-
-    @Override
-    public boolean isProxy(final Object instance) {
-        return this.applicationProxier.isProxy(instance);
-    }
-
-    @Override
-    public boolean isProxy(final Class<?> candidate) {
-        return this.applicationProxier.isProxy(candidate);
-    }
-
-    @Override
-    public <T extends Observer> Set<T> observers(final Class<T> type) {
-        if (type == null) throw new IllegalArgumentException("type cannot be null");
-
-        final Set<T> observers = new HashSet<>();
+        Set<T> observers = new HashSet<>();
         this.observers.stream()
                 .filter(type::isInstance)
                 .map(type::cast)
@@ -381,50 +314,413 @@ public class ContextualApplicationEnvironment implements ObservableApplicationEn
 
         this.lazyObservers.stream()
                 .filter(type::isAssignableFrom)
-                .map(lo -> this.applicationContext.get(lo))
+                .map(this.applicationContext::get)
                 .map(type::cast)
                 .forEach(observers::add);
 
         return observers;
     }
 
-    @Override
-    public ModifiableContextCarrier applicationContext(final ApplicationContext applicationContext) {
-        if (this.applicationContext == null) this.applicationContext = applicationContext;
-        else throw new IllegalModificationException("Application context has already been configured");
-        return this;
+    private void printBanner(Class<?> mainClass) {
+        Logger logger = LoggerFactory.getLogger(mainClass);
+        this.createBanner().print(logger);
     }
 
-    private void printBanner(final InitializingContext context) {
-        final Logger logger = LoggerFactory.getLogger(context.builder().mainClass());
-        this.createBanner(context).print(logger);
-    }
-
-    private Banner createBanner(final InitializingContext context) {
-        final ClasspathResourceLocator resourceLocator = context.resourceLocator();
-        return resourceLocator.resource("banner.txt")
+    private Banner createBanner() {
+        return this.resourceLocator.resource("banner.txt")
                 .option()
                 .map(resource -> (Banner) new ResourcePathBanner(resource))
                 .orElseGet(HartshornBanner::new);
     }
 
-    @Override
-    public <A extends Annotation> A find(final AnnotatedElement element, final Class<A> annotationType) throws DuplicateAnnotationCompositeException {
-        return this.annotationLookup.find(element, annotationType);
+    /**
+     * Creates a new {@link ContextualInitializer} for the {@link ContextualApplicationEnvironment} using the given
+     * {@link Customizer}.
+     *
+     * @param customizer the customizer to use, if left empty the default configuration will be used
+     * @return a non-cached {@link ContextualInitializer} for the {@link ContextualApplicationEnvironment}
+     */
+    public static ContextualInitializer<ApplicationBootstrapContext, ContextualApplicationEnvironment> create(Customizer<Configurer> customizer) {
+        return context -> {
+            Configurer configurer = new Configurer();
+            customizer.configure(configurer);
+            return new ContextualApplicationEnvironment(context, configurer);
+        };
     }
 
     @Override
-    public <A extends Annotation> List<A> findAll(final AnnotatedElement element, final Class<A> annotationType) {
-        return this.annotationLookup.findAll(element, annotationType);
+    public ModifiableContextCarrier applicationContext(ApplicationContext context) {
+        if (this.applicationContext != null && this.applicationContext != context) {
+            throw new IllegalStateException("Application context already set");
+        }
+        this.applicationContext = context;
+        return this;
     }
 
-    @Override
-    public Annotation unproxy(final Annotation annotation) {
-        return this.annotationLookup.unproxy(annotation);
-    }
+    public static class Configurer {
 
-    @Override
-    public LinkedHashSet<Class<? extends Annotation>> annotationHierarchy(final Class<? extends Annotation> type) {
-        return this.annotationLookup.annotationHierarchy(type);
+        private ContextualInitializer<Properties, Boolean> enableBanner = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.banner.enabled", "true")));
+        private ContextualInitializer<Properties, Boolean> enableBatchMode = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.batch.enabled", "false")));
+        private ContextualInitializer<Properties, Boolean> enableStrictMode = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.strict.enabled", "true")));
+        private ContextualInitializer<Properties, Boolean> showStacktraces = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.exceptions.stacktraces", "true")));
+
+        private ContextualInitializer<Introspector, ? extends ProxyOrchestrator> proxyOrchestrator = context -> DefaultProxyOrchestratorLoader.create(Customizer.useDefaults()).initialize(context);
+        private ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider = ContextualInitializer.of(
+                PathFileSystemProvider::new);
+        private ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler = ContextualInitializer.of(LoggingExceptionHandler::new);
+        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser = ContextualInitializer.of(StandardApplicationArgumentParser::new);
+        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationLogger> applicationLogger = AutoSwitchingApplicationLogger.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ContextualInitializer.of(ClassLoaderClasspathResourceLocator::new);
+        private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup = ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
+        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext = SimpleApplicationContext.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment = environment -> BuildEnvironmentPredicate.isBuildEnvironment();
+
+        /**
+         * Enables or disables the banner. If the banner is enabled, it will be printed to the console when the
+         * application starts. The banner is enabled by default.
+         *
+         * @param enableBanner whether to enable or disable the banner
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer enableBanner(ContextualInitializer<Properties, Boolean> enableBanner) {
+            this.enableBanner = enableBanner;
+            return this;
+        }
+
+        /**
+         * Enables the banner. If the banner is enabled, it will be printed to the console when the application
+         * starts. The banner is enabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer enableBanner() {
+            return this.enableBanner(ContextualInitializer.of(true));
+        }
+
+        /**
+         * Disables the banner. If the banner is disabled, it will not be printed to the console when the application
+         * starts. The banner is enabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer disableBanner() {
+            return this.enableBanner(ContextualInitializer.of(false));
+        }
+
+        /**
+         * Enables or disables batch mode. Batch mode is typically used for optimizations specific to applications
+         * which will spawn multiple application contexts with shared resources. Batch mode is disabled by default.
+         *
+         * @param enableBatchMode whether to enable or disable batch mode
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer enableBatchMode(ContextualInitializer<Properties, Boolean> enableBatchMode) {
+            this.enableBatchMode = enableBatchMode;
+            return this;
+        }
+
+        /**
+         * Enables strict mode. Strict mode is typically used to indicate that a lookup should only return a value if
+         * it is explicitly bound to the key, and not if it is bound to a sub-type of the key.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer enableStrictMode() {
+            return this.enableStrictMode(ContextualInitializer.of(true));
+        }
+
+        /**
+         * Disables strict mode. Strict mode is typically used to indicate that a lookup should only return a value if
+         * it is explicitly bound to the key, and not if it is bound to a sub-type of the key.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer disableStrictMode() {
+            return this.enableStrictMode(ContextualInitializer.of(false));
+        }
+
+        /**
+         * Enables or disables strict mode. Strict mode is typically used to indicate that a lookup should only return a
+         * value if it is explicitly bound to the key, and not if it is bound to a sub-type of the key.
+         *
+         * @param enableStrictMode whether to enable or disable strict mode
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer enableStrictMode(ContextualInitializer<Properties, Boolean> enableStrictMode) {
+            this.enableStrictMode = enableStrictMode;
+            return this;
+        }
+
+        /**
+         * Enables batch mode. Batch mode is typically used for optimizations specific to applications which will
+         * spawn multiple application contexts with shared resources. Batch mode is disabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer enableBatchMode() {
+            return this.enableBatchMode(ContextualInitializer.of(true));
+        }
+
+        /**
+         * Disables batch mode. Batch mode is typically used for optimizations specific to applications which will
+         * spawn multiple application contexts with shared resources. Batch mode is disabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer disableBatchMode() {
+            return this.enableBatchMode(ContextualInitializer.of(false));
+        }
+
+        /**
+         * Enables or disables the printing of stacktraces when exceptions occur. Stacktraces are enabled by default.
+         *
+         * @param showStacktraces whether to enable or disable stacktraces
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer showStacktraces(ContextualInitializer<Properties, Boolean> showStacktraces) {
+            this.showStacktraces = showStacktraces;
+            return this;
+        }
+
+        /**
+         * Enables the printing of stacktraces when exceptions occur. Stacktraces are enabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer showStacktraces() {
+            return this.showStacktraces(ContextualInitializer.of(true));
+        }
+
+        /**
+         * Disables the printing of stacktraces when exceptions occur. Stacktraces are enabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer hideStacktraces() {
+            return this.showStacktraces(ContextualInitializer.of(false));
+        }
+
+        /**
+         * Sets the {@link ProxyOrchestrator} to use. The {@link ProxyOrchestrator} is responsible for creating
+         * proxies for application components. The default implementation is provided by {@link DefaultProxyOrchestratorLoader}.
+         *
+         * @param proxyOrchestrator the {@link ProxyOrchestrator} to use
+         * @see ProxyOrchestrator
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer applicationOrchestrator(ProxyOrchestrator proxyOrchestrator) {
+            return this.applicationOrchestrator(ContextualInitializer.of(proxyOrchestrator));
+        }
+
+        /**
+         * Sets the {@link ProxyOrchestrator} to use. The {@link ProxyOrchestrator} is responsible for creating
+         * proxies for application components. The default implementation is provided by {@link DefaultProxyOrchestratorLoader}.
+         *
+         * @param orchestrator the {@link ProxyOrchestrator} to use
+         * @see ProxyOrchestrator
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer applicationOrchestrator(ContextualInitializer<Introspector, ? extends ProxyOrchestrator> orchestrator) {
+            this.proxyOrchestrator = orchestrator;
+            return this;
+        }
+
+        /**
+         * Sets the {@link FileSystemProvider} to use. The {@link FileSystemProvider} is responsible for
+         * providing the application's file system. The default implementation is {@link PathFileSystemProvider}.
+         *
+         * @param fileSystemProvider the {@link FileSystemProvider} to use
+         * @see FileSystemProvider
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer applicationFSProvider(FileSystemProvider fileSystemProvider) {
+            return this.applicationFSProvider(ContextualInitializer.of(fileSystemProvider));
+        }
+
+        /**
+         * Sets the {@link FileSystemProvider} to use. The {@link FileSystemProvider} is responsible for
+         * providing the application's file system. The default implementation is {@link PathFileSystemProvider}.
+         *
+         * @param applicationFSProvider the {@link FileSystemProvider} to use
+         * @see FileSystemProvider
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer applicationFSProvider(ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider) {
+            this.applicationFSProvider = applicationFSProvider;
+            return this;
+        }
+
+        /**
+         * Sets the {@link ExceptionHandler} to use. The {@link ExceptionHandler} is responsible for handling
+         * exceptions that occur during the application's lifecycle. The default implementation is {@link LoggingExceptionHandler}.
+         *
+         * @param exceptionHandler the {@link ExceptionHandler} to use
+         * @see ExceptionHandler
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer exceptionHandler(ExceptionHandler exceptionHandler) {
+            return this.exceptionHandler(ContextualInitializer.of(exceptionHandler));
+        }
+
+        /**
+         * Sets the {@link ExceptionHandler} to use. The {@link ExceptionHandler} is responsible for handling
+         * exceptions that occur during the application's lifecycle. The default implementation is {@link LoggingExceptionHandler}.
+         *
+         * @param exceptionHandler the {@link ExceptionHandler} to use
+         * @see ExceptionHandler
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer exceptionHandler(ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler) {
+            this.exceptionHandler = exceptionHandler;
+            return this;
+        }
+
+        /**
+         * Sets the {@link ApplicationArgumentParser} to use. The {@link ApplicationArgumentParser} is responsible for
+         * parsing arguments passed to the application. The default implementation is {@link StandardApplicationArgumentParser}.
+         *
+         * @param applicationArgumentParser the {@link ApplicationArgumentParser} to use
+         * @see ApplicationArgumentParser
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer applicationArgumentParser(ApplicationArgumentParser applicationArgumentParser) {
+            return this.applicationArgumentParser(ContextualInitializer.of(applicationArgumentParser));
+        }
+
+        /**
+         * Sets the {@link ApplicationArgumentParser} to use. The {@link ApplicationArgumentParser} is responsible for
+         * parsing arguments passed to the application. The default implementation is {@link StandardApplicationArgumentParser}.
+         *
+         * @param applicationArgumentParser the {@link ApplicationArgumentParser} to use
+         * @see ApplicationArgumentParser
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer applicationArgumentParser(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser) {
+            this.applicationArgumentParser = applicationArgumentParser;
+            return this;
+        }
+
+        /**
+         * Sets the {@link ApplicationLogger} to use. The {@link ApplicationLogger} is responsible for logging
+         * messages during the application's lifecycle. The default implementation is {@link AutoSwitchingApplicationLogger}.
+         *
+         * @param applicationLogger the {@link ApplicationLogger} to use
+         * @see ApplicationLogger
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer applicationLogger(ApplicationLogger applicationLogger) {
+            return this.applicationLogger(ContextualInitializer.of(applicationLogger));
+        }
+
+        /**
+         * Sets the {@link ApplicationLogger} to use. The {@link ApplicationLogger} is responsible for logging
+         * messages during the application's lifecycle. The default implementation is {@link AutoSwitchingApplicationLogger}.
+         *
+         * @param applicationLogger the {@link ApplicationLogger} to use
+         * @see ApplicationLogger
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer applicationLogger(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationLogger> applicationLogger) {
+            this.applicationLogger = applicationLogger;
+            return this;
+        }
+
+        /**
+         * Sets the {@link ClasspathResourceLocator} to use. The {@link ClasspathResourceLocator} is responsible for
+         * locating resources on the classpath. The default implementation is {@link ClassLoaderClasspathResourceLocator}.
+         *
+         * @param classpathResourceLocator the {@link ClasspathResourceLocator} to use
+         * @see ClasspathResourceLocator
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer classpathResourceLocator(ClasspathResourceLocator classpathResourceLocator) {
+            return this.classpathResourceLocator(ContextualInitializer.of(classpathResourceLocator));
+        }
+
+        /**
+         * Sets the {@link ClasspathResourceLocator} to use. The {@link ClasspathResourceLocator} is responsible for
+         * locating resources on the classpath. The default implementation is {@link ClassLoaderClasspathResourceLocator}.
+         *
+         * @param classpathResourceLocator the {@link ClasspathResourceLocator} to use
+         * @see ClasspathResourceLocator
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer classpathResourceLocator(ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator) {
+            this.classpathResourceLocator = classpathResourceLocator;
+            return this;
+        }
+
+        /**
+         * Sets the {@link AnnotationLookup} to use. The {@link AnnotationLookup} is responsible for looking up
+         * annotations on elements. The default implementation is {@link VirtualHierarchyAnnotationLookup}.
+         *
+         * @param annotationLookup the {@link AnnotationLookup} to use
+         * @see AnnotationLookup
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer annotationLookup(AnnotationLookup annotationLookup) {
+            return this.annotationLookup(ContextualInitializer.of(annotationLookup));
+        }
+
+        /**
+         * Sets the {@link AnnotationLookup} to use. The {@link AnnotationLookup} is responsible for looking up
+         * annotations on elements. The default implementation is {@link VirtualHierarchyAnnotationLookup}.
+         *
+         * @param annotationLookup the {@link AnnotationLookup} to use
+         * @see AnnotationLookup
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer annotationLookup(ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup) {
+            this.annotationLookup = annotationLookup;
+            return this;
+        }
+
+        /**
+         * Sets the {@link ApplicationContext} to use. The {@link ApplicationContext} is responsible for providing
+         * access to components and global application state. The default implementation is {@link SimpleApplicationContext}.
+         *
+         * @param applicationContext the {@link ApplicationContext} to use
+         * @see ApplicationContext
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer applicationContext(ApplicationContext applicationContext) {
+            return this.applicationContext(ContextualInitializer.of(applicationContext));
+        }
+
+        /**
+         * Sets the {@link ApplicationContext} to use. The {@link ApplicationContext} is responsible for providing
+         * access to components and global application state. The default implementation is {@link SimpleApplicationContext}.
+         *
+         * @param applicationContext the {@link ApplicationContext} to use
+         * @see ApplicationContext
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer applicationContext(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext) {
+            this.applicationContext = applicationContext;
+            return this;
+        }
+
+        /**
+         * Sets whether the application is running in a build environment. This is typically used to disable
+         * certain features that are not required in a build environment. By default this will follow the result
+         * of
+         *
+         * @param isBuildEnvironment whether the application is running in a build environment
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer isBuildEnvironment(ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment) {
+            this.isBuildEnvironment = isBuildEnvironment;
+            return this;
+        }
+
+        /**
+         * Sets whether the application is running in a build environment. This is typically used to disable
+         * certain features that are not required in a build environment. This is disabled by default.
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer isBuildEnvironment(boolean isBuildEnvironment) {
+            return this.isBuildEnvironment(ContextualInitializer.of(isBuildEnvironment));
+        }
     }
 }

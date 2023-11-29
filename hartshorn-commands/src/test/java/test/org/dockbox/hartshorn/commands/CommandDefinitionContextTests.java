@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,12 @@ import org.dockbox.hartshorn.commands.ParsingException;
 import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContextImpl;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.option.Option;
@@ -49,85 +50,85 @@ public class CommandDefinitionContextTests {
     @Inject
     private ApplicationContext applicationContext;
 
-    private final Key<SampleCommand> typeContext = Key.of(SampleCommand.class);
+    private final ComponentKey<SampleCommand> typeContext = ComponentKey.of(SampleCommand.class);
 
     @Test
-    @TestComponents(SampleCommand.class)
+    @TestComponents(components = SampleCommand.class)
     void testParsingCanSucceed() {
-        final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
+        CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
         Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(this.applicationContext), "demo sub 1 --skip 1 2 3 4"));
     }
 
     @Test
-    @TestComponents(SampleCommandExtension.class)
+    @TestComponents(components = SampleCommandExtension.class)
     void testExtensionCanSucceed() {
-        final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
+        CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
-        gateway.register(Key.of(SampleCommandExtension.class));
+        gateway.register(ComponentKey.of(SampleCommandExtension.class));
         Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(this.applicationContext), "demo second ThisIsMyName"));
     }
 
     @Test
-    @TestComponents(SampleCommand.class)
+    @TestComponents(components = SampleCommand.class)
     void testComplexParsingCanSucceed() {
-        final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
+        CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
         Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(this.applicationContext), "demo complex requiredArg optionalArg ONE --flag --vflag flagValue -s"));
     }
 
     @Test
     void testTooManyArguments() {
-        final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
+        CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
         Assertions.assertThrows(ParsingException.class, () -> gateway.accept(SystemSubject.instance(this.applicationContext), "demo complex requiredArg optionalArg ONE thisArgumentIsOneTooMany"));
     }
 
     @Test
     void testNotEnoughArguments() {
-        final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
+        CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
         Assertions.assertThrows(ParsingException.class, () -> gateway.accept(SystemSubject.instance(this.applicationContext), "demo complex")); // Missing required arg (and optional arguments)
     }
 
     @Test
     void testUnknownFlag() {
-        final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
+        CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
         Assertions.assertThrows(ParsingException.class, () -> gateway.accept(SystemSubject.instance(this.applicationContext), "demo complex requiredArg optionalArg ONE --unknownFlag"));
     }
 
     @Test
-    @TestComponents(SampleCommand.class)
+    @TestComponents(components = SampleCommand.class)
     void testArgumentParameters() {
-        final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
+        CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
         Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(this.applicationContext), "demo arguments requiredA optionalB --flag valueC"));
     }
 
     @Test
     void testSpecificSuggestion() {
-        final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
+        CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
-        final List<String> suggestions = gateway.suggestions(SystemSubject.instance(this.applicationContext), "demo complex requiredArg optionalArg O");
+        List<String> suggestions = gateway.suggestions(SystemSubject.instance(this.applicationContext), "demo complex requiredArg optionalArg O");
 
         Assertions.assertEquals(1, suggestions.size());
         Assertions.assertEquals("one", suggestions.get(0));
     }
 
     @Test
-    @TestComponents(SampleCommand.class)
+    @TestComponents(components = SampleCommand.class)
     void testGroups() throws ParsingException {
-        final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
+        CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
         gateway.accept(SystemSubject.instance(this.applicationContext), "demo group");
     }
 
     @Test
     void testAllSuggestions() {
-        final CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
+        CommandGateway gateway = this.applicationContext.get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
-        final List<String> suggestions = gateway.suggestions(SystemSubject.instance(this.applicationContext), "demo complex requiredArg optionalArg ");
+        List<String> suggestions = gateway.suggestions(SystemSubject.instance(this.applicationContext), "demo complex requiredArg optionalArg ");
 
         Assertions.assertEquals(3, suggestions.size());
         Assertions.assertTrue(suggestions.containsAll(List.of("one", "two", "three")));
@@ -135,8 +136,9 @@ public class CommandDefinitionContextTests {
 
     @Test
     void testContainerContext() {
-        final Command command = new TestCommand();
-        final CommandDefinitionContext context = new CommandDefinitionContextImpl(this.applicationContext, command, null);
+        Command command = new TestCommand();
+        ArgumentConverterRegistry converterRegistry = this.applicationContext.get(ArgumentConverterRegistry.class);
+        CommandDefinitionContext context = new CommandDefinitionContextImpl(this.applicationContext, converterRegistry, command, null);
 
         Assertions.assertEquals(1, context.aliases().size());
         Assertions.assertEquals("demo", context.aliases().get(0));
@@ -146,31 +148,31 @@ public class CommandDefinitionContextTests {
 
         // Below tests also cover element order.
 
-        final CommandElement<?> requiredElement = context.elements().get(0);
+        CommandElement<?> requiredElement = context.elements().get(0);
         Assertions.assertFalse(requiredElement.optional());
         Assertions.assertEquals("required", requiredElement.name());
 
-        final CommandElement<?> optionalElement = context.elements().get(1);
+        CommandElement<?> optionalElement = context.elements().get(1);
         Assertions.assertTrue(optionalElement.optional());
         Assertions.assertEquals("optional", optionalElement.name());
 
-        final CommandElement<?> enumElement = context.elements().get(2);
+        CommandElement<?> enumElement = context.elements().get(2);
         Assertions.assertTrue(enumElement.optional());
         Assertions.assertEquals("enum", enumElement.name());
-        final Option<?> one = enumElement.parse(null, "ONE");
+        Option<?> one = enumElement.parse(null, "ONE");
         Assertions.assertTrue(one.present());
         Assertions.assertTrue(one.get() instanceof CommandValueEnum);
         Assertions.assertEquals(CommandValueEnum.ONE, one.get());
 
-        final CommandFlag flag = context.flags().get(0);
+        CommandFlag flag = context.flags().get(0);
         Assertions.assertEquals("flag", flag.name());
 
-        final CommandFlag valueFlag = context.flags().get(1);
+        CommandFlag valueFlag = context.flags().get(1);
         Assertions.assertTrue(valueFlag instanceof CommandElement);
         Assertions.assertEquals("vflag", valueFlag.name());
         Assertions.assertTrue(((CommandElement<?>) valueFlag).optional());
 
-        final CommandFlag shortFlag = context.flags().get(2);
+        CommandFlag shortFlag = context.flags().get(2);
         Assertions.assertEquals("s", shortFlag.name());
     }
 

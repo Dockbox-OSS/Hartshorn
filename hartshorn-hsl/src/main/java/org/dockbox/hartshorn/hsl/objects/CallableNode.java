@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,20 @@
 
 package org.dockbox.hartshorn.hsl.objects;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
-
-import java.util.List;
 
 /**
  * Represents a node that can be called, producing a result. This is the base class for all types
  * of executable nodes, including functions and constructors.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
+@FunctionalInterface
 public interface CallableNode {
 
     /**
@@ -37,6 +38,7 @@ public interface CallableNode {
      *
      * @param at The token at which the node is being executed. This is used for error reporting.
      * @param interpreter The interpreter that is executing the node.
+     * @param instance The instance on which the node is being executed. This is used for method calls.
      * @param arguments The arguments that are passed to the node.
      * @return The result of the node.
      * @throws ApplicationException If an error occurs while executing the node.

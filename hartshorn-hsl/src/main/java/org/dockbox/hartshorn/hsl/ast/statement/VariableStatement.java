@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +27,11 @@ public class VariableStatement extends FinalizableStatement implements NamedNode
     private final Token name;
     private final Expression initializer;
 
-    public VariableStatement(final Token name, final Expression initializer) {
+    public VariableStatement(Token name, Expression initializer) {
         this(name, false, name, initializer);
     }
 
-    public VariableStatement(final ASTNode at, final boolean finalized, final Token name, final Expression initializer) {
+    public VariableStatement(ASTNode at, boolean finalized, Token name, Expression initializer) {
         super(at, finalized);
         this.name = name;
         this.initializer = initializer;
@@ -47,7 +47,7 @@ public class VariableStatement extends FinalizableStatement implements NamedNode
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

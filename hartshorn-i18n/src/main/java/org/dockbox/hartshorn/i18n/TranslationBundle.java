@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.nio.file.Path;
@@ -47,7 +47,7 @@ public interface TranslationBundle {
 
     Set<Message> register(Map<String, String> messages, Locale locale);
 
-    Set<Message> register(Path source, Locale locale, FileFormats fileFormat);
+    Set<Message> register(Path source, Locale locale, FileFormat fileFormat);
 
     Set<Message> register(ResourceBundle resourceBundle);
 }

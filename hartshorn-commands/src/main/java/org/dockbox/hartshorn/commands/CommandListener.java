@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,14 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.application.lifecycle.ApplicationState;
-import org.dockbox.hartshorn.events.EngineChangedState;
+import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 
 import java.io.InputStream;
 
 /**
  * Represents a constant listener which is capable of listening to command inputs. Commands may be entered through
  * any mean, like a command line, external event bus, or similar solutions. Should be activated after the engine
- * started, typically this can be done by listening for {@link EngineChangedState} with
- * {@link ApplicationState.Started} as its parameter.
+ * started. This can usually be done by implementing a {@link LifecycleObserver}.
  *
  * <p>For example
  * <pre>{@code

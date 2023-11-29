@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,21 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.function.Supplier;
+public class LazySingletonProvider<T> implements NonTypeAwareProvider<T> {
 
-public class LazySingletonProvider<T> implements Provider<T> {
-
-    private final Supplier<ObjectContainer<T>> supplier;
+    private final CheckedSupplier<ObjectContainer<T>> supplier;
     private ObjectContainer<T> container;
 
-    public LazySingletonProvider(final Supplier<ObjectContainer<T>> supplier) {
+    public LazySingletonProvider(CheckedSupplier<ObjectContainer<T>> supplier) {
         this.supplier = supplier;
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(final ApplicationContext context) {
+    public Option<ObjectContainer<T>> provide(ApplicationContext context) throws ApplicationException {
         if (this.container == null) {
             this.container = this.supplier.get();
         }

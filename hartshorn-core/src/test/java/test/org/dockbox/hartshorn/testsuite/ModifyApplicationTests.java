@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package test.org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.ModifyApplication;
+import org.dockbox.hartshorn.testsuite.TestCustomizer;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 
@@ -28,14 +28,15 @@ import org.junit.jupiter.api.Assertions;
 public class ModifyApplicationTests {
 
     @ModifyApplication
-    public static ApplicationBuilder<?, ?> factory(final ApplicationBuilder<?, ?> factory) {
-        // Typically this would be done with @TestProperties, but we're testing the factory here
-        return factory.argument("--factory.modified=true");
+    public static void customize() {
+        TestCustomizer.BUILDER.compose(builder -> {
+            builder.arguments(args -> args.add("--hartshorn.modified=true"));
+        });
     }
 
     @InjectTest
-    void testFactoryWasModified(final ApplicationContext applicationContext) {
-        final Option<String> property = applicationContext.property("factory.modified");
+    void testFactoryWasModified(ApplicationContext applicationContext) {
+        Option<String> property = applicationContext.property("hartshorn.modified");
         Assertions.assertTrue(property.present());
         Assertions.assertEquals("true", property.get());
     }

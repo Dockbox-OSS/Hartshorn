@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.Service;
 
 import jakarta.inject.Named;
@@ -25,28 +25,28 @@ import jakarta.inject.Singleton;
 @Service
 public class SampleProviderService {
 
-    @Provider
+    @Binds
     public ProvidedInterface get() {
         return () -> "Provision";
     }
 
-    @Provider("named")
+    @Binds("named")
     public ProvidedInterface named() {
         return () -> "NamedProvision";
     }
 
-    @Provider("parameter")
-    public ProvidedInterface withParameter(final SampleField field) {
+    @Binds("parameter")
+    public ProvidedInterface withParameter(SampleField field) {
         return () -> "ParameterProvision";
     }
 
-    @Provider("namedParameter")
-    public ProvidedInterface withNamedField(@Named("named") final SampleField field) {
+    @Binds("namedParameter")
+    public ProvidedInterface withNamedField(@Named("named") SampleField field) {
         return () -> "NamedParameterProvision";
     }
 
     @Singleton
-    @Provider("singleton")
+    @Binds("singleton")
     public ProvidedInterface singleton() {
         return () -> "SingletonProvision";
     }

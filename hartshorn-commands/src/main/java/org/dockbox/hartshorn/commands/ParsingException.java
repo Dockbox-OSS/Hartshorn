@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ import org.dockbox.hartshorn.i18n.Message;
  */
 public class ParsingException extends ApplicationException {
 
-    public ParsingException(final Message resource) {
+    public ParsingException(Message resource) {
         super(resource.string());
     }
 
-    public ParsingException(final Message resource, final Throwable cause) {
+    public ParsingException(Message resource, Throwable cause) {
         super(resource.string(), cause);
     }
 }

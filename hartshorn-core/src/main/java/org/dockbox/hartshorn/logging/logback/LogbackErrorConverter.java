@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,14 +26,15 @@ import ch.qos.logback.core.pattern.color.ForegroundCompositeConverterBase;
  * with the {@link Level#ERROR} level.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public class LogbackErrorConverter extends ForegroundCompositeConverterBase<ILoggingEvent> {
     @Override
-    protected String getForegroundColorCode(final ILoggingEvent event) {
-        final Level level = event.getLevel();
-        if (level.toInt() == Level.ERROR_INT)
+    protected String getForegroundColorCode(ILoggingEvent event) {
+        Level level = event.getLevel();
+        if (level.toInt() == Level.ERROR_INT) {
             return ANSIConstants.RED_FG;
+        }
         return ANSIConstants.DEFAULT_FG;
     }
 }

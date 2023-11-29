@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,31 @@
 
 package org.dockbox.hartshorn.i18n;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
+import org.dockbox.hartshorn.i18n.services.SimpleTranslationKeyGenerator;
+import org.dockbox.hartshorn.i18n.services.TranslationKeyGenerator;
 
 @Service
 @RequiresActivator(UseTranslations.class)
 public class TranslationProviders {
 
-    @Provider
-    public TranslationService translationService() {
-        return new BundledTranslationService();
+    @Binds
+    public TranslationService translationService(ApplicationContext applicationContext, TranslationBundle bundle) {
+        return new BundledTranslationService(applicationContext, bundle);
     }
 
-    @Provider
-    public TranslationBundle translationBundle() {
-        return new DefaultTranslationBundle();
+    @Binds
+    public TranslationBundle translationBundle(ApplicationContext applicationContext) {
+        return new DefaultTranslationBundle(applicationContext);
+    }
+
+    @Binds
+    public TranslationKeyGenerator translationKeyGenerator(ComponentLocator componentLocator) {
+        return new SimpleTranslationKeyGenerator(componentLocator);
     }
 }

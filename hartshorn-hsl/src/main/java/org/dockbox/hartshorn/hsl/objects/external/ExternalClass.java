@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import java.util.List;
+import java.util.Map;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
@@ -29,9 +32,6 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * Represents a Java class that can be called from an HSL runtime. This class can be
  * used to create a new instance of the class. This requires the class to be imported
@@ -44,34 +44,24 @@ import java.util.Map;
  * }</pre>
  *
  * @param <T> The type of the class.
+ *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
-public class ExternalClass<T> implements ClassReference {
-
-    private final TypeView<T> type;
-
-    public ExternalClass(final TypeView<T> type) {
-        this.type = type;
-    }
-
-    /**
-     * Gets the {@link TypeView} represented by this instance.
-     * @return The {@link TypeView} represented by this instance.
-     */
-    public TypeView<T> type() {
-        return this.type;
-    }
+public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
 
     @Override
-    public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) throws ApplicationException {
+    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
         if (instance != null) {
             throw new ScriptEvaluationError("Cannot call a class with an instance", Phase.INTERPRETING, at);
         }
-        final ConstructorView<T> executable = ExecutableLookup.executable(this.type.constructors().all(), arguments);
+        ConstructorView<T> executable = ExecutableLookup.executable(this.type.constructors().all(), arguments);
         if (executable != null) {
-            final T objectInstance = executable.create(arguments.toArray()).rethrowUnchecked().orNull();
-            return new ExternalInstance(objectInstance, interpreter.applicationContext().environment().introspect(objectInstance));
+            T objectInstance = executable.create(arguments.toArray())
+                    .mapError(ApplicationException::new)
+                    .rethrow()
+                    .orNull();
+            return new ExternalInstance(objectInstance, interpreter.applicationContext().environment().introspector().introspect(objectInstance));
         }
         throw new ScriptEvaluationError("No constructor found for class " + this.type.name() + " with arguments " + arguments, Phase.INTERPRETING, at);
     }
@@ -87,25 +77,28 @@ public class ExternalClass<T> implements ClassReference {
     }
 
     @Override
-    public MethodReference method(final String name) {
+    public MethodReference method(String name) {
         return new ExternalFunction(this.type(), name);
     }
 
     @Override
     public ClassReference superClass() {
-        final TypeView<?> parent = this.type().superClass();
-        if (parent.isVoid()) return null;
+        TypeView<?> parent = this.type().superClass();
+        if (parent.isVoid()) {
+            return null;
+        }
         return new ExternalClass<>(parent);
     }
 
     @Override
     public String name() {
+        // TODO #1000: Return alias if imported with non-original name
         return this.type().name();
     }
 
     @Override
     public boolean isFinal() {
-        return this.type().isFinal();
+        return this.type().modifiers().isFinal();
     }
 
     @Override

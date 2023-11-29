@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,10 @@ import java.util.Set;
 public class CaseBodyStatementParser implements ASTNodeParser<Statement> {
 
     @Override
-    public Attempt<Statement, ScriptEvaluationError> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Attempt<Statement, ScriptEvaluationError> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.COLON)) {
-            final Token colon = parser.previous();
-            final List<Statement> statements = new ArrayList<>();
+            Token colon = parser.previous();
+            List<Statement> statements = new ArrayList<>();
             while (!parser.check(TokenType.CASE, TokenType.DEFAULT, TokenType.RIGHT_BRACE)) {
                 statements.add(parser.statement());
             }

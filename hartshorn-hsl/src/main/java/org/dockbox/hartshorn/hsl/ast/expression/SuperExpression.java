@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public class SuperExpression extends Expression {
     private final Token keyword;
     private final Token method;
 
-    public SuperExpression(final Token keyword, final Token method) {
+    public SuperExpression(Token keyword, Token method) {
         super(keyword);
         this.keyword = keyword;
         this.method = method;
@@ -39,7 +39,7 @@ public class SuperExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

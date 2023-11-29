@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public class PrefixExpression extends Expression {
     private final Token prefixFunName;
     private final Expression rightExpression;
 
-    public PrefixExpression(final Token prefixFunName, final Expression rightExpression) {
+    public PrefixExpression(Token prefixFunName, Expression rightExpression) {
         super(prefixFunName);
         this.prefixFunName = prefixFunName;
         this.rightExpression = rightExpression;
@@ -39,7 +39,7 @@ public class PrefixExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

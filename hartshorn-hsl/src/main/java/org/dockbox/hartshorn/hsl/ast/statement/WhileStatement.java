@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ public class WhileStatement extends BodyStatement {
 
     private final Expression condition;
 
-    public WhileStatement(final Expression condition, final BlockStatement loopBody) {
+    public WhileStatement(Expression condition, BlockStatement loopBody) {
         super(condition, loopBody);
         this.condition = condition;
     }
@@ -33,7 +33,7 @@ public class WhileStatement extends BodyStatement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

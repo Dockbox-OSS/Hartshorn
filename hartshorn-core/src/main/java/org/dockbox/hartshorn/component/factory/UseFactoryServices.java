@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,25 @@
 package org.dockbox.hartshorn.component.factory;
 
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.inject.processing.UseServiceProvision;
-import org.dockbox.hartshorn.proxy.UseProxying;
+import org.dockbox.hartshorn.inject.processing.UseContextInjection;
+import org.dockbox.hartshorn.component.UseProxying;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @deprecated See {@link Factory}.
+ */
+@Deprecated(since = "0.5.0", forRemoval = true)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ServiceActivator(processors = {
         FactoryServicePostProcessor.class,
         FactoryServicePreProcessor.class,
 })
-@UseServiceProvision
+@UseContextInjection
 @UseProxying
 public @interface UseFactoryServices {
 }

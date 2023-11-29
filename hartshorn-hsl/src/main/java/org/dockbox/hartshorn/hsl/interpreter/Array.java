@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.interpreter;
 
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 import java.util.Arrays;
@@ -27,17 +28,17 @@ import java.util.Iterator;
  * by the {@link Interpreter} to represent arrays in the HSL language, and access them natively.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class Array implements Iterable<Object>, PropertyContainer {
 
     private final Object[] values;
 
-    public Array(final int length) {
+    public Array(int length) {
         this.values = new Object[length];
     }
 
-    public Array(final Object[] values) {
+    public Array(Object[] values) {
         this.values = values;
     }
 
@@ -47,7 +48,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
      * @param index The index to set the value at.
      * @throws IndexOutOfBoundsException If the index is out of bounds.
      */
-    public void value(final Object value, final int index) {
+    public void value(Object value, int index) {
         this.values[index] = value;
     }
 
@@ -57,7 +58,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
      * @return The value at the given index.
      * @throws IndexOutOfBoundsException If the index is out of bounds.
      */
-    public Object value(final int index) {
+    public Object value(int index) {
         return this.values[index];
     }
 
@@ -88,12 +89,12 @@ public class Array implements Iterable<Object>, PropertyContainer {
     }
 
     @Override
-    public void set(final Token name, final Object value, final VariableScope fromScope) {
+    public void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options) {
         throw new UnsupportedOperationException("Cannot set properties on arrays.");
     }
 
     @Override
-    public Object get(final Token name, final VariableScope fromScope) {
+    public Object get(Token name, VariableScope fromScope, ExecutionOptions interpreter) {
         if ("length".equals(name.lexeme())) {
             return this.values.length;
         } else {

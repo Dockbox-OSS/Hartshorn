@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,17 @@ package org.dockbox.hartshorn.commands.arguments;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 
 public class CommandSubjectParameterRule implements ParameterLoaderRule<CommandParameterLoaderContext> {
     @Override
-    public boolean accepts(final ParameterView<?> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
-        final TypeView<?> type = context.applicationContext().environment().introspect(context.commandContext());
+    public boolean accepts(ParameterView<?> parameter, int index, CommandParameterLoaderContext context, Object... args) {
+        TypeView<?> type = context.applicationContext().environment().introspector().introspect(context.commandContext());
         return type.isChildOf(parameter.type().type());
     }
 
     @Override
-    public <T> Option<T> load(final ParameterView<T> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
-        return Option.of((T) context.commandContext());
+    public <T> Option<T> load(ParameterView<T> parameter, int index, CommandParameterLoaderContext context, Object... args) {
+        return Option.of(parameter.type().cast(context.commandContext()));
     }
 }

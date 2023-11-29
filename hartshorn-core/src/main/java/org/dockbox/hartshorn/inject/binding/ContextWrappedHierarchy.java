@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,17 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.inject.Provider;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.SortedSet;
 import java.util.function.Consumer;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A {@link ContextWrappedHierarchy} is a {@link BindingHierarchy} that wraps another {@link BindingHierarchy}
@@ -34,21 +35,25 @@ import java.util.function.Consumer;
  *
  * @param <C> The type of the wrapped {@link BindingHierarchy}.
  * @author Guus Lieben
- * @since 21.4
+ * @since 0.4.3
  */
-public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
+public class ContextWrappedHierarchy<C> implements PrunableBindingHierarchy<C> {
 
-    private BindingHierarchy<C> real;
     private final ApplicationContext applicationContext;
     private final Consumer<BindingHierarchy<C>> onUpdate;
 
-    public ContextWrappedHierarchy(final BindingHierarchy<C> real, final ApplicationContext applicationContext, final Consumer<BindingHierarchy<C>> onUpdate) {
+    private BindingHierarchy<C> real;
+
+    public ContextWrappedHierarchy(BindingHierarchy<C> real, ApplicationContext applicationContext, Consumer<BindingHierarchy<C>> onUpdate) {
         this.real = real;
         this.applicationContext = applicationContext;
         this.onUpdate = onUpdate;
     }
 
-    public BindingHierarchy<C> real() {
+    /**
+     * @return The wrapped {@link BindingHierarchy}.
+     */
+    protected BindingHierarchy<C> real() {
         return this.real;
     }
 
@@ -63,25 +68,25 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
     }
 
     @Override
-    public BindingHierarchy<C> add(final Provider<C> provider) {
+    public BindingHierarchy<C> add(Provider<C> provider) {
         this.real = this.real().add(provider);
         return this.update();
     }
 
     @Override
-    public BindingHierarchy<C> add(final int priority, final Provider<C> provider) {
+    public BindingHierarchy<C> add(int priority, Provider<C> provider) {
         this.real = this.real().add(priority, provider);
         return this.update();
     }
 
     @Override
-    public BindingHierarchy<C> addNext(final Provider<C> provider) {
+    public BindingHierarchy<C> addNext(Provider<C> provider) {
         this.real = this.real().addNext(provider);
         return this.update();
     }
 
     @Override
-    public BindingHierarchy<C> merge(final BindingHierarchy<C> hierarchy) {
+    public BindingHierarchy<C> merge(BindingHierarchy<C> hierarchy) {
         this.real = this.real().merge(hierarchy);
         return this.update();
     }
@@ -92,12 +97,22 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
     }
 
     @Override
-    public Option<Provider<C>> get(final int priority) {
+    public Option<Provider<C>> get(int priority) {
         return this.real().get(priority);
     }
 
     @Override
-    public Key<C> key() {
+    public int highestPriority() {
+        return this.real().highestPriority();
+    }
+
+    @Override
+    public SortedSet<Integer> priorities() {
+        return this.real().priorities();
+    }
+
+    @Override
+    public ComponentKey<C> key() {
         return this.real().key();
     }
 
@@ -121,5 +136,29 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
     @Override
     public String toString() {
         return this.real().toString();
+    }
+
+    @Override
+    public boolean prune(int priority) {
+        if (this.real() instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
+            return prunableBindingHierarchy.prune(priority);
+        }
+        return false;
+    }
+
+    @Override
+    public int pruneAbove(int priority) {
+        if (this.real() instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
+            return prunableBindingHierarchy.pruneAbove(priority);
+        }
+        return 0;
+    }
+
+    @Override
+    public int pruneBelow(int priority) {
+        if (this.real() instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
+            return prunableBindingHierarchy.pruneBelow(priority);
+        }
+        return 0;
     }
 }

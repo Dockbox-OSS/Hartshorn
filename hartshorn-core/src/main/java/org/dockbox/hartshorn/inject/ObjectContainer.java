@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,48 @@
 
 package org.dockbox.hartshorn.inject;
 
-public class ObjectContainer<T> {
+/**
+ * A simple container for an object instance. Used to track whether an object has been processed or not.
+ *
+ * @param <T> the type of the object instance
+ *
+ * @author Guus Lieben
+ * @since 0.4.12
+ */
+public abstract class ObjectContainer<T> {
 
     private final T instance;
-    private boolean processed;
 
-    public ObjectContainer(final T instance, final boolean processed) {
+    protected ObjectContainer(T instance) {
         this.instance = instance;
-        this.processed = processed;
     }
 
+    /**
+     * Returns the object instance. Note that this instance may or may not have been processed.
+     *
+     * @return the object instance
+     */
     public T instance() {
         return this.instance;
     }
 
-    public boolean processed() {
-        return this.processed;
-    }
+    /**
+     * Returns whether the object instance has been processed or not.
+     *
+     * @return {@code true} if the object instance has been processed, {@code false} otherwise
+     */
+    public abstract boolean processed();
 
-    public void processed(final boolean processed) {
-        this.processed = processed;
+    /**
+     * Sets whether the object instance has been processed or not. This method is intended to be used by
+     * providers that are responsible for processing the object instance.
+     *
+     * @param processed whether the object instance has been processed or not
+     */
+    public abstract void processed(boolean processed);
+
+    @Override
+    public String toString() {
+        return this.instance.toString();
     }
 }

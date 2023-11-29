@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,11 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.hsl.HslLanguageFactory;
+import org.dockbox.hartshorn.hsl.ParserCustomizer;
+import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.customizer.ExpressionCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.util.option.Option;
-
-import jakarta.inject.Inject;
 
 /**
  * A customized runtime specifically targeted at evaluating single expressions.
@@ -31,14 +29,23 @@ import jakarta.inject.Inject;
  * customizes the input using the {@link ExpressionCustomizer}.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
-@Component
 public class ValidateExpressionRuntime extends StandardRuntime {
 
-    @Inject
-    public ValidateExpressionRuntime(final ApplicationContext applicationContext, final HslLanguageFactory factory) {
+    public ValidateExpressionRuntime(
+        ApplicationContext applicationContext,
+        ScriptComponentFactory factory
+    ) {
         super(applicationContext, factory);
+    }
+
+    public ValidateExpressionRuntime(
+        ApplicationContext applicationContext,
+        ScriptComponentFactory factory,
+        ParserCustomizer parserCustomizer
+    ) {
+        super(applicationContext, factory, parserCustomizer);
         this.customizer(new ExpressionCustomizer());
     }
 
@@ -49,8 +56,8 @@ public class ValidateExpressionRuntime extends StandardRuntime {
      * @param collector The result collector in which the validation result may be stored.
      * @return The validation result, or {@code false} if it does not exist.
      */
-    public static boolean valid(final ResultCollector collector) {
-        final Option<Boolean> result = collector.result(ExpressionCustomizer.VALIDATION_ID);
+    public static boolean valid(ResultCollector collector) {
+        Option<Boolean> result = collector.result(ExpressionCustomizer.VALIDATION_ID, Boolean.class);
         return Boolean.TRUE.equals(result.orElse(false));
     }
 }

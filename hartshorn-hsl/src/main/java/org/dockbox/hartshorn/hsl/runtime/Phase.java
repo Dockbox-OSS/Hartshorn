@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package org.dockbox.hartshorn.hsl.runtime;
  * a single HSL source.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public enum Phase {
     /**

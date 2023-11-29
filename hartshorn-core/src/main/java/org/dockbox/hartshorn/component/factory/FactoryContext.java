@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.component.factory;
 
-import org.dockbox.hartshorn.context.AutoCreating;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
+import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -30,9 +30,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * The context used by the {@link FactoryServicePreProcessor} and {@link FactoryServicePostProcessor}. This context keeps track
  * of associated constructors for {@link Factory} methods. If no constructor
  * exists for a given method, an exception will be thrown by this context.
+ *
+ * @deprecated See {@link Factory}.
  */
-@AutoCreating
-public class FactoryContext extends DefaultContext {
+@Deprecated(since = "0.5.0", forRemoval = true)
+@InstallIfAbsent
+public class FactoryContext extends DefaultProvisionContext {
 
     private final Map<MethodView<?, ?>, ConstructorView<?>> bounds = new ConcurrentHashMap<>();
 
@@ -43,7 +46,7 @@ public class FactoryContext extends DefaultContext {
      * @param constructor The constructor to associate with the method.
      * @param <T> The return type of the method.
      */
-    public <T> void register(final MethodView<T, ?> method, final ConstructorView<T> constructor) {
+    public <T> void register(MethodView<T, ?> method, ConstructorView<T> constructor) {
         this.bounds.put(method, constructor);
     }
 
@@ -56,8 +59,8 @@ public class FactoryContext extends DefaultContext {
      * @return The constructor associated with the given method.
      * @throws NoSuchElementException If no constructor is associated with the method.
      */
-    public <T> Option<ConstructorView<T>> get(final MethodView<T, ?> method) {
-        final ConstructorView<?> constructor = this.bounds.get(method);
+    public <T> Option<ConstructorView<T>> get(MethodView<T, ?> method) {
+        ConstructorView<?> constructor = this.bounds.get(method);
         return Option.of((ConstructorView<T>) constructor);
     }
 }

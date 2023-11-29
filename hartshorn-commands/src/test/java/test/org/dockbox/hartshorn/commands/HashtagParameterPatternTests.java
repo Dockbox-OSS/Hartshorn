@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,18 @@
 
 package test.org.dockbox.hartshorn.commands;
 
+import java.util.List;
+import java.util.Locale;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.ConverterException;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
-import test.org.dockbox.hartshorn.commands.types.CuboidArgument;
+import org.dockbox.hartshorn.commands.arguments.PrefixedParameterPattern;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.MessageTemplate;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -30,10 +35,8 @@ import org.dockbox.hartshorn.util.option.Attempt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Locale;
-
 import jakarta.inject.Inject;
+import test.org.dockbox.hartshorn.commands.types.CuboidArgument;
 
 @UseCommands
 @HartshornTest(includeBasePackages = false)
@@ -42,19 +45,25 @@ public class HashtagParameterPatternTests {
     @Inject
     private ApplicationContext applicationContext;
 
+    @Inject
+    private ArgumentConverterRegistry registry;
+
+    @Inject
+    private CommandParameterResources resources;
+
     @Test
     void testPreconditionsAcceptValidPattern() {
-        final String pattern = "#cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.pattern();
+        String pattern = "#cuboid[1]";
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
-        final Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.present());
         Assertions.assertTrue(result.get());
     }
 
-    private HashtagParameterPattern pattern() {
-        return new HashtagParameterPattern() {
+    private PrefixedParameterPattern pattern() {
+        return new HashtagParameterPattern(registry, resources) {
             @Override
             protected Message wrongFormat() {
                 // Override resources as these are otherwise requested through bound resource references
@@ -65,10 +74,10 @@ public class HashtagParameterPatternTests {
 
     @Test
     void testPreconditionsRejectInvalidPrefix() {
-        final String pattern = "@cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.pattern();
+        String pattern = "@cuboid[1]";
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
-        final Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.absent());
         Assertions.assertTrue(result.errorPresent());
@@ -76,10 +85,10 @@ public class HashtagParameterPatternTests {
 
     @Test
     void testPreconditionsRejectInvalidName() {
-        final String pattern = "#sphere[1]";
-        final CustomParameterPattern parameterPattern = this.pattern();
+        String pattern = "#sphere[1]";
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
-        final Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.absent());
         Assertions.assertTrue(result.errorPresent());
@@ -87,10 +96,10 @@ public class HashtagParameterPatternTests {
 
     @Test
     void testSplitArgumentsCreatesCorrectArguments() {
-        final String pattern = "#cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.pattern();
+        String pattern = "#cuboid[1]";
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
-        final List<String> arguments = parameterPattern.splitArguments(pattern);
+        List<String> arguments = parameterPattern.splitArguments(pattern);
 
         Assertions.assertEquals(1, arguments.size());
         Assertions.assertEquals("1", arguments.get(0));
@@ -98,10 +107,10 @@ public class HashtagParameterPatternTests {
 
     @Test
     void testIdentifierParser() {
-        final String pattern = "#cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.pattern();
+        String pattern = "#cuboid[1]";
+        PrefixedParameterPattern parameterPattern = this.pattern();
 
-        final Attempt<String, ConverterException> identifier = parameterPattern.parseIdentifier(pattern);
+        Attempt<String, ConverterException> identifier = parameterPattern.parseIdentifier(pattern);
 
         Assertions.assertTrue(identifier.present());
         Assertions.assertEquals("cuboid", identifier.get());
@@ -109,14 +118,14 @@ public class HashtagParameterPatternTests {
 
     @Test
     void testValidArgumentCanBeRequested() {
-        final String pattern = "#cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.pattern();
+        String pattern = "#cuboid[1]";
+        CustomParameterPattern parameterPattern = this.pattern();
 
-        final Attempt<CuboidArgument, ConverterException> result = parameterPattern.request(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        Attempt<CuboidArgument, ConverterException> result = parameterPattern.request(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.present());
 
-        final CuboidArgument cuboid = result.get();
+        CuboidArgument cuboid = result.get();
         Assertions.assertEquals(1, cuboid.size());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.objects;
 
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -25,7 +26,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
  * be virtual or native, depending on its implementation.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  * @see org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance
  * @see org.dockbox.hartshorn.hsl.objects.external.ExternalInstance
  */
@@ -37,9 +38,11 @@ public interface PropertyContainer {
      *
      * @param name The name of the property.
      * @param value The value of the property.
+     * @param options The execution options.
+     *
      * @throws RuntimeError If the property is not supported or not accessible.
      */
-    void set(Token name, Object value, VariableScope fromScope);
+    void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options);
 
     /**
      * Gets a property from the instance. This may either return a {@link CallableNode}
@@ -48,8 +51,10 @@ public interface PropertyContainer {
      * is thrown.
      *
      * @param name The name of the property.
+     * @param options The execution options.
+     *
      * @return The value of the property.
      * @throws RuntimeError If the property is not supported or accessible.
      */
-    Object get(Token name, VariableScope fromScope);
+    Object get(Token name, VariableScope fromScope, ExecutionOptions options);
 }

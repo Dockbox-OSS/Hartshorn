@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.CommandParameterResources;
-import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.i18n.Message;
 
 import jakarta.inject.Inject;
@@ -29,15 +29,20 @@ import jakarta.inject.Inject;
  *
  * <p>An example of this pattern is as follows: if we have a constructor for a Shape type
  * <pre>{@code
+ * @Parameter("shape")
  * public Shape(String name, int sides) { ... }
  * }</pre>
  * The pattern for this type is expected to be <pre>#shape[square][4]</pre>
  */
-@Component
 public class HashtagParameterPattern extends PrefixedParameterPattern {
 
+    private final CommandParameterResources resources;
+
     @Inject
-    private CommandParameterResources resources;
+    public HashtagParameterPattern(ArgumentConverterRegistry argumentConverterRegistry, CommandParameterResources resources) {
+        super(argumentConverterRegistry);
+        this.resources = resources;
+    }
 
     @Override
     protected char opening() {

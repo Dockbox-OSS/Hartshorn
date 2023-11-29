@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.commands.annotations;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.util.introspect.annotations.AliasFor;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
  * The annotation used to mark a method or class as a command holder.
@@ -34,6 +34,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Extends(Service.class)
 public @interface Command {
+
     /**
      * The aliases for the command.
      *
@@ -53,7 +54,7 @@ public @interface Command {
     /**
      * The parent command for the command. When specified, the command will be executed as a sub-command.
      */
-    @AliasFor("owner")
+    @AttributeAlias("owner")
     Class<?> parent() default Void.class;
 
     /**

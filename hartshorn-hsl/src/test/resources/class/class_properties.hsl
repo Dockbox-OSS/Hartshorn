@@ -1,7 +1,7 @@
 class Cake {
   public flavor;
 
-  fun taste() {
+  function taste() {
     var adjective = "delicious";
     print("The " + this.flavor + " cake is " + adjective + "!");
   }

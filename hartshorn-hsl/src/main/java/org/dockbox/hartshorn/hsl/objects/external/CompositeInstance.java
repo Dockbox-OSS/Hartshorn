@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import java.util.List;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
@@ -25,21 +28,21 @@ import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.List;
-
 public class CompositeInstance<T> extends VirtualInstance implements ExternalObjectReference {
 
     private final TypeView<T> firstExternalClass;
     private T instance;
 
-    public CompositeInstance(final @NonNull VirtualClass virtualClass) {
+    public CompositeInstance(@NonNull VirtualClass virtualClass) {
         super(virtualClass);
         ClassReference superClass = virtualClass.superClass();
         while (superClass != null && !(superClass instanceof ExternalClass<?>)) {
@@ -54,13 +57,16 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         }
     }
 
-    public void makeInstance(final Token at, final Interpreter interpreter, final List<Object> arguments, final VirtualFunction virtualConstructor) {
+    public void makeInstance(Token at, Interpreter interpreter, List<Object> arguments, VirtualFunction virtualConstructor) throws ApplicationException {
         if (this.instance != null) {
             throw new IllegalStateException("Instance already made");
         }
         // External class constructor
-        final ConstructorView<T> constructor = this.firstExternalClass.constructors().defaultConstructor().get();
-        this.instance = constructor.create().rethrowUnchecked().orNull();
+        ConstructorView<T> constructor = this.firstExternalClass.constructors().defaultConstructor().get();
+        this.instance = constructor.create()
+                .mapError(ApplicationException::new)
+                .rethrow()
+                .orNull();
         // Virtual class constructor
         if (virtualConstructor != null) {
             virtualConstructor.call(at, interpreter, this, arguments);
@@ -68,14 +74,14 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     }
 
     @Override
-    public void set(final Token name, final Object value, final VariableScope fromScope) {
+    public void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options) {
         this.checkInstance();
-        final FieldStatement virtualField = super.type().field(name.lexeme());
+        FieldStatement virtualField = super.type().field(name.lexeme());
         if (virtualField != null) {
-            super.set(name, value, fromScope);
+            super.set(name, value, fromScope, options);
         }
         else {
-            final Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
+            Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
                 field.get().set(this.instance, value);
             }
@@ -86,14 +92,14 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     }
 
     @Override
-    public Object get(final Token name, final VariableScope fromScope) {
+    public Object get(Token name, VariableScope fromScope, ExecutionOptions options) {
         this.checkInstance();
-        final FieldStatement virtualField = super.type().field(name.lexeme());
+        FieldStatement virtualField = super.type().field(name.lexeme());
         if (virtualField != null) {
-            return super.get(name, fromScope);
+            return super.get(name, fromScope, options);
         }
         else {
-            final Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
+            Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
                 return field.get().get(this.instance);
             }
@@ -104,7 +110,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     }
 
     @Override
-    public Object externalObject() {
+    public @Nullable Object externalObject() {
         this.checkInstance();
         return this.instance;
     }

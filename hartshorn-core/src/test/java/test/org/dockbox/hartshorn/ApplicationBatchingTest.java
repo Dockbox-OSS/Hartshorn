@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@
 package test.org.dockbox.hartshorn;
 
 import org.dockbox.hartshorn.application.HartshornApplication;
+import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.parallel.Execution;
@@ -33,12 +35,19 @@ public class ApplicationBatchingTest {
      */
     @RepeatedTest(1)
     void testApplicationContextBatching() {
-        final ApplicationContext applicationContext = Assertions.assertDoesNotThrow(() ->
-                HartshornApplication.create(ApplicationBatchingTest.class, builder -> builder.enableBatchMode(true).argument("--hartshorn:debug=true"))
-        );
+        ApplicationContext applicationContext = Assertions.assertDoesNotThrow(() ->
+                HartshornApplication.create(ApplicationBatchingTest.class, builder ->
+                        builder.constructor(StandardApplicationContextConstructor.create(constructor -> {
+                                    constructor.includeBasePackages(false);
+                                    constructor.standaloneComponents(components -> components.add(SimpleComponent.class));
+                                    constructor.environment(
+                                            ContextualApplicationEnvironment.create(ContextualApplicationEnvironment.Configurer::enableBatchMode)
+                                    );
+                                })
+                        )));
         Assertions.assertNotNull(applicationContext);
 
-        final SimpleComponent component = applicationContext.get(SimpleComponent.class);
+        SimpleComponent component = applicationContext.get(SimpleComponent.class);
         Assertions.assertNotNull(component);
         Assertions.assertSame(applicationContext, component.applicationContext());
     }

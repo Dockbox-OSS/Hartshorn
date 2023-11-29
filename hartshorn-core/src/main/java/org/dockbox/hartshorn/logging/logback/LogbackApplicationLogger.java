@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,17 +34,17 @@ public class LogbackApplicationLogger extends CallerLookupApplicationLogger {
     }
 
     @Override
-    public void setDebugActive(final boolean active) {
-        final ILoggerFactory factory = LoggerFactory.getILoggerFactory();
+    public void enableDebugLogging(boolean active) {
+        ILoggerFactory factory = LoggerFactory.getILoggerFactory();
 
-        final Level level = active ? Level.DEBUG : Level.INFO;
+        Level level = active ? Level.DEBUG : Level.INFO;
         if (factory instanceof LoggerContext loggerContext) {
-            for (final Logger logger : loggerContext.getLoggerList()) {
+            for (Logger logger : loggerContext.getLoggerList()) {
                 logger.setLevel(level);
             }
         }
         else {
-            final org.slf4j.Logger logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+            org.slf4j.Logger logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
             if (logger instanceof Logger) {
                 ((Logger) logger).setLevel(level);
             }

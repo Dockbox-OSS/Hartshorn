@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,22 +21,13 @@ import java.util.List;
 /**
  * Represents the definition of a single command or collection of {@link CommandElement elements}.
  */
-public class CommandDefinition {
-
-    private final boolean optional;
-    private final List<CommandElement<?>> elements;
-    private final List<CommandFlag> flags;
-
-    public CommandDefinition(final boolean optional, final List<CommandElement<?>> elements, final List<CommandFlag> flags) {
-        this.optional = optional;
-        this.elements = elements;
-        this.flags = flags;
-    }
+public record CommandDefinition(boolean optional, List<CommandElement<?>> elements, List<CommandFlag> flags) {
 
     /**
      * Indicates whether the definition is optional. Only applies when the
      * definition represents a collection of elements.
      */
+    @Override
     public boolean optional() {
         return this.optional;
     }
@@ -44,6 +35,7 @@ public class CommandDefinition {
     /**
      * Gets all elements contained in this definition.
      */
+    @Override
     public List<CommandElement<?>> elements() {
         return this.elements;
     }
@@ -51,6 +43,7 @@ public class CommandDefinition {
     /**
      * Gets all flags contained in this definition.
      */
+    @Override
     public List<CommandFlag> flags() {
         return this.flags;
     }

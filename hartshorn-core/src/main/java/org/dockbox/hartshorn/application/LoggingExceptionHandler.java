@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.application.context.IllegalModificationException;
+import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ApplicationManaged;
 import org.slf4j.Logger;
@@ -28,16 +28,17 @@ import org.slf4j.LoggerFactory;
  * stacktraces when {@link #stacktraces()} is {@code true}.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public class LoggingExceptionHandler implements ExceptionHandler, ApplicationManaged {
 
     private boolean stacktraces;
     private ApplicationEnvironment environment;
 
-    public LoggingExceptionHandler stacktraces(final boolean stacktraces) {
-        findLogger().debug("{} stacktraces for all reported errors", stacktraces ? "Enabling" : "Disabling");
+    @Override
+    public LoggingExceptionHandler printStacktraces(boolean stacktraces) {
         this.stacktraces = stacktraces;
+        this.findLogger().debug("{} stacktraces for all reported errors", stacktraces ? "Enabled" : "Disabled");
         return this;
     }
 
@@ -45,35 +46,42 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
         return this.stacktraces;
     }
 
+    @Override
     public ApplicationEnvironment environment() {
         return this.environment;
     }
 
     @Override
-    public void environment(final ApplicationEnvironment environment) {
-        if (this.environment == null) this.environment = environment;
-        else throw new IllegalModificationException("Application environment has already been configured");
+    public void environment(ApplicationEnvironment environment) {
+        if (this.environment == null) {
+            this.environment = environment;
+        }
+        else {
+            throw new IllegalModificationException("Application environment has already been configured");
+        }
     }
 
     @Override
-    public void handle(final Throwable throwable) {
+    public void handle(Throwable throwable) {
         this.handle(firstMessage(throwable), throwable);
     }
 
     @Override
-    public void handle(String message, final Throwable throwable) {
+    public void handle(String message, Throwable throwable) {
         if (null != throwable) {
-            final Logger log = findLogger();
+            Logger log = this.findLogger();
 
             String location = "";
             if (0 < throwable.getStackTrace().length) {
-                final StackTraceElement root = throwable.getStackTrace()[0];
-                final String line = 0 < root.getLineNumber() ? ":" + root.getLineNumber() : "(internal call)";
+                StackTraceElement root = throwable.getStackTrace()[0];
+                String line = 0 < root.getLineNumber() ? ":" + root.getLineNumber() : "(internal call)";
                 location = root.getFileName() + line;
             }
 
-            if (message == null) message = "";
-            final String[] lines = message.split("\n");
+            if (message == null) {
+                message = "";
+            }
+            String[] lines = message.split("\n");
             log.error("Exception: " + throwable.getClass().getCanonicalName() + " ("+ location +"): " + lines[0]);
             if (lines.length > 1) {
                 for (int i = 1; i < lines.length; i++) {
@@ -85,9 +93,9 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
                 Throwable nextException = throwable;
 
                 while (null != nextException) {
-                    final StackTraceElement[] trace = nextException.getStackTrace();
-                    final String nextMessage = String.valueOf(nextException.getMessage());
-                    final String[] nextLines = nextMessage.split("\n");
+                    StackTraceElement[] trace = nextException.getStackTrace();
+                    String nextMessage = String.valueOf(nextException.getMessage());
+                    String[] nextLines = nextMessage.split("\n");
                     log.error(nextException.getClass().getCanonicalName() + ": " + nextLines[0]);
                     if (nextLines.length > 1) {
                         for (int i = 1; i < nextLines.length; i++) {
@@ -95,8 +103,8 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
                         }
                     }
 
-                    for (final StackTraceElement element : trace) {
-                        final String elLine = 0 < element.getLineNumber() ? ":" + element.getLineNumber() : "(internal call)";
+                    for (StackTraceElement element : trace) {
+                        String elLine = 0 < element.getLineNumber() ? ":" + element.getLineNumber() : "(internal call)";
                         String logMessage = "  at " + element.getClassName() + "." + element.getMethodName() + "(" + element.getFileName() + elLine + ")";
                         if (logMessage.indexOf('\r') >= 0) {
                             // Use half indentation, \r is permitted to be in the message to request additional visual focus.
@@ -121,14 +129,20 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
      * @param throwable The {@link Throwable} to get the first message from.
      * @return The first message of the given {@link Throwable} or {@code null}.
      */
-    public static String firstMessage(final Throwable throwable) {
+    public static String firstMessage(Throwable throwable) {
         Throwable next = throwable;
         while (next != null) {
-            if (null != next.getMessage()) return next.getMessage();
+            if (null != next.getMessage()) {
+                return next.getMessage();
+            }
             else {
                 // Avoid infinitely looping if the throwable has itself as cause
-                if (!next.equals(throwable.getCause())) next = next.getCause();
-                else break;
+                if (!next.equals(throwable.getCause())) {
+                    next = next.getCause();
+                }
+                else {
+                    break;
+                }
             }
         }
         return "No message provided";

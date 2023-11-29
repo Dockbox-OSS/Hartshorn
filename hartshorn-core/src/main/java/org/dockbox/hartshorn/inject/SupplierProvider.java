@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.function.Supplier;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.function.CheckedSupplier;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A {@link Supplier} that is able to provide instances using the given {@link Supplier}. If the
@@ -31,12 +33,14 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @see Provider
  * @see ContextDrivenProvider
- * @since 21.4
+ * @since 0.4.3
  */
-public record SupplierProvider<C>(Supplier<C> supplier) implements Provider<C> {
+public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements NonTypeAwareProvider<C> {
 
     @Override
-    public Option<ObjectContainer<C>> provide(final ApplicationContext context) {
-        return Option.of(() -> new ObjectContainer<>(this.supplier.get(), false));
+    public Option<ObjectContainer<C>> provide(ApplicationContext context) throws ApplicationException {
+        C instance = this.supplier.get();
+        return Option.of(instance).map(ComponentObjectContainer::new);
     }
+
 }

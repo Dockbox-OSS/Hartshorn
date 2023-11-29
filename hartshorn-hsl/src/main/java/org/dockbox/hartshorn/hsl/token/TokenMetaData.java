@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package org.dockbox.hartshorn.hsl.token;
  * metadata is immutable, as it is part of the lexical definition of a token.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class TokenMetaData {
 
@@ -29,14 +29,18 @@ public class TokenMetaData {
     private final String representation;
     private final boolean keyword;
     private final boolean standaloneStatement;
+    private final boolean reserved;
     private final TokenType assignsWith;
 
-    TokenMetaData(final TokenMetaDataBuilder builder) {
-        this.type = builder.type;
-        this.representation = builder.representation;
-        this.keyword = builder.keyword;
-        this.standaloneStatement = builder.standaloneStatement;
-        this.assignsWith = builder.assignsWith;
+    TokenMetaData(TokenType type, String representation,
+                  boolean keyword, boolean standaloneStatement, 
+                  boolean reserved, TokenType assignsWith) {
+        this.type = type;
+        this.representation = representation;
+        this.keyword = keyword;
+        this.standaloneStatement = standaloneStatement;
+        this.reserved = reserved;
+        this.assignsWith = assignsWith;
     }
 
     /**
@@ -74,6 +78,15 @@ public class TokenMetaData {
     }
 
     /**
+     * Gets whether the use of this {@link TokenType} is reserved. This is typically used
+     * to indicate a token that is not yet supported, but is reserved for future use.
+     * @return {@code true} if the token is reserved.
+     */
+    public boolean reserved() {
+        return this.reserved;
+    }
+
+    /**
      * Gets the {@link TokenType} which this {@link TokenType} assigns with. This is
      * typically used to indicate a token that can be used as an assignment operator.
      * @return The {@link TokenType} which this {@link TokenType} assigns with.
@@ -87,7 +100,7 @@ public class TokenMetaData {
      * @param type The {@link TokenType} to attach to.
      * @return A new {@link TokenMetaDataBuilder}.
      */
-    public static TokenMetaDataBuilder builder(final TokenType type) {
+    public static TokenMetaDataBuilder builder(TokenType type) {
         return new TokenMetaDataBuilder(type);
     }
 }

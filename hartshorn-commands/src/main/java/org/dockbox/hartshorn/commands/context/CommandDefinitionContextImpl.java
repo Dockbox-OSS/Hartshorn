@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.commands.context;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.arguments.ArgumentMatchingFailedException;
@@ -28,23 +35,16 @@ import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlagImpl;
 import org.dockbox.hartshorn.commands.definition.EnumCommandElement;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Simple implementation of {@link CommandDefinitionContext}. Creates a definition based on the
  * <a href="https://minecraft.fandom.com/wiki/Module:Command/Syntax">Minecraft Command Syntax</a>.
- * <p>Required arguments are formatted as <code>&lt;name&gt;</code>, optional arguments are formatted
- * as <code>[name]</code>, and flags are formatted as <code>-f</code> (short) or <code>--flag</code>
+ * <p>Required arguments are formatted as {@code <name>}, optional arguments are formatted
+ * as {@code [name]}, and flags are formatted as {@code -f} (short) or {@code --flag}
  * (long).
  * <p>See {@link CommandDefinitionContextImpl#FLAG} for details on the flag pattern, and {@link CommandDefinitionContextImpl#ARGUMENT}
  * for details on the argument pattern. Both flags and arguments can be defined with custom types, which
@@ -52,7 +52,7 @@ import java.util.regex.Pattern;
  * for this definition are explained at {@link CommandDefinitionContextImpl#ELEMENT_VALUE}. If no
  * explicit type is defined, {@link CommandDefinitionContextImpl#DEFAULT_TYPE} is used.
  */
-public class CommandDefinitionContextImpl extends DefaultContext implements CommandDefinitionContext {
+public class CommandDefinitionContextImpl extends DefaultProvisionContext implements CommandDefinitionContext {
 
     /**
      * Represents the default type for command elements matched by {@link CommandDefinitionContextImpl#FLAG} or
@@ -117,12 +117,19 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
      */
     private static final Pattern ELEMENT_VALUE = Pattern.compile("(\\w+)(?:\\{([\\w\\.]+)?\\})?");
 
+    private final ArgumentConverterRegistry converterRegistry;
     private final Command command;
     private final CommandDefinition definition;
     private final ApplicationContext context;
     private final MethodView<?, ?> method;
 
-    public CommandDefinitionContextImpl(final ApplicationContext context, final Command command, final MethodView<?, ?> method) {
+    public CommandDefinitionContextImpl(
+            ApplicationContext context,
+            ArgumentConverterRegistry converterRegistry,
+            Command command,
+            MethodView<?, ?> method
+    ) {
+        this.converterRegistry = converterRegistry;
         this.command = command;
         this.context = context;
         this.method = method;
@@ -134,32 +141,38 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         }
     }
 
-    protected CommandDefinition parseElements(final CharSequence arguments) {
-        final List<CommandElement<?>> elements = new ArrayList<>();
-        final List<CommandFlag> flags = new ArrayList<>();
+    protected CommandDefinition parseElements(CharSequence arguments) {
+        List<CommandElement<?>> elements = new ArrayList<>();
+        List<CommandFlag> flags = new ArrayList<>();
 
-        final Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(arguments);
+        Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(arguments);
         while (genericArgumentMatcher.find()) {
 
-            final String part = genericArgumentMatcher.group();
-            final Matcher argumentMatcher = ARGUMENT.matcher(part);
+            String part = genericArgumentMatcher.group();
+            Matcher argumentMatcher = ARGUMENT.matcher(part);
             if (argumentMatcher.matches()) {
                 this.context.log().debug("Matched argument definition partial " + part + " as explicit argument");
-                final CommandDefinition definition = this.extractArguments(argumentMatcher);
-                final List<CommandElement<?>> commandElements = definition.elements();
-                if (commandElements.isEmpty()) continue;
-                if (commandElements.size() == 1) elements.add(commandElements.get(0));
-                else elements.add(new GroupCommandElement(commandElements, definition.optional()));
+                CommandDefinition definition = this.extractArguments(argumentMatcher);
+                List<CommandElement<?>> commandElements = definition.elements();
+                if (commandElements.isEmpty()) {
+                    continue;
+                }
+                if (commandElements.size() == 1) {
+                    elements.add(commandElements.get(0));
+                }
+                else {
+                    elements.add(new GroupCommandElement(commandElements, definition.optional()));
+                }
             }
             else {
                 this.context.log().debug("Matched argument definition partial " + part + " as flag");
-                final Matcher flagMatcher = FLAG.matcher(part);
+                Matcher flagMatcher = FLAG.matcher(part);
                 flags.addAll(this.generateFlags(flagMatcher));
             }
         }
 
         for (int i = 0; i < elements.size(); i++) {
-            final CommandElement<?> element = elements.get(i);
+            CommandElement<?> element = elements.get(i);
             if (element.size() == -1 && i != elements.size() - 1) {
                 throw new IllegalArgumentRequestException("Cannot request arguments after joining remaining elements");
             }
@@ -168,58 +181,60 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         return new CommandDefinition(true, elements, flags);
     }
 
-    private CommandDefinition extractArguments(final MatchResult argumentMatcher) {
-        final boolean optional = '[' == argumentMatcher.group(1).charAt(0);
-        final String elementValue = argumentMatcher.group(2);
+    private CommandDefinition extractArguments(MatchResult argumentMatcher) {
+        boolean optional = '[' == argumentMatcher.group(1).charAt(0);
+        String elementValue = argumentMatcher.group(2);
 
         CommandDefinition definition = this.parseElements(elementValue);
 
         if (definition.elements().isEmpty() && definition.flags().isEmpty()) {
-            final CommandElement<?> element = this.generateElement(argumentMatcher.group(2), optional);
+            CommandElement<?> element = this.generateElement(argumentMatcher.group(2), optional);
             definition = new CommandDefinition(optional, List.of(element), List.of());
         }
 
         return definition;
     }
 
-    protected CommandElement<?> generateElement(final String definition, final boolean optional) {
+    protected CommandElement<?> generateElement(String definition, boolean optional) {
         String type = DEFAULT_TYPE;
-        final String name;
-        final Matcher elementValue = ELEMENT_VALUE.matcher(definition);
-        if (!elementValue.matches() || 0 == elementValue.groupCount())
+        String name;
+        Matcher elementValue = ELEMENT_VALUE.matcher(definition);
+        if (!elementValue.matches() || 0 == elementValue.groupCount()) {
             this.context.log().warn("Unknown argument specification " + definition + ", use Type or Name{Type}");
+        }
 
-        /*
-        Group one specifies either the name of the value (if two or more groups are matched), or the type if only one
-        group matched.
-        */
+
+        // Group one specifies either the name of the value (if two or more groups are matched), or the type if only
+        // one group matched.
         if (1 <= elementValue.groupCount()) {
-            final String g1 = elementValue.group(1);
-            if (1 == elementValue.groupCount()) type = g1;
+            String g1 = elementValue.group(1);
+            if (1 == elementValue.groupCount()) {
+                type = g1;
+            }
             name = g1;
         }
-        else throw new ArgumentMatchingFailedException("Missing key argument in specification '" + definition + "'");
+        else {
+            throw new ArgumentMatchingFailedException("Missing key argument in specification '" + definition + "'");
+        }
 
-        /*
-        Group two matches the type if two or more groups are present. This overwrites the default value if applicable.
-        */
-        if (2 <= elementValue.groupCount() && null != elementValue.group(2))
+        // Group two matches the type if two or more groups are present. This overwrites the default value if applicable.
+        if (2 <= elementValue.groupCount() && null != elementValue.group(2)) {
             type = elementValue.group(2);
+        }
 
         this.context.log().debug("Determined type '%s', name '%s' for %s argument (definition: %s)".formatted(type, name, optional ? "optional" : "required", definition));
         return this.lookupElement(type, name, optional);
     }
 
-    private <E extends Enum<E>> CommandElement<?> lookupElement(final String type, final String name, final boolean optional) {
-        final Option<ArgumentConverter<?>> converter = this.context
-                .first(ArgumentConverterContext.class)
-                .flatMap(context -> context.converter(type.toLowerCase()));
+    private <E extends Enum<E>> CommandElement<?> lookupElement(String type, String name, boolean optional) {
+        Option<ArgumentConverter<?>> converter = this.converterRegistry.converter(type.toLowerCase());
+
         if (converter.present()) {
             this.context.log().debug("Found converter for element type " + type);
             return new CommandElementImpl<>(converter.get(), name, optional, converter.get().size());
         }
         else {
-            final TypeView<?> lookup = this.context.environment().introspect(type);
+            TypeView<?> lookup = this.context.environment().introspector().introspect(type);
             if (lookup.isVoid()) {
                 this.context.log().error("No argument of type '" + type + "' can be read");
                 return null;
@@ -236,8 +251,8 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         }
     }
 
-    private List<CommandFlag> generateFlags(final Matcher flagMatcher) {
-        final List<CommandFlag> flags = new ArrayList<>();
+    private List<CommandFlag> generateFlags(Matcher flagMatcher) {
+        List<CommandFlag> flags = new ArrayList<>();
         if (flagMatcher.matches()) {
             flags.add(this.parseFlag(
                     flagMatcher.group(1),
@@ -247,7 +262,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         return flags;
     }
 
-    private CommandFlag parseFlag(final String name, final String type) {
+    private CommandFlag parseFlag(String name, String type) {
         if (null == type) {
             this.context.log().debug("Determined flag definition for '%s'".formatted(name));
             return new CommandFlagImpl(name);
@@ -259,11 +274,15 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     }
 
     @Override
-    public boolean matches(final String command) {
-        for (final String candidate : this.aliases()) {
+    public boolean matches(String command) {
+        for (String candidate : this.aliases()) {
             if (command.startsWith(candidate)) {
-                if (!command.contains(" ")) return this.requiredElements().isEmpty();
-                else return true;
+                if (!command.contains(" ")) {
+                    return this.requiredElements().isEmpty();
+                }
+                else {
+                    return true;
+                }
             }
         }
         return false;
@@ -277,7 +296,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
 
     @Override
     public List<String> aliases() {
-        final String[] command = this.command.value();
+        String[] command = this.command.value();
         if (command.length == 0 || (command.length == 1 && "".equals(command[0]))) {
             return Collections.singletonList(this.method.name());
         }
@@ -305,9 +324,11 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     }
 
     @Override
-    public Option<CommandFlag> flag(final String name) {
-        for (final CommandFlag flag : this.flags()) {
-            if (flag.name().equals(name)) return Option.of(flag);
+    public Option<CommandFlag> flag(String name) {
+        for (CommandFlag flag : this.flags()) {
+            if (flag.name().equals(name)) {
+                return Option.of(flag);
+            }
         }
         return Option.empty();
     }

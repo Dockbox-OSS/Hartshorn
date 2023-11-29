@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,22 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.context.CommandParameterContext;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.parameter.RuleBasedParameterLoader;
+import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 
 import java.util.ArrayList;
 
 public class CommandParameterLoader extends RuleBasedParameterLoader<CommandParameterLoaderContext> {
 
     public CommandParameterLoader() {
+        super(CommandParameterLoaderContext.class);
         this.add(new CommandContextParameterRule());
         this.add(new CommandSubjectParameterRule());
     }
 
     @Override
-    protected <T> T loadDefault(final ParameterView<T> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
-        final CommandParameterContext parameterContext = new ArrayList<>(context.executorContext().parameters().values()).get(index);
-        final T out = context.commandContext().get(parameterContext.parameter().name(), parameter.type().type());
+    protected <T> T loadDefault(ParameterView<T> parameter, int index, CommandParameterLoaderContext context, Object... args) {
+        CommandParameterContext parameterContext = new ArrayList<>(context.executorContext().parameters().values()).get(index);
+        T out = context.commandContext().get(parameterContext.parameter().name(), parameter.type().type());
         return out == null ? super.loadDefault(parameter, index, context, args) : out;
     }
 }

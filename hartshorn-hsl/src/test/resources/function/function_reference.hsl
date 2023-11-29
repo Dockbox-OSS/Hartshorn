@@ -1,8 +1,8 @@
-fun printCallback() {
+function printCallback() {
    print("Callback is run :D");
 }
 
-fun testCallback(callback) {
+function testCallback(callback) {
     callback();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,12 @@ import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
+import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.lang.reflect.AnnotatedElement;
 import java.util.List;
 
 /**
@@ -46,26 +47,26 @@ public interface CommandExecutorContext extends ApplicationAwareContext {
      *
      * @param command The raw command.
      *
-     * @return <code>true</code> if the command matches, else <code>false</code>
+     * @return {@code true} if the command matches, else {@code false}
      */
     boolean accepts(String command);
 
     /**
-     * Strips the given raw command to contain only the argument and flag values. If <code>parentOnly</code> is
-     * <code>true</code> and the executor is a child/sub command the alias of the child command is not stripped.
-     * If <code>parentOnly</code> is <code>false</code> both parent and child aliases are stripped.
+     * Strips the given raw command to contain only the argument and flag values. If {@code parentOnly} is
+     * {@code true} and the executor is a child/sub command the alias of the child command is not stripped.
+     * If {@code parentOnly} is {@code false} both parent and child aliases are stripped.
      * <p>For example, when a raw command is as follows:
-     * <pre><code>
+     * <pre>{@code
      *     "parentAlias childAlias argumentA --flagB"
-     * </code></pre>
-     * Then stripping with <code>parentOnly</code> set to <code>true</code> will return:
-     * <pre><code>
+     * }</pre>
+     * Then stripping with {@code parentOnly} set to {@code true} will return:
+     * <pre>{@code
      *     "childAlias argumentA --flagB"
-     * </code></pre>
-     * While the returned value with <code>parentOnly</code> set to <code>false</code> is:
-     * <pre><code>
+     * }</pre>
+     * While the returned value with {@code parentOnly} set to {@code false} is:
+     * <pre>{@code
      *     "argumentA --flagB"
-     * </code></pre>
+     * }</pre>
      *
      * @param command The raw command.
      * @param parentOnly Whether to also include the child alias when stripping the command.
@@ -90,8 +91,8 @@ public interface CommandExecutorContext extends ApplicationAwareContext {
     TypeView<?> parent();
 
     /**
-     * Gets the {@link AnnotatedElement} behind this executor. This element is typically a {@link java.lang.reflect.Method} but
-     * may deviate from this in custom use-cases. This should only be accessed internally and by a {@link org.dockbox.hartshorn.commands.extension.CommandExecutorExtension}.
+     * Gets the {@link AnnotatedElementView} behind this executor. This element is typically a {@link MethodView} but
+     * may deviate from this in custom use-cases. This should only be accessed internally and by a {@link CommandExecutorExtension}.
      *
      * @return The annotated element.
      */

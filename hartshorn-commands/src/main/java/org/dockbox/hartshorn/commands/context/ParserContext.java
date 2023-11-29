@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,13 +47,13 @@ public interface ParserContext extends Context {
     /**
      * Gets the alias of a command. Typically, a raw command will contain both the alias and additional
      * arguments and flags. The result of this method is only the alias. For example the raw command:
-     * <pre><code>
+     * <pre>{@code
      *     "command argumentA --flagB"
-     * </code></pre>
+     * }</pre>
      * Will result in:
-     * <pre><code>
+     * <pre>{@code
      *     "command"
-     * </code></pre>
+     * }</pre>
      *
      * @return The command alias.
      */

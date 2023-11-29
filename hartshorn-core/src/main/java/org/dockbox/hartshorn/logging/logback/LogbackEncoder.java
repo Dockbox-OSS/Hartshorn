@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
  * in the logback configuration, using the syntax {@code %process_id}.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  * @see LogbackPIDConverter
  */
 public class LogbackEncoder extends PatternLayoutEncoder {

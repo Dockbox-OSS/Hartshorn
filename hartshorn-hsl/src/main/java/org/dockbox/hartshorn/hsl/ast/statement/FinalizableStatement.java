@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ public abstract class FinalizableStatement extends Statement implements Finaliza
 
     private boolean finalized;
 
-    protected FinalizableStatement(final ASTNode at, final boolean finalized) {
+    protected FinalizableStatement(ASTNode at, boolean finalized) {
         super(at);
         this.finalized = finalized;
     }

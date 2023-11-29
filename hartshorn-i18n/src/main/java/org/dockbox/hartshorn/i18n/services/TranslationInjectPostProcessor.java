@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,72 +17,36 @@
 package org.dockbox.hartshorn.i18n.services;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.i18n.Message;
-import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
-import org.dockbox.hartshorn.proxy.MethodInterceptor;
-import org.dockbox.hartshorn.proxy.processing.MethodProxyContext;
-import org.dockbox.hartshorn.proxy.processing.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
+import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
+import org.dockbox.hartshorn.component.processing.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 
 public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<InjectTranslation> {
 
-    @Override
-    public <T, R> MethodInterceptor<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
-        final String key = this.key(context, methodContext.type(), methodContext.method());
-        final InjectTranslation annotation = methodContext.method().annotations().get(InjectTranslation.class).get();
+    public static final Object[] EMPTY_ARGS = new Object[0];
 
-        return interceptorContext -> {
-            // Prevents NPE when formatting cached resources without arguments
-            final Object[] args = interceptorContext.args();
-            final Object[] objects = null == args ? new Object[0] : args;
-            return interceptorContext.checkedCast(context.get(TranslationService.class).getOrCreate(key, annotation.value()).format(objects));
-        };
+    @Override
+    public <T, R> MethodInterceptor<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
+        String key = context.get(TranslationKeyGenerator.class).key(methodContext.type(), methodContext.method());
+        context.log().debug("Determined I18N key for %s: %s".formatted(methodContext.method().qualifiedName(), key));
+
+        InjectTranslation annotation = methodContext.method().annotations().get(InjectTranslation.class).get();
+        ConversionService conversionService = context.get(ConversionService.class);
+
+        return new TranslationInjectMethodInterceptor<>(context, key, annotation, conversionService, methodContext);
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext<T> processingContext) {
+    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
         return methodContext.method().returnType().isChildOf(Message.class);
     }
 
     @Override
     public Class<InjectTranslation> annotation() {
         return InjectTranslation.class;
-    }
-
-    protected String key(final ApplicationContext context, final TypeView<?> type, final MethodView<?, ?> method) {
-        final String i18nKey = this.createI18nKey(context, method);
-        context.log().debug("Determined I18N key for %s: %s".formatted(method.qualifiedName(), i18nKey));
-        return i18nKey;
-    }
-
-    protected String createI18nKey(final ApplicationContext context, final MethodView<?, ?> method) {
-        final Option<InjectTranslation> resource = method.annotations().get(InjectTranslation.class);
-
-        // If the method has an explicit key, use that without further processing
-        if (resource.present()) {
-            final String resourceKey = resource.get().key();
-            if (StringUtilities.notEmpty(resourceKey))
-                return resourceKey;
-        }
-
-        String methodName = method.name();
-        if (methodName.startsWith("get")) methodName = methodName.substring(3);
-        String methodKey = String.join(".", StringUtilities.splitCapitals(methodName)).toLowerCase();
-
-        final TypeView<?> declaringType = method.declaredBy();
-        final Option<ComponentContainer> container = context.get(ComponentLocator.class).container(declaringType.type());
-        if (container.present()) {
-            final String containerKey = container.get().id();
-            if (containerKey != null) methodKey = containerKey + "." + methodKey;
-        }
-
-        return methodKey;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package test.org.dockbox.hartshorn.i18n;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.i18n.TranslationBundle;
 import org.dockbox.hartshorn.i18n.annotations.TranslationProvider;
 
@@ -30,17 +30,17 @@ import java.util.Locale;
 public class TranslationProviderService {
 
     @TranslationProvider
-    public TranslationBundle dutch(final ApplicationContext context) {
-        final TranslationBundle bundle = context.get(TranslationBundle.class);
+    public TranslationBundle dutch(ApplicationContext context) {
+        TranslationBundle bundle = context.get(TranslationBundle.class);
         bundle.primaryLanguage(new Locale("nl", "NL"));
         bundle.register("lang.name", "Nederlands");
         return bundle;
     }
 
     @TranslationProvider
-    public TranslationBundle english(final ApplicationContext context) {
-        final TranslationBundle bundle = context.get(TranslationBundle.class);
-        final Path path = context.get(ClasspathResourceLocator.class).resource("i18n/en_us.yml").get();
+    public TranslationBundle english(ApplicationContext context) {
+        TranslationBundle bundle = context.get(TranslationBundle.class);
+        Path path = context.get(ClasspathResourceLocator.class).resource("i18n/en_us.yml").get();
         bundle.register(path, Locale.US, FileFormats.YAML);
         return bundle;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public class UnaryExpression extends Expression {
     private final Token operator;
     private final Expression rightExp;
 
-    public UnaryExpression(final Token operator, final Expression rightExp) {
+    public UnaryExpression(Token operator, Expression rightExp) {
         super(operator);
         this.operator = operator;
         this.rightExp = rightExp;
@@ -39,7 +39,7 @@ public class UnaryExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

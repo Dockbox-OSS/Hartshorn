@@ -1,13 +1,13 @@
-class Function {
-    fun accept () {
+class Runnable {
+    function run() {
         print(1);
     }
 }
 
-var function = Function();
+var runnable = Runnable();
 
-fun callback(caller) {
-   caller.accept();
+function callback(caller) {
+   caller.run();
 }
 
-callback(function);
+callback(runnable);

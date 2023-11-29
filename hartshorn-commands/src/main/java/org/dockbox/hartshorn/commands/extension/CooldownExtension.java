@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,19 @@
 
 package org.dockbox.hartshorn.commands.extension;
 
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalUnit;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandResources;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Cooldown;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.util.Identifiable;
-
-import java.time.LocalDateTime;
-import java.time.temporal.TemporalUnit;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.inject.Inject;
 
@@ -37,29 +38,14 @@ import jakarta.inject.Inject;
  * quickly. The delay between commands is defined by a {@link Cooldown}
  * decorator on the command.
  */
-@Component
 public class CooldownExtension implements CommandExecutorExtension {
 
-    @Inject
-    private CommandResources resources;
-
     private final Map<Object, CooldownEntry> activeCooldowns = new ConcurrentHashMap<>();
+    private final ApplicationContext applicationContext;
 
-    @Override
-    public ExtensionResult execute(final CommandContext context, final CommandExecutorContext executorContext) {
-        final CommandSource sender = context.source();
-        if (!(sender instanceof Identifiable)) return ExtensionResult.accept();
-
-        final String id = this.id((Identifiable) sender, context);
-        if (this.inCooldown(id)) {
-            context.applicationContext().log().debug("Executor with ID '%s' is in active cooldown, rejecting command execution of %s".formatted(id, context.command()));
-            return ExtensionResult.reject(this.resources.cooldownActive());
-        }
-        else {
-            final Cooldown cooldown = executorContext.element().annotations().get(Cooldown.class).get();
-            this.cooldown(id, cooldown.duration(), cooldown.unit());
-            return ExtensionResult.accept();
-        }
+    @Inject
+    public CooldownExtension(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -67,40 +53,67 @@ public class CooldownExtension implements CommandExecutorExtension {
         return context.element().annotations().has(Cooldown.class);
     }
 
+    @Override
+    public ExtensionResult execute(CommandContext context, CommandExecutorContext executorContext) {
+        CommandSource sender = context.source();
+        if (!(sender instanceof Identifiable)) {
+            return ExtensionResult.accept();
+        }
+
+        String id = this.id((Identifiable) sender, context);
+        if (this.inCooldown(id)) {
+            context.applicationContext().log().debug("Executor with ID '%s' is in active cooldown, rejecting command execution of %s".formatted(id, context.command()));
+            Message cooldownMessage = this.activeCooldownMessage();
+            return ExtensionResult.reject(cooldownMessage);
+        }
+        else {
+            Cooldown cooldown = executorContext.element().annotations().get(Cooldown.class).get();
+            this.cooldown(id, cooldown.duration(), cooldown.unit());
+            return ExtensionResult.accept();
+        }
+    }
+
+    protected Message activeCooldownMessage() {
+        return this.applicationContext.get(CommandResources.class).cooldownActive();
+    }
+
     /**
      * Places an object in the cooldown queue for a given amount of time. If the object is already in
      * the cooldown queue it will not be overwritten and the existing queue position with be kept.
      *
-     * @param o The object to place in cooldown
+     * @param target The object to place in cooldown
      * @param duration The duration
      * @param timeUnit The time unit in which the duration is kept
      */
-    protected void cooldown(final Object o, final long duration, final TemporalUnit timeUnit) {
-        if (this.inCooldown(o)) return;
-        this.activeCooldowns.put(o, new CooldownEntry(LocalDateTime.now(), duration, timeUnit));
+    protected void cooldown(Object target, long duration, TemporalUnit timeUnit) {
+        if (this.inCooldown(target)) {
+            return;
+        }
+        this.activeCooldowns.put(target, new CooldownEntry(LocalDateTime.now(), duration, timeUnit));
     }
 
     /**
      * Returns true if an object is in an active cooldown queue. Otherwise false
      *
-     * @param o The object
+     * @param target The object to check
      *
      * @return true if an object is in an active cooldown queue. Otherwise false
      */
-    protected boolean inCooldown(final Object o) {
-        if (this.activeCooldowns.containsKey(o)) {
-            final LocalDateTime now = LocalDateTime.now();
-            final CooldownEntry cooldown = this.activeCooldowns.get(o);
-            final LocalDateTime timeCooledDown = cooldown.startTime();
-            final long duration = cooldown.duration();
-            final TemporalUnit timeUnit = cooldown.timeUnit();
+    protected boolean inCooldown(Object target) {
+        if (this.activeCooldowns.containsKey(target)) {
+            LocalDateTime now = LocalDateTime.now();
+            CooldownEntry cooldown = this.activeCooldowns.get(target);
+            LocalDateTime timeCooledDown = cooldown.startTime();
+            long duration = cooldown.duration();
+            TemporalUnit timeUnit = cooldown.timeUnit();
 
-            final LocalDateTime endTime = timeCooledDown.plus(duration, timeUnit);
+            LocalDateTime endTime = timeCooledDown.plus(duration, timeUnit);
 
             return endTime.isAfter(now);
-
         }
-        else return false;
+        else {
+            return false;
+        }
     }
 
     private record CooldownEntry(LocalDateTime startTime, long duration, TemporalUnit timeUnit) {

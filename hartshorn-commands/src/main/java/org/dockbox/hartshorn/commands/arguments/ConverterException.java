@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,15 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class ConverterException extends ApplicationRuntimeException {
 
-    public ConverterException(final String message) {
+    public ConverterException(String message) {
         super(message);
     }
 
-    public ConverterException(final String message, final Throwable cause) {
+    public ConverterException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ConverterException(final Throwable cause) {
+    public ConverterException(Throwable cause) {
         super(cause);
     }
 }

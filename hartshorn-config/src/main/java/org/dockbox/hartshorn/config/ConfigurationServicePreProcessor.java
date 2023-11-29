@@ -1,0 +1,92 @@
+/*
+ * Copyright 2019-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.dockbox.hartshorn.config;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
+import org.dockbox.hartshorn.config.annotations.Configuration;
+import org.dockbox.hartshorn.config.properties.PropertyHolder;
+import org.dockbox.hartshorn.util.resources.FileSystemLookupStrategy;
+import org.dockbox.hartshorn.util.resources.MissingSourceException;
+import org.dockbox.hartshorn.util.resources.ResourceLookup;
+import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
+
+import java.net.URI;
+import java.util.Set;
+
+/**
+ * Processes all services annotated with {@link Configuration} by loading the indicated file and registering the
+ * properties to {@link PropertyHolder#set(String, Object)}. To support different file sources
+ * {@link ResourceLookupStrategy strategies} are used. Each strategy is able to define behavior specific to sources
+ * defined with its name. Strategies can be indicated in the {@link Configuration#value()} of a {@link Configuration}
+ * in the format {@code strategy_name:source_name}. If a strategy is not registered, or no name is defined, behavior
+ * defaults to {@link FileSystemLookupStrategy}.
+ */
+public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
+
+    @Override
+    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
+        if (processingContext.type().annotations().has(Configuration.class)) {
+            Configuration configuration = processingContext.type().annotations().get(Configuration.class).get();
+            String[] sources = configuration.value();
+
+            for (String source : sources) {
+                if (this.processSource(source, context, processingContext.key())) {
+                    return;
+                }
+                context.log().debug("Skipped configuration source '{}', proceeding to next source if available", source);
+            }
+
+            if (configuration.failOnMissing()) {
+                throw new MissingSourceException("None of the configured sources in " + processingContext.type().name() + " were found");
+            }
+            else {
+                context.log().warn("None of the configured sources in {} were found, proceeding without configuration", processingContext.type().name());
+            }
+        }
+    }
+
+    private <T> boolean processSource(String source, ApplicationContext context, ComponentKey<T> key) {
+        ResourceLookup resourceLookup = context.get(ResourceLookup.class);
+        Set<URI> config = resourceLookup.lookup(source);
+
+        if (config.isEmpty()) {
+            context.log().warn("No configuration file found for " + key.type().getSimpleName());
+            return false;
+        }
+        else if (config.size() > 1) {
+            context.log().warn("Found multiple configuration files for " + key.type().getSimpleName() + ": " + config);
+        }
+
+        ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
+        for (URI uri : config) {
+            ConfigurationURIContext uriContext = new ConfigurationURIContext(uri, key, source);
+            uriContextList.add(uriContext);
+        }
+
+        return true;
+    }
+
+    @Override
+    public int priority() {
+        // Run before the ProviderServicePreProcessor, so this context is available for configuration objects
+        return ProcessingPriority.NORMAL_PRECEDENCE;
+    }
+}

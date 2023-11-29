@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,13 +26,13 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public final class EnumCommandElement<E extends Enum<E>> implements CommandElement<E> {
+public class EnumCommandElement<E extends Enum<E>> implements CommandElement<E> {
 
     private final String name;
     private final Map<String, E> values;
     private final boolean optional;
 
-    EnumCommandElement(final String name, final TypeView<E> type, final boolean optional) {
+    EnumCommandElement(String name, TypeView<E> type, boolean optional) {
         this.name = name;
         this.values = type.enumConstants().stream().collect(Collectors.toMap(value -> value.name().toLowerCase(), Function.identity(), (value, value2) -> {
             throw new UnsupportedOperationException(type.qualifiedName() + " contains more than one enum constant with the same name, only differing by capitalization, which is unsupported.");
@@ -51,12 +51,12 @@ public final class EnumCommandElement<E extends Enum<E>> implements CommandEleme
     }
 
     @Override
-    public Option<E> parse(final CommandSource source, final String argument) {
+    public Option<E> parse(CommandSource source, String argument) {
         return Option.of(this.values.get(argument.toLowerCase()));
     }
 
     @Override
-    public Collection<String> suggestions(final CommandSource source, final String argument) {
+    public Collection<String> suggestions(CommandSource source, String argument) {
         return this.values.keySet().stream()
                 .filter(value -> value.toLowerCase(Locale.ROOT).startsWith(argument.toLowerCase(Locale.ROOT)))
                 .toList();
@@ -67,7 +67,7 @@ public final class EnumCommandElement<E extends Enum<E>> implements CommandEleme
         return 1;
     }
 
-    public static <E extends Enum<E>> CommandElement<E> of(final String name, final TypeView<E> type, final boolean optional) {
+    public static <E extends Enum<E>> CommandElement<E> of(String name, TypeView<E> type, boolean optional) {
         return new EnumCommandElement<>(name, type, optional);
     }
 }

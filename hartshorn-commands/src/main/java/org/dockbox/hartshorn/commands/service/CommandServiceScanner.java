@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,12 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 public class CommandServiceScanner extends ComponentPreProcessor {
 
     @Override
-    public <T> void process(final ApplicationContext context, final ComponentProcessingContext<T> processingContext) {
+    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
         if (!processingContext.type()
                 .methods()
                 .annotatedWith(Command.class)
                 .isEmpty()) {
-            final CommandGateway gateway = context.get(CommandGateway.class);
+            CommandGateway gateway = context.get(CommandGateway.class);
             gateway.register(processingContext.key());
         }
     }

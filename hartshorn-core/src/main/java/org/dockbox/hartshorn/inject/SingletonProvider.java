@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,21 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.option.Option;
 
-public class SingletonProvider<T> implements Provider<T> {
+public class SingletonProvider<T> implements NonTypeAwareProvider<T> {
 
     private final ObjectContainer<T> container;
 
-    public SingletonProvider(final T instance) {
-        this(instance, false);
-    }
-
-    public SingletonProvider(final T instance, final boolean processed) {
-        this.container = new ObjectContainer<>(instance, processed);
+    public SingletonProvider(T instance) {
+        this.container = new ComponentObjectContainer<>(instance);
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(final ApplicationContext context) {
+    public Option<ObjectContainer<T>> provide(ApplicationContext context) {
         return Option.of(this.container);
+    }
+
+    @Override
+    public String toString() {
+        return "Singleton: " + container;
     }
 }

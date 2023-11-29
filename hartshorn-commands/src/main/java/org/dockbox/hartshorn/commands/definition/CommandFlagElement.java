@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
 
     private final CommandElement<T> element;
 
-    public CommandFlagElement(final CommandElement<T> element) {
+    public CommandFlagElement(CommandElement<T> element) {
         this.element = element;
     }
 
@@ -42,12 +42,12 @@ public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
     }
 
     @Override
-    public Option<T> parse(final CommandSource source, final String argument) {
+    public Option<T> parse(CommandSource source, String argument) {
         return this.element.parse(source, argument);
     }
 
     @Override
-    public Collection<String> suggestions(final CommandSource source, final String argument) {
+    public Collection<String> suggestions(CommandSource source, String argument) {
         return this.element.suggestions(source, argument);
     }
 

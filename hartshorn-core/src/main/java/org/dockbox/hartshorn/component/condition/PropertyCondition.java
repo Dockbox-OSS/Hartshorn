@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import org.dockbox.hartshorn.util.option.Option;
 public class PropertyCondition implements Condition {
 
     @Override
-    public ConditionResult matches(final ConditionContext context) {
+    public ConditionResult matches(ConditionContext context) {
         return context.annotatedElement().annotations().get(RequiresProperty.class).map(condition -> {
-            final String name = condition.name();
-            final Option<String> result = context.applicationContext().property(name);
+            String name = condition.name();
+            Option<String> result = context.applicationContext().property(name);
             if (result.absent()) {
                 if (condition.matchIfMissing()) {
                     return ConditionResult.matched();
@@ -32,7 +32,7 @@ public class PropertyCondition implements Condition {
                 return ConditionResult.notFound("property", name);
             }
 
-            final String value = result.get();
+            String value = result.get();
             if (condition.matchIfMissing()) {
                 return ConditionResult.found("property", name, value);
             }

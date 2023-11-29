@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,53 @@
 
 package org.dockbox.hartshorn.component;
 
+import jakarta.inject.Singleton;
 import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.inject.Strict;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.logging.LogExclude;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
+import org.dockbox.hartshorn.util.introspect.convert.Converter;
+import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
+import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
+import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.slf4j.Logger;
 
 /**
- * The {@link ApplicationProviders} class is responsible for providing the default {@link Logger}
- * for the application.
+ * Configuration for core components that are required by the framework. This includes the {@link Logger} and
+ * {@link ConversionService}.
  *
  * @author Guus Lieben
- * @since 21.7
+ * @since 0.4.6
  */
 @Service
 @RequiresActivator(UseBootstrap.class)
 @LogExclude
 public class ApplicationProviders {
 
-    @Provider
-    public Logger logger(final ApplicationContext context) {
+    @Binds
+    public Logger logger(ApplicationContext context) {
         return context.log();
     }
 
+    @Binds
+    @Singleton
+    public ConversionService conversionService(
+            Introspector introspector,
+            @Strict(false) ComponentCollection<GenericConverter> genericConverters,
+            @Strict(false) ComponentCollection<ConverterFactory<?, ?>> converterFactories,
+            @Strict(false) ComponentCollection<Converter<?, ?>> converters
+    ) {
+        StandardConversionService service = new StandardConversionService(introspector).withDefaults();
+        
+        genericConverters.forEach(service::addConverter);
+        converterFactories.forEach(service::addConverterFactory);
+        converters.forEach(service::addConverter);
+
+        return service;
+    }
 }

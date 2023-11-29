@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -28,15 +30,13 @@ import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 
-import java.util.List;
-
 /**
  * Represents a function definition inside a script. The function is identified by its name, and
  * parameters. The function can carry a variety of additional information such as the body, and
  * its body.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class VirtualFunction extends AbstractFinalizable implements MethodReference {
     
@@ -45,11 +45,11 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
     private final InstanceReference instance;
     private final boolean isInitializer;
 
-    public VirtualFunction(final ParametricExecutableStatement declaration, final VariableScope closure, final boolean isInitializer) {
+    public VirtualFunction(ParametricExecutableStatement declaration, VariableScope closure, boolean isInitializer) {
         this(declaration, closure, null, isInitializer);
     }
 
-    public VirtualFunction(final ParametricExecutableStatement declaration, final VariableScope closure, final InstanceReference instance, final boolean isInitializer) {
+    public VirtualFunction(ParametricExecutableStatement declaration, VariableScope closure, InstanceReference instance, boolean isInitializer) {
         super(declaration.isFinal());
         this.declaration = declaration;
         this.closure = closure;
@@ -64,16 +64,16 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
      * @return A new {@link VirtualFunction} bound to the given instance.
      */
     @Override
-    public VirtualFunction bind(final InstanceReference instance) {
-        final VariableScope variableScope = new VariableScope(this.closure);
+    public VirtualFunction bind(InstanceReference instance) {
+        VariableScope variableScope = new VariableScope(this.closure);
         variableScope.define(TokenType.THIS.representation(), instance);
         return new VirtualFunction(this.declaration, variableScope, this.isInitializer);
     }
 
     @Override
-    public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) {
-        final VariableScope variableScope = new VariableScope(this.closure);
-        final List<Parameter> parameters = this.declaration.parameters();
+    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) {
+        VariableScope variableScope = new VariableScope(this.closure);
+        List<Parameter> parameters = this.declaration.parameters();
         if (parameters.size() != arguments.size()) {
             throw new RuntimeError(at, "Expected %d %s, but got %d".formatted(
                     parameters.size(),
@@ -86,11 +86,15 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
         try {
             interpreter.execute(this.declaration.statements(), variableScope);
         }
-        catch (final Return returnValue) {
-            if (this.isInitializer) return this.closure.getAt(at, 0, TokenType.THIS.representation());
+        catch (Return returnValue) {
+            if (this.isInitializer) {
+                return this.closure.getAt(at, 0, TokenType.THIS.representation());
+            }
             return returnValue.value();
         }
-        if (this.isInitializer) return this.closure.getAt(at, 0, TokenType.THIS.representation());
+        if (this.isInitializer) {
+            return this.closure.getAt(at, 0, TokenType.THIS.representation());
+        }
         return null;
     }
 

@@ -1,4 +1,4 @@
-using math;
+import math;
 
 var x = 9;
 var y = 2;

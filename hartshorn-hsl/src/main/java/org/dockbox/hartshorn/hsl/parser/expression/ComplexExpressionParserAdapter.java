@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,13 +35,13 @@ import org.dockbox.hartshorn.util.option.Option;
  * parser which is able to parse complex expressions.
  *
  * @author Guus Lieben
- * @since 22.5
+ * @since 0.4.13
  */
 public class ComplexExpressionParserAdapter implements ExpressionParser {
 
     @Override
-    public Option<Expression> parse(final TokenParser parser, final TokenStepValidator validator) {
-        final ComplexExpressionParser expressionParser = new ComplexExpressionParser(parser, validator);
+    public Option<Expression> parse(TokenParser parser, TokenStepValidator validator) {
+        ComplexExpressionParser expressionParser = new ComplexExpressionParser(parser, validator);
         return Option.of(expressionParser.parse());
     }
 

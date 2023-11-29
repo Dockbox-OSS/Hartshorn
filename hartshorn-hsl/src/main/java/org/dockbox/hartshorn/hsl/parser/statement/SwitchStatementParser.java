@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -44,31 +43,30 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
     private final CaseBodyStatementParser caseBodyStatementParser;
 
     @Inject
-    @Bound
-    public SwitchStatementParser(final CaseBodyStatementParser caseBodyStatementParser) {
+    public SwitchStatementParser(CaseBodyStatementParser caseBodyStatementParser) {
         this.caseBodyStatementParser = caseBodyStatementParser;
     }
 
     @Override
-    public Option<SwitchStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<SwitchStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.SWITCH)) {
-            final Token switchToken = parser.previous();
+            Token switchToken = parser.previous();
             validator.expectAfter(TokenType.LEFT_PAREN, "switch");
-            final Expression expr = parser.expression();
+            Expression expr = parser.expression();
             validator.expectAfter(TokenType.RIGHT_PAREN, "expression");
 
             validator.expectAfter(TokenType.LEFT_BRACE, "switch");
 
             SwitchCase defaultBody = null;
-            final List<SwitchCase> cases = new ArrayList<>();
-            final Set<Object> matchedLiterals = new HashSet<>();
+            List<SwitchCase> cases = new ArrayList<>();
+            Set<Object> matchedLiterals = new HashSet<>();
 
             while (parser.match(TokenType.CASE, TokenType.DEFAULT)) {
-                final Token caseToken = parser.previous();
+                Token caseToken = parser.previous();
 
                 if (caseToken.type() == TokenType.CASE) {
-                    final Expression caseExpr = parser.expression();
-                    if (!(caseExpr instanceof final LiteralExpression literal)) {
+                    Expression caseExpr = parser.expression();
+                    if (!(caseExpr instanceof LiteralExpression literal)) {
                         throw new ScriptEvaluationError("Case expression must be a literal.", Phase.PARSING, caseToken);
                     }
 
@@ -77,14 +75,14 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
                     }
                     matchedLiterals.add(literal.value());
 
-                    final Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
+                    Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
                     if (body.errorPresent()) {
                         return Attempt.of(body.error());
                     }
                     cases.add(new SwitchCase(caseToken, body.get(), literal, false));
                 }
                 else {
-                    final Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
+                    Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
                     if (body.errorPresent()) {
                         return Attempt.of(body.error());
                     }

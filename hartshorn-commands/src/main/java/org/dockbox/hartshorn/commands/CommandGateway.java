@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
@@ -30,8 +30,8 @@ import java.util.List;
 public interface CommandGateway {
 
     /**
-     * Performs a command based on the given {@link CommandSource} and raw <code>command</code>.
-     * The way the provided <code>command</code> is parsed depends on the underlying {@link CommandParser}.
+     * Performs a command based on the given {@link CommandSource} and raw {@code command}.
+     * The way the provided {@code command} is parsed depends on the underlying {@link CommandParser}.
      *
      * @param source The {@link CommandSource} performing the command
      * @param command The raw command
@@ -56,7 +56,7 @@ public interface CommandGateway {
      *
      * @param key The key containing {@link org.dockbox.hartshorn.commands.annotations.Command} methods.
      */
-    <T> void register(Key<T> key);
+    <T> void register(ComponentKey<T> key);
 
     /**
      * Registers the given {@link CommandExecutorContext} to handle the associated command(s).

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,17 @@ import java.util.Set;
 
 public abstract class AbstractBodyStatementParser<T extends ASTNode> implements ASTNodeParser<T> {
 
-    protected BlockStatement blockStatement(final String afterStatement, final ASTNode at, final TokenParser parser, final TokenStepValidator validator) {
-        final Set<ASTNodeParser<BlockStatement>> parsers = parser.compatibleParsers(BlockStatement.class);
-        if (parsers.isEmpty()) throw new ScriptEvaluationError("No BlockStatement parsers found", Phase.PARSING, at);
+    protected BlockStatement blockStatement(String afterStatement, ASTNode at, TokenParser parser, TokenStepValidator validator) {
+        Set<ASTNodeParser<BlockStatement>> parsers = parser.compatibleParsers(BlockStatement.class);
+        if (parsers.isEmpty()) {
+            throw new ScriptEvaluationError("No BlockStatement parsers found", Phase.PARSING, at);
+        }
 
-        for (final ASTNodeParser<BlockStatement> nodeParser : parsers) {
-            final Option<BlockStatement> statement = nodeParser.parse(parser, validator);
-            if (statement.present()) return statement.get();
+        for (ASTNodeParser<BlockStatement> nodeParser : parsers) {
+            Option<BlockStatement> statement = nodeParser.parse(parser, validator);
+            if (statement.present()) {
+                return statement.get();
+            }
         }
 
         throw new ScriptEvaluationError("Expected block after " + afterStatement, Phase.PARSING, parser.peek());

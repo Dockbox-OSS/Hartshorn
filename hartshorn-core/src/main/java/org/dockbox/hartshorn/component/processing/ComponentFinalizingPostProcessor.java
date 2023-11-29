@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,19 @@
 
 package org.dockbox.hartshorn.component.processing;
 
+import java.util.Collection;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentPopulator;
-import org.dockbox.hartshorn.inject.CyclingConstructorAnalyzer;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ContextualComponentPopulator;
+import org.dockbox.hartshorn.inject.ComponentConstructorResolver;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
-import org.dockbox.hartshorn.proxy.StateAwareProxyFactory;
+import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
@@ -31,45 +36,79 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
 
+    @SuppressWarnings("rawtypes")
+    private static final ComponentKey<ComponentContainer> COMPONENT_CONTAINER = ComponentKey.of(ComponentContainer.class);
+    @SuppressWarnings("rawtypes")
+    private static final ComponentKey<ProxyFactory> PROXY_FACTORY = ComponentKey.of(ProxyFactory.class);
+
+    private ComponentPopulator componentPopulator;
+
     @Override
-    public <T> T process(final ApplicationContext context, @Nullable final T instance, final ComponentProcessingContext<T> processingContext) {
-        if (processingContext.get(Key.of(ComponentContainer.class)).permitsProxying()) {
+    public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+
+        boolean permitsProxying = !processingContext.containsKey(COMPONENT_CONTAINER)
+                || processingContext.get(COMPONENT_CONTAINER).permitsProxying();
+
+        if (permitsProxying && !(instance instanceof Collection<?>)) {
             T finalizingInstance = instance;
-            if (processingContext.containsKey(Key.of(ProxyFactory.class))) {
-                final ProxyFactory<T, ?> factory = processingContext.get(Key.of(ProxyFactory.class));
+            
+            if (processingContext.containsKey(PROXY_FACTORY)) {
+                ProxyFactory<T> factory = processingContext.get(PROXY_FACTORY);
+
+                boolean isStateAwareFactory = factory instanceof StateAwareProxyFactory<?>;
+                // If not state aware, always assume state has been modified
+                boolean stateModified = !isStateAwareFactory || ((StateAwareProxyFactory<T>) factory).modified();
+                boolean noConcreteInstancePossible = instance == null && processingContext.type().modifiers().isAbstract();
                 try {
-                    final boolean stateModified = factory instanceof StateAwareProxyFactory stateAwareProxyFactory && stateAwareProxyFactory.modified();
-                    final boolean noConcreteInstancePossible = instance == null && processingContext.type().isAbstract();
                     if (stateModified || noConcreteInstancePossible) {
                         finalizingInstance = this.createProxyInstance(context, factory, instance);
                     }
                 }
-                catch (final ApplicationException e) {
+                catch (ApplicationException e) {
                     throw new ApplicationRuntimeException(e);
                 }
             }
-            return context.get(ComponentPopulator.class).populate(finalizingInstance);
+
+            if (processingContext instanceof ModifiableComponentProcessingContext<T> modifiableComponentProcessingContext) {
+                modifiableComponentProcessingContext.instance(finalizingInstance);
+                modifiableComponentProcessingContext.requestInstanceLock();
+            }
+
+            return this.getComponentPopulator(context).populate(finalizingInstance);
         }
         return instance;
     }
 
-    protected <T> T createProxyInstance(final ApplicationContext context, final ProxyFactory<T, ?> factory, @Nullable final T instance) throws ApplicationException {
-        final TypeView<T> factoryType = context.environment().introspect(factory.type());
+    protected ComponentPopulator getComponentPopulator(ApplicationContext applicationContext) {
+        if (this.componentPopulator == null) {
+            this.componentPopulator = createComponentPopulator(applicationContext);
+        }
+        return this.componentPopulator;
+    }
+
+    @NonNull
+    public static ContextualComponentPopulator createComponentPopulator(ApplicationContext applicationContext) {
+        return new ContextualComponentPopulator(applicationContext);
+    }
+
+    protected <T> T createProxyInstance(ApplicationContext context, ProxyFactory<T> factory, @Nullable T instance) throws ApplicationException {
+        TypeView<T> factoryType = context.environment().introspector().introspect(factory.type());
         // Ensure we use a non-default constructor if there is no default constructor to use
         if (!factoryType.isInterface() && factoryType.constructors().defaultConstructor().absent()) {
-            final ConstructorView<T> constructor = CyclingConstructorAnalyzer.findConstructor(factoryType)
-                    .rethrowUnchecked()
+            ConstructorView<? extends T> constructor = ComponentConstructorResolver.create(context).findConstructor(factoryType)
+                    .rethrow()
                     .orElseThrow(() -> new ApplicationException("No default or injectable constructor found for proxy factory " + factoryType.name()));
 
-            final Object[] arguments = constructor.parameters().loadFromContext();
+            ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
+            Object[] arguments = adapter.loadParameters(constructor);
             return factory.proxy(constructor, arguments).orElse(instance);
         }
         return factory.proxy().orElse(instance);
     }
 
     @Override
-    public Integer order() {
+    public int priority() {
         // Run after all other core post processors, but permit external post processors to run after this one
-        return Integer.MAX_VALUE / 2;
+        return ProcessingPriority.LOWEST_PRECEDENCE - 128;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@
 
 package org.dockbox.hartshorn.hsl.parser.expression;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.DefaultProvisionContext;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FunctionParserContext extends DefaultContext {
+public class FunctionParserContext extends DefaultProvisionContext {
 
     private final Set<String> prefixFunctions = new HashSet<>();
     private final Set<String> infixFunctions = new HashSet<>();
 
-    public void addPrefixFunction(final String name) {
+    public void addPrefixFunction(String name) {
         this.prefixFunctions.add(name);
     }
 
-    public void addInfixFunction(final String name) {
+    public void addInfixFunction(String name) {
         this.infixFunctions.add(name);
     }
 

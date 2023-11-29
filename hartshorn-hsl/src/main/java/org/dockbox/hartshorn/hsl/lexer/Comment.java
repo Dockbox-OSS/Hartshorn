@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,31 +21,27 @@ package org.dockbox.hartshorn.hsl.lexer;
  * which can be located anywhere in a script.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
-public class Comment {
-
-    private final int line;
-    private final String text;
-
-    public Comment(final int line, final String text) {
-        this.line = line;
-        this.text = text;
-    }
+public record Comment(int line, String text) {
 
     /**
      * The first line the comment was found on. If a comment spans multiple lines,
      * this number represents the first of these lines.
+     *
      * @return The first line number.
      */
+    @Override
     public int line() {
         return this.line;
     }
 
     /**
      * The untrimmed text content of the comment, excluding any comment tokens.
+     *
      * @return The comment content.
      */
+    @Override
     public String text() {
         return this.text;
     }

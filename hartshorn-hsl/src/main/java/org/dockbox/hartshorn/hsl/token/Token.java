@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.hsl.ast.ASTNode;
  * a valid {@link TokenType}.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class Token extends ASTNode {
 
@@ -32,15 +32,19 @@ public class Token extends ASTNode {
     private final Object literal;
     private String lexeme;
 
-    public Token(final TokenType type, final String lexeme, final int line, final int column) {
+    public Token(TokenType type, String lexeme, int line, int column) {
         this(type, lexeme, null, line, column);
     }
 
-    public Token(final TokenType type, final String lexeme, final Object literal, final int line, final int column) {
+    public Token(TokenType type, String lexeme, Object literal, int line, int column) {
         super(line, column);
         this.type = type;
         this.lexeme = lexeme;
         this.literal = literal;
+    }
+
+    public static TokenBuilder of(TokenType type) {
+        return new TokenBuilder(type);
     }
 
     /**
@@ -48,7 +52,7 @@ public class Token extends ASTNode {
      * this token.
      * @param token The token of which the lexical meaning is to be concatenated.
      */
-    public void concat(final Token token) {
+    public void concat(Token token) {
         if(token == null) {
             return;
         }

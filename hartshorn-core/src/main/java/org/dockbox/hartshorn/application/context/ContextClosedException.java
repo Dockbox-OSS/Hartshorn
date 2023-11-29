@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,18 @@ package org.dockbox.hartshorn.application.context;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
+/**
+ * An exception that is thrown when an attempt is made to close a context that is already closed.
+ *
+ * @see ApplicationContext#close()
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class ContextClosedException extends ApplicationRuntimeException {
-    public ContextClosedException(final Class<? extends Context> type) {
+
+    public ContextClosedException(Class<? extends Context> type) {
         super("Context (" + type.getSimpleName() + ") is already closed.");
     }
 }

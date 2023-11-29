@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,32 +23,37 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Locale;
 import java.util.function.Function;
 
-public class ComponentUtilities {
+public final class ComponentUtilities {
 
-    public static String id(final ApplicationContext context, final Class<?> type) {
+    private ComponentUtilities() {
+    }
+
+    public static String id(ApplicationContext context, Class<?> type) {
         return id(context, type, false);
     }
 
-    public static String id(final ApplicationContext context, final Class<?> type, final boolean ignoreExisting) {
+    public static String id(ApplicationContext context, Class<?> type, boolean ignoreExisting) {
         return format(context, type, ignoreExisting, '-', ComponentContainer::id).toLowerCase(Locale.ROOT);
     }
 
-    public static String name(final ApplicationContext context, final Class<?> type, final boolean ignoreExisting) {
+    public static String name(ApplicationContext context, Class<?> type, boolean ignoreExisting) {
         return format(context, type, ignoreExisting, ' ', ComponentContainer::name);
     }
 
-    protected static String format(final ApplicationContext context, final Class<?> type, final boolean ignoreExisting, final char delimiter, final Function<ComponentContainer, String> attribute) {
-        final Option<ComponentContainer> container = context.get(ComponentLocator.class).container(type);
+    public static String format(ApplicationContext context, Class<?> type, boolean ignoreExisting, char delimiter, Function<ComponentContainer<?>, String> attribute) {
+        Option<ComponentContainer<?>> container = context.get(ComponentLocator.class).container(type);
         if (!ignoreExisting && container.present()) {
-            final String name = attribute.apply(container.get());
-            if (!"".equals(name)) return name;
+            String name = attribute.apply(container.get());
+            if (StringUtilities.notEmpty(name)) {
+                return name;
+            }
         }
 
         String raw = type.getSimpleName();
         if (raw.endsWith("Service")) {
             raw = raw.substring(0, raw.length() - 7);
         }
-        final String[] parts = StringUtilities.splitCapitals(raw);
-        return StringUtilities.capitalize(String.join(delimiter + "", parts));
+        String[] parts = StringUtilities.splitCapitals(raw);
+        return StringUtilities.capitalize(String.join(String.valueOf(delimiter), parts));
     }
 }

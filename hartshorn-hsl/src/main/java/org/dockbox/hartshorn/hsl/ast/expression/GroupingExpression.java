@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ public class GroupingExpression extends Expression {
 
     private final Expression expression;
 
-    public GroupingExpression(final Expression expression) {
+    public GroupingExpression(Expression expression) {
         super(expression);
         this.expression = expression;
     }
@@ -32,7 +32,7 @@ public class GroupingExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

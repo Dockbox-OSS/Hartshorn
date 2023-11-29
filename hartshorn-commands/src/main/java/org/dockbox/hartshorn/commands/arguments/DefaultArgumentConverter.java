@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,22 +32,25 @@ public abstract class DefaultArgumentConverter<T> implements ArgumentConverter<T
     private final Class<T> type;
     private final int size;
 
-    protected DefaultArgumentConverter(final Class<T> type, final String... keys) {
+    protected DefaultArgumentConverter(Class<T> type, String... keys) {
         this(type, 1, keys);
     }
 
-    protected DefaultArgumentConverter(final Class<T> type, final int size, final String... keys) {
-        if (0 == keys.length)
+    protected DefaultArgumentConverter(Class<T> type, int size, String... keys) {
+        if (0 == keys.length) {
             throw new IllegalArgumentException("Cannot create argument converter without at least one key");
+        }
         this.keys = keys;
         this.type = type;
         this.size = size;
     }
 
+    @Override
     public Class<T> type() {
         return this.type;
     }
 
+    @Override
     public List<String> keys() {
         return Arrays.asList(this.keys);
     }

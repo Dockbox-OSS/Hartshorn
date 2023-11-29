@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@ import org.slf4j.Logger;
 public class HartshornTests {
 
     @InjectTest
-    void testLoggersAreReused(final ApplicationContext applicationContext) {
-        final Logger l1 = applicationContext.log();
-        final Logger l2 = applicationContext.log();
+    void testLoggersAreReused(ApplicationContext applicationContext) {
+        Logger l1 = applicationContext.log();
+        Logger l2 = applicationContext.log();
 
         Assertions.assertNotNull(l1);
         Assertions.assertNotNull(l2);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
  * it is accessed for the first time.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class ApplicationBoundNativeModule extends AbstractNativeModule {
 
@@ -33,7 +33,7 @@ public class ApplicationBoundNativeModule extends AbstractNativeModule {
 
     private Object instance;
 
-    public ApplicationBoundNativeModule(final Class<?> moduleClass, final ApplicationContext applicationContext) {
+    public ApplicationBoundNativeModule(Class<?> moduleClass, ApplicationContext applicationContext) {
         this.moduleClass = moduleClass;
         this.applicationContext = applicationContext;
     }

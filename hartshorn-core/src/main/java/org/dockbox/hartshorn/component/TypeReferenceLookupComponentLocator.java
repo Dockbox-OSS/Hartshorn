@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,41 +21,39 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-public class TypeReferenceLookupComponentLocator implements ComponentLocator, ContextCarrier {
+public class TypeReferenceLookupComponentLocator implements ComponentLocator {
 
     private final ApplicationContext applicationContext;
-    private final Set<ComponentContainer> componentContainers = ConcurrentHashMap.newKeySet();
+    private final Set<ComponentContainer<?>> componentContainers = ConcurrentHashMap.newKeySet();
 
-    public TypeReferenceLookupComponentLocator(final ApplicationContext applicationContext) {
+    public TypeReferenceLookupComponentLocator(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public Collection<ComponentContainer> containers() {
+    public Collection<ComponentContainer<?>> containers() {
         if (this.componentContainers.isEmpty()) {
             this.applicationContext().environment().types(Component.class).stream()
                     .filter(type -> !type.isAnnotation()) // Filter activators
-                    .map(type -> new ComponentContainerImpl(this.applicationContext(), type.type()))
+                    .map(type -> new ComponentContainerImpl<>(this.applicationContext(), type.type()))
                     .forEach(this.componentContainers::add);
         }
         return this.componentContainers;
     }
 
     @Override
-    public Collection<ComponentContainer> containers(final ComponentType componentType) {
+    public Collection<ComponentContainer<?>> containers(ComponentType componentType) {
         return this.containers().stream()
                 .filter(container -> container.componentType() == componentType)
                 .toList();
     }
 
     @Override
-    public Option<ComponentContainer> container(final Class<?> type) {
+    public Option<ComponentContainer<?>> container(Class<?> type) {
         return Option.of(this.containers()
                 .stream()
                 .filter(container -> container.type().is(type))
@@ -64,13 +62,9 @@ public class TypeReferenceLookupComponentLocator implements ComponentLocator, Co
     }
 
     @Override
-    public <T> void validate(final Key<T> key) {
-        final Introspector introspector = this.applicationContext().environment();
-        final TypeView<T> contract = introspector.introspect(key.type());
-
-        // Skip introspection types, to avoid infinite recursion. Introspectors are utility classes,
-        // and are never registered as components.
-        if (contract.isDeclaredIn(Introspector.class.getPackageName())) return;
+    public <T> void validate(ComponentKey<T> key) {
+        Introspector introspector = this.applicationContext().environment().introspector();
+        TypeView<T> contract = introspector.introspect(key.type());
 
         if (contract.annotations().has(Component.class) && this.container(contract.type()).absent()) {
             this.applicationContext().log().warn("Component key '%s' is annotated with @Component, but is not registered.".formatted(contract.qualifiedName()));

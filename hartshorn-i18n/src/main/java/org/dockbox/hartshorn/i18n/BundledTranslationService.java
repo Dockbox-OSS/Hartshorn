@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,17 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.util.option.Option;
 
-import jakarta.inject.Inject;
-
-@Component
 public class BundledTranslationService implements TranslationService {
 
-    @Inject
-    private ApplicationContext applicationContext;
-
-    @Inject
+    private final ApplicationContext applicationContext;
     private TranslationBundle bundle;
+
+    public BundledTranslationService(ApplicationContext applicationContext, TranslationBundle bundle) {
+        this.applicationContext = applicationContext;
+        this.bundle = bundle;
+    }
 
     @Override
     public ApplicationContext applicationContext() {
@@ -42,27 +40,27 @@ public class BundledTranslationService implements TranslationService {
     }
 
     @Override
-    public Option<Message> get(final String key) {
+    public Option<Message> get(String key) {
         return this.bundle.message(this.clean(key));
     }
 
     @Override
-    public Message getOrCreate(final String key, final String value) {
+    public Message getOrCreate(String key, String value) {
         return this.bundle.message(this.clean(key))
                 .orElseGet(() -> this.bundle.register(key, value));
     }
 
     @Override
-    public void add(final TranslationBundle bundle) {
+    public void add(TranslationBundle bundle) {
         this.bundle = this.bundle.merge(bundle);
     }
 
     @Override
-    public void add(final Message message) {
+    public void add(Message message) {
         this.bundle.register(message);
     }
 
-    private String clean(final String key) {
+    private String clean(String key) {
         return key.replaceAll("[/\\\\_-]", ".");
     }
 }

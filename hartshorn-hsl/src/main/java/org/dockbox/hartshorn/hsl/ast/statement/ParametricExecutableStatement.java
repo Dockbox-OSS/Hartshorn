@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public abstract class ParametricExecutableStatement extends Function {
     private final List<Parameter> params;
     private final BlockStatement body;
 
-    protected ParametricExecutableStatement(final Token token, final List<Parameter> params, final BlockStatement body) {
+    protected ParametricExecutableStatement(Token token, List<Parameter> params, BlockStatement body) {
         super(token);
         this.params = params;
         this.body = body;
@@ -43,16 +43,6 @@ public abstract class ParametricExecutableStatement extends Function {
         return this.body;
     }
 
-    public static class Parameter {
-
-        private final Token name;
-
-        public Parameter(final Token name) {
-            this.name = name;
-        }
-
-        public Token name() {
-            return this.name;
-        }
+    public record Parameter(Token name) {
     }
 }

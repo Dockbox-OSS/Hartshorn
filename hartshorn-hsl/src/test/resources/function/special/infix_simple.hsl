@@ -1,4 +1,4 @@
-infix fun sum(x, y) {
+infix function sum(x, y) {
    return x + y;
 }
 

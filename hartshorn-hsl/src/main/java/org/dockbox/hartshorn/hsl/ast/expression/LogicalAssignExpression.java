@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public class LogicalAssignExpression extends AssignExpression {
 
     private final Token operator;
 
-    public LogicalAssignExpression(final Token name, final Token operator, final Expression rightExp) {
+    public LogicalAssignExpression(Token name, Token operator, Expression rightExp) {
         super(name, rightExp);
         this.operator = operator;
     }
@@ -38,7 +38,7 @@ public class LogicalAssignExpression extends AssignExpression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.Objects;
  * based on a predefined instance.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class InstanceNativeModule extends AbstractNativeModule {
 
@@ -33,7 +33,7 @@ public class InstanceNativeModule extends AbstractNativeModule {
     private final Object instance;
     private final ApplicationContext applicationContext;
 
-    public InstanceNativeModule(final ApplicationContext applicationContext, final Object instance) {
+    public InstanceNativeModule(ApplicationContext applicationContext, Object instance) {
         this.instance = Objects.requireNonNull(instance);
         this.moduleClass = instance.getClass();
         this.applicationContext = applicationContext;

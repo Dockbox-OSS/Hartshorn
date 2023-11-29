@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,17 @@ import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.component.DirectScopeKey;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
+import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.ScopeKey;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.slf4j.Logger;
-
-import java.io.Closeable;
 
 /**
  * The primary context for an application. This context is responsible for providing the application
@@ -44,7 +47,7 @@ import java.io.Closeable;
  * its components. The implementation may choose to perform specific actions based on available
  * activators and properties.
  *
- * @since 21.1
+ * @since 0.4.0
  * @author Guus Lieben
  */
 @LogExclude
@@ -55,11 +58,18 @@ public interface ApplicationContext extends
         ApplicationLogger,
         ExceptionHandler,
         ActivatorHolder,
-        Closeable {
+        Scope,
+        AutoCloseable {
+
+    /**
+     * The scope key for the application context. This key is used to register the application context
+     * as a global scope.
+     */
+    ScopeKey SCOPE_KEY = DirectScopeKey.of(ApplicationContext.class);
 
     /**
      * Registers a component processor with the application context. The processor will be invoked when
-     * a component is added to the application context.
+     * a component is loaded by the application context.
      *
      * @param processor The component processor to register.
      * @see ComponentProcessor
@@ -67,6 +77,16 @@ public interface ApplicationContext extends
      * @see org.dockbox.hartshorn.component.processing.ComponentPostProcessor
      */
     void add(ComponentProcessor processor);
+
+    /**
+     * Registers a lazy-loaded component post-processor with the application context. The processor will be instantiated
+     * when it is first used. The processor will be invoked when a component is loaded by the application context.
+     *
+     * @param processor The component processor to register.
+     * @see ComponentProcessor
+     * @see org.dockbox.hartshorn.component.processing.ComponentPostProcessor
+     */
+    void add(Class<? extends ComponentPostProcessor> processor);
 
     /**
      * Gets the active {@link ApplicationEnvironment} for the application.
@@ -89,4 +109,12 @@ public interface ApplicationContext extends
      * @return {@code true} if the context is closed, {@code false} otherwise.
      */
     boolean isClosed();
+
+    @Override
+    default ScopeKey installableScopeType() {
+        return SCOPE_KEY;
+    }
+
+    @Override
+    void close() throws ApplicationException;
 }

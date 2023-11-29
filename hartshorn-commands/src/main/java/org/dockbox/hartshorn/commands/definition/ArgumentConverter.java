@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Responsible for converting a raw string input to the specified type <code>T</code>.
+ * Responsible for converting a raw string input to the specified type {@code T}.
  *
  * @param <T> The type this converter can convert into
  */
@@ -46,34 +46,34 @@ public interface ArgumentConverter<T> {
     Class<T> type();
 
     /**
-     * Converts a given raw argument into type <code>T</code>. The provided
+     * Converts a given raw argument into type {@code T}. The provided
      * {@link CommandSource} may provide additional context to the implementation.
      *
      * @param source The command source executing a command containing the argument
      * @param argument The raw argument without the associated key
      *
-     * @return The converted object of type <code>T</code>, or {@link Option#empty()}
+     * @return The converted object of type {@code T}, or {@link Option#empty()}
      */
     Option<T> convert(CommandSource source, String argument);
 
     /**
-     * Converts a given argument into type <code>T</code>. The {@link CommandParameter}
-     * provides both the raw argument of the value, and the associated <code>key</code>
+     * Converts a given argument into type {@code T}. The {@link CommandParameter}
+     * provides both the raw argument of the value, and the associated {@code key}
      * used to obtain it. The provided {@link CommandSource} may provide additional
      * context to the implementation.
      *
      * @param source The command source executing a command containing the argument
      * @param value The argument with the associated key
      *
-     * @return The converted object of type <code>T</code>, or {@link Option#empty()}
+     * @return The converted object of type {@code T}, or {@link Option#empty()}
      */
     Option<T> convert(CommandSource source, CommandParameter<String> value);
 
     /**
      * Gets the suggestions to complete a currently incomplete argument value. Suggestions
      * are complete values.
-     * <p>For example, when possible values are: <code>one, two, three</code>, with the input
-     * being <code>t</code>, the returned collection will be <code>two, three</code>.
+     * <p>For example, when possible values are: {@code one, two, three}, with the input
+     * being {@code t}, the returned collection will be {@code two, three}.
      *
      * @param source The command source executing a command containing the argument
      * @param argument The incomplete raw argument

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Identifiable;
-
 import java.util.Locale;
 import java.util.UUID;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Identifiable;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -28,14 +28,18 @@ import jakarta.inject.Singleton;
 @Singleton
 public abstract class SystemSubject implements CommandSource, Identifiable {
 
-    @Inject
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
     private Locale locale = Locale.getDefault();
 
     public static final UUID UNIQUE_ID = new UUID(0, 0);
 
-    public static SystemSubject instance(final ApplicationContext context) {
+    public static SystemSubject instance(ApplicationContext context) {
         return context.get(SystemSubject.class);
+    }
+
+    @Inject
+    protected SystemSubject(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -49,7 +53,7 @@ public abstract class SystemSubject implements CommandSource, Identifiable {
     }
 
     @Override
-    public void language(final Locale language) {
+    public void language(Locale language) {
         this.locale = language;
     }
 

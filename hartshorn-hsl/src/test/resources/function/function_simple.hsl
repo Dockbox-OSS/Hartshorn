@@ -1,4 +1,4 @@
-fun sum(x,y) {
+function sum(x,y) {
    print(x + y);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 
 package test.org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
+import org.dockbox.hartshorn.component.processing.Binds;
 
 import jakarta.inject.Singleton;
 
@@ -28,8 +29,9 @@ import jakarta.inject.Singleton;
 @RequiresActivator(UseCommands.class)
 public class TestCommandProviders {
 
-    @Provider(priority = 0)
+    @Binds(priority = 0)
     @Singleton
-    public Class<? extends SystemSubject> systemSubject = JUnitSystemSubject.class;
-
+    public SystemSubject systemSubject(ApplicationContext applicationContext) {
+        return new JUnitSystemSubject(applicationContext);
+    }
 }

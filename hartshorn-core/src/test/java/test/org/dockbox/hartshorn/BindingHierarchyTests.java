@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,19 @@
 
 package test.org.dockbox.hartshorn;
 
+import jakarta.inject.Inject;
 import java.util.Map.Entry;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.ComposedProvider;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
-import org.dockbox.hartshorn.inject.Key;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.NativeBindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import jakarta.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
 public class BindingHierarchyTests {
@@ -39,34 +38,34 @@ public class BindingHierarchyTests {
 
     @Test
     void testToString() {
-        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class), this.applicationContext);
-        hierarchy.add(0, new ContextDrivenProvider<>(ImplementationA.class));
-        hierarchy.add(1, new ContextDrivenProvider<>(ImplementationB.class));
-        hierarchy.add(2, new ContextDrivenProvider<>(ImplementationC.class));
+        BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class), this.applicationContext);
+        hierarchy.add(0, new ContextDrivenProvider<>(ComponentKey.of(ImplementationA.class)));
+        hierarchy.add(1, new ContextDrivenProvider<>(ComponentKey.of(ImplementationB.class)));
+        hierarchy.add(2, new ContextDrivenProvider<>(ComponentKey.of(ImplementationC.class)));
 
         Assertions.assertEquals("Hierarchy[Contract]: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
     }
 
     @Test
     void testToStringNamed() {
-        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class, "sample"), this.applicationContext);
-        hierarchy.add(0, new ContextDrivenProvider<>(ImplementationA.class));
-        hierarchy.add(1, new ContextDrivenProvider<>(ImplementationB.class));
-        hierarchy.add(2, new ContextDrivenProvider<>(ImplementationC.class));
+        BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class, "sample"), this.applicationContext);
+        hierarchy.add(0, new ContextDrivenProvider<>(ComponentKey.of(ImplementationA.class)));
+        hierarchy.add(1, new ContextDrivenProvider<>(ComponentKey.of(ImplementationB.class)));
+        hierarchy.add(2, new ContextDrivenProvider<>(ComponentKey.of(ImplementationC.class)));
 
         Assertions.assertEquals("Hierarchy[Contract::sample]: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
     }
 
     @Test
     void testIteratorIsSorted() {
-        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class), this.applicationContext);
-        hierarchy.add(0, new ContextDrivenProvider<>(ImplementationA.class));
-        hierarchy.add(1, new ContextDrivenProvider<>(ImplementationB.class));
-        hierarchy.add(2, new ContextDrivenProvider<>(ImplementationC.class));
+        BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class), this.applicationContext);
+        hierarchy.add(0, new ContextDrivenProvider<>(ComponentKey.of(ImplementationA.class)));
+        hierarchy.add(1, new ContextDrivenProvider<>(ComponentKey.of(ImplementationB.class)));
+        hierarchy.add(2, new ContextDrivenProvider<>(ComponentKey.of(ImplementationC.class)));
 
         int next = 2;
-        for (final Entry<Integer, Provider<Contract>> entry : hierarchy) {
-            final Integer priority = entry.getKey();
+        for (Entry<Integer, Provider<Contract>> entry : hierarchy) {
+            Integer priority = entry.getKey();
             Assertions.assertEquals(next, priority.intValue());
             next--;
         }
@@ -74,49 +73,56 @@ public class BindingHierarchyTests {
 
     @Test
     void testApplicationContextHierarchyControl() {
-        final Key<Contract> key = Key.of(Contract.class);
+        ComponentKey<Contract> key = ComponentKey.of(Contract.class);
 
-        final BindingHierarchy<Contract> secondHierarchy = new NativeBindingHierarchy<>(key, this.applicationContext);
-        secondHierarchy.add(2, new ContextDrivenProvider<>(ImplementationC.class));
+        BindingHierarchy<Contract> secondHierarchy = new NativePrunableBindingHierarchy<>(key, this.applicationContext);
+        secondHierarchy.add(2, new ContextDrivenProvider<>(ComponentKey.of(ImplementationC.class)));
 
         this.applicationContext.hierarchy(key)
-                .add(0, new ContextDrivenProvider<>(ImplementationA.class))
-                .add(1, new ContextDrivenProvider<>(ImplementationB.class))
+                .add(0, new ContextDrivenProvider<>(ComponentKey.of(ImplementationA.class)))
+                .add(1, new ContextDrivenProvider<>(ComponentKey.of(ImplementationB.class)))
                 .merge(secondHierarchy);
 
-        final BindingHierarchy<Contract> hierarchy = this.applicationContext.hierarchy(key);
+        BindingHierarchy<Contract> hierarchy = this.applicationContext.hierarchy(key);
         Assertions.assertNotNull(hierarchy);
 
         Assertions.assertEquals(3, hierarchy.size());
 
-        final Option<Provider<Contract>> priorityZero = hierarchy.get(0);
+        Option<Provider<Contract>> priorityZero = hierarchy.get(0);
         Assertions.assertTrue(priorityZero.present());
         Assertions.assertTrue(priorityZero.get() instanceof ContextDrivenProvider);
-        Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityZero.get()).type(), ImplementationA.class);
+        Assertions.assertSame(((ContextDrivenProvider<Contract>) priorityZero.get()).type(), ImplementationA.class);
 
-        final Option<Provider<Contract>> priorityOne = hierarchy.get(1);
+        Option<Provider<Contract>> priorityOne = hierarchy.get(1);
         Assertions.assertTrue(priorityOne.present());
         Assertions.assertTrue(priorityOne.get() instanceof ContextDrivenProvider);
-        Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityOne.get()).type(), ImplementationB.class);
+        Assertions.assertSame(((ContextDrivenProvider<Contract>) priorityOne.get()).type(), ImplementationB.class);
 
-        final Option<Provider<Contract>> priorityTwo = hierarchy.get(2);
+        Option<Provider<Contract>> priorityTwo = hierarchy.get(2);
         Assertions.assertTrue(priorityTwo.present());
         Assertions.assertTrue(priorityTwo.get() instanceof ContextDrivenProvider);
-        Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityTwo.get()).type(), ImplementationC.class);
+        Assertions.assertSame(((ContextDrivenProvider<Contract>) priorityTwo.get()).type(), ImplementationC.class);
     }
 
     @Test
     void testContextCreatesHierarchy() {
         this.applicationContext.bind(LocalContract.class).to(LocalImpl.class);
 
-        final BindingHierarchy<LocalContract> hierarchy = this.applicationContext.hierarchy(Key.of(LocalContract.class));
+        BindingHierarchy<LocalContract> hierarchy = this.applicationContext.hierarchy(ComponentKey.of(LocalContract.class));
         Assertions.assertNotNull(hierarchy);
         Assertions.assertEquals(1, hierarchy.size());
 
-        final Option<Provider<LocalContract>> provider = hierarchy.get(-1);
+        Option<Provider<LocalContract>> provider = hierarchy.get(-1);
         Assertions.assertTrue(provider.present());
-        Assertions.assertTrue(provider.get() instanceof ContextDrivenProvider);
-        Assertions.assertEquals(((ContextDrivenProvider<LocalContract>) provider.get()).type(), LocalImpl.class);
+
+        Provider<LocalContract> contractProvider = provider.get();
+        if (contractProvider instanceof ComposedProvider<LocalContract> composedProvider) {
+            // If the provider is composed, we need to get the actual provider from it
+            contractProvider = composedProvider.provider();
+        }
+
+        Assertions.assertTrue(contractProvider instanceof ContextDrivenProvider);
+        Assertions.assertSame(((ContextDrivenProvider<LocalContract>) contractProvider).type(), LocalImpl.class);
     }
 
     interface LocalContract {

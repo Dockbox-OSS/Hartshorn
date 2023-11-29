@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,47 +16,55 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
-import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
-import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
-import org.dockbox.hartshorn.commands.extension.CommandExtensionContext;
-import org.dockbox.hartshorn.commands.extension.ExtensionResult;
-import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap.CopyOnWriteArrayListMultiMap;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import jakarta.annotation.PostConstruct;
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
+import org.dockbox.hartshorn.commands.context.CommandContext;
+import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
+import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
+import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
+import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
+import org.dockbox.hartshorn.commands.extension.ExtensionResult;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
+import org.dockbox.hartshorn.util.collections.CopyOnWriteArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Simple implementation of {@link CommandGateway}.
  */
-@Component
 public class CommandGatewayImpl implements CommandGateway {
 
     private final transient MultiMap<String, CommandExecutorContext> contexts = new CopyOnWriteArrayListMultiMap<>();
     private final transient List<CommandExecutorExtension> extensions = new CopyOnWriteArrayList<>();
 
+    private final CommandParser parser;
+    private final CommandResources resources;
+    private final ApplicationContext context;
+    private final ArgumentConverterRegistry converterRegistry;
+
     @Inject
-    private CommandParser parser;
-    @Inject
-    private CommandResources resources;
-    @Inject
-    private ApplicationContext context;
+    public CommandGatewayImpl(
+            CommandParser parser,
+            CommandResources resources,
+            ApplicationContext context,
+            ArgumentConverterRegistry converterRegistry
+    ) {
+        this.parser = parser;
+        this.resources = resources;
+        this.context = context;
+        this.converterRegistry = converterRegistry;
+    }
 
     protected MultiMap<String, CommandExecutorContext> contexts() {
         return this.contexts;
@@ -69,8 +77,8 @@ public class CommandGatewayImpl implements CommandGateway {
     @PostConstruct
     public void enable() {
         if (this.extensions.isEmpty()) {
-            final CommandExtensionContext extensionContext = this.context.first(CommandExtensionContext.class).get();
-            for (final CommandExecutorExtension extension : extensionContext.extensions()) {
+            ComponentCollection<CommandExecutorExtension> extensions = this.context.get(ComponentKey.collect(CommandExecutorExtension.class));
+            for (final CommandExecutorExtension extension : extensions) {
                 this.context.log().debug("Adding extension " + extension.getClass().getSimpleName() + " to command gateway");
                 this.add(extension);
             }
@@ -78,11 +86,13 @@ public class CommandGatewayImpl implements CommandGateway {
     }
 
     @Override
-    public void accept(final CommandSource source, final String command) throws ParsingException {
-        final Option<CommandExecutorContext> context = this.lookupContext(command);
-        if (context.absent()) throw new ParsingException(this.resources.missingHandler(command));
+    public void accept(CommandSource source, String command) throws ParsingException {
+        Option<CommandExecutorContext> context = this.lookupContext(command);
+        if (context.absent()) {
+            throw new ParsingException(this.resources.missingHandler(command));
+        }
         else {
-            final Option<CommandContext> commandContext = this.parser.parse(command, source, context.get());
+            Option<CommandContext> commandContext = this.parser.parse(command, source, context.get());
             if (commandContext.present()) {
                 this.execute(context.get(), commandContext.get());
             }
@@ -92,17 +102,17 @@ public class CommandGatewayImpl implements CommandGateway {
         }
     }
 
-    private Option<CommandExecutorContext> lookupContext(final String command) {
-        final String alias = command.split(" ")[0];
+    private Option<CommandExecutorContext> lookupContext(String command) {
+        String alias = command.split(" ")[0];
         CommandExecutorContext bestContext = null;
         this.context.log().debug("Looking up executor context for " + command + " in " + this.contexts.size() + " contexts");
-        for (final CommandExecutorContext context : this.contexts.get(alias)) {
+        for (CommandExecutorContext context : this.contexts.get(alias)) {
             if (context.accepts(command)) {
                 if (bestContext == null) {
                     bestContext = context;
                 }
                 else {
-                    final String stripped = context.strip(command, false);
+                    String stripped = context.strip(command, false);
                     // This leaves the arguments without the context's aliases. If the new value is shorter it means more aliases were
                     // stripped, indicating it's providing a deeper level sub-command.
                     if (stripped.length() < bestContext.strip(command, false).length()) {
@@ -114,11 +124,13 @@ public class CommandGatewayImpl implements CommandGateway {
         return Option.of(bestContext);
     }
 
-    protected void execute(final CommandExecutorContext context, final CommandContext commandContext) {
-        for (final CommandExecutorExtension extension : this.extensions()) {
+    protected void execute(CommandExecutorContext context, CommandContext commandContext) {
+        for (CommandExecutorExtension extension : this.extensions()) {
             if (extension.extend(context)) {
-                final ExtensionResult result = extension.execute(commandContext, context);
-                if (result.send()) commandContext.source().send(result.reason());
+                ExtensionResult result = extension.execute(commandContext, context);
+                if (result.send()) {
+                    commandContext.source().send(result.reason());
+                }
                 if (!result.proceed()) {
                     context.applicationContext().log().debug("Extension " + extension.getClass().getSimpleName() + " rejected direct execution, cancelling command executor.");
                     return;
@@ -129,28 +141,30 @@ public class CommandGatewayImpl implements CommandGateway {
     }
 
     @Override
-    public void accept(final CommandContext context) throws ParsingException {
-        final Option<CommandExecutorContext> executor = this.get(context);
-        executor.peek(e -> this.execute(e, context))
+    public void accept(CommandContext context) throws ParsingException {
+        Option<CommandExecutorContext> executor = this.get(context);
+        executor.peek(executorContext -> this.execute(executorContext, context))
                 .orElseThrow(() -> new ParsingException(this.resources.missingExecutor(context.alias(), context.arguments().size())));
     }
 
     @Override
-    public <T> void register(final Key<T> key) {
-        final TypeView<T> typeView = this.context.environment().introspect(key.type());
-        for (final MethodView<T, ?> method : typeView.methods().annotatedWith(Command.class)) {
+    public <T> void register(ComponentKey<T> key) {
+        TypeView<T> typeView = this.context.environment().introspector().introspect(key.type());
+        for (MethodView<T, ?> method : typeView.methods().annotatedWith(Command.class)) {
             this.register(method, key);
         }
     }
 
     @Override
-    public void register(final CommandExecutorContext context) {
-        final Option<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
-        if (container.absent()) throw new InvalidExecutorException("Executor contexts should contain at least one container context");
+    public void register(CommandExecutorContext context) {
+        Option<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
+        if (container.absent()) {
+            throw new InvalidExecutorException("Executor contexts should contain at least one container context");
+        }
 
-        final List<String> aliases;
-        final TypeView<?> typeContext = context.parent();
-        final Option<Command> annotated = typeContext.annotations().get(Command.class);
+        List<String> aliases;
+        TypeView<?> typeContext = context.parent();
+        Option<Command> annotated = typeContext.annotations().get(Command.class);
         if (!typeContext.isVoid() && annotated.present()) {
             aliases = List.of(annotated.get().value());
         }
@@ -161,27 +175,30 @@ public class CommandGatewayImpl implements CommandGateway {
             throw new InvalidExecutorException("Executor should either be declared in command type or container should provide aliases");
         }
 
-        for (final String alias : aliases) {
+        for (String alias : aliases) {
             this.contexts().put(alias, context);
         }
         this.context.add(context);
     }
 
     @Override
-    public List<String> suggestions(final CommandSource source, final String command) {
-        final Option<CommandExecutorContext> context = this.lookupContext(command);
-        final List<String> suggestions = new ArrayList<>();
+    public List<String> suggestions(CommandSource source, String command) {
+        Option<CommandExecutorContext> context = this.lookupContext(command);
+        List<String> suggestions = new ArrayList<>();
 
-        if (context.present())
+        if (context.present()) {
             suggestions.addAll(context.get().suggestions(source, command, this.parser));
+        }
 
-        final String alias = command.split(" ")[0];
-        final Collection<CommandExecutorContext> contexts = this.contexts().get(alias);
-        for (final CommandExecutorContext executorContext : contexts) {
-            for (final String contextAlias : executorContext.aliases()) {
+        String alias = command.split(" ")[0];
+        Collection<CommandExecutorContext> contexts = this.contexts().get(alias);
+        for (CommandExecutorContext executorContext : contexts) {
+            for (String contextAlias : executorContext.aliases()) {
                 if (contextAlias.startsWith(command)) {
-                    final String stripped = contextAlias.replaceFirst(alias + " ", "");
-                    if (!"".equals(stripped)) suggestions.add(stripped);
+                    String stripped = contextAlias.replaceFirst(alias + " ", "");
+                    if (!stripped.isEmpty()) {
+                        suggestions.add(stripped);
+                    }
                 }
             }
         }
@@ -190,19 +207,21 @@ public class CommandGatewayImpl implements CommandGateway {
     }
 
     @Override
-    public Option<CommandExecutorContext> get(final CommandContext context) {
-        for (final CommandExecutorContext executorContext : this.contexts().get(context.alias())) {
-            if (executorContext.accepts(context.command())) return Option.of(executorContext);
+    public Option<CommandExecutorContext> get(CommandContext context) {
+        for (CommandExecutorContext executorContext : this.contexts().get(context.alias())) {
+            if (executorContext.accepts(context.command())) {
+                return Option.of(executorContext);
+            }
         }
         return Option.empty();
     }
 
     @Override
-    public void add(final CommandExecutorExtension extension) {
+    public void add(CommandExecutorExtension extension) {
         this.extensions.add(extension);
     }
 
-    private <T> void register(final MethodView<T, ?> method, final Key<T> key) {
-        this.register(new MethodCommandExecutorContext<>(this.context, method, key));
+    private <T> void register(MethodView<T, ?> method, ComponentKey<T> key) {
+        this.register(new MethodCommandExecutorContext<>(this.context, this.converterRegistry, method, key));
     }
 }

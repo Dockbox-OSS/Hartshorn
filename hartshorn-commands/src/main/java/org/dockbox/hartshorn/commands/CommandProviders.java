@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,19 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.beans.Bean;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
-import org.dockbox.hartshorn.commands.arguments.CommandParameterLoader;
+import org.dockbox.hartshorn.commands.arguments.ParameterTypeArgumentConverterRegistryCustomizer;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistryCustomizer;
+import org.dockbox.hartshorn.commands.context.SimpleArgumentConverterRegistry;
+import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.CooldownExtension;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Provider;
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.util.parameter.ParameterLoader;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 
 import jakarta.inject.Singleton;
 
@@ -31,35 +36,46 @@ import jakarta.inject.Singleton;
 @RequiresActivator(UseCommands.class)
 public class CommandProviders {
 
-    @Bean
-    public static CooldownExtension cooldownExtension() {
-        return new CooldownExtension();
+    @Binds
+    public CommandListener listener(ApplicationContext applicationContext, CommandGateway gateway) {
+        return new CommandListenerImpl(applicationContext, gateway);
     }
 
-    @Provider
-    public Class<? extends CommandListener> listener() {
-        return CommandListenerImpl.class;
-    }
-
-    @Provider
+    @Binds
     @Singleton
-    public Class<? extends SystemSubject> systemSubject() {
-        return ApplicationSystemSubject.class;
+    public SystemSubject systemSubject(ApplicationContext applicationContext) {
+        return new ApplicationSystemSubject(applicationContext);
     }
 
-    @Provider
+    @Binds
     @Singleton
-    public Class<? extends CommandGateway> commandGateway() {
-        return CommandGatewayImpl.class;
+    public CommandGateway commandGateway(
+        CommandParser parser,
+        CommandResources resources,
+        ApplicationContext context,
+        ArgumentConverterRegistry converterRegistry) {
+        return new CommandGatewayImpl(parser, resources, context, converterRegistry);
     }
 
-    @Provider
-    public Class<? extends CommandParser> commandParser() {
-        return CommandParserImpl.class;
+    @Binds
+    public CommandParser commandParser(CommandResources resources) {
+        return new CommandParserImpl(resources);
     }
 
-    @Provider("command_loader")
-    public ParameterLoader<?> parameterLoader() {
-        return new CommandParameterLoader();
+    @Binds(type = BindingType.COLLECTION)
+    public CommandExecutorExtension cooldownExtension(ApplicationContext applicationContext) {
+        return new CooldownExtension(applicationContext);
+    }
+    
+    @Binds
+    public ArgumentConverterRegistry converterRegistry(ApplicationEnvironment environment, ArgumentConverterRegistryCustomizer customizer) {
+        ArgumentConverterRegistry registry = new SimpleArgumentConverterRegistry();
+        customizer.configure(registry);
+        return registry;
+    }
+
+    @Binds(priority = 0)
+    public ArgumentConverterRegistryCustomizer converterRegistryCustomizer(ApplicationEnvironment environment, ArgumentConverterRegistryCustomizer customizer) {
+        return customizer.compose(new ParameterTypeArgumentConverterRegistryCustomizer(environment));
     }
 }

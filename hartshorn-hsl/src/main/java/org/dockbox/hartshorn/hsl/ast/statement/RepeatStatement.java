@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ public class RepeatStatement extends BodyStatement {
 
     private final Expression value;
 
-    public RepeatStatement(final Expression value, final BlockStatement loopBody) {
+    public RepeatStatement(Expression value, BlockStatement loopBody) {
         super(value, loopBody);
         this.value = value;
     }
@@ -33,7 +33,7 @@ public class RepeatStatement extends BodyStatement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

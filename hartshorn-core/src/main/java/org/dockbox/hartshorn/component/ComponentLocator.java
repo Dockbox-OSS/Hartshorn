@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Collection;
 
-public interface ComponentLocator {
+import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.util.option.Option;
 
-    Collection<ComponentContainer> containers();
+public interface ComponentLocator extends ContextCarrier {
 
-    Collection<ComponentContainer> containers(ComponentType functional);
+    Collection<ComponentContainer<?>> containers();
 
-    Option<ComponentContainer> container(final Class<?> type);
+    Collection<ComponentContainer<?>> containers(ComponentType functional);
 
-    <T> void validate(Key<T> key);
+    Option<ComponentContainer<?>> container(Class<?> type);
+
+    <T> void validate(ComponentKey<T> key);
 }

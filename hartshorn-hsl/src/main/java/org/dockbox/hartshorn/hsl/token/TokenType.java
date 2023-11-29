@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.util.function.Function;
  * token type.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public enum TokenType {
     // Literals
@@ -88,7 +88,7 @@ public enum TokenType {
     PREFIX(builder -> builder.keyword(true).ok()),
     INFIX(builder -> builder.keyword(true).ok()),
     CLASS(builder -> builder.keyword(true).ok()),
-    FUN(builder -> builder.keyword(true).ok()),
+    FUNCTION(builder -> builder.keyword(true).ok()),
     EXTENDS(builder -> builder.keyword(true).ok()),
     ELSE(builder -> builder.keyword(true).ok()),
     TRUE(builder -> builder.keyword(true).ok()),
@@ -102,6 +102,7 @@ public enum TokenType {
     CASE(builder -> builder.keyword(true).ok()),
     DEFAULT(builder -> builder.keyword(true).ok()),
     CONSTRUCTOR(builder -> builder.keyword(true).ok()),
+    FINAL(builder -> builder.keyword(true).ok()),
 
     // Standalone statements
     IF(builder -> builder.keyword(true).standaloneStatement(true).ok()),
@@ -113,23 +114,44 @@ public enum TokenType {
     CONTINUE(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     RETURN(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     TEST(builder -> builder.keyword(true).standaloneStatement(true).ok()),
-    USING(builder -> builder.keyword(true).standaloneStatement(true).ok()),
+    IMPORT(builder -> builder.keyword(true).standaloneStatement(true).ok()),
     SWITCH(builder -> builder.keyword(true).standaloneStatement(true).ok()),
 
-    // Reserved words/characters
-    OPERATOR(builder -> builder.keyword(true).ok()),
-
-    STATIC(builder -> builder.keyword(true).ok()),
-    FINAL(builder -> builder.keyword(true).ok()),
-
-    ABSTRACT(builder -> builder.keyword(true).ok()),
-    OVERRIDE(builder -> builder.keyword(true).ok()),
-    INTERFACE(builder -> builder.keyword(true).ok()),
-    IMPLEMENTS(builder -> builder.keyword(true).ok()),
-
+    // Modifiers
     PUBLIC(builder -> builder.keyword(true).ok()),
     PRIVATE(builder -> builder.keyword(true).ok()),
 
+    // Reserved words/characters
+    OPERATOR(builder -> builder.keyword(true).reserved(true).ok()),
+
+    STATIC(builder -> builder.keyword(true).reserved(true).ok()),
+
+    ABSTRACT(builder -> builder.keyword(true).reserved(true).ok()),
+    OVERRIDE(builder -> builder.keyword(true).reserved(true).ok()),
+    INTERFACE(builder -> builder.keyword(true).reserved(true).ok()),
+    IMPLEMENTS(builder -> builder.keyword(true).reserved(true).ok()),
+    ENUM(builder -> builder.keyword(true).reserved(true).ok()),
+
+    ASSERT(builder -> builder.keyword(true).reserved(true).ok()),
+
+    THROW(builder -> builder.keyword(true).reserved(true).ok()),
+    TRY(builder -> builder.keyword(true).reserved(true).ok()),
+    CATCH(builder -> builder.keyword(true).reserved(true).ok()),
+    FINALLY(builder -> builder.keyword(true).reserved(true).ok()),
+
+    AS(builder -> builder.keyword(true).reserved(true).ok()),
+    IS(builder -> builder.keyword(true).reserved(true).ok()),
+    NEW(builder -> builder.keyword(true).reserved(true).ok()),
+    TYPEOF(builder -> builder.keyword(true).reserved(true).ok()),
+    INSTANCEOF(builder -> builder.keyword(true).reserved(true).ok()),
+
+    DELETE(builder -> builder.keyword(true).reserved(true).ok()),
+
+    WITH(builder -> builder.keyword(true).reserved(true).ok()),
+    YIELD(builder -> builder.keyword(true).reserved(true).ok()),
+
+    AWAIT(builder -> builder.keyword(true).reserved(true).ok()),
+    ASYNC(builder -> builder.keyword(true).reserved(true).ok()),
     ;
 
     private final TokenMetaData metaData;
@@ -142,8 +164,8 @@ public enum TokenType {
         this(TokenMetaDataBuilder::ok);
     }
 
-    TokenType(final char representation) {
-        this(representation + "");
+    TokenType(char representation) {
+        this(String.valueOf(representation));
     }
 
     /**
@@ -151,8 +173,8 @@ public enum TokenType {
      * will not be a keyword or standalone statement.
      * @param representation The static representation of the token type.
      */
-    TokenType(final String representation) {
-        this(b -> b.representation(representation).ok());
+    TokenType(String representation) {
+        this(builder -> builder.representation(representation).ok());
     }
 
     /**
@@ -160,7 +182,7 @@ public enum TokenType {
      * the new {@link TokenType}.
      * @param builder The builder to use to create the {@link TokenMetaData} of the new {@link TokenType}.
      */
-    TokenType(final Function<TokenMetaDataBuilder, TokenMetaData> builder) {
+    TokenType(Function<TokenMetaDataBuilder, TokenMetaData> builder) {
         this.metaData = builder.apply(TokenMetaData.builder(this));
     }
 
@@ -186,6 +208,13 @@ public enum TokenType {
     }
 
     /**
+     * @see TokenMetaData#reserved()
+     */
+    public boolean reserved() {
+        return this.metaData.reserved();
+    }
+
+    /**
      * @see TokenMetaData#assignsWith()
      */
     public TokenType assignsWith() {
@@ -197,8 +226,8 @@ public enum TokenType {
      * @return All token types which represent keywords.
      */
     public static Map<String, TokenType> keywords() {
-        final Map<String, TokenType> keywords = new ConcurrentHashMap<>();
-        for (final TokenType tokenType : TokenType.values()) {
+        Map<String, TokenType> keywords = new ConcurrentHashMap<>();
+        for (TokenType tokenType : TokenType.values()) {
             if (tokenType.keyword()) {
                 keywords.put(tokenType.representation(), tokenType);
             }

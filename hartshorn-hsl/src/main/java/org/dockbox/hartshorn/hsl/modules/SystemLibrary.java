@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * Standard library granting access to environment variables.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class SystemLibrary {
 
@@ -33,17 +33,19 @@ public class SystemLibrary {
     /**
      * @see System#getenv(String)
      */
-    public String env(final String program) {
+    public String env(String program) {
         return System.getenv(program);
     }
 
-    public void print(final Object object) {
-        final String text = this.stringify(object);
+    public void print(Object object) {
+        String text = this.stringify(object);
         this.logger.info(text);
     }
 
-    public String stringify(final Object object) {
-        if (object == null) return TokenType.NULL.representation();
+    public String stringify(Object object) {
+        if (object == null) {
+            return TokenType.NULL.representation();
+        }
         // Hack. Work around Java adding ".0" to integer-valued doubles.
         if (object instanceof Double) {
             String text = object.toString();

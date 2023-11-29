@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FinalizableStatement;
@@ -29,27 +32,24 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 public class FinalDeclarationStatementParser implements ASTNodeParser<FinalizableStatement> {
 
     @Override
-    public Option<FinalizableStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<FinalizableStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.FINAL)) {
-            final Token current = parser.peek();
-            final FinalizableStatement finalizable = switch (current.type()) {
+            Token current = parser.peek();
+            FinalizableStatement finalizable = switch (current.type()) {
                 case PREFIX, INFIX -> {
                     parser.advance();
-                    if (parser.check(TokenType.FUN)) {
+                    if (parser.check(TokenType.FUNCTION)) {
                         yield lookupFinalizableFunction(parser, validator, parser.peek());
                     }
                     else {
                         throw new ScriptEvaluationError("Unexpected token '" + current.lexeme() + "' at line " + current.line() + ", column " + current.column(), Phase.PARSING, current);
                     }
                 }
-                case FUN -> lookupFinalizableFunction(parser, validator, current);
+                case FUNCTION -> lookupFinalizableFunction(parser, validator, current);
                 case VAR -> delegateParseStatement(parser, validator, VariableStatement.class, "variable", current);
                 case CLASS -> delegateParseStatement(parser, validator, ClassStatement.class, "class", current);
                 case NATIVE -> delegateParseStatement(parser, validator, NativeFunctionStatement.class, "native function", current);
@@ -60,15 +60,15 @@ public class FinalDeclarationStatementParser implements ASTNodeParser<Finalizabl
         return Option.empty();
     }
 
-    @NotNull
-    private static FinalizableStatement delegateParseStatement(final TokenParser parser, final TokenStepValidator validator, final Class<? extends FinalizableStatement> statement, final String statementType, final Token current) {
+    @NonNull
+    private static FinalizableStatement delegateParseStatement(TokenParser parser, TokenStepValidator validator, Class<? extends FinalizableStatement> statement, String statementType, Token current) {
         return parser.firstCompatibleParser(statement)
                 .flatMap(nodeParser -> nodeParser.parse(parser, validator))
                 .orElseThrow(() -> new ScriptEvaluationError("Failed to parse %s statement".formatted(statementType), Phase.PARSING, current));
     }
 
-    @NotNull
-    private static Function lookupFinalizableFunction(final TokenParser parser, final TokenStepValidator validator, final Token current) {
+    @NonNull
+    private static Function lookupFinalizableFunction(TokenParser parser, TokenStepValidator validator, Token current) {
         return parser.firstCompatibleParser(Function.class)
                 .flatMap(functionParser -> functionParser.parse(parser, validator))
                 .orElseThrow(() -> new ScriptEvaluationError("Failed to parse function", Phase.PARSING, current));

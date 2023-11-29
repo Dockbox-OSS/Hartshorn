@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public class ForStatement extends BodyStatement {
     private final Expression condition;
     private final Statement increment;
 
-    public ForStatement(final VariableStatement initializer, final Expression condition, final Statement increment, final BlockStatement loopBody) {
+    public ForStatement(VariableStatement initializer, Expression condition, Statement increment, BlockStatement loopBody) {
         super(initializer, loopBody);
         this.initializer = initializer;
         this.condition = condition;
@@ -45,7 +45,7 @@ public class ForStatement extends BodyStatement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public class FieldStatement extends FinalizableStatement implements MemberStatem
     private final Token name;
     private final Expression initializer;
 
-    public FieldStatement(final Token modifier, final Token name, final Expression initializer, final boolean isFinal) {
+    public FieldStatement(Token modifier, Token name, Expression initializer, boolean isFinal) {
         super(modifier != null ? modifier : name, isFinal);
         this.modifier = modifier;
         this.name = name;
@@ -49,7 +49,7 @@ public class FieldStatement extends FinalizableStatement implements MemberStatem
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

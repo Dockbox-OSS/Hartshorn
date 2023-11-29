@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
@@ -31,19 +35,15 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 /**
  * Represents a class definition inside a script. The class is identified by its name, and
  * can carry a variety of additional information such as the super class, methods, and an
  * optional super class.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
-public final class VirtualClass extends AbstractFinalizable implements ClassReference {
+public class VirtualClass extends AbstractFinalizable implements ClassReference {
 
     private final String name;
     private final ClassReference superClass;
@@ -53,14 +53,14 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
     private final Map<String, FieldStatement> fields;
     private final boolean isDynamic;
 
-    public VirtualClass(final String name,
-                        final ClassReference superClass,
-                        final VirtualFunction constructor,
-                        final VariableScope variableScope,
-                        final Map<String, VirtualFunction> methods,
-                        final Map<String, FieldStatement> fields,
-                        final boolean finalized,
-                        final boolean isDynamic
+    public VirtualClass(String name,
+                        ClassReference superClass,
+                        VirtualFunction constructor,
+                        VariableScope variableScope,
+                        Map<String, VirtualFunction> methods,
+                        Map<String, FieldStatement> fields,
+                        boolean finalized,
+                        boolean isDynamic
     ) {
         super(finalized);
         this.name = name;
@@ -111,7 +111,13 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
         return this.fields;
     }
 
-    public FieldStatement field(final String name) {
+    /**
+     * Looks up a field by name. If no field is found, {@code null} is returned.
+     *
+     * @param name The name of the field.
+     * @return The field, or {@code null} if no field is found.
+     */
+    public FieldStatement field(String name) {
         return this.fields.get(name);
     }
 
@@ -123,7 +129,7 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
      * @param function
      *         The function to add.
      */
-    public void addMethod(final String name, final VirtualFunction function) {
+    public void addMethod(String name, VirtualFunction function) {
         this.methods.put(name, function);
     }
 
@@ -136,7 +142,7 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
      * @return The method, or {@code null} if no method is found.
      */
     @Override
-    public MethodReference method(final String name) {
+    public MethodReference method(String name) {
         if (this.methods.containsKey(name)) {
             return this.methods.get(name);
         }
@@ -156,6 +162,13 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
         return this.variableScope;
     }
 
+    /**
+     * Returns whether this class is dynamic. A dynamic class is a class that does not
+     * have strictly defined properties, but rather allows scripts to add properties
+     * at runtime.
+     *
+     * @return {@code true} if this class is dynamic, otherwise {@code false}.
+     */
     public boolean isDynamic() {
         return this.isDynamic;
     }
@@ -166,19 +179,19 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
     }
 
     @Override
-    public Object call(final Token at, final Interpreter interpreter, final InstanceReference instance, final List<Object> arguments) throws ApplicationException {
+    public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
         if (instance != null) {
             throw new ScriptEvaluationError("Cannot call a class as an instance", Phase.INTERPRETING, at);
         }
         if (this.superClass instanceof ExternalClass) {
-            final CompositeInstance<?> compositeInstance = new CompositeInstance<>(this);
+            CompositeInstance<?> compositeInstance = new CompositeInstance<>(this);
             compositeInstance.makeInstance(at, interpreter, arguments, this.constructor());
             return compositeInstance;
         }
         else {
-            final InstanceReference virtualInstance = new VirtualInstance(this);
+            InstanceReference virtualInstance = new VirtualInstance(this);
             // Acts as a virtual constructor
-            final VirtualFunction initializer = this.constructor();
+            VirtualFunction initializer = this.constructor();
             if (initializer != null) {
                 initializer.bind(virtualInstance).call(at, interpreter, virtualInstance, arguments);
             }
@@ -192,10 +205,15 @@ public final class VirtualClass extends AbstractFinalizable implements ClassRefe
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        final var that = (VirtualClass) obj;
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        VirtualClass that = (VirtualClass) obj;
         return Objects.equals(this.name, that.name) &&
                 Objects.equals(this.superClass, that.superClass) &&
                 Objects.equals(this.constructor, that.constructor) &&

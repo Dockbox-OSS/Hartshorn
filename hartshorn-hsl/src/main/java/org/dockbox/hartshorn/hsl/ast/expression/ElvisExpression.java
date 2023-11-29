@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ public class ElvisExpression extends Expression {
     private final Token elvisOpe;
     private final Expression rightExp;
 
-    public ElvisExpression(final Expression condition,
-                           final Token elvisOpe,
-                           final Expression rightExp) {
+    public ElvisExpression(Expression condition,
+                           Token elvisOpe,
+                           Expression rightExp) {
         super(elvisOpe);
         this.condition = condition;
         this.elvisOpe = elvisOpe;
@@ -47,7 +47,7 @@ public class ElvisExpression extends Expression {
     }
 
     @Override
-    public <R> R accept(final ExpressionVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

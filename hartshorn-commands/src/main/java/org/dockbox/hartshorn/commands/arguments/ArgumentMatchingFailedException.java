@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.commands.arguments;
 import org.dockbox.hartshorn.i18n.Message;
 
 public class ArgumentMatchingFailedException extends ConverterException {
-    public ArgumentMatchingFailedException(final Message message) {
+    public ArgumentMatchingFailedException(Message message) {
         this(message.string());
     }
 
-    public ArgumentMatchingFailedException(final String message) {
+    public ArgumentMatchingFailedException(String message) {
         super(message);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,19 @@
 
 package org.dockbox.hartshorn.component.condition;
 
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.inject.processing.ProviderContextList;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 
 public class AbsentBindingCondition implements Condition {
 
     @Override
-    public ConditionResult matches(final ConditionContext context) {
-        final ProviderContextList listContext = context.applicationContext().first(ProviderContextList.class).orNull();
+    public ConditionResult matches(ConditionContext context) {
         return context.annotatedElement().annotations().get(RequiresAbsentBinding.class).map(condition -> {
-            final Key<?> key = Key.of(condition.value(), condition.name());
-            if (listContext != null && listContext.containsKey(key)) {
-                return ConditionResult.matched();
-            }
-            else return ConditionResult.notFound("Binding", String.valueOf(key));
+            ComponentKey<?> key = ComponentKey.of(condition.value(), condition.name());
+            BindingHierarchy<?> hierarchy = context.applicationContext().hierarchy(key);
+            return hierarchy.size() > 0
+                    ? ConditionResult.matched()
+                    : ConditionResult.notFound("Binding", String.valueOf(key));
         }).orElse(ConditionResult.invalidCondition("absent binding"));
     }
 }

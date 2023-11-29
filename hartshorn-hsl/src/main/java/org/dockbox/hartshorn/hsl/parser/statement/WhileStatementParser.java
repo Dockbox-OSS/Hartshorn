@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,12 @@ import java.util.Set;
 public class WhileStatementParser extends AbstractBodyStatementParser<WhileStatement> {
 
     @Override
-    public Option<WhileStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<WhileStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.WHILE)) {
             validator.expectAfter(TokenType.LEFT_PAREN, TokenType.WHILE);
-            final Expression condition = parser.expression();
+            Expression condition = parser.expression();
             validator.expectAfter(TokenType.RIGHT_PAREN, "while condition");
-            final BlockStatement loopBody = this.blockStatement("while", condition, parser, validator);
+            BlockStatement loopBody = this.blockStatement("while", condition, parser, validator);
             return Option.of(new WhileStatement(condition, loopBody));
         }
         return Option.empty();

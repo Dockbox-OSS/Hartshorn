@@ -7,11 +7,11 @@ class User {
         this.age = age;
     }
 
-    fun getAge() {
+    function getAge() {
         return this.age;
     }
 
-    fun setAge(age) {
+    function setAge(age) {
         this.age = age;
     }
 }

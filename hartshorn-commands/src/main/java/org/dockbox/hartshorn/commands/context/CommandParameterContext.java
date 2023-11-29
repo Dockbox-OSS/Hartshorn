@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,38 +16,22 @@
 
 package org.dockbox.hartshorn.commands.context;
 
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
 /**
- * Type used to store a {@link java.lang.reflect.Method}'s parameter and the index of said
- * parameter.
+ * Type used to store a {@link MethodView}'s parameter and the index of said parameter.
  */
-public class CommandParameterContext {
-
-    private final ParameterView<?> parameter;
-    private final int index;
-
-    public CommandParameterContext(final ParameterView<?> parameter, final int index) {
-        this.parameter = parameter;
-        this.index = index;
-    }
-
-    public ParameterView<?> parameter() {
-        return this.parameter;
-    }
-
-    public int index() {
-        return this.index;
-    }
+public record CommandParameterContext(ParameterView<?> parameter, int index) {
 
     /**
      * Checks if the provided type is equal to, or a supertype of, the stored parameter's type.
      *
      * @param type The type to compare against
      *
-     * @return <code>true</code> if the provided type is equal or a supertype, else <code>false</code>
+     * @return {@code true} if the provided type is equal or a supertype, else {@code false}
      */
-    public boolean is(final Class<?> type) {
+    public boolean is(Class<?> type) {
         return this.parameter().type().isChildOf(type);
     }
 

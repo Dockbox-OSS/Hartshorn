@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.inject.Provider;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.SortedSet;
+
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A hierarchical representation of type providers. Each entry is represented by a {@link Entry}
@@ -38,7 +39,7 @@ import java.util.Map.Entry;
  *
  * @param <C> The type of type {@code C} that the hierarchy is for.
  * @author Guus Lieben
- * @since 21.4
+ * @since 0.4.3
  */
 public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>>>, ContextCarrier {
 
@@ -104,11 +105,25 @@ public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>
     Option<Provider<C>> get(int priority);
 
     /**
-     * Gets the {@link Key} of the current hierarchy, containing a {@link Class}
+     * Gets the priority of the highest priority provider in the hierarchy.
+     *
+     * @return The highest priority, or {@code -1} if the hierarchy is empty.
+     */
+    int highestPriority();
+
+    /**
+     * Gets all priorities in the hierarchy, in ascending order.
+     *
+     * @return All priorities.
+     */
+    SortedSet<Integer> priorities();
+
+    /**
+     * Gets the {@link ComponentKey} of the current hierarchy, containing a {@link Class}
      * of type {@code C}, and a potential {@link jakarta.inject.Named} instance.
      *
      * @return The key of the current hierarchy.
-     * @see Key
+     * @see ComponentKey
      */
-    Key<C> key();
+    ComponentKey<C> key();
 }

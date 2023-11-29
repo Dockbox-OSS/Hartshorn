@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.introspect.ViewContextAdapter;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -29,41 +32,49 @@ import org.dockbox.hartshorn.util.option.Option;
  * <p>If no injectable constructors can be found, the default constructor is used instead. If this
  * constructor is not injectable, an {@link IllegalStateException} is thrown.
  *
- * @param <C>
- *         The type of the class to create.
+ * @param <C> The type of the class to create.
  *
  * @author Guus Lieben
  * @see Provider
  * @see SupplierProvider
- * @since 21.4
+ * @since 0.4.3
  */
-public class ContextDrivenProvider<C> implements Provider<C> {
+public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
 
-    private final Class<? extends C> context;
+    private final ComponentKey<? extends C> context;
     private ConstructorView<? extends C> optimalConstructor;
 
-    public ContextDrivenProvider(final Class<? extends C> type) {
+    public ContextDrivenProvider(ComponentKey<? extends C> type) {
         this.context = type;
     }
 
     @Override
-    public final Option<ObjectContainer<C>> provide(final ApplicationContext context) {
-        return this.optimalConstructor(context)
-                .flatMap(constructor -> constructor.createWithContext().rethrowUnchecked())
-                .map(this.type()::cast)
-                .map(instance -> new ObjectContainer<>(instance, false));
+    public Option<ObjectContainer<C>> provide(ApplicationContext context) throws ApplicationException {
+        Option<? extends ConstructorView<? extends C>> constructor = this.optimalConstructor(context);
+        if (constructor.absent()) {
+            return Option.empty();
+        }
+
+        ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
+        return adapter.scope(this.context.scope()).create(constructor.get())
+                .mapError(error -> new ApplicationException("Failed to create instance of type " + this.type().getName(), error))
+                .rethrow()
+                .cast(this.type())
+                .map(ComponentObjectContainer::new);
     }
 
-    protected Option<? extends ConstructorView<? extends C>> optimalConstructor(final ApplicationContext applicationContext) {
-        final TypeView<? extends C> typeView = applicationContext.environment().introspect(this.type());
+    protected Option<? extends ConstructorView<? extends C>> optimalConstructor(ApplicationContext applicationContext) throws ApplicationException {
+        TypeView<? extends C> typeView = applicationContext.environment().introspector().introspect(this.type());
         if (this.optimalConstructor == null) {
-            this.optimalConstructor = CyclingConstructorAnalyzer.findConstructor(typeView)
-                    .rethrowUnchecked().orNull();
+            this.optimalConstructor = ComponentConstructorResolver.create(applicationContext).findConstructor(typeView)
+                    .rethrow()
+                    .orNull();
         }
         return Option.of(this.optimalConstructor);
     }
 
+    @Override
     public Class<? extends C> type() {
-        return this.context;
+        return this.context.type();
     }
 }

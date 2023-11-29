@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.inject.binding.Bound;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.ArrayList;
@@ -43,17 +42,16 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
     private final FieldStatementParser fieldParser;
 
     @Inject
-    @Bound
-    public ClassStatementParser(final FieldStatementParser fieldParser) {
+    public ClassStatementParser(FieldStatementParser fieldParser) {
         this.fieldParser = fieldParser;
     }
 
     @Override
-    public Option<ClassStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<ClassStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.CLASS)) {
-            final Token name = validator.expect(TokenType.IDENTIFIER, "class name");
+            Token name = validator.expect(TokenType.IDENTIFIER, "class name");
 
-            final boolean isDynamic = parser.match(TokenType.QUESTION_MARK);
+            boolean isDynamic = parser.match(TokenType.QUESTION_MARK);
 
             VariableExpression superClass = null;
             if (parser.match(TokenType.EXTENDS)) {
@@ -63,11 +61,11 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
 
             validator.expectBefore(TokenType.LEFT_BRACE, "class body");
 
-            final List<FunctionStatement> methods = new ArrayList<>();
-            final List<FieldStatement> fields = new ArrayList<>();
+            List<FunctionStatement> methods = new ArrayList<>();
+            List<FieldStatement> fields = new ArrayList<>();
             ConstructorStatement constructor = null;
             while (!parser.check(TokenType.RIGHT_BRACE) && !parser.isAtEnd()) {
-                final Statement declaration = this.classBodyStatement(parser, validator);
+                Statement declaration = this.classBodyStatement(parser, validator);
                 if (declaration instanceof ConstructorStatement constructorStatement) {
                     constructor = constructorStatement;
                 }
@@ -90,11 +88,11 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
         return Option.empty();
     }
 
-    private Statement classBodyStatement(final TokenParser parser, final TokenStepValidator validator) {
+    private Statement classBodyStatement(TokenParser parser, TokenStepValidator validator) {
         if (parser.check(TokenType.CONSTRUCTOR)) {
             return this.handleDelegate(parser, validator, parser.firstCompatibleParser(ConstructorStatement.class));
         }
-        else if (parser.check(TokenType.FUN)) {
+        else if (parser.check(TokenType.FUNCTION)) {
             return this.handleDelegate(parser, validator, parser.firstCompatibleParser(FunctionStatement.class));
         }
         else {
@@ -102,10 +100,10 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
         }
     }
 
-    private <T extends Statement> T handleDelegate(final TokenParser parser, final TokenStepValidator validator,
-                                                   final Option<ASTNodeParser<T>> statement) {
+    private <T extends Statement> T handleDelegate(TokenParser parser, TokenStepValidator validator,
+                                                   Option<ASTNodeParser<T>> statement) {
         return statement
-                .flatMap(p -> p.parse(parser, validator))
+                .flatMap(nodeParser -> nodeParser.parse(parser, validator))
                 .attempt(ScriptEvaluationError.class)
                 .rethrow()
                 .orNull();

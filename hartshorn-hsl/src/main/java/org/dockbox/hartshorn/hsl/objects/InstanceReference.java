@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,22 @@ package org.dockbox.hartshorn.hsl.objects;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * Represents a reference to an instance of a class. This could represent e.g. an instance of a
+ * script-defined class, or a class loaded from a Java class file. Exact semantics are defined by
+ * the implementation.
+ *
+ * @author Guus Lieben
+ * @since 0.4.12
+ */
 public interface InstanceReference extends PropertyContainer {
 
+    /**
+     * Returns the type of the instance. This is the type of the class that the instance is an
+     * instance of. This may be a real or a synthetic type.
+     *
+     * @return The type of the instance.
+     */
     @NonNull
     ClassReference type();
-
 }

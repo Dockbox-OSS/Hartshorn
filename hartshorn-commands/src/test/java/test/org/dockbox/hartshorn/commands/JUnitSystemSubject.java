@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.i18n.Message;
@@ -23,13 +24,20 @@ import org.dockbox.hartshorn.i18n.Message;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.inject.Inject;
+
 @Component
 public class JUnitSystemSubject extends SystemSubject {
 
     private final List<Message> received = new ArrayList<>();
 
+    @Inject
+    public JUnitSystemSubject(ApplicationContext applicationContext) {
+        super(applicationContext);
+    }
+
     @Override
-    public void send(final Message text) {
+    public void send(Message text) {
         this.received.add(text);
     }
 

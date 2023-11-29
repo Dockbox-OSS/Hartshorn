@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.commands.extension;
 
-import org.dockbox.hartshorn.util.Identifiable;
+import java.util.UUID;
+
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-
-import java.util.UUID;
+import org.dockbox.hartshorn.util.Identifiable;
 
 /**
  * Type to allow for commands to be extended without modifying the underlying
@@ -48,7 +48,7 @@ public interface CommandExecutorExtension {
      *
      * @param context The executor context
      *
-     * @return <code>true</code> if the executor should be modified, or <code>false</code>
+     * @return {@code true} if the executor should be modified, or {@code false}
      */
     boolean extend(CommandExecutorContext context);
 
@@ -60,10 +60,9 @@ public interface CommandExecutorExtension {
      *
      * @return The unique ID
      */
-    default String id(final Identifiable sender, final CommandContext context) {
-        final UUID uuid = sender.uniqueId();
-        final String alias = context.alias();
+    default String id(Identifiable sender, CommandContext context) {
+        UUID uuid = sender.uniqueId();
+        String alias = context.alias();
         return uuid + "$" + alias;
     }
-
 }

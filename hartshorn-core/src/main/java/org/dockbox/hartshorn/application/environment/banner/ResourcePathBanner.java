@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,18 +25,18 @@ public class ResourcePathBanner implements Banner {
 
     private final Path resourcePath;
 
-    public ResourcePathBanner(final Path resourcePath) {
+    public ResourcePathBanner(Path resourcePath) {
         this.resourcePath = resourcePath;
     }
 
     @Override
-    public void print(final Logger logger) {
+    public void print(Logger logger) {
         try {
-            for (final String line : Files.readAllLines(this.resourcePath)) {
+            for (String line : Files.readAllLines(this.resourcePath)) {
                 logger.info(line);
             }
             logger.info("");
-        } catch (final Exception e) {
+        } catch (Exception e) {
             logger.error("Failed to print banner", e);
         }
     }

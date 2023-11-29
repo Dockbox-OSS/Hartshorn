@@ -1,4 +1,4 @@
-fun sayHi(first, last) {
+function sayHi(first, last) {
   print("Hi, " + first + " " + last + "!");
 }
 

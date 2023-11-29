@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,32 @@
 package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.Key;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-public abstract class DefaultApplicationAwareContext extends DefaultContext implements ApplicationAwareContext {
+public abstract class DefaultApplicationAwareContext extends DefaultProvisionContext implements ApplicationAwareContext {
 
     private final ApplicationContext applicationContext;
 
-    public DefaultApplicationAwareContext(final ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    @SuppressWarnings({ "OverridableMethodCallDuringObjectConstruction", "InstanceofThis" })
+    protected DefaultApplicationAwareContext(ApplicationContext applicationContext) {
+        if (applicationContext != null) {
+            this.applicationContext = applicationContext;
+        }
+        else {
+            if (this instanceof ApplicationContext self) {
+                this.applicationContext = self;
+            }
+            else if (!this.permitNullableApplicationContext()) {
+                throw new IllegalStateException("No application context available");
+            }
+            else {
+                this.applicationContext = null;
+            }
+        }
+    }
+
+    protected boolean permitNullableApplicationContext() {
+        return false;
     }
 
     @Override
@@ -35,36 +51,14 @@ public abstract class DefaultApplicationAwareContext extends DefaultContext impl
     }
 
     @Override
-    public <C extends Context> Option<C> first(final Class<C> context) {
-        return super.first(context).orCompute(() -> {
-            final TypeView<C> typeView = this.applicationContext().environment().introspect(context);
-            if (typeView.annotations().has(AutoCreating.class)) {
-                this.applicationContext().log().debug("Context with key " + Key.of(context) + " does not exist in current context (" + this.getClass().getSimpleName() + "), but is marked to be automatically created");
-                final C created = this.applicationContext().get(context);
-                this.add(created);
-                return created;
+    public <C extends Context> Option<C> first(ContextIdentity<C> key) {
+        return super.first(key).orCompute(() -> {
+            if (key instanceof ContextKey<C> contextKey) {
+                C context = contextKey.create(this.applicationContext);
+                this.add(context);
+                return context;
             }
-            else return null;
+            return null;
         });
-    }
-
-    @Override
-    public <C extends Context> Option<C> first(final Class<C> context, final String name) {
-        return super.first(context, name).orCompute(() -> {
-            final TypeView<C> typeView = this.applicationContext().environment().introspect(context);
-            if (typeView.annotations().has(AutoCreating.class)) {
-                this.applicationContext().log().debug("Context with key " + Key.of(context, name) + " does not exist in current context (" + this.getClass().getSimpleName() + "), but is marked to be automatically created");
-                final C created = this.applicationContext().get(context);
-                this.add(name, created);
-                return created;
-            }
-            else return null;
-        });
-    }
-
-    @Override
-    public <C extends Context> Option<C> first(final Key<C> key) {
-        if (key.name() == null) return this.first(key.type());
-        else return this.first(key.type(), key.name().value());
     }
 }

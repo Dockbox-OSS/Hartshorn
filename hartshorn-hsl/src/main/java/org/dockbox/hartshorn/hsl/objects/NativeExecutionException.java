@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,14 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * to the active runtime.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
 public class NativeExecutionException extends ApplicationException {
-    public NativeExecutionException(final String message, final Throwable e) {
-        super(message, e);
+    public NativeExecutionException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public NativeExecutionException(final String message) {
+    public NativeExecutionException(String message) {
         super(message);
     }
 }

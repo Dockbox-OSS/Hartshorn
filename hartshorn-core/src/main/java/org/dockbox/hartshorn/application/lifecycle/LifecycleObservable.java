@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package org.dockbox.hartshorn.application.lifecycle;
  * {@link LifecycleObserver} interface.
  *
  * @author Guus Lieben
- * @since 21.9
+ * @since 0.4.8
  */
 public interface LifecycleObservable {
 
@@ -32,5 +32,11 @@ public interface LifecycleObservable {
      */
     void register(Observer observer);
 
+    /**
+     * Adds a lazily instantiated lifecycle observer to this observable. The observer is instantiated when it's first
+     * needed.
+     *
+     * @param observer the observer to add
+     */
     void register(Class<? extends Observer> observer);
 }

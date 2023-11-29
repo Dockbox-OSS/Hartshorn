@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,15 @@ package org.dockbox.hartshorn.component;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class ComponentFinalizationException extends ApplicationRuntimeException {
-    public ComponentFinalizationException(final String message) {
+    public ComponentFinalizationException(String message) {
         super(message);
     }
 
-    public ComponentFinalizationException(final String message, final Throwable cause) {
+    public ComponentFinalizationException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ComponentFinalizationException(final Throwable cause) {
+    public ComponentFinalizationException(Throwable cause) {
         super(cause);
     }
 }

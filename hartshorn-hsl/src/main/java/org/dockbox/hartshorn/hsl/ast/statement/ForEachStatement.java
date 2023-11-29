@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public class ForEachStatement extends BodyStatement {
     private final VariableStatement selector;
     private final Expression collection;
 
-    public ForEachStatement(final VariableStatement selector, final Expression collection, final BlockStatement body) {
+    public ForEachStatement(VariableStatement selector, Expression collection, BlockStatement body) {
         super(selector, body);
         this.selector = selector;
         this.collection = collection;
@@ -39,7 +39,7 @@ public class ForEachStatement extends BodyStatement {
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,68 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.component.ComponentPopulator;
 
+/**
+ * Indicates that the values of fields and executables should be automatically populated
+ * by {@link org.dockbox.hartshorn.component.ComponentPopulator}s. Note that this annotation
+ * is typically not required, however {@link ComponentPopulator}s can decide to either not
+ * populate at all if this annotation is absent, or to populate all targets by default.
+ *
+ * <p>Population targets can be specified by using the {@link Populate#value()} attribute. By
+ * default, nothing is populated. All targets are therefore opt-in when using this annotation.
+ *
+ * @author Guus Lieben
+ * @since 0.4.9
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Populate {
-    boolean fields() default true;
-    boolean executables() default true;
+
+    /**
+     * The types of values that should be populated.
+     *
+     * @return The types of values that should be populated.
+     */
+    Type[] value();
+
+    /**
+     * @deprecated since 0.5.0, for removal in 0.6.0. Use {@link #value()} instead.
+     * @return {@code true} if fields should be populated, {@code false} otherwise.
+     */
+    @Deprecated(since = "0.5.0", forRemoval = true)
+    boolean fields() default false;
+
+    /**
+     * @deprecated since 0.5.0, for removal in 0.6.0. Use {@link #value()} instead.
+     * @return {@code true} if executables (e.g. methods) should be populated, {@code false} otherwise.
+     */
+    @Deprecated(since = "0.5.0", forRemoval = true)
+    boolean executables() default false;
+
+    /**
+     * Types of elements that can be populated. Used as a value for {@link Populate#value()}.
+     *
+     * @author Guus Lieben
+     * @since 0.5.0
+     */
+    enum Type {
+        /**
+         * <pre>{@code
+         * @Inject
+         * private MyComponent component;
+         * }</pre>
+         */
+        FIELDS,
+        /**
+         * <pre>{@code
+         * @Inject
+         * public void setComponent(MyComponent component) {
+         *    this.component = component;
+         *    // ...
+         * }
+         * }</pre>
+         */
+        EXECUTABLES,
+    }
 }

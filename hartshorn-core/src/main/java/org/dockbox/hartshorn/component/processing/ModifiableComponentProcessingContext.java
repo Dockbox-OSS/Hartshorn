@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,36 @@
 package org.dockbox.hartshorn.component.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.Key;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.util.IllegalModificationException;
+
+import java.util.function.Consumer;
 
 public class ModifiableComponentProcessingContext<T> extends ComponentProcessingContext<T> {
 
-    public ModifiableComponentProcessingContext(final ApplicationContext applicationContext, final Key<T> key, final T instance) {
+    private final Consumer<T> onLockRequested;
+    private boolean requestInstanceLock = false;
+
+    public ModifiableComponentProcessingContext(ApplicationContext applicationContext, ComponentKey<T> key,
+                                                T instance, Consumer<T> onLockRequested) {
         super(applicationContext, key, instance);
+        this.onLockRequested = onLockRequested;
     }
 
-    public ModifiableComponentProcessingContext<T> instance(final T instance) {
+    public ModifiableComponentProcessingContext<T> instance(T instance) {
+        if (this.requestInstanceLock) {
+            throw new IllegalModificationException("Cannot modify instance after lock has been requested");
+        }
         super.instance = instance;
         return this;
+    }
+
+    public void requestInstanceLock() {
+        this.requestInstanceLock = true;
+        this.onLockRequested.accept(this.instance());
+    }
+
+    public boolean isInstanceLocked() {
+        return this.requestInstanceLock;
     }
 }

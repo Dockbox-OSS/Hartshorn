@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,20 +27,19 @@ import jakarta.inject.Inject;
 
 public class CommandListenerImpl implements CommandListener {
 
+    private final ApplicationContext context;
+    private final CommandGateway gateway;
+
     @Inject
-    private ApplicationContext context;
-    @Inject
-    private CommandGateway gateway;
+    public CommandListenerImpl(ApplicationContext applicationContext, CommandGateway gateway) {
+        this.context = applicationContext;
+        this.gateway = gateway;
+        this.source(SystemSubject.instance(applicationContext));
+    }
 
     private boolean async;
     private InputStream input = System.in;
     private CommandSource source;
-
-    @Inject
-    protected void context(final ApplicationContext applicationContext) {
-        this.context = applicationContext;
-        this.source(SystemSubject.instance(applicationContext));
-    }
 
     public boolean async() {
         return this.async;
@@ -51,26 +50,26 @@ public class CommandListenerImpl implements CommandListener {
     }
 
     @Override
-    public CommandListenerImpl async(final boolean async) {
+    public CommandListenerImpl async(boolean async) {
         this.async = async;
         return this;
     }
 
     @Override
-    public CommandListenerImpl input(final InputStream input) {
+    public CommandListenerImpl input(InputStream input) {
         this.input = input;
         return this;
     }
 
     @Override
-    public CommandListenerImpl source(final CommandSource source) {
+    public CommandListenerImpl source(CommandSource source) {
         this.source = source;
         return this;
     }
 
     @Override
     public void open() {
-        final Runnable task = this.createTask();
+        Runnable task = this.createTask();
 
         if (this.async()) {
             this.context.log().debug("Performing startup task for command CLI asynchronously");
@@ -82,24 +81,26 @@ public class CommandListenerImpl implements CommandListener {
     }
 
     protected Runnable createTask() {
-        return () -> {
-            try (
-                    final InputStream input = this.input();
-                    final Scanner scanner = new Scanner(input)
-            ) {
-                this.context.log().debug("Starting command CLI input listener");
-                while (this.running()) {
-                    final String next = scanner.nextLine();
-                    try {
-                        this.gateway.accept(this.source(), next);
-                    } catch (final ParsingException e) {
-                        this.context.handle(e);
-                    }
+        return this::listenForInput;
+    }
+
+    private void listenForInput() {
+        try (
+                InputStream input = this.input();
+                Scanner scanner = new Scanner(input)
+        ) {
+            this.context.log().debug("Starting command CLI input listener");
+            while (this.running()) {
+                String next = scanner.nextLine();
+                try {
+                    this.gateway.accept(this.source(), next);
+                } catch (ParsingException e) {
+                    this.context.handle(e);
                 }
-            } catch (final IOException e) {
-                this.context.handle(e);
             }
-        };
+        } catch (IOException e) {
+            this.context.handle(e);
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,13 +40,13 @@ public class LexerTests {
             TokenType.PREFIX, TokenType.INFIX,
             TokenType.CLASS, TokenType.EXTENDS,
             TokenType.IF, TokenType.ELSE,
-            TokenType.FUN, TokenType.RETURN, TokenType.NATIVE,
+            TokenType.FUNCTION, TokenType.RETURN, TokenType.NATIVE,
             TokenType.TRUE, TokenType.FALSE,
             TokenType.FOR, TokenType.DO, TokenType.WHILE, TokenType.REPEAT,
             TokenType.BREAK, TokenType.CONTINUE,
             TokenType.SUPER, TokenType.THIS,
             TokenType.NULL, TokenType.TEST,
-            TokenType.VAR, TokenType.USING,
+            TokenType.VAR, TokenType.IMPORT,
     };
 
     private static final List<TokenType> literals = List.of(
@@ -69,9 +69,11 @@ public class LexerTests {
     };
 
     public static Stream<Arguments> tokens() {
-        final List<Arguments> arguments = new ArrayList<>();
-        for (final TokenType type : TokenType.values()) {
-            if (literals.contains(type)) continue;
+        List<Arguments> arguments = new ArrayList<>();
+        for (TokenType type : TokenType.values()) {
+            if (literals.contains(type)) {
+                continue;
+            }
             arguments.add(Arguments.of(type.representation(), type));
         }
         arguments.add(Arguments.of("12.0", TokenType.NUMBER));
@@ -91,60 +93,60 @@ public class LexerTests {
 
     @ParameterizedTest
     @MethodSource("singleCharacterTokens")
-    void testTokenTypesUseConstantsOfSameName(final TokenType type) throws IllegalAccessException, NoSuchFieldException {
-        final String name = type.name();
-        final Field field = TokenConstants.class.getField(name);
+    void testTokenTypesUseConstantsOfSameName(TokenType type) throws IllegalAccessException, NoSuchFieldException {
+        String name = type.name();
+        Field field = TokenConstants.class.getField(name);
         // Should be static and public
-        final char constant = (char) field.get(null);
-        Assertions.assertEquals("" + constant, type.representation());
+        char constant = (char) field.get(null);
+        Assertions.assertEquals(String.valueOf(constant), type.representation());
     }
 
     @ParameterizedTest
     @MethodSource("keywords")
-    void testKeywordsMatchExpectedList(final TokenType type) {
-        final Collection<TokenType> tokenTypes = TokenType.keywords().values();
+    void testKeywordsMatchExpectedList(TokenType type) {
+        Collection<TokenType> tokenTypes = TokenType.keywords().values();
         Assertions.assertTrue(tokenTypes.contains(type));
     }
 
     @ParameterizedTest
     @MethodSource("keywords")
-    void testKeywordsHaveCorrectMetaData(final TokenType type) {
+    void testKeywordsHaveCorrectMetaData(TokenType type) {
         Assertions.assertTrue(type.keyword());
     }
 
     @ParameterizedTest
     @MethodSource("tokens")
-    void testCorrectToken(final String text, final TokenType expected) {
-        final Lexer lexer = new Lexer(text);
-        final List<Token> tokens = lexer.scanTokens();
+    void testCorrectToken(String text, TokenType expected) {
+        Lexer lexer = new Lexer(text);
+        List<Token> tokens = lexer.scanTokens();
 
         Assertions.assertNotNull(tokens);
         Assertions.assertEquals(2, tokens.size());
 
-        final Token token = tokens.get(0);
+        Token token = tokens.get(0);
         Assertions.assertEquals(expected, token.type());
         Assertions.assertEquals(1, token.line());
 
-        final Token eof = tokens.get(1);
+        Token eof = tokens.get(1);
         Assertions.assertEquals(TokenType.EOF, eof.type());
     }
 
     @Test
     void testSingleLineComment() {
-        final Lexer lexer = new Lexer("# Comment");
-        final List<Token> tokens = lexer.scanTokens();
+        Lexer lexer = new Lexer("# Comment");
+        List<Token> tokens = lexer.scanTokens();
 
         Assertions.assertNotNull(tokens);
         Assertions.assertEquals(1, tokens.size());
 
-        final Token token = tokens.get(0);
+        Token token = tokens.get(0);
         Assertions.assertEquals(TokenType.EOF, token.type());
 
-        final List<Comment> comments = lexer.comments();
+        List<Comment> comments = lexer.comments();
         Assertions.assertNotNull(comments);
         Assertions.assertEquals(1, comments.size());
 
-        final Comment comment = comments.get(0);
+        Comment comment = comments.get(0);
         // Comments are not trimmed, include whitespace
         Assertions.assertEquals(" Comment", comment.text());
     }

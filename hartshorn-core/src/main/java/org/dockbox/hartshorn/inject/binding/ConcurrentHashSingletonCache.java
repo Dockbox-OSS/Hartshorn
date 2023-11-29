@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,37 +16,43 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.inject.Key;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.util.IllegalModificationException;
+import org.dockbox.hartshorn.util.option.Option;
+
+/**
+ * A singleton cache implementation that uses a {@link ConcurrentHashMap} to store
+ * instances. This implementation is thread-safe.
+ *
+ * @author Guus Lieben
+ * @since 0.4.11
+ *
+ * @see SingletonCache
+ * @see ConcurrentHashMap
+ */
 public class ConcurrentHashSingletonCache implements SingletonCache {
 
-    private final Map<Key<?>, Object> cache = new ConcurrentHashMap<>();
+    private final Map<ComponentKey<?>, Object> cache = new ConcurrentHashMap<>();
 
     @Override
-    public <T> void put(final Key<T> key, final T instance) {
+    public <T> void put(ComponentKey<T> key, T instance) {
+        if (this.cache.containsKey(key) && this.cache.get(key) != instance) {
+            throw new IllegalModificationException("An instance is already stored for key '" + key + "'");
+        }
         this.cache.put(key, instance);
     }
 
     @Override
-    public <T> T get(final Key<T> key) {
-        return key.type().cast(this.cache.get(key));
+    public <T> Option<T> get(ComponentKey<T> key) {
+        return Option.of(key.type().cast(this.cache.get(key)));
     }
 
     @Override
-    public <T> void remove(final Key<T> key) {
-        this.cache.remove(key);
-    }
-
-    @Override
-    public <T> boolean contains(final Key<T> key) {
+    public <T> boolean contains(ComponentKey<T> key) {
         return this.cache.containsKey(key);
     }
 
-    @Override
-    public <T> void clear() {
-        this.cache.clear();
-    }
 }

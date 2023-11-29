@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import java.util.Map;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
-import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Map;
 
 /**
  * Represents a single nullable {@link Object} instance that can be accessed from an HSL
@@ -37,14 +37,14 @@ import java.util.Map;
  * to the runtime.
  *
  * @author Guus Lieben
- * @since 22.4
+ * @since 0.4.12
  */
-public class ExternalInstance implements InstanceReference, ExternalObjectReference {
+public class ExternalInstance implements ExternalObjectReference {
 
     private final Object instance;
     private final TypeView<Object> type;
 
-    public <T> ExternalInstance(final T instance, final TypeView<T> type) {
+    public <T> ExternalInstance(T instance, TypeView<T> type) {
         if (instance != null && !type.isInstance(instance)) {
             throw new IllegalArgumentException("Instance of type %s is not an instance of %s".formatted(instance.getClass().getName(), type.name()));
         }
@@ -61,26 +61,32 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
     }
 
     @Override
-    public void set(final Token name, final Object value, final VariableScope fromScope) {
+    public void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options) {
         this.type.fields().named(name.lexeme())
-                .map(field -> (FieldView<Object, Object>) field)
                 .peek(field -> field.set(this.instance(), value))
                 .orElseThrow(() -> this.propertyDoesNotExist(name));
     }
 
     @Override
-    public Object get(final Token name, final VariableScope fromScope) {
-        final boolean isMethod = this.type.methods().all().stream()
-                .anyMatch(method -> method.name().equals(name.lexeme()));
+    public Object get(Token name, VariableScope fromScope, ExecutionOptions options) {
+        Object[] methods = this.type.methods().all().stream()
+                .filter(method -> method.name().equals(name.lexeme()))
+                .toArray();
 
-        if (isMethod) return new ExternalFunction(this.type, name.lexeme());
+        if (methods.length > 1 && !options.permitAmbiguousExternalFunctions()) {
+            throw new RuntimeError(name, "Ambiguous method call for method %s".formatted(name.lexeme()));
+        }
+
+        if (methods.length > 0) {
+            return new ExternalFunction(this.type, name.lexeme());
+        }
 
         return this.type.fields().named(name.lexeme())
                 .flatMap(field -> field.get(this.instance()))
                 .orElseThrow(() -> this.propertyDoesNotExist(name));
     }
 
-    private RuntimeError propertyDoesNotExist(final Token name) {
+    private RuntimeError propertyDoesNotExist(Token name) {
         return new RuntimeError(name, "Property %s does not exist on external instance of type %s".formatted(name.lexeme(), this.type.name()));
     }
 
@@ -96,7 +102,7 @@ public class ExternalInstance implements InstanceReference, ExternalObjectRefere
     }
 
     @Override
-    public Object externalObject() {
+    public @Nullable Object externalObject() {
         return this.instance();
     }
 }

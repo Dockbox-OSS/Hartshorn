@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,12 @@ import java.util.Set;
 public class DoWhileStatementParser extends AbstractBodyStatementParser<DoWhileStatement> {
 
     @Override
-    public Option<DoWhileStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<DoWhileStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(TokenType.DO)) {
-            final BlockStatement loopBody = this.blockStatement("do", parser.previous(), parser, validator);
+            BlockStatement loopBody = this.blockStatement("do", parser.previous(), parser, validator);
             validator.expect(TokenType.WHILE);
             validator.expectAfter(TokenType.LEFT_PAREN, TokenType.WHILE);
-            final Expression condition = parser.expression();
+            Expression condition = parser.expression();
             validator.expectAfter(TokenType.RIGHT_PAREN, "do while condition");
             validator.expectAfter(TokenType.SEMICOLON, "do while condition");
             return Option.of(new DoWhileStatement(condition, loopBody));

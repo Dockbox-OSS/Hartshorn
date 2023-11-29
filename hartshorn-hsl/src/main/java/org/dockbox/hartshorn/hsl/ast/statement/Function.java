@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2022 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ import org.dockbox.hartshorn.hsl.token.Token;
 
 public abstract class Function extends FinalizableStatement {
 
-    protected Function(final Token at) {
+    protected Function(Token at) {
         this(at, false);
     }
 
-    protected Function(final ASTNode at, final boolean finalized) {
+    protected Function(ASTNode at, boolean finalized) {
         super(at, finalized);
     }
 }
