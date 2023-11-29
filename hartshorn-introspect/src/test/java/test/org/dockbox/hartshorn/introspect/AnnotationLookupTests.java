@@ -50,6 +50,8 @@ public class AnnotationLookupTests {
     /**
      * Default implementation of {@link AnnotationLookup}, provided as a method
      * to allow overriding in subclasses of this test class.
+     *
+     * @return the annotation lookup instance to use
      */
     protected AnnotationLookup annotationLookup() {
         return new VirtualHierarchyAnnotationLookup();

@@ -32,9 +32,6 @@ public interface TypeParameterView extends View {
 
     TypeView<?> consumedBy();
 
-    /**
-     * If parameter is output, gets original input definition of the parameter if it exists.
-     */
     Option<TypeParameterView> definition();
 
     Set<TypeParameterView> represents();

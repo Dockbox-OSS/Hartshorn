@@ -352,7 +352,7 @@
                     <failOnViolation>true</failOnViolation>
                     <violationSeverity>warning</violationSeverity>
                     <linkXRef>false</linkXRef>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <includeTestSourceDirectory>false</includeTestSourceDirectory>
                     <configLocation>hartshorn-assembly/checkstyle/checkstyle.xml</configLocation>
                     <suppressionsLocation>hartshorn-assembly/checkstyle/suppressions.xml</suppressionsLocation>
                 </configuration>

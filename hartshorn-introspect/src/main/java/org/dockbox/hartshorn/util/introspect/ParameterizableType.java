@@ -171,6 +171,8 @@ public final class ParameterizableType implements Reportable {
          *
          * @param parameters the new parameters
          *
+         * @return Self, for chaining
+         *
          * @throws IllegalArgumentException if the number of parameters does not match the number of type parameters
          */
         public Builder parameters(List<ParameterizableType> parameters) {

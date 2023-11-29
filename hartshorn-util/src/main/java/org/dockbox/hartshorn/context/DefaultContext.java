@@ -31,6 +31,10 @@ import java.util.stream.Stream;
 /**
  * The default implementation of {@link Context}. This implementation uses a {@link SynchronizedHashSetMultiMap} to store the
  * contexts.
+ *
+ * @author Guus Lieben
+ *
+ * @since 0.4.1
  */
 public abstract class DefaultContext implements Context {
 

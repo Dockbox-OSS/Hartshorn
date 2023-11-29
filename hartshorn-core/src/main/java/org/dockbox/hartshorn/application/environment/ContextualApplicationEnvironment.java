@@ -744,6 +744,8 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * Sets whether the application is running in a build environment. This is typically used to disable
          * certain features that are not required in a build environment. This is disabled by default.
          *
+         * @param isBuildEnvironment whether the application is running in a build environment
+         *
          * @return the current {@link Configurer} instance
          */
         public Configurer isBuildEnvironment(boolean isBuildEnvironment) {

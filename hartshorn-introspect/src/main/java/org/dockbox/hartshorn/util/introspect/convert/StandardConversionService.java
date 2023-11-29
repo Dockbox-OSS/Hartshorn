@@ -270,6 +270,8 @@ public class StandardConversionService implements ConversionService, ConverterRe
      * handled by {@link TypeView#defaultOrNull()}.
      *
      * @param registry The registry to register the default value providers to
+     * @param introspector The introspector to use for introspecting types
+     *
      * @see TypeView#defaultOrNull()
      */
     public static void registerDefaultProviders(ConverterRegistry registry, Introspector introspector) {

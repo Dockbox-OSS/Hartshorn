@@ -16,6 +16,16 @@
 
 package org.dockbox.hartshorn.context;
 
+/**
+ * A simple implementation of {@link ContextIdentity}. This implementation does not provide a factory
+ * implementation, and will throw an {@link IllegalStateException} when {@link #create()} is invoked.
+ *
+ * @author Guus Lieben
+ *
+ * @param <T> The type of context that is identified by this instance.
+ *
+ * @since 0.5.0
+ */
 public class SimpleContextIdentity<T extends Context> implements ContextIdentity<T> {
 
     private final Class<T> type;
