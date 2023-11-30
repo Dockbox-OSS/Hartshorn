@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectiveFieldAccess;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectiveFieldWriter;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -159,5 +160,15 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
         collector.property("elementType").write("field");
         collector.property("type").write(this.genericType());
         collector.property("declaredBy").write(this.declaredBy());
+    }
+
+    @Override
+    public boolean isEnclosed() {
+        return true;
+    }
+
+    @Override
+    public Option<EnclosableView> enclosingView() {
+        return Option.of(this.declaredBy());
     }
 }

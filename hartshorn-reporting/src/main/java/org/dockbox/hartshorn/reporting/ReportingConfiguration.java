@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.reporting;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
@@ -29,9 +29,9 @@ import org.dockbox.hartshorn.reporting.component.ComponentDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.component.ComponentProcessorDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.system.SystemDiagnosticsReporter;
 
-@Service
+@Configuration
 @RequiresActivator(UseReporting.class)
-public class ReportingProviders {
+public class ReportingConfiguration {
 
     @Binds
     public Reportable applicationReportable(ApplicationContext applicationContext) {

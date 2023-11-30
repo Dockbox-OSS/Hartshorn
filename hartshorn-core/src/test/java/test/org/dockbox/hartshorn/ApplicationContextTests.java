@@ -95,8 +95,8 @@ import test.org.dockbox.hartshorn.components.SampleFieldImplementation;
 import test.org.dockbox.hartshorn.components.SampleImplementation;
 import test.org.dockbox.hartshorn.components.SampleInterface;
 import test.org.dockbox.hartshorn.components.SampleMetaAnnotatedImplementation;
-import test.org.dockbox.hartshorn.components.SampleProviderService;
-import test.org.dockbox.hartshorn.components.SampleProviders;
+import test.org.dockbox.hartshorn.components.SampleProviderConfiguration;
+import test.org.dockbox.hartshorn.components.SampleConfiguration;
 import test.org.dockbox.hartshorn.components.SampleType;
 import test.org.dockbox.hartshorn.components.SetterInjectedComponent;
 import test.org.dockbox.hartshorn.components.SetterInjectedComponentWithAbsentBinding;
@@ -219,7 +219,7 @@ public class ApplicationContextTests {
     }
 
     @Test
-    @TestComponents(components = SampleProviders.class)
+    @TestComponents(components = SampleConfiguration.class)
     public void testScannedMetaBindingsCanBeProvided() {
 
         // Ensure that the binding is not bound to the default name
@@ -276,7 +276,7 @@ public class ApplicationContextTests {
 
     @ParameterizedTest
     @MethodSource("providers")
-    @TestComponents(components = {SampleFieldImplementation.class, SampleProviderService.class})
+    @TestComponents(components = {SampleFieldImplementation.class, SampleProviderConfiguration.class})
     void testProvidersCanApply(String meta, String name, boolean field, String fieldMeta, boolean singleton) {
         if (field) {
             if (fieldMeta == null) {this.applicationContext.bind(SampleField.class).to(SampleFieldImplementation.class);}
@@ -497,7 +497,7 @@ public class ApplicationContextTests {
             }
 
             DependencyContext<?> dependencyContext = new AutoConfiguringDependencyContext<>(componentKey,
-                    dependencyMap, Scope.DEFAULT_SCOPE.installableScopeType(), -1, BindingType.COMPONENT, origin, () -> null);
+                    dependencyMap, Scope.DEFAULT_SCOPE.installableScopeType(), -1, BindingType.STANDALONE, origin, () -> null);
             dependencyContexts.add(dependencyContext);
         }
 

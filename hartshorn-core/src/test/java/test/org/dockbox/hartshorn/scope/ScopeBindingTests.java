@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
-import test.org.dockbox.hartshorn.scope.ScopedBindingProvider.SampleScope;
+import test.org.dockbox.hartshorn.scope.ScopedBindingConfiguration.SampleScope;
 
 @HartshornTest(includeBasePackages = false)
 public class ScopeBindingTests {
@@ -79,7 +79,7 @@ public class ScopeBindingTests {
     }
 
     @Test
-    @TestComponents(components = ScopedBindingProvider.class)
+    @TestComponents(components = ScopedBindingConfiguration.class)
     void name() {
         String applicationScope = this.applicationContext.get(String.class);
         String scopedValue = this.applicationContext.get(ComponentKey.builder(String.class).scope(new SampleScope()).build());

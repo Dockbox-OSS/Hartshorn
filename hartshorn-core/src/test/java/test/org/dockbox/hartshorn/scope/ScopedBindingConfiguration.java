@@ -16,15 +16,15 @@
 
 package test.org.dockbox.hartshorn.scope;
 
+import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.DirectScopeKey;
 import org.dockbox.hartshorn.component.InstallTo;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
-import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.processing.Binds;
 
-@Service
-public class ScopedBindingProvider {
+@Configuration
+public class ScopedBindingConfiguration {
 
     @Binds
     @InstallTo(SampleScope.class)

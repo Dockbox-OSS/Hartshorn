@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.i18n.support;
+package test.org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.commands.SystemSubject;
+import org.dockbox.hartshorn.commands.annotations.UseCommands;
+import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
-import org.dockbox.hartshorn.i18n.Message;
-import org.dockbox.hartshorn.i18n.TranslationService;
-import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
-import org.dockbox.hartshorn.util.introspect.convert.Converter;
+import org.dockbox.hartshorn.inject.Priority;
 
-@Service
-@RequiresActivator(UseTranslations.class)
-public class MessageConverterProviders {
+import jakarta.inject.Singleton;
 
-    @Binds(type = BindingType.COLLECTION)
-    public Converter<String, Message> stringToMessageConverter(TranslationService translationService) {
-        return new StringToMessageConverter(translationService);
+@Configuration
+@RequiresActivator(UseCommands.class)
+public class TestCommandConfiguration {
+
+    @Binds
+    @Priority(0)
+    @Singleton
+    public SystemSubject systemSubject(ApplicationContext applicationContext) {
+        return new JUnitSystemSubject(applicationContext);
     }
 }

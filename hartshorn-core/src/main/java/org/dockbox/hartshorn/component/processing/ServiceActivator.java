@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import org.dockbox.hartshorn.application.Hartshorn;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
 
 /**
  * Annotation used to mark annotations as service activators. Service activators indicate whether specific components
@@ -54,5 +54,6 @@ public @interface ServiceActivator {
      * @return The base packages to scan for services.
      */
     String[] scanPackages() default { Hartshorn.PACKAGE_PREFIX };
+
     Class<? extends ComponentProcessor>[] processors() default {};
 }

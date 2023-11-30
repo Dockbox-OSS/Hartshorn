@@ -144,7 +144,7 @@ public class DependencyGraphBuilder {
         ComponentKey<?> componentKey = dependencyContext.componentKey();
         PriorityComponentKey key = new PriorityComponentKey(dependencyContext.priority(), componentKey);
         switch (dependencyContext.type()) {
-            case COMPONENT -> nodes.put(key, node);
+            case STANDALONE -> nodes.put(key, node);
             case COLLECTION -> {
                 ComponentKey<? extends ComponentCollection<?>> collectorComponentKey = componentKey.mutable().collector().build();
                 PriorityComponentKey collectorKey = new PriorityComponentKey(dependencyContext.priority(), collectorComponentKey);

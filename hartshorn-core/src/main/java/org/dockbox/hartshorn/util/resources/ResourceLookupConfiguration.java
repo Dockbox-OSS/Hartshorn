@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.util.resources;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 
-@Service
-public class ResourceProviders {
+@Configuration
+public class ResourceLookupConfiguration {
 
     @Binds(type = BindingType.COLLECTION)
     public ResourceLookupStrategy classPathResourceLookupStrategy() {

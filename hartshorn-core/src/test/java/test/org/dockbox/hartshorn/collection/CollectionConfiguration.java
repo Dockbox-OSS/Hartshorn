@@ -14,18 +14,29 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.scan;
+package test.org.dockbox.hartshorn.collection;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.inject.Named;
 
-@Service
-@RequiresActivator(UseDemo.class)
-public class DemoProvider {
+@Configuration
+public class CollectionConfiguration {
+
+    @Binds(type = BindingType.COLLECTION)
+    String hello() {
+        return "Hello";
+    }
+
+    @Binds(type = BindingType.COLLECTION)
+    String thing(@Named("name") String name) {
+        return name;
+    }
 
     @Binds
-    public Demo demo() {
-        return new DemoImpl();
+    @Named("name")
+    String name() {
+        return "World";
     }
 }

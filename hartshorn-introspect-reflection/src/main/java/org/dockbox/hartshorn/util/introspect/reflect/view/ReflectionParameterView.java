@@ -16,18 +16,20 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
-import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView implements ParameterView<T> {
 
@@ -106,5 +108,15 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView i
     public void report(DiagnosticsPropertyCollector collector) {
         collector.property("name").write(this.name());
         collector.property("type").write(this.genericType());
+    }
+
+    @Override
+    public boolean isEnclosed() {
+        return true;
+    }
+
+    @Override
+    public Option<EnclosableView> enclosingView() {
+        return Option.of(this.declaredBy());
     }
 }

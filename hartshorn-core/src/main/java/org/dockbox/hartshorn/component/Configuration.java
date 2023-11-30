@@ -21,53 +21,40 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.proxy.Proxy;
-import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
- * Annotation to indicate a component is a functional component, better known as a service. A service is a component
- * of which the methods, and thus functionality, can be directly modified through {@link ProxyManager}s to allow for
- * dynamic behavior of service definitions. This transforms the service into a {@link Proxy} instance.
+ * Indicates that a component is a configuration. Configurations are components that are used to configure other
+ * components. Typically, this is done by offering {@link Binds binding providers}.
  *
- * <p>By default all services are {@link #singleton() singletons}.
+ * <p>Configurations are not expected to have any dependencies, other than components that are provided by the
+ * container during the configuration process. As such, configurations are never proxied or processed.
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
- * @since 0.4.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Extends(Component.class)
-@Component(type = ComponentType.FUNCTIONAL)
-public @interface Service {
+@Component(
+        type = ComponentType.INJECTABLE,
+        singleton = true,
+        permitProxying = false,
+        permitProcessing = false
+)
+public @interface Configuration {
 
     /**
      * @see Component#id()
-     * @return The id of the service.
+     * @return The id of the configuration.
      */
     String id() default "";
 
     /**
      * @see Component#name()
-     * @return The name of the service.
+     * @return The name of the configuration.
      */
     String name() default "";
-
-    /**
-     * @see Component#singleton()
-     * @return Whether the service is a singleton.
-     */
-    boolean singleton() default true;
-
-    /**
-     * @see Component#lazy()
-     * @return Whether the service is lazy.
-     */
-    boolean lazy() default false;
-
-    /**
-     * @see Component#permitProxying()
-     * @return Whether the service is permitted to be proxied.
-     */
-    boolean permitProxying() default true;
 }

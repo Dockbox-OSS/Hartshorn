@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -30,9 +30,9 @@ import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 
-@Service
+@Configuration
 @RequiresActivator(UseExpressionValidation.class)
-public class ScriptLanguageProviders {
+public class ScriptLanguageConfiguration {
 
     @Binds
     private ScriptComponentFactory languageFactory() {

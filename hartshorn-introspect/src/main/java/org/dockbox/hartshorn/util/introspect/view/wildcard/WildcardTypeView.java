@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
@@ -24,12 +27,10 @@ import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class WildcardTypeView extends DefaultContext implements TypeView<Object> {
 
@@ -227,5 +228,15 @@ public class WildcardTypeView extends DefaultContext implements TypeView<Object>
     public void report(DiagnosticsPropertyCollector collector) {
         collector.property("name").write("*");
         collector.property("wildcard").write(true);
+    }
+
+    @Override
+    public boolean isEnclosed() {
+        return false;
+    }
+
+    @Override
+    public Option<EnclosableView> enclosingView() {
+        return Option.empty();
     }
 }

@@ -21,12 +21,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistryCustomizer;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.i18n.Message;
@@ -40,9 +41,9 @@ import org.dockbox.hartshorn.util.introspect.convert.support.StringToNumberConve
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToUUIDConverter;
 import org.dockbox.hartshorn.util.option.Option;
 
-@Service(permitProxying = false)
+@Configuration
 @RequiresActivator(UseCommands.class)
-public class DefaultArgumentConverters {
+public class ArgumentConverterConfiguration {
 
     @Binds
     public ArgumentConverterRegistryCustomizer converterRegistryCustomizer() {

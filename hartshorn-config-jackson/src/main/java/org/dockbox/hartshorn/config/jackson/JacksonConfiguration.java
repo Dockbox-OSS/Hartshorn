@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,10 @@
 package org.dockbox.hartshorn.config.jackson;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.inject.Named;
-import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.jackson.mapping.JavaPropsDataMapper;
@@ -30,57 +28,76 @@ import org.dockbox.hartshorn.config.jackson.mapping.JsonDataMapper;
 import org.dockbox.hartshorn.config.jackson.mapping.TomlDataMapper;
 import org.dockbox.hartshorn.config.jackson.mapping.XmlDataMapper;
 import org.dockbox.hartshorn.config.jackson.mapping.YamlDataMapper;
+import org.dockbox.hartshorn.inject.Named;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
-@Service
+@Configuration
 @RequiresActivator(UseConfigurations.class)
 @RequiresClass("com.fasterxml.jackson.databind.ObjectMapper")
-public class JacksonProviders {
+public class JacksonConfiguration {
 
-    private static final int DATA_MAPPER_PHASE = ProcessingPriority.HIGH_PRECEDENCE - 64;
-
-    @Named("properties")
-    @Binds(phase = DATA_MAPPER_PHASE)
-    @RequiresClass("com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper")
-    public JacksonDataMapper properties() {
-        return new JavaPropsDataMapper();
-    }
-
-    @Named("json")
-    @Binds(phase = DATA_MAPPER_PHASE)
-    @RequiresClass("com.fasterxml.jackson.databind.json.JsonMapper")
-    public JacksonDataMapper json() {
-        return new JsonDataMapper();
-    }
-
-    @Named("toml")
-    @Binds(phase = DATA_MAPPER_PHASE)
-    @RequiresClass("com.fasterxml.jackson.dataformat.toml.TomlMapper")
-    public JacksonDataMapper toml() {
-        return new TomlDataMapper();
-    }
-
-    @Named("xml")
-    @Binds(phase = DATA_MAPPER_PHASE)
-    @RequiresClass("com.fasterxml.jackson.dataformat.xml.XmlMapper")
-    public JacksonDataMapper xml() {
-        return new XmlDataMapper();
-    }
-
-    @Named("yml")
-    @Binds(phase = DATA_MAPPER_PHASE)
-    @RequiresClass("com.fasterxml.jackson.dataformat.yaml.YAMLMapper")
-    public JacksonDataMapper yml() {
-        return new YamlDataMapper();
-    }
-
-    @Binds(phase = DATA_MAPPER_PHASE + 32)
+    @Binds
     public ObjectMapper objectMapper(ApplicationContext applicationContext) {
         return new JacksonObjectMapper(applicationContext);
     }
 
-    @Binds(phase = DATA_MAPPER_PHASE + 16) // Before ObjectMapper
+    @Binds(before = ObjectMapper.class)
     public JacksonObjectMapperConfigurator mapperConfigurator(Introspector introspector) {
         return new StandardJacksonObjectMapperConfigurator(introspector);
+    }
+
+    @Configuration
+    @RequiresClass("com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper")
+    public static class JacksonPropertiesMapperConfiguration {
+
+        @Named("properties")
+        @Binds(before = ObjectMapper.class)
+        public JacksonDataMapper properties() {
+            return new JavaPropsDataMapper();
+        }
+    }
+
+    @Configuration
+    @RequiresClass("com.fasterxml.jackson.databind.json.JsonMapper")
+    public static class JacksonJsonMapperConfiguration {
+
+        @Named("json")
+        @Binds(before = ObjectMapper.class)
+        public JacksonDataMapper json() {
+            return new JsonDataMapper();
+        }
+    }
+
+    @Configuration
+    @RequiresClass("com.fasterxml.jackson.dataformat.toml.TomlMapper")
+    public static class JacksonTomlMapperConfiguration {
+
+        @Named("toml")
+        @Binds(before = ObjectMapper.class)
+        public JacksonDataMapper toml() {
+            return new TomlDataMapper();
+        }
+    }
+
+    @Configuration
+    @RequiresClass("com.fasterxml.jackson.dataformat.xml.XmlMapper")
+    public static class JacksonXmlMapperConfiguration {
+
+        @Named("xml")
+        @Binds(before = ObjectMapper.class)
+        public JacksonDataMapper xml() {
+            return new XmlDataMapper();
+        }
+    }
+
+    @Configuration
+    @RequiresClass("com.fasterxml.jackson.dataformat.yaml.YAMLMapper")
+    public static class JacksonYamlMapperConfiguration {
+
+        @Named("yaml")
+        @Binds(before = ObjectMapper.class)
+        public JacksonDataMapper yml() {
+            return new YamlDataMapper();
+        }
     }
 }

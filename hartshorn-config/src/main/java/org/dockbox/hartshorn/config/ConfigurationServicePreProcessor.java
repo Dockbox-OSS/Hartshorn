@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
-import org.dockbox.hartshorn.config.annotations.Configuration;
+import org.dockbox.hartshorn.config.annotations.IncludeResourceConfiguration;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.util.resources.FileSystemLookupStrategy;
 import org.dockbox.hartshorn.util.resources.MissingSourceException;
@@ -32,10 +32,10 @@ import java.net.URI;
 import java.util.Set;
 
 /**
- * Processes all services annotated with {@link Configuration} by loading the indicated file and registering the
+ * Processes all services annotated with {@link IncludeResourceConfiguration} by loading the indicated file and registering the
  * properties to {@link PropertyHolder#set(String, Object)}. To support different file sources
  * {@link ResourceLookupStrategy strategies} are used. Each strategy is able to define behavior specific to sources
- * defined with its name. Strategies can be indicated in the {@link Configuration#value()} of a {@link Configuration}
+ * defined with its name. Strategies can be indicated in the {@link IncludeResourceConfiguration#value()} of a {@link IncludeResourceConfiguration}
  * in the format {@code strategy_name:source_name}. If a strategy is not registered, or no name is defined, behavior
  * defaults to {@link FileSystemLookupStrategy}.
  */
@@ -43,8 +43,8 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
 
     @Override
     public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
-        if (processingContext.type().annotations().has(Configuration.class)) {
-            Configuration configuration = processingContext.type().annotations().get(Configuration.class).get();
+        if (processingContext.type().annotations().has(IncludeResourceConfiguration.class)) {
+            IncludeResourceConfiguration configuration = processingContext.type().annotations().get(IncludeResourceConfiguration.class).get();
             String[] sources = configuration.value();
 
             for (String source : sources) {
