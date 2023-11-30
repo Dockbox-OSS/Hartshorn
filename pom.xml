@@ -6,7 +6,7 @@
     <groupId>org.dockbox.hartshorn</groupId>
     <artifactId>hartshorn</artifactId>
     <packaging>pom</packaging>
-    <version>0.5.0</version>
+    <version>0.6.0</version>
 
     <name>Hartshorn Framework</name>
     <description>Hartshorn is a modern JVM-based full stack Java framework</description>
@@ -51,7 +51,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
 
-        <hartshorn.version>0.5.0</hartshorn.version>
+        <hartshorn.version>${project.version}</hartshorn.version>
         <checkstyle.skip>false</checkstyle.skip>
         <javadoc.skip>false</javadoc.skip>
         <owasp.skip>false</owasp.skip>
