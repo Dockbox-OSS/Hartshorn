@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-staging</artifactId>
-        <version>0.5.0</version>
+        <version>0.5.1</version>
         <relativePath>../hartshorn-assembly/pom.staging.xml</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
 
     <artifactId>hartshorn-bom</artifactId>
     <packaging>pom</packaging>
-    <version>0.5.0</version>
+    <version>0.5.1</version>
 
     <properties>
         <!-- Language support, keep in sync with module parent -->
