@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.component.populate;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Attempt;
 
 public abstract class AbstractComponentPopulationStrategy implements ComponentPopulationStrategy, ContextCarrier {
 
@@ -64,7 +66,7 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
         }
         else if (injectionPoint instanceof FieldView<?,?> field) {
             if (objectsToInject.size() == 1) {
-                field.set(context.instance(), objectsToInject.get(0));
+                this.processFieldInjection(field, context.instance(), objectsToInject.get(0));
             }
             else {
                 throw new UnsupportedOperationException("Cannot inject multiple objects into a single field");
@@ -73,6 +75,17 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
         else {
             throw new UnsupportedOperationException("Unsupported injection point type: " + injectionPoint.getClass().getName());
         }
+    }
+
+    private void processFieldInjection(FieldView<?, ?> field, Object instance, Object objectToInject) {
+        if (objectToInject instanceof Collection<?> collection) {
+            Attempt<?, Throwable> previousValue = field.get(instance);
+            if (previousValue.present() && previousValue.get() instanceof Collection<?> existingCollection) {
+                existingCollection.addAll(TypeUtils.adjustWildcards(collection, Collection.class));
+                return;
+            }
+        }
+        field.set(instance, objectToInject);
     }
 
     protected abstract boolean isApplicable(AnnotatedElementView injectionPoint);

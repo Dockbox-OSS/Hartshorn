@@ -63,7 +63,7 @@ public interface FieldView<Parent, FieldType> extends AnnotatedElementView, Modi
      * @throws IllegalIntrospectionException if the field is not accessible, or the configured getter method does not exist
      * @return the value of the field represented by this view on the given instance
      */
-    Attempt<FieldType, Throwable> get(Parent instance);
+    Attempt<FieldType, Throwable> get(Object instance);
 
     /**
      * Gets the value of the field represented by this view, as a static field. If the field is annotated with

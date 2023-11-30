@@ -54,7 +54,7 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
      * @param arguments the arguments to pass to the method
      * @return the result of the method invocation
      */
-    default Attempt<ReturnType, Throwable> invoke(Parent instance, Object... arguments) {
+    default Attempt<ReturnType, Throwable> invoke(Object instance, Object... arguments) {
         return this.invoke(instance, Arrays.asList(arguments));
     }
 
@@ -67,7 +67,7 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
      * @param arguments the arguments to pass to the method
      * @return the result of the method invocation
      */
-    Attempt<ReturnType, Throwable> invoke(Parent instance, Collection<?> arguments);
+    Attempt<ReturnType, Throwable> invoke(Object instance, Collection<?> arguments);
 
     /**
      * Invokes the method represented by this view as a static method call with the given arguments.
