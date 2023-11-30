@@ -51,9 +51,9 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
 
     @Override
     public <T> void populate(PopulateComponentContext<T> context, AnnotatedElementView injectionPoint) throws ApplicationException {
-        if (isApplicable(injectionPoint)) {
-            List<Object> objectsToInject = resolveInjectedObjects(context, injectionPoint);
-            processObjectInjection(context, injectionPoint, objectsToInject);
+        if (this.isApplicable(injectionPoint)) {
+            List<Object> objectsToInject = this.resolveInjectedObjects(context, injectionPoint);
+            this.processObjectInjection(context, injectionPoint, objectsToInject);
         }
     }
 
@@ -78,7 +78,7 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
     protected abstract boolean isApplicable(AnnotatedElementView injectionPoint);
 
     private List<Object> resolveInjectedObjects(PopulateComponentContext<?> context, AnnotatedElementView injectionPoint) throws ApplicationException {
-        Set<InjectionPoint> injectionPoints = lookupInjectionPoints(injectionPoint);
+        Set<InjectionPoint> injectionPoints = this.lookupInjectionPoints(injectionPoint);
 
         List<Object> objectsToInject = new ArrayList<>();
         for(InjectionPoint point : injectionPoints) {
@@ -87,7 +87,7 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
                 object = this.resolveInjectedObject(point, context);
             }
             catch(ApplicationException | ApplicationRuntimeException e) {
-                if (shouldRequire(point)) {
+                if (this.shouldRequire(point)) {
                     throw new ComponentRequiredException("Could not resolve value for injection point " + point.injectionPoint().qualifiedName(), e);
                 }
                 else {
@@ -96,7 +96,7 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
                 }
             }
 
-            if (object == null && shouldRequire(point)) {
+            if (object == null && this.shouldRequire(point)) {
                 throw new ComponentRequiredException("Injection point " + point.injectionPoint().qualifiedName() + " is required, but could not be provided");
             }
             objectsToInject.add(object);

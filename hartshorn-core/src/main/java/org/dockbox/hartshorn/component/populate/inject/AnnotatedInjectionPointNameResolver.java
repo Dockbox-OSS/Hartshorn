@@ -17,11 +17,12 @@
 package org.dockbox.hartshorn.component.populate.inject;
 
 import jakarta.inject.Named;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class AnnotatedInjectionPointNameResolver implements InjectionPointNameResolver {
 
     @Override
-    public String resolve(InjectionPoint injectionPoint) {
+    public @Nullable String resolve(InjectionPoint injectionPoint) {
         return injectionPoint.injectionPoint().annotations()
                 .get(Named.class)
                 .map(Named::value)

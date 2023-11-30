@@ -16,10 +16,8 @@
 
 package org.dockbox.hartshorn.component.populate;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPopulateException;
 import org.dockbox.hartshorn.component.ComponentPopulator;
@@ -42,7 +40,7 @@ public class StrategyComponentPopulator implements ComponentPopulator, ContextCa
     private final ApplicationContext applicationContext;
     private final ComponentInjectionPointsResolver injectionPointsResolver;
 
-    protected StrategyComponentPopulator(
+    public StrategyComponentPopulator(
             ApplicationContext applicationContext,
             Set<ComponentPopulationStrategy> strategies,
             ComponentInjectionPointsResolver injectionPointsResolver
@@ -123,7 +121,7 @@ public class StrategyComponentPopulator implements ComponentPopulator, ContextCa
             return this;
         }
 
-        public Configurer strategies(Collection<ComponentPopulationStrategy> strategies) {
+        public Configurer strategies(Iterable<ComponentPopulationStrategy> strategies) {
             this.strategies.customizer(collection -> collection.addAll(strategies));
             return this;
         }
