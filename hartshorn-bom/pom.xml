@@ -19,23 +19,22 @@
 
     <properties>
         <!-- Language support, keep in sync with module parent -->
-        <groovy.version>4.0.15</groovy.version>
-        <kotlin.version>1.9.10</kotlin.version>
+        <groovy.version>4.0.16</groovy.version>
+        <kotlin.version>1.9.21</kotlin.version>
         <slf4j.version>2.0.9</slf4j.version>
 
         <!-- Versions in alphabetical order -->
-        <auto-service.version>1.1.1</auto-service.version>
         <compile-testing.version>0.21.0</compile-testing.version>
         <cglib.version>3.3.0</cglib.version>
-        <checker.version>3.39.0</checker.version>
+        <checker.version>3.40.0</checker.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <jackson.version>2.15.3</jackson.version>
+        <jackson.version>2.16.0</jackson.version>
         <jakarta.annotations.version>2.1.1</jakarta.annotations.version>
         <jakarta.inject.version>2.0.1</jakarta.inject.version>
         <javassist.version>3.29.2-GA</javassist.version>
-        <junit.version>5.10.0</junit.version>
-        <logback.version>1.4.11</logback.version>
-        <mockito.version>5.6.0</mockito.version>
+        <junit.version>5.10.1</junit.version>
+        <logback.version>1.4.13</logback.version>
+        <mockito.version>5.7.0</mockito.version>
         <scala.version>3.3.1</scala.version>
     </properties>
 
@@ -184,11 +183,6 @@
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-yaml</artifactId>
                 <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.auto.service</groupId>
-                <artifactId>auto-service</artifactId>
-                <version>${auto-service.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.testing.compile</groupId>
