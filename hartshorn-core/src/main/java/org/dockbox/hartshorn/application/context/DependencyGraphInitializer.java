@@ -51,7 +51,7 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
  *
  * @author Guus Lieben
  */
-public class DependencyGraphInitializer {
+public final class DependencyGraphInitializer {
 
     private final DependencyGraphBuilder graphBuilder;
     private final ConfigurationDependencyVisitor dependencyVisitor;
