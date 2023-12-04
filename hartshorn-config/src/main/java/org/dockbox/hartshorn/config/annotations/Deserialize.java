@@ -64,6 +64,8 @@ public @interface Deserialize {
 
     /**
      * The file format to use when deserializing.
+     *
+     * @return The file format to use when deserializing.
      */
     FileFormats fileType() default FileFormats.JSON;
 }

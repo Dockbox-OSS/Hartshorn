@@ -54,6 +54,7 @@ public interface CommandGateway {
      * in the provided {@link Class type} as {@link CommandExecutor executors} capable of handling
      * the commands.
      *
+     * @param <T> The type of the class
      * @param key The key containing {@link org.dockbox.hartshorn.commands.annotations.Command} methods.
      */
     <T> void register(ComponentKey<T> key);

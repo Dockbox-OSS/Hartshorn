@@ -38,6 +38,7 @@ public interface PropertyContainer {
      *
      * @param name The name of the property.
      * @param value The value of the property.
+     * @param fromScope The scope from which the property is set.
      * @param options The execution options.
      *
      * @throws ScriptEvaluationError If the property is not supported or not accessible.
@@ -51,6 +52,7 @@ public interface PropertyContainer {
      * is thrown.
      *
      * @param name The name of the property.
+     * @param fromScope The scope from which the property is retrieved.
      * @param options The execution options.
      *
      * @return The value of the property.

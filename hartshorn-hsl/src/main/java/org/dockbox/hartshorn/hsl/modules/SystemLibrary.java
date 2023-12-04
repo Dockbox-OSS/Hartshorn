@@ -35,6 +35,9 @@ public class SystemLibrary {
     }
 
     /**
+     * @param program The name of the environment variable to retrieve.
+     * @return The value of the environment variable, or {@code null} if the variable is not defined.
+     *
      * @see System#getenv(String)
      */
     public String env(String program) {

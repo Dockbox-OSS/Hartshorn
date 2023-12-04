@@ -18,8 +18,31 @@ package org.dockbox.hartshorn.util.collections;
 
 import java.util.Map;
 
+/**
+ * A {@link Map} that allows for bidirectional lookup of keys and values. This interface is a subset of the {@link Map}
+ * interface, and does not include methods that would break the bidirectional lookup.
+ *
+ * <p>The inverse of a {@link BiMap} can be obtained by calling {@link #inverse()}. The inverse of a {@link BiMap} is
+ * another {@link Map} that contains the same entries as the original {@link BiMap}, but with the keys and values
+ * swapped.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public interface BiMap<K, V> extends Map<K, V> {
 
+    /**
+     * Creates a new {@link BiMap} with the given {@link java.util.Map.Entry entries} as initial entries.
+     *
+     * @param entries the entries to add to the {@link BiMap}
+     * @return a new {@link BiMap} with the given entries
+     * @param <K> the type of the keys
+     * @param <V> the type of the values
+     */
     @SafeVarargs
     static <K, V> BiMap<K, V> ofEntries(Entry<K, V>... entries) {
         BiMap<K, V> map = new HashBiMap<>();
@@ -29,5 +52,11 @@ public interface BiMap<K, V> extends Map<K, V> {
         return map;
     }
 
+    /**
+     * Returns the inverse of this {@link BiMap}. The inverse of a {@link BiMap} is another {@link Map} that contains
+     * the same entries as the original {@link BiMap}, but with the keys and values swapped.
+     *
+     * @return the inverse of this {@link BiMap}
+     */
     Map<V, K> inverse();
 }

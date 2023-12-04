@@ -16,8 +16,30 @@
 
 package org.dockbox.hartshorn.util.collections;
 
+/**
+ * A {@link MultiMap} that can be inverted, meaning that the values become the keys and the keys become the values.
+ *
+ * <p>If a value is present in the map multiple times, all keys that are associated with that value will be present in
+ * the inverse map. For example, if the map contains the mapping {@code "a" -> "b"} and {@code "c" -> "b"}, the inverse
+ * map will contain the mapping {@code "b" -> ["a", "c"]}.
+ *
+ * <p>This interface is comparable to {@link BiMap}, but is specifically designed for {@link MultiMap} instances.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public interface BiMultiMap<K, V> extends MultiMap<K, V> {
 
+    /**
+     * Returns the inverse of this {@link BiMultiMap}. The inverse of a {@link BiMultiMap} is another {@link MultiMap}
+     * that contains the same entries as the original {@link BiMultiMap}, but with the keys and values swapped.
+     *
+     * @return the inverse of this {@link BiMultiMap}
+     */
     MultiMap<V, K> inverse();
 
 }

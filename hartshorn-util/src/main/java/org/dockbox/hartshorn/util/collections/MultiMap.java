@@ -21,8 +21,27 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+/**
+ * A map that can contain multiple values for a single key. This allows for a more natural way of storing multiple values
+ * for a single key, without having to use a {@link Map} of {@link Collection}s.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public interface MultiMap<K, V> {
 
+    /**
+     * Returns all values in this {@link MultiMap}. The returned {@link Collection} is a copy of the values in this
+     * {@link MultiMap}, so changes to the returned {@link Collection} will not be reflected in this {@link MultiMap}.
+     *
+     * <p>The returned {@link Collection} is not guaranteed to be ordered in any way, and may contain duplicate values.
+     *
+     * @return all values in this {@link MultiMap}
+     */
     Collection<V> allValues();
 
     void putAll(K key, Collection<V> values);
