@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.populate.AbstractComponentPopulationStrategy;
+import org.dockbox.hartshorn.component.populate.ComponentInjectionPoint;
 import org.dockbox.hartshorn.component.populate.ComponentPopulationStrategy;
 import org.dockbox.hartshorn.component.populate.PopulateComponentContext;
 import org.dockbox.hartshorn.component.populate.inject.AnnotatedInjectionPointRequireRule;
@@ -31,7 +32,6 @@ import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class ContextPopulationStrategy extends AbstractComponentPopulationStrategy {
@@ -52,7 +52,7 @@ public class ContextPopulationStrategy extends AbstractComponentPopulationStrate
     }
 
     @Override
-    protected boolean isApplicable(AnnotatedElementView injectionPoint) {
+    protected boolean isApplicable(ComponentInjectionPoint<?> injectionPoint) {
         return injectionPoint.annotations().has(CONTEXT_ANNOTATION);
     }
 

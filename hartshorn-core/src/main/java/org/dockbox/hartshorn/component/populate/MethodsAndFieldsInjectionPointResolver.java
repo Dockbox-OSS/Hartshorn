@@ -22,24 +22,27 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.inject.Populate.Type;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectionPointsResolver {
 
     @Override
-    public Set<AnnotatedElementView> resolve(TypeView<?> type) {
+    public <T> Set<ComponentInjectionPoint<T>> resolve(TypeView<T> type) {
         List<Type> types = type.annotations().get(Populate.class)
                 .map(Populate::value)
                 .map(List::of)
                 .orElseGet(() -> List.of(Type.values()));
 
-        Set<AnnotatedElementView> injectionPoints = new HashSet<>();
+        Set<ComponentInjectionPoint<T>> injectionPoints = new HashSet<>();
         if (types.contains(Type.EXECUTABLES)) {
-            injectionPoints.addAll(type.methods().all());
+            type.methods().all().stream()
+                    .map(ComponentMethodInjectionPoint::new)
+                    .forEach(injectionPoints::add);
         }
         if (types.contains(Type.FIELDS)) {
-            injectionPoints.addAll(type.fields().all());
+            type.fields().all().stream()
+                    .map(ComponentFieldInjectionPoint::new)
+                    .forEach(injectionPoints::add);
         }
         return injectionPoints;
     }

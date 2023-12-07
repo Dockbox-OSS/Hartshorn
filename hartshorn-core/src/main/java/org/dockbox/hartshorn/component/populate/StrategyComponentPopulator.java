@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.component.populate;
 
 import java.util.List;
 import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPopulateException;
 import org.dockbox.hartshorn.component.ComponentPopulator;
@@ -31,7 +32,6 @@ import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class StrategyComponentPopulator implements ComponentPopulator, ContextCarrier {
@@ -78,11 +78,11 @@ public class StrategyComponentPopulator implements ComponentPopulator, ContextCa
 
     private <T> void populate(PopulateComponentContext<T> context) {
         TypeView<T> type = context.type();
-        Set<AnnotatedElementView> injectionPoints = injectionPointsResolver.resolve(type);
+        Set<ComponentInjectionPoint<T>> injectionPoints = injectionPointsResolver.resolve(type);
 
         T instance = context.instance();
         for(ComponentPopulationStrategy strategy : this.strategies) {
-            for(AnnotatedElementView injectionPoint : injectionPoints) {
+            for(ComponentInjectionPoint<T> injectionPoint : injectionPoints) {
                 try {
                     strategy.populate(context, injectionPoint);
                 }

@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
 import org.dockbox.hartshorn.component.populate.AbstractComponentPopulationStrategy;
+import org.dockbox.hartshorn.component.populate.ComponentInjectionPoint;
 import org.dockbox.hartshorn.component.populate.ComponentPopulationStrategy;
 import org.dockbox.hartshorn.component.populate.PopulateComponentContext;
 import org.dockbox.hartshorn.util.ContextualInitializer;
@@ -31,7 +32,6 @@ import org.dockbox.hartshorn.util.Lazy;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
 import jakarta.inject.Inject;
 
@@ -60,7 +60,7 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
     }
 
     @Override
-    protected boolean isApplicable(AnnotatedElementView injectionPoint) {
+    protected boolean isApplicable(ComponentInjectionPoint<?> injectionPoint) {
         return injectionPoint.annotations().hasAny(this.injectAnnotations);
     }
 

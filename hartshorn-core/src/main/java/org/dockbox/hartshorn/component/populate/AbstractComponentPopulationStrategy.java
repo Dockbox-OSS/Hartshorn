@@ -17,10 +17,8 @@
 package org.dockbox.hartshorn.component.populate;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
@@ -29,13 +27,15 @@ import org.dockbox.hartshorn.component.populate.inject.RequireInjectionPointRule
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
-import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.Attempt;
 
+/**
+ * A base implementation of {@link ComponentPopulationStrategy} which provides the basic functionality for
+ * populating components. This includes the ability to indicate whether the strategy is applicable to a given
+ * injection point, and the ability to resolve the objects to be injected into the injection point if it is
+ * applicable.
+ *
+ * <p>
+ */
 public abstract class AbstractComponentPopulationStrategy implements ComponentPopulationStrategy, ContextCarrier {
 
     private final Set<RequireInjectionPointRule> requiresComponentRules;
@@ -52,46 +52,17 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
     }
 
     @Override
-    public <T> void populate(PopulateComponentContext<T> context, AnnotatedElementView injectionPoint) throws ApplicationException {
+    public <T> void populate(PopulateComponentContext<T> context, ComponentInjectionPoint<T> injectionPoint) throws ApplicationException {
         if (this.isApplicable(injectionPoint)) {
             List<Object> objectsToInject = this.resolveInjectedObjects(context, injectionPoint);
-            this.processObjectInjection(context, injectionPoint, objectsToInject);
+            injectionPoint.processObjects(context, objectsToInject);
         }
     }
 
-    private <T> void processObjectInjection(PopulateComponentContext<T> context, AnnotatedElementView injectionPoint, List<Object> objectsToInject) {
-        if (injectionPoint instanceof MethodView<?, ?> executable) {
-            MethodView<T, ?> method = TypeUtils.adjustWildcards(executable, MethodView.class);
-            method.invoke(context.instance(), objectsToInject.toArray());
-        }
-        else if (injectionPoint instanceof FieldView<?,?> field) {
-            if (objectsToInject.size() == 1) {
-                this.processFieldInjection(field, context.instance(), objectsToInject.get(0));
-            }
-            else {
-                throw new UnsupportedOperationException("Cannot inject multiple objects into a single field");
-            }
-        }
-        else {
-            throw new UnsupportedOperationException("Unsupported injection point type: " + injectionPoint.getClass().getName());
-        }
-    }
+    protected abstract boolean isApplicable(ComponentInjectionPoint<?> injectionPoint);
 
-    private void processFieldInjection(FieldView<?, ?> field, Object instance, Object objectToInject) {
-        if (objectToInject instanceof Collection<?> collection) {
-            Attempt<?, Throwable> previousValue = field.get(instance);
-            if (previousValue.present() && previousValue.get() instanceof Collection<?> existingCollection) {
-                existingCollection.addAll(TypeUtils.adjustWildcards(collection, Collection.class));
-                return;
-            }
-        }
-        field.set(instance, objectToInject);
-    }
-
-    protected abstract boolean isApplicable(AnnotatedElementView injectionPoint);
-
-    private List<Object> resolveInjectedObjects(PopulateComponentContext<?> context, AnnotatedElementView injectionPoint) throws ApplicationException {
-        Set<InjectionPoint> injectionPoints = this.lookupInjectionPoints(injectionPoint);
+    private List<Object> resolveInjectedObjects(PopulateComponentContext<?> context, ComponentInjectionPoint<?> injectionPoint) {
+        Set<InjectionPoint> injectionPoints = injectionPoint.injectionPoints();
 
         List<Object> objectsToInject = new ArrayList<>();
         for(InjectionPoint point : injectionPoints) {
@@ -115,20 +86,6 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
             objectsToInject.add(object);
         }
         return objectsToInject;
-    }
-
-    private Set<InjectionPoint> lookupInjectionPoints(AnnotatedElementView injectionPoint) {
-        if (injectionPoint instanceof ExecutableElementView<?> executable) {
-            return executable.parameters().all().stream()
-                    .map(parameter -> new InjectionPoint(parameter.genericType(), parameter))
-                    .collect(Collectors.toSet());
-        }
-        else if (injectionPoint instanceof FieldView<?,?> field) {
-            return Set.of(new InjectionPoint(field.genericType(), field));
-        }
-        else {
-            throw new UnsupportedOperationException("Unsupported injection point type: " + injectionPoint.getClass().getName());
-        }
     }
 
     protected abstract Object resolveInjectedObject(InjectionPoint injectionPoint, PopulateComponentContext<?> context) throws ApplicationException, ApplicationRuntimeException;

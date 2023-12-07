@@ -16,11 +16,19 @@
 
 package org.dockbox.hartshorn.component.populate;
 
+import java.util.List;
 import java.util.Set;
 
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 
-public interface ComponentInjectionPointsResolver {
+public interface ComponentInjectionPoint<T> {
 
-    <T> Set<ComponentInjectionPoint<T>> resolve(TypeView<T> type);
+    void processObjects(PopulateComponentContext<T> context, List<Object> objectsToInject);
+
+    ElementAnnotationsIntrospector annotations();
+
+    Set<InjectionPoint> injectionPoints();
+
+    String qualifiedName();
 }
