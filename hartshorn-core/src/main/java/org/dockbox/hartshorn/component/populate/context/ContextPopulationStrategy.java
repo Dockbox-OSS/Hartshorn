@@ -34,6 +34,33 @@ import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * A {@link ComponentPopulationStrategy} which populates components with {@link org.dockbox.hartshorn.context.Context} objects.
+ *
+ * <p>Components can be populated with {@link org.dockbox.hartshorn.context.Context} objects by annotating the injection point with
+ * {@link Context}. The {@link Context} annotation can be used to specify the name of the context to inject. If no name is specified,
+ * the {@link org.dockbox.hartshorn.context.Context} with the same type as the injection point will be injected.
+ *
+ * <p>If multiple {@link org.dockbox.hartshorn.context.Context} objects with the same type are available, the first encountered
+ * {@link org.dockbox.hartshorn.context.Context} will be injected.
+ *
+ * <p>Example:
+ * <pre>{@code
+ * @Component
+ * public class MyComponent {
+ *
+ *   @Context("my-context")
+ *   private Context myContext;
+ * }
+ * }</pre>
+ *
+ * @see org.dockbox.hartshorn.context.Context The Context interface
+ * @see Context The Context annotation
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class ContextPopulationStrategy extends AbstractComponentPopulationStrategy {
 
     private static final Class<Context> CONTEXT_ANNOTATION = Context.class;

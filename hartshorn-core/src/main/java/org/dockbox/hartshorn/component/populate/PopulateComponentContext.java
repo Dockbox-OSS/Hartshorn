@@ -20,6 +20,16 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * A context that is used during the population of a component. This includes the instance that is being populated, the
+ * type of the instance, the application context and the original instance if the instance was proxied.
+ *
+ * @param <T> the type of the component
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public final class PopulateComponentContext<T> extends DefaultContext {
 
     private final T instance;
@@ -35,18 +45,40 @@ public final class PopulateComponentContext<T> extends DefaultContext {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * Returns the instance that is being populated. This instance is not necessarily the same as the original instance
+     * if the instance was proxied.
+     *
+     * @return the instance that is being populated
+     */
     public T instance() {
         return instance;
     }
 
+    /**
+     * Returns the original instance if the instance was proxied. If the instance was not proxied, this method returns
+     * the same instance as {@link #instance()}.
+     *
+     * @return the original instance if the instance was proxied, the same instance as {@link #instance()} otherwise
+     */
     public T originalInstance() {
         return originalInstance;
     }
 
+    /**
+     * Returns the type of the component that is being populated.
+     *
+     * @return the type of the component that is being populated
+     */
     public TypeView<T> type() {
         return type;
     }
 
+    /**
+     * Returns the application context that is used during the population of the component.
+     *
+     * @return the application context that is used during the population of the component
+     */
     public ApplicationContext applicationContext() {
         return applicationContext;
     }

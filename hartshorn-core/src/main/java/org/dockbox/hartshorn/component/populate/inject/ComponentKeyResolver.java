@@ -25,6 +25,21 @@ import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * Resolves the {@link ComponentKey} for a given {@link InjectionPoint}. This supports customization
+ * of the key's name and enablement requirements through {@link InjectionPointNameResolver} and
+ * {@link EnableInjectionPointRule} respectively.
+ *
+ * <p>If the injection point is a {@link Collection},  the element type is used as the type and the key
+ * will be configured for collecting a {@link org.dockbox.hartshorn.inject.binding.collection.ComponentCollection}.
+ *
+ * @see InjectionPointNameResolver
+ * @see EnableInjectionPointRule
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class ComponentKeyResolver {
 
     private final Set<InjectionPointNameResolver> nameResolvers;
@@ -38,6 +53,12 @@ public class ComponentKeyResolver {
         this.enableComponentRules = enableComponentRules;
     }
 
+    /**
+     * Builds a {@link ComponentKey} for the given {@link InjectionPoint}.
+     *
+     * @param injectionPoint the injection point to build the key for
+     * @return the component key
+     */
     public ComponentKey<?> buildComponentKey(InjectionPoint injectionPoint) {
         ComponentKey.Builder<?> componentKey = ComponentKey.builder(injectionPoint.type())
                 .name(resolveName(injectionPoint))
@@ -45,6 +66,15 @@ public class ComponentKeyResolver {
         return customizeComponentKey(componentKey, injectionPoint);
     }
 
+    /**
+     * Customizes the given {@link ComponentKey.Builder} for the given {@link InjectionPoint}. By
+     * default this method will only customize the key for {@link Collection} types, by setting the
+     * element type and enabling collection mode.
+     *
+     * @param keyBuilder the key builder to customize
+     * @param injectionPoint the injection point to customize the key for
+     * @return the customized key builder
+     */
     protected ComponentKey<?> customizeComponentKey(ComponentKey.Builder<?> keyBuilder, InjectionPoint injectionPoint) {
         if (injectionPoint.type().isChildOf(Collection.class)) {
             TypeView<?> elementType = resolveCollectionElementType(injectionPoint);
@@ -55,6 +85,15 @@ public class ComponentKeyResolver {
         }
     }
 
+    /**
+     * Resolves the element type of the given {@link Collection} injection point. If the element type
+     * cannot be resolved, an exception is thrown.
+     *
+     * @param injectionPoint the injection point to resolve the element type for
+     * @return the element type
+     *
+     * @throws ComponentPopulateException if the element type cannot be resolved
+     */
     protected TypeView<?> resolveCollectionElementType(InjectionPoint injectionPoint) {
         Option<TypeView<?>> elementType = injectionPoint.type()
                 .typeParameters()
@@ -67,6 +106,13 @@ public class ComponentKeyResolver {
         return elementType.get();
     }
 
+    /**
+     * Resolves the name for the given {@link InjectionPoint}. This will use the first non-null and
+     * non-blank name returned by the {@link InjectionPointNameResolver}s configured in this resolver.
+     *
+     * @param injectionPoint the injection point to resolve the name for
+     * @return the name
+     */
     private String resolveName(InjectionPoint injectionPoint) {
         return this.nameResolvers.stream()
                 .map(resolver -> resolver.resolve(injectionPoint))
@@ -75,9 +121,14 @@ public class ComponentKeyResolver {
                 .orElse(null);
     }
 
+    /**
+     * Determines whether the given {@link InjectionPoint} should be enabled. This will return true
+     * if all {@link EnableInjectionPointRule}s configured in this resolver return true.
+     *
+     * @param injectionPoint the injection point to determine whether it should be enabled
+     * @return true if the injection point should be enabled
+     */
     private boolean shouldEnable(InjectionPoint injectionPoint) {
-        return this.enableComponentRules.stream()
-                .map(rule -> rule.shouldEnable(injectionPoint))
-                .reduce(true, Boolean::logicalAnd);
+        return this.enableComponentRules.isEmpty() || this.enableComponentRules.stream().allMatch(rule -> rule.shouldEnable(injectionPoint));
     }
 }

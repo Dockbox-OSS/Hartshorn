@@ -19,6 +19,16 @@ package org.dockbox.hartshorn.component.populate.inject;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A rule that determines whether an {@link InjectionPoint} is required to be present. This uses
+ * the {@link Required} annotation to determine whether the injection point is required.
+ *
+ * @see Required
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class AnnotatedInjectionPointRequireRule implements RequireInjectionPointRule {
 
     @Override

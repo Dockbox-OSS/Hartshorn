@@ -35,6 +35,43 @@ import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 
 import jakarta.inject.Inject;
 
+/**
+ * A {@link ComponentPopulationStrategy} which populates components with other components. This provides basic support for
+ * {@link Inject} annotated fields, or any other annotation which is configured to be used for injection.
+ *
+ * <p>Injected components will be resolved by their {@link ComponentKey}, which is determined by the type of the injection point.
+ * Additional metadata can be provided to configure the {@link ComponentKey}. The exact way in which this metadata is resolved is
+ * determined by the configured {@link InjectionPointNameResolver} and {@link EnableInjectionPointRule} implementations.
+ *
+ * <p>By default, all components are resolved through the {@link ApplicationContext}. Additional {@link InjectParameterResolver}
+ * implementations can be registered to provide custom resolution logic for specific injection points. This is primarily useful
+ * for injecting components which are not registered in the {@link ApplicationContext}, or cannot be resolved through the
+ * {@link ApplicationContext} alone. Built-in support for {@link org.dockbox.hartshorn.inject.Context} is provided by the
+ * {@link InjectContextParameterResolver}.
+ *
+ * <p>Example:
+ * <pre>{@code
+ * @Component
+ * public class MyComponent {
+ *
+ *    @Inject
+ *    private MyOtherComponent otherComponent;
+ *
+ *    @Inject
+ *    public void doSomething(@Context SampleContext context) { ... }
+ * }
+ * }</pre>
+ *
+ * @see Inject
+ * @see ComponentKey
+ * @see InjectionPointNameResolver
+ * @see EnableInjectionPointRule
+ * @see InjectParameterResolver
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class InjectPopulationStrategy extends AbstractComponentPopulationStrategy {
 
     private final Set<Class<? extends Annotation>> injectAnnotations;
@@ -68,12 +105,23 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
     protected Object resolveInjectedObject(InjectionPoint injectionPoint, PopulateComponentContext<?> context) throws ComponentResolutionException {
         for(InjectParameterResolver resolver : parameterResolvers) {
             if (resolver.accepts(injectionPoint)) {
-                return resolver.resolve(injectionPoint, context);
+                Object resolved = resolver.resolve(injectionPoint, context);
+                // Parameter resolvers are expected to provide compatible instances, or null if they cannot resolve the injection point.
+                // If a non-null value is provided, it must be compatible with the injection point type. If it is not, we do not want
+                // to attempt a manual conversion through the ConversionService, as we cannot make assumptions about custom implementations,
+                // and thus risk resulting in unexpected behaviour.
+                if (resolved == null || injectionPoint.type().isInstance(resolved)) {
+                    return resolved;
+                }
+                else {
+                    throw new ComponentResolutionException("Failed to resolve injection point " + injectionPoint.injectionPoint().qualifiedName() + ", expected type " + injectionPoint.type().type().getName() + " but got " + resolved.getClass().getName(), null);
+                }
             }
         }
 
         ComponentKey<?> componentKey = componentKeyResolver.buildComponentKey(injectionPoint);
         Object component = this.applicationContext().get(componentKey);
+
         // Ensure types are compatible, or a default value is provided if it is available. This primarily
         // applies to component collections.
         return this.conversionService.get().convert(component, injectionPoint.type().type());

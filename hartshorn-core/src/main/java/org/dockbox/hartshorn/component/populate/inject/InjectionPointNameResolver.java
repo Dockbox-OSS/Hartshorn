@@ -16,8 +16,23 @@
 
 package org.dockbox.hartshorn.component.populate.inject;
 
+/**
+ * A resolver that determines the name of an {@link InjectionPoint}. This is commonly used to
+ * construct a {@link org.dockbox.hartshorn.component.ComponentKey} for the injection point.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 @FunctionalInterface
 public interface InjectionPointNameResolver {
 
+    /**
+     * Resolves the name of the given {@link InjectionPoint}. If the name cannot be resolved,
+     * {@code null} is returned.
+     *
+     * @param injectionPoint the injection point to resolve the name for
+     * @return the name of the injection point, or {@code null} if the name cannot be resolved
+     */
     String resolve(InjectionPoint injectionPoint);
 }

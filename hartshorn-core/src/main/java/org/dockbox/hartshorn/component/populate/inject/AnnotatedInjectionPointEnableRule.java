@@ -19,6 +19,16 @@ package org.dockbox.hartshorn.component.populate.inject;
 import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A rule that determines whether an {@link InjectionPoint} should be enabled. This uses the {@link Enable}
+ * annotation to determine whether the injection point should be enabled.
+ *
+ * @see Enable
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class AnnotatedInjectionPointEnableRule implements EnableInjectionPointRule {
 
     @Override

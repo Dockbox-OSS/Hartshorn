@@ -24,6 +24,18 @@ import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * A {@link InjectParameterResolver} implementation that resolves {@link org.dockbox.hartshorn.context.Context} instances.
+ * This resolver will only accept injection points that are annotated with {@link Context}. If multiple contexts are
+ * available, the first one is returned.
+ *
+ * @see Context
+ * @see org.dockbox.hartshorn.context.Context
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class InjectContextParameterResolver implements InjectParameterResolver {
 
     @Override

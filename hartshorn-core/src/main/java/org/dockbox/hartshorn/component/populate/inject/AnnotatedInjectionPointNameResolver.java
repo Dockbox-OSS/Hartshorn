@@ -16,9 +16,18 @@
 
 package org.dockbox.hartshorn.component.populate.inject;
 
-import jakarta.inject.Named;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import jakarta.inject.Named;
+
+/**
+ * A resolver that uses the {@link Named} annotation to resolve the name of an injection point. If the
+ * annotation is not present, {@code null} is returned.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class AnnotatedInjectionPointNameResolver implements InjectionPointNameResolver {
 
     @Override

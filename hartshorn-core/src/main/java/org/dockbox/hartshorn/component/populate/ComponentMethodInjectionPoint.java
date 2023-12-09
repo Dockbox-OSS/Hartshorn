@@ -17,13 +17,22 @@
 package org.dockbox.hartshorn.component.populate;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.SequencedCollection;
 
 import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
+/**
+ * Represents a method of which the parameters can be injected. Most commonly, this is used for
+ * setter injection which require validation of the provided arguments.
+ *
+ * @param <T> the type of the component that this injection point is for
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class ComponentMethodInjectionPoint<T> implements ComponentInjectionPoint<T> {
 
     private final MethodView<T, ?> method;
@@ -43,10 +52,10 @@ public class ComponentMethodInjectionPoint<T> implements ComponentInjectionPoint
     }
 
     @Override
-    public Set<InjectionPoint> injectionPoints() {
+    public SequencedCollection<InjectionPoint> injectionPoints() {
         return this.method.parameters().all().stream()
                 .map(parameter -> new InjectionPoint(parameter.genericType(), parameter))
-                .collect(Collectors.toSet());
+                .toList();
     }
 
     @Override

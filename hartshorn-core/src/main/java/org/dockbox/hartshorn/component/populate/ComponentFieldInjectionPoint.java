@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.component.populate;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.SequencedCollection;
 
 import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -26,6 +26,16 @@ import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.option.Attempt;
 
+/**
+ * Represents a field that can be injected into inside a component. Additional handling is in place to
+ * support merging {@link Collection}s into existing values, if applicable.
+ *
+ * @param <T> the type of the component that this injection point is for
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class ComponentFieldInjectionPoint<T> implements ComponentInjectionPoint<T> {
 
     private final FieldView<T, ?> field;
@@ -59,8 +69,8 @@ public class ComponentFieldInjectionPoint<T> implements ComponentInjectionPoint<
     }
 
     @Override
-    public Set<InjectionPoint> injectionPoints() {
-        return Set.of(new InjectionPoint(this.field.genericType(), this.field));
+    public SequencedCollection<InjectionPoint> injectionPoints() {
+        return List.of(new InjectionPoint(this.field.genericType(), this.field));
     }
 
     @Override

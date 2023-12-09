@@ -18,9 +18,33 @@ package org.dockbox.hartshorn.component.populate.inject;
 
 import org.dockbox.hartshorn.component.populate.PopulateComponentContext;
 
+/**
+ * A resolver that may be used to resolve a value for an {@link InjectionPoint}. This is commonly used
+ * to extend the functionality of a {@link InjectPopulationStrategy}.
+ *
+ * @see InjectPopulationStrategy
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface InjectParameterResolver {
 
+    /**
+     * Indicates whether this resolver accepts the given {@link InjectionPoint}.
+     *
+     * @param injectionPoint the injection point to check
+     * @return {@code true} if this resolver accepts the given injection point, {@code false} otherwise
+     */
     boolean accepts(InjectionPoint injectionPoint);
 
+    /**
+     * Resolves a value for the given {@link InjectionPoint}. If the resolver could not resolve a value,
+     * {@code null} is returned.
+     *
+     * @param injectionPoint the injection point to resolve a value for
+     * @param context the context in which the injection point is resolved
+     * @return the resolved value, or {@code null} if the value could not be resolved
+     */
     Object resolve(InjectionPoint injectionPoint, PopulateComponentContext<?> context);
 }

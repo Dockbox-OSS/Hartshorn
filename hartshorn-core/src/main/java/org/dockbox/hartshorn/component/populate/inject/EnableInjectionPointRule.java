@@ -16,9 +16,22 @@
 
 package org.dockbox.hartshorn.component.populate.inject;
 
+/**
+ * A rule that determines whether an {@link InjectionPoint} should be enabled.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 @FunctionalInterface
 public interface EnableInjectionPointRule {
 
+    /**
+     * Indicates whether the given {@link InjectionPoint} should be enabled.
+     *
+     * @param injectionPoint the injection point to check
+     * @return {@code true} if the injection point should be enabled, {@code false} otherwise
+     */
     boolean shouldEnable(InjectionPoint injectionPoint);
 
 }

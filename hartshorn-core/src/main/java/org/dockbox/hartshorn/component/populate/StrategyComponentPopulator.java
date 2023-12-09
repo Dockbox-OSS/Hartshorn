@@ -34,15 +34,30 @@ import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * A {@link ComponentPopulator} that populates components using a set of {@link ComponentPopulationStrategy}s. The
+ * strategies are executed in the order they are provided to the constructor. If a strategy is applicable to a given
+ * injection point, the strategy is executed. If the strategy is not applicable, the next strategy is executed.
+ *
+ * <p>Injection points are resolved using a {@link ComponentInjectionPointsResolver}. The resolver is expected to
+ * return all injection points of a given type, without prior filtering. Filtering is expected to be done by the
+ * {@link ComponentPopulationStrategy strategies}.
+ *
+ * @see ComponentPopulationStrategy
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class StrategyComponentPopulator implements ComponentPopulator, ContextCarrier {
 
-    private final Set<ComponentPopulationStrategy> strategies;
+    private final List<ComponentPopulationStrategy> strategies;
     private final ApplicationContext applicationContext;
     private final ComponentInjectionPointsResolver injectionPointsResolver;
 
     public StrategyComponentPopulator(
             ApplicationContext applicationContext,
-            Set<ComponentPopulationStrategy> strategies,
+            List<ComponentPopulationStrategy> strategies,
             ComponentInjectionPointsResolver injectionPointsResolver
     ) {
         this.applicationContext = applicationContext;
@@ -76,7 +91,7 @@ public class StrategyComponentPopulator implements ComponentPopulator, ContextCa
         }
     }
 
-    private <T> void populate(PopulateComponentContext<T> context) {
+    protected <T> void populate(PopulateComponentContext<T> context) {
         TypeView<T> type = context.type();
         Set<ComponentInjectionPoint<T>> injectionPoints = injectionPointsResolver.resolve(type);
 
@@ -104,7 +119,7 @@ public class StrategyComponentPopulator implements ComponentPopulator, ContextCa
             customizer.configure(configurer);
             List<ComponentPopulationStrategy> populationStrategies = configurer.strategies.initialize(context);
             ComponentInjectionPointsResolver resolver = configurer.injectionPointsResolver.initialize(context);
-            return new StrategyComponentPopulator(context.input(), Set.copyOf(populationStrategies), resolver);
+            return new StrategyComponentPopulator(context.input(), List.copyOf(populationStrategies), resolver);
         };
     }
 

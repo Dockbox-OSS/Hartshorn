@@ -16,9 +16,26 @@
 
 package org.dockbox.hartshorn.component.populate.inject;
 
+/**
+ * A rule that determines whether an {@link InjectionPoint} is required to be populated. This is
+ * commonly used by {@link org.dockbox.hartshorn.component.ComponentPopulator}s (or delegates of
+ * a populator) to handle optional dependencies.
+ *
+ * @see org.dockbox.hartshorn.component.ComponentPopulator
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 @FunctionalInterface
 public interface RequireInjectionPointRule {
 
+    /**
+     * Indicates whether the given {@link InjectionPoint} is required to be populated.
+     *
+     * @param injectionPoint the injection point to check
+     * @return {@code true} if the injection point is required, {@code false} otherwise
+     */
     boolean isRequired(InjectionPoint injectionPoint);
 
 }

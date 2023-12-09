@@ -19,6 +19,18 @@ package org.dockbox.hartshorn.component.populate.inject;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-public record InjectionPoint(TypeView<?> type, AnnotatedElementView injectionPoint) {
-
-}
+/**
+ * Represents an injection point, which is a combination of a type and an annotated element. Typically,
+ * the annotated element is a field or parameter, and the type is the type of the field or parameter.
+ *
+ * @param type the type of the injection point
+ * @param injectionPoint the annotated element of the injection point
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
+public record InjectionPoint(
+        TypeView<?> type,
+        AnnotatedElementView injectionPoint
+) { }

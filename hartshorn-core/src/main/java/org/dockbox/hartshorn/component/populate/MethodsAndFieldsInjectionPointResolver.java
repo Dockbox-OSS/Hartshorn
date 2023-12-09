@@ -24,6 +24,19 @@ import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.inject.Populate.Type;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * A {@link ComponentInjectionPointsResolver} that resolves the injection points of a component by
+ * inspecting the methods and fields of the component. The injection points are resolved based on
+ * the {@link Populate} annotation on the component type. If no {@link Populate} annotation is
+ * present, all injection points will be resolved.
+ *
+ * @see Populate
+ * @see ComponentInjectionPoint
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectionPointsResolver {
 
     @Override
