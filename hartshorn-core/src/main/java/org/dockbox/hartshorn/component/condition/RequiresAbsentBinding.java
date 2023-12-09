@@ -16,18 +16,48 @@
 
 package org.dockbox.hartshorn.component.condition;
 
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
+
+/**
+ * A condition that requires a binding to be present in the {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
+ *
+ * @see AbsentBindingCondition
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Extends(RequiresCondition.class)
 @RequiresCondition(condition = AbsentBindingCondition.class)
 public @interface RequiresAbsentBinding {
+
+    /**
+     * The type of the binding that is required to be absent.
+     *
+     * @return the type of the binding that is required to be absent
+     */
     Class<?> value();
+
+    /**
+     * The name of the binding that is required to be absent. If not specified, the binding is
+     * resolved by type only.
+     *
+     * @return the name of the binding that is required to be absent
+     */
     String name() default "";
+
+    /**
+     * @see RequiresCondition#failOnNoMatch()
+     * @return whether to fail on no match
+     */
+    @AttributeAlias(value = "failsOnNoMatch", target = RequiresCondition.class)
+    boolean failOnNoMatch() default false;
 }

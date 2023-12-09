@@ -18,6 +18,16 @@ package org.dockbox.hartshorn.component.condition;
 
 import java.lang.annotation.Annotation;
 
+/**
+ * A condition that matches when an activator is present.
+ *
+ * @see RequiresActivator
+ * @see org.dockbox.hartshorn.application.ActivatorHolder#hasActivator(Class)
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class ActivatorCondition implements Condition {
 
     @Override
