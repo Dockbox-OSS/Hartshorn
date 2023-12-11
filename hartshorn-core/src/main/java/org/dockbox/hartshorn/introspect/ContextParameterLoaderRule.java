@@ -38,7 +38,7 @@ public class ContextParameterLoaderRule implements ParameterLoaderRule<Applicati
         return new InjectionPoint(context.executable().declaredBy(), parameter);
     }
 
-    private PopulateComponentContext<?> createContext(ParameterView<?> parameter, ApplicationBoundParameterLoaderContext context) {
+    private PopulateComponentContext<?> createContext(ApplicationBoundParameterLoaderContext context) {
         Object instance = context.instance();
         TypeView<?> type = context.executable().declaredBy();
         return new PopulateComponentContext<>(instance, instance, TypeUtils.adjustWildcards(type, TypeView.class), context.applicationContext());
@@ -46,14 +46,14 @@ public class ContextParameterLoaderRule implements ParameterLoaderRule<Applicati
 
     @Override
     public boolean accepts(ParameterView<?> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
-        return resolver.accepts(createInjectionPoint(parameter, context));
+        return this.resolver.accepts(this.createInjectionPoint(parameter, context));
     }
 
     @Override
     public <T> Option<T> load(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
         InjectionPoint injectionPoint = this.createInjectionPoint(parameter, context);
-        Object resolved = this.resolver.resolve(injectionPoint, this.createContext(parameter, context));
-        if (resolved == null && requireRule.isRequired(injectionPoint)) {
+        Object resolved = this.resolver.resolve(injectionPoint, this.createContext(context));
+        if (resolved == null && this.requireRule.isRequired(injectionPoint)) {
             throw new ComponentRequiredException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required");
         }
         return Option.of(parameter.type().cast(resolved));
