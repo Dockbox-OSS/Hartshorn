@@ -79,7 +79,7 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
         MethodView<T, ?> methodView = TypeUtils.adjustWildcards(source.toIntrospector(), MethodView.class);
 
         CustomInvocation<?> customInvocation = this.createDefaultInvocation(source, proxy, callbackTarget);
-        Object[] arguments = this.resolveArgs(source, self, args);
+        Object[] arguments = this.resolveArgs(methodView, self, args);
 
         Object result = this.interceptAndNotify(instance, source, proxy, callbackTarget, methodView, customInvocation, arguments);
         return this.resultValidator.validateResult(source, result);
@@ -118,9 +118,8 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
         };
     }
 
-    protected Object[] resolveArgs(MethodInvokable method, Object instance, Object[] args) {
-        MethodView<?, ?> methodView = method.toIntrospector();
-        ProxyParameterLoaderContext context = new ProxyParameterLoaderContext(methodView, instance, this.proxyOrchestrator);
+    protected Object[] resolveArgs(MethodView<?, ?> view, Object instance, Object[] args) {
+        ProxyParameterLoaderContext context = new ProxyParameterLoaderContext(view, instance, this.proxyOrchestrator);
         return this.parameterLoader().loadArguments(context, args).toArray();
     }
 

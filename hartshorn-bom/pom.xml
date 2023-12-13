@@ -24,6 +24,7 @@
         <slf4j.version>2.0.9</slf4j.version>
 
         <!-- Versions in alphabetical order -->
+        <bytebuddy.version>1.14.10</bytebuddy.version>
         <compile-testing.version>0.21.0</compile-testing.version>
         <cglib.version>3.3.0</cglib.version>
         <checker.version>3.40.0</checker.version>
@@ -54,6 +55,11 @@
             <dependency>
                 <groupId>org.dockbox.hartshorn</groupId>
                 <artifactId>hartshorn-proxy</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dockbox.hartshorn</groupId>
+                <artifactId>hartshorn-proxy-bytebuddy</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -158,6 +164,11 @@
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>${bytebuddy.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
