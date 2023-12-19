@@ -16,8 +16,9 @@
 
 package org.dockbox.hartshorn.introspect;
 
-import jakarta.inject.Named;
 import java.util.List;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentKey.Builder;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
@@ -30,11 +31,13 @@ import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
+import jakarta.inject.Named;
+
 public class ExecutableElementContextParameterLoader extends RuleBasedParameterLoader<ApplicationBoundParameterLoaderContext> {
 
-    public ExecutableElementContextParameterLoader() {
+    public ExecutableElementContextParameterLoader(ApplicationContext applicationContext) {
         super(ApplicationBoundParameterLoaderContext.class);
-        this.add(new ContextParameterLoaderRule());
+        this.add(new ContextParameterLoaderRule(applicationContext));
     }
 
     @Override

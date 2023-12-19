@@ -31,8 +31,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
  *
  * <p>Provider methods can have parameters, which will be injected through the active
  * {@link ApplicationContext}. This includes support for {@link jakarta.inject.Named} parameters, and
- * optionally {@link org.dockbox.hartshorn.context.Context} types if
- * {@link org.dockbox.hartshorn.inject.processing.UseContextInjection} is used.
+ * {@link org.dockbox.hartshorn.context.Context} types.
  *
  * <p>If {@link jakarta.inject.Singleton} is used on the provider method, the result of the provider
  * method will be cached immediately, and the same instance will be returned on subsequent calls.

@@ -70,7 +70,7 @@ public class ComponentFieldInjectionPoint<T> implements ComponentInjectionPoint<
 
     @Override
     public SequencedCollection<InjectionPoint> injectionPoints() {
-        return List.of(new InjectionPoint(this.field.genericType(), this.field));
+        return List.of(new InjectionPoint(this.field));
     }
 
     @Override

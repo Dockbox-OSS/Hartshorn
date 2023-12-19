@@ -42,7 +42,6 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.inject.processing.UseContextInjection;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
@@ -252,13 +251,13 @@ public final class StandardApplicationContextConstructor implements ApplicationC
 
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, Annotation> activators = LazyStreamableConfigurer.of(
                 TypeUtils.annotation(UseBootstrap.class),
-                TypeUtils.annotation(UseProxying.class),
-                TypeUtils.annotation(UseContextInjection.class)
+                TypeUtils.annotation(UseProxying.class)
         );
 
         private final LazyStreamableConfigurer<ApplicationContext, ComponentPreProcessor> componentPreProcessors = LazyStreamableConfigurer.empty();
-        private final LazyStreamableConfigurer<ApplicationContext, ComponentPostProcessor> componentPostProcessors = LazyStreamableConfigurer.<ApplicationContext, ComponentPostProcessor>empty()
-                .customizer(collection -> collection.add(ComponentFinalizingPostProcessor.create(Customizer.useDefaults())));
+        private final LazyStreamableConfigurer<ApplicationContext, ComponentPostProcessor> componentPostProcessors = LazyStreamableConfigurer.of(collection -> {
+            collection.add(ComponentFinalizingPostProcessor.create(Customizer.useDefaults()));
+        });
 
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, Class<?>> standaloneComponents = LazyStreamableConfigurer.empty();
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, String> scanPackages = LazyStreamableConfigurer.empty();

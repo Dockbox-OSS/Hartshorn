@@ -66,7 +66,7 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
 
     @Override
     public Object[] loadParameters(ExecutableElementView<?> element) {
-        ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
+        ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader(this.applicationContext);
         ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.applicationContext(), this.scope);
         this.copyTo(loaderContext);
         return parameterLoader.loadArguments(loaderContext).toArray();

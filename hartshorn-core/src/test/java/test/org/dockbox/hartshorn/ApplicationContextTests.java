@@ -32,7 +32,6 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
-import org.dockbox.hartshorn.component.ContextualComponentPopulator;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
@@ -47,7 +46,6 @@ import org.dockbox.hartshorn.inject.DependencyResolutionType;
 import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.TypePathNode;
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
-import org.dockbox.hartshorn.inject.processing.UseContextInjection;
 import org.dockbox.hartshorn.inject.strategy.DependencyResolverUtils;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -108,7 +106,6 @@ import test.org.dockbox.hartshorn.components.TypeWithFailingConstructor;
 import test.org.dockbox.hartshorn.components.contextual.ErrorInConstructorObject;
 
 @HartshornTest(includeBasePackages = false)
-@UseContextInjection
 public class ApplicationContextTests {
 
     @Inject
@@ -248,7 +245,6 @@ public class ApplicationContextTests {
 
     public static Stream<Arguments> componentPopulators() {
         return Stream.of(
-            Arguments.of((Function<ApplicationContext, ComponentPopulator>) ContextualComponentPopulator::new),
             Arguments.of((Function<ApplicationContext, ComponentPopulator>) context -> {
                 return StrategyComponentPopulator.create(Customizer.useDefaults()).initialize(SimpleSingleElementContext.create(context));
             })
@@ -333,10 +329,10 @@ public class ApplicationContextTests {
     void testNamedContextFieldsAreInjected(Function<ApplicationContext, ComponentPopulator> populatorFactory) {
         String contextName = "InjectedContext";
         this.applicationContext.add("another", new SampleContext(contextName));
-        
+
         ComponentPopulator populator = populatorFactory.apply(this.applicationContext);
         ContextInjectedType instance = populator.populate(new ContextInjectedType());
-        
+
         Assertions.assertNotNull(instance.anotherContext());
         Assertions.assertEquals(contextName, instance.anotherContext().name());
     }

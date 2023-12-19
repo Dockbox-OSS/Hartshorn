@@ -54,7 +54,7 @@ public class ComponentMethodInjectionPoint<T> implements ComponentInjectionPoint
     @Override
     public SequencedCollection<InjectionPoint> injectionPoints() {
         return this.method.parameters().all().stream()
-                .map(parameter -> new InjectionPoint(parameter.genericType(), parameter))
+                .map(InjectionPoint::new)
                 .toList();
     }
 

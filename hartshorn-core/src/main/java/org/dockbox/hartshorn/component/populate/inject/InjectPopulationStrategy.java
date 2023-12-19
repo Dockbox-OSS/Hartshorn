@@ -46,7 +46,7 @@ import jakarta.inject.Inject;
  * <p>By default, all components are resolved through the {@link ApplicationContext}. Additional {@link InjectParameterResolver}
  * implementations can be registered to provide custom resolution logic for specific injection points. This is primarily useful
  * for injecting components which are not registered in the {@link ApplicationContext}, or cannot be resolved through the
- * {@link ApplicationContext} alone. Built-in support for {@link org.dockbox.hartshorn.inject.Context} is provided by the
+ * {@link ApplicationContext} alone. Built-in support for {@link org.dockbox.hartshorn.context.Context} types is provided by the
  * {@link InjectContextParameterResolver}.
  *
  * <p>Example:
@@ -148,7 +148,7 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
         private final LazyStreamableConfigurer<ApplicationContext, InjectionPointNameResolver> nameResolvers = LazyStreamableConfigurer.of(new AnnotatedInjectionPointNameResolver());
         private final LazyStreamableConfigurer<ApplicationContext, EnableInjectionPointRule> enableComponentRules = LazyStreamableConfigurer.of(new AnnotatedInjectionPointEnableRule());
         private final LazyStreamableConfigurer<ApplicationContext, RequireInjectionPointRule> requiresComponentRules = LazyStreamableConfigurer.of(new AnnotatedInjectionPointRequireRule());
-        private final LazyStreamableConfigurer<ApplicationContext, InjectParameterResolver> parameterResolvers = LazyStreamableConfigurer.of(new InjectContextParameterResolver());
+        private final LazyStreamableConfigurer<ApplicationContext, InjectParameterResolver> parameterResolvers = LazyStreamableConfigurer.ofInitializer(context -> new InjectContextParameterResolver(context.input()));
 
         @SafeVarargs
         public final Configurer annotations(Class<? extends Annotation>... annotations) {

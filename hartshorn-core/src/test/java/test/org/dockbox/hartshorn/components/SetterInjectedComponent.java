@@ -17,10 +17,10 @@
 package test.org.dockbox.hartshorn.components;
 
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.inject.Required;
 
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 @Component
 public class SetterInjectedComponent {
@@ -34,7 +34,7 @@ public class SetterInjectedComponent {
     }
 
     @Inject
-    public void setContext(@Context("setter") SampleContext context) {
+    public void setContext(@Named("setter") SampleContext context) {
         this.context = context;
     }
 

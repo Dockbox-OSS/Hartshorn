@@ -16,13 +16,16 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.inject.Context;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public class ContextInjectedType {
-    @Context
+
+    @Inject
     private SampleContext context;
 
-    @Context("another")
+    @Inject
+    @Named("another")
     private SampleContext anotherContext;
 
     public SampleContext context() {

@@ -17,20 +17,43 @@
 package org.dockbox.hartshorn.component.populate.inject;
 
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
  * Represents an injection point, which is a combination of a type and an annotated element. Typically,
  * the annotated element is a field or parameter, and the type is the type of the field or parameter.
  *
- * @param type the type of the injection point
- * @param injectionPoint the annotated element of the injection point
- *
  * @since 0.6.0
  *
  * @author Guus Lieben
  */
-public record InjectionPoint(
-        TypeView<?> type,
-        AnnotatedElementView injectionPoint
-) { }
+public final class InjectionPoint {
+
+    private final TypeView<?> type;
+    private final AnnotatedElementView injectionPoint;
+
+    public <T extends AnnotatedElementView & GenericTypeView<?>> InjectionPoint(T injectionPoint) {
+        this.type = injectionPoint.genericType();
+        this.injectionPoint = injectionPoint;
+    }
+
+    /**
+     * Returns the type of the injection point. This is typically the type of the {@link #injectionPoint()}.
+     *
+     * @return the type of the injection point
+     */
+    public TypeView<?> type() {
+        return type;
+    }
+
+    /**
+     * Returns the annotated element of the injection point. This is typically the field or parameter
+     * that is being injected into.
+     *
+     * @return the annotated element of the injection point
+     */
+    public AnnotatedElementView injectionPoint() {
+        return injectionPoint;
+    }
+}

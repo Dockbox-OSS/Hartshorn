@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.inject.HandledInjection;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.inject.Strict;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.StringUtilities;
@@ -48,7 +48,7 @@ public class DependencyResolverUtils {
 
     public static Set<ComponentKey<?>> resolveDependencies(ExecutableElementView<?> executable) {
         return executable.parameters().all().stream()
-                .filter(parameter -> !parameter.annotations().has(HandledInjection.class))
+                .filter(parameter -> !parameter.type().isChildOf(Context.class))
                 .map(DependencyResolverUtils::resolveComponentKey)
                 .collect(Collectors.toSet());
     }

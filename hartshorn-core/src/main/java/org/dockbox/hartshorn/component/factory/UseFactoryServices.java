@@ -16,14 +16,13 @@
 
 package org.dockbox.hartshorn.component.factory;
 
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.inject.processing.UseContextInjection;
-import org.dockbox.hartshorn.component.UseProxying;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.component.UseProxying;
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
 
 /**
  * @deprecated See {@link Factory}.
@@ -35,7 +34,6 @@ import java.lang.annotation.Target;
         FactoryServicePostProcessor.class,
         FactoryServicePreProcessor.class,
 })
-@UseContextInjection
 @UseProxying
 public @interface UseFactoryServices {
 }

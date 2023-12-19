@@ -18,19 +18,20 @@ package org.dockbox.hartshorn.component.populate.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.populate.PopulateComponentContext;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextKey;
-import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+import jakarta.inject.Named;
+
 /**
- * A {@link InjectParameterResolver} implementation that resolves {@link org.dockbox.hartshorn.context.Context} instances.
- * This resolver will only accept injection points that are annotated with {@link Context}. If multiple contexts are
- * available, the first one is returned.
+ * A {@link InjectParameterResolver} implementation that resolves {@link Context} instances. This resolver
+ * will only accept injection points that implement {@link Context}. If multiple contexts are available,
+ * the first one is returned.
  *
  * @see Context
- * @see org.dockbox.hartshorn.context.Context
  *
  * @since 0.6.0
  *
@@ -38,22 +39,41 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  */
 public class InjectContextParameterResolver implements InjectParameterResolver {
 
+    private final ApplicationContext applicationContext;
+
+    public InjectContextParameterResolver(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
     @Override
     public boolean accepts(InjectionPoint injectionPoint) {
-        return injectionPoint.injectionPoint().annotations().has(Context.class) && injectionPoint.type().isChildOf(org.dockbox.hartshorn.context.Context.class);
+        TypeView<?> type = injectionPoint.type();
+        boolean childOf = type.isChildOf(Context.class);
+        if (!childOf) {
+            return false;
+        }
+
+        ContextKey<? extends Context> contextKey = getContextKey(injectionPoint);
+        // If absent, we still prefer bindings from the application context in case
+        // manual bindings exist. A common example of this is the ApplicationContext
+        // itself, which is a self-containing context.
+        return this.applicationContext.first(contextKey).present();
     }
 
     @Override
     public Object resolve(InjectionPoint injectionPoint, PopulateComponentContext<?> context) {
-        ApplicationContext applicationContext = context.applicationContext();
-        String name = injectionPoint.injectionPoint().annotations().get(Context.class).map(Context::value).orNull();
+        ContextKey<? extends Context> key = getContextKey(injectionPoint);
+        return this.applicationContext.first(key).orNull();
+    }
 
-        TypeView<? extends org.dockbox.hartshorn.context.Context> type = TypeUtils.adjustWildcards(injectionPoint.type(), TypeView.class);
-        ContextKey<? extends org.dockbox.hartshorn.context.Context> key = ContextKey.of(type.type());
+    private static ContextKey<? extends Context> getContextKey(InjectionPoint injectionPoint) {
+        String name = injectionPoint.injectionPoint().annotations().get(Named.class).map(Named::value).orNull();
+
+        TypeView<? extends Context> type = TypeUtils.adjustWildcards(injectionPoint.type(), TypeView.class);
+        ContextKey<? extends Context> key = ContextKey.of(type.type());
         if (StringUtilities.notEmpty(name)) {
             key = key.mutable().name(name).build();
         }
-
-        return applicationContext.first(key).orNull();
+        return key;
     }
 }

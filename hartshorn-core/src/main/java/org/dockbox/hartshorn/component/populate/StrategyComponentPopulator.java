@@ -16,10 +16,12 @@
 
 package org.dockbox.hartshorn.component.populate;
 
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPopulateException;
 import org.dockbox.hartshorn.component.ComponentPopulator;
-import org.dockbox.hartshorn.component.populate.context.ContextPopulationStrategy;
 import org.dockbox.hartshorn.component.populate.inject.InjectPopulationStrategy;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.proxy.ProxyManager;
@@ -30,9 +32,6 @@ import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * A {@link ComponentPopulator} that populates components using a set of {@link ComponentPopulationStrategy}s. The
@@ -124,9 +123,8 @@ public class StrategyComponentPopulator implements ComponentPopulator, ContextCa
 
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<ApplicationContext, ComponentPopulationStrategy> strategies = LazyStreamableConfigurer.<ApplicationContext, ComponentPopulationStrategy>empty().customizer(collection -> {
+        private final LazyStreamableConfigurer<ApplicationContext, ComponentPopulationStrategy> strategies = LazyStreamableConfigurer.of(collection -> {
             collection.add(InjectPopulationStrategy.create(Customizer.useDefaults()));
-            collection.add(ContextPopulationStrategy.create(Customizer.useDefaults()));
         });
         private ContextualInitializer<ApplicationContext, ComponentInjectionPointsResolver> injectionPointsResolver = ContextualInitializer.of(MethodsAndFieldsInjectionPointResolver::new);
 

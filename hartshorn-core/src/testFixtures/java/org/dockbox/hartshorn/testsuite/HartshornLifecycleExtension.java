@@ -16,17 +16,6 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
@@ -60,6 +49,17 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.mockito.Mockito;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import jakarta.inject.Inject;
 
@@ -190,7 +190,7 @@ public class HartshornLifecycleExtension implements
             throw new ParameterResolutionException("Test method was not provided to runner");
         }
 
-        ParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
+        ParameterLoader parameterLoader = new ExecutableElementContextParameterLoader(this.applicationContext);
         MethodView<?, ?> executable = this.applicationContext.environment().introspector().introspect(testMethod.get());
         ApplicationBoundParameterLoaderContext parameterLoaderContext = new ApplicationBoundParameterLoaderContext(executable,
                 extensionContext.getTestInstance().orElse(null), this.applicationContext);

@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.introspect;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.component.populate.PopulateComponentContext;
 import org.dockbox.hartshorn.component.populate.inject.AnnotatedInjectionPointRequireRule;
@@ -31,11 +32,11 @@ import org.dockbox.hartshorn.util.option.Option;
 
 public class ContextParameterLoaderRule implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {
 
-    private final InjectContextParameterResolver resolver = new InjectContextParameterResolver();
     private final RequireInjectionPointRule requireRule = new AnnotatedInjectionPointRequireRule();
+    private final InjectContextParameterResolver resolver;
 
-    private InjectionPoint createInjectionPoint(ParameterView<?> parameter, ApplicationBoundParameterLoaderContext context) {
-        return new InjectionPoint(context.executable().declaredBy(), parameter);
+    public ContextParameterLoaderRule(ApplicationContext applicationContext) {
+        this.resolver = new InjectContextParameterResolver(applicationContext);
     }
 
     private PopulateComponentContext<?> createContext(ApplicationBoundParameterLoaderContext context) {
@@ -46,12 +47,12 @@ public class ContextParameterLoaderRule implements ParameterLoaderRule<Applicati
 
     @Override
     public boolean accepts(ParameterView<?> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
-        return this.resolver.accepts(this.createInjectionPoint(parameter, context));
+        return this.resolver.accepts(new InjectionPoint(parameter));
     }
 
     @Override
     public <T> Option<T> load(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
-        InjectionPoint injectionPoint = this.createInjectionPoint(parameter, context);
+        InjectionPoint injectionPoint = new InjectionPoint(parameter);
         Object resolved = this.resolver.resolve(injectionPoint, this.createContext(context));
         if (resolved == null && this.requireRule.isRequired(injectionPoint)) {
             throw new ComponentRequiredException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required");

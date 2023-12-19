@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 
 /**
  * Annotation for injecting a {@link org.dockbox.hartshorn.context.Context} into a class. The context is
@@ -31,10 +30,12 @@ import java.lang.annotation.Target;
  *
  * @author Guus Lieben
  * @since 0.4.7
+ *
+ * @deprecated Context injection is now built-in to default injection strategies. Use {@link jakarta.inject.Inject} instead.
  */
-@Extends(HandledInjection.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
+@Deprecated(since = "0.6.0", forRemoval = true)
 public @interface Context {
 
     /**
