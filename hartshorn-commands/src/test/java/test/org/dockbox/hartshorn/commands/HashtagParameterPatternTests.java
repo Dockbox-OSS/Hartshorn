@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.MessageTemplate;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -56,10 +56,8 @@ public class HashtagParameterPatternTests {
         String pattern = "#cuboid[1]";
         PrefixedParameterPattern parameterPattern = this.pattern();
 
-        Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
-
-        Assertions.assertTrue(result.present());
-        Assertions.assertTrue(result.get());
+        boolean result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        Assertions.assertTrue(result);
     }
 
     private PrefixedParameterPattern pattern() {
@@ -77,10 +75,9 @@ public class HashtagParameterPatternTests {
         String pattern = "@cuboid[1]";
         PrefixedParameterPattern parameterPattern = this.pattern();
 
-        Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
-
-        Assertions.assertTrue(result.absent());
-        Assertions.assertTrue(result.errorPresent());
+        Assertions.assertThrows(ConverterException.class, () -> {
+            parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        });
     }
 
     @Test
@@ -88,10 +85,9 @@ public class HashtagParameterPatternTests {
         String pattern = "#sphere[1]";
         PrefixedParameterPattern parameterPattern = this.pattern();
 
-        Attempt<Boolean, ConverterException> result = parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
-
-        Assertions.assertTrue(result.absent());
-        Assertions.assertTrue(result.errorPresent());
+        Assertions.assertThrows(ConverterException.class, () -> {
+            parameterPattern.preconditionsMatch(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        });
     }
 
     @Test
@@ -110,7 +106,7 @@ public class HashtagParameterPatternTests {
         String pattern = "#cuboid[1]";
         PrefixedParameterPattern parameterPattern = this.pattern();
 
-        Attempt<String, ConverterException> identifier = parameterPattern.parseIdentifier(pattern);
+        Option<String> identifier = parameterPattern.parseIdentifier(pattern);
 
         Assertions.assertTrue(identifier.present());
         Assertions.assertEquals("cuboid", identifier.get());
@@ -121,7 +117,7 @@ public class HashtagParameterPatternTests {
         String pattern = "#cuboid[1]";
         CustomParameterPattern parameterPattern = this.pattern();
 
-        Attempt<CuboidArgument, ConverterException> result = parameterPattern.request(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
+        Option<CuboidArgument> result = parameterPattern.request(CuboidArgument.class, SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.present());
 

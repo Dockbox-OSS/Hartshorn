@@ -39,6 +39,7 @@ import javax.xml.transform.Result;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.none.None;
 import org.dockbox.hartshorn.util.option.some.Some;
@@ -52,12 +53,25 @@ import org.dockbox.hartshorn.util.option.some.Some;
  * such as {@link #orElse(Object)} (return a default value if value not present) and {@link #peek(Consumer)} (execute a
  * block of code if the value is present).
  *
+ * <p>When comparing {@link Option} to {@link Optional}, there are two major differences between the two:
+ * <ol>
+ *     <li>
+ *         {@link Option} is an interface, with specific implementations to match certain scenarios (present or absent values).
+ *         This allows for pattern matching, and for the creation of custom implementations if desired.
+ *     </li>
+ *     <li>
+ *         {@link Option} is a {@link Context}, which allows for the storage of additional data. This is useful for example when
+ *         a value is present, but the value is not the only thing that is relevant. For example, when a value is absent, and the
+ *         reason for the absence is relevant, the reason can be stored in the {@link Context} of the {@link Option} instance.
+ *     </li>
+ * </ol>
+ *
  * @param <T> the type of the (potential) value wrapped by the {@link Option} instance.
  *
  * @author Guus Lieben
  * @since 0.4.13
  */
-public interface Option<T> extends Iterable<T> {
+public interface Option<T> extends Context, Iterable<T> {
 
     /**
      * Creates a new {@link Option} instance wrapping the given nullable value. If the value is {@code null}, an
@@ -140,7 +154,11 @@ public interface Option<T> extends Iterable<T> {
      * @param <E> the type of the error to wrap in the {@link Attempt} instance.
      *
      * @return a {@link Attempt} instance based on the current {@link Option} instance.
+     *
+     * @deprecated since 0.6.0 for removal in 0.7.0. Consider handling exceptions immediately, or rethrowing them
+     *             in a checked manner.
      */
+    @Deprecated(since = "0.6.0", forRemoval = true)
     <E extends Throwable> Attempt<T, E> attempt(Class<E> errorType);
 
     /**

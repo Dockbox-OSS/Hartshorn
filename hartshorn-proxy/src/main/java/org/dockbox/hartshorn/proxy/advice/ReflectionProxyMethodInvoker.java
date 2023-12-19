@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.proxy.advice;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.advice.intercept.CustomInvocation;
 import org.dockbox.hartshorn.proxy.advice.intercept.Invokable;
@@ -29,14 +37,6 @@ import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Standard implementation of {@link ProxyMethodInvoker} that uses reflection to invoke methods on the target
@@ -68,7 +68,7 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
     }
 
     @Override
-    public Object invokeDelegate(T self, Invokable target, Object[] args) {
+    public Object invokeDelegate(T self, Invokable target, Object[] args) throws Throwable {
         return this.invokeAccessible(self, target, args, (method, instance, interceptorArgs) -> method.invoke(this.manager.delegate().get(), interceptorArgs));
     }
 
@@ -91,7 +91,7 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
      * @param args the arguments that are passed to the method
      * @return the result of the method invocation
      */
-    protected Object invokeSelf(T self, Invokable target, Object[] args) {
+    protected Object invokeSelf(T self, Invokable target, Object[] args) throws Throwable {
         return this.invokeAccessible(self, target, args, (method, instance, interceptorArgs) -> method.invoke(self, interceptorArgs));
     }
 
@@ -195,7 +195,7 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
      * @param function the function that is used to invoke the method
      * @return the result of the method invocation
      */
-    protected Object invokeAccessible(T self, Invokable target, Object[] args, MethodInvoker<Object, T> function) {
+    protected Object invokeAccessible(T self, Invokable target, Object[] args, MethodInvoker<Object, T> function) throws Throwable {
         target.setAccessible(true);
 
         Object result;

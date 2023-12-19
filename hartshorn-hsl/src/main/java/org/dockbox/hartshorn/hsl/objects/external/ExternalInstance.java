@@ -27,7 +27,9 @@ import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents a single nullable {@link Object} instance that can be accessed from an HSL
@@ -62,9 +64,18 @@ public class ExternalInstance implements ExternalObjectReference {
 
     @Override
     public void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options) {
-        this.type.fields().named(name.lexeme())
-                .peek(field -> field.set(this.instance(), value))
-                .orElseThrow(() -> this.propertyDoesNotExist(name));
+        Option<FieldView<Object, ?>> field = this.type.fields().named(name.lexeme());
+        if (field.present()) {
+            try {
+                field.get().set(this.instance(), value);
+            }
+            catch(Throwable throwable) {
+                throw new RuntimeError(name, "Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.type.name()), throwable);
+            }
+        }
+        else {
+            throw this.propertyDoesNotExist(name);
+        }
     }
 
     @Override
@@ -81,9 +92,18 @@ public class ExternalInstance implements ExternalObjectReference {
             return new ExternalFunction(this.type, name.lexeme());
         }
 
-        return this.type.fields().named(name.lexeme())
-                .flatMap(field -> field.get(this.instance()))
-                .orElseThrow(() -> this.propertyDoesNotExist(name));
+        Option<FieldView<Object, ?>> field = this.type.fields().named(name.lexeme());
+        if (field.present()) {
+            try {
+                return field.get().get(this.instance());
+            }
+            catch(Throwable throwable) {
+                throw new RuntimeError(name, "Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.type.name()), throwable);
+            }
+        }
+        else {
+            throw this.propertyDoesNotExist(name);
+        }
     }
 
     private RuntimeError propertyDoesNotExist(Token name) {

@@ -17,14 +17,13 @@
 package org.dockbox.hartshorn.inject;
 
 import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.NoSuchProviderException.ProviderType;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 public final class ComponentConstructorResolver {
@@ -39,12 +38,14 @@ public final class ComponentConstructorResolver {
         return new ComponentConstructorResolver(applicationContext);
     }
 
-    public <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructor(TypeView<C> type) {
+    public <C> Option<ConstructorView<? extends C>> findConstructor(TypeView<C> type)
+            throws MissingInjectConstructorException, NoSuchProviderException {
         TypePathNode<C> node = new TypePathNode<>(type, ComponentKey.of(type), type);
         return this.findConstructor(node);
     }
 
-    public <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructor(TypePathNode<C> node) {
+    public <C> Option<ConstructorView<? extends C>> findConstructor(TypePathNode<C> node)
+            throws MissingInjectConstructorException, NoSuchProviderException {
         BindingHierarchy<C> hierarchy = this.applicationContext.hierarchy(node.componentKey());
         int highestPriority = hierarchy.highestPriority();
         Option<Provider<C>> providerOption = hierarchy.get(highestPriority);
@@ -53,7 +54,8 @@ public final class ComponentConstructorResolver {
             : this.findConstructorInHierarchy(node, providerOption);
     }
 
-    private <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructorInHierarchy(TypePathNode<C> node, Option<Provider<C>> providerOption) {
+    private <C> Option<ConstructorView<? extends C>> findConstructorInHierarchy(TypePathNode<C> node, Option<Provider<C>> providerOption)
+            throws NoSuchProviderException, MissingInjectConstructorException {
         Provider<C> provider = providerOption.get();
         if (provider instanceof ComposedProvider<C> composedProvider) {
             provider = composedProvider.provider();
@@ -63,18 +65,18 @@ public final class ComponentConstructorResolver {
             TypeView<? extends C> typeView = this.applicationContext.environment().introspector().introspect(typeAwareProvider.type());
             return this.findConstructorInImplementation(typeView);
         }
-        return Attempt.of(new NoSuchProviderException(ProviderType.TYPE_AWARE, node.componentKey()));
+        throw new NoSuchProviderException(ProviderType.TYPE_AWARE, node.componentKey());
     }
 
-    private <C> Attempt<ConstructorView<? extends C>, ? extends ApplicationException> findConstructorInImplementation(TypeView<? extends C> type) {
+    private <C> Option<ConstructorView<? extends C>> findConstructorInImplementation(TypeView<? extends C> type) throws MissingInjectConstructorException {
         if (type.modifiers().isAbstract()) {
-            return Attempt.empty();
+            return Option.empty();
         }
 
         ConstructorView<? extends C> optimalConstructor;
         List<? extends ConstructorView<? extends C>> constructors = this.findAvailableConstructors(type);
         if (constructors.isEmpty()) {
-            return Attempt.of(new MissingInjectConstructorException(type));
+            throw new MissingInjectConstructorException(type);
         }
 
         // An optimal constructor is the one with the highest amount of injectable parameters, so as many dependencies
@@ -86,7 +88,7 @@ public final class ComponentConstructorResolver {
             }
         }
 
-        return Attempt.of(optimalConstructor);
+        return Option.of(optimalConstructor);
     }
 
     private <C> List<ConstructorView<C>> findAvailableConstructors(TypeView<C> type) {

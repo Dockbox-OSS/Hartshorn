@@ -16,15 +16,15 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import java.util.Optional;
+
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionToOptionalConverter;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-
 public class OptionToOptionalConverterTests {
+
     @Test
     void testPresentOptionConvertsToPresentOptional() {
         OptionToOptionalConverter converter = new OptionToOptionalConverter();
@@ -39,44 +39,6 @@ public class OptionToOptionalConverterTests {
     void testEmptyOptionConvertsToEmptyOptional() {
         OptionToOptionalConverter converter = new OptionToOptionalConverter();
         Option<String> option = Option.empty();
-        Optional<?> optional = converter.convert(option);
-        Assertions.assertNotNull(optional);
-        Assertions.assertFalse(optional.isPresent());
-    }
-
-    @Test
-    void testSuccessPresentAttemptConvertsToPresentOptional() {
-        OptionToOptionalConverter converter = new OptionToOptionalConverter();
-        Option<String> option = Attempt.of("test");
-        Optional<?> optional = converter.convert(option);
-        Assertions.assertNotNull(optional);
-        Assertions.assertTrue(optional.isPresent());
-        Assertions.assertEquals("test", optional.get());
-    }
-
-    @Test
-    void testFailurePresentAttemptConvertsToPresentOptional() {
-        OptionToOptionalConverter converter = new OptionToOptionalConverter();
-        Option<String> option = Attempt.of("test", new Exception());
-        Optional<?> optional = converter.convert(option);
-        Assertions.assertNotNull(optional);
-        Assertions.assertTrue(optional.isPresent());
-        Assertions.assertEquals("test", optional.get());
-    }
-
-    @Test
-    void testFailureAbsentAttemptConvertsToEmptyOptional() {
-        OptionToOptionalConverter converter = new OptionToOptionalConverter();
-        Option<String> option = Attempt.of(new Exception());
-        Optional<?> optional = converter.convert(option);
-        Assertions.assertNotNull(optional);
-        Assertions.assertFalse(optional.isPresent());
-    }
-
-    @Test
-    void testSuccessAbsentAttemptConvertsToEmptyOptional() {
-        OptionToOptionalConverter converter = new OptionToOptionalConverter();
-        Option<String> option = Attempt.of((String) null);
         Optional<?> optional = converter.convert(option);
         Assertions.assertNotNull(optional);
         Assertions.assertFalse(optional.isPresent());

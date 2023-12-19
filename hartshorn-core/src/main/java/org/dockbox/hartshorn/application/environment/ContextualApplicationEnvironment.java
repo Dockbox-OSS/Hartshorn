@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -327,10 +328,14 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     }
 
     private Banner createBanner() {
-        return this.resourceLocator.resource("banner.txt")
-                .option()
-                .map(resource -> (Banner) new ResourcePathBanner(resource))
-                .orElseGet(HartshornBanner::new);
+        try {
+            return this.resourceLocator.resource("banner.txt")
+                    .map(resource -> (Banner) new ResourcePathBanner(resource))
+                    .orElseGet(HartshornBanner::new);
+        }
+        catch (IOException e) {
+            return new HartshornBanner();
+        }
     }
 
     /**

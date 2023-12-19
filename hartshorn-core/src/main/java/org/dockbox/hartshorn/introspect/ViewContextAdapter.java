@@ -24,23 +24,23 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 public interface ViewContextAdapter extends ApplicationAwareContext {
 
     ViewContextAdapter scope(Scope scope);
 
-    <T> Attempt<T, Throwable> create(ConstructorView<T> constructor);
+    <T> Option<T> create(ConstructorView<T> constructor) throws Throwable;
 
     Object[] loadParameters(ExecutableElementView<?> element);
 
-    <P, R> Attempt<R, Throwable> invoke(MethodView<P, R> method);
+    <P, R> Option<R> invoke(MethodView<P, R> method) throws Throwable;
 
-    <P, R> Attempt<R, Throwable> invokeStatic(MethodView<P, R> method);
+    <P, R> Option<R> invokeStatic(MethodView<P, R> method) throws Throwable;
     
-    <P, R> Attempt<R, Throwable> load(FieldView<P, R> field);
+    <P, R> Option<R> load(FieldView<P, R> field) throws Throwable;
 
-    <T> Attempt<T, Throwable> load(GenericTypeView<T> element);
+    <T> Option<T> load(GenericTypeView<T> element) throws Throwable;
 
     boolean isProxy(TypeView<?> type);
 }

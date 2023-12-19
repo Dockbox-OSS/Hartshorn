@@ -16,21 +16,20 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
+import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Supplier;
+
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
-
-import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Supplier;
 
 public class ConverterIntrospectionHelper {
 
@@ -42,7 +41,12 @@ public class ConverterIntrospectionHelper {
 
             ConstructorView<T> constructorView = Mockito.mock(ConstructorView.class);
             Mockito.when(constructorView.constructor()).thenReturn(Option.of(defaultConstructor));
-            Mockito.when(constructorView.create()).thenAnswer(invocation -> Attempt.of(supplier.get()));
+            try {
+                Mockito.when(constructorView.create()).thenAnswer(invocation -> Option.of(supplier.get()));
+            }
+            catch (Throwable throwable) {
+                Assertions.fail("On-going stub yielded an unexpected exception", throwable);
+            }
 
             Mockito.when(constructors.defaultConstructor()).thenReturn(Option.of(constructorView));
         }

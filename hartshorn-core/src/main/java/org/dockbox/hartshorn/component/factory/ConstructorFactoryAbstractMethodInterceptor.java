@@ -46,7 +46,7 @@ public class ConstructorFactoryAbstractMethodInterceptor<T, R> extends Construct
 
     @Override
     public R intercept(MethodInterceptorContext<T, R> interceptorContext) throws Throwable {
-        Object instance = this.constructor.create(interceptorContext.args()).rethrow().orNull();
+        Object instance = this.constructor.create(interceptorContext.args()).orNull();
         R result = this.conversionService.convert(instance, this.method.returnType().type());
         return this.processInstance(this.context, result, this.enable);
     }

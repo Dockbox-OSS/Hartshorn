@@ -21,10 +21,11 @@ import java.util.List;
 import java.util.SequencedCollection;
 
 import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
-import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents a field that can be injected into inside a component. Additional handling is in place to
@@ -45,18 +46,26 @@ public class ComponentFieldInjectionPoint<T> implements ComponentInjectionPoint<
     }
 
     @Override
-    public void processObjects(PopulateComponentContext<T> context, List<Object> objectsToInject) {
+    public void processObjects(PopulateComponentContext<T> context, List<Object> objectsToInject) throws ApplicationException {
         if (objectsToInject.size() == 1) {
             Object objectToInject = objectsToInject.get(0);
             T instance = context.instance();
-            if (objectToInject instanceof Collection<?> collection) {
-                Attempt<?, Throwable> previousValue = this.field.get(instance);
-                if (previousValue.present() && previousValue.get() instanceof Collection<?> existingCollection) {
-                    existingCollection.addAll(TypeUtils.adjustWildcards(collection, Collection.class));
-                    return;
+            try {
+                if (objectToInject instanceof Collection<?> collection) {
+                    Option<?> previousValue = this.field.get(instance);
+                    if (previousValue.present() && previousValue.get() instanceof Collection<?> existingCollection) {
+                        existingCollection.addAll(TypeUtils.adjustWildcards(collection, Collection.class));
+                        return;
+                    }
                 }
+                this.field.set(instance, objectToInject);
             }
-            this.field.set(instance, objectToInject);
+            catch (ApplicationException e) {
+                throw e;
+            }
+            catch (Throwable throwable) {
+                throw new ApplicationException(throwable);
+            }
         }
         else {
             throw new UnsupportedOperationException("Cannot inject multiple objects into a single field");

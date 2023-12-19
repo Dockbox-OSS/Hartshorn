@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -328,15 +327,16 @@ public abstract class ElementContextTests {
     }
 
     @Test
-    void testStaticMethodCanInvokeStatic() {
+    void testStaticMethodCanInvokeStatic() throws Throwable {
         Option<MethodView<ElementContextTests, ?>> test = this.introspector().introspect(this)
                 .methods()
                 .named("testStatic");
         Assertions.assertTrue(test.present());
         MethodView<ElementContextTests, ?> methodContext = test.get();
         Assertions.assertTrue(methodContext.modifiers().isStatic());
-        Attempt<?, ?> result = methodContext.invokeStatic();
-        Assertions.assertTrue(result.errorAbsent());
+        Option<?> result = methodContext.invokeStatic();
+        // Void methods return empty option
+        Assertions.assertTrue(result.absent());
     }
 
     public static void testStatic() {}

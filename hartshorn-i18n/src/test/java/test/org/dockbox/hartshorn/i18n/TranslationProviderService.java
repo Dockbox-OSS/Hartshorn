@@ -16,15 +16,16 @@
 
 package test.org.dockbox.hartshorn.i18n;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Locale;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.i18n.TranslationBundle;
 import org.dockbox.hartshorn.i18n.annotations.TranslationProvider;
-
-import java.nio.file.Path;
-import java.util.Locale;
 
 @Service
 public class TranslationProviderService {
@@ -38,7 +39,7 @@ public class TranslationProviderService {
     }
 
     @TranslationProvider
-    public TranslationBundle english(ApplicationContext context) {
+    public TranslationBundle english(ApplicationContext context) throws IOException {
         TranslationBundle bundle = context.get(TranslationBundle.class);
         Path path = context.get(ClasspathResourceLocator.class).resource("i18n/en_us.yml").get();
         bundle.register(path, Locale.US, FileFormats.YAML);

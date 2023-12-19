@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
+import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.config.annotations.ConfigurationObject;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
@@ -34,7 +35,7 @@ public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPost
     }
 
     @Override
-    public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ObjectMappingException {
         if (processingContext.type().annotations().has(ConfigurationObject.class)) {
             ConfigurationObject configurationObject = processingContext.type().annotations().get(ConfigurationObject.class).get();
 
@@ -45,7 +46,7 @@ public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPost
         return instance;
     }
 
-    private <T> T createOrUpdate(ComponentKey<T> key, T instance, ConfigurationObject configurationObject) {
+    private <T> T createOrUpdate(ComponentKey<T> key, T instance, ConfigurationObject configurationObject) throws ObjectMappingException {
         Option<T> configuration;
         Class<T> type = instance == null
                 ? key.type()

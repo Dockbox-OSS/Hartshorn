@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.i18n.services;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
@@ -25,8 +27,6 @@ import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.TranslationProvider;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-
-import java.util.List;
 
 public class LanguageProviderServicePreProcessor extends ComponentPreProcessor {
 
@@ -39,10 +39,13 @@ public class LanguageProviderServicePreProcessor extends ComponentPreProcessor {
             ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
 
             for (MethodView<T, ?> method : translationProviderMethods) {
-                Object value = adapter.invoke(method)
-                        .mapError(error -> new IllegalStateException("Failed to invoke translation provider method " + method, error))
-                        .rethrow()
-                        .orNull();
+                Object value;
+                try {
+                    value = adapter.invoke(method).orNull();
+                }
+                catch (Throwable throwable) {
+                    throw new IllegalStateException("Failed to invoke translation provider method " + method, throwable);
+                }
 
                 if (value != null) {
                     if (value instanceof TranslationBundle bundle) {

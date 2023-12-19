@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.application.environment;
 
-import org.dockbox.hartshorn.application.Hartshorn;
-import org.dockbox.hartshorn.util.resources.Resources;
-import org.dockbox.hartshorn.util.option.Attempt;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -30,6 +26,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.resources.Resources;
 
 /**
  * The default implementation of {@link ClasspathResourceLocator}. This implementation will copy the resource to a temporary
@@ -47,8 +47,12 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
     }
 
     @Override
-    public Attempt<Path, IOException> resource(String name) {
-        return Attempt.of(() -> Resources.getResourceAsFile(name), IOException.class).map(File::toPath);
+    public Option<Path> resource(String name) throws IOException {
+        File file = Resources.getResourceAsFile(name);
+        if(file.exists()) {
+            return Option.of(file.toPath());
+        }
+        return Option.empty();
     }
 
     @Override

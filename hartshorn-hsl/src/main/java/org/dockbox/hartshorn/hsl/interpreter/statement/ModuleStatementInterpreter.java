@@ -16,29 +16,57 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.modules.AmbiguousLibraryFunction;
 import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 public class ModuleStatementInterpreter implements ASTNodeInterpreter<Void, ModuleStatement> {
+
     @Override
     public Void interpret(ModuleStatement node, InterpreterAdapter adapter) {
         String moduleName = node.name().lexeme();
         NativeModule module = adapter.interpreter().state().externalModules().get(moduleName);
-        for (NativeFunctionStatement supportedFunction : module.supportedFunctions(node.name())) {
-            NativeLibrary library = new NativeLibrary(supportedFunction, moduleName, module);
 
-            if (adapter.global().contains(supportedFunction.name().lexeme()) && !adapter.interpreter().executionOptions().permitAmbiguousExternalFunctions()) {
-                throw new ScriptEvaluationError("Module '" + moduleName + "' contains ambiguous function '" + supportedFunction.name().lexeme() + "' which is already defined in the global scope.", Phase.INTERPRETING, supportedFunction.name());
+        List<NativeFunctionStatement> supportedFunctions = module.supportedFunctions(node.name());
+        Map<String, List<NativeFunctionStatement>> functionsByName = supportedFunctions.stream()
+                .collect(Collectors.groupingBy(function -> function.name().lexeme()));
+
+        for(List<NativeFunctionStatement> functions : functionsByName.values()) {
+            registerModuleFunction(node, adapter, functions, moduleName, module);
+        }
+
+        return null;
+    }
+
+    private void registerModuleFunction(ModuleStatement node, InterpreterAdapter adapter, List<NativeFunctionStatement> supportedFunctions,
+            String moduleName, NativeModule module) {
+        boolean ambiguousFunction = supportedFunctions.size() > 1;
+        if (ambiguousFunction) {
+            if (!adapter.interpreter().executionOptions().permitAmbiguousExternalFunctions()) {
+                throw new ScriptEvaluationError("Module '" + moduleName + "' contains ambiguous function '" + node.name().lexeme() + "' which is already defined in the global scope.", Phase.INTERPRETING, supportedFunctions.getFirst().name());
             }
-
+            else {
+                Set<NativeLibrary> libraries = supportedFunctions.stream()
+                        .map(function -> new NativeLibrary(function, moduleName, module))
+                        .collect(Collectors.toSet());
+                adapter.global().define(supportedFunctions.getFirst().name().lexeme(), new AmbiguousLibraryFunction(libraries));
+            }
+        }
+        else {
+            NativeFunctionStatement supportedFunction = supportedFunctions.getFirst();
+            NativeLibrary library = new NativeLibrary(supportedFunction, moduleName, module);
             adapter.global().define(supportedFunction.name().lexeme(), library);
         }
-        return null;
     }
 }

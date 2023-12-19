@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.util.option.none;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.option.Attempt;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -28,6 +23,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents a failed {@link Attempt} which contains an error, but no value.

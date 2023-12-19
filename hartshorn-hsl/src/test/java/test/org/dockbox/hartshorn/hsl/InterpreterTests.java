@@ -58,6 +58,7 @@ public class InterpreterTests {
     }
 
     public static class AmbiguousExternalModule {
+
         public boolean ambiguousCall() {
             return true;
         }

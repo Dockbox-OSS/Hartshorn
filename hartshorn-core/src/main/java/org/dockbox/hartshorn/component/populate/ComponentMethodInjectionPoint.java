@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.SequencedCollection;
 
 import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
@@ -42,8 +43,16 @@ public class ComponentMethodInjectionPoint<T> implements ComponentInjectionPoint
     }
 
     @Override
-    public void processObjects(PopulateComponentContext<T> context, List<Object> objectsToInject) {
-        this.method.invoke(context.instance(), objectsToInject.toArray());
+    public void processObjects(PopulateComponentContext<T> context, List<Object> objectsToInject) throws ApplicationException {
+        try {
+            this.method.invoke(context.instance(), objectsToInject.toArray());
+        }
+        catch (ApplicationException e) {
+            throw e;
+        }
+        catch (Throwable throwable) {
+            throw new ApplicationException(throwable);
+        }
     }
 
     @Override

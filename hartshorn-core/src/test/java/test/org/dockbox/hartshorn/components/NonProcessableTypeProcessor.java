@@ -20,13 +20,19 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.junit.jupiter.api.Assertions;
 
 public class NonProcessableTypeProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> void postConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         if (instance instanceof NonProcessableType) {
-            processingContext.type().fields().named("nonNullIfProcessed").get().set(instance, "processed");
+            try {
+                processingContext.type().fields().named("nonNullIfProcessed").get().set(instance, "processed");
+            }
+            catch(Throwable throwable) {
+                Assertions.fail(throwable);
+            }
         }
     }
 }

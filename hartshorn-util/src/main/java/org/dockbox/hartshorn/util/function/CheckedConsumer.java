@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.reporting.serialize;
+package org.dockbox.hartshorn.util.function;
 
-import org.dockbox.hartshorn.reporting.DiagnosticsReport;
+import org.dockbox.hartshorn.util.ApplicationException;
 
-public interface ReportSerializer<T> {
-
-    T serialize(DiagnosticsReport report);
-
+/**
+ * Extension of {@link java.util.function.Consumer} with the addition of a
+ * {@code throws ApplicationException} clause.
+ *
+ * @param <T> the type of the argument to consume
+ *
+ * @see java.util.function.Consumer
+ */
+@FunctionalInterface
+public interface CheckedConsumer<T> {
+    void accept(T t) throws ApplicationException;
 }

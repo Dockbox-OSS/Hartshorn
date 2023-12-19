@@ -16,6 +16,18 @@
 
 package org.dockbox.hartshorn.testsuite;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
@@ -37,7 +49,6 @@ import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.SimpleSingleElementContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.AfterAllCallback;
@@ -49,17 +60,6 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.mockito.Mockito;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import jakarta.inject.Inject;
 
@@ -154,9 +154,13 @@ public class HartshornLifecycleExtension implements
 
             Class<?>[] parameters = factoryModifier.getParameterTypes();
             if (parameters.length == 0) {
-                Attempt.of(() -> (Customizer<StandardApplicationBuilder.Configurer>) factoryModifier.invoke(null), Throwable.class)
-                        .mapError(ApplicationException::new)
-                        .rethrow();
+
+                try {
+                    factoryModifier.invoke(null);
+                }
+                catch (Exception e) {
+                    throw new ApplicationException(e);
+                }
             }
             else {
                 throw new InvalidFactoryModifierException("Invalid parameter count for " + factoryModifier.getName() + ", expected 0, got " + parameters.length + ".");
@@ -329,14 +333,20 @@ public class HartshornLifecycleExtension implements
         }
 
         private <T extends ComponentProcessor> List<T> filterProcessors(Class<T> type, List<Class<? extends ComponentProcessor>> processors) {
-            return processors.stream()
-                    .filter(type::isAssignableFrom)
-                    .map(processor -> Attempt.of(() -> processor.getConstructor().newInstance(), Throwable.class)
-                            .mapError(ApplicationRuntimeException::new)
-                            .rethrow()
-                            .cast(type)
-                            .get())
-                    .toList();
+            List<T> result = new ArrayList<>();
+            for(Class<? extends ComponentProcessor> processor : processors) {
+                if (type.isAssignableFrom(processor)) {
+                    try {
+                        ComponentProcessor instance = processor.getConstructor().newInstance();
+                        result.add(type.cast(instance));
+                    }
+                    catch(IllegalAccessException | InvocationTargetException | SecurityException | NoSuchMethodException |
+                          InstantiationException | IllegalArgumentException e) {
+                        throw new ApplicationRuntimeException(e);
+                    }
+                }
+            }
+            return result;
         }
     }
 }

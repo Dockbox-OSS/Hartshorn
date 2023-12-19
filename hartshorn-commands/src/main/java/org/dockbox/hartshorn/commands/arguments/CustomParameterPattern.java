@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -29,12 +28,11 @@ public interface CustomParameterPattern {
     /**
      * Attempts to parse a {@code raw} argument into the requested {@code type}.
      *
-     * @param type The target type to parse into
+     * @param type   The target type to parse into
      * @param source The source of the command, provided in case the parser is context-sensitive
-     * @param raw The raw argument
-     * @param <T> The generic type of the target
-     *
+     * @param raw    The raw argument
+     * @param <T>    The generic type of the target
      * @return An instance of {@code T}, wrapped in a {@link Option}, or {@link Option#empty()} if {@code null}
      */
-    <T> Attempt<T, ConverterException> request(Class<T> type, CommandSource source, String raw);
+    <T> Option<T> request(Class<T> type, CommandSource source, String raw) throws ConverterException;
 }

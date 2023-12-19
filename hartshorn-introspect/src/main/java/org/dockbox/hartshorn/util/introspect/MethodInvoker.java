@@ -17,9 +17,10 @@
 package org.dockbox.hartshorn.util.introspect;
 
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 @FunctionalInterface
 public interface MethodInvoker<T, P> {
-    Attempt<T, Throwable> invoke(MethodView<P, T> method, P instance, Object[] args);
+
+    Option<T> invoke(MethodView<P, T> method, P instance, Object[] args) throws Throwable;
 }

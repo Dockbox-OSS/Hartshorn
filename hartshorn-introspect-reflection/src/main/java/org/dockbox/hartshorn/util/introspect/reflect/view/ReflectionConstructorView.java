@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -23,18 +29,11 @@ import org.dockbox.hartshorn.util.introspect.TypeVariablesIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeVariablesIntrospector;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectiveConstructorCall;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T> implements ConstructorView<T>, ReflectionModifierCarrierView {
 
@@ -42,7 +41,7 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     private final Introspector introspector;
 
     private TypeVariablesIntrospector typeParametersIntrospector;
-    private Function<Object[], Attempt<T, Throwable>> invoker;
+    private ReflectiveConstructorCall<T> invoker;
     private String qualifiedName;
 
     public ReflectionConstructorView(ReflectionIntrospector introspector, Constructor<T> constructor) {
@@ -51,18 +50,18 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
         this.introspector = introspector;
     }
 
-    protected Function<Object[], Attempt<T, Throwable>> invoker() {
+    protected ReflectiveConstructorCall<T> invoker() {
         if (this.invoker == null) {
-            this.invoker = args -> Attempt.of(() -> {
+            this.invoker = args -> {
                 try {
-                    return this.constructor.newInstance(args);
+                    return Option.of(this.constructor.newInstance(args));
                 } catch (InvocationTargetException e) {
                     if (e.getCause() instanceof Exception ex) {
                         throw ex;
                     }
                     throw e;
                 }
-            }, Throwable.class);
+            };
         }
         return this.invoker;
     }
@@ -73,8 +72,8 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     }
 
     @Override
-    public Attempt<T, Throwable> create(Collection<?> arguments) {
-        return this.invoker().apply(arguments.toArray());
+    public Option<T> create(Collection<?> arguments) throws Throwable {
+        return this.invoker().invoke(arguments.toArray());
     }
 
     @Override

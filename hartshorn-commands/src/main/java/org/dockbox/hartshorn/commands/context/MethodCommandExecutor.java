@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.commands.context;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandResources;
@@ -25,8 +27,6 @@ import org.dockbox.hartshorn.component.condition.ProvidedParameterContext;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-
-import java.util.List;
 
 public class MethodCommandExecutor<T> implements CommandExecutor {
     private final ConditionMatcher conditionMatcher;
@@ -50,8 +50,12 @@ public class MethodCommandExecutor<T> implements CommandExecutor {
 
         if (this.conditionMatcher.match(this.method, ProvidedParameterContext.of(this.method, arguments))) {
             this.applicationContext.log().debug("Invoking command method %s with %d arguments".formatted(this.method.qualifiedName(), arguments.size()));
-            this.method.invoke(instance, arguments.toArray())
-                    .peekError(error -> this.applicationContext.handle("Encountered unexpected error while performing command executor", error));
+            try {
+                this.method.invoke(instance, arguments.toArray());
+            }
+            catch (Throwable throwable) {
+                this.applicationContext.handle(throwable);
+            }
         }
         else {
             this.applicationContext.log().debug("Conditions didn't match for " + this.method.qualifiedName());

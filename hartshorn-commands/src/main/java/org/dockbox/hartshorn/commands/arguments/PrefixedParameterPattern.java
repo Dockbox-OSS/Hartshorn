@@ -25,7 +25,8 @@ import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
+
 /**
  * Converts prefixed patterns into type instances used by command executors. The
  * pattern is decided on by any implementation of this type.
@@ -37,7 +38,7 @@ public abstract class PrefixedParameterPattern extends AbstractParameterPattern 
     }
 
     @Override
-    public <T> Attempt<Boolean, ConverterException> preconditionsMatch(Class<T> type, CommandSource source, String raw) {
+    public <T> boolean preconditionsMatch(Class<T> type, CommandSource source, String raw) throws ConverterException {
         String prefix = String.valueOf(this.prefix());
         if (this.requiresTypeName()) {
             ApplicationContext applicationContext = source.applicationContext();
@@ -46,9 +47,9 @@ public abstract class PrefixedParameterPattern extends AbstractParameterPattern 
             prefix = this.prefix() + parameterName;
         }
         if (raw.startsWith(prefix)) {
-            return Attempt.of(true);
+            return true;
         } else {
-            return Attempt.of(new ArgumentMatchingFailedException(this.wrongFormat()));
+            throw new ArgumentMatchingFailedException(this.wrongFormat());
         }
     }
 
@@ -76,12 +77,12 @@ public abstract class PrefixedParameterPattern extends AbstractParameterPattern 
     }
 
     @Override
-    public Attempt<String, ConverterException> parseIdentifier(String argument) {
+    public Option<String> parseIdentifier(String argument) throws ConverterException {
         if (argument.startsWith(String.valueOf(this.prefix()))) {
-            return Attempt.of(argument.substring(1, argument.indexOf(this.opening())));
+            return Option.of(argument.substring(1, argument.indexOf(this.opening())));
         }
         else {
-            return Attempt.of(new ArgumentMatchingFailedException(this.wrongFormat()));
+            return Option.empty();
         }
     }
 

@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.IllegalComponentModificationException;
 import org.dockbox.hartshorn.proxy.Proxy;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 
 /**
@@ -59,7 +60,7 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
     }
 
     @Override
-    public final <T> T process(ComponentProcessingContext<T> processingContext) {
+    public final <T> T process(ComponentProcessingContext<T> processingContext) throws ApplicationException {
         T instance = processingContext.instance();
 
         if (!this.isCompatible(processingContext)) {
@@ -96,7 +97,7 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @param processingContext the processing context
      * @param <T> the type of the component
      */
-    public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ApplicationException {
         // Do nothing by default
     }
 
@@ -111,7 +112,7 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @return the initialized component
      * @param <T> the type of the component
      */
-    public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ApplicationException {
         // Do nothing by default
         return instance;
     }
@@ -127,7 +128,7 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @param processingContext the processing context
      * @param <T> the type of the component
      */
-    public <T> void postConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void postConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ApplicationException {
         // Do nothing by default
     }
 

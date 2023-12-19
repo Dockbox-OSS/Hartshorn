@@ -16,18 +16,19 @@
 
 package org.dockbox.hartshorn.config.properties;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.config.ConfigurationURIContext;
-import org.dockbox.hartshorn.config.FileFormat;
-import org.dockbox.hartshorn.config.FileFormats;
-import org.dockbox.hartshorn.config.ObjectMapper;
-import org.dockbox.hartshorn.util.TypeUtils;
-
 import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.config.ConfigurationURIContext;
+import org.dockbox.hartshorn.config.FileFormat;
+import org.dockbox.hartshorn.config.FileFormats;
+import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.config.ObjectMappingException;
+import org.dockbox.hartshorn.util.TypeUtils;
 
 import jakarta.inject.Singleton;
 
@@ -47,13 +48,18 @@ public class StandardURIConfigProcessor implements URIConfigProcessor {
                 return;
             }
 
-            Map<String, Object> cache = TypeUtils.adjustWildcards(context.get(ObjectMapper.class)
-                    .fileType(format)
-                    .read(uri, Map.class)
-                    .orElseGet(HashMap::new), Map.class);
+            try {
+                Map<String, Object> cache = TypeUtils.adjustWildcards(context.get(ObjectMapper.class)
+                        .fileType(format)
+                        .read(uri, Map.class)
+                        .orElseGet(HashMap::new), Map.class);
 
-            context.log().debug("Located " + cache.size() + " properties in " + uri.getPath());
-            context.get(PropertyHolder.class).set(cache);
+                context.log().debug("Located " + cache.size() + " properties in " + uri.getPath());
+                context.get(PropertyHolder.class).set(cache);
+            }
+            catch (ObjectMappingException e) {
+                context.log().error("Failed to read properties from " + uri.getPath(), e);
+            }
         }
     }
 

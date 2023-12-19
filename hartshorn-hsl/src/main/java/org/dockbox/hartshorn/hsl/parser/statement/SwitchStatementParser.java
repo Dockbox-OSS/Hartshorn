@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
@@ -28,13 +33,7 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import jakarta.inject.Inject;
 
@@ -75,17 +74,11 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
                     }
                     matchedLiterals.add(literal.value());
 
-                    Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
-                    if (body.errorPresent()) {
-                        return Attempt.of(body.error());
-                    }
+                    Option<Statement> body = this.caseBodyStatementParser.parse(parser, validator);
                     cases.add(new SwitchCase(caseToken, body.get(), literal, false));
                 }
                 else {
-                    Attempt<Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
-                    if (body.errorPresent()) {
-                        return Attempt.of(body.error());
-                    }
+                    Option<Statement> body = this.caseBodyStatementParser.parse(parser, validator);
                     defaultBody = new SwitchCase(caseToken, body.get(), null, true);
                 }
             }

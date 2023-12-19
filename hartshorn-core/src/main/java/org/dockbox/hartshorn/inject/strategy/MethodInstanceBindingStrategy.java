@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.inject.strategy;
 
-import jakarta.inject.Singleton;
 import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.DirectScopeKey;
@@ -42,6 +42,8 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import jakarta.inject.Singleton;
 
 public class MethodInstanceBindingStrategy implements BindingStrategy {
 
@@ -87,13 +89,25 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
             );
             contextAdapter.add(customizerContext);
         }
-        CheckedSupplier<T> supplier = () -> contextAdapter.load(bindsMethod)
-                .mapError(error -> new ComponentInitializationException("Failed to obtain instance for " + bindsMethod.qualifiedName(), error))
-                .rethrow()
-                .orNull();
 
-        return new AutoConfiguringDependencyContext<>(componentKey, dependenciesMap, scope, priority, bindingType, bindsMethod, supplier)
-                .lazy(lazy)
+        CheckedSupplier<T> supplier = () -> {
+            try {
+                return contextAdapter.load(bindsMethod).orNull();
+            }
+            catch(Throwable throwable) {
+                throw new ComponentInitializationException("Failed to obtain instance for " + bindsMethod.qualifiedName(), throwable);
+            }
+        };
+
+        return new AutoConfiguringDependencyContext<>(
+                componentKey,
+                dependenciesMap,
+                scope,
+                priority,
+                bindingType,
+                bindsMethod,
+                supplier
+        ).lazy(lazy)
                 .singleton(singleton)
                 .processAfterInitialization(processAfterInitialization);
     }

@@ -19,10 +19,11 @@ package org.dockbox.hartshorn.config.properties;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.config.ConfigurationURIContextList;
+import org.dockbox.hartshorn.config.ObjectMappingException;
 
 public abstract class PropertyAwareComponentPostProcessor extends ComponentPostProcessor {
 
-    protected void verifyPropertiesAvailable(ApplicationContext context, PropertyHolder propertyHolder) {
+    protected void verifyPropertiesAvailable(ApplicationContext context, PropertyHolder propertyHolder) throws ObjectMappingException {
         if (propertyHolder.properties().isEmpty()) {
             ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
             URIConfigProcessor configProcessor = context.get(URIConfigProcessor.class);

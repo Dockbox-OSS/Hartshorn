@@ -45,7 +45,11 @@ import org.dockbox.hartshorn.util.option.some.SuccessSome;
  *
  * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @deprecated Attempts potentially hide throwables, and are therefore not recommended. Use a direct {@link Option}
+ *             instead, and consider handling exceptions immediately or re-throwing them in a checked manner.
  */
+@Deprecated(since = "0.6.0", forRemoval = true)
 public interface Attempt<T, E extends Throwable> extends Option<T> {
 
     /**

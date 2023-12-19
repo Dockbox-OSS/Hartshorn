@@ -57,11 +57,17 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
         }
         ConstructorView<T> executable = ExecutableLookup.executable(this.type.constructors().all(), arguments);
         if (executable != null) {
-            T objectInstance = executable.create(arguments.toArray())
-                    .mapError(ApplicationException::new)
-                    .rethrow()
-                    .orNull();
-            return new ExternalInstance(objectInstance, interpreter.applicationContext().environment().introspector().introspect(objectInstance));
+            try {
+                T objectInstance = executable.create(arguments.toArray()).orNull();
+                return new ExternalInstance(objectInstance,
+                        interpreter.applicationContext().environment().introspector().introspect(objectInstance));
+            }
+            catch (ApplicationException e) {
+                throw e;
+            }
+            catch (Throwable throwable) {
+                throw new ApplicationException(throwable);
+            }
         }
         throw new ScriptEvaluationError("No constructor found for class " + this.type.name() + " with arguments " + arguments, Phase.INTERPRETING, at);
     }

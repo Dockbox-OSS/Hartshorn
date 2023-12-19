@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.util.option.some;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.option.Attempt;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -28,6 +23,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents an {@link Option} containing a non-null value.
@@ -37,7 +38,7 @@ import java.util.stream.Stream;
  * @author Guus Lieben
  * @since 0.4.13
  */
-public class Some<T> implements Option<T> {
+public class Some<T> extends DefaultContext implements Option<T> {
 
     private final T value;
 
