@@ -50,7 +50,7 @@ public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPost
         Option<T> configuration;
         Class<T> type = instance == null
                 ? key.type()
-                : TypeUtils.adjustWildcards(instance.getClass(), Class.class);
+                : TypeUtils.getClass(instance);
 
         if (instance == null) {
             configuration = this.propertyHolder.get(configurationObject.prefix(), type);

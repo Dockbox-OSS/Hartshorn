@@ -197,4 +197,9 @@ public class TypeUtils {
         }
         return source.isPrimitive() && TypeUtils.isPrimitiveWrapper(target, source);
     }
+
+    public static <T> Class<T> getClass(T instance) {
+        //noinspection unchecked
+        return (Class<T>) instance.getClass();
+    }
 }

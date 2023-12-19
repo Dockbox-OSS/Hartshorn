@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.ObjectMappingException;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.GenericType;
 
 import jakarta.inject.Singleton;
 
@@ -49,10 +49,10 @@ public class StandardURIConfigProcessor implements URIConfigProcessor {
             }
 
             try {
-                Map<String, Object> cache = TypeUtils.adjustWildcards(context.get(ObjectMapper.class)
+                Map<String, Object> cache = context.get(ObjectMapper.class)
                         .fileType(format)
-                        .read(uri, Map.class)
-                        .orElseGet(HashMap::new), Map.class);
+                        .read(uri, new GenericType<Map<String, Object>>() {})
+                        .orElseGet(HashMap::new);
 
                 context.log().debug("Located " + cache.size() + " properties in " + uri.getPath());
                 context.get(PropertyHolder.class).set(cache);
