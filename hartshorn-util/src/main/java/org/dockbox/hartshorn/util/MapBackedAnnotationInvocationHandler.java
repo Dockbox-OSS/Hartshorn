@@ -67,7 +67,12 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
         if ("equals".equals(methodName)) {
             return proxy == args[0];
         }
-        return this.values.get(methodName);
+        if (this.values.containsKey(methodName)) {
+            return this.values.get(methodName);
+        }
+        else {
+            return method.getDefaultValue();
+        }
     }
 
     public Class<?> type() {
