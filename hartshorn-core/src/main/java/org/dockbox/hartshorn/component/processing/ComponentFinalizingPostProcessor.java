@@ -18,19 +18,20 @@ package org.dockbox.hartshorn.component.processing;
 
 import java.util.Collection;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentPopulator;
-import org.dockbox.hartshorn.component.ContextualComponentPopulator;
+import org.dockbox.hartshorn.component.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.inject.ComponentConstructorResolver;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -41,7 +42,11 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
     @SuppressWarnings("rawtypes")
     private static final ComponentKey<ProxyFactory> PROXY_FACTORY = ComponentKey.of(ProxyFactory.class);
 
-    private ComponentPopulator componentPopulator;
+    private final ComponentPopulator componentPopulator;
+
+    public ComponentFinalizingPostProcessor(ComponentPopulator componentPopulator) {
+        this.componentPopulator = componentPopulator;
+    }
 
     @Override
     public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
@@ -74,21 +79,9 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
                 modifiableComponentProcessingContext.requestInstanceLock();
             }
 
-            return this.getComponentPopulator(context).populate(finalizingInstance);
+            return this.componentPopulator.populate(finalizingInstance);
         }
         return instance;
-    }
-
-    protected ComponentPopulator getComponentPopulator(ApplicationContext applicationContext) {
-        if (this.componentPopulator == null) {
-            this.componentPopulator = createComponentPopulator(applicationContext);
-        }
-        return this.componentPopulator;
-    }
-
-    @NonNull
-    public static ContextualComponentPopulator createComponentPopulator(ApplicationContext applicationContext) {
-        return new ContextualComponentPopulator(applicationContext);
     }
 
     protected <T> T createProxyInstance(ApplicationContext context, ProxyFactory<T> factory, @Nullable T instance) throws ApplicationException {
@@ -110,5 +103,27 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
     public int priority() {
         // Run after all other core post processors, but permit external post processors to run after this one
         return ProcessingPriority.LOWEST_PRECEDENCE - 128;
+    }
+
+    public static ContextualInitializer<ApplicationContext, ComponentPostProcessor> create(Customizer<Configurer> customizer) {
+        return context -> {
+            Configurer configurer = new Configurer();
+            customizer.configure(configurer);
+            return new ComponentFinalizingPostProcessor(configurer.componentPopulator.initialize(context));
+        };
+    }
+
+    public static class Configurer {
+
+        private ContextualInitializer<ApplicationContext, ComponentPopulator> componentPopulator = StrategyComponentPopulator.create(Customizer.useDefaults());
+
+        public Configurer componentPopulator(ComponentPopulator componentPopulator) {
+            return this.componentPopulator(ContextualInitializer.of(componentPopulator));
+        }
+
+        public Configurer componentPopulator(ContextualInitializer<ApplicationContext, ComponentPopulator> componentPopulator) {
+            this.componentPopulator = componentPopulator;
+            return this;
+        }
     }
 }

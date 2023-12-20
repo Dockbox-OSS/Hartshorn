@@ -43,6 +43,14 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
         return new LazyStreamableConfigurer<>(StreamableConfigurer.empty());
     }
 
+    public static <I, O> LazyStreamableConfigurer<I, O> of(Customizer<StreamableConfigurer<I, O>> customizer) {
+        return new LazyStreamableConfigurer<I, O>(StreamableConfigurer.empty()).customizer(customizer);
+    }
+
+    public static <I, O> LazyStreamableConfigurer<I, O> ofInitializer(ContextualInitializer<I, O> initializer) {
+        return new LazyStreamableConfigurer<>(StreamableConfigurer.ofInitializer(initializer));
+    }
+
     @SafeVarargs
     public static <I, O> LazyStreamableConfigurer<I, O> of(O... objects) {
         return new LazyStreamableConfigurer<>(StreamableConfigurer.of(objects));

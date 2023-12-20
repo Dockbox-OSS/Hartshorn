@@ -44,6 +44,11 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
         return configurer.addAll(objects);
     }
 
+    public static <I, O> StreamableConfigurer<I, O> ofInitializer(ContextualInitializer<I, O> initializer) {
+        StreamableConfigurer<I, O> configurer = StreamableConfigurer.empty();
+        return configurer.add(initializer);
+    }
+
     public StreamableConfigurer<I, T> add(T resolver) {
         this.objects.add(ContextualInitializer.of(resolver));
         return this;

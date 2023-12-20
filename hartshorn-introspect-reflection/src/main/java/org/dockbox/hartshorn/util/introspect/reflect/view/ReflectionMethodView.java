@@ -54,11 +54,12 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public Attempt<ReturnType, Throwable> invoke(Parent instance, Collection<?> arguments) {
+    public Attempt<ReturnType, Throwable> invoke(Object instance, Collection<?> arguments) {
         if (this.invoker == null) {
             this.invoker = new ReflectionMethodInvoker<>();
         }
-        return this.invoker.invoke(this, instance, arguments.toArray());
+        Parent checkedInstance = this.declaredBy().cast(instance);
+        return this.invoker.invoke(this, checkedInstance, arguments.toArray());
     }
 
     @Override

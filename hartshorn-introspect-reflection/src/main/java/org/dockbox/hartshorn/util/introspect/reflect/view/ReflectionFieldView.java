@@ -86,7 +86,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     }
 
     @Override
-    public Attempt<FieldType, Throwable> get(Parent instance) {
+    public Attempt<FieldType, Throwable> get(Object instance) {
         if (this.getter == null) {
             Option<Property> property = this.annotations().get(Property.class);
             if (property.present() && !"".equals(property.get().getter())) {

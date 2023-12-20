@@ -84,9 +84,9 @@ public final class CollectionUtilities {
      * @see #mergeList(Collection[])
      */
     @SafeVarargs
-    public static <T> Set<T> merge(Collection<T>... collections) {
+    public static <T> Set<T> merge(Collection<? extends T>... collections) {
         Set<T> merged = new HashSet<>();
-        for (Collection<T> collection : collections) {
+        for (Collection<? extends T> collection : collections) {
             merged.addAll(collection);
         }
         return merged;

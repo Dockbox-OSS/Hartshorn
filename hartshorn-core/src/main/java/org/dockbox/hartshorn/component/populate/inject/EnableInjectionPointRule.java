@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.components;
+package org.dockbox.hartshorn.component.populate.inject;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+/**
+ * A rule that determines whether an {@link InjectionPoint} should be enabled.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
+@FunctionalInterface
+public interface EnableInjectionPointRule {
 
-public class ContextInjectedType {
+    /**
+     * Indicates whether the given {@link InjectionPoint} should be enabled.
+     *
+     * @param injectionPoint the injection point to check
+     * @return {@code true} if the injection point should be enabled, {@code false} otherwise
+     */
+    boolean shouldEnable(InjectionPoint injectionPoint);
 
-    @Inject
-    private SampleContext context;
-
-    @Inject
-    @Named("another")
-    private SampleContext anotherContext;
-
-    public SampleContext context() {
-        return this.context;
-    }
-
-    public SampleContext anotherContext() {
-        return this.anotherContext;
-    }
 }

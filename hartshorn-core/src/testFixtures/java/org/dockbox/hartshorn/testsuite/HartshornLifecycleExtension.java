@@ -16,17 +16,6 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
@@ -34,8 +23,8 @@ import org.dockbox.hartshorn.application.StandardApplicationContextConstructor.C
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
-import org.dockbox.hartshorn.component.ContextualComponentPopulator;
-import org.dockbox.hartshorn.component.processing.ComponentFinalizingPostProcessor;
+import org.dockbox.hartshorn.component.ComponentPopulator;
+import org.dockbox.hartshorn.component.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
@@ -45,6 +34,7 @@ import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.SimpleSingleElementContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Attempt;
@@ -59,6 +49,17 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.mockito.Mockito;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import jakarta.inject.Inject;
 
@@ -189,7 +190,7 @@ public class HartshornLifecycleExtension implements
             throw new ParameterResolutionException("Test method was not provided to runner");
         }
 
-        ParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
+        ParameterLoader parameterLoader = new ExecutableElementContextParameterLoader(this.applicationContext);
         MethodView<?, ?> executable = this.applicationContext.environment().introspector().introspect(testMethod.get());
         ApplicationBoundParameterLoaderContext parameterLoaderContext = new ApplicationBoundParameterLoaderContext(executable,
                 extensionContext.getTestInstance().orElse(null), this.applicationContext);
@@ -198,8 +199,9 @@ public class HartshornLifecycleExtension implements
     }
 
     protected void populateTestInstance(Object instance, ApplicationContext applicationContext) {
-        ContextualComponentPopulator componentPopulator = ComponentFinalizingPostProcessor.createComponentPopulator(applicationContext);
-        componentPopulator.populate(instance);
+        SimpleSingleElementContext<ApplicationContext> elementContext = SimpleSingleElementContext.create(applicationContext);
+        ComponentPopulator populator = StrategyComponentPopulator.create(Customizer.useDefaults()).initialize(elementContext);
+        populator.populate(instance);
     }
 
     private ApplicationBuilder<?> prepareFactory(Class<?> testClass, List<AnnotatedElement> testComponentSources) {

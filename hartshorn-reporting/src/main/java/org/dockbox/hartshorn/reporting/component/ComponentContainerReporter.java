@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import java.util.List;
+import java.util.Map.Entry;
+
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.condition.RequiresCondition;
-import org.dockbox.hartshorn.inject.Context;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
@@ -28,9 +28,8 @@ import org.dockbox.hartshorn.reporting.component.ComponentReportingConfiguration
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Map.Entry;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 class ComponentContainerReporter implements Reportable {
     private final ComponentDiagnosticsReporter componentDiagnosticsReporter;
@@ -59,10 +58,7 @@ class ComponentContainerReporter implements Reportable {
 
         if (this.componentDiagnosticsReporter.configuration().includeDependencies()) {
             componentCollector.property("dependencies").write(dependencyCollector -> {
-                dependencyCollector.property("inject")
-                        .write(injectCollector -> this.reportAnnotatedField(Inject.class, injectCollector));
-                dependencyCollector.property("context")
-                        .write(requiredCollector -> this.reportAnnotatedField(Context.class, requiredCollector));
+                dependencyCollector.property("inject").write(this::reportAnnotatedField);
             });
         }
 
@@ -91,8 +87,8 @@ class ComponentContainerReporter implements Reportable {
         }
     }
 
-    private void reportAnnotatedField(Class<? extends Annotation> annotation, DiagnosticsPropertyCollector injectCollector) {
-        List<? extends FieldView<?, ?>> injectFields = this.container.type().fields().annotatedWith(annotation);
+    private void reportAnnotatedField(DiagnosticsPropertyCollector injectCollector) {
+        List<? extends FieldView<?, ?>> injectFields = this.container.type().fields().annotatedWith(Inject.class);
 
         for (FieldView<?, ?> injectField : injectFields) {
             injectCollector.property(injectField.name()).write(fieldCollector -> {

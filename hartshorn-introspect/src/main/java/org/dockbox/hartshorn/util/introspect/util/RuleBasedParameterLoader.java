@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.util.introspect.util;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends ParameterLoader {
 
@@ -60,17 +60,21 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
         if (parameterCandidate.present()) {
             C adjustedContext = this.contextType.cast(context);
             ParameterView<?> parameter = parameterCandidate.get();
-            for (ParameterLoaderRule<C> rule : this.rules()) {
-                if (rule.accepts(parameter, index, adjustedContext, args)) {
-                    Option<?> argument = rule.load(parameter, index, adjustedContext, args);
-                    if (argument.present()) {
-                        return argument.get();
-                    }
-                }
-            }
-            return this.loadDefault(parameter, index, adjustedContext, args);
+            return loadArgument(index, args, parameter, adjustedContext);
         }
         return null;
+    }
+
+    private Object loadArgument(int index, Object[] args, ParameterView<?> parameter, C adjustedContext) {
+        for (ParameterLoaderRule<C> rule : this.rules()) {
+            if (rule.accepts(parameter, index, adjustedContext, args)) {
+                Option<?> argument = rule.load(parameter, index, adjustedContext, args);
+                if (argument.present()) {
+                    return argument.get();
+                }
+            }
+        }
+        return this.loadDefault(parameter, index, adjustedContext, args);
     }
 
     @Override

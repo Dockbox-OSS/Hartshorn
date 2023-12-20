@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
@@ -36,11 +37,11 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentType;
 import org.dockbox.hartshorn.component.UseProxying;
+import org.dockbox.hartshorn.component.processing.ComponentFinalizingPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.inject.processing.UseContextInjection;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
@@ -174,8 +175,9 @@ public final class StandardApplicationContextConstructor implements ApplicationC
     private Set<ComponentProcessor> componentProcessors(ApplicationContext applicationContext, SingleElementContext<ApplicationBootstrapContext> initializerContext, Set<Class<? extends ComponentPreProcessor>> processorTypes) {
         Set<ComponentProcessor> componentProcessors = new HashSet<>();
 
-        componentProcessors.addAll(this.configurer.componentPreProcessors.initialize(initializerContext));
-        componentProcessors.addAll(this.configurer.componentPostProcessors.initialize(initializerContext));
+        SingleElementContext<@Nullable ApplicationContext> context = initializerContext.transform(applicationContext);
+        componentProcessors.addAll(this.configurer.componentPreProcessors.initialize(context));
+        componentProcessors.addAll(this.configurer.componentPostProcessors.initialize(context));
 
         processorTypes.stream()
                 .map(applicationContext::get)
@@ -249,13 +251,14 @@ public final class StandardApplicationContextConstructor implements ApplicationC
 
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, Annotation> activators = LazyStreamableConfigurer.of(
                 TypeUtils.annotation(UseBootstrap.class),
-                TypeUtils.annotation(UseProxying.class),
-                TypeUtils.annotation(UseContextInjection.class)
-//                TypeUtils.annotation(UseCollectionInjection.class)
+                TypeUtils.annotation(UseProxying.class)
         );
 
-        private final LazyStreamableConfigurer<ApplicationBootstrapContext, ComponentPreProcessor> componentPreProcessors = LazyStreamableConfigurer.empty();
-        private final LazyStreamableConfigurer<ApplicationBootstrapContext, ComponentPostProcessor> componentPostProcessors = LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<ApplicationContext, ComponentPreProcessor> componentPreProcessors = LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<ApplicationContext, ComponentPostProcessor> componentPostProcessors = LazyStreamableConfigurer.of(collection -> {
+            collection.add(ComponentFinalizingPostProcessor.create(Customizer.useDefaults()));
+        });
+
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, Class<?>> standaloneComponents = LazyStreamableConfigurer.empty();
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, String> scanPackages = LazyStreamableConfigurer.empty();
 
@@ -267,12 +270,12 @@ public final class StandardApplicationContextConstructor implements ApplicationC
             return this;
         }
 
-        public Configurer componentPreProcessors(Customizer<StreamableConfigurer<ApplicationBootstrapContext, ComponentPreProcessor>> customizer) {
+        public Configurer componentPreProcessors(Customizer<StreamableConfigurer<ApplicationContext, ComponentPreProcessor>> customizer) {
             this.componentPreProcessors.customizer(customizer);
             return this;
         }
 
-        public Configurer componentPostProcessors(Customizer<StreamableConfigurer<ApplicationBootstrapContext, ComponentPostProcessor>> customizer) {
+        public Configurer componentPostProcessors(Customizer<StreamableConfigurer<ApplicationContext, ComponentPostProcessor>> customizer) {
             this.componentPostProcessors.customizer(customizer);
             return this;
         }

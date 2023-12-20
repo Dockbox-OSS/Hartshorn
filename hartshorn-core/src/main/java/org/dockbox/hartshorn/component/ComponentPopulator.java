@@ -18,5 +18,5 @@ package org.dockbox.hartshorn.component;
 
 public interface ComponentPopulator {
 
-    <T> T populate(T type);
+    <T> T populate(T instance);
 }

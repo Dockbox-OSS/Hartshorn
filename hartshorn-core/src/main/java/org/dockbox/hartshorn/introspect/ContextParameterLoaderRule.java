@@ -18,11 +18,12 @@ package org.dockbox.hartshorn.introspect;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
-import org.dockbox.hartshorn.context.ContextKey;
-import org.dockbox.hartshorn.inject.Context;
-import org.dockbox.hartshorn.inject.Required;
+import org.dockbox.hartshorn.component.populate.PopulateComponentContext;
+import org.dockbox.hartshorn.component.populate.inject.AnnotatedInjectionPointRequireRule;
+import org.dockbox.hartshorn.component.populate.inject.InjectContextParameterResolver;
+import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
+import org.dockbox.hartshorn.component.populate.inject.RequireInjectionPointRule;
 import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
-import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
@@ -31,31 +32,31 @@ import org.dockbox.hartshorn.util.option.Option;
 
 public class ContextParameterLoaderRule implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {
 
+    private final RequireInjectionPointRule requireRule = new AnnotatedInjectionPointRequireRule();
+    private final InjectContextParameterResolver resolver;
+
+    public ContextParameterLoaderRule(ApplicationContext applicationContext) {
+        this.resolver = new InjectContextParameterResolver(applicationContext);
+    }
+
+    private PopulateComponentContext<?> createContext(ApplicationBoundParameterLoaderContext context) {
+        Object instance = context.instance();
+        TypeView<?> type = context.executable().declaredBy();
+        return new PopulateComponentContext<>(instance, instance, TypeUtils.adjustWildcards(type, TypeView.class), context.applicationContext());
+    }
+
     @Override
     public boolean accepts(ParameterView<?> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
-        return parameter.annotations().has(Context.class) && parameter.type().isChildOf(org.dockbox.hartshorn.context.Context.class);
+        return this.resolver.accepts(new InjectionPoint(parameter));
     }
 
     @Override
     public <T> Option<T> load(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
-        ApplicationContext applicationContext = context.applicationContext();
-        String name = parameter.annotations().get(Context.class).map(Context::value).orNull();
-
-        TypeView<? extends org.dockbox.hartshorn.context.Context> type = TypeUtils.adjustWildcards(parameter.type(), TypeView.class);
-        ContextKey<? extends org.dockbox.hartshorn.context.Context> key = ContextKey.of(type.type());
-        if (StringUtilities.notEmpty(name)) {
-            key = key.mutable().name(name).build();
-        }
-
-        Option<? extends org.dockbox.hartshorn.context.Context> out = applicationContext.first(key);
-
-        boolean required = Boolean.TRUE.equals(parameter.annotations().get(Required.class)
-                .map(Required::value)
-                .orElse(false));
-        if (required && out.absent()) {
+        InjectionPoint injectionPoint = new InjectionPoint(parameter);
+        Object resolved = this.resolver.resolve(injectionPoint, this.createContext(context));
+        if (resolved == null && this.requireRule.isRequired(injectionPoint)) {
             throw new ComponentRequiredException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required");
         }
-
-        return out.cast(parameter.type().type());
+        return Option.of(parameter.type().cast(resolved));
     }
 }
