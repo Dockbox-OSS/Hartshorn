@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.commands.CommandSource;
@@ -27,6 +24,9 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractParameterPattern implements CustomParameterPattern {
 
@@ -98,38 +98,52 @@ public abstract class AbstractParameterPattern implements CustomParameterPattern
 
     protected <T> Option<ConstructorView<T>> constructor(List<Class<?>> argumentTypes, List<Object> arguments, TypeView<T> type, CommandSource source) throws ConverterException {
         for (ConstructorView<T> constructor : type.constructors().all()) {
-            if (constructor.parameters().count() != arguments.size()) {
-                continue;
-            }
-            List<TypeView<?>> parameters = constructor.parameters().types();
-
-            boolean passed = true;
-            for (int i = 0; i < parameters.size(); i++) {
-                TypeView<?> parameter = parameters.get(i);
-                Class<?> argument = argumentTypes.get(i);
-
-                if (argument == null) {
-                    Option<? extends ArgumentConverter<?>> converter = this.argumentConverterRegistry.converter(parameter);
-                    if (converter.present()) {
-                        Option<?> result = converter.get().convert(source, (String) arguments.get(i));
-                        if (result.present()) {
-                            arguments.set(i, result.get());
-                            continue; // Generic type, will be parsed later
-                        }
-                    }
-                }
-                else if (parameter.is(argument)) {
-                    continue;
-                }
-
-                passed = false;
-                break; // Parameter is not what we expected, do not continue
-            }
-            if (passed) {
-                source.applicationContext().log().debug("Found matching constructor for " + type.name() + " with " + argumentTypes.size() + " arguments.");
+            if (this.constructorMatchesArguments(argumentTypes, arguments, type, source, constructor)) {
                 return Option.of(constructor);
             }
         }
         throw new ArgumentMatchingFailedException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs());
+    }
+
+    private <T> boolean constructorMatchesArguments(List<Class<?>> argumentTypes, List<Object> arguments, TypeView<T> type, CommandSource source, ConstructorView<T> constructor) {
+        if (constructor.parameters().count() != arguments.size()) {
+            return false;
+        }
+        List<TypeView<?>> parameters = constructor.parameters().types();
+
+        boolean passed = true;
+        for (int i = 0; i < parameters.size(); i++) {
+            TypeView<?> parameter = parameters.get(i);
+            Class<?> argument = argumentTypes.get(i);
+
+            if (argument == null) {
+                if (this.tryProvideArgument(arguments, source, parameter, i)) {
+                    continue; // Generic type, will be parsed later
+                }
+            }
+            else if (parameter.is(argument)) {
+                continue;
+            }
+
+            passed = false;
+            break; // Parameter is not what we expected, do not continue
+        }
+        if (passed) {
+            source.applicationContext().log().debug("Found matching constructor for " + type.name() + " with " + argumentTypes.size() + " arguments.");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean tryProvideArgument(List<Object> arguments, CommandSource source, TypeView<?> parameter, int i) {
+        Option<? extends ArgumentConverter<?>> converter = this.argumentConverterRegistry.converter(parameter);
+        if (converter.present()) {
+            Option<?> result = converter.get().convert(source, (String) arguments.get(i));
+            if (result.present()) {
+                arguments.set(i, result.get());
+                return true;
+            }
+        }
+        return false;
     }
 }
