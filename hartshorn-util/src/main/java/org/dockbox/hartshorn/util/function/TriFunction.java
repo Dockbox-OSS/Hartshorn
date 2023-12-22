@@ -24,7 +24,17 @@ package org.dockbox.hartshorn.util.function;
  * @param <U> the type of the second argument to the operation
  * @param <O> the type of the third argument to the operation
  * @param <R> The return type of the function
+ *
+ * @see java.util.function.Function
+ * @see java.util.function.BiFunction
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ *
+ * @deprecated Prefer the usage of specialized functional interfaces instead, which are more expressive.
  */
+@Deprecated(since = "0.6.0", forRemoval = true)
 @FunctionalInterface
 public interface TriFunction<T, U, O, R> {
     R accept(T t, U u, O o);

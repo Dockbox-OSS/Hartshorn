@@ -23,8 +23,23 @@ package org.dockbox.hartshorn.util.function;
  * @param <T> the type of the first argument to the operation
  * @param <U> the type of the second argument to the operation
  * @param <O> the type of the third argument to the operation
+ *
+ * @since 0.4.0
+ *
+ * @author Guus Lieben
+ *
+ * @deprecated Prefer the usage of specialized functional interfaces instead, which are more expressive.
  */
+@Deprecated(since = "0.6.0", forRemoval = true)
 @FunctionalInterface
 public interface TriConsumer<T, U, O> {
+
+    /**
+     * Performs this operation on the given arguments.
+     *
+     * @param t the first input argument
+     * @param u the second input argument
+     * @param o the third input argument
+     */
     void accept(T t, U u, O o);
 }
