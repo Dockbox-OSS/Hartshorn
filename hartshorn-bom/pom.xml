@@ -21,21 +21,21 @@
         <!-- Language support, keep in sync with module parent -->
         <groovy.version>4.0.16</groovy.version>
         <kotlin.version>1.9.21</kotlin.version>
-        <slf4j.version>2.0.9</slf4j.version>
+        <scala.version>3.3.1</scala.version>
 
         <!-- Versions in alphabetical order -->
         <compile-testing.version>0.21.0</compile-testing.version>
         <cglib.version>3.3.0</cglib.version>
-        <checker.version>3.40.0</checker.version>
+        <checker.version>3.42.0</checker.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jackson.version>2.16.0</jackson.version>
         <jakarta.annotations.version>2.1.1</jakarta.annotations.version>
         <jakarta.inject.version>2.0.1</jakarta.inject.version>
-        <javassist.version>3.29.2-GA</javassist.version>
+        <javassist.version>3.30.1-GA</javassist.version>
         <junit.version>5.10.1</junit.version>
-        <logback.version>1.4.13</logback.version>
-        <mockito.version>5.7.0</mockito.version>
-        <scala.version>3.3.1</scala.version>
+        <logback.version>1.4.14</logback.version>
+        <mockito.version>5.8.0</mockito.version>
+        <slf4j.version>2.0.9</slf4j.version>
     </properties>
 
     <dependencyManagement>
