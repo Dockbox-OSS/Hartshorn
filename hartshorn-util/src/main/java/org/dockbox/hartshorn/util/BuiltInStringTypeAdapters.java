@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.util;
 
 import java.util.UUID;
 
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -54,7 +53,7 @@ public final class BuiltInStringTypeAdapters {
     public static final StringTypeAdapter<Boolean> BOOLEAN = StringTypeAdapterImpl.of(Boolean.class, in -> switch (in) {
         case "yes" -> Option.of(true);
         case "no" -> Option.of(false);
-        default -> Attempt.<Boolean>of(() -> Boolean.parseBoolean(in));
+        default -> Option.of(() -> Boolean.parseBoolean(in));
     });
 
     /**
@@ -63,7 +62,7 @@ public final class BuiltInStringTypeAdapters {
      * is the double value of the input as produced by {@link Double#parseDouble(String)}.
      */
     public static final StringTypeAdapter<Double> DOUBLE = StringTypeAdapterImpl.of(Double.class,
-            in -> Attempt.<Double>of(() -> Double.parseDouble(in)));
+            in -> Option.of(() -> Double.parseDouble(in)));
 
     /**
      * A float adapter, converting a string to an {@link Float}. If the input is empty, {@link Option#empty()}
@@ -71,7 +70,7 @@ public final class BuiltInStringTypeAdapters {
      * is the float value of the input as produced by {@link Float#parseFloat(String)}.
      */
     public static final StringTypeAdapter<Float> FLOAT = StringTypeAdapterImpl.of(Float.class,
-            in -> Attempt.<Float>of(() -> Float.parseFloat(in)));
+            in -> Option.of(() -> Float.parseFloat(in)));
 
     /**
      * An integer adapter, converting a string to an {@link Integer}. If the input is empty, {@link Option#empty()}
@@ -79,7 +78,7 @@ public final class BuiltInStringTypeAdapters {
      * is the integer value of the input as produced by {@link Integer#parseInt(String)}.
      */
     public static final StringTypeAdapter<Integer> INTEGER = StringTypeAdapterImpl.of(Integer.class,
-            in -> Attempt.<Integer>of(() -> Integer.parseInt(in)));
+            in -> Option.of(() -> Integer.parseInt(in)));
 
     /**
      * A long adapter, converting a string to an {@link Long}. If the input is empty, {@link Option#empty()}
@@ -87,7 +86,7 @@ public final class BuiltInStringTypeAdapters {
      * is the long value of the input as produced by {@link Long#parseLong(String)}.
      */
     public static final StringTypeAdapter<Long> LONG = StringTypeAdapterImpl.of(Long.class,
-            in -> Attempt.<Long>of(() -> Long.parseLong(in)));
+            in -> Option.of(() -> Long.parseLong(in)));
 
     /**
      * A short adapter, converting a string to an {@link Short}. If the input is empty, {@link Option#empty()}
@@ -95,14 +94,14 @@ public final class BuiltInStringTypeAdapters {
      * is the short value of the input as produced by {@link Short#parseShort(String)}.
      */
     public static final StringTypeAdapter<Short> SHORT = StringTypeAdapterImpl.of(Short.class,
-            in -> Attempt.<Short>of(() -> Short.parseShort(in)));
+            in -> Option.of(() -> Short.parseShort(in)));
 
     /**
      * A UUID adapter, converting a string to a {@link UUID}. If the input is a valid UUID according to the specifications
      * in {@link UUID}, the result is the UUID value of the input as produced by {@link UUID#fromString(String)}.
      */
     public static final StringTypeAdapter<UUID> UNIQUE_ID = StringTypeAdapterImpl.of(UUID.class,
-            in -> Attempt.<UUID>of(() -> UUID.fromString(in)));
+            in -> Option.of(() -> UUID.fromString(in)));
 
     private BuiltInStringTypeAdapters() {}
 }

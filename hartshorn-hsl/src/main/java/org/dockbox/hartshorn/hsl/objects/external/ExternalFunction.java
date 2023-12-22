@@ -104,14 +104,18 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         }
         MethodView<Object, ?> method = this.method(at, arguments);
 
-        return method.invoke(externalObjectReference.externalObject(), arguments)
-                .mapError(error -> {
-                    if (error instanceof ApplicationException ae) {
-                        return ae;
-                    }
-                    return new ApplicationException(error);
-                }).map(object -> new ExternalInstance(object, interpreter.applicationContext().environment().introspector().introspect(object)))
-                .orNull();
+        try {
+            return method.invoke(externalObjectReference.externalObject(), arguments)
+                    .map(object -> new ExternalInstance(object,
+                            interpreter.applicationContext().environment().introspector().introspect(object)))
+                    .orNull();
+        }
+        catch (ApplicationException e) {
+            throw e;
+        }
+        catch (Throwable throwable) {
+            throw new ApplicationException(throwable);
+        }
     }
 
     @Override

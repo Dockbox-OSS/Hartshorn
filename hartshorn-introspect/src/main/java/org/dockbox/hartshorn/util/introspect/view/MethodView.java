@@ -22,7 +22,6 @@ import java.util.Collection;
 
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -48,50 +47,50 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
     /**
      * Invokes the method represented by this view on the given instance with the given arguments. If
      * the method is static, the instance may be {@code null}. Any exceptions thrown by the method
-     * will be caught and returned as a failed {@link Attempt}.
+     * will be re-thrown.
      *
      * @param instance the instance to invoke the method on
      * @param arguments the arguments to pass to the method
      * @return the result of the method invocation
      */
-    default Attempt<ReturnType, Throwable> invoke(Object instance, Object... arguments) {
+    default Option<ReturnType> invoke(Object instance, Object... arguments) throws Throwable {
         return this.invoke(instance, Arrays.asList(arguments));
     }
 
     /**
      * Invokes the method represented by this view on the given instance with the given arguments. If
      * the method is static, the instance may be {@code null}. Any exceptions thrown by the method
-     * will be caught and returned as a failed {@link Attempt}.
+     * will be re-thrown.
      *
      * @param instance the instance to invoke the method on
      * @param arguments the arguments to pass to the method
      * @return the result of the method invocation
      */
-    Attempt<ReturnType, Throwable> invoke(Object instance, Collection<?> arguments);
+    Option<ReturnType> invoke(Object instance, Collection<?> arguments) throws Throwable;
 
     /**
      * Invokes the method represented by this view as a static method call with the given arguments.
      * If the method is not static, a {@link IllegalIntrospectionException} will be thrown. Any
-     * exceptions thrown by the method will be caught and returned as a failed {@link Attempt}.
+     * exceptions thrown by the method will be re-thrown.
      *
      * @param arguments the arguments to pass to the method
      * @throws IllegalIntrospectionException if the method is not static
      * @return the result of the method invocation
      */
-    default Attempt<ReturnType, Throwable> invokeStatic(Object... arguments) {
+    default Option<ReturnType> invokeStatic(Object... arguments) throws Throwable {
         return this.invokeStatic(Arrays.asList(arguments));
     }
 
     /**
      * Invokes the method represented by this view as a static method call with the given arguments.
      * If the method is not static, a {@link IllegalIntrospectionException} will be thrown. Any
-     * exceptions thrown by the method will be caught and returned as a failed {@link Attempt}.
+     * exceptions will be re-thrown.
      *
      * @param arguments the arguments to pass to the method
      * @throws IllegalIntrospectionException if the method is not static
      * @return the result of the method invocation
      */
-    Attempt<ReturnType, Throwable> invokeStatic(Collection<?> arguments);
+    Option<ReturnType> invokeStatic(Collection<?> arguments) throws Throwable;
 
     /**
      * Returns a {@link TypeView} representing the non-generic return type of the method.

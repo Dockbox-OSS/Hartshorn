@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.component.processing;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
  * The {@link ComponentProcessor} is a service that can be used to process components, whether
@@ -43,6 +44,6 @@ public sealed interface ComponentProcessor extends OrderedComponentProcessor per
      * @return The processed component instance.
      * @param <T> The type of the component.
      */
-    <T> T process(ComponentProcessingContext<T> processingContext);
+    <T> T process(ComponentProcessingContext<T> processingContext) throws ApplicationException;
 
 }

@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.util.option.none;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.option.Attempt;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -28,6 +23,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents an empty {@link Option}.
@@ -37,7 +38,7 @@ import java.util.stream.Stream;
  * @author Guus Lieben
  * @since 0.4.13
  */
-public class None<T> implements Option<T> {
+public class None<T> extends DefaultContext implements Option<T> {
 
     @Override
     public <E extends Throwable> Attempt<T, E> attempt(Class<E> errorType) {

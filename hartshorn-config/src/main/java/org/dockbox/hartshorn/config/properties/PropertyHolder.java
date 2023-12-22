@@ -16,35 +16,36 @@
 
 package org.dockbox.hartshorn.config.properties;
 
-import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Map;
 import java.util.Properties;
+
+import org.dockbox.hartshorn.config.ObjectMappingException;
+import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.option.Option;
 
 public interface PropertyHolder {
 
     boolean has(String key);
 
-    default <T> Option<T> update(T object, String key) {
+    default <T> Option<T> update(T object, String key) throws ObjectMappingException {
         return this.update(object, key, (Class<T>) null);
     }
 
-    <T> Option<T> update(T object, String key, Class<T> type);
+    <T> Option<T> update(T object, String key, Class<T> type) throws ObjectMappingException;
 
-    <T> Option<T> update(T object, String key, GenericType<T> type);
+    <T> Option<T> update(T object, String key, GenericType<T> type) throws ObjectMappingException;
 
-    <T> Option<T> get(String key, Class<T> type);
+    <T> Option<T> get(String key, Class<T> type) throws ObjectMappingException;
 
-    <T> Option<T> get(String key, GenericType<T> type);
+    <T> Option<T> get(String key, GenericType<T> type) throws ObjectMappingException;
 
-    default <T> Option<T> get(String key) {
+    default <T> Option<T> get(String key) throws ObjectMappingException {
         return this.get(key, (Class<T>) null);
     }
 
-    <T> void set(String key, T value);
+    <T> void set(String key, T value) throws ObjectMappingException;
 
-    void set(Map<String, Object> tree);
+    void set(Map<String, Object> tree) throws ObjectMappingException;
 
-    Properties properties();
+    Properties properties() throws ObjectMappingException;
 }

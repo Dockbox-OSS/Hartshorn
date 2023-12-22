@@ -49,7 +49,7 @@ public class ConfigurationProviders {
     public PropertyHolder propertyHolder(ApplicationContext applicationContext,
                                          ApplicationPropertyHolder propertyHolder,
                                          ObjectMapper objectMapper,
-                                         ObjectMapper propertyMapper) {
+                                         ObjectMapper propertyMapper) throws ObjectMappingException {
         return new StandardPropertyHolder(applicationContext, propertyHolder, objectMapper, propertyMapper);
     }
 

@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.application.environment;
 
-import org.dockbox.hartshorn.util.option.Attempt;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.Set;
+
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A classpath resource locator. This class is used to locate resources in the classpath, and make them available to
@@ -33,16 +33,17 @@ import java.util.Set;
 public interface ClasspathResourceLocator {
 
     /**
-     * Attempts to look up a resource file. If the file exists it is wrapped in a {@link Attempt}
-     * and returned. If the file does not exist or is a directory, {@link Attempt#empty()} is
-     * returned. If the requested file name is invalid, or {@code null}, a {@link Attempt}
-     * containing the appropriate exception is returned.
+     * Attempts to look up a resource file. If the file exists it is wrapped in a {@link Option}
+     * and returned. If the file does not exist or is a directory, {@link Option#empty()} is
+     * returned.
      *
      * @param name The name of the file to look up
      *
-     * @return The resource file wrapped in a {@link Attempt}, or an appropriate {@link Attempt} (either none or providing the appropriate exception).
+     * @return The resource file wrapped in a {@link Option} if present, otherwise {@link Option#empty()}
+     *
+     * @throws IOException if an I/O error occurs
      */
-    Attempt<Path, IOException> resource(String name);
+    Option<Path> resource(String name) throws IOException;
 
     Set<Path> resources(String name);
 

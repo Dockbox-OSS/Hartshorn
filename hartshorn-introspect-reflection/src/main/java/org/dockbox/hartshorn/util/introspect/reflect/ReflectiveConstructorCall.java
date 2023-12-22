@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.introspect;
+package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
 @FunctionalInterface
-public interface MethodInvoker<T, P> {
+public interface ReflectiveConstructorCall<T> {
 
-    Option<T> invoke(MethodView<P, T> method, P instance, Object[] args) throws Throwable;
+    Option<T> invoke(Object[] args) throws Throwable;
 }

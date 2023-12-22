@@ -16,36 +16,32 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import java.lang.reflect.Method;
+
 import org.dockbox.hartshorn.util.introspect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.Method;
 
 public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
 
     @Override
-    public Attempt<T, Throwable> invoke(MethodView<P, T> method, P instance, Object[] args) {
-        Attempt<T, Throwable> result = Attempt.of(() -> {
-            Option<Method> jlrMethod = method.method();
-            if (jlrMethod.absent()) {
-                return null;
-            }
-
-            // Do not use explicit casting here, as it will cause a ClassCastException if the method
-            // returns a primitive type. Instead, use the inferred type from the method view.
-            //noinspection unchecked
-            return (T) jlrMethod.get().invoke(instance, args);
-        }, Throwable.class);
-
-        if (result.errorPresent()) {
-            Throwable cause = result.error();
-            if (result.error().getCause() != null) {
-                cause = result.error().getCause();
-            }
-            return Attempt.of(result.orNull(), cause);
+    public Option<T> invoke(MethodView<P, T> method, P instance, Object[] args) throws Throwable {
+        Option<Method> jlrMethod = method.method();
+        if(jlrMethod.absent()) {
+            return null;
         }
-        return result;
+
+        // Do not use explicit casting here, as it will cause a ClassCastException if the method
+        // returns a primitive type. Instead, use the inferred type from the method view.
+        try {
+            //noinspection unchecked
+            return Option.of((T) jlrMethod.get().invoke(instance, args));
+        }
+        catch (Throwable throwable) {
+            if (throwable.getCause() != null) {
+                throw throwable.getCause();
+            }
+            throw throwable;
+        }
     }
 }

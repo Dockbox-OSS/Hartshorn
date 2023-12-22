@@ -34,6 +34,11 @@ public class RuntimeError extends RuntimeException {
         this.token = token;
     }
 
+    public RuntimeError(Token token, String message, Throwable cause) {
+        super(message, cause);
+        this.token = token;
+    }
+
     /**
      * The token at which the error occurred.
      * @return The token at which the error occurred.

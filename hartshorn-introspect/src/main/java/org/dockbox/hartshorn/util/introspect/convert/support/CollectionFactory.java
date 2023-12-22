@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
@@ -34,6 +30,10 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Supplier;
+
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class CollectionFactory {
 
@@ -70,7 +70,12 @@ public class CollectionFactory {
 
         Option<ConstructorView<O>> defaultConstructor = this.introspector.introspect(targetType).constructors().defaultConstructor();
         if (defaultConstructor.present()) {
-            return defaultConstructor.get().create().orNull();
+            try {
+                return defaultConstructor.get().create().orNull();
+            }
+            catch (Throwable e) {
+                throw new IllegalArgumentException("Failed to create collection of type " + targetType.getName(), e);
+            }
         }
         else {
             throw new IllegalArgumentException("Unsupported Collection implementation: " + targetType.getName());

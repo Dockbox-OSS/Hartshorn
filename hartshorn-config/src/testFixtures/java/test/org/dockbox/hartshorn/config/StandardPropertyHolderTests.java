@@ -17,6 +17,7 @@
 package test.org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -37,7 +38,7 @@ public abstract class StandardPropertyHolderTests {
     protected abstract PropertyHolder propertyHolder(ApplicationContext applicationContext);
 
     @Test
-    void testPropertyHolder() {
+    void testPropertyHolder() throws ObjectMappingException {
         PropertyHolder propertyHolder = this.propertyHolder(this.applicationContext);
 
         propertyHolder.set("user.name", "John Doe");
@@ -65,7 +66,7 @@ public abstract class StandardPropertyHolderTests {
 
     @Test
     @TestComponents(components = ComponentWithUserValue.class)
-    void testValueComponents() {
+    void testValueComponents() throws ObjectMappingException {
         PropertyHolder propertyHolder = this.propertyHolder(this.applicationContext);
         propertyHolder.set("user.name", "John Doe");
         propertyHolder.set("user.address.city", "Darwin City");

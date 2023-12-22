@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import java.lang.reflect.Field;
+
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.annotations.Property;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.Field;
 
 /**
  * Represents a view of a field. This view is used to access the field's value, and to set the field's value.
@@ -52,7 +51,7 @@ public interface FieldView<Parent, FieldType> extends AnnotatedElementView, Modi
      * @throws IllegalIntrospectionException if the field is final, the given value does not match the field's type, or
      *        if the field is not accessible. Also thrown if the configured setter method does not exist.
      */
-    void set(Object instance, Object value);
+    void set(Object instance, Object value) throws Throwable;
 
     /**
      * Gets the value of the field represented by this view on the given instance. If the field is static, the instance
@@ -63,7 +62,7 @@ public interface FieldView<Parent, FieldType> extends AnnotatedElementView, Modi
      * @throws IllegalIntrospectionException if the field is not accessible, or the configured getter method does not exist
      * @return the value of the field represented by this view on the given instance
      */
-    Attempt<FieldType, Throwable> get(Object instance);
+    Option<FieldType> get(Object instance) throws Throwable;
 
     /**
      * Gets the value of the field represented by this view, as a static field. If the field is annotated with
@@ -74,7 +73,7 @@ public interface FieldView<Parent, FieldType> extends AnnotatedElementView, Modi
      *       does not exist
      * @return the value of the field represented by this view
      */
-    Attempt<FieldType, Throwable> getStatic();
+    Option<FieldType> getStatic() throws Throwable;
 
     /**
      * Returns the element's declaring type.

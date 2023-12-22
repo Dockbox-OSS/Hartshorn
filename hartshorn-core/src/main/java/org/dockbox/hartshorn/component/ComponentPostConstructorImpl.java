@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
 
 import jakarta.annotation.PostConstruct;
 
@@ -49,16 +48,14 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
 
         for (MethodView<T, ?> postConstructMethod : postConstructMethods) {
             Object[] arguments = this.contextAdapter.loadParameters(postConstructMethod);
-            Attempt<?, Throwable> result = postConstructMethod.invoke(instance, arguments);
-
-            if (result.errorPresent()) {
-                Throwable error = result.error();
-
-                if (error instanceof ApplicationException applicationException) {
-                    throw applicationException;
-                } else {
-                    throw new ApplicationException(error);
-                }
+            try {
+                postConstructMethod.invoke(instance, arguments);
+            }
+            catch (ApplicationException e) {
+                throw e;
+            }
+            catch (Throwable e) {
+                throw new ApplicationException(e);
             }
         }
         return instance;

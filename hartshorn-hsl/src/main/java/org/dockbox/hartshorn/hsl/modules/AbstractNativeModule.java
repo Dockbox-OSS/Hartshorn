@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
@@ -92,14 +91,15 @@ public abstract class AbstractNativeModule implements NativeModule {
                 method = TypeUtils.adjustWildcards(function.method(), MethodView.class);
             }
             if (this.supportedFunctions.stream().anyMatch(sf -> function.method().equals(method))) {
-                Object result = method.invoke(this.instance(), arguments.toArray(Object[]::new))
-                        .mapError(ApplicationException::new)
-                        .orNull();
+                Object result = method.invoke(this.instance(), arguments.toArray(Object[]::new)).orNull();
 
                 return new ExternalInstance(result, TypeUtils.adjustWildcards(method.returnType(), TypeView.class));
             } else {
                 throw new RuntimeError(at, "Function '" + function.name().lexeme() + "' is not supported by module '" + this.moduleClass().getSimpleName() + "'");
             }
+        }
+        catch (NativeExecutionException e) {
+            throw e;
         }
         catch (Throwable e) {
             throw new RuntimeError(at, e.getMessage());

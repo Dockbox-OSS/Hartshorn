@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -25,32 +29,28 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.option.Attempt;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class CaseBodyStatementParser implements ASTNodeParser<Statement> {
 
     @Override
-    public Attempt<Statement, ScriptEvaluationError> parse(TokenParser parser, TokenStepValidator validator) {
+    public Option<Statement> parse(TokenParser parser, TokenStepValidator validator) throws ScriptEvaluationError {
         if (parser.match(TokenType.COLON)) {
             Token colon = parser.previous();
             List<Statement> statements = new ArrayList<>();
             while (!parser.check(TokenType.CASE, TokenType.DEFAULT, TokenType.RIGHT_BRACE)) {
                 statements.add(parser.statement());
             }
-            return Attempt.of(new BlockStatement(colon, statements));
+            return Option.of(new BlockStatement(colon, statements));
         }
         else if (parser.match(TokenType.ARROW)) {
-            return Attempt.of(parser.expressionStatement());
+            return Option.of(parser.expressionStatement());
         }
         else {
-            return Attempt.of(new ScriptEvaluationError("Expected '%s' or '%s'".formatted(
+            throw new ScriptEvaluationError("Expected '%s' or '%s'".formatted(
                     TokenType.COLON.representation(),
                     TokenType.ARROW.representation()
-            ), Phase.PARSING, parser.peek()));
+            ), Phase.PARSING, parser.peek());
         }
     }
 

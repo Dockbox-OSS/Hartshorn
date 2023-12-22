@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.SequencedCollection;
 
 import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 
 /**
@@ -44,7 +45,7 @@ public interface ComponentInjectionPoint<T> {
      * @param context the context that provides the component instance
      * @param objectsToInject the objects to inject into the component instance
      */
-    void processObjects(PopulateComponentContext<T> context, List<Object> objectsToInject);
+    void processObjects(PopulateComponentContext<T> context, List<Object> objectsToInject) throws ApplicationException;
 
     /**
      * Returns an {@link ElementAnnotationsIntrospector} that can be used to introspect the annotations of the

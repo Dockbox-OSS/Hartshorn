@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.introspect;
+package org.dockbox.hartshorn.util.function;
 
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.ApplicationException;
 
+/**
+ * Extension of {@link java.util.function.Consumer} with the addition of a
+ * {@code throws ApplicationException} clause.
+ *
+ * @param <T> the type of the argument to consume
+ *
+ * @see java.util.function.Consumer
+ */
 @FunctionalInterface
-public interface MethodInvoker<T, P> {
-
-    Option<T> invoke(MethodView<P, T> method, P instance, Object[] args) throws Throwable;
+public interface CheckedConsumer<T> {
+    void accept(T t) throws ApplicationException;
 }

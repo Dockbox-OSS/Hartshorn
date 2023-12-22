@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.reporting.serialize;
+package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.reporting.DiagnosticsReport;
+@FunctionalInterface
+public interface ReflectiveFieldWriter<T, P> {
 
-public interface ReportSerializer<T> {
-
-    T serialize(DiagnosticsReport report);
-
+    void set(P instance, T value) throws Throwable;
 }

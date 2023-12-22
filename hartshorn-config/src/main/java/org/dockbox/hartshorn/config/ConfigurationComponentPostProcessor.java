@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.config.properties.PropertyAwareComponentPostProcessor;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.NotPrimitiveException;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -32,7 +33,8 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ConfigurationComponentPostProcessor extends PropertyAwareComponentPostProcessor {
 
     @Override
-    public <T> void postConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void postConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext)
+            throws ApplicationException {
         if (processingContext.type().fields().annotatedWith(Value.class).isEmpty()) {
             return;
         }
@@ -58,6 +60,9 @@ public class ConfigurationComponentPostProcessor extends PropertyAwareComponentP
             catch (NotPrimitiveException e) {
                 context.log().warn("Could not prepare value field {} in {}", field.name(), processingContext.type().name());
                 context.handle(e);
+            }
+            catch(Throwable e) {
+                throw new ApplicationException(e);
             }
         }
     }

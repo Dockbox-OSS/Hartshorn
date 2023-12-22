@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.commands.CommandSource;
@@ -25,8 +23,10 @@ import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractParameterPattern implements CustomParameterPattern {
 
@@ -37,18 +37,13 @@ public abstract class AbstractParameterPattern implements CustomParameterPattern
     }
 
     @Override
-    public <T> Attempt<T, ConverterException> request(Class<T> type, CommandSource source, String raw) {
+    public <T> Option<T> request(Class<T> type, CommandSource source, String raw) throws ConverterException {
         ApplicationContext context = source.applicationContext();
         TypeView<T> typeView = context.environment().introspector().introspect(type);
 
-        Attempt<Boolean, ConverterException> preconditionsMatch = this.preconditionsMatch(type, source, raw);
-        if (preconditionsMatch.errorPresent()) {
-            context.log().debug("Preconditions yielded exception, rejecting raw argument " + raw);
-            return Attempt.of(preconditionsMatch.error());
-        }
-        else if (Boolean.FALSE.equals(preconditionsMatch.orElse(false))) {
+        if (!this.preconditionsMatch(type, source, raw)) {
             context.log().debug("Preconditions failed, rejecting raw argument " + raw);
-            return Attempt.empty();
+            return Option.empty();
         }
 
         List<String> rawArguments = this.splitArguments(raw);
@@ -70,7 +65,7 @@ public abstract class AbstractParameterPattern implements CustomParameterPattern
             Option<ArgumentConverter<?>> converter = this.argumentConverterRegistry.converter(typeIdentifier);
             if (converter.absent()) {
                 context.log().debug("Could not locate converter for identifier '%s'".formatted(typeIdentifier));
-                return Attempt.of(new MissingConverterException(context, typeView));
+                throw new MissingConverterException(context, typeView);
             }
 
             context.log().debug("Found converter for identifier '%s'".formatted(typeIdentifier));
@@ -78,53 +73,77 @@ public abstract class AbstractParameterPattern implements CustomParameterPattern
             arguments.add(converter.get().convert(source, rawArgument).orNull());
         }
 
-        return this.constructor(argumentTypes, arguments, typeView, source)
-                .flatMap(constructor -> constructor.create(arguments.toArray(new Object[0])))
-                .attempt(ArgumentMatchingFailedException.class)
-                // Inferred downcast from ArgumentMatchingFailedException to ConverterException
-                .mapError(error -> error);
+        Option<ConstructorView<T>> constructor = this.constructor(argumentTypes, arguments, typeView, source);
+        if (constructor.present()) {
+            try {
+                return constructor.get().create(arguments.toArray());
+            }
+            catch (ConverterException e) {
+                throw e;
+            }
+            catch (Throwable t) {
+                throw new ConverterException(t);
+            }
+        }
+        else {
+            return Option.empty();
+        }
     }
 
-    public abstract <T> Attempt<Boolean, ConverterException> preconditionsMatch(Class<T> type, CommandSource source, String raw);
+    public abstract <T> boolean preconditionsMatch(Class<T> type, CommandSource source, String raw) throws ConverterException;
 
     public abstract List<String> splitArguments(String raw);
 
-    public abstract Attempt<String, ConverterException> parseIdentifier(String argument);
+    public abstract Option<String> parseIdentifier(String argument) throws ConverterException;
 
-    protected <T> Attempt<ConstructorView<T>, ConverterException> constructor(List<Class<?>> argumentTypes, List<Object> arguments, TypeView<T> type, CommandSource source) {
+    protected <T> Option<ConstructorView<T>> constructor(List<Class<?>> argumentTypes, List<Object> arguments, TypeView<T> type, CommandSource source) throws ConverterException {
         for (ConstructorView<T> constructor : type.constructors().all()) {
-            if (constructor.parameters().count() != arguments.size()) {
-                continue;
-            }
-            List<TypeView<?>> parameters = constructor.parameters().types();
-
-            boolean passed = true;
-            for (int i = 0; i < parameters.size(); i++) {
-                TypeView<?> parameter = parameters.get(i);
-                Class<?> argument = argumentTypes.get(i);
-
-                if (argument == null) {
-                    Option<? extends ArgumentConverter<?>> converter = this.argumentConverterRegistry.converter(parameter);
-                    if (converter.present()) {
-                        Option<?> result = converter.get().convert(source, (String) arguments.get(i));
-                        if (result.present()) {
-                            arguments.set(i, result.get());
-                            continue; // Generic type, will be parsed later
-                        }
-                    }
-                }
-                else if (parameter.is(argument)) {
-                    continue;
-                }
-
-                passed = false;
-                break; // Parameter is not what we expected, do not continue
-            }
-            if (passed) {
-                source.applicationContext().log().debug("Found matching constructor for " + type.name() + " with " + argumentTypes.size() + " arguments.");
-                return Attempt.of(constructor);
+            if (this.constructorMatchesArguments(argumentTypes, arguments, type, source, constructor)) {
+                return Option.of(constructor);
             }
         }
-        return Attempt.of(new ArgumentMatchingFailedException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs()));
+        throw new ArgumentMatchingFailedException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs());
+    }
+
+    private <T> boolean constructorMatchesArguments(List<Class<?>> argumentTypes, List<Object> arguments, TypeView<T> type, CommandSource source, ConstructorView<T> constructor) {
+        if (constructor.parameters().count() != arguments.size()) {
+            return false;
+        }
+        List<TypeView<?>> parameters = constructor.parameters().types();
+
+        boolean passed = true;
+        for (int i = 0; i < parameters.size(); i++) {
+            TypeView<?> parameter = parameters.get(i);
+            Class<?> argument = argumentTypes.get(i);
+
+            if (argument == null) {
+                if (this.tryProvideArgument(arguments, source, parameter, i)) {
+                    continue; // Generic type, will be parsed later
+                }
+            }
+            else if (parameter.is(argument)) {
+                continue;
+            }
+
+            passed = false;
+            break; // Parameter is not what we expected, do not continue
+        }
+        if (passed) {
+            source.applicationContext().log().debug("Found matching constructor for " + type.name() + " with " + argumentTypes.size() + " arguments.");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean tryProvideArgument(List<Object> arguments, CommandSource source, TypeView<?> parameter, int i) {
+        Option<? extends ArgumentConverter<?>> converter = this.argumentConverterRegistry.converter(parameter);
+        if (converter.present()) {
+            Option<?> result = converter.get().convert(source, (String) arguments.get(i));
+            if (result.present()) {
+                arguments.set(i, result.get());
+                return true;
+            }
+        }
+        return false;
     }
 }

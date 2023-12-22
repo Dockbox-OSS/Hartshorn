@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.StringJoiner;
+
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
@@ -26,13 +31,7 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionMethodInvoker;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.StringJoiner;
 
 public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutableElementView<Parent> implements MethodView<Parent, ReturnType>, ReflectionModifierCarrierView {
 
@@ -54,7 +53,7 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public Attempt<ReturnType, Throwable> invoke(Object instance, Collection<?> arguments) {
+    public Option<ReturnType> invoke(Object instance, Collection<?> arguments) throws Throwable {
         if (this.invoker == null) {
             this.invoker = new ReflectionMethodInvoker<>();
         }
@@ -63,7 +62,7 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public Attempt<ReturnType, Throwable> invokeStatic(Collection<?> arguments) {
+    public Option<ReturnType> invokeStatic(Collection<?> arguments) throws Throwable {
         if (this.modifiers().isStatic()) {
             return this.invoke(null, arguments);
         }

@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.config;
 
+import java.io.OutputStream;
+
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptorContext;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.Option;
-
-import java.io.OutputStream;
 
 public class SerializerMethodInterceptor<T, R> implements MethodInterceptor<T, R> {
     private final SerializationSourceConverter converter;
@@ -46,7 +45,7 @@ public class SerializerMethodInterceptor<T, R> implements MethodInterceptor<T, R
         Object[] arguments = interceptorContext.args();
 
         try (OutputStream outputStream = this.converter.outputStream(this.method, arguments)) {
-            Option<?> result;
+            Object result;
 
             if (outputStream == null && this.returnsStringOrWrapper) {
                 result = this.mapper.write(arguments[0]);

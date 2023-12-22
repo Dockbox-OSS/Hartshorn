@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Collection;
+import java.util.function.Supplier;
+
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
@@ -23,9 +26,6 @@ import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Collection;
-import java.util.function.Supplier;
 
 public class CollectionDefaultValueProviderFactory implements DefaultValueProviderFactory<Collection<?>> {
 
@@ -41,7 +41,14 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
         TypeView<O> type = this.introspector.introspect(targetType);
         Option<ConstructorView<O>> defaultConstructor = type.constructors().defaultConstructor();
         if (defaultConstructor.present()) {
-            return () -> defaultConstructor.get().create().orNull();
+            return () -> {
+                try {
+                    return defaultConstructor.get().create().orNull();
+                }
+                catch(Throwable e) {
+                    return null;
+                }
+            };
         }
         else {
             return () -> {

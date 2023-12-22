@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
+import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -63,10 +64,16 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         }
         // External class constructor
         ConstructorView<T> constructor = this.firstExternalClass.constructors().defaultConstructor().get();
-        this.instance = constructor.create()
-                .mapError(ApplicationException::new)
-                .rethrow()
-                .orNull();
+        try {
+            this.instance = constructor.create().orNull();
+        }
+        catch (ApplicationException e) {
+            throw e;
+        }
+        catch (Throwable throwable) {
+            throw new ApplicationException(throwable);
+        }
+
         // Virtual class constructor
         if (virtualConstructor != null) {
             virtualConstructor.call(at, interpreter, this, arguments);
@@ -83,7 +90,12 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         else {
             Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
-                field.get().set(this.instance, value);
+                try {
+                    field.get().set(this.instance, value);
+                }
+                catch (Throwable throwable) {
+                    throw new RuntimeError(name, "Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()), throwable);
+                }
             }
             else {
                 throw new IllegalArgumentException("Field " + name.lexeme() + " not found in " + this.firstExternalClass.name());
@@ -101,7 +113,12 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         else {
             Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
-                return field.get().get(this.instance);
+                try {
+                    return field.get().get(this.instance);
+                }
+                catch (Throwable throwable) {
+                    throw new RuntimeError(name, "Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()), throwable);
+                }
             }
             else {
                 throw new IllegalArgumentException("Field " + name.lexeme() + " not found in " + this.firstExternalClass.name());

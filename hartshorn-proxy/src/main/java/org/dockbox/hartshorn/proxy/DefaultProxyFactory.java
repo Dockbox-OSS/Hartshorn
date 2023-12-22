@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * The default implementation of {@link ProxyFactory}. This implementation is state-aware, as is suggested by its
@@ -136,23 +136,23 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public Attempt<T, Throwable> proxy() throws ApplicationException {
+    public Option<T> proxy() throws ApplicationException {
         this.validateConstraints();
         return this.createNewProxy();
     }
 
-    protected abstract Attempt<T, Throwable> createNewProxy() throws ApplicationException;
+    protected abstract Option<T> createNewProxy() throws ApplicationException;
 
     @Override
-    public Attempt<T, Throwable> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
+    public Option<T> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
         this.validateConstraints();
         return this.createNewProxy(constructor, args);
     }
 
-    protected abstract Attempt<T, Throwable> createNewProxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException;
+    protected abstract Option<T> createNewProxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException;
 
     @Override
-    public Attempt<T, Throwable> proxy(ConstructorView<? extends T> constructor, Object[] args) throws ApplicationException {
+    public Option<T> proxy(ConstructorView<? extends T> constructor, Object[] args) throws ApplicationException {
         if (constructor.constructor().present()) {
             return this.proxy(constructor.constructor().get(), args);
         }

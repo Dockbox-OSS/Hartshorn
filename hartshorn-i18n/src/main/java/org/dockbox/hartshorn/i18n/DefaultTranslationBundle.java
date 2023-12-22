@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.config.FileFormat;
-import org.dockbox.hartshorn.config.ObjectMapper;
-import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Locale;
@@ -31,6 +25,12 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.config.FileFormat;
+import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class DefaultTranslationBundle implements TranslationBundle {
 
@@ -114,10 +114,16 @@ public class DefaultTranslationBundle implements TranslationBundle {
     @Override
     public Set<Message> register(Path source, Locale locale, FileFormat fileFormat) {
         ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class).fileType(fileFormat);
-        Map<String, String> result = objectMapper.flat(source).entrySet()
-                .stream()
-                .collect(Collectors.toMap(Entry::getKey, value -> String.valueOf(value.getValue())));
-        return this.register(result, locale);
+        try {
+            Map<String, String> result = objectMapper.flat(source).entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(Entry::getKey, value -> String.valueOf(value.getValue())));
+            return this.register(result, locale);
+        }
+        catch (Exception e) {
+            this.applicationContext.handle(e);
+            return Set.of();
+        }
     }
 
     @Override

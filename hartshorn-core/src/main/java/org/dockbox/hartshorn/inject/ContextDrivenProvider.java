@@ -56,19 +56,26 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
         }
 
         ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
-        return adapter.scope(this.context.scope()).create(constructor.get())
-                .mapError(error -> new ApplicationException("Failed to create instance of type " + this.type().getName(), error))
-                .rethrow()
-                .cast(this.type())
-                .map(ComponentObjectContainer::new);
+        try {
+            return adapter.scope(this.context.scope())
+                    .create(constructor.get())
+                    .cast(this.type())
+                    .map(ComponentObjectContainer::new);
+        }
+        catch (Throwable throwable) {
+            throw new ApplicationException("Failed to create instance of type " + this.type().getName(), throwable);
+        }
     }
 
     protected Option<? extends ConstructorView<? extends C>> optimalConstructor(ApplicationContext applicationContext) throws ApplicationException {
         TypeView<? extends C> typeView = applicationContext.environment().introspector().introspect(this.type());
         if (this.optimalConstructor == null) {
-            this.optimalConstructor = ComponentConstructorResolver.create(applicationContext).findConstructor(typeView)
-                    .rethrow()
-                    .orNull();
+            try {
+                this.optimalConstructor = ComponentConstructorResolver.create(applicationContext).findConstructor(typeView).orNull();
+            }
+            catch(Throwable throwable) {
+                throw new ApplicationException(throwable);
+            }
         }
         return Option.of(this.optimalConstructor);
     }

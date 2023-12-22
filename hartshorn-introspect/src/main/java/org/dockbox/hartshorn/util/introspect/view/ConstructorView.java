@@ -20,7 +20,6 @@ import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -44,26 +43,26 @@ public interface ConstructorView<T> extends ExecutableElementView<T> {
     /**
      * Creates a new instance of the class that declares the constructor represented by this view.
      * The provided arguments are passed to the constructor. If the constructor is not accessible,
-     * it will be made accessible. If the constructor is not available, an empty {@link Attempt} is
-     * returned. If the constructor throws an exception, the exception is wrapped in an {@link Attempt}.
+     * it will be made accessible. If the constructor is not available, an empty {@link Option} is
+     * returned. If the constructor throws an exception, the exception is re-thrown.
      *
      * @param arguments the arguments to pass to the constructor
      * @return a new instance of the class that declares the constructor
      */
-    default Attempt<T, Throwable> create(Object... arguments) {
+    default Option<T> create(Object... arguments) throws Throwable {
         return this.create(Arrays.asList(arguments));
     }
 
     /**
      * Creates a new instance of the class that declares the constructor represented by this view.
      * The provided arguments are passed to the constructor. If the constructor is not accessible,
-     * it will be made accessible. If the constructor is not available, an empty {@link Attempt} is
-     * returned. If the constructor throws an exception, the exception is wrapped in an {@link Attempt}.
+     * it will be made accessible. If the constructor is not available, an empty {@link Option} is
+     * returned. If the constructor throws an exception, the exception is re-thrown.
      *
      * @param arguments the arguments to pass to the constructor
      * @return a new instance of the class that declares the constructor
      */
-    Attempt<T, Throwable> create(Collection<?> arguments);
+    Option<T> create(Collection<?> arguments) throws Throwable;
 
     /**
      * Returns the type of the class that declares the constructor represented by this view.

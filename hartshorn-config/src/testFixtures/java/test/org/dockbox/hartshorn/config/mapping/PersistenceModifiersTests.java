@@ -16,16 +16,16 @@
 
 package test.org.dockbox.hartshorn.config.mapping;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.config.JsonInclusionRule;
 import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.config.annotations.UseSerialization;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 @HartshornTest(includeBasePackages = false)
 @UseSerialization
@@ -34,22 +34,22 @@ public abstract class PersistenceModifiersTests {
     protected abstract ObjectMapper objectMapper();
 
     @Test
-    void testSkipEmptyKeepsNonEmpty() {
+    void testSkipEmptyKeepsNonEmpty() throws ObjectMappingException {
         ObjectMapper mapper = this.objectMapper().skipBehavior(JsonInclusionRule.SKIP_EMPTY);
         ModifierElement element = new ModifierElement(List.of("sample", "other"));
-        Option<String> out = mapper.write(element);
+        String out = mapper.write(element);
 
-        Assertions.assertTrue(out.present());
-        Assertions.assertEquals("{\"names\":[\"sample\",\"other\"]}", StringUtilities.strip(out.get()));
+        Assertions.assertNotNull(out);
+        Assertions.assertEquals("{\"names\":[\"sample\",\"other\"]}", StringUtilities.strip(out));
     }
 
     @Test
-    void testSkipEmptySkipsEmpty() {
+    void testSkipEmptySkipsEmpty() throws ObjectMappingException {
         ObjectMapper mapper = this.objectMapper().skipBehavior(JsonInclusionRule.SKIP_EMPTY);
         ModifierElement element = new ModifierElement(List.of());
-        Option<String> out = mapper.write(element);
+        String out = mapper.write(element);
 
-        Assertions.assertTrue(out.present());
-        Assertions.assertEquals("{}", StringUtilities.strip(out.get()));
+        Assertions.assertNotNull(out);
+        Assertions.assertEquals("{}", StringUtilities.strip(out));
     }
 }
