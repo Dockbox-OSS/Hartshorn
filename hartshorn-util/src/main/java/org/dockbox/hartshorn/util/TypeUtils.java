@@ -166,13 +166,13 @@ public class TypeUtils {
      *
      * <p>Taking the following example type parameters for this method:
      * <ul>
-     *     <li>{@link InstanceType} - List<?></li>
+     *     <li>{@link InstanceType} - List&lt;?&gt;</li>
      *     <li>{@link KeyType} - List</li>
-     *     <li>{@link AdjustedType} - List<String></li>
+     *     <li>{@link AdjustedType} - List&lt;String&gt;</li>
      * </ul>
      *
      * <p>When invoking this method with an instance of any {@link java.util.List}, the method will return the same instance, as
-     * {@link java.util.List} is assignable to {@link java.util.List<?>}. However, as the instance could be {@code List<Integer>}
+     * {@link java.util.List} is assignable to {@link java.util.List}&gt;?&lt;. However, as the instance could be {@code List<Integer>}
      * just as well as {@code List<String>}, caution should be taken before using this method.
      *
      * <p>Proper usage of this method will result in a type-safe cast. For example, when invoking this method with an instance of

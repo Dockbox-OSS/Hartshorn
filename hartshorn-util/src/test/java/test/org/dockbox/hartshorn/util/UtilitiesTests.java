@@ -16,13 +16,6 @@
 
 package test.org.dockbox.hartshorn.util;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Stream;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.NotPrimitiveException;
 import org.dockbox.hartshorn.util.StringUtilities;
@@ -34,6 +27,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 
 public class UtilitiesTests {
 
@@ -53,15 +54,15 @@ public class UtilitiesTests {
 
     private static Stream<Arguments> durations() {
         return Stream.of(
-                Arguments.of("1s", 1),
-                Arguments.of("1m", minute),
-                Arguments.of("1h", hour),
-                Arguments.of("1d", day),
-                Arguments.of("1w", week),
-                Arguments.of("1w1d1h1m1s", week + day + hour + minute + 1),
-                Arguments.of("2w3d", (2 * week) + (3 * day)),
-                Arguments.of("2w3d5h", (2 * week) + (3 * day) + (5 * hour)),
-                Arguments.of("17h21m13s", (17 * hour) + (21 * minute) + 13)
+                Arguments.of("P1S", 1),
+                Arguments.of("P1M", minute),
+                Arguments.of("P1H", hour),
+                Arguments.of("P1D", day),
+                Arguments.of("P1W", week),
+                Arguments.of("P1W1D1H1M1S", week + day + hour + minute + 1),
+                Arguments.of("P2W3D", (2 * week) + (3 * day)),
+                Arguments.of("P2W3D5H", (2 * week) + (3 * day) + (5 * hour)),
+                Arguments.of("P17H21M13S", (17 * hour) + (21 * minute) + 13)
         );
     }
 
