@@ -25,6 +25,10 @@ import java.util.Objects;
  *
  * @param <K> The type of the key represented by this tuple
  * @param <V> The type of the value represented by this tuple
+ *
+ * @since 0.4.0
+ *
+ * @author Guus Lieben
  */
 public class Tuple<K, V> implements Entry<K, V> {
 
@@ -36,14 +40,33 @@ public class Tuple<K, V> implements Entry<K, V> {
         this.value = value;
     }
 
+    /**
+     * Returns the key of this tuple. Equivalent to {@link #getKey()}.
+     *
+     * @return the key of this tuple
+     */
     public K key() {
         return this.key;
     }
 
+    /**
+     * Returns the value of this tuple. Equivalent to {@link #getValue()}.
+     *
+     * @return the value of this tuple
+     */
     public V value() {
         return this.value;
     }
 
+    /**
+     * Creates a new {@link Tuple} instance with the given key and value.
+     *
+     * @param key the key
+     * @param value the value
+     * @return a new {@link Tuple} instance
+     * @param <K> the type of the key
+     * @param <V> the type of the value
+     */
     public static <K, V> Tuple<K, V> of(K key, V value) {
         return new Tuple<>(key, value);
     }

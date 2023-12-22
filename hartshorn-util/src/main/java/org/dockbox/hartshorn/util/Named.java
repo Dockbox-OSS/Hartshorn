@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.util;
 
+/**
+ * A named element is one which has a simple name. The name does not have to be unique, and
+ * may or may not be formalized in any way.
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 @FunctionalInterface
 public interface Named {
 
