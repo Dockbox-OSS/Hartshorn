@@ -20,6 +20,16 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * A simple implementation of a {@link MutableContainableGraphNode}, which is a node that can be
+ * can have parents and children added to it.
+ *
+ * @param <T> the type of the value of the node
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SimpleGraphNode<T> implements MutableContainableGraphNode<T> {
 
     private final T value;

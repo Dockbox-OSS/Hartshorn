@@ -18,6 +18,15 @@ package org.dockbox.hartshorn.util.graph;
 
 import java.util.Set;
 
+/**
+ * A simple immutable implementation of a {@link GraphNode}.
+ *
+ * @param <T> the type of the value of the node
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ImmutableGraphNode<T> implements GraphNode<T> {
 
     private final T value;

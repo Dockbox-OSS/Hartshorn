@@ -21,6 +21,18 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * A {@link GraphIterator} that traverses a {@link Graph} in a depth-first manner. This means that
+ * the visitor will visit all nodes of a path before moving on to the next path. A node is only
+ * visited if all of its parents have been visited, and if the node has not been visited before.
+ *
+ * @param <T> the type of the value of the node
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+@FunctionalInterface
 public interface DepthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
 
     @Override

@@ -19,6 +19,21 @@ package org.dockbox.hartshorn.util.graph;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * A {@link GraphIterator} that iterates over a {@link Graph} in a breadth-first manner. This means
+ * that all nodes on the same level are visited before any nodes on the next level are visited.
+ *
+ * <p>This iterator will not visit nodes that have parents that have not been visited yet. This
+ * means that if a node has a parent that has not been visited yet, the node will not be visited
+ * until all of its parents have been visited.
+ *
+ * @param <T> the type of the value of the node
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+@FunctionalInterface
 public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
 
     @Override
