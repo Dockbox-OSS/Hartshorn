@@ -16,20 +16,18 @@
 
 package org.dockbox.hartshorn.util;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A collection of utility methods for working with collections. This class is not meant to be
@@ -42,35 +40,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public final class CollectionUtilities {
 
     private CollectionUtilities() {
-    }
-
-    /**
-     * Constructs a new unique map from a given set of {@link Entry entries}. If no entries are
-     * provided an empty {@link Map} is returned. The constructed map is not concurrent.
-     * Entries can easily be created using {@link Tuple#of(Object, Object)}
-     *
-     * @param <K> The (super)type of all keys in the entry set
-     * @param <V> The (super)type of all values in the entry set
-     * @param entries The entries to use while constructing a new map
-     *
-     * @return The new non-concurrent map
-     * @throws NullPointerException If an entry is null
-     * @see Tuple#of(Object, Object)
-     * @deprecated Use {@link Map#ofEntries(Entry...)} instead
-     */
-    @SafeVarargs
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    public static <K, V> Map<K, V> ofEntries(Entry<? extends K, ? extends V>... entries) {
-        if (0 == entries.length) { // implicit null check of entries array
-            return new HashMap<>();
-        }
-        else {
-            Map<K, V> map = new HashMap<>();
-            for (Entry<? extends K, ? extends V> entry : entries) {
-                map.put(entry.getKey(), entry.getValue());
-            }
-            return map;
-        }
     }
 
     /**
