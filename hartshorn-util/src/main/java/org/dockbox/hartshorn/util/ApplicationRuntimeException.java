@@ -33,19 +33,4 @@ public class ApplicationRuntimeException extends RuntimeException {
     public ApplicationRuntimeException(Throwable cause) {
         super(cause);
     }
-
-    /**
-     * Attempts to look up the first cause of the exception. If no cause is found,
-     * the exception itself is returned.
-     *
-     * @return The first cause of the exception.
-     */
-    @Deprecated(forRemoval = true, since = "0.4.13")
-    public Throwable unwrap() {
-        Throwable root = this;
-        while (root.getCause() instanceof ApplicationRuntimeException && root.getCause() != root) {
-            root = root.getCause();
-        }
-        return root;
-    }
 }

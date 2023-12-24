@@ -48,22 +48,4 @@ public interface ExceptionHandler {
      * @return Itself, for chaining.
      */
     ExceptionHandler printStacktraces(boolean stacktraces);
-
-    /**
-     * Throw the provided {@link Throwable} as if it were unchecked. This treats the exception as if it were unchecked,
-     * and will not require it to be handled by javac. This is possible because of a side effect of type erasure, see
-     * the link below for more details. The return result is only used to mimic a return value when it is needed, as the
-     * {@code throws} cause is not enough to make the compiler know that the method will throw an exception.
-     *
-     * @param throwable The exception to throw.
-     * @param <T> The type of the exception.
-     * @throws T The exception to throw.
-     * @see <a href="https://blog.jooq.org/throw-checked-exceptions-like-runtime-exceptions-in-java/">Throw checked exceptions like runtime exceptions in Java</a>
-     *
-     * @deprecated Re-throwing checked exceptions as unchecked exceptions is not recommended. This method will be removed in a future release.
-     */
-    @Deprecated(since = "0.5.0", forRemoval = true)
-    static <T extends Throwable, R> R unchecked(Throwable throwable) throws T {
-        throw (T) throwable;
-    }
 }

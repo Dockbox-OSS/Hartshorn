@@ -16,6 +16,15 @@
 
 package org.dockbox.hartshorn.util.option;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.function.ThrowingSupplier;
+import org.dockbox.hartshorn.util.option.none.FailedNone;
+import org.dockbox.hartshorn.util.option.none.SuccessNone;
+import org.dockbox.hartshorn.util.option.some.FailedSome;
+import org.dockbox.hartshorn.util.option.some.SuccessSome;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.NoSuchElementException;
@@ -26,15 +35,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.function.ThrowingSupplier;
-import org.dockbox.hartshorn.util.option.none.FailedNone;
-import org.dockbox.hartshorn.util.option.none.SuccessNone;
-import org.dockbox.hartshorn.util.option.some.FailedSome;
-import org.dockbox.hartshorn.util.option.some.SuccessSome;
 
 /**
  * A container object which may or may not contain a non-null value, and which may or may not contain a non-null
@@ -420,21 +420,6 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
      * @throws E the exception contained in this {@link Attempt}, if present.
      */
     Attempt<T, E> rethrow() throws E;
-
-    /**
-     * Throws the exception contained in this {@link Attempt} in an unchecked manner. If no exception is present, this
-     * method will only return itself. This method will attempt to throw the exception as is, and will not wrap it in a
-     * checked exception. If the exception is a checked exception, it will still be thrown without being wrapped.
-     *
-     * @return the current {@link Attempt} instance.
-     *
-     * @deprecated It is not recommended to throw checked exceptions in an unchecked manner, as this can lead to
-     *             unexpected behavior. This method will be removed in a future release.
-     */
-    @Deprecated(since = "0.5.0", forRemoval = true)
-    default Attempt<T, E> rethrowUnchecked() {
-        return this;
-    }
 
     @Override
     @NonNull Attempt<T, E> peek(Consumer<T> consumer);
