@@ -81,7 +81,6 @@
                 <module>hartshorn-util</module>
                 <module>hartshorn-discovery</module>
                 <module>hartshorn-proxy</module>
-                <module>hartshorn-proxy-cglib</module>
                 <module>hartshorn-proxy-javassist</module>
                 <module>hartshorn-introspect</module>
                 <module>hartshorn-introspect-reflection</module>

@@ -25,7 +25,6 @@
 
         <!-- Versions in alphabetical order -->
         <compile-testing.version>0.21.0</compile-testing.version>
-        <cglib.version>3.3.0</cglib.version>
         <checker.version>3.42.0</checker.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jackson.version>2.16.0</jackson.version>
@@ -54,11 +53,6 @@
             <dependency>
                 <groupId>org.dockbox.hartshorn</groupId>
                 <artifactId>hartshorn-proxy</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-proxy-cglib</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -188,11 +182,6 @@
                 <groupId>com.google.testing.compile</groupId>
                 <artifactId>compile-testing</artifactId>
                 <version>${compile-testing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib</artifactId>
-                <version>${cglib.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.javassist</groupId>

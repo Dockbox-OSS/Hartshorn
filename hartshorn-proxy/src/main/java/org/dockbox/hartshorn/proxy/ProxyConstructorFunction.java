@@ -16,14 +16,18 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import java.lang.reflect.Constructor;
-
 import org.dockbox.hartshorn.util.ApplicationException;
+
+import java.lang.reflect.Constructor;
 
 /**
  * A function that creates a proxy instance. This is used to allow for custom proxy implementations.
  *
  * @param <T> The type of the proxy
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ProxyConstructorFunction<T> {
 
