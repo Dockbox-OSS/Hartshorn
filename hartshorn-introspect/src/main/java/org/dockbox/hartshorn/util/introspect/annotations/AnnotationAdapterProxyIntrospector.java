@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.annotations;
 
-import java.lang.annotation.Annotation;
-
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.annotation.Annotation;
 
 public class AnnotationAdapterProxyIntrospector<T extends Annotation> implements ProxyIntrospector<T> {
 
@@ -34,21 +34,21 @@ public class AnnotationAdapterProxyIntrospector<T extends Annotation> implements
 
     @Override
     public Class<T> targetClass() {
-        return adapterProxy.targetAnnotationClass();
+        return this.adapterProxy.targetAnnotationClass();
     }
 
     @Override
     public Class<T> proxyClass() {
-        return TypeUtils.adjustWildcards(annotation.getClass(), Class.class);
+        return TypeUtils.adjustWildcards(this.annotation.getClass(), Class.class);
     }
 
     @Override
     public T proxy() {
-        return adapterProxy.targetAnnotationClass().cast(annotation);
+        return this.adapterProxy.targetAnnotationClass().cast(this.annotation);
     }
 
     @Override
     public Option<T> delegate() {
-        return Option.of(adapterProxy.targetAnnotationClass().cast(adapterProxy.actual()));
+        return Option.of(this.adapterProxy.targetAnnotationClass().cast(this.adapterProxy.actual()));
     }
 }

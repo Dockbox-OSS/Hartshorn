@@ -34,18 +34,4 @@ public class ApplicationException extends Exception {
     public ApplicationException(Throwable cause) {
         super(cause);
     }
-
-    /**
-     * Attempts to look up the first cause of the exception. If no cause is found,
-     * the exception itself is returned.
-     *
-     * @return The first cause of the exception.
-     */
-    public Throwable unwrap() {
-        Throwable root = this;
-        while (root.getCause() instanceof ApplicationException && root.getCause() != root) {
-            root = root.getCause();
-        }
-        return root;
-    }
 }

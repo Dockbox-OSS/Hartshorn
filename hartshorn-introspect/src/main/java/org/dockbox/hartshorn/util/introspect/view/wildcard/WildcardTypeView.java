@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.util.introspect.AccessModifier;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
@@ -76,21 +75,6 @@ public class WildcardTypeView extends DefaultContext implements TypeView<Object>
 
     @Override
     public boolean isRecord() {
-        return false;
-    }
-
-    @Override
-    public boolean isAbstract() {
-        return false;
-    }
-
-    @Override
-    public boolean isFinal() {
-        return false;
-    }
-
-    @Override
-    public boolean isStatic() {
         return false;
     }
 
@@ -222,11 +206,6 @@ public class WildcardTypeView extends DefaultContext implements TypeView<Object>
     @Override
     public Object cast(Object object) {
         return object;
-    }
-
-    @Override
-    public boolean has(AccessModifier modifier) {
-        return false;
     }
 
     @Override

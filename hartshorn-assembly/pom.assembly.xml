@@ -77,10 +77,6 @@
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-proxy-cglib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dockbox.hartshorn</groupId>
             <artifactId>hartshorn-proxy-javassist</artifactId>
         </dependency>
         <dependency>

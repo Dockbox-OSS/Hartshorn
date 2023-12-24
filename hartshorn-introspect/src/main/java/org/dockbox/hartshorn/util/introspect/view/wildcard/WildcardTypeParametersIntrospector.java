@@ -20,23 +20,11 @@ import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.Collections;
 import java.util.List;
 
 public class WildcardTypeParametersIntrospector implements TypeParametersIntrospector {
-
-    @Override
-    public List<TypeView<?>> from(Class<?> fromInterface) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public Option<TypeView<?>> at(int index) {
-        return Option.empty();
-    }
 
     @Override
     public TypeParameterList resolveInputFor(Class<?> fromParentType) {

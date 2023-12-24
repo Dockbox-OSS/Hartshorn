@@ -100,41 +100,6 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public boolean isProtected() {
-        return this.modifiers().isProtected();
-    }
-
-    @Override
-    public boolean isPublic() {
-        return this.modifiers().isPublic();
-    }
-
-    @Override
-    public boolean isPrivate() {
-        return this.modifiers().isPrivate();
-    }
-
-    @Override
-    public boolean isStatic() {
-        return this.modifiers().isStatic();
-    }
-
-    @Override
-    public boolean isFinal() {
-        return this.modifiers().isFinal();
-    }
-
-    @Override
-    public boolean isAbstract() {
-        return this.modifiers().isAbstract();
-    }
-
-    @Override
-    public boolean isDefault() {
-        return this.modifiers().isDefault();
-    }
-
-    @Override
     public TypeView<ReturnType> type() {
         return this.returnType();
     }

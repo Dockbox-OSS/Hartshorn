@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.proxy.advice.intercept;
 
-import org.dockbox.hartshorn.proxy.advice.ProxyResultValidator;
-import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 import java.util.concurrent.Callable;
@@ -120,23 +118,5 @@ public class MethodInterceptorContext<T, R> {
      */
     public R result() {
         return this.result;
-    }
-
-    /**
-     * @deprecated interceptor results are automatically validated using the configured {@link ProxyResultValidator}. Use a
-     * {@link ConversionService} to convert the result if necessary, or compare against {@link #method() the active method's}
-     * {@link MethodView#returnType() return type}.
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    public R checkedCast(Object o) {
-        if (this.method.returnType().isVoid()) {
-            return null;
-        }
-        else if (this.method.returnType().isInstance(o)) {
-            return this.method.returnType().cast(o);
-        }
-        else {
-            throw new UnsupportedOperationException("Cannot cast " + o.getClass().getName() + " to " + this.method.returnType().name() + ", use a ConversionService instance to convert the result.");
-        }
     }
 }

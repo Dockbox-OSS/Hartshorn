@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
-import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -42,13 +41,4 @@ public class WildcardTypeFieldsIntrospector implements TypeFieldsIntrospector<Ob
         return Collections.emptyList();
     }
 
-    @Override
-    public <F> List<FieldView<Object, ? extends F>> typed(Class<F> type) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public <F> List<FieldView<Object, ? extends F>> typed(GenericType<F> type) {
-        return Collections.emptyList();
-    }
 }
