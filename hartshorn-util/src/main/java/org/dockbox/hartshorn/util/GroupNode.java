@@ -19,6 +19,9 @@ package org.dockbox.hartshorn.util;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ */
 public class GroupNode extends SimpleNode<List<Node<?>>> {
 
     public GroupNode(String name) {

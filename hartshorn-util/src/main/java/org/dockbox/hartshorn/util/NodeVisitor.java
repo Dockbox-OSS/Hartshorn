@@ -16,10 +16,35 @@
 
 package org.dockbox.hartshorn.util;
 
+/**
+ * A visitor for {@link Node}s.
+ *
+ * @param <T> the return type of the visitor
+ */
 public interface NodeVisitor<T> {
+
+    /**
+     * Visits a node that is neither a {@link GroupNode} nor an {@link ArrayNode}. This method is
+     * called for all nodes that are not explicitly handled by other methods.
+     *
+     * @param node the node to visit
+     * @return the result of the visit
+     */
     T visit(Node<?> node);
 
+    /**
+     * Visits a {@link GroupNode}.
+     *
+     * @param node the node to visit
+     * @return the result of the visit
+     */
     T visit(GroupNode node);
 
+    /**
+     * Visits an {@link ArrayNode}.
+     *
+     * @param node the node to visit
+     * @return the result of the visit
+     */
     T visit(ArrayNode<?> node);
 }

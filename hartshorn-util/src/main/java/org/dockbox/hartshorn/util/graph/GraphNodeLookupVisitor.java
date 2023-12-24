@@ -18,6 +18,15 @@ package org.dockbox.hartshorn.util.graph;
 
 import java.util.function.Predicate;
 
+/**
+ * A {@link BreadthFirstGraphVisitor} that will stop when a node is found that matches the given rule.
+ *
+ * @param <T> the type of the node value
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class GraphNodeLookupVisitor<T> implements BreadthFirstGraphVisitor<T> {
 
     private final Predicate<T> rule;
@@ -31,6 +40,11 @@ public class GraphNodeLookupVisitor<T> implements BreadthFirstGraphVisitor<T> {
         this.rule = rule;
     }
 
+    /**
+     * Returns the node that was found, or {@code null} if no node was found.
+     *
+     * @return the node that was found, or {@code null} if no node was found
+     */
     public GraphNode<T> foundNode() {
         return this.foundNode;
     }

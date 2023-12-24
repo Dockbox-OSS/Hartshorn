@@ -18,10 +18,30 @@ package org.dockbox.hartshorn.util.graph;
 
 import java.util.Set;
 
+/**
+ * A {@link GraphNode} that is aware of its parents. This can be used to resolve a graph in a bottom-up manner, for
+ * example to reverse a graph.
+ *
+ * @param <T> the type of the value of the node
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public interface ContainableGraphNode<T> extends GraphNode<T> {
 
+    /**
+     * Returns the parents of this node.
+     *
+     * @return the parents of this node
+     */
     Set<GraphNode<T>> parents();
 
+    /**
+     * Returns whether this node is a root node. A root node is a node that has no parents.
+     *
+     * @return whether this node is a root node
+     */
     default boolean isRoot() {
         return this.parents().isEmpty();
     }
