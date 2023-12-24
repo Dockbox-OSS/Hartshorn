@@ -69,4 +69,8 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
         }
         return this.values.get(methodName);
     }
+
+    public Class<?> type() {
+        return this.type;
+    }
 }
