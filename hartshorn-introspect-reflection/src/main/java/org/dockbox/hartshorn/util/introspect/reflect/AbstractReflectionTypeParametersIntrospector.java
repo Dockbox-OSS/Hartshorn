@@ -116,11 +116,6 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     }
 
     @Override
-    public Option<TypeView<?>> at(int index) {
-        return this.atIndex(index).flatMap(TypeParameterView::resolvedType);
-    }
-
-    @Override
     public TypeParameterList all() {
         List<TypeParameterView> allParameters = CollectionUtilities.mergeList(this.allInput().asList(), this.allOutput().asList());
         return new SimpleTypeParameterList(allParameters);

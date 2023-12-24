@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
-
-import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
-import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents a view of a {@link Method} instance. This view provides access various properties of
@@ -108,34 +107,6 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
      * @see #genericType()
      */
     TypeView<ReturnType> genericReturnType();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isStatic()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isStatic();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isFinal()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isFinal();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isAbstract()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isAbstract();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isDefault()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isDefault();
 
     @Override
     default TypeView<?> resultType() {

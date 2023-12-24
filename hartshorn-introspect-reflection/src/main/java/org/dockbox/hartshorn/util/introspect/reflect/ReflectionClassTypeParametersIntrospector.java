@@ -36,12 +36,6 @@ public class ReflectionClassTypeParametersIntrospector extends AbstractReflectio
     }
 
     @Override
-    @Deprecated(since = "0.5.0", forRemoval = true)
-    public List<TypeView<?>> from(Class<?> fromInterface) {
-        return List.of();
-    }
-
-    @Override
     public TypeParameterList allInput() {
         if (this.inputParameters == null) {
             List<TypeParameterView> parameters = new ArrayList<>();

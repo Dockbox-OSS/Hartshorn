@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.SynchronizedArrayListMultiMap;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
@@ -61,34 +60,6 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
             this.parameters = new SimpleTypeParameterList(typeParameters);
         }
         return this.parameters;
-    }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    public List<TypeView<?>> from(Class<?> fromInterface) {
-        if (!fromInterface.isInterface()) {
-            throw new IllegalArgumentException("Provided type " + fromInterface.getSimpleName() + " is not a interface");
-        }
-        if (!this.type().isChildOf(fromInterface)) {
-            throw new IllegalArgumentException("Provided interface " + fromInterface.getSimpleName() + " is not a super type of " + this.type().name());
-        }
-
-        if (this.interfaceTypeParameters == null) {
-            this.interfaceTypeParameters = new SynchronizedArrayListMultiMap<>();
-        }
-
-        if (!this.interfaceTypeParameters.containsKey(fromInterface)) {
-            for (Type genericSuper : this.type().type().getGenericInterfaces()) {
-                if (genericSuper instanceof ParameterizedType parameterized) {
-                    Type raw = parameterized.getRawType();
-                    if (raw instanceof Class<?> clazz && fromInterface.equals(clazz)) {
-                        this.interfaceTypeParameters.putAll(fromInterface, this.contextsFromParameterizedType(parameterized));
-                    }
-                }
-            }
-        }
-
-        return List.copyOf(this.interfaceTypeParameters.get(fromInterface));
     }
 
     private List<TypeView<?>> contextsFromParameterizedType(ParameterizedType parameterizedType) {

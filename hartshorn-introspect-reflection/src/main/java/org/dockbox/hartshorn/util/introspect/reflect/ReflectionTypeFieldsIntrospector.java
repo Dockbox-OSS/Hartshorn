@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospector<T> {
 
@@ -94,46 +92,4 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
                 .toList();
     }
 
-    @Override
-    public <F> List<FieldView<T, ? extends F>> typed(Class<F> type) {
-        return this.all().stream()
-                .filter(field -> field.type().is(type))
-                .map(field -> (FieldView<T, ? extends F>) field)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public <F> List<FieldView<T, ? extends F>> typed(GenericType<F> type) {
-        return this.all().stream()
-                .filter(field -> field.type().is(type.asClass().get()))
-                .filter(field -> {
-                    TypeView<?> genericType = field.genericType();
-                    List<TypeView<?>> typeParameters = genericType.typeParameters().all().stream()
-                            .flatMap(typeParameterView -> typeParameterView.upperBounds().stream())
-                            .toList();
-                    Option<Class<F>> classType = type.asClass();
-                    if (classType.absent()) {
-                        return false;
-                    }
-
-                    TypeView<F> targetGenericType = this.introspector.introspect(classType.get());
-                    List<TypeView<?>> targetTypeParameters = targetGenericType.typeParameters().all().stream()
-                            .flatMap(typeParameterView -> typeParameterView.upperBounds().stream())
-                            .toList();
-                    if (targetTypeParameters.size() != typeParameters.size()) {
-                        return false;
-                    }
-
-                    for (int i = 0; i < typeParameters.size(); i++) {
-                        TypeView<?> typeParameter = typeParameters.get(i);
-                        TypeView<?> targetTypeParameter = targetTypeParameters.get(i);
-                        if (!typeParameter.is(targetTypeParameter.type())) {
-                            return false;
-                        }
-                    }
-                    return true;
-                })
-                .map(field -> (FieldView<T, ? extends F>) field)
-                .collect(Collectors.toList());
-    }
 }

@@ -144,38 +144,8 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
     }
 
     @Override
-    public boolean isProtected() {
-        return this.modifiers().isProtected();
-    }
-
-    @Override
-    public boolean isPublic() {
-        return this.modifiers().isPublic();
-    }
-
-    @Override
-    public boolean isPrivate() {
-        return this.modifiers().isPrivate();
-    }
-
-    @Override
     public ElementModifiersIntrospector modifiers() {
         return new ReflectionElementModifiersIntrospector(this.field);
-    }
-
-    @Override
-    public boolean isStatic() {
-        return this.modifiers().isStatic();
-    }
-
-    @Override
-    public boolean isFinal() {
-        return this.modifiers().isFinal();
-    }
-
-    @Override
-    public boolean isTransient() {
-        return this.modifiers().isTransient();
     }
 
     @Override

@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import java.lang.reflect.Field;
-
-import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.annotations.Property;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.Field;
 
 /**
  * Represents a view of a field. This view is used to access the field's value, and to set the field's value.
@@ -81,26 +80,4 @@ public interface FieldView<Parent, FieldType> extends AnnotatedElementView, Modi
      * @return the element's declaring type
      */
     TypeView<Parent> declaredBy();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isStatic()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isStatic();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isFinal()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isFinal();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isTransient()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isTransient();
-
 }
