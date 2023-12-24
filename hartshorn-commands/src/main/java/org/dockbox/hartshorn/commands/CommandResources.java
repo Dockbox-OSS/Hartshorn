@@ -23,40 +23,40 @@ import org.dockbox.hartshorn.i18n.Message;
 @Service
 public interface CommandResources {
 
-    @InjectTranslation(value = "$1This command requires confirmation, click $2[here] $1to confirm", key = "command.confirm")
+    @InjectTranslation(defaultValue = "$1This command requires confirmation, click $2[here] $1to confirm", key = "command.confirm")
     Message confirmCommand();
 
-    @InjectTranslation(value = "$1Confirm running command", key = "command.confirm.hover")
+    @InjectTranslation(defaultValue = "$1Confirm running command", key = "command.confirm.hover")
     Message confirmCommandHover();
 
-    @InjectTranslation(value = "$4This command requires arguments", key = "command.missing.arguments")
+    @InjectTranslation(defaultValue = "$4This command requires arguments", key = "command.missing.arguments")
     Message missingArguments();
 
-    @InjectTranslation(value = "$4Too many arguments", key = "command.overflow")
+    @InjectTranslation(defaultValue = "$4Too many arguments", key = "command.overflow")
     Message tooManyArguments();
 
-    @InjectTranslation(value = "$4Not enough arguments for parameter '{0}'", key = "command.parameter.missing.arguments")
+    @InjectTranslation(defaultValue = "$4Not enough arguments for parameter '{0}'", key = "command.parameter.missing.arguments")
     Message notEnoughParameterArguments(String parameter);
 
-    @InjectTranslation(value = "You are in cool-down", key = "command.cooldown")
+    @InjectTranslation(defaultValue = "You are in cool-down", key = "command.cooldown")
     Message cooldownActive();
 
-    @InjectTranslation(value = "No supported command handler found for '{0}'", key = "command.missing.handler")
+    @InjectTranslation(defaultValue = "No supported command handler found for '{0}'", key = "command.missing.handler")
     Message missingHandler(String command);
 
-    @InjectTranslation(value = "No executor registered for command '{0}' with {1} arguments", key = "command.missing.executor")
+    @InjectTranslation(defaultValue = "No executor registered for command '{0}' with {1} arguments", key = "command.missing.executor")
     Message missingExecutor(String alias, int size);
 
-    @InjectTranslation(value = "Illegal argument definition", key = "command.illegal")
+    @InjectTranslation(defaultValue = "Illegal argument definition", key = "command.illegal")
     Message illegalArgumentDefinition();
 
-    @InjectTranslation(value = "Unknown flag '{0}'", key = "command.flag.unknown")
+    @InjectTranslation(defaultValue = "Unknown flag '{0}'", key = "command.flag.unknown")
     Message unknownFlag(String name);
 
-    @InjectTranslation(value = "Could not parse {0} '{1}'", key = "command.parse.failure")
+    @InjectTranslation(defaultValue = "Could not parse {0} '{1}'", key = "command.parse.failure")
     Message couldNotParse(String type, String name);
 
-    @InjectTranslation(value = "Could not execute the command as it was cancelled", key = "command.cancelled")
+    @InjectTranslation(defaultValue = "Could not execute the command as it was cancelled", key = "command.cancelled")
     Message cancelled();
 
 }

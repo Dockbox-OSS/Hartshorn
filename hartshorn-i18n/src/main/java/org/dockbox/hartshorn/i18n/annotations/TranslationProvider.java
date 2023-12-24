@@ -16,11 +16,27 @@
 
 package org.dockbox.hartshorn.i18n.annotations;
 
+import org.dockbox.hartshorn.i18n.Message;
+import org.dockbox.hartshorn.i18n.TranslationBundle;
+import org.dockbox.hartshorn.i18n.TranslationService;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Registers a method as a translation provider. Translation providers are used to register
+ * {@link TranslationBundle}s and {@link Message}s to the active {@link TranslationService}.
+ *
+ * @see TranslationService
+ * @see TranslationBundle
+ * @see Message
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface TranslationProvider {

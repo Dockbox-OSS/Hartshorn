@@ -20,11 +20,37 @@ import org.dockbox.hartshorn.util.Subject;
 
 import java.util.Locale;
 
+/**
+ * Represents a receiver of messages, which can be used to send messages to a specific target.
+ *
+ * @since 0.4.8
+ *
+ * @see Message
+ *
+ * @author Guus Lieben
+ */
 public interface MessageReceiver extends Subject {
 
+    /**
+     * Returns the preferred or primary language of the receiver.
+     *
+     * @return the preferred or primary language of the receiver
+     */
     Locale language();
 
+    /**
+     * Sets the preferred or primary language of the receiver.
+     *
+     * @param language the preferred or primary language of the receiver
+     */
     void language(Locale language);
 
+    /**
+     * Sends the provided message to the receiver. This will result in the message
+     * being displayed to the receiver in the receiver's preferred language, in
+     * whichever way the receiver is able to display messages.
+     *
+     * @param text the message to send
+     */
     void send(Message text);
 }

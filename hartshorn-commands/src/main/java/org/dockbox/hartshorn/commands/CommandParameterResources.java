@@ -23,13 +23,13 @@ import org.dockbox.hartshorn.i18n.Message;
 @Service
 public interface CommandParameterResources {
 
-    @InjectTranslation(value = "Not enough arguments.", key = "missing_args")
+    @InjectTranslation(defaultValue = "Not enough arguments.", key = "missing_args")
     Message notEnoughArgs();
 
-    @InjectTranslation(value = "Pattern has to be formatted as #type[arg1][arg2][etc.]", key = "hashtag.wrong_format")
+    @InjectTranslation(defaultValue = "Pattern has to be formatted as #type[arg1][arg2][etc.]", key = "hashtag.wrong_format")
     Message wrongHashtagPatternFormat();
 
-    @InjectTranslation(value = "Parameter of type {0} has no register converter", key = "missing_converter")
+    @InjectTranslation(defaultValue = "Parameter of type {0} has no register converter", key = "missing_converter")
     Message missingConverter(String type);
 
 }

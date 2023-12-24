@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.i18n;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.config.FileFormat;
+import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Locale;
@@ -26,12 +32,14 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.config.FileFormat;
-import org.dockbox.hartshorn.config.ObjectMapper;
-import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.option.Option;
-
+/**
+ * Default implementation of {@link TranslationBundle}. By default, this uses the
+ * {@link Locale#getDefault() default locale of the current environment}.
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 public class DefaultTranslationBundle implements TranslationBundle {
 
     private final Map<String, Message> messages = new ConcurrentHashMap<>();
@@ -85,10 +93,6 @@ public class DefaultTranslationBundle implements TranslationBundle {
         return this.register(key, value, this.primaryLanguage());
     }
 
-    protected void add(Message message) {
-        message.translate(this.primaryLanguage());
-    }
-
     @Override
     public TranslationBundle merge(TranslationBundle bundle) {
         DefaultTranslationBundle translationBundle = new DefaultTranslationBundle(this.applicationContext)
@@ -97,7 +101,8 @@ public class DefaultTranslationBundle implements TranslationBundle {
         Map<String, Message> messageDict = translationBundle.messages;
         CollectionUtilities.forEach(
                 message -> messageDict.put(message.key(), this.mergeMessages(message, messageDict)),
-                this.messages(), bundle.messages()
+                this.messages(),
+                bundle.messages()
         );
 
         return translationBundle;

@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.i18n.services;
 
-import java.util.List;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
@@ -29,6 +27,17 @@ import org.dockbox.hartshorn.i18n.annotations.TranslationProvider;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
+import java.util.List;
+
+/**
+ * A pre-processor that processes {@link TranslationProvider} annotations on components. This will register
+ * the result of the annotated method as a {@link TranslationBundle} or {@link Message} with the
+ * {@link TranslationService}. If the annotated method returns another type, an exception is thrown.
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 public class LanguageProviderServicePreProcessor extends ComponentPreProcessor {
 
     @Override
@@ -48,13 +57,16 @@ public class LanguageProviderServicePreProcessor extends ComponentPreProcessor {
                     throw new IllegalStateException("Failed to invoke translation provider method " + method, throwable);
                 }
 
-                if (value != null) {
-                    if (value instanceof TranslationBundle bundle) {
-                        translationService.add(bundle);
-                    }
-                    else if (value instanceof Message message) {
-                        translationService.add(message);
-                    }
+                switch (value) {
+                    case TranslationBundle bundle -> translationService.add(bundle);
+                    case Message message -> translationService.add(message);
+                    case null -> throw new IllegalStateException(
+                            "Translation provider method " + method + " returned null. " +
+                                    "Expected " + TranslationBundle.class.getSimpleName() + " or " + Message.class.getSimpleName());
+                    default -> throw new IllegalStateException(
+                            "Translation provider method " + method + " returned an invalid value. " +
+                                    "Expected " + TranslationBundle.class.getSimpleName() + " or " + Message.class.getSimpleName() + ", " +
+                                    "got " + value.getClass().getSimpleName());
                 }
             }
         }

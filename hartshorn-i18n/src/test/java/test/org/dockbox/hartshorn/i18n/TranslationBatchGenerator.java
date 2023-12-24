@@ -191,7 +191,7 @@ public final class TranslationBatchGenerator {
             for (MethodView<?, ?> method : methods) {
                 InjectTranslation annotation = method.annotations().get(InjectTranslation.class).get();
                 String key = keyGenerator.key(type, method);
-                batch.put(key, annotation.value());
+                batch.put(key, annotation.defaultValue());
             }
         }
         return batch;

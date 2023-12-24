@@ -25,12 +25,23 @@ import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 
+/**
+ * Providers for utility {@link Converter}s that affect {@link Message}s.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 @Configuration
-@RequiresActivator(UseTranslations.class)
 public class MessageConverterConfiguration {
 
     @Binds(type = BindingType.COLLECTION)
     public Converter<String, Message> stringToMessageConverter(TranslationService translationService) {
         return new StringToMessageConverter(translationService);
+    }
+
+    @Binds(type = BindingType.COLLECTION)
+    public Converter<Message, String> messageToStringConverter() {
+        return message -> message.string();
     }
 }

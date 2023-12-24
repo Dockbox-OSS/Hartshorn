@@ -23,10 +23,10 @@ import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 @Service(id = "resource")
 public interface ITestResources {
 
-    @InjectTranslation("Hello world!")
+    @InjectTranslation(defaultValue = "Hello world!")
     Message testEntry();
 
-    @InjectTranslation("Hello {0}!")
+    @InjectTranslation(defaultValue = "Hello {0}!")
     Message parameterTestEntry(String name);
 
 }

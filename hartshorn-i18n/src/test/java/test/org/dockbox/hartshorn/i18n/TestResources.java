@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 @Service
 public class TestResources {
 
-    @InjectTranslation("Hello world!")
+    @InjectTranslation(defaultValue = "Hello world!")
     public Message testEntry() {return null;}
 
 }

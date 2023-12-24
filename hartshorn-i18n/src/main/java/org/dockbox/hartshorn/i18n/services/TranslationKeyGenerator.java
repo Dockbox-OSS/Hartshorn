@@ -19,7 +19,23 @@ package org.dockbox.hartshorn.i18n.services;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * A generator that creates a translation key based on method and type information. This is used
+ * for translation injectors and providers that do not define a key explicitly.
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
+@FunctionalInterface
 public interface TranslationKeyGenerator {
 
+    /**
+     * Generates a translation key based on the provided method and type information.
+     *
+     * @param type The type of the component that declares the method
+     * @param method The method
+     * @return The generated translation key
+     */
     String key(TypeView<?> type, MethodView<?, ?> method);
 }

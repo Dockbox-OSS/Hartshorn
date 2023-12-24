@@ -25,21 +25,33 @@ import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.i18n.services.SimpleTranslationKeyGenerator;
 import org.dockbox.hartshorn.i18n.services.TranslationKeyGenerator;
 
+import jakarta.inject.Singleton;
+
+/**
+ * Default providers for internationalization services.
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 @Configuration
 @RequiresActivator(UseTranslations.class)
 public class TranslationConfiguration {
 
     @Binds
+    @Singleton
     public TranslationService translationService(ApplicationContext applicationContext, TranslationBundle bundle) {
         return new BundledTranslationService(applicationContext, bundle);
     }
 
     @Binds
+    @Singleton
     public TranslationBundle translationBundle(ApplicationContext applicationContext) {
         return new DefaultTranslationBundle(applicationContext);
     }
 
     @Binds
+    @Singleton
     public TranslationKeyGenerator translationKeyGenerator(ComponentLocator componentLocator) {
         return new SimpleTranslationKeyGenerator(componentLocator);
     }

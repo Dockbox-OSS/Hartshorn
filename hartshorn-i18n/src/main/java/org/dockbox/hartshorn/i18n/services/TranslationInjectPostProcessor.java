@@ -26,9 +26,15 @@ import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.component.processing.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 
+/**
+ * Post-processor to intercept methods annotated with {@link InjectTranslation}. This will register
+ * a {@link TranslationInjectMethodInterceptor} for the method.
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<InjectTranslation> {
-
-    public static final Object[] EMPTY_ARGS = new Object[0];
 
     @Override
     public <T, R> MethodInterceptor<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
