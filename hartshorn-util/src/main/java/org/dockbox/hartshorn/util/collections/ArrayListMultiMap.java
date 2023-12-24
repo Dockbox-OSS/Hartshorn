@@ -18,7 +18,19 @@ package org.dockbox.hartshorn.util.collections;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
+/**
+ * A simple implementation of {@link MultiMap} that uses {@link ArrayList} as its backing collection,
+ * and {@link HashMap} as its backing map. This implementation is not thread-safe.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ArrayListMultiMap<K, V> extends HashMultiMap<K, V> {
 
     public ArrayListMultiMap() {

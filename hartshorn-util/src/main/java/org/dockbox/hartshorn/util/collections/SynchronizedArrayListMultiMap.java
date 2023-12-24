@@ -19,6 +19,16 @@ package org.dockbox.hartshorn.util.collections;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * A {@link SynchronizedMultiMap} implementation that uses {@link ArrayList} as its backing collection.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SynchronizedArrayListMultiMap<K, V> extends SynchronizedMultiMap<K, V> {
 
     public SynchronizedArrayListMultiMap() {

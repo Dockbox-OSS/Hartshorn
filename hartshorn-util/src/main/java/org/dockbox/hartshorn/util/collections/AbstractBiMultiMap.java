@@ -20,6 +20,17 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
 
+/**
+ * A base implementation of a {@link BiMultiMap}. This implementation handles the inverse map
+ * creation, but leaves the actual storage and creation of the inverse map to the implementation.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class AbstractBiMultiMap<K, V> extends StandardMultiMap<K, V> implements BiMultiMap<K, V> {
 
     protected AbstractBiMultiMap() {
@@ -43,5 +54,11 @@ public abstract class AbstractBiMultiMap<K, V> extends StandardMultiMap<K, V> im
         return inverseMap;
     }
 
+    /**
+     * Creates an empty inverse map. This method is invoked by {@link #inverse()}. The returned map
+     * is populated with the inverse mappings of the current instance, and thus expected to be empty.
+     *
+     * @return An empty inverse map.
+     */
     protected abstract MultiMap<V, K> createEmptyInverseMap();
 }

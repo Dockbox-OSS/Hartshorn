@@ -20,6 +20,10 @@ package org.dockbox.hartshorn.util;
  * A visitor for {@link Node}s.
  *
  * @param <T> the return type of the visitor
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface NodeVisitor<T> {
 

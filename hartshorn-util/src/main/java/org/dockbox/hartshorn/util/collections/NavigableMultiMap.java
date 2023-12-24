@@ -19,20 +19,36 @@ package org.dockbox.hartshorn.util.collections;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-public abstract class TreeMultiMap<K extends Comparable<K>, V> extends StandardMultiMap<K, V> {
+/**
+ * A {@link MultiMap} implementation that uses {@link TreeMap} as its backing map. As the backing
+ * map is a {@link NavigableMap}, this implementation provides methods to retrieve entries based
+ * on their relation to other entries in the map, such as {@link #firstEntry()}, {@link
+ * #lastEntry()}, etc.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @see TreeMap
+ * @see MultiMap
+ * @see StandardMultiMap
+ *
+ * @author Guus Lieben
+ */
+public abstract class NavigableMultiMap<K extends Comparable<K>, V> extends StandardMultiMap<K, V> {
 
     private final Comparator<? super K> comparator;
 
-    protected TreeMultiMap(Comparator<? super K> comparator) {
+    protected NavigableMultiMap(Comparator<? super K> comparator) {
         this.comparator = comparator;
     }
 
-    protected TreeMultiMap(Comparator<? super K> comparator, MultiMap<K, V> map) {
+    protected NavigableMultiMap(Comparator<? super K> comparator, MultiMap<K, V> map) {
         super(map);
         this.comparator = comparator;
     }
@@ -91,7 +107,7 @@ public abstract class TreeMultiMap<K extends Comparable<K>, V> extends StandardM
     }
 
     @Override
-    protected Map<K, Collection<V>> createEmptyMap() {
+    protected NavigableMap<K, Collection<V>> createEmptyMap() {
         return new TreeMap<>(this.comparator);
     }
 }

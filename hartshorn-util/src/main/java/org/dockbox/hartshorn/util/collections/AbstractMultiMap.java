@@ -22,10 +22,19 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+/**
+ * A base implementation of {@link MultiMap} that provides default implementations for most methods.
+ * Implementations only have to provide a backing map and a method to create an empty collection, which
+ * will be used to store the values.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
-
-    protected abstract Map<K, Collection<V>> map();
-    protected abstract Collection<V> createEmptyCollection();
 
     protected AbstractMultiMap() {
     }
@@ -33,6 +42,10 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     protected AbstractMultiMap(MultiMap<K, V> map) {
         this.putAll(map);
     }
+
+    protected abstract Map<K, Collection<V>> map();
+
+    protected abstract Collection<V> createEmptyCollection();
 
     @Override
     public Collection<V> allValues() {
