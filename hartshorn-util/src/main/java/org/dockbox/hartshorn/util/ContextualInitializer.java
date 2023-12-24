@@ -28,6 +28,10 @@ import java.util.function.Function;
  *
  * @param <I> The type of input to initialize with.
  * @param <T> The type of object to initialize.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ContextualInitializer<I, T> {

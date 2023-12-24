@@ -16,17 +16,21 @@
 
 package org.dockbox.hartshorn.util;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * Generic type reference, allowing for generic type reading. This is derived
  * from Jackson's TypeReference.
  *
  * @param <T> The generic type
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public abstract class GenericType<T> implements Comparable<GenericType<T>> {
 
