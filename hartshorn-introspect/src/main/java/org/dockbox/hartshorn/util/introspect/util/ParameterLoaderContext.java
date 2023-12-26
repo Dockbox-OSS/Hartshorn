@@ -18,6 +18,16 @@ package org.dockbox.hartshorn.util.introspect.util;
 
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 
+/**
+ * A context object that is passed to {@link ParameterLoader}s to provide them with the necessary
+ * information to load a parameter. This information includes the {@link ExecutableElementView} that
+ * is being invoked, and the instance on which the method is being invoked. If the executable is
+ * static, the instance will be {@code null}.
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 public class ParameterLoaderContext {
 
     private final ExecutableElementView<?> executable;
@@ -28,10 +38,21 @@ public class ParameterLoaderContext {
         this.instance = instance;
     }
 
+    /**
+     * Returns the executable element for which the parameters are being loaded.
+     *
+     * @return the executable element for which the parameters are being loaded
+     */
     public ExecutableElementView<?> executable() {
         return this.executable;
     }
 
+    /**
+     * Returns the instance on which the executable is being invoked. If the executable is static,
+     * this method will return {@code null}.
+     *
+     * @return the instance on which the executable is being invoked, or {@code null}
+     */
     public Object instance() {
         return this.instance;
     }
