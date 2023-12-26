@@ -77,7 +77,7 @@ public class ReflectionExecutableParametersIntrospector implements ExecutablePar
     }
 
     @Override
-    public List<ParameterView<?>> annotedWith(Class<? extends Annotation> annotation) {
+    public List<ParameterView<?>> annotatedWith(Class<? extends Annotation> annotation) {
         return this.all().stream()
                 .filter(parameter -> parameter.annotations().has(annotation))
                 .toList();

@@ -27,18 +27,13 @@ import java.util.List;
 public class WildcardTypeParametersIntrospector implements TypeParametersIntrospector {
 
     @Override
-    public TypeParameterList resolveInputFor(Class<?> fromParentType) {
+    public TypeParameterList inputFor(Class<?> fromParentType) {
         return new SimpleTypeParameterList(List.of());
     }
 
     @Override
     public Option<TypeParameterView> atIndex(int index) {
         return Option.empty();
-    }
-
-    @Override
-    public TypeParameterList all() {
-        return new SimpleTypeParameterList(List.of());
     }
 
     @Override
@@ -56,8 +51,4 @@ public class WildcardTypeParametersIntrospector implements TypeParametersIntrosp
         return new SimpleTypeParameterList(List.of());
     }
 
-    @Override
-    public int count() {
-        return 0;
-    }
 }

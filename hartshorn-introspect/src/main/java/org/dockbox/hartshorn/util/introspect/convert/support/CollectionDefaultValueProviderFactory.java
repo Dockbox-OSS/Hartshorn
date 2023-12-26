@@ -68,7 +68,7 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
     public <O extends Collection<?>> DefaultValueProvider<O> create(Class<O> targetType) {
         TypeView<O> type = this.introspector.introspect(targetType);
         Class<?> componentType = type.typeParameters()
-                .resolveInputFor(Collection.class)
+                .inputFor(Collection.class)
                 .atIndex(0)
                 .flatMap(TypeParameterView::resolvedType)
                 .map(TypeView::type)

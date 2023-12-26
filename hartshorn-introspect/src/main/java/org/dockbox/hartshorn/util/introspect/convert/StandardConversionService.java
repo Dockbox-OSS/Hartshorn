@@ -160,7 +160,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
     public <I, O> void addConverter(Converter<I, O> converter) {
         TypeParameterList converterParameters = this.introspector.introspect(converter)
                 .typeParameters()
-                .resolveInputFor(Converter.class);
+                .inputFor(Converter.class);
 
         Class<I> sourceType = TypeUtils.adjustWildcards(this.unwrapParameterAtIndex(converterParameters, 0), Class.class);
         Class<O> targetType = TypeUtils.adjustWildcards(this.unwrapParameterAtIndex(converterParameters, 1), Class.class);
@@ -218,7 +218,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
     protected <T, R> Class<R> getTypeParameter(Class<T> fromType, T converterFactory, int parameterIndex) {
         TypeParameterList typeParameters = this.introspector.introspect(converterFactory)
                 .typeParameters()
-                .resolveInputFor(fromType);
+                .inputFor(fromType);
 
         Class<?> parameter = this.unwrapParameterAtIndex(typeParameters, parameterIndex);
         return TypeUtils.adjustWildcards(parameter, Class.class);

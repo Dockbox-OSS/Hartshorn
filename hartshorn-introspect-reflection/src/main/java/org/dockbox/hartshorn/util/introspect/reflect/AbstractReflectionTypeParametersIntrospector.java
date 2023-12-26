@@ -63,7 +63,7 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     }
 
     @Override
-    public TypeParameterList resolveInputFor(Class<?> fromParentType) {
+    public TypeParameterList inputFor(Class<?> fromParentType) {
         if (this.type().is(fromParentType)) {
             return this.allInput();
         }
@@ -71,7 +71,7 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
             TypeView<?> parentType = this.introspector().introspect(fromParentType);
             TypeParametersIntrospector typeParameters = parentType.typeParameters();
             // No point in resolving if there are no type parameters
-            if (typeParameters.count() > 0) {
+            if (!(typeParameters.allOutput().isEmpty() && typeParameters.allInput().isEmpty())) {
                 return this.tryResolveInputForParent(parentType);
             }
         }
@@ -108,17 +108,6 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
             this.typeHierarchy = TypeHierarchyGraph.of(this.type());
         }
         return this.typeHierarchy;
-    }
-
-    @Override
-    public int count() {
-        return this.all().count();
-    }
-
-    @Override
-    public TypeParameterList all() {
-        List<TypeParameterView> allParameters = CollectionUtilities.mergeList(this.allInput().asList(), this.allOutput().asList());
-        return new SimpleTypeParameterList(allParameters);
     }
 
     @Override

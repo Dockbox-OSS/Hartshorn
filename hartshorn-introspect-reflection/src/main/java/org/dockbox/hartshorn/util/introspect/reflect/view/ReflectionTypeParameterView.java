@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -26,14 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
-import org.dockbox.hartshorn.util.option.Option;
 
 public class ReflectionTypeParameterView extends DefaultContext implements TypeParameterView {
 
@@ -143,7 +143,7 @@ public class ReflectionTypeParameterView extends DefaultContext implements TypeP
 
     private Set<TypeParameterView> getRepresentedParameters(TypeVariable<?> typeVariable, TypeView<?> typeView) {
         Set<TypeParameterView> representedParameters = new HashSet<>();
-        for (TypeParameterView parameterView : typeView.typeParameters().all()) {
+        for (TypeParameterView parameterView : typeView.typeParameters().allInput()) {
             if (parameterView instanceof ReflectionTypeParameterView reflectionTypeParameterView) {
                 if (reflectionTypeParameterView.type == typeVariable) {
                     representedParameters.add(reflectionTypeParameterView);
@@ -156,19 +156,15 @@ public class ReflectionTypeParameterView extends DefaultContext implements TypeP
     @Override
     public Set<TypeView<?>> upperBounds() {
         if (this.upperBounds == null) {
-            if (this.type instanceof TypeVariable<?> typeVariable) {
-                this.upperBounds = Arrays.stream(typeVariable.getBounds())
+            this.upperBounds = switch (this.type) {
+                case TypeVariable<?> typeVariable -> Arrays.stream(typeVariable.getBounds())
                         .map(this.introspector::introspect)
                         .collect(Collectors.toSet());
-            }
-            else if (this.type instanceof WildcardType wildcardType) {
-                this.upperBounds = Arrays.stream(wildcardType.getUpperBounds())
+                case WildcardType wildcardType -> Arrays.stream(wildcardType.getUpperBounds())
                         .map(this.introspector::introspect)
                         .collect(Collectors.toSet());
-            }
-            else {
-                this.upperBounds = Set.of();
-            }
+                case null, default -> Set.of();
+            };
         }
         return this.upperBounds;
     }
@@ -176,34 +172,26 @@ public class ReflectionTypeParameterView extends DefaultContext implements TypeP
     @Override
     public Option<TypeView<?>> resolvedType() {
         if (this.resolvedType == null) {
-            if (this.type instanceof Class<?> clazz) {
-                this.resolvedType = Option.of(this.introspector.introspect(clazz));
-            }
-            else if (this.type instanceof ParameterizedType parameterizedType) {
-                this.resolvedType = Option.of(this.introspector.introspect(parameterizedType));
-            }
-            else if (this.type instanceof WildcardType) {
+            this.resolvedType = switch (this.type) {
+                case Class<?> clazz -> Option.of(this.introspector.introspect(clazz));
+                case ParameterizedType parameterizedType -> Option.of(this.introspector.introspect(parameterizedType));
                 // Note that upper bounds may be present, but the resolved type itself is still a wildcard,
                 // so we return a wildcard type view here. The upper bounds can be resolved separately if
                 // needed.
-                this.resolvedType = Option.of(new WildcardTypeView());
-            }
-            else {
-                this.resolvedType = Option.empty();
-            }
+                case WildcardType ignored -> Option.of(new WildcardTypeView());
+                case null, default -> Option.empty();
+            };
         }
         return this.resolvedType;
     }
 
     @Override
     public boolean isBounded() {
-        if (this.type instanceof TypeVariable<?> typeVariable) {
-            return typeVariable.getBounds().length > 0;
-        }
-        else if (this.type instanceof WildcardType wildcardType) {
-            return wildcardType.getUpperBounds().length > 0;
-        }
-        return false;
+        return switch (this.type) {
+            case TypeVariable<?> typeVariable -> typeVariable.getBounds().length > 0;
+            case WildcardType wildcardType -> wildcardType.getUpperBounds().length > 0;
+            case null, default -> false;
+        };
     }
 
     @Override

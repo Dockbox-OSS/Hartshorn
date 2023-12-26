@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
+
 public interface TypeFieldsIntrospector<T> {
 
     Option<FieldView<T, ?>> named(String name);

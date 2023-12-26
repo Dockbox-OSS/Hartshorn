@@ -44,7 +44,7 @@ public class ConverterIntrospectionHelper {
         configureInitialCapacityConstructor(type, capacityConstructor, constructors);
 
         TypeParametersIntrospector parametersIntrospector = Mockito.mock(TypeParametersIntrospector.class);
-        Mockito.when(parametersIntrospector.resolveInputFor(Collection.class)).thenReturn(new SimpleTypeParameterList(List.of()));
+        Mockito.when(parametersIntrospector.inputFor(Collection.class)).thenReturn(new SimpleTypeParameterList(List.of()));
 
         TypeView<T> typeView = Mockito.mock(TypeView.class);
         Mockito.when(typeView.constructors()).thenReturn(constructors);

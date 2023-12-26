@@ -37,6 +37,7 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
+import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionClassTypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementModifiersIntrospector;
@@ -471,9 +472,17 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
         collector.property("package").write(this.packageInfo().name());
 
         TypeParametersIntrospector typeParameters = this.typeParameters();
-        if (typeParameters.count() > 0) {
-            collector.property("typeParameters").write(typeParameters.all().asList().toArray(Reportable[]::new));
-        }
+        collector.property("typeParameters").write(reporter -> {
+            TypeParameterList inputParameters = typeParameters.allInput();
+            if (!inputParameters.isEmpty()) {
+                reporter.property("input").write(inputParameters.asList().toArray(Reportable[]::new));
+            }
+
+            TypeParameterList outputParameters = typeParameters.allOutput();
+            if (!outputParameters.isEmpty()) {
+                reporter.property("output").write(outputParameters.asList().toArray(Reportable[]::new));
+            }
+        });
     }
 
     @Override
