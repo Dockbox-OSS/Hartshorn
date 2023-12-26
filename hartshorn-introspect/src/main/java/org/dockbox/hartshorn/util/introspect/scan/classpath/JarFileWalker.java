@@ -23,14 +23,32 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
+/**
+ * A {@link FileVisitor} that walks the contents of a jar file. This delegates all file processing to a {@link
+ * ClassPathScanner}, which will process the file if it is a compatible file.
+ *
+ * @see ClassPathScanner
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class JarFileWalker implements FileVisitor<Path> {
 
     private final ClassPathScanner classPathScanner;
     private final ResourceHandler handler;
     private final URLClassLoader classLoader;
 
-    public JarFileWalker(ClassPathScanner classPathScanner, ResourceHandler handler,
-                         URLClassLoader classLoader) {
+    /**
+     * Creates a new {@link JarFileWalker} instance. The provided {@link ClassPathScanner} will be used to process files
+     * that are found in the jar file. The provided {@link ResourceHandler} and {@link URLClassLoader} will be provided
+     * to the {@link ClassPathScanner} when processing files.
+     *
+     * @param classPathScanner The scanner to use for processing files
+     * @param handler The handler that will consume the file if it is compatible
+     * @param classLoader The classloader to use for loading classes from the jar file
+     */
+    public JarFileWalker(ClassPathScanner classPathScanner, ResourceHandler handler, URLClassLoader classLoader) {
         this.classPathScanner = classPathScanner;
         this.handler = handler;
         this.classLoader = classLoader;

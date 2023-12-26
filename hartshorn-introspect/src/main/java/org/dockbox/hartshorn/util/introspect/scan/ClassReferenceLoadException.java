@@ -18,6 +18,15 @@ package org.dockbox.hartshorn.util.introspect.scan;
 
 import org.dockbox.hartshorn.util.ApplicationException;
 
+/**
+ * Thrown when a {@link TypeReference} cannot be loaded.
+ *
+ * @see TypeReference#getOrLoad()
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ClassReferenceLoadException extends ApplicationException {
 
     public ClassReferenceLoadException(String message) {

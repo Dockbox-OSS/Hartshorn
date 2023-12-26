@@ -40,12 +40,12 @@ public class EnvironmentTypeCollector {
     }
 
     public <T> Collection<TypeView<? extends T>> types(Predicate<TypeView<?>> predicate) {
-        Option<TypeReferenceCollectorContext> collectorContext = environment.applicationContext().first(TypeReferenceCollectorContext.class);
+        Option<TypeReferenceCollectorContext> collectorContext = this.environment.applicationContext().first(TypeReferenceCollectorContext.class);
         if (collectorContext.absent()) {
             this.environment.log().warn("TypeReferenceCollectorContext not available, falling back to no-op type lookup");
             return Collections.emptyList();
         }
-        return collectTypes(predicate, collectorContext);
+        return this.collectTypes(predicate, collectorContext);
     }
 
     @NotNull
@@ -55,13 +55,13 @@ public class EnvironmentTypeCollector {
             Set<TypeReference> references = collectorContext.get().collector().collect();
             Collection<Class<?>> classes = this.loadClasses(references);
             return classes.stream()
-                    .map(environment.introspector()::introspect)
+                    .map(this.environment.introspector()::introspect)
                     .filter(predicate)
                     .map(reference -> (TypeView<T>) reference)
                     .collect(Collectors.toSet());
         }
         catch (TypeCollectionException e) {
-            environment.handle(e);
+            this.environment.handle(e);
             return Collections.emptyList();
         }
     }
@@ -73,7 +73,7 @@ public class EnvironmentTypeCollector {
                         return reference.getOrLoad();
                     }
                     catch (ClassReferenceLoadException e) {
-                        environment.handle(e);
+                        this.environment.handle(e);
                         return null;
                     }
                 })
