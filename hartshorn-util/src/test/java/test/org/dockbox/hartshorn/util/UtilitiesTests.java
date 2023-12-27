@@ -54,15 +54,15 @@ public class UtilitiesTests {
 
     private static Stream<Arguments> durations() {
         return Stream.of(
-                Arguments.of("P1S", 1),
-                Arguments.of("P1M", minute),
-                Arguments.of("P1H", hour),
-                Arguments.of("P1D", day),
-                Arguments.of("P1W", week),
-                Arguments.of("P1W1D1H1M1S", week + day + hour + minute + 1),
-                Arguments.of("P2W3D", (2 * week) + (3 * day)),
-                Arguments.of("P2W3D5H", (2 * week) + (3 * day) + (5 * hour)),
-                Arguments.of("P17H21M13S", (17 * hour) + (21 * minute) + 13)
+                Arguments.of("1s", 1),
+                Arguments.of("1m", minute),
+                Arguments.of("1h", hour),
+                Arguments.of("1d", day),
+                Arguments.of("1w", week),
+                Arguments.of("1w1d1h1m1s", week + day + hour + minute + 1),
+                Arguments.of("2w3d", (2 * week) + (3 * day)),
+                Arguments.of("2w3d5h", (2 * week) + (3 * day) + (5 * hour)),
+                Arguments.of("17h21m13s", (17 * hour) + (21 * minute) + 13)
         );
     }
 

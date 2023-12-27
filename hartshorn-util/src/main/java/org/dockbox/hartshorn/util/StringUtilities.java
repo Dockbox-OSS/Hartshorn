@@ -68,7 +68,7 @@ public final class StringUtilities {
      *     <li>1d4m: 1 day, 4 minutes</li>
      * </ul>
      */
-    private static final Pattern timeString = Pattern.compile("P^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
+    private static final Pattern timeString = Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
     private static final int secondsInMinute = 60;
     private static final int secondsInHour = 60 * StringUtilities.secondsInMinute;
     private static final int secondsInDay = 24 * StringUtilities.secondsInHour;
