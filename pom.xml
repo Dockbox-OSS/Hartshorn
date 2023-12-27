@@ -307,6 +307,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
+                    <javadocDirectory>${basedir}/hartshorn-assembly/javadoc</javadocDirectory>
+                    <addStylesheets>
+                            <stylesheetfile>overrides.css</stylesheetfile>
+                    </addStylesheets>
                     <skip>${javadoc.skip}</skip>
                     <show>package</show>
                     <show>protected</show>
@@ -336,6 +340,12 @@
                             <goal>aggregate</goal>
                         </goals>
                         <phase>site</phase>
+                    </execution>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
