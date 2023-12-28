@@ -307,7 +307,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <javadocDirectory>${basedir}/hartshorn-assembly/javadoc</javadocDirectory>
+                    <javadocDirectory>${maven.multiModuleProjectDirectory}/hartshorn-assembly/javadoc</javadocDirectory>
                     <addStylesheets>
                             <stylesheetfile>overrides.css</stylesheetfile>
                     </addStylesheets>

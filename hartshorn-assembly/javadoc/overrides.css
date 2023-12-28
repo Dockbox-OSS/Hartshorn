@@ -1,16 +1,17 @@
-/* Created with Javadoc-Themer built by Nishant */
-@import url('https://fonts.googleapis.com/css2?family=Roboto');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans');
 @import url(//db.onlinewebfonts.com/c/1db29588408eadbd4406aae9238555eb?family=Consolas);
 
 :root {
     --link-color-active: #64bdd2;
     --selected-link-color: #64bdd2;
+    --selected-background-color: #468590;
+    --block-font-family: 'IBM Plex Sans';
 }
 
 body {
     background-color: #ffffff;
     color: #141414;
-    font-family: 'Roboto';
+    font-family: 'IBM Plex Sans';
     font-size: 76%;
     margin: 0;
 }
@@ -22,13 +23,44 @@ body {
 h1 {
     font-size: 2em;
 }
+
+.header {
+    background: #262626;
+    color: white;
+    padding: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header .title {
+    color: white;
+}
+
+.header a:link, .header a:visited {
+    color: white;
+}
+
+main {
+    padding: 0;
+}
+
+section.class-description, section.details, section.summary {
+    margin: 20px 30px 20px 30px;
+}
+
 dl.notes > dd, code, #class-description > div.block {
-    font-family: 'Roboto';
+    font-family: 'IBM Plex Sans';
 }
 
 section.class-description {
     line-height: 1.4;
-    padding: 1px 0 1px 10px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #dfe3e5;
+}
+
+section.summary {
+    padding-bottom: 1px;
 }
 
 .col-first, .col-first {
@@ -43,37 +75,32 @@ dl.notes > dt {
 }
 
 .flex-content {
-    background: #64bdd240;
+    background: #f4f4f4;
 }
 
 body > div.flex-box > div > main {
-    max-width: 1080px;
-    min-width: 800px;
-    width: 90%;
     background: white;
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 9px 0px;
-    border-radius: 5px;
-    margin: 20px auto 60px;
 }
 
 .top-nav {
-    background: #64bdd2;
+    background: white;
     padding: 10px 10px 0 10px;
-    font-size: 1em;
+    font-size: 0.857em;
+    flex: 1;
 }
 
 #navbar-top-firstrow > li {
-    color: white;
+    color: #4b4b4b;
 }
 
-.nav-bar-cell1-rev {
+#navbar-top-firstrow > li.nav-bar-cell1-rev {
     background-color: #468590;
     font-weight: bold;
+    color: white;
 }
 
-/* A - LINKS */
 #navbar-top-firstrow > li > a {
-    color: white;
+    color: #141414;
 }
 a:link, a {
     color: #64bdd2;
@@ -115,21 +142,27 @@ a[name]:hover {
     text-decoration: none;
 }
 
-/* details navigation links */
 body > div.flex-box > header > nav > div.sub-nav > div:nth-child(1) > ul:nth-child(2),
 body > div.flex-box > header > nav > div.sub-nav > div:nth-child(1) > ul:nth-child(1) > li:nth-child(2), #navbar-top-firstrow > li:nth-child(7),
 #class-description > hr,
 body > div.flex-box > div > main > div.inheritance {
     display: none;
 }
+
+nav[role="navigation"] {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 2px solid #e0e0e0;
+}
+
 .sub-nav {
-    border-top: 1px solid #dfe3e5;
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 9px 0px;
-    float: left;
     overflow: hidden;
-    width: 100%;
-    background-color: #f0fdff;
-    border-bottom: 1px solid #8adaea;
+    background-color: white;
+    display: flex;
+    float: right;
+    align-items: stretch;
+    flex: 2;
+    flex-direction: row-reverse;
 }
 
 .sub-nav .sub-nav-list {
@@ -146,7 +179,6 @@ body > div.flex-box > div > main > div.inheritance {
     border-radius: 1px;
     border: 1px solid #dfe3e5;
     color: #a3a5a7;
-    /* box-shadow: rgb(0 0 0 / 5%) 0px 6px 9px 0px; */
 }
 body > div.flex-box > header > nav > div.sub-nav > div.nav-list-search > label {
     display: none;
@@ -174,24 +206,12 @@ body > div.flex-box > header > nav > div.sub-nav > div:nth-child(1) {
 section#field-summary, section#constructor-summary, section#method-summary, section#nested-class-summary {
     background: white;
     border: none;
-    margin-left: -10px;
-}
-
-section#field-detail, section#constructor-detail, section#method-detail,
-#field-summary > div.caption,
-#constructor-summary > div.caption,
-#nested-class-summary > div.caption,
-#all-packages-table > div.caption > span,
-#class > div.caption > span,
-#method > div.caption > span {
-    display: none;
 }
 
 #field-summary > h2, #constructor-summary > h2, #method-summary > h2, #nested-class-summary > h2 {
     font-style: normal;
 }
 
-/* Inheritance declarations */
 body.class-declaration-page .summary h3,
 body.class-declaration-page .details h3,
 body.class-declaration-page .summary .inherited-list h2 {
@@ -235,7 +255,7 @@ body.class-declaration-page .summary .inherited-list h2 {
 }
 
 .summary-table div, body > div.flex-box > div > main > dl > dd > div {
-    font-family: 'Roboto';
+    font-family: 'IBM Plex Sans';
 }
 
 code a:link:not(:hover), .summary-table div > code > a:not(:hover) {
@@ -248,14 +268,9 @@ main a[href*="://"]::after {
 }
 
 div.table-tabs > button.active-table-tab, #related-package-summary > div.caption > span, #class-summary > div.caption > span {
-    background: #f5f8fa;
-    color: #434c5d;
     font-weight: normal;
-    border-radius: 6px;
-    padding-top: 10px;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-    margin-left: 0px;
+    margin-left: 0;
+    color: white;
 }
 div.table-tabs > button.table-tab {
     background: white;
@@ -264,12 +279,22 @@ div.table-tabs > button.table-tab {
 }
 
 .deprecation-block {
+    width: calc(100% - 20px);
     background: #ffe9e9;
-    padding: 2px 6px;
+    padding: 10px;
     border: none;
-    border-radius: 6px;
+    border-radius: 3px;
     font-weight: normal;
-    font-family: 'Roboto';
+    font-family: 'IBM Plex Sans';
+}
+
+.deprecation-comment code {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.deprecation-comment, .help-footnote, .preview-comment {
+    font-style: normal;
 }
 
 #ui-id-1 .ui-state-active {
@@ -278,43 +303,40 @@ div.table-tabs > button.table-tab {
 }
 
 #ui-id-1 {
-    border-radius: 6px;
+    border-radius: 0;
     overflow-x: hidden;
     border: none;
 }
 
-/* Search results */
 ul.ui-autocomplete li {
     background: white;
     color: #434c5d;
-    font-family: 'Roboto'
-}
-
-footer hr {
-    visibility: hidden;
+    font-family: 'IBM Plex Sans'
 }
 
 footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
+    margin-top: -15px;
+}
+
+footer hr {
+    display: none;
 }
 
 .legal-copy {
     padding: 1em;
-    background-color: #f0fdff;
-    border-top: 1px solid #8adaea;
-    margin: 20px 0 0;
+    background-color: #262626;
+    margin: 0;
+    color: white;
+    font-size: 1.1em;
 }
 
 .caption span {
     background: transparent;
     font-size: 1.1em;
     font-weight: bold;
-    color: #141414;
+    color: white;
     display: block;
     padding: 0;
-    margin: 10px 0 15px 0;
 }
 
 body.class-declaration-page .summary h2,
@@ -335,13 +357,99 @@ body.module-declaration-page .block-list h2 {
     margin: 20px 0 10px;
 }
 
-body.class-declaration-page .summary h3, body.class-declaration-page .details h3, body.class-declaration-page .summary .inherited-list h2 {
+body.class-declaration-page .summary h3,
+body.class-declaration-page .details h3,
+body.class-declaration-page .summary .inherited-list h2 {
     padding: 7px 10px;
-    background-color: #f0fdff;
-    border-bottom: 1px solid #8adaea;
+    background-color: #262626;
+    color: white;
     margin-bottom: 2px;
+    margin-top: 10px;
+}
+
+body.class-declaration-page .summary h3 img,
+body.class-declaration-page .details h3 img,
+body.class-declaration-page .summary .inherited-list h2 img {
+    filter: brightness(0) invert(1);
 }
 
 .inherited-list, section[class$="-details"] .detail {
     padding: 0 0 5px 10px;
+}
+
+ul.ui-autocomplete li.ui-autocomplete-category {
+    background: #262626;
+    color: white;
+}
+
+ul.ui-autocomplete li.ui-static-link {
+    background: #f5f8fa;
+    border-top: 1px solid #ccc;
+}
+
+ul.contents-list {
+    margin: 0 0 15px 20px;
+}
+
+h2[title] {
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.deprecation-block .deprecated-label {
+    font-size: 1.2em;
+}
+
+.block .deprecated-label {
+    color: #b95959;
+}
+
+.sub-nav div {
+    text-transform: capitalize;
+}
+
+main hr {
+    display: none;
+}
+
+.summary .summary-list {
+    margin: 0;
+}
+
+.package-signature {
+    background: #f5f8fa;
+    padding: 10px 30px;
+    border-radius: 0;
+    font-family: 'Consolas', monospace;
+}
+
+ul.block-list > li, ul.details-list > li, ul.member-list > li, ul.summary-list > li {
+    border: 0px solid white;
+}
+
+.summary section[class$="-summary"], .details section[class$="-details"], .class-uses .detail, .serialized-class-details {
+    border: none;
+    background: inherit;
+}
+
+.caption {
+    position: relative;
+    text-align: left;
+    clear: none;
+    overflow: hidden;
+    vertical-align: middle;
+    align-items: center;
+    display: flex;
+    align-content: center;
+    padding: 7px 10px;
+    background-color: #262626;
+    margin-bottom: 2px;
+    margin-top: 10px;
+}
+
+.module-signature, .package-signature, .type-signature, .member-signature {
+    background: #f5f8fa;
+    padding: 10px;
+    border-radius: 6px;
+    font-family: 'Consolas', monospace;
 }
