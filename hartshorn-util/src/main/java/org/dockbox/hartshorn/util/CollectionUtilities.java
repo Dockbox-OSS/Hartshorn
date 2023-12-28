@@ -21,6 +21,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NavigableSet;
@@ -210,5 +211,14 @@ public final class CollectionUtilities {
                 .map(valueMapper)
                 .map(Object::toString)
                 .reduce((a, b) -> a + ", " + b).orElse("");
+    }
+
+    public static <T> Set<T> copyOf(Set<T> set) {
+        if (set instanceof NavigableSet<T> navigableSet) {
+            return Collections.unmodifiableNavigableSet(navigableSet);
+        }
+        else {
+            return Set.copyOf(set);
+        }
     }
 }

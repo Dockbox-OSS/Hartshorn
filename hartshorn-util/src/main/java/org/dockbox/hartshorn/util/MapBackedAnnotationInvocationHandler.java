@@ -115,6 +115,11 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
         }
     }
 
+    /**
+     * Returns the type of the annotation.
+     *
+     * @return the type of the annotation
+     */
     public Class<?> type() {
         return this.type;
     }

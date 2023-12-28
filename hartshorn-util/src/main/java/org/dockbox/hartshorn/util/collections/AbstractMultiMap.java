@@ -16,7 +16,10 @@
 
 package org.dockbox.hartshorn.util.collections;
 
+import org.dockbox.hartshorn.util.CollectionUtilities;
+
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -84,17 +87,17 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public Set<K> keySet() {
-        return this.map().keySet();
+        return CollectionUtilities.copyOf(this.map().keySet());
     }
 
     @Override
     public Set<Map.Entry<K, Collection<V>>> entrySet() {
-        return this.map().entrySet();
+        return CollectionUtilities.copyOf(this.map().entrySet());
     }
 
     @Override
     public Collection<Collection<V>> values() {
-        return this.map().values();
+        return List.copyOf(this.map().values());
     }
 
     @Override

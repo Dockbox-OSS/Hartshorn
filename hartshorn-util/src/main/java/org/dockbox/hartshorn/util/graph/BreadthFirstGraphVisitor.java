@@ -50,6 +50,14 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
         return visited;
     }
 
+    /**
+     * Visits a single node. If the node has not been visited yet, it will be visited through
+     * {@link #visitRow(Set, Set)}.
+     *
+     * @param visited the set of visited nodes
+     * @param node the node to visit
+     * @throws GraphException when an error occurs while visiting the node
+     */
     default void visitSingle(Set<GraphNode<T>> visited, GraphNode<T> node) throws GraphException {
         if (visited.add(node)) {
             this.visitRow(visited, Set.of(node));

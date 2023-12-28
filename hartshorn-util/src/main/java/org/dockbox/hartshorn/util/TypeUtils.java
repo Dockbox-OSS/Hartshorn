@@ -354,6 +354,13 @@ public class TypeUtils {
         return source.isPrimitive() && TypeUtils.isPrimitiveWrapper(target, source);
     }
 
+    /**
+     * Returns a map of the attributes of the given annotation. The keys of the map are the names of the attributes,
+     * and the values are the values of the attributes.
+     *
+     * @param annotation The annotation to get the attributes of
+     * @return A map of the attributes of the given annotation
+     */
     public static Map<String, Object> getAttributes(Annotation annotation) {
         Class<? extends Annotation> annotationType = annotation.annotationType();
         return Arrays.stream(annotationType.getDeclaredMethods())
@@ -371,7 +378,18 @@ public class TypeUtils {
                 ));
     }
 
+    /**
+     * Returns the class of the given instance. This method is a null-safe and type-safe alternative
+     * to {@link Object#getClass()}.
+     *
+     * @param instance The instance to get the class of, or {@code null} if the instance is {@code null}
+     * @return The class of the given instance
+     * @param <T> The type of the instance
+     */
     public static <T> Class<T> getClass(T instance) {
+        if (instance == null) {
+            return null;
+        }
         //noinspection unchecked
         return (Class<T>) instance.getClass();
     }

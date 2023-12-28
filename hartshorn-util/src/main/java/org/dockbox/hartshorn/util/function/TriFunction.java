@@ -37,5 +37,14 @@ package org.dockbox.hartshorn.util.function;
 @Deprecated(since = "0.6.0", forRemoval = true)
 @FunctionalInterface
 public interface TriFunction<T, U, O, R> {
+
+    /**
+     * Applies this function to the given arguments.
+     *
+     * @param t the first function argument
+     * @param u the second function argument
+     * @param o the third function argument
+     * @return the function result
+     */
     R accept(T t, U u, O o);
 }

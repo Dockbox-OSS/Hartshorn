@@ -53,6 +53,11 @@ public abstract class NavigableMultiMap<K extends Comparable<K>, V> extends Stan
         this.comparator = comparator;
     }
 
+    /**
+     * Returns the first entry in the map, or an empty collection if the map is empty.
+     *
+     * @return the first entry in the map, or an empty collection if the map is empty
+     */
     public Collection<V> firstEntry() {
         if (this.isEmpty()) {
             return List.of();
@@ -60,6 +65,11 @@ public abstract class NavigableMultiMap<K extends Comparable<K>, V> extends Stan
         return this.map().firstEntry().getValue();
     }
 
+    /**
+     * Returns the last entry in the map, or an empty collection if the map is empty.
+     *
+     * @return the last entry in the map, or an empty collection if the map is empty
+     */
     public Collection<V> lastEntry() {
         if (this.isEmpty()) {
             return List.of();
@@ -67,26 +77,60 @@ public abstract class NavigableMultiMap<K extends Comparable<K>, V> extends Stan
         return this.map().lastEntry().getValue();
     }
 
+    /**
+     * Returns the collection associated with the greatest key less than or equal to the given key, or
+     * an empty collection if there is no such key.
+     *
+     * @param key the key
+     * @return the collection associated with the greatest key less than or equal to the given key
+     */
     public Collection<V> floorEntry(K key) {
         Entry<K, Collection<V>> entry = this.map().floorEntry(key);
         return entry == null ? List.of() : entry.getValue();
     }
 
+    /**
+     * Returns the collection associated with the least key greater than or equal to the given key, or
+     * an empty collection if there is no such key.
+     *
+     * @param key the key
+     * @return the collection associated with the least key greater than or equal to the given key
+     */
     public Collection<V> ceilingEntry(K key) {
         Entry<K, Collection<V>> entry = this.map().ceilingEntry(key);
         return entry == null ? List.of() : entry.getValue();
     }
 
+    /**
+     * Returns the collection associated with the greatest key strictly less than the given key, or
+     * an empty collection if there is no such key.
+     *
+     * @param key the key
+     * @return the collection associated with the greatest key strictly less than the given key
+     */
     public Collection<V> lowerEntry(K key) {
         Entry<K, Collection<V>> entry = this.map().lowerEntry(key);
         return entry == null ? List.of() : entry.getValue();
     }
 
+    /**
+     * Returns the collection associated with the least key strictly greater than the given key, or
+     * an empty collection if there is no such key.
+     *
+     * @param key the key
+     * @return the collection associated with the least key strictly greater than the given key
+     */
     public Collection<V> higherEntry(K key) {
         Entry<K, Collection<V>> entry = this.map().higherEntry(key);
         return entry == null ? List.of() : entry.getValue();
     }
 
+    /**
+     * Removes and returns the collection associated with the least key in this map, or an empty collection if
+     * the map is empty.
+     *
+     * @return the collection associated with the least key in this map
+     */
     public Collection<V> pollFirstEntry() {
         if (this.isEmpty()) {
             return List.of();
@@ -94,6 +138,12 @@ public abstract class NavigableMultiMap<K extends Comparable<K>, V> extends Stan
         return this.map().pollFirstEntry().getValue();
     }
 
+    /**
+     * Removes and returns the collection associated with the greatest key in this map, or an empty collection if
+     * the map is empty.
+     *
+     * @return the collection associated with the greatest key in this map
+     */
     public Collection<V> pollLastEntry() {
         if (this.isEmpty()) {
             return List.of();
