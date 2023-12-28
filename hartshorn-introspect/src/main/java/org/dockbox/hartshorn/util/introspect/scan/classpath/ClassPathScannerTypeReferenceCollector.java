@@ -24,6 +24,15 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * A {@link ClasspathTypeReferenceCollector} that collects {@link TypeReference}s from a classpath using a
+ * {@link ClassPathScanner}. This automatically includes the default classpath, and filters on the configured
+ * package name. Scanning does not include any non-class resources.
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferenceCollector {
 
     public ClassPathScannerTypeReferenceCollector(String packageName) {

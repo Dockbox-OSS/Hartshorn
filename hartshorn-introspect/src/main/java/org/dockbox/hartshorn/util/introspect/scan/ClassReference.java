@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect.scan;
 
+/**
+ * A {@link TypeReference} that represents a {@link Class}. No guarantees are made about the state of the class
+ * represented by this reference. It is possible that the class is not yet initialized.
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ClassReference implements TypeReference {
 
     private final Class<?> type;

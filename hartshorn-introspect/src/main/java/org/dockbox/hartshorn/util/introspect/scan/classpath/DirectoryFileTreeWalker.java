@@ -23,6 +23,16 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
+/**
+ * A {@link FileVisitor} that walks the contents of a directory. This delegates all file processing to a {@link
+ * ClassPathScanner}, which will process the file if it is a compatible file.
+ *
+ * @see ClassPathScanner
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class DirectoryFileTreeWalker implements FileVisitor<Path> {
 
     private final ClassPathScanner classPathScanner;
