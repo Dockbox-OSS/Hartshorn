@@ -47,7 +47,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @since 0.5.0
  * @author Guus Lieben
  */
-@SuppressWarnings({ "OverlyBroadThrowsClause", "ProhibitedExceptionDeclared" })
+@SuppressWarnings("ProhibitedExceptionDeclared")
 public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<T> {
 
     private final ProxyManager<T> manager;

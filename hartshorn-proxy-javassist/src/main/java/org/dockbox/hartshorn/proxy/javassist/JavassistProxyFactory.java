@@ -23,6 +23,22 @@ import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
+/**
+ * A proxy factory that uses Javassist to create proxies. This implementation is based on the
+ * {@link JDKInterfaceProxyFactory}, but uses Javassist to create the proxy class if the type
+ * is not an interface. This allows for the creation of proxies for concrete and abstract classes. The
+ * proxy class is created by extending the target class, and implementing all interfaces that the
+ * target class implements.
+ *
+ * @param <T> the type of the proxy
+ *
+ * @see ProxyFactory
+ * @see MethodHandler
+ *
+ * @since 0.4.10
+ *
+ * @author Guus Lieben
+ */
 public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
 
     static {

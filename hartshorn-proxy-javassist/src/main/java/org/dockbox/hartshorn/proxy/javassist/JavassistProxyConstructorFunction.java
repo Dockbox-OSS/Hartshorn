@@ -16,15 +16,26 @@
 
 package org.dockbox.hartshorn.proxy.javassist;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
 import org.dockbox.hartshorn.util.ApplicationException;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
+/**
+ * A proxy constructor function that uses Javassist to create a proxy instance.
+ *
+ * @param <T> the type of the proxy
+ *
+ * @see ProxyFactory
+ *
+ * @since 0.4.10
+ *
+ * @author Guus Lieben
+ */
 public class JavassistProxyConstructorFunction<T> implements ProxyConstructorFunction<T> {
 
     private final Class<T> type;

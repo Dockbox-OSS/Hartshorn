@@ -29,8 +29,19 @@ package org.dockbox.hartshorn.proxy.advice.wrap;
 @FunctionalInterface
 public interface ProxyCallback<T> {
 
+    /**
+     * Accepts a context for the proxy method invocation.
+     *
+     * @param context the context
+     */
     void accept(ProxyCallbackContext<T> context);
 
+    /**
+     * Returns a new callback that will execute the current callback, and then the provided callback.
+     *
+     * @param next the callback to execute after the current callback
+     * @return the new callback
+     */
     default ProxyCallback<T> then(ProxyCallback<T> next) {
         return context -> {
             this.accept(context);

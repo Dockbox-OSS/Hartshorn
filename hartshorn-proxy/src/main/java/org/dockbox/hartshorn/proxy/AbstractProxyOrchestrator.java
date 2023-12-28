@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.proxy.advice.ProxyAdvisor;
 import org.dockbox.hartshorn.proxy.advice.TypeAdvisorResolver;
 import org.dockbox.hartshorn.proxy.lookup.HartshornProxyLookup;
@@ -28,6 +25,9 @@ import org.dockbox.hartshorn.util.introspect.NativeProxyLookup;
 import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A base implementation of {@link ProxyOrchestrator} that provides a default set of {@link ProxyLookup}s, and
@@ -112,6 +112,12 @@ public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
         return Option.empty();
     }
 
+    /**
+     * Registers a new {@link ProxyLookup} with this orchestrator. The lookup will be used as a candidate for all
+     * future proxy operations.
+     *
+     * @param proxyLookup the lookup to register
+     */
     public void registerProxyLookup(ProxyLookup proxyLookup) {
         this.proxyLookups.add(proxyLookup);
     }

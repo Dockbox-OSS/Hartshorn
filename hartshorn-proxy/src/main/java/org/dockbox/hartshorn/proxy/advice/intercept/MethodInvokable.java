@@ -81,10 +81,20 @@ public class MethodInvokable implements Invokable {
         return this.toIntrospector().qualifiedName();
     }
 
+    /**
+     * Returns a {@link MethodView} for the underlying method.
+     *
+     * @return a {@link MethodView} for the underlying method
+     */
     public MethodView<?, ?> toIntrospector() {
         return this.introspector.introspect(this.method);
     }
 
+    /**
+     * Returns the underlying method.
+     *
+     * @return the underlying method
+     */
     public Method toMethod() {
         return this.method;
     }

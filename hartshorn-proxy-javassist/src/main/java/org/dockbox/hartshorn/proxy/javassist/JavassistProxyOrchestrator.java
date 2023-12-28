@@ -20,6 +20,17 @@ import org.dockbox.hartshorn.proxy.AbstractProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
+/**
+ * A proxy orchestrator that uses Javassist to create proxies. This adds support for {@link JavassistProxyLookup}s,
+ * and uses {@link JavassistProxyFactory} to construct new proxy instances.
+ *
+ * @since 0.5.0
+ *
+ * @see JavassistProxyLookup
+ * @see JavassistProxyFactory
+ *
+ * @author Guus Lieben
+ */
 public class JavassistProxyOrchestrator extends AbstractProxyOrchestrator {
 
     public JavassistProxyOrchestrator(Introspector introspector) {
