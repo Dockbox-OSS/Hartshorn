@@ -20,6 +20,10 @@ import java.util.UUID;
 
 /**
  * A single {@link Subject} which can be identified by its name and unique ID.
+ *
+ * @since 0.4.0
+ *
+ * @author Guus Lieben
  */
 public interface Identifiable extends Subject {
 

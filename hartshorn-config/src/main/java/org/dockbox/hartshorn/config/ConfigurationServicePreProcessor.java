@@ -38,6 +38,10 @@ import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
  * defined with its name. Strategies can be indicated in the {@link IncludeResourceConfiguration#value()} of a {@link IncludeResourceConfiguration}
  * in the format {@code strategy_name:source_name}. If a strategy is not registered, or no name is defined, behavior
  * defaults to {@link FileSystemLookupStrategy}.
+ *
+ * @since 0.4.7
+ *
+ * @author Guus Lieben
  */
 public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
 

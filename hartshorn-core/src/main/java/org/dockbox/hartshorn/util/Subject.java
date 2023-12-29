@@ -18,6 +18,10 @@ package org.dockbox.hartshorn.util;
 
 /**
  * Represents a single subject. Typically, a subject will be an actor of any kind.
+ *
+ * @since 0.4.0
+ *
+ * @author Guus Lieben
  */
 public interface Subject {
 }
