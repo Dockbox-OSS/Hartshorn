@@ -127,5 +127,5 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
     /**
      * The type of instance that is created by the container. This is either a supplier, a singleton or a lazy singleton.
      */
-    enum InstanceType { SUPPLIER, SINGLETON, LAZY_SINGLETON }
+    private enum InstanceType { SUPPLIER, SINGLETON, LAZY_SINGLETON }
 }

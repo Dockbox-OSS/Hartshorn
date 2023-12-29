@@ -35,6 +35,17 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+/**
+ * A base implementation of a {@link BindingHierarchy}. This implementation tracks providers by priority, and allows
+ * for the addition of providers with a priority. The priority is used to determine the order in which providers are
+ * evaluated. The higher the priority, the earlier the provider is evaluated.
+ *
+ * @param <T> the type of the component
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T> {
 
     private final NavigableMap<Integer, Provider<T>> providers = new TreeMap<>(Collections.reverseOrder());
@@ -47,6 +58,12 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * Returns the map of providers, where the key is the priority, and the value is the provider. The map is sorted
+     * in descending order, meaning the highest priority is the first entry.
+     *
+     * @return the map of providers
+     */
     protected NavigableMap<Integer, Provider<T>> priorityProviders() {
         return this.providers;
     }
@@ -162,6 +179,11 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
         return "Hierarchy<%s>%s: %s".formatted(contract, qualifiers, hierarchy);
     }
 
+    /**
+     * Returns a string representation of the contract type of this hierarchy.
+     *
+     * @return a string representation of the contract type of this hierarchy
+     */
     protected String contractTypeToString() {
         return this.key().parameterizedType().toString();
     }

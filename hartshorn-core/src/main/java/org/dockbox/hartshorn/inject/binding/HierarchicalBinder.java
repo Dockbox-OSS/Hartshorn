@@ -18,7 +18,25 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 
+/**
+ * A binder that supports hierarchical bindings. This means that bindings are not just one-to-one, but can be
+ * one-to-many, with various bindings on different priority levels.
+ *
+ * @see BindingHierarchy
+ * @see Binder
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public interface HierarchicalBinder extends Binder {
 
+    /**
+     * Returns the binding hierarchy for the given key.
+     *
+     * @param key the key to return the hierarchy for
+     * @return the binding hierarchy
+     * @param <T> the type of the component
+     */
     <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key);
 }

@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.inject.binding.collection;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.CollectionObjectContainer;
 import org.dockbox.hartshorn.inject.NonTypeAwareProvider;
@@ -31,6 +25,12 @@ import org.dockbox.hartshorn.inject.TypeAwareProvider;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * A provider which provides a {@link ComponentCollection} of all the provided instances. This provider
@@ -55,8 +55,13 @@ public class CollectionProvider<T> implements NonTypeAwareProvider<ComponentColl
 
     private final Set<Provider<T>> providers = ConcurrentHashMap.newKeySet();
 
+    /**
+     * Returns a copy of the providers that are currently part of this collection.
+     *
+     * @return a copy of the providers that are currently part of this collection
+     */
     public Set<Provider<T>> providers() {
-        return Set.copyOf(providers);
+        return Set.copyOf(this.providers);
     }
 
     /**

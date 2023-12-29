@@ -26,6 +26,14 @@ import org.dockbox.hartshorn.context.ContextCarrier;
 
 import jakarta.inject.Singleton;
 
+/**
+ * Provides default bindings for the framework. These bindings are not required for the framework to function, but
+ * are provided for convenience.
+ *
+ * @since 0.4.10
+ *
+ * @author Guus Lieben
+ */
 @Configuration
 @RequiresActivator(UseBootstrap.class)
 public class ContextConfiguration {

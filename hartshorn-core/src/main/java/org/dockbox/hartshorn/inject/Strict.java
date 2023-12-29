@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
-import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 
 /**
  * Indicates that an injection lookup should be strict, meaning that it should only return a value if it is
@@ -48,5 +49,11 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 @Target({ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Strict {
+
+    /**
+     * Whether strict mode should be enabled. Defaults to {@code true}.
+     *
+     * @return {@code true} if strict mode should be enabled, {@code false} otherwise.
+     */
     boolean value() default true;
 }

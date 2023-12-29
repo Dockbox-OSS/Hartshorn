@@ -19,6 +19,13 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * Thrown when no injectable constructors are found for a given type.
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class MissingInjectConstructorException extends ApplicationException {
     public MissingInjectConstructorException(TypeView<?> type) {
         super("No injectable constructors found for " + type.name());

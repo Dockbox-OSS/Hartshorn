@@ -45,6 +45,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 public @interface Enable {
+
+    /**
+     * Whether the annotated element should be enabled. Defaults to {@code true}.
+     *
+     * @return {@code true} if the annotated element should be enabled, {@code false} otherwise.
+     */
     boolean value() default true;
 }
 

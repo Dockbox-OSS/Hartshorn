@@ -16,6 +16,22 @@
 
 package org.dockbox.hartshorn.inject;
 
+/**
+ * A {@link Provider} that is aware of the type it provides. This is especially useful
+ * when introspecting the type of the provided instance is required.
+ *
+ * @param <T> The type instance to provide.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public non-sealed interface TypeAwareProvider<T> extends Provider<T> {
+
+    /**
+     * Returns the type of the instance that is provided.
+     *
+     * @return The type of the instance that is provided.
+     */
     Class<? extends T> type();
 }
