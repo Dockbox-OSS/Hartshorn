@@ -213,6 +213,15 @@ public final class CollectionUtilities {
                 .reduce((a, b) -> a + ", " + b).orElse("");
     }
 
+    /**
+     * Returns a new set containing all elements of the given set. The returned set is a new set
+     * and does not modify the original set. The advantage of this compared to {@link Set#copyOf(Collection)}
+     * is that the order of the elements is preserved if the given set is a {@link NavigableSet}.
+     *
+     * @param set The set to copy
+     * @return The new set containing all elements
+     * @param <T> The type of the elements in the set
+     */
     public static <T> Set<T> copyOf(Set<T> set) {
         if (set instanceof NavigableSet<T> navigableSet) {
             return Collections.unmodifiableNavigableSet(navigableSet);
