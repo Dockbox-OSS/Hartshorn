@@ -5,6 +5,6 @@
         "https://checkstyle.org/dtds/suppressions_1_2.dtd">
 
 <suppressions>
-    <suppress id="MissingJavadocMethod" files=".*Providers.java"/>
+    <suppress files=".*Providers.java" checks="MissingJavadocMethod"/>
     <!-- No active suppressions -->
 </suppressions>
