@@ -21,6 +21,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.io.Closeable;
 
+/**
+ * An exception that is thrown when introspection of a component fails in the
+ * {@link org.dockbox.hartshorn.config.jackson.introspect.HartshornJacksonAnnotationIntrospector}.
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class JacksonIntrospectionException extends JsonMappingException {
 
     public JacksonIntrospectionException(Closeable processor, String msg) {

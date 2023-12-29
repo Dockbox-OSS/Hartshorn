@@ -36,6 +36,17 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.lang.reflect.AnnotatedElement;
 import java.util.function.Function;
 
+/**
+ * A {@link JacksonAnnotationIntrospector} that supports the {@link Property} and {@link IgnoreProperty} annotations.
+ * This introspector is used by the {@link org.dockbox.hartshorn.config.jackson.StandardJacksonObjectMapperConfigurator}
+ * to configure new {@link com.fasterxml.jackson.databind.ObjectMapper} instances.
+ *
+ * @see Property
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public class HartshornJacksonAnnotationIntrospector extends JacksonAnnotationIntrospector {
 
     private final Introspector introspector;

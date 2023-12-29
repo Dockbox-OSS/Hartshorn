@@ -16,13 +16,28 @@
 
 package org.dockbox.hartshorn.config.jackson;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
 
+import java.io.IOException;
+
+/**
+ * A functional interface that writes to a destination that may throw an {@link IOException}, {@link StreamWriteException}
+ * or {@link DatabindException}. This is used internally by the {@link org.dockbox.hartshorn.config.ObjectMapper}.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public interface WriterFunction {
 
+    /**
+     * Writes to a destination that may throw an {@link IOException}, {@link StreamWriteException} or {@link DatabindException}.
+     *
+     * @throws IOException When the destination throws an {@link IOException}
+     * @throws StreamWriteException When the destination throws an {@link StreamWriteException}
+     * @throws DatabindException When the destination throws an {@link DatabindException}
+     */
     void write() throws IOException, StreamWriteException, DatabindException;
 
 }

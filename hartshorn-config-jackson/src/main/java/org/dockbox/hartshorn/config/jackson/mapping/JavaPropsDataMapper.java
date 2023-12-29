@@ -23,7 +23,16 @@ import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.jackson.JacksonDataMapper;
 
+/**
+ * A {@link JacksonDataMapper} that uses the Java Properties format. This mapper uses Jackson's {@link JavaPropsMapper} to
+ * support {@link FileFormats#PROPERTIES Java Properties sources}.
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public class JavaPropsDataMapper implements JacksonDataMapper {
+
     @Override
     public FileFormat fileFormat() {
         return FileFormats.PROPERTIES;
