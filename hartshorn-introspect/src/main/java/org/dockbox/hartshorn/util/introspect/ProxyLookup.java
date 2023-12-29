@@ -54,6 +54,14 @@ public interface ProxyLookup {
      */
     boolean isProxy(Class<?> candidate);
 
+    /**
+     * Returns a proxy introspector for the given instance. If the given instance is not a proxy, or is not
+     * supported by this lookup implementation, an empty {@link Option} is returned.
+     *
+     * @param instance the instance to introspect
+     * @return a proxy introspector for the given instance
+     * @param <T> the type of the instance
+     */
     <T> Option<ProxyIntrospector<T>> introspector(T instance);
 
 }

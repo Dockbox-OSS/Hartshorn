@@ -18,7 +18,24 @@ package org.dockbox.hartshorn.util.introspect;
 
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 
+/**
+ * A loader for {@link Introspector} instances. This may be registered to a SPI registry to allow for
+ * custom introspectors to be used.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 @FunctionalInterface
 public interface IntrospectorLoader {
+
+    /**
+     * Creates a new introspector instance. The provided {@link ProxyLookup} and {@link AnnotationLookup}
+     * instances can be used to introspect proxy and annotation instances.
+     *
+     * @param proxyLookup the proxy lookup
+     * @param annotationLookup the annotation lookup
+     * @return the introspector instance
+     */
     Introspector create(ProxyLookup proxyLookup, AnnotationLookup annotationLookup);
 }

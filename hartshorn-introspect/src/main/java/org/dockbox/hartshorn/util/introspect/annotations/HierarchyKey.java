@@ -20,6 +20,17 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Objects;
 
+/**
+ * A key that is used to identify a specific annotation on a specific element. This key is used
+ * to cache annotation proxies in {@link VirtualHierarchyAnnotationLookup}s.
+ *
+ * @param element The element on which the annotation is present
+ * @param annotationType The type of annotation that is present on the element
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public record HierarchyKey(AnnotatedElement element, Class<? extends Annotation> annotationType) {
 
     @Override

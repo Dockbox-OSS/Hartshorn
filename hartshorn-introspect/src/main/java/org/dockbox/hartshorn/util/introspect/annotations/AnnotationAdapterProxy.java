@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.annotations;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -24,10 +28,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A proxy implementation of {@link Annotation} which allows for the creation of
@@ -42,8 +42,12 @@ import org.dockbox.hartshorn.util.option.Option;
  * but the constructor is only intended to be called by the {@link VirtualHierarchyAnnotationLookup}.
  *
  * @param <A> The type of annotation this proxy represents
+ *
+ * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
-public class AnnotationAdapterProxy<A extends Annotation> implements InvocationHandler {
+public class AnnotationAdapterProxy<A extends Annotation> implements InvocationHandler, AnnotationAdapter {
 
     private final Annotation actual;
     private final Class<A> targetAnnotationClass;
@@ -86,14 +90,6 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
             this.methodsCache.put(method.getName(), cachedField);
         }
         return cachedField.orNull();
-    }
-
-    /**
-     * Returns the original annotation backing this proxy.
-     * @return The original annotation
-     */
-    public Annotation actual() {
-        return this.actual;
     }
 
     /**
@@ -225,5 +221,10 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
         catch (Exception e) {
             throw new ApplicationRuntimeException(e);
         }
+    }
+
+    @Override
+    public Annotation actualAnnotation() {
+        return this.actual;
     }
 }
