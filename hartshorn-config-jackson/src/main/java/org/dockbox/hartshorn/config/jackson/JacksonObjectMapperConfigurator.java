@@ -36,6 +36,15 @@ import org.dockbox.hartshorn.config.JsonInclusionRule;
  */
 public interface JacksonObjectMapperConfigurator {
 
+    /**
+     * Configures the provided {@link MapperBuilder} based on the provided {@link FileFormat} and {@link
+     * JsonInclusionRule}.
+     *
+     * @param builder the builder to configure
+     * @param format the format of the source
+     * @param inclusionRule the inclusion rule to use
+     * @return the configured builder
+     */
     MapperBuilder<?, ?> configure(MapperBuilder<?, ?> builder, FileFormat format, JsonInclusionRule inclusionRule);
 
 }
