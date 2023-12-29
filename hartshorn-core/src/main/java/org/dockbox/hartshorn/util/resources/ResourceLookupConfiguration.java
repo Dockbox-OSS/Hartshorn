@@ -24,6 +24,16 @@ import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 
 import jakarta.inject.Singleton;
 
+/**
+ * Providers for {@link ResourceLookupStrategy} based {@link ResourceLookup} implementations.
+ *
+ * @see ResourceLookup
+ * @see ResourceLookupStrategy
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 @Configuration
 public class ResourceLookupConfiguration {
 

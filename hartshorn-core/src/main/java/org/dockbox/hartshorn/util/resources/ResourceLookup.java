@@ -19,14 +19,23 @@ package org.dockbox.hartshorn.util.resources;
 import java.net.URI;
 import java.util.Set;
 
+/**
+ * A resource lookup is responsible for finding resources based on a given path. This may be a file, a classpath
+ * resource or any other type of resource.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+@FunctionalInterface
 public interface ResourceLookup {
 
+    /**
+     * Looks up all resources that match the given path. The path may be a file path, a classpath resource path or any
+     * other type of path.
+     *
+     * @param path the path to the resource
+     * @return a set of {@link URI URIs} pointing to the resource
+     */
     Set<URI> lookup(String path);
-
-    void addLookupStrategy(ResourceLookupStrategy strategy);
-
-    void removeLookupStrategy(ResourceLookupStrategy strategy);
-
-    Set<ResourceLookupStrategy> strategies();
-
 }

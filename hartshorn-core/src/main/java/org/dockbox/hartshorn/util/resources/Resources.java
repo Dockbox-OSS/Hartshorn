@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util.resources;
 
 import org.dockbox.hartshorn.application.Hartshorn;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,15 +30,44 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Utilities for working with classpath resources. This class is internal, and should not be used directly. Instead,
+ * refer to a {@link ClasspathResourceLocator}.
+ *
+ * @see ClasspathResourceLocator
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public final class Resources {
 
     private Resources() {
     }
 
+    /**
+     * Returns a {@link URL} pointing to the given resource. This method will first attempt to find the resource
+     * using the {@link Thread#getContextClassLoader() current thread's context class loader} , and if that fails,
+     * will attempt to find the resource using the system classloader.
+     *
+     * @param resource the name of the resource
+     * @return a {@link URL} pointing to the given resource
+     * @throws IOException if the resource could not be found
+     */
     public static URL getResourceURL(String resource) throws IOException {
         return getResourceURL(getClassLoader(), resource);
     }
 
+    /**
+     * Returns a {@link URL} pointing to the given resource. This method will first attempt to find the resource
+     * using the provided {@link ClassLoader}, and if that fails, will attempt to find the resource using the
+     * system classloader.
+     *
+     * @param loader the {@link ClassLoader} to use to find the resource
+     * @param resource the name of the resource
+     * @return a {@link URL} pointing to the given resource
+     * @throws IOException if the resource could not be found
+     */
     public static URL getResourceURL(ClassLoader loader, String resource) throws IOException {
         URL url = null;
         if (loader != null) {
@@ -52,18 +82,56 @@ public final class Resources {
         return url;
     }
 
+    /**
+     * Returns a {@link File} pointing to the given resource. This method will first attempt to find the resource
+     * using the {@link Thread#getContextClassLoader() current thread's context class loader} , and if that fails,
+     * will attempt to find the resource using the system classloader.
+     *
+     * @param resource the name of the resource
+     * @return a {@link File} pointing to the given resource
+     * @throws IOException if the resource could not be found
+     */
     public static File getResourceAsFile(String resource) throws IOException {
         return new File(getResourceURL(resource).getFile());
     }
 
+    /**
+     * Returns a {@link File} pointing to the given resource. This method will first attempt to find the resource
+     * using the provided {@link ClassLoader}, and if that fails, will attempt to find the resource using the
+     * system classloader.
+     *
+     * @param loader the {@link ClassLoader} to use to find the resource
+     * @param resource the name of the resource
+     * @return a {@link File} pointing to the given resource
+     * @throws IOException if the resource could not be found
+     */
     public static File getResourceAsFile(ClassLoader loader, String resource) throws IOException {
         return new File(getResourceURL(loader, resource).getFile());
     }
 
+    /**
+     * Returns a {@link Set} of {@link URL}s pointing to all resources with the given name. This method will first
+     * attempt to find the resource using the {@link Thread#getContextClassLoader() current thread's context class
+     * loader} , and if that fails, will attempt to find the resource using the system classloader.
+     *
+     * @param resource the name of the resource
+     * @return a {@link Set} of {@link URL}s pointing to all resources with the given name
+     * @throws IOException if the resource could not be found
+     */
     public static Set<URL> getResourceURLs(String resource) throws IOException {
         return getResourceURLs(getClassLoader(), resource);
     }
 
+    /**
+     * Returns a {@link Set} of {@link URL}s pointing to all resources with the given name. This method will first
+     * attempt to find the resource using the provided {@link ClassLoader}, and if that fails, will attempt to find
+     * the resource using the system classloader.
+     *
+     * @param loader the {@link ClassLoader} to use to find the resource
+     * @param resource the name of the resource
+     * @return a {@link Set} of {@link URL}s pointing to all resources with the given name
+     * @throws IOException if the resource could not be found
+     */
     public static Set<URL> getResourceURLs(ClassLoader loader, String resource) throws IOException {
         Set<URL> urls = new HashSet<>();
         if (loader != null) {
@@ -83,16 +151,44 @@ public final class Resources {
         return Collections.unmodifiableSet(urls);
     }
 
+    /**
+     * Returns a {@link Set} of {@link File}s pointing to all resources with the given name. This method will first
+     * attempt to find the resource using the {@link Thread#getContextClassLoader() current thread's context class
+     * loader} , and if that fails, will attempt to find the resource using the system classloader.
+     *
+     * @param resource the name of the resource
+     * @return a {@link Set} of {@link File}s pointing to all resources with the given name
+     * @throws IOException if the resource could not be found
+     */
     public static Set<File> getResourcesAsFiles(String resource) throws IOException {
         return getResourcesAsFiles(getClassLoader(), resource);
     }
 
+    /**
+     * Returns a {@link Set} of {@link File}s pointing to all resources with the given name. This method will first
+     * attempt to find the resource using the provided {@link ClassLoader}, and if that fails, will attempt to find
+     * the resource using the system classloader.
+     *
+     * @param loader the {@link ClassLoader} to use to find the resource
+     * @param resource the name of the resource
+     * @return a {@link Set} of {@link File}s pointing to all resources with the given name
+     * @throws IOException if the resource could not be found
+     */
     public static Set<File> getResourcesAsFiles(ClassLoader loader, String resource) throws IOException {
         return getResourceURLs(loader, resource).stream()
                 .map(url -> new File(url.getFile()))
                 .collect(Collectors.toUnmodifiableSet());
     }
 
+    /**
+     * Returns a {@link Set} of {@link URI}s pointing to all resources with the given name. This method will request
+     * each provided {@link ResourceLookupStrategy} to find the resource, and will return the union of all results.
+     *
+     * @param applicationContext the {@link ApplicationContext} to use to find the resource
+     * @param resource the name of the resource
+     * @param strategies the {@link ResourceLookupStrategy}s to use to find the resource
+     * @return a {@link Set} of {@link URI}s pointing to all resources with the given name
+     */
     public static Set<URI> getResourceURIs(ApplicationContext applicationContext, String resource, ResourceLookupStrategy... strategies) {
         Set<URI> uris = new HashSet<>();
         for (ResourceLookupStrategy strategy : strategies) {
@@ -101,6 +197,13 @@ public final class Resources {
         return Collections.unmodifiableSet(uris);
     }
 
+    /**
+     * Returns the {@link ClassLoader} to use to find resources. This method will first attempt to find the
+     * {@link Thread#getContextClassLoader() current thread's context class loader} , and if that fails, will
+     * return the current class' {@link ClassLoader}.
+     *
+     * @return the {@link ClassLoader} to use to find resources
+     */
     private static ClassLoader getClassLoader() {
         try {
             return Thread.currentThread().getContextClassLoader();

@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.resources;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+
 import java.io.File;
 import java.net.URI;
 import java.util.Arrays;
@@ -23,14 +25,16 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
 /**
  * Looks up a resource through the local filesystem. The file directory is looked up based on the configuration path of
  * the path representation, typically this will be similar to {@code /config/{owner-id}/}.
  *
  * <p>This strategy does not require the name to be present, as it is the default strategy used in
  * {@link Resources#getResourceURIs(ApplicationContext, String, ResourceLookupStrategy...)}.
+ *
+ * @since 0.4.7
+ *
+ * @author Guus Lieben
  */
 public class FileSystemLookupStrategy implements ResourceLookupStrategy {
 
