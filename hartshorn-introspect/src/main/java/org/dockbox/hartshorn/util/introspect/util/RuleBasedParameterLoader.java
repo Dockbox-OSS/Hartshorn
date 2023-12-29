@@ -50,6 +50,12 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implemen
         this.contextType = contextType;
     }
 
+    /**
+     * Adds the provided rule to the set of rules that are used to load parameters.
+     *
+     * @param rule the rule to add
+     * @return the current instance
+     */
     public RuleBasedParameterLoader<?> add(ParameterLoaderRule<? super C> rule) {
         this.rules.add((ParameterLoaderRule<C>) rule);
         return this;

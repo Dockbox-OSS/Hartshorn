@@ -42,17 +42,17 @@ import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionClassTypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
-import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionParameterizedTypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
+import org.dockbox.hartshorn.util.introspect.view.ModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implements ReflectionModifierCarrierView, TypeView<T> {
+public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implements TypeView<T> {
 
     private static final BiMap<Class<?>, Class<?>> WRAPPERS = BiMap.ofEntries(
             Map.entry(Boolean.class, boolean.class),

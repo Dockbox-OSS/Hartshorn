@@ -54,18 +54,46 @@ public final class ParameterizableType implements Reportable {
         this.parameters = parameters;
     }
 
+    /**
+     * Creates a new {@link ParameterizableType} for the given type. The type must not be {@code null}.
+     *
+     * @param type the type to create a {@link ParameterizableType} for
+     * @return a new {@link ParameterizableType} for the given type
+     */
     public static ParameterizableType create(Class<?> type) {
         return builder(type).build();
     }
 
+    /**
+     * Creates a new {@link ParameterizableType} for the given type. The type must not be {@code null}. If the
+     * type represents a {@link ParameterizedType}, the parameters of the type are used to create the parameters
+     * of the {@link ParameterizableType}.
+     *
+     * @param type the type to create a {@link ParameterizableType} for
+     * @return a new {@link ParameterizableType} for the given type
+     */
     public static ParameterizableType create(TypeView<?> type) {
         return builder(type).build();
     }
 
+    /**
+     * Creates a new {@link Builder} for the given type. The type must not be {@code null}.
+     *
+     * @param type the type to create a {@link Builder} for
+     * @return a new {@link Builder} for the given type
+     */
     public static Builder builder(Class<?> type) {
         return new Builder(type);
     }
 
+    /**
+     * Creates a new {@link Builder} for the given type. The type must not be {@code null}. If the
+     * type represents a {@link ParameterizedType}, the parameters of the type are used to pre-configure
+     * the parameters of the {@link Builder}.
+     *
+     * @param type the type to create a {@link Builder} for
+     * @return a new {@link Builder} for the given type
+     */
     public static Builder builder(TypeView<?> type) {
         List<ParameterizableType> parameters = type.typeParameters()
             .allInput()
@@ -134,6 +162,12 @@ public final class ParameterizableType implements Reportable {
         return Objects.hash(this.type, this.parameters);
     }
 
+    /**
+     * Returns a fully qualified string representation of this type. This includes the package name of the
+     * type, and the fully qualified names of all parameters.
+     *
+     * @return a fully qualified string representation of this type
+     */
     public String toQualifiedString() {
         String parameters = this.parameters.stream()
                 .map(ParameterizableType::toQualifiedString)
@@ -155,6 +189,14 @@ public final class ParameterizableType implements Reportable {
         collector.property("parameters").write(this.parameters.toArray(Reportable[]::new));
     }
 
+    /**
+     * A builder for {@link ParameterizableType}s. This builder allows for the creation of {@link ParameterizableType}s
+     * with parameters.
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static class Builder {
 
         private final Class<?> type;
@@ -184,10 +226,24 @@ public final class ParameterizableType implements Reportable {
             return this;
         }
 
+        /**
+         * Sets the parameters of this type, overriding all existing parameters. The number of parameters must
+         * match the number of type parameters of the type. If the type has no type parameters, the given
+         * parameters must be empty.
+         *
+         * @param parameters the new parameters
+         * @return Self, for chaining
+         * @throws IllegalArgumentException if the number of parameters does not match the number of type parameters
+         */
         public Builder parameters(ParameterizableType... parameters) {
             return this.parameters(List.of(parameters));
         }
 
+        /**
+         * Builds a new {@link ParameterizableType} from the configured values.
+         *
+         * @return a new {@link ParameterizableType} from the configured values
+         */
         public ParameterizableType build() {
             return new ParameterizableType(this.type, this.parameters);
         }
