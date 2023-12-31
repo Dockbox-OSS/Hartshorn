@@ -41,7 +41,7 @@ import java.util.function.Supplier;
  * <pre>{@code
  * @interface MetaAnnotation {
  *    String name();
- * ]
+ * }
  *
  * @Extends(MetaAnnotation.class)
  * @MetaAnnotation(name = "meta")
