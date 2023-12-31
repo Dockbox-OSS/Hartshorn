@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class WildcardTypeMethodsIntrospector implements TypeMethodsIntrospector<Object> {
+
     @Override
     public Option<MethodView<Object, ?>> named(String name, Collection<Class<?>> parameterTypes) {
         return Option.empty();

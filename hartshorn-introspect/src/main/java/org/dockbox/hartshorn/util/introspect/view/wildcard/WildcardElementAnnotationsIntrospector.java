@@ -23,7 +23,16 @@ import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.Set;
 
+/**
+ * An {@link ElementAnnotationsIntrospector} that does not provide access to any annotations. This
+ * introspector is commonly used for wildcard types.
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class WildcardElementAnnotationsIntrospector implements ElementAnnotationsIntrospector {
+
     @Override
     public Set<Annotation> all() {
         return Collections.emptySet();

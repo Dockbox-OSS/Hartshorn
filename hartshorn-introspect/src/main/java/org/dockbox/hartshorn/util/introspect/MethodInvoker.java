@@ -35,5 +35,14 @@ import org.dockbox.hartshorn.util.option.Option;
 @FunctionalInterface
 public interface MethodInvoker<T, P> {
 
+    /**
+     * Invokes the provided method on the provided instance, with the provided arguments.
+     *
+     * @param method the method to invoke
+     * @param instance the instance on which to invoke the method
+     * @param args the arguments to pass to the method
+     * @return the result of the method invocation
+     * @throws Throwable if the method invocation fails
+     */
     Option<T> invoke(MethodView<P, T> method, P instance, Object[] args) throws Throwable;
 }

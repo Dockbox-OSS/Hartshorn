@@ -47,7 +47,6 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeConstructorsI
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
-import org.dockbox.hartshorn.util.introspect.view.ModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -389,13 +388,13 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     }
 
     @Override
-    public Option<TypeView<?>> elementType() throws IllegalArgumentException {
+    public Option<TypeView<?>> elementType() {
         if (this.elementType == null) {
             if (this.isArray()) {
                 this.elementType = Option.of(this.introspector.introspect(this.type().getComponentType()));
             }
             else {
-                throw new IllegalArgumentException("The introspected type must be an array to look up its element type");
+                this.elementType = Option.empty();
             }
         }
         return this.elementType;
@@ -440,8 +439,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
         }
         // Do not use .cast here, getOrDefault causes boxing so we get e.g. Integer instead of int. Explicit cast
         // unboxes it correctly, but .cast will yield a ClassCastException.
-        if (this.isInstance(object)) //noinspection unchecked
-        {
+        if (this.isInstance(object)) {
+            //noinspection unchecked
             return (T) object;
         }
         else {
