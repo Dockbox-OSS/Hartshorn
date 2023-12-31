@@ -29,6 +29,8 @@ import java.util.Set;
  * @see ResourceLookup
  *
  * @since 0.4.7
+ *
+ * @author Guus Lieben
  */
 public interface ResourceLookupStrategy {
 

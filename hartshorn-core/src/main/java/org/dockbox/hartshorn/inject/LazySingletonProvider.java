@@ -21,6 +21,18 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A provider that always returns the same instance, but does not initialize it until it is
+ * requested. While the instance is available, this provider is not type-aware, as the instance
+ * may be {@code null}, deviate from the binding key, or should not be initialized until it is
+ * actually requested.
+ *
+ * @param <T> the type of the instance
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class LazySingletonProvider<T> implements NonTypeAwareProvider<T> {
 
     private final CheckedSupplier<ObjectContainer<T>> supplier;

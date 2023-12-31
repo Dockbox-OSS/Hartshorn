@@ -19,6 +19,17 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A provider that always returns the same instance. While the instance is available, this
+ * provider is not type-aware, as the instance may be {@code null}, or deviate from the
+ * binding key.
+ *
+ * @param <T> the type of the instance
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class SingletonProvider<T> implements NonTypeAwareProvider<T> {
 
     private final ObjectContainer<T> container;
@@ -34,6 +45,6 @@ public class SingletonProvider<T> implements NonTypeAwareProvider<T> {
 
     @Override
     public String toString() {
-        return "Singleton: " + container;
+        return "Singleton: " + this.container;
     }
 }
