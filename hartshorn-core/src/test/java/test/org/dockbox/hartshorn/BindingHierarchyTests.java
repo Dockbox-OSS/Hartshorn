@@ -72,7 +72,13 @@ public class BindingHierarchyTests {
         hierarchy.add(1, new ContextDrivenProvider<>(ComponentKey.of(ImplementationB.class)));
         hierarchy.add(2, new ContextDrivenProvider<>(ComponentKey.of(ImplementationC.class)));
 
-        Assertions.assertEquals("Hierarchy<Contract> Named{value=sample}, VersionQualifier{value=V2}: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
+        String hierarchyString = hierarchy.toString();
+        Assertions.assertTrue(hierarchyString.startsWith("Hierarchy<Contract> "));
+        Assertions.assertTrue(hierarchyString.endsWith(": 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC"));
+
+        // Check with contains,as order is not guaranteed
+        Assertions.assertTrue(hierarchyString.contains("Named{value=sample}"));
+        Assertions.assertTrue(hierarchyString.contains("VersionQualifier{value=V2}"));
     }
 
     @Test
