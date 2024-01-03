@@ -49,7 +49,8 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) {
 
     /**
      * Creates a new {@link QualifierKey} instance based on the provided annotation. The type of the qualifier is
-     * determined by the type of the annotation. The meta data is determined by the values of the annotation.
+     * determined by the type of the annotation. The meta data is determined by the values of the annotation, excluding
+     * any {@link Deprecated deprecated} members.
      *
      * <p><b>Note</b>: If possible, it is preferred to use {@link #of(Class, Map)} instead, as that method does not
      * require the annotation to be introspected at runtime.
@@ -90,14 +91,15 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) {
     }
 
     private static <T> void checkValidMetadata(Class<T> type, Map<String, Object> meta) {
-        Method[] methods = type.getDeclaredMethods();
-        if (methods.length != meta.size()) {
+        Set<String> methodNames = Arrays.stream(type.getDeclaredMethods())
+                .filter(method -> !method.isAnnotationPresent(Deprecated.class))
+                .map(Method::getName)
+                .collect(Collectors.toSet());
+
+        if (methodNames.size() != meta.size()) {
             throw new IllegalArgumentException("Meta size does not match method count on type '" + type.getSimpleName() + "'");
         }
 
-        Set<String> methodNames = Arrays.stream(methods)
-                .map(Method::getName)
-                .collect(Collectors.toSet());
         for (String metaName : meta.keySet()) {
             if (!methodNames.contains(metaName)) {
                 throw new IllegalArgumentException("Meta key '" + metaName + "' is not a valid method name on type '" + type.getSimpleName() + "'");
