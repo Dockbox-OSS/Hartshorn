@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.components.contextual;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.inject.Named;
 
 @Service
 public class StaticComponentService {
@@ -27,17 +28,20 @@ public class StaticComponentService {
     public static final String ADMIN = "admin";
     public static final String GUEST = "guest";
 
-    @Binds(value = USER, type = BindingType.COLLECTION, priority = 12)
+    @Named(USER)
+    @Binds(type = BindingType.COLLECTION, priority = 12)
     public StaticComponent userComponent() {
         return new StaticComponent(USER);
     }
 
-    @Binds(value = ADMIN, type = BindingType.COLLECTION)
+    @Named(ADMIN)
+    @Binds(type = BindingType.COLLECTION)
     public StaticComponent adminComponent() {
         return new StaticComponent(ADMIN);
     }
 
-    @Binds(value = GUEST, type = BindingType.COLLECTION)
+    @Named(GUEST)
+    @Binds(type = BindingType.COLLECTION)
     public StaticComponent guestComponent() {
         return new StaticComponent(GUEST);
     }

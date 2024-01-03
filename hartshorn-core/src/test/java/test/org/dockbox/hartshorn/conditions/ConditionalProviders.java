@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.condition.RequiresProperty;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.inject.Named;
 
 @Service
 public class ConditionalProviders {
@@ -28,7 +29,8 @@ public class ConditionalProviders {
      * Passes as long as {@code java.lang.String} is on the classpath. As this is
      * part of the standard library, it should always be available.
      */
-    @Binds("a")
+    @Binds
+    @Named("a")
     @RequiresClass("java.lang.String")
     public String a() {
         return "a";
@@ -38,7 +40,8 @@ public class ConditionalProviders {
      * Fails when {@code java.gnal.String} is not on the classpath. As this is
      * an intentional typo, it should never be available.
      */
-    @Binds("b")
+    @Binds
+    @Named("b")
     @RequiresClass("java.gnal.String")
     public String b() {
         return "b";
@@ -48,7 +51,8 @@ public class ConditionalProviders {
      * Passes as long as {@code property.c} is present as a property, no matter
      * what its value is.
      */
-    @Binds("c")
+    @Binds
+    @Named("c")
     @RequiresProperty(name = "property.c")
     public String c() {
         return "c";
@@ -59,7 +63,8 @@ public class ConditionalProviders {
      * value is equal to {@code d}. This is handled by {@link ConditionTests},
      * so the property is <b>present</b>.
      */
-    @Binds("d")
+    @Binds
+    @Named("d")
     @RequiresProperty(name = "property.d", withValue = "d")
     public String d() {
         return "d";
@@ -70,7 +75,8 @@ public class ConditionalProviders {
      * value is equal to {@code e}. This is handled by {@link ConditionTests},
      * so the property is <b>absent</b>.
      */
-    @Binds("e")
+    @Binds
+    @Named("e")
     @RequiresProperty(name = "property.e", withValue = "e")
     public String e() {
         return "e";
@@ -80,7 +86,8 @@ public class ConditionalProviders {
      * Passes if there is no property named {@code property.l}. This is handled
      * by {@link ConditionTests}, so the property is <b>absent</b>.
      */
-    @Binds("f")
+    @Binds
+    @Named("f")
     @RequiresProperty(name = "property.f", matchIfMissing = true)
     public String f() {
         return "f";
