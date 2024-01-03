@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,11 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import jakarta.inject.Inject;
-
 public interface TypeConstructorsIntrospector<T> {
 
     Option<ConstructorView<T>> defaultConstructor();
 
     List<ConstructorView<T>> annotatedWith(Class<? extends Annotation> annotation);
-
-    default List<ConstructorView<T>> injectable() {
-        return this.annotatedWith(Inject.class);
-    }
 
     default Option<ConstructorView<T>> withParameters(Class<?>... parameters) {
         return this.withParameters(List.of(parameters));

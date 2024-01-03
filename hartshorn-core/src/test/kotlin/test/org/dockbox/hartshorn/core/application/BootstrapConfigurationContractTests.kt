@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package test.org.dockbox.hartshorn.core.application
 
 import org.dockbox.hartshorn.application.*
@@ -25,6 +24,7 @@ import org.dockbox.hartshorn.application.environment.*
 import org.dockbox.hartshorn.component.*
 import org.dockbox.hartshorn.component.condition.ConditionMatcher
 import org.dockbox.hartshorn.inject.ApplicationDependencyResolver
+import org.dockbox.hartshorn.inject.BindsMethodDependencyResolver
 import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor
 import org.dockbox.hartshorn.inject.DependencyResolver
 import org.dockbox.hartshorn.inject.binding.Binder
@@ -190,7 +190,7 @@ class BootstrapConfigurationContractTests {
 
     @Test
     fun testApplicationDependencyResolverContract() {
-        val instance = ApplicationDependencyResolver.Configurer()
+        val instance = BindsMethodDependencyResolver.Configurer()
 
         assertDeferred(instance) { configurer, deferred: ConditionMatcher? -> configurer.conditionMatcher(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.conditionMatcher(initializer) }

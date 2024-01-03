@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.SortedSet;
-
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedSet;
 
 /**
  * A hierarchical representation of type providers. Each entry is represented by a {@link Entry}
@@ -120,7 +120,7 @@ public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>
 
     /**
      * Gets the {@link ComponentKey} of the current hierarchy, containing a {@link Class}
-     * of type {@code C}, and a potential {@link jakarta.inject.Named} instance.
+     * of type {@code C}, and potential qualifiers.
      *
      * @return The key of the current hierarchy.
      * @see ComponentKey

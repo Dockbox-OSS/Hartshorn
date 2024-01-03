@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,22 @@
 
 package org.dockbox.hartshorn.component.populate;
 
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.inject.Populate;
+import org.dockbox.hartshorn.inject.Populate.Type;
+import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
+import org.dockbox.hartshorn.util.StreamableConfigurer;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.dockbox.hartshorn.inject.Populate;
-import org.dockbox.hartshorn.inject.Populate.Type;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import jakarta.inject.Inject;
 
 /**
  * A {@link ComponentInjectionPointsResolver} that resolves the injection points of a component by
@@ -39,6 +48,12 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  */
 public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectionPointsResolver {
 
+    private final Set<Class<? extends Annotation>> injectAnnotations;
+
+    public MethodsAndFieldsInjectionPointResolver(Set<Class<? extends Annotation>> injectAnnotations) {
+        this.injectAnnotations = injectAnnotations;
+    }
+
     @Override
     public <T> Set<ComponentInjectionPoint<T>> resolve(TypeView<T> type) {
         List<Type> types = type.annotations().get(Populate.class)
@@ -49,14 +64,53 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
         Set<ComponentInjectionPoint<T>> injectionPoints = new HashSet<>();
         if (types.contains(Type.EXECUTABLES)) {
             type.methods().all().stream()
+                    .filter(this::isInjectable)
                     .map(ComponentMethodInjectionPoint::new)
                     .forEach(injectionPoints::add);
         }
         if (types.contains(Type.FIELDS)) {
             type.fields().all().stream()
+                    .filter(this::isInjectable)
                     .map(ComponentFieldInjectionPoint::new)
                     .forEach(injectionPoints::add);
         }
         return injectionPoints;
+    }
+
+    @Override
+    public boolean isInjectable(AnnotatedGenericTypeView<?> declaration) {
+        return declaration.annotations().hasAny(this.injectAnnotations);
+    }
+
+    public static ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> create(Customizer<Configurer> customizer) {
+        return context -> {
+            Configurer configurer = new Configurer();
+            customizer.configure(configurer);
+
+            List<Class<? extends Annotation>> annotationTypes = configurer.annotations.initialize(context);
+            return new MethodsAndFieldsInjectionPointResolver(Set.copyOf(annotationTypes));
+        };
+    }
+
+    public static class Configurer {
+
+        private final LazyStreamableConfigurer<ApplicationEnvironment, Class<? extends Annotation>> annotations = LazyStreamableConfigurer.of(Inject.class);
+
+        @SafeVarargs
+        public final Configurer annotations(Class<? extends Annotation>... annotations) {
+            this.annotations(collection -> collection.addAll(annotations));
+            return this;
+        }
+
+        public Configurer annotations(Set<Class<? extends Annotation>> annotations) {
+            this.annotations(collection -> collection.addAll(annotations));
+            return this;
+        }
+
+        public Configurer annotations(Customizer<StreamableConfigurer<ApplicationEnvironment, Class<? extends Annotation>>> customizer) {
+            this.annotations.customizer(customizer);
+            return this;
+        }
+
     }
 }

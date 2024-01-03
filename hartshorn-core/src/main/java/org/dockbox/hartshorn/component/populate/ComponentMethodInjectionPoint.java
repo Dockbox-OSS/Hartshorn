@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.component.populate;
 
-import java.util.List;
-import java.util.SequencedCollection;
-
 import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+
+import java.util.List;
+import java.util.SequencedCollection;
 
 /**
  * Represents a method of which the parameters can be injected. Most commonly, this is used for
@@ -70,5 +71,10 @@ public class ComponentMethodInjectionPoint<T> implements ComponentInjectionPoint
     @Override
     public String qualifiedName() {
         return this.method.qualifiedName();
+    }
+
+    @Override
+    public AnnotatedGenericTypeView<?> declaration() {
+        return this.method;
     }
 }

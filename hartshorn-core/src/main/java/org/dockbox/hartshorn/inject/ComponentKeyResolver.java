@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.introspect.view;
+package org.dockbox.hartshorn.inject;
 
-public interface ParameterView<T> extends AnnotatedGenericTypeView<T> {
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 
-    boolean isVarArgs();
+public interface ComponentKeyResolver {
 
-    boolean isNamePresent();
+    default ComponentKey<?> resolve(AnnotatedGenericTypeView<?> view) {
+        return this.resolve(view, Scope.DEFAULT_SCOPE);
+    }
 
-    ExecutableElementView<?> declaredBy();
+    ComponentKey<?> resolve(AnnotatedGenericTypeView<?> view, Scope scope);
 }

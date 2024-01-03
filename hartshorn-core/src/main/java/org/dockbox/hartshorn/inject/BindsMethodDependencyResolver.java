@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,9 @@
 
 package org.dockbox.hartshorn.inject;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.Binds;
@@ -34,6 +32,10 @@ import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class BindsMethodDependencyResolver extends AbstractContainerDependencyResolver {
 
@@ -82,13 +84,45 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
         return this.registry.find(strategyContext).map(strategy -> strategy.handle(strategyContext));
     }
 
-    public static ContextualInitializer<ConditionMatcher, DependencyResolver> create(Customizer<BindingStrategyRegistry> customizer) {
+    public static ContextualInitializer<ApplicationContext, DependencyResolver> create(Customizer<Configurer> customizer) {
         return context -> {
-            BindingStrategyRegistry registry = new SimpleBindingStrategyRegistry();
-            registry.register(new MethodInstanceBindingStrategy());
+            Configurer configurer = new Configurer();
+            customizer.configure(configurer);
 
-            customizer.configure(registry);
-            return new BindsMethodDependencyResolver(context.input(), registry);
+            BindingStrategyRegistry registry = new SimpleBindingStrategyRegistry();
+            ApplicationContext applicationContext = context.input();
+
+            ApplicationEnvironment environment = applicationContext.environment();
+            registry.register(new MethodInstanceBindingStrategy(environment));
+
+            configurer.registryCustomizer.configure(registry);
+
+            ConditionMatcher conditionMatcher = configurer.conditionMatcher.initialize(context.transform(applicationContext));
+            DefaultBindingConfigurerContext.compose(context, binder -> {
+                binder.bind(ConditionMatcher.class).singleton(conditionMatcher);
+            });
+
+            return new BindsMethodDependencyResolver(conditionMatcher, registry);
         };
+    }
+
+    public static class Configurer {
+
+        private ContextualInitializer<ApplicationContext, ConditionMatcher> conditionMatcher = context -> new ConditionMatcher(context.input());
+        private Customizer<BindingStrategyRegistry> registryCustomizer = Customizer.useDefaults();
+
+        public Configurer conditionMatcher(ConditionMatcher conditionMatcher) {
+            return this.conditionMatcher(ContextualInitializer.of(conditionMatcher));
+        }
+
+        public Configurer conditionMatcher(ContextualInitializer<ApplicationContext, ConditionMatcher> conditionMatcher) {
+            this.conditionMatcher = conditionMatcher;
+            return this;
+        }
+
+        public Configurer registry(Customizer<BindingStrategyRegistry> customizer) {
+            this.registryCustomizer = customizer;
+            return this;
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-
-import jakarta.inject.Named;
 
 /**
  * A component provider is a class that is capable of providing components. Components are identified using
@@ -54,12 +52,12 @@ public interface ComponentProvider {
      * Returns the component for the given type and name metadata. If {@code named} is null, the given
      * {@link Class} is used to identify the component.
      * @param type The type of the component to return.
-     * @param named The name metadata of the component to return.
+     * @param qualifiers The metadata of the component to return.
      * @param <T> The type of the component to return.
      * @return The component for the given type and name metadata.
      */
-    default <T> T get(Class<T> type, Named named) {
-        ComponentKey<T> key = ComponentKey.builder(type).name(named).build();
+    default <T> T get(Class<T> type, QualifierKey<?>... qualifiers) {
+        ComponentKey<T> key = ComponentKey.builder(type).qualifiers(qualifiers).build();
         return this.get(key);
     }
 

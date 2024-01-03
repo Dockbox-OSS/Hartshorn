@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
@@ -31,6 +26,11 @@ import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.component.ComponentReportingConfiguration.ComponentAttribute;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ComponentReportingConfiguration>, CategorizedDiagnosticsReporter {
 
@@ -68,7 +68,7 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
     @NonNull
     private Reportable[] diagnosticsReporters(Collection<ComponentContainer<?>> containers) {
         return containers.stream()
-                .map(container -> (Reportable) new ComponentContainerReporter(this, container))
+                .map(container -> (Reportable) new ComponentContainerReporter(this, this.applicationContext.environment(), container))
                 .toArray(Reportable[]::new);
     }
 

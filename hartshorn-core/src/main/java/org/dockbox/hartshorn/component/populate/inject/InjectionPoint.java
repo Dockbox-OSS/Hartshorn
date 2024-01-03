@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 
 package org.dockbox.hartshorn.component.populate.inject;
 
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
-import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
@@ -31,9 +30,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 public final class InjectionPoint {
 
     private final TypeView<?> type;
-    private final AnnotatedElementView injectionPoint;
+    private final AnnotatedGenericTypeView<?> injectionPoint;
 
-    public <T extends AnnotatedElementView & GenericTypeView<?>> InjectionPoint(T injectionPoint) {
+    public InjectionPoint(AnnotatedGenericTypeView<?> injectionPoint) {
         this.type = injectionPoint.genericType();
         this.injectionPoint = injectionPoint;
     }
@@ -53,7 +52,7 @@ public final class InjectionPoint {
      *
      * @return the annotated element of the injection point
      */
-    public AnnotatedElementView injectionPoint() {
-        return injectionPoint;
+    public AnnotatedGenericTypeView<?> injectionPoint() {
+        return this.injectionPoint;
     }
 }

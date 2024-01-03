@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Collection;
-
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents a view of a constructor. This view can be used to invoke the constructor and to
@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @author Guus Lieben
  * @since 0.4.13
  */
-public interface ConstructorView<T> extends ExecutableElementView<T> {
+public interface ConstructorView<T> extends ExecutableElementView<T>, AnnotatedGenericTypeView<T> {
 
     /**
      * Returns the constructor represented by this view.

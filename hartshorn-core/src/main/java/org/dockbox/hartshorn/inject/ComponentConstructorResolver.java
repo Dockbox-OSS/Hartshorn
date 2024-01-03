@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 
 package org.dockbox.hartshorn.inject;
 
-import java.util.List;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.inject.NoSuchProviderException.ProviderType;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
 
 public final class ComponentConstructorResolver {
 
@@ -92,7 +93,10 @@ public final class ComponentConstructorResolver {
     }
 
     private <C> List<ConstructorView<C>> findAvailableConstructors(TypeView<C> type) {
-        List<ConstructorView<C>> constructors = type.constructors().injectable();
+        ComponentInjectionPointsResolver injectionPointsResolver = this.applicationContext.environment().injectionPointsResolver();
+        List<ConstructorView<C>> constructors = type.constructors().all().stream()
+                .filter(injectionPointsResolver::isInjectable)
+                .toList();
         if (constructors.isEmpty()) {
             Option<ConstructorView<C>> defaultConstructor = type.constructors().defaultConstructor();
             if (defaultConstructor.present()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateReporterConfiguration;
 import org.dockbox.hartshorn.reporting.application.ApplicationDiagnosticsReporter;
