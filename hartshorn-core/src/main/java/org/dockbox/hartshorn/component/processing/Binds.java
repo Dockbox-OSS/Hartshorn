@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.component.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.Named;
 import org.dockbox.hartshorn.inject.Qualifier;
 
 import java.lang.annotation.ElementType;
@@ -43,6 +44,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.FIELD })
 public @interface Binds {
+
+    /**
+     * The name of the binding. If not specified, no name will be bound.
+     *
+     * @return the name of the binding
+     *
+     * @deprecated use {@link Named} annotations instead or a custom {@link Qualifier} annotation instead
+     */
+    @Deprecated(since = "0.6.0", forRemoval = true)
     String value() default "";
 
     int priority() default -1;
