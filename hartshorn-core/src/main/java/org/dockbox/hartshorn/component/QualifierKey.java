@@ -80,6 +80,18 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) {
     }
 
     /**
+     * Creates a new {@link QualifierKey} instance based on the provided type. It is expected that the provided
+     * type does not have any attributes.
+     *
+     * @param type The type of the qualifier.
+     * @return The new {@link QualifierKey} instance.
+     * @param <T> The type of the qualifier.
+     */
+    public static <T extends Annotation> QualifierKey<T> of(Class<T> type) {
+        return of(type, Map.of());
+    }
+
+    /**
      * Creates a new {@link QualifierKey} instance based on the provided string. This method is a convenience method
      * when working with {@link Named} qualifiers.
      *
