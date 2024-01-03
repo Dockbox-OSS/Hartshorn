@@ -196,7 +196,20 @@ public interface ApplicationEnvironment extends ContextCarrier, ApplicationLogge
      */
     Properties rawArguments();
 
+    /**
+     * Gets the {@link ComponentKeyResolver} for the current environment. The resolver is responsible for resolving
+     * {@link ComponentKey}s for a given element. This is typically used for resolving {@link ComponentKey}s for binding
+     * declarations and injection points.
+     *
+     * @return The component key resolver
+     */
     ComponentKeyResolver componentKeyResolver();
 
+    /**
+     * Gets the {@link ComponentInjectionPointsResolver} for the current environment. The resolver is responsible for
+     * resolving {@link org.dockbox.hartshorn.component.populate.ComponentInjectionPoint}s for a given type.
+     *
+     * @return The component injection points resolver
+     */
     ComponentInjectionPointsResolver injectionPointsResolver();
 }

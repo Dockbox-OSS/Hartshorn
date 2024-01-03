@@ -272,6 +272,12 @@ public final class ComponentKey<T> implements Reportable {
         return null;
     }
 
+    /**
+     * Returns the qualifier of the component. If the component has no explicit qualifier, an empty qualifier is
+     * returned.
+     *
+     * @return the qualifier of the component
+     */
     public CompositeQualifier qualifier() {
         return this.qualifier;
     }
@@ -310,6 +316,12 @@ public final class ComponentKey<T> implements Reportable {
         return this.strict;
     }
 
+    /**
+     * Returns the strategy that should be used to select a provider for this component. This often selects
+     * a provider based on the priority of the key.
+     *
+     * @return the strategy that should be used to select a provider for this component
+     */
     public ProviderSelectionStrategy strategy() {
         return this.strategy;
     }

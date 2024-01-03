@@ -140,7 +140,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
         String contract = this.contractTypeToString();
         CompositeQualifier qualifier = this.key().qualifier();
         String qualifiers = "";
-        if (qualifier != null && !qualifier.isEmpty()) {
+        if (qualifier != null && !qualifier.qualifiers().isEmpty()) {
             qualifiers = " " + qualifier;
         }
 

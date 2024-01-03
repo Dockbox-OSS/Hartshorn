@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.component;
 
+import org.dockbox.hartshorn.inject.Named;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.StringUtilities;
@@ -25,20 +26,54 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * A {@link CompositeQualifier} is a collection of {@link QualifierKey}s. It is used to qualify a {@link ComponentKey}
+ * with zero or more qualifiers. While multiple {@link QualifierKey}s can be used to qualify a {@link ComponentKey},
+ * only one {@link QualifierKey} of a specific type can be used. For example, a {@link ComponentKey} can be qualified
+ * with one {@link QualifierKey} of type {@link Named}, but not with two or more.
+ *
+ * @see QualifierKey
+ * @see ComponentKey
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class CompositeQualifier implements Reportable {
 
     private final Map<Class<?>, QualifierKey<?>> qualifiers = new HashMap<>();
 
+    /**
+     * Adds the provided qualifier to this {@link CompositeQualifier}. If a qualifier of the same type already exists,
+     * it is replaced by the provided qualifier.
+     *
+     * @param qualifier The qualifier to add.
+     * @return This {@link CompositeQualifier} instance.
+     */
     public CompositeQualifier add(QualifierKey<?> qualifier) {
         this.qualifiers.put(qualifier.type(), qualifier);
         return this;
     }
 
+    /**
+     * Adds the provided qualifiers to this {@link CompositeQualifier}. If a qualifier of the same type already exists,
+     * it is replaced by the provided qualifier.
+     *
+     * @param qualifiers The qualifiers to add.
+     * @return This {@link CompositeQualifier} instance.
+     */
     public CompositeQualifier addAll(QualifierKey<?>... qualifiers) {
         this.addAll(Set.of(qualifiers));
         return this;
     }
 
+    /**
+     * Adds the provided qualifiers to this {@link CompositeQualifier}. If a qualifier of the same type already exists,
+     * it is replaced by the provided qualifier.
+     *
+     * @param qualifiers The qualifiers to add.
+     * @return This {@link CompositeQualifier} instance.
+     */
     public CompositeQualifier addAll(Set<QualifierKey<?>> qualifiers) {
         for (QualifierKey<?> qualifier : qualifiers) {
             this.add(qualifier);
@@ -46,10 +81,22 @@ public class CompositeQualifier implements Reportable {
         return this;
     }
 
+    /**
+     * Adds the qualifiers of the provided {@link CompositeQualifier} to this {@link CompositeQualifier}. If a qualifier
+     * of the same type already exists, it is replaced by the provided qualifier.
+     *
+     * @param qualifier The qualifier to add.
+     */
     public void addAll(CompositeQualifier qualifier) {
         this.addAll(qualifier.qualifiers());
     }
 
+    /**
+     * Returns all qualifiers of this {@link CompositeQualifier}. If no qualifiers are present, an empty set is
+     * returned.
+     *
+     * @return All qualifiers of this {@link CompositeQualifier}.
+     */
     public Set<QualifierKey<?>> qualifiers() {
         return Set.copyOf(this.qualifiers.values());
     }
@@ -79,9 +126,5 @@ public class CompositeQualifier implements Reportable {
     public String toString() {
         String qualifierString = StringUtilities.join(", ", this.qualifiers.values(), QualifierKey::toString);
         return "%s".formatted(qualifierString);
-    }
-
-    public boolean isEmpty() {
-        return this.qualifiers == null || this.qualifiers.isEmpty();
     }
 }

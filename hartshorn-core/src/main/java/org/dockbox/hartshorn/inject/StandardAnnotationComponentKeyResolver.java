@@ -36,6 +36,25 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A {@link ComponentKeyResolver} that resolves the {@link ComponentKey} of a component based on the
+ * presence of annotations on the component type. The key is resolved as follows:
+ * <ul>
+ *     <li>The type of the component is used as the type of the key</li>
+ *     <li>The scope of the key is set to the given scope</li>
+ *     <li>The qualifiers of the key are set to the meta data of {@link Qualifier meta qualifiers} on the component type</li>
+ *     <li>The strictness of the key is set to the value of the {@link Strict} annotation on the component type</li>
+ *     <li>The auto-enabling of the key is set to the value of the {@link Enable} annotation on the component type</li>
+ *     <li>The priority of the key is set to the value of the {@link Priority} annotation on the component type,
+ *     or configured based on the declaring element if applicable</li>
+ *     <li>If the component type is a {@link Collection}, the key is treated as a collector and the element type of the
+ *     collection is used as the type of the key</li>
+ * </ul>
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class StandardAnnotationComponentKeyResolver implements ComponentKeyResolver {
 
     @Override

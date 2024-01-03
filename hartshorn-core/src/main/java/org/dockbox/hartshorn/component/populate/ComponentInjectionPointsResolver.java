@@ -48,5 +48,12 @@ public interface ComponentInjectionPointsResolver {
      */
     <T> Set<ComponentInjectionPoint<T>> resolve(TypeView<T> type);
 
+    /**
+     * Determines if the given declaration is injectable. This method is expected to return {@code
+     * true} if the given declaration is injectable, {@code false} otherwise.
+     *
+     * @param declaration the declaration to check
+     * @return {@code true} if the given declaration is injectable, {@code false} otherwise
+     */
     boolean isInjectable(AnnotatedGenericTypeView<?> declaration);
 }

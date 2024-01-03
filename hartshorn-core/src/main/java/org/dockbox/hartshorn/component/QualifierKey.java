@@ -27,19 +27,64 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A {@link QualifierKey} is a key that can be used to qualify a {@link ComponentKey}. It is a combination of a type
+ * and a set of meta data. The type is used to identify the qualifier, while the meta data is used to provide further
+ * information about the qualifier. For example, a {@link Named} qualifier can be used to identify a component, but
+ * the name of the component is provided as meta data.
+ *
+ * <p>Meta data is always constrained to the type of the qualifier, meaning that the meta data can only contain keys
+ * that are also present as methods on the qualifier type. For example, a {@link Named} qualifier can only contain
+ * the key {@code value}, as that is the only method on the {@link Named} annotation.
+ *
+ * @param type The type of the qualifier.
+ * @param meta The meta data of the qualifier.
+ * @param <T> The type of the qualifier.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) {
 
+    /**
+     * Creates a new {@link QualifierKey} instance based on the provided annotation. The type of the qualifier is
+     * determined by the type of the annotation. The meta data is determined by the values of the annotation.
+     *
+     * <p><b>Note</b>: If possible, it is preferred to use {@link #of(Class, Map)} instead, as that method does not
+     * require the annotation to be introspected at runtime.
+     *
+     * @param annotation The annotation to use as a qualifier.
+     * @return The new {@link QualifierKey} instance.
+     * @param <T> The type of the annotation.
+     */
     public static <T extends Annotation> QualifierKey<T> of(T annotation) {
         Class<T> annotationType = TypeUtils.adjustWildcards(annotation.annotationType(), Class.class);
         Map<String, Object> annotationValues = TypeUtils.getAttributes(annotation);
         return of(annotationType, annotationValues);
     }
 
+    /**
+     * Creates a new {@link QualifierKey} instance based on the provided type and meta data. The type of the qualifier
+     * is determined by the provided type. The meta data is determined by the provided meta data.
+     *
+     * @param type The type of the qualifier.
+     * @param meta The meta data of the qualifier.
+     * @return The new {@link QualifierKey} instance.
+     * @param <T> The type of the qualifier.
+     */
     public static <T extends Annotation> QualifierKey<T> of(Class<T> type, Map<String, Object> meta) {
         checkValidMetadata(type, meta);
         return new QualifierKey<>(type, meta);
     }
 
+    /**
+     * Creates a new {@link QualifierKey} instance based on the provided string. This method is a convenience method
+     * when working with {@link Named} qualifiers.
+     *
+     * @param qualifier The name of the qualifier.
+     * @return The new {@link QualifierKey} instance.
+     */
     public static QualifierKey<Named> of(String qualifier) {
         return of(Named.class, Map.of("value", qualifier));
     }
