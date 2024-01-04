@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package org.dockbox.hartshorn.component;
 
-import java.util.Objects;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.Objects;
 
 /**
  * Simple implementation of a {@link ScopeKey}, to be used for direct implementations of
@@ -99,5 +101,10 @@ public class DirectScopeKey implements ScopeKey {
     @Override
     public int hashCode() {
         return Objects.hash(this.scopeType);
+    }
+
+    @Override
+    public void report(DiagnosticsPropertyCollector collector) {
+        collector.property("type").write(this.scopeType);
     }
 }

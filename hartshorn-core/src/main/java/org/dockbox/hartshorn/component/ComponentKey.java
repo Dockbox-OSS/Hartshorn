@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,19 @@
 
 package org.dockbox.hartshorn.component;
 
-import java.util.Objects;
-
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.inject.Enable;
 import org.dockbox.hartshorn.inject.HighestPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.ProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import jakarta.inject.Named;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A key that can be used to identify a component. This contains required metadata to identify a component, such as
@@ -51,11 +48,11 @@ import jakarta.inject.Named;
  *
  * @author Guus Lieben
  */
-public final class ComponentKey<T> {
+public final class ComponentKey<T> implements Reportable {
 
     private final ProviderSelectionStrategy strategy;
     private final ParameterizableType type;
-    private final String name;
+    private final CompositeQualifier qualifier;
     private final Scope scope;
     private final boolean enable;
     private final Tristate strict;
@@ -63,14 +60,14 @@ public final class ComponentKey<T> {
     private ComponentKey(
             ProviderSelectionStrategy strategy,
             ParameterizableType type,
-            String name,
+            CompositeQualifier qualifier,
             Scope scope,
             boolean enable,
             Tristate strict
     ) {
         this.strategy = strategy;
         this.type = type;
-        this.name = name;
+        this.qualifier = qualifier;
         this.scope = scope;
         this.enable = enable;
         this.strict = strict;
@@ -109,22 +106,6 @@ public final class ComponentKey<T> {
      */
     public static Builder<?> builder(ParameterizableType type) {
         return new Builder<>(type);
-    }
-
-    /**
-     * Creates a new builder for a component key of the given type. If the type is parameterized, the key will
-     * retain its parameterization.
-     *
-     * @param parameter the parameter of the component
-     * @return a new builder
-     * @param <T> the type of the component
-     */
-    public static <T> Builder<T> builder(ParameterView<T> parameter) {
-        Builder<T> builder = builder(parameter.genericType());
-        ElementAnnotationsIntrospector annotations = parameter.annotations();
-        annotations.get(Named.class).peek(builder::name);
-        annotations.get(Enable.class).peek(enable -> builder.enable(enable.value()));
-        return builder;
     }
 
     public static <T> ComponentKey<ComponentCollection<T>> collect(final Class<T> type) {
@@ -198,18 +179,6 @@ public final class ComponentKey<T> {
     }
 
     /**
-     * Creates a new named component key of the given type. If the type is parameterized, the key will retain its
-     * parameterization.
-     *
-     * @param parameter the parameter of the component
-     * @return a new component key
-     * @param <T> the type of the component
-     */
-    public static <T> ComponentKey<T> of(ParameterView<T> parameter) {
-        return ComponentKey.builder(parameter).build();
-    }
-
-    /**
      * Creates a new key builder based on this key. The builder will have the same type, name, scope and enable
      * values as this key. The builder can be used to create a new key with different values.
      *
@@ -241,10 +210,11 @@ public final class ComponentKey<T> {
      * @return the qualified name
      */
     public String qualifiedName(boolean qualifyType) {
-        String nameSuffix = StringUtilities.empty(this.name) ? "" : ":" + this.name;
+        String qualifier = StringUtilities.join(", ", this.qualifier.qualifiers(), QualifierKey::toString);
+        String qualifierSuffix = StringUtilities.empty(qualifier) ? "" : ":" + qualifier;
         String scopeName = this.scope.installableScopeType().name();
         String typeName = qualifyType ? this.type.toQualifiedString() : this.type.toString();
-        return typeName + nameSuffix + " @ " + scopeName;
+        return typeName + qualifierSuffix + " @ " + scopeName;
     }
 
     @Override
@@ -263,13 +233,13 @@ public final class ComponentKey<T> {
         ComponentKey<?> otherComponentKey = (ComponentKey<?>) other;
         return this.enable == otherComponentKey.enable
                 && this.type.equals(otherComponentKey.type)
-                && Objects.equals(this.name, otherComponentKey.name)
+                && Objects.equals(this.qualifier, otherComponentKey.qualifier)
                 && Objects.equals(this.scope, otherComponentKey.scope);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.type, this.name, this.scope, this.enable);
+        return Objects.hash(this.type, this.qualifier, this.scope, this.enable);
     }
 
     /**
@@ -294,9 +264,22 @@ public final class ComponentKey<T> {
      * Returns the name of the component. If the component has no name, {@code null} is returned.
      *
      * @return the name of the component, or {@code null} if the component has no name
+     *
+     * @deprecated explicit names have been replaced with qualifiers. Use {@link #qualifier()} instead.
      */
+    @Deprecated(since = "0.6.0", forRemoval = true)
     public String name() {
-        return this.name;
+        return null;
+    }
+
+    /**
+     * Returns the qualifier of the component. If the component has no explicit qualifier, an empty qualifier is
+     * returned.
+     *
+     * @return the qualifier of the component
+     */
+    public CompositeQualifier qualifier() {
+        return this.qualifier;
     }
 
     /**
@@ -333,8 +316,24 @@ public final class ComponentKey<T> {
         return this.strict;
     }
 
+    /**
+     * Returns the strategy that should be used to select a provider for this component. This often selects
+     * a provider based on the priority of the key.
+     *
+     * @return the strategy that should be used to select a provider for this component
+     */
     public ProviderSelectionStrategy strategy() {
         return this.strategy;
+    }
+
+    @Override
+    public void report(DiagnosticsPropertyCollector collector) {
+        collector.property("type").write(this.type);
+        collector.property("qualifier").write(this.qualifier);
+        if (scope != null) {
+            collector.property("scope").write(this.scope.installableScopeType());
+        }
+        collector.property("enable").write(this.enable);
     }
 
     /**
@@ -353,15 +352,15 @@ public final class ComponentKey<T> {
     public static final class Builder<T> {
 
         private final ParameterizableType type;
+        private final CompositeQualifier qualifier = new CompositeQualifier();
         private ProviderSelectionStrategy strategy = HighestPriorityProviderSelectionStrategy.INSTANCE;
-        private String name;
         private Scope scope = Scope.DEFAULT_SCOPE;
         private boolean enable = true;
         private Tristate strict = Tristate.UNDEFINED;
 
         private Builder(ComponentKey<T> key) {
             this.type = key.type;
-            this.name = key.name;
+            this.qualifier.addAll(key.qualifier);
             this.scope = key.scope;
             this.enable = key.enable;
         }
@@ -384,7 +383,7 @@ public final class ComponentKey<T> {
 
         private <U> Builder<U> copyProperties(Builder<U> builder) {
             return builder
-                    .name(this.name)
+                    .qualifiers(this.qualifier.qualifiers())
                     .scope(this.scope)
                     .enable(this.enable);
         }
@@ -395,14 +394,21 @@ public final class ComponentKey<T> {
         }
 
         public Builder<T> name(String name) {
-            this.name = StringUtilities.nullIfEmpty(name);
+            return this.qualifier(QualifierKey.of(name));
+        }
+
+        public Builder<T> qualifier(QualifierKey<?> qualifier) {
+            this.qualifier.add(qualifier);
             return this;
         }
 
-        public Builder<T> name(@Nullable Named named) {
-            if(named != null) {
-                return this.name(named.value());
-            }
+        public Builder<T> qualifiers(QualifierKey<?>... qualifiers) {
+            this.qualifier.addAll(qualifiers);
+            return this;
+        }
+
+        public Builder<T> qualifiers(Set<QualifierKey<?>> qualifiers) {
+            this.qualifier.addAll(qualifiers);
             return this;
         }
 
@@ -426,42 +432,47 @@ public final class ComponentKey<T> {
                     .parameters(this.type)
                     .build();
             Builder<?> builder = builder(collectionType)
-                    .name(this.name)
+                    .qualifiers(this.qualifier.qualifiers())
                     .scope(this.scope)
                     .enable(this.enable);
             return TypeUtils.adjustWildcards(builder, Builder.class);
         }
 
         public ComponentKey<T> build() {
-            return new ComponentKey<>(this.strategy, this.type, this.name, this.scope, this.enable, this.strict);
+            return new ComponentKey<>(this.strategy, this.type, this.qualifier, this.scope, this.enable, this.strict);
         }
 
         public ComponentKeyView<T> view() {
-            return new ComponentKeyView<>(this.type, this.name);
+            return new ComponentKeyView<>(this.type, this.qualifier);
         }
     }
 
     public static final class ComponentKeyView<T> {
 
         private final ParameterizableType type;
-        private final String name;
+        private final CompositeQualifier qualifier;
 
-        public ComponentKeyView(ParameterizableType type, String name) {
+        public ComponentKeyView(ParameterizableType type, CompositeQualifier qualifier) {
             this.type = type;
-            this.name = name;
+            this.qualifier = qualifier;
         }
 
         private ComponentKeyView(ComponentKey<T> key) {
             this.type = key.type;
-            this.name = key.name;
+            this.qualifier = key.qualifier;
         }
 
         public ParameterizableType type() {
             return this.type;
         }
 
+        @Deprecated(since = "0.6.0", forRemoval = true)
         public String name() {
-            return this.name;
+            return null;
+        }
+
+        public Set<QualifierKey<?>> qualifiers() {
+            return this.qualifier.qualifiers();
         }
 
         @Override
@@ -473,16 +484,20 @@ public final class ComponentKey<T> {
                 return false;
             }
             ComponentKeyView<?> otherKeyView = (ComponentKeyView<?>) other;
-            return Objects.equals(this.type, otherKeyView.type) && Objects.equals(this.name, otherKeyView.name);
+            return Objects.equals(this.type, otherKeyView.type) && Objects.equals(this.qualifier, otherKeyView.qualifier);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(this.type, this.name);
+            return Objects.hash(this.type, this.qualifier);
         }
 
         public boolean matches(ComponentKey<?> componentKey) {
-            return this.type.equals(componentKey.type) && Objects.equals(this.name, componentKey.name);
+            return this.type.equals(componentKey.type) && Objects.equals(this.qualifier, componentKey.qualifier);
+        }
+
+        public boolean matches(ComponentKeyView<?> componentKeyView) {
+            return this.type.equals(componentKeyView.type) && Objects.equals(this.qualifier, componentKeyView.qualifier);
         }
     }
 

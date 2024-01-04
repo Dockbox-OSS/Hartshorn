@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.component.populate;
 
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentPopulateException;
 import org.dockbox.hartshorn.component.ComponentPopulator;
@@ -32,6 +29,9 @@ import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * A {@link ComponentPopulator} that populates components using a set of {@link ComponentPopulationStrategy}s. The
@@ -52,16 +52,13 @@ public class StrategyComponentPopulator implements ComponentPopulator, ContextCa
 
     private final List<ComponentPopulationStrategy> strategies;
     private final ApplicationContext applicationContext;
-    private final ComponentInjectionPointsResolver injectionPointsResolver;
 
     public StrategyComponentPopulator(
             ApplicationContext applicationContext,
-            List<ComponentPopulationStrategy> strategies,
-            ComponentInjectionPointsResolver injectionPointsResolver
+            List<ComponentPopulationStrategy> strategies
     ) {
         this.applicationContext = applicationContext;
         this.strategies = strategies;
-        this.injectionPointsResolver = injectionPointsResolver;
     }
 
     @Override
@@ -92,7 +89,10 @@ public class StrategyComponentPopulator implements ComponentPopulator, ContextCa
 
     protected <T> void populate(PopulateComponentContext<T> context) {
         TypeView<T> type = context.type();
-        Set<ComponentInjectionPoint<T>> injectionPoints = this.injectionPointsResolver.resolve(type);
+        Set<ComponentInjectionPoint<T>> injectionPoints = this.applicationContext()
+                .environment()
+                .injectionPointsResolver()
+                .resolve(type);
 
         for(ComponentPopulationStrategy strategy : this.strategies) {
             for(ComponentInjectionPoint<T> injectionPoint : injectionPoints) {
@@ -116,8 +116,7 @@ public class StrategyComponentPopulator implements ComponentPopulator, ContextCa
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
             List<ComponentPopulationStrategy> populationStrategies = configurer.strategies.initialize(context);
-            ComponentInjectionPointsResolver resolver = configurer.injectionPointsResolver.initialize(context);
-            return new StrategyComponentPopulator(context.input(), List.copyOf(populationStrategies), resolver);
+            return new StrategyComponentPopulator(context.input(), List.copyOf(populationStrategies));
         };
     }
 
@@ -126,7 +125,6 @@ public class StrategyComponentPopulator implements ComponentPopulator, ContextCa
         private final LazyStreamableConfigurer<ApplicationContext, ComponentPopulationStrategy> strategies = LazyStreamableConfigurer.of(collection -> {
             collection.add(InjectPopulationStrategy.create(Customizer.useDefaults()));
         });
-        private ContextualInitializer<ApplicationContext, ComponentInjectionPointsResolver> injectionPointsResolver = ContextualInitializer.of(MethodsAndFieldsInjectionPointResolver::new);
 
         public Configurer strategy(ComponentPopulationStrategy strategy) {
             this.strategies.customizer(collection -> collection.add(strategy));
@@ -145,16 +143,6 @@ public class StrategyComponentPopulator implements ComponentPopulator, ContextCa
 
         public Configurer strategies(Customizer<StreamableConfigurer<ApplicationContext, ComponentPopulationStrategy>> customizer) {
             this.strategies.customizer(customizer);
-            return this;
-        }
-
-        public Configurer injectionPointsResolver(ComponentInjectionPointsResolver injectionPointsResolver) {
-            this.injectionPointsResolver = ContextualInitializer.of(() -> injectionPointsResolver);
-            return this;
-        }
-
-        public Configurer injectionPointsResolver(ContextualInitializer<ApplicationContext, ComponentInjectionPointsResolver> injectionPointsResolver) {
-            this.injectionPointsResolver = injectionPointsResolver;
             return this;
         }
     }

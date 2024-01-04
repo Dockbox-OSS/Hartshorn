@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
 import org.dockbox.hartshorn.application.StandardApplicationContextConstructor.Configurer;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.populate.StrategyComponentPopulator;
@@ -178,8 +179,9 @@ public class HartshornLifecycleExtension implements
             return false;
         }
 
-        MethodView<?, ?> method = this.applicationContext.environment().introspector().introspect(testMethod.get());
-        return method.annotations().has(Inject.class);
+        ApplicationEnvironment environment = this.applicationContext.environment();
+        MethodView<?, ?> method = environment.introspector().introspect(testMethod.get());
+        return this.applicationContext.environment().injectionPointsResolver().isInjectable(method);
     }
 
     @Override

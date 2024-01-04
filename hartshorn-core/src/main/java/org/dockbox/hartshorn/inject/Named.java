@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,30 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component.populate.inject;
+package org.dockbox.hartshorn.inject;
+
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * A rule that determines whether an {@link InjectionPoint} should be enabled.
+ * Standard string qualifier annotation.
  *
  * @since 0.6.0
  *
+ * @see Qualifier
+ *
  * @author Guus Lieben
  */
-@FunctionalInterface
-public interface EnableInjectionPointRule {
-
-    /**
-     * Indicates whether the given {@link InjectionPoint} should be enabled.
-     *
-     * @param injectionPoint the injection point to check
-     * @return {@code true} if the injection point should be enabled, {@code false} otherwise
-     */
-    boolean shouldEnable(InjectionPoint injectionPoint);
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target({
+        ElementType.METHOD,
+        ElementType.FIELD,
+        ElementType.PARAMETER,
+})
+@Qualifier
+public @interface Named {
+    String value();
 }

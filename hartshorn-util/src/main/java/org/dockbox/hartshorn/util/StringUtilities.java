@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -142,5 +144,16 @@ public class StringUtilities {
             }
         }
         return sb.toString();
+    }
+
+    public static <T> String join(String delimiter, Collection<T> elements, Function<T, String> toStringFunction) {
+        StringBuilder builder = new StringBuilder();
+        int i = 0;
+        for (T element : elements) {
+            if (i > 0) builder.append(delimiter);
+            builder.append(toStringFunction.apply(element));
+            i++;
+        }
+        return builder.toString();
     }
 }

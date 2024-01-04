@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.CompositeQualifier;
+import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.inject.TypeAwareProvider;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,13 +34,6 @@ import java.util.NavigableSet;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.inject.Provider;
-import org.dockbox.hartshorn.inject.TypeAwareProvider;
-import org.dockbox.hartshorn.util.option.Option;
 
 public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T> {
 
@@ -137,10 +138,10 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     @Override
     public String toString() {
         String contract = this.contractTypeToString();
-        String keyName = this.key().name();
-        String name = "";
-        if (keyName != null) {
-            name = "::" + keyName;
+        CompositeQualifier qualifier = this.key().qualifier();
+        String qualifiers = "";
+        if (qualifier != null && !qualifier.qualifiers().isEmpty()) {
+            qualifiers = " " + qualifier;
         }
 
         // The priorities are stored high to low, however we want to display them as low-to-high.
@@ -158,7 +159,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
                 })
                 .collect(Collectors.joining(" -> "));
 
-        return "Hierarchy[%s%s]: %s".formatted(contract, name, hierarchy);
+        return "Hierarchy<%s>%s: %s".formatted(contract, qualifiers, hierarchy);
     }
 
     protected String contractTypeToString() {

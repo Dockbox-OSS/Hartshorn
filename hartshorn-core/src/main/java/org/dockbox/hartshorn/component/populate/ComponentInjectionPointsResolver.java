@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 
 package org.dockbox.hartshorn.component.populate;
 
-import java.util.Set;
-
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.Set;
 
 /**
  * A resolver that determines the injection points of a component. This is commonly used by
@@ -46,4 +47,13 @@ public interface ComponentInjectionPointsResolver {
      * @param <T> the type of the component
      */
     <T> Set<ComponentInjectionPoint<T>> resolve(TypeView<T> type);
+
+    /**
+     * Determines if the given declaration is injectable. This method is expected to return {@code
+     * true} if the given declaration is injectable, {@code false} otherwise.
+     *
+     * @param declaration the declaration to check
+     * @return {@code true} if the given declaration is injectable, {@code false} otherwise
+     */
+    boolean isInjectable(AnnotatedGenericTypeView<?> declaration);
 }

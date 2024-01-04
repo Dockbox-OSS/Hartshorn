@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,14 +38,15 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
     private final ApplicationContext applicationContext;
     private final Scope scope;
 
-    public IntrospectionViewContextAdapter(ApplicationContext applicationContext, Scope scope) {
-        this.applicationContext = applicationContext;
+    public IntrospectionViewContextAdapter(IntrospectionViewContextAdapter adapter, Scope scope) {
+        this.applicationContext = adapter.applicationContext;
         this.scope = scope;
     }
 
     @Inject
     public IntrospectionViewContextAdapter(ApplicationContext applicationContext) {
-        this(applicationContext, applicationContext);
+        this.applicationContext = applicationContext;
+        this.scope = applicationContext;
     }
 
     @Override
@@ -55,7 +56,7 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
 
     @Override
     public ViewContextAdapter scope(Scope scope) {
-        return new IntrospectionViewContextAdapter(this.applicationContext, scope);
+        return new IntrospectionViewContextAdapter(this, scope);
     }
 
     @Override
@@ -66,7 +67,9 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
 
     @Override
     public Object[] loadParameters(ExecutableElementView<?> element) {
-        ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader(this.applicationContext);
+        ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader(
+                this.applicationContext
+        );
         ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.applicationContext(), this.scope);
         this.copyTo(loaderContext);
         return parameterLoader.loadArguments(loaderContext).toArray();

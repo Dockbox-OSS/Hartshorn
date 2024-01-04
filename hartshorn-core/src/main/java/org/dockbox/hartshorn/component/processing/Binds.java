@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,24 @@
 
 package org.dockbox.hartshorn.component.processing;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.Named;
+import org.dockbox.hartshorn.inject.Priority;
+import org.dockbox.hartshorn.inject.Qualifier;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentKey;
-
 /**
  * Annotation used to indicate that a method will act as a binding provider. The return type of the
- * method, combined with the {@link #value()} form the {@link ComponentKey} of
+ * method, combined with optional {@link Qualifier} annotations form the {@link ComponentKey} of
  * the binding.
  *
  * <p>Provider methods can have parameters, which will be injected through the active
- * {@link ApplicationContext}. This includes support for {@link jakarta.inject.Named} parameters, and
+ * {@link ApplicationContext}. This includes support for complex {@link ComponentKey}s, and
  * {@link org.dockbox.hartshorn.context.Context} types.
  *
  * <p>If {@link jakarta.inject.Singleton} is used on the provider method, the result of the provider
@@ -42,8 +45,26 @@ import org.dockbox.hartshorn.component.ComponentKey;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.FIELD })
 public @interface Binds {
+
+    /**
+     * The name of the binding. If not specified, no name will be bound.
+     *
+     * @return the name of the binding
+     *
+     * @deprecated use the {@link Named} annotation or a custom {@link Qualifier} annotation instead
+     */
+    @Deprecated(since = "0.6.0", forRemoval = true)
     String value() default "";
 
+    /**
+     * The priority of the binding. If not specified, the default priority of {@code -1} will be used.
+     * The higher the priority, the higher the chance that the binding will be selected.
+     *
+     * @return the priority of the binding
+     *
+     * @deprecated use the {@link Priority} annotation instead
+     */
+    @Deprecated(since = "0.6.0", forRemoval = true)
     int priority() default -1;
 
     boolean lazy() default false;

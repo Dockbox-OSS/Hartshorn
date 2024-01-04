@@ -14,18 +14,7 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.components;
+package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.inject.Named;
-
-@Service
-public class SampleProviders {
-
-    @Binds
-    @Named("meta")
-    public SampleInterface sampleInterface() {
-        return new SampleMetaAnnotatedImplementation();
-    }
+public interface AnnotatedGenericTypeView<T> extends AnnotatedElementView, GenericTypeView<T> {
 }

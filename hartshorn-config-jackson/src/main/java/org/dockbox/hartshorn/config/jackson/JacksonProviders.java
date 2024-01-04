@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.inject.Named;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
@@ -38,31 +39,36 @@ public class JacksonProviders {
 
     private static final int DATA_MAPPER_PHASE = ProcessingPriority.HIGH_PRECEDENCE - 64;
 
-    @Binds(value = "properties", phase = DATA_MAPPER_PHASE)
+    @Named("properties")
+    @Binds(phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper")
     public JacksonDataMapper properties() {
         return new JavaPropsDataMapper();
     }
 
-    @Binds(value = "json", phase = DATA_MAPPER_PHASE)
+    @Named("json")
+    @Binds(phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.databind.json.JsonMapper")
     public JacksonDataMapper json() {
         return new JsonDataMapper();
     }
 
-    @Binds(value = "toml", phase = DATA_MAPPER_PHASE)
+    @Named("toml")
+    @Binds(phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.dataformat.toml.TomlMapper")
     public JacksonDataMapper toml() {
         return new TomlDataMapper();
     }
 
-    @Binds(value = "xml", phase = DATA_MAPPER_PHASE)
+    @Named("xml")
+    @Binds(phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.dataformat.xml.XmlMapper")
     public JacksonDataMapper xml() {
         return new XmlDataMapper();
     }
 
-    @Binds(value = "yml", phase = DATA_MAPPER_PHASE)
+    @Named("yml")
+    @Binds(phase = DATA_MAPPER_PHASE)
     @RequiresClass("com.fasterxml.jackson.dataformat.yaml.YAMLMapper")
     public JacksonDataMapper yml() {
         return new YamlDataMapper();

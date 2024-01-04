@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,6 @@
 
 package org.dockbox.hartshorn.application.environment;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.LoggingExceptionHandler;
@@ -38,9 +28,13 @@ import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironm
 import org.dockbox.hartshorn.application.lifecycle.Observer;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
+import org.dockbox.hartshorn.component.populate.MethodsAndFieldsInjectionPointResolver;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.discovery.DiscoveryService;
 import org.dockbox.hartshorn.discovery.ServiceDiscoveryException;
+import org.dockbox.hartshorn.inject.ComponentKeyResolver;
+import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
 import org.dockbox.hartshorn.logging.ApplicationLogger;
 import org.dockbox.hartshorn.logging.AutoSwitchingApplicationLogger;
 import org.dockbox.hartshorn.logging.LogExclude;
@@ -48,6 +42,7 @@ import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.Initializer;
 import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -60,6 +55,16 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.inject.Singleton;
 
@@ -76,6 +81,9 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     private final ExceptionHandler exceptionHandler;
     private final AnnotationLookup annotationLookup;
     private final ClasspathResourceLocator resourceLocator;
+
+    private final ComponentInjectionPointsResolver injectionPointsResolver;
+    private final ComponentKeyResolver componentKeyResolver;
 
     private final boolean isBuildEnvironment;
     private final boolean isBatchMode;
@@ -97,6 +105,8 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         this.fileSystemProvider = this.configure(environmentInitializerContext, configurer.applicationFSProvider);
         this.argumentParser = this.configure(environmentInitializerContext, configurer.applicationArgumentParser);
         this.resourceLocator = this.configure(environmentInitializerContext, configurer.classpathResourceLocator);
+        this.injectionPointsResolver = this.configure(environmentInitializerContext, configurer.injectionPointsResolver);
+        this.componentKeyResolver = this.configure(environmentInitializerContext, configurer.componentKeyResolver);
 
         this.arguments = this.argumentParser.parse(context.input().arguments());
 
@@ -139,6 +149,16 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     @Override
     public Properties rawArguments() {
         return this.arguments;
+    }
+
+    @Override
+    public ComponentKeyResolver componentKeyResolver() {
+        return this.componentKeyResolver;
+    }
+
+    @Override
+    public ComponentInjectionPointsResolver injectionPointsResolver() {
+        return this.injectionPointsResolver;
     }
 
     private <T> T configure(T instance) {
@@ -379,6 +399,8 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup = ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext = SimpleApplicationContext.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment = environment -> BuildEnvironmentPredicate.isBuildEnvironment();
+        private ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver = MethodsAndFieldsInjectionPointResolver.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver = context -> new StandardAnnotationComponentKeyResolver();
 
         /**
          * Enables or disables the banner. If the banner is enabled, it will be printed to the console when the
@@ -726,6 +748,28 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          */
         public Configurer isBuildEnvironment(boolean isBuildEnvironment) {
             return this.isBuildEnvironment(ContextualInitializer.of(isBuildEnvironment));
+        }
+
+        public Configurer injectionPointsResolver(ComponentInjectionPointsResolver injectionPointsResolver) {
+            return this.injectionPointsResolver(ContextualInitializer.of(() -> injectionPointsResolver));
+        }
+
+        public Configurer injectionPointsResolver(ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver) {
+            this.injectionPointsResolver = injectionPointsResolver;
+            return this;
+        }
+
+        public Configurer componentKeyResolver(ComponentKeyResolver componentKeyResolver) {
+            return this.componentKeyResolver(ContextualInitializer.of(componentKeyResolver));
+        }
+
+        public Configurer componentKeyResolver(Initializer<ComponentKeyResolver> componentKeyResolver) {
+            return this.componentKeyResolver(ContextualInitializer.of(componentKeyResolver));
+        }
+
+        public Configurer componentKeyResolver(ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver) {
+            this.componentKeyResolver = componentKeyResolver;
+            return this;
         }
     }
 }

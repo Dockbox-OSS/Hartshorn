@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.component.populate.inject;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
@@ -26,6 +23,7 @@ import org.dockbox.hartshorn.component.populate.AbstractComponentPopulationStrat
 import org.dockbox.hartshorn.component.populate.ComponentInjectionPoint;
 import org.dockbox.hartshorn.component.populate.ComponentPopulationStrategy;
 import org.dockbox.hartshorn.component.populate.PopulateComponentContext;
+import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.Lazy;
@@ -33,15 +31,16 @@ import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 
+import java.util.Set;
+
 import jakarta.inject.Inject;
 
 /**
  * A {@link ComponentPopulationStrategy} which populates components with other components. This provides basic support for
  * {@link Inject} annotated fields, or any other annotation which is configured to be used for injection.
  *
- * <p>Injected components will be resolved by their {@link ComponentKey}, which is determined by the type of the injection point.
- * Additional metadata can be provided to configure the {@link ComponentKey}. The exact way in which this metadata is resolved is
- * determined by the configured {@link InjectionPointNameResolver} and {@link EnableInjectionPointRule} implementations.
+ * <p>Injected components will be resolved by their {@link ComponentKey}, which is determined by the provided {@link
+ * ComponentKeyResolver}.
  *
  * <p>By default, all components are resolved through the {@link ApplicationContext}. Additional {@link InjectParameterResolver}
  * implementations can be registered to provide custom resolution logic for specific injection points. This is primarily useful
@@ -64,8 +63,6 @@ import jakarta.inject.Inject;
  *
  * @see Inject
  * @see ComponentKey
- * @see InjectionPointNameResolver
- * @see EnableInjectionPointRule
  * @see InjectParameterResolver
  *
  * @since 0.6.0
@@ -74,36 +71,29 @@ import jakarta.inject.Inject;
  */
 public class InjectPopulationStrategy extends AbstractComponentPopulationStrategy {
 
-    private final Set<Class<? extends Annotation>> injectAnnotations;
-    private final ComponentKeyResolver componentKeyResolver;
     private final Lazy<ConversionService> conversionService;
     private final Set<InjectParameterResolver> parameterResolvers;
 
     protected InjectPopulationStrategy(
             ApplicationContext applicationContext,
-            Set<Class<? extends Annotation>> injectAnnotations,
-            Set<InjectionPointNameResolver> nameResolvers,
-            Set<EnableInjectionPointRule> enableComponentRules,
             Set<RequireInjectionPointRule> requiresComponentRules,
             Set<InjectParameterResolver> parameterResolvers) {
         super(applicationContext, requiresComponentRules);
-        this.injectAnnotations = injectAnnotations;
         this.parameterResolvers = parameterResolvers;
-        this.componentKeyResolver = new ComponentKeyResolver(
-                nameResolvers,
-                enableComponentRules
-        );
         this.conversionService = Lazy.of(applicationContext, ConversionService.class);
     }
 
     @Override
     protected boolean isApplicable(ComponentInjectionPoint<?> injectionPoint) {
-        return injectionPoint.annotations().hasAny(this.injectAnnotations);
+        return this.applicationContext()
+                .environment()
+                .injectionPointsResolver()
+                .isInjectable(injectionPoint.declaration());
     }
 
     @Override
     protected Object resolveInjectedObject(InjectionPoint injectionPoint, PopulateComponentContext<?> context) throws ComponentResolutionException {
-        for(InjectParameterResolver resolver : parameterResolvers) {
+        for(InjectParameterResolver resolver : this.parameterResolvers) {
             if (resolver.accepts(injectionPoint)) {
                 Object resolved = resolver.resolve(injectionPoint, context);
                 // Parameter resolvers are expected to provide compatible instances, or null if they cannot resolve the injection point.
@@ -119,7 +109,7 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
             }
         }
 
-        ComponentKey<?> componentKey = componentKeyResolver.buildComponentKey(injectionPoint);
+        ComponentKey<?> componentKey = this.applicationContext().environment().componentKeyResolver().resolve(injectionPoint.injectionPoint());
         Object component = this.applicationContext().get(componentKey);
 
         // Ensure types are compatible, or a default value is provided if it is available. This primarily
@@ -133,9 +123,6 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
             customizer.configure(configurer);
             return new InjectPopulationStrategy(
                     context.input(),
-                    Set.copyOf(configurer.annotations.initialize(context)),
-                    Set.copyOf(configurer.nameResolvers.initialize(context)),
-                    Set.copyOf(configurer.enableComponentRules.initialize(context)),
                     Set.copyOf(configurer.requiresComponentRules.initialize(context)),
                     Set.copyOf(configurer.parameterResolvers.initialize(context))
             );
@@ -144,57 +131,8 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
 
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<ApplicationContext, Class<? extends Annotation>> annotations = LazyStreamableConfigurer.of(Inject.class);
-        private final LazyStreamableConfigurer<ApplicationContext, InjectionPointNameResolver> nameResolvers = LazyStreamableConfigurer.of(new AnnotatedInjectionPointNameResolver());
-        private final LazyStreamableConfigurer<ApplicationContext, EnableInjectionPointRule> enableComponentRules = LazyStreamableConfigurer.of(new AnnotatedInjectionPointEnableRule());
         private final LazyStreamableConfigurer<ApplicationContext, RequireInjectionPointRule> requiresComponentRules = LazyStreamableConfigurer.of(new AnnotatedInjectionPointRequireRule());
         private final LazyStreamableConfigurer<ApplicationContext, InjectParameterResolver> parameterResolvers = LazyStreamableConfigurer.ofInitializer(context -> new InjectContextParameterResolver(context.input()));
-
-        @SafeVarargs
-        public final Configurer annotations(Class<? extends Annotation>... annotations) {
-            this.annotations.customizer(collection -> collection.addAll(annotations));
-            return this;
-        }
-
-        public Configurer annotations(Set<Class<? extends Annotation>> annotations) {
-            this.annotations.customizer(collection -> collection.addAll(annotations));
-            return this;
-        }
-
-        public Configurer annotations(Customizer<StreamableConfigurer<ApplicationContext, Class<? extends Annotation>>> customizer) {
-            this.annotations.customizer(customizer);
-            return this;
-        }
-
-        public Configurer nameResolvers(InjectionPointNameResolver... nameResolvers) {
-            this.nameResolvers.customizer(collection -> collection.addAll(nameResolvers));
-            return this;
-        }
-
-        public Configurer nameResolvers(Set<InjectionPointNameResolver> nameResolvers) {
-            this.nameResolvers.customizer(collection -> collection.addAll(nameResolvers));
-            return this;
-        }
-
-        public Configurer nameResolvers(Customizer<StreamableConfigurer<ApplicationContext, InjectionPointNameResolver>> customizer) {
-            this.nameResolvers.customizer(customizer);
-            return this;
-        }
-
-        public Configurer enableComponentRules(EnableInjectionPointRule... enableComponentRules) {
-            this.enableComponentRules.customizer(collection -> collection.addAll(enableComponentRules));
-            return this;
-        }
-
-        public Configurer enableComponentRules(Set<EnableInjectionPointRule> enableComponentRules) {
-            this.enableComponentRules.customizer(collection -> collection.addAll(enableComponentRules));
-            return this;
-        }
-
-        public Configurer enableComponentRules(Customizer<StreamableConfigurer<ApplicationContext, EnableInjectionPointRule>> customizer) {
-            this.enableComponentRules.customizer(customizer);
-            return this;
-        }
 
         public Configurer requiresComponentRules(RequireInjectionPointRule... requiresComponentRules) {
             this.requiresComponentRules.customizer(collection -> collection.addAll(requiresComponentRules));
@@ -210,5 +148,21 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
             this.requiresComponentRules.customizer(customizer);
             return this;
         }
+
+        public Configurer parameterResolvers(InjectParameterResolver... parameterResolvers) {
+            this.parameterResolvers.customizer(collection -> collection.addAll(parameterResolvers));
+            return this;
+        }
+
+        public Configurer parameterResolvers(Set<InjectParameterResolver> parameterResolvers) {
+            this.parameterResolvers.customizer(collection -> collection.addAll(parameterResolvers));
+            return this;
+        }
+
+        public Configurer parameterResolvers(Customizer<StreamableConfigurer<ApplicationContext, InjectParameterResolver>> customizer) {
+            this.parameterResolvers.customizer(customizer);
+            return this;
+        }
+
     }
 }

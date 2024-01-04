@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,58 +16,40 @@
 
 package org.dockbox.hartshorn.inject.strategy;
 
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.populate.ComponentInjectionPoint;
+import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.inject.Strict;
-import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
-import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
-import org.dockbox.hartshorn.util.introspect.view.GenericTypeView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
+public final class DependencyResolverUtils {
 
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
-
-public class DependencyResolverUtils {
-
-    public static Set<ComponentKey<?>> resolveDependencies(TypeView<?> type) {
-        Set<ComponentKey<?>> setterDependencies = type.methods().annotatedWith(Inject.class).stream()
-                .flatMap(method -> DependencyResolverUtils.resolveDependencies(method).stream())
-                .collect(Collectors.toSet());
-        Set<ComponentKey<?>> fieldDependencies = type.fields().annotatedWith(Inject.class).stream()
-                .map(DependencyResolverUtils::resolveComponentKey)
-                .collect(Collectors.toSet());
-
-        return CollectionUtilities.merge(setterDependencies, fieldDependencies);
+    private DependencyResolverUtils() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
-    public static Set<ComponentKey<?>> resolveDependencies(ExecutableElementView<?> executable) {
+    public static Set<ComponentKey<?>> resolveDependencies(
+            TypeView<?> type,
+            ApplicationEnvironment environment
+    ) {
+        Set<? extends ComponentInjectionPoint<?>> points = environment.injectionPointsResolver().resolve(type);
+        return points.stream()
+                .map(ComponentInjectionPoint::declaration)
+                .map(environment.componentKeyResolver()::resolve)
+                .collect(Collectors.toSet());
+    }
+
+    public static Set<ComponentKey<?>> resolveDependencies(
+            ExecutableElementView<?> executable,
+            ApplicationEnvironment environment
+    ) {
         return executable.parameters().all().stream()
                 .filter(parameter -> !parameter.type().isChildOf(Context.class))
-                .map(DependencyResolverUtils::resolveComponentKey)
+                .map(environment.componentKeyResolver()::resolve)
                 .collect(Collectors.toSet());
-    }
-
-    public static <T, E extends AnnotatedElementView & GenericTypeView<T>> ComponentKey<T> resolveComponentKey(E element) {
-        TypeView<T> type = element.genericType();
-        ComponentKey.Builder<T> keyBuilder = ComponentKey.builder(type);
-
-        ElementAnnotationsIntrospector annotations = element.annotations();
-        annotations.get(Named.class)
-                .filter(qualifier -> StringUtilities.notEmpty(qualifier.value()))
-                .peek(qualifier -> {
-                    if (StringUtilities.notEmpty(qualifier.value())) {
-                        keyBuilder.name(qualifier);
-                    }
-                });
-        annotations.get(Strict.class)
-            .peek(strict -> keyBuilder.strict(strict.value()));
-
-        return keyBuilder.build();
     }
 }

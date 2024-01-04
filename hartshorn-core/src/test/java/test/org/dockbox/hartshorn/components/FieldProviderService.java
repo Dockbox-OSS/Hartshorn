@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,19 @@ package test.org.dockbox.hartshorn.components;
 
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.inject.Named;
 
 import jakarta.inject.Singleton;
 
 @Service
 public class FieldProviderService {
 
-    @Binds("field")
+    @Binds
+    @Named("field")
     private final ProvidedInterface field = () -> "Field";
 
     @Singleton
-    @Binds("singletonField")
+    @Binds
+    @Named("singletonField")
     private final ProvidedInterface singletonField = () -> "Field";
 }

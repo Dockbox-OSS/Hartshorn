@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,23 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import org.dockbox.hartshorn.application.ExceptionHandler;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
+import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.inject.ComponentKeyResolver;
+import org.dockbox.hartshorn.logging.ApplicationLogger;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-
-import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.logging.ApplicationLogger;
-import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
  * The environment of an active application. The environment can only be responsible for one {@link ApplicationContext},
@@ -193,4 +195,21 @@ public interface ApplicationEnvironment extends ContextCarrier, ApplicationLogge
      * @return The raw arguments
      */
     Properties rawArguments();
+
+    /**
+     * Gets the {@link ComponentKeyResolver} for the current environment. The resolver is responsible for resolving
+     * {@link ComponentKey}s for a given element. This is typically used for resolving {@link ComponentKey}s for binding
+     * declarations and injection points.
+     *
+     * @return The component key resolver
+     */
+    ComponentKeyResolver componentKeyResolver();
+
+    /**
+     * Gets the {@link ComponentInjectionPointsResolver} for the current environment. The resolver is responsible for
+     * resolving {@link org.dockbox.hartshorn.component.populate.ComponentInjectionPoint}s for a given type.
+     *
+     * @return The component injection points resolver
+     */
+    ComponentInjectionPointsResolver injectionPointsResolver();
 }

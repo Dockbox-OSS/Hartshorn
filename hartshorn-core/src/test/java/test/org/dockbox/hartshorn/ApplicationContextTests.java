@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,6 @@
  */
 
 package test.org.dockbox.hartshorn;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
@@ -65,6 +56,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.boot.EmptyService;
@@ -479,17 +479,19 @@ public class ApplicationContextTests {
 
             DependencyMap dependencyMap = DependencyMap.create()
                     // Fields and methods are always delayed
-                    .delayed(DependencyResolverUtils.resolveDependencies(typeView));
+                    .delayed(DependencyResolverUtils.resolveDependencies(typeView, this.applicationContext.environment()));
 
             View origin = typeView;
             if (!typeView.isInterface()) {
-                List<? extends ConstructorView<?>> constructorViews = typeView.constructors().injectable();
+                List<? extends ConstructorView<?>> constructorViews = typeView.constructors().all().stream()
+                        .filter(this.applicationContext.environment().injectionPointsResolver()::isInjectable)
+                        .toList();
                 if (!constructorViews.isEmpty()) {
                     Assertions.assertEquals(1, constructorViews.size());
                     ConstructorView<?> constructorView = constructorViews.get(0);
                     origin = constructorView;
                     // Constructors are always immediate
-                    Set<ComponentKey<?>> immediateDependencies = DependencyResolverUtils.resolveDependencies(constructorView);
+                    Set<ComponentKey<?>> immediateDependencies = DependencyResolverUtils.resolveDependencies(constructorView, this.applicationContext.environment());
                     dependencyMap.putAll(DependencyResolutionType.IMMEDIATE, immediateDependencies);
                 }
             }

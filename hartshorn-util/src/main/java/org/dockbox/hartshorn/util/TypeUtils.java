@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,15 @@
 package org.dockbox.hartshorn.util;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TypeUtils {
@@ -196,6 +199,23 @@ public class TypeUtils {
             return true;
         }
         return source.isPrimitive() && TypeUtils.isPrimitiveWrapper(target, source);
+    }
+
+    public static Map<String, Object> getAttributes(Annotation annotation) {
+        Class<? extends Annotation> annotationType = annotation.annotationType();
+        return Arrays.stream(annotationType.getDeclaredMethods())
+                .filter(method -> !method.isAnnotationPresent(Deprecated.class))
+                .collect(Collectors.toMap(
+                        Method::getName,
+                        method -> {
+                            try {
+                                return method.invoke(annotation);
+                            }
+                            catch (IllegalAccessException | InvocationTargetException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                ));
     }
 
     public static <T> Class<T> getClass(T instance) {
