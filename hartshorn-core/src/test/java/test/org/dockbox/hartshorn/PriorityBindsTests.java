@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package test.org.dockbox.hartshorn;
 
-import jakarta.inject.Inject;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.processing.Binds;
@@ -25,6 +24,8 @@ import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.components.SampleInterface;
 
 @HartshornTest(includeBasePackages = false)
@@ -59,7 +60,8 @@ public class PriorityBindsTests {
             return () -> PRIORITY_DEFAULT;
         }
 
-        @Binds(priority = 0)
+        @Binds
+        @Priority(0)
         public SampleInterface sampleInterfacePriorityZero() {
             return () -> PRIORITY_ZERO;
         }
@@ -68,7 +70,8 @@ public class PriorityBindsTests {
     @Service
     public static class TestProviderImplicitPriority {
 
-        @Binds(priority = 1)
+        @Binds
+        @Priority(1)
         public SampleInterface sampleInterfacePriorityOne(SampleInterface lowerPriority) {
             return () -> lowerPriority.name() + PRIORITY_ONE;
         }
@@ -77,8 +80,9 @@ public class PriorityBindsTests {
     @Service
     public static class TestProviderExplicitPriority {
 
-        @Binds(priority = 1)
-        public SampleInterface sampleInterfacePriorityOne(@Priority(-1) SampleInterface lowerPriority) {
+        @Binds
+        @Priority(1)
+        public SampleInterface sampleInterfacePriorityOne(@Priority(Priority.DEFAULT_PRIORITY) SampleInterface lowerPriority) {
             return () -> lowerPriority.name() + PRIORITY_ONE;
         }
     }

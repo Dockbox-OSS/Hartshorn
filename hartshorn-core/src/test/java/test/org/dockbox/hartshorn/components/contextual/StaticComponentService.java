@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.inject.Named;
+import org.dockbox.hartshorn.inject.Priority;
 
 @Service
 public class StaticComponentService {
@@ -29,7 +30,8 @@ public class StaticComponentService {
     public static final String GUEST = "guest";
 
     @Named(USER)
-    @Binds(type = BindingType.COLLECTION, priority = 12)
+    @Priority(12)
+    @Binds(type = BindingType.COLLECTION)
     public StaticComponent userComponent() {
         return new StaticComponent(USER);
     }

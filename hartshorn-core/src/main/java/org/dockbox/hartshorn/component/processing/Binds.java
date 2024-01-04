@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.component.processing;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.Named;
+import org.dockbox.hartshorn.inject.Priority;
 import org.dockbox.hartshorn.inject.Qualifier;
 
 import java.lang.annotation.ElementType;
@@ -50,11 +51,20 @@ public @interface Binds {
      *
      * @return the name of the binding
      *
-     * @deprecated use {@link Named} annotations instead or a custom {@link Qualifier} annotation instead
+     * @deprecated use the {@link Named} annotation or a custom {@link Qualifier} annotation instead
      */
     @Deprecated(since = "0.6.0", forRemoval = true)
     String value() default "";
 
+    /**
+     * The priority of the binding. If not specified, the default priority of {@code -1} will be used.
+     * The higher the priority, the higher the chance that the binding will be selected.
+     *
+     * @return the priority of the binding
+     *
+     * @deprecated use the {@link Priority} annotation instead
+     */
+    @Deprecated(since = "0.6.0", forRemoval = true)
     int priority() default -1;
 
     boolean lazy() default false;

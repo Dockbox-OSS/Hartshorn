@@ -71,6 +71,15 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
         return this.postConfigureKey(builder, view);
     }
 
+    /**
+     * Post configures the given {@link ComponentKey.Builder} based on the given {@link AnnotatedGenericTypeView}. This
+     * usually entails that final details are added- or transformations are applied to the key, such turning the key
+     * into a collector if the type is a {@link Collection}.
+     *
+     * @param builder the builder to post configure
+     * @param view the view to post configure the builder with
+     * @return the post configured key
+     */
     protected ComponentKey<?> postConfigureKey(Builder<?> builder, AnnotatedGenericTypeView<?> view) {
         TypeView<?> type = view.genericType();
         if (type.isChildOf(Collection.class)) {
@@ -82,11 +91,26 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
         }
     }
 
+    /**
+     * Configures the qualifiers of the given {@link ComponentKey.Builder} based on available metadata, typically in the
+     * form of {@link Qualifier} annotations.
+     *
+     * @param builder the builder to configure
+     * @param annotations the annotations to configure the builder with
+     */
     protected void configureQualifiers(Builder<?> builder, ElementAnnotationsIntrospector annotations) {
         Set<QualifierKey<?>> qualifiers = this.resolveQualifiers(annotations);
         builder.qualifiers(qualifiers);
     }
 
+    /**
+     * Resolves the qualifiers of the given {@link ComponentKey.Builder} based on available metadata, typically in the
+     * form of {@link Qualifier} annotations. The result may include any amount of {@link QualifierKey}s, though keys
+     * may apply restrictions to the presence of duplicate {@link QualifierKey#type() qualifier types}.
+     *
+     * @param annotations the annotations to resolve the qualifiers from
+     * @return the resolved qualifiers
+     */
     protected Set<QualifierKey<?>> resolveQualifiers(ElementAnnotationsIntrospector annotations) {
         Set<Annotation> metaQualifiers = annotations.annotedWith(Qualifier.class);
         return metaQualifiers.stream()
@@ -94,28 +118,61 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
                 .collect(Collectors.toSet());
     }
 
-    private void configureStrict(Builder<?> builder, ElementAnnotationsIntrospector annotations) {
+    /**
+     * Configures the strictness of the given {@link ComponentKey.Builder} based on available metadata.
+     *
+     * @param builder the builder to configure
+     * @param annotations the annotations to configure the builder with
+     */
+    protected void configureStrict(Builder<?> builder, ElementAnnotationsIntrospector annotations) {
         Tristate isStrict = this.isStrict(annotations);
         if (isStrict != Tristate.UNDEFINED) {
             builder.strict(isStrict.booleanValue());
         }
     }
 
+    /**
+     * Determines the strictness of the given {@link ComponentKey.Builder} based on available metadata. If the
+     * strictness cannot be determined, {@link Tristate#UNDEFINED} is returned.
+     *
+     * @param annotations the annotations to determine the strictness from
+     * @return the strictness of the key, or {@link Tristate#UNDEFINED} if it cannot be determined
+     */
     protected Tristate isStrict(ElementAnnotationsIntrospector annotations) {
         return annotations.get(Strict.class).map(Strict::value)
                 .map(Tristate::valueOf)
                 .orElse(Tristate.UNDEFINED);
     }
 
-    private void configureAutoEnabling(Builder<?> builder, ElementAnnotationsIntrospector annotations) {
+    /**
+     * Configures the auto-enabling of the given {@link ComponentKey.Builder} based on available metadata.
+     *
+     * @param builder the builder to configure
+     * @param annotations the annotations to configure the builder with
+     */
+    protected void configureAutoEnabling(Builder<?> builder, ElementAnnotationsIntrospector annotations) {
         builder.enable(this.isAutoEnabled(annotations));
     }
 
+    /**
+     * Determines the auto-enabling of the given {@link ComponentKey.Builder} based on available metadata. If the
+     * auto-enabling cannot be determined, {@code true} is returned.
+     *
+     * @param annotations the annotations to determine the auto-enabling from
+     * @return the auto-enabling of the key, or {@code true} if it cannot be determined
+     */
     protected boolean isAutoEnabled(ElementAnnotationsIntrospector annotations) {
         return annotations.get(Enable.class).map(Enable::value).orElse(true);
     }
 
-    private void configurePriority(Builder<?> builder, AnnotatedGenericTypeView<?> view, Scope scope) {
+    /**
+     * Configures the priority of the given {@link ComponentKey.Builder} based on available metadata.
+     *
+     * @param builder the builder to configure
+     * @param view the view to configure the builder with
+     * @param scope the scope of the key
+     */
+    protected void configurePriority(Builder<?> builder, AnnotatedGenericTypeView<?> view, Scope scope) {
         Option<Priority> priorityOption = view.annotations().get(Priority.class);
         if (priorityOption.present()) {
             int parameterPriority = priorityOption.get().value();
@@ -126,15 +183,24 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
         }
     }
 
-    private void configureSelfProvisionCandidate(Builder<?> builder, Scope scope, ParameterView<?> parameterView) {
+    /**
+     * Configures the priority of the given {@link ComponentKey.Builder} based on provided {@link ParameterView}. If
+     * the parameter is declared by a {@link Binds binding} method which declares a binding of the same type as the
+     * parameter, the priority of the key is set to be at most the priority of the binding (exclusive).
+     *
+     * @param builder the builder to configure
+     * @param scope the scope of the key
+     * @param parameterView the parameter to configure the builder with
+     */
+    protected void configureSelfProvisionCandidate(Builder<?> builder, Scope scope, ParameterView<?> parameterView) {
         ExecutableElementView<?> declaredBy = parameterView.declaredBy();
         if (declaredBy instanceof AnnotatedGenericTypeView<?> annotatedDeclaredBy) {
             ComponentKey<?> key = this.resolve(annotatedDeclaredBy, scope);
             boolean selfProvision = key.view().matches(builder.view());
             if (selfProvision) {
-                Option<Binds> binds = declaredBy.annotations().get(Binds.class);
-                if (binds.present()) {
-                    builder.strategy(new MaximumPriorityProviderSelectionStrategy(binds.get().priority()));
+                Option<Priority> priority = declaredBy.annotations().get(Priority.class);
+                if (priority.present()) {
+                    builder.strategy(new MaximumPriorityProviderSelectionStrategy(priority.get().value()));
                 }
             }
         }

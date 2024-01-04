@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.DependencyMap;
+import org.dockbox.hartshorn.inject.Priority;
 import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -74,7 +75,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         ComponentKey<T> componentKey = TypeUtils.adjustWildcards(this.environment.componentKeyResolver().resolve(bindsMethod), ComponentKey.class);
         Set<ComponentKey<?>> dependencies = DependencyResolverUtils.resolveDependencies(bindsMethod, this.environment);
         ScopeKey scope = this.resolveComponentScope(bindsMethod);
-        int priority = bindingDecorator.priority();
+        int priority = resolvePriority(bindsMethod);
 
         boolean lazy = bindingDecorator.lazy();
         boolean singleton = this.isSingleton(applicationContext, bindsMethod, componentKey);
@@ -104,6 +105,10 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         ).lazy(lazy)
                 .singleton(singleton)
                 .processAfterInitialization(processAfterInitialization);
+    }
+
+    private int resolvePriority(AnnotatedElementView view) {
+        return view.annotations().get(Priority.class).map(Priority::value).orElse(Priority.DEFAULT_PRIORITY);
     }
 
     private boolean isSingleton(ApplicationContext applicationContext, AnnotatedElementView view, ComponentKey<?> componentKey) {
