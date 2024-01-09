@@ -16,11 +16,7 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.time.Duration;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -28,6 +24,8 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A collection of utility methods for working with strings.
@@ -307,7 +305,7 @@ public final class StringUtilities {
         return sb.toString();
     }
 
-    public static <T> String join(String delimiter, Collection<T> elements, Function<T, String> toStringFunction) {
+    public static <T> String join(String delimiter, Iterable<T> elements, Function<T, String> toStringFunction) {
         StringBuilder builder = new StringBuilder();
         int i = 0;
         for (T element : elements) {
