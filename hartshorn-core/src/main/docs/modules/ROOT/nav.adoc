@@ -1,0 +1,6 @@
+* xref:index.adoc[Introduction]
+** xref:terminology.adoc[Terminology]
+** xref:principles.adoc[Principles]
+
+* xref:setup/index.adoc[Project Setup]
+** xref:setup/bootstrap.adoc[Application Bootstrap]

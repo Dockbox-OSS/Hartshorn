@@ -1,0 +1,20 @@
+= Hartshorn Framework Documentation
+
+Hartshorn is a cutting-edge Java framework built on the JVM platform that offers comprehensive support for modular, scalable, and testable application development using Java and other JVM-based languages. Its main objective is to simplify the creation and administration of intricate JVM applications by providing developers with the necessary tools.
+
+Hartshorn makes it easy to create Java enterprise applications through service-driven development. It provides everything you need to develop lightweight, platform agnostic applications. Hartshorn, and all its official modules are open source and can be found on https://github.com/Dockbox-OSS/Hartshorn[GitHub].
+
+== Definition of 'Hartshorn Framework'
+
+Hartshorn is an umbrella term for the Hartshorn Framework and all official modules. Hartshorn Framework itself is a service- and dependency management framework which compliments https://www.jcp.org/en/jsr/detail?id=330[JSR 330], but does not embrace the Java EE specification. You can read more about Hartshorn's core terminology and principles in xref:terminology.adoc[the terminology chapter].
+
+== Philosophy
+
+As with any framework, it is important that you know not only what it does but also what principles it follows. Hartshorn follows a range of technical xref:principles.adoc[core principles], as well as a specific design philosophy. The guiding principles of the Hartshorn Framework include:
+
+* Extensibility and flexibility. Hartshorn puts an emphasis on enabling developers to extend and switch between implementations at every level, without requiring changes to your code.
+* Allow for diverse usages. Hartshorn allows for a large amount of flexibility, by providing a template for you to develop your application in.
+* High standards for code quality. Hartshorn aims to use modern language features in combination with a meaningful and future-proof API to allow developers to intuitively use the framework.
+
+== Getting started
+If you are just getting started with Hartshorn, you'll want to view xref:setup/index.adoc[the 'Getting Started' guides]. The provided guides use Hartshorn's xref:setup/bootstrap.adoc[application bootstrapper] which enables you to get started quickly.
