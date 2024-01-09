@@ -1,0 +1,4 @@
+name: commands
+title: Hartshorn Commands
+nav:
+  - modules/ROOT/nav.adoc

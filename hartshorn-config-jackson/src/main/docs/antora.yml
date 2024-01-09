@@ -1,0 +1,4 @@
+name: config-jackson
+title: Hartshorn Configuration (Jackson)
+nav:
+  - modules/ROOT/nav.adoc

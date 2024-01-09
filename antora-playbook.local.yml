@@ -1,0 +1,71 @@
+#
+# Template Antora playbook configuration for local documentation pre-viewing.
+#
+# This template uses the current local repository as the source for the documentation,
+# targeting the appropriate documentation content for the applicable submodules.
+#
+# This playbook is not intended for use in production, but rather for local development
+# and testing of the documentation. You can generate a static site from this playbook by
+# running `antora antora-playbook.local.yml`. The generated site will be placed in the
+# `hartshorn-assembly/target/docs` directory.
+#
+site:
+  title: Hartshorn Framework
+  start_page: core::index.adoc
+
+content:
+  sources:
+    - url: .
+      branches: HEAD
+      # Effectively null, no versioning on non-released documentation
+      version: ~
+      start_paths:
+        - hartshorn-core/src/main/docs
+        - hartshorn-util/src/main/docs
+        - hartshorn-discovery/src/main/docs
+        - hartshorn-proxy/src/main/docs
+        - hartshorn-proxy-javassist/src/main/docs
+        - hartshorn-introspect/src/main/docs
+        - hartshorn-introspect-reflection/src/main/docs
+        - hartshorn-reporting/src/main/docs
+        - hartshorn-hsl/src/main/docs
+        - hartshorn-i18n/src/main/docs
+        - hartshorn-config/src/main/docs
+        - hartshorn-config-jackson/src/main/docs
+        - hartshorn-commands/src/main/docs
+
+output:
+  dir: hartshorn-assembly/target/docs
+  clean: true
+
+asciidoc:
+  extensions:
+    - '@asciidoctor/tabs'
+    - 'asciidoctor-interdoc-reftext'
+
+antora:
+  extensions:
+    - '@antora/lunr-extension'
+
+# TODO #1049: Create custom UI bundle for documentation
+ui:
+  bundle:
+    url: ./ui-bundle.zip
+    snapshot: true
+  supplemental_files:
+    - path: css/vendor/tabs.css
+      contents: 'C:\Users\guusl\AppData\Roaming\npm\node_modules/@asciidoctor/tabs/dist/css/tabs.css'
+    - path: js/vendor/tabs.js
+      contents: 'C:\Users\guusl\AppData\Roaming\npm\node_modules/@asciidoctor/tabs/dist/js/tabs.js'
+    - path: partials/footer-scripts.hbs
+      contents: |
+        <script id="site-script" src="{{{uiRootPath}}}/js/site.js" data-ui-root-path="{{{uiRootPath}}}"></script>
+        <script async src="{{{uiRootPath}}}/js/vendor/highlight.js"></script>
+        <script async src="{{{uiRootPath}}}/js/vendor/tabs.js"></script>
+        {{#if env.SITE_SEARCH_PROVIDER}}
+        {{> search-scripts}}
+        {{/if}}
+    - path: partials/head-styles.hbs
+      contents: |
+        <link rel="stylesheet" href="{{{uiRootPath}}}/css/site.css">
+        <link rel="stylesheet" href="{{{uiRootPath}}}/css/vendor/tabs.css">
