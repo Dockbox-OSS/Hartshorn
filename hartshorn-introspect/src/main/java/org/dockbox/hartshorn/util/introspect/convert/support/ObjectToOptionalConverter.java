@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,18 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Optional;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 
-import java.util.Optional;
-
+/**
+ * Converts any object to an {@link Optional} by wrapping the object in an {@link Optional#of(Object)}.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ObjectToOptionalConverter implements Converter<Object, Optional<?>> {
 
     @Override

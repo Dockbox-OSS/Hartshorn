@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param <I> the input object type
  * @param <O> the output object type
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface Converter<I, O> {

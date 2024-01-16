@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 
 package org.dockbox.hartshorn.util.introspect.convert;
+
+import java.util.Optional;
+import java.util.UUID;
 
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -47,9 +50,6 @@ import org.dockbox.hartshorn.util.introspect.convert.support.StringToUUIDConvert
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Standard implementation of {@link ConversionService} and {@link ConverterRegistry}. The registry implementation
@@ -91,6 +91,18 @@ public class StandardConversionService implements ConversionService, ConverterRe
         this.defaultValueProviderCache = defaultValueProviderCache;
     }
 
+    /**
+     * Registers all default converters. This includes all converters in the
+     * {@link org.dockbox.hartshorn.util.introspect.convert.support} package.
+     *
+     * @see #registerCollectionConverters(ConverterRegistry, ConversionService, Introspector)
+     * @see #registerNullWrapperConverters(ConverterRegistry, Introspector)
+     * @see #registerStringConverters(ConverterRegistry)
+     * @see #registerPrimitiveConverters(ConverterRegistry)
+     * @see #registerDefaultProviders(ConverterRegistry, Introspector)
+     *
+     * @return this instance
+     */
     public StandardConversionService withDefaults() {
         StandardConversionService.registerCollectionConverters(this, this, this.introspector);
         StandardConversionService.registerNullWrapperConverters(this, this.introspector);
@@ -224,6 +236,13 @@ public class StandardConversionService implements ConversionService, ConverterRe
         return TypeUtils.adjustWildcards(parameter, Class.class);
     }
 
+    /**
+     * Registers a set of converters for converting collections and arrays.
+     *
+     * @param registry The registry to register the converters to
+     * @param service The conversion service to use for converting elements
+     * @param introspector The introspector to use for introspecting types
+     */
     public static void registerCollectionConverters(ConverterRegistry registry, ConversionService service, Introspector introspector) {
         registry.addConverter(new ObjectToArrayConverter());
         registry.addConverter(new ArrayToObjectConverter(service));
@@ -236,6 +255,12 @@ public class StandardConversionService implements ConversionService, ConverterRe
         registry.addConverterFactory(new CollectionToCollectionConverterFactory(introspector));
     }
 
+    /**
+     * Registers a set of converters for converting null wrappers, such as {@link Optional} and {@link Option}.
+     *
+     * @param registry The registry to register the converters to
+     * @param introspector The introspector to use for introspecting types
+     */
     public static void registerNullWrapperConverters(ConverterRegistry registry, Introspector introspector) {
         registry.addConverter(new ObjectToOptionalConverter());
         registry.addConverter(new ObjectToOptionConverter());
@@ -248,6 +273,11 @@ public class StandardConversionService implements ConversionService, ConverterRe
         registry.addConverterFactory(new OptionalToCollectionConverterFactory(introspector));
     }
 
+    /**
+     * Registers a set of converters for converting strings.
+     *
+     * @param registry The registry to register the converters to
+     */
     public static void registerStringConverters(ConverterRegistry registry) {
         registry.addConverter(String.class, Character.class, new StringToCharacterConverter());
         registry.addConverter(String.class, UUID.class,new StringToUUIDConverter());
@@ -259,6 +289,11 @@ public class StandardConversionService implements ConversionService, ConverterRe
         registry.addConverterFactory(String.class, new StringToPrimitiveConverterFactory());
     }
 
+    /**
+     * Registers a set of converters for converting primitives and primitive wrappers.
+     *
+     * @param registry The registry to register the converters to
+     */
     public static void registerPrimitiveConverters(ConverterRegistry registry) {
         registry.addConverter(new PrimitiveWrapperConverter());
         registry.addConverter(new ObjectToVoidConverter());

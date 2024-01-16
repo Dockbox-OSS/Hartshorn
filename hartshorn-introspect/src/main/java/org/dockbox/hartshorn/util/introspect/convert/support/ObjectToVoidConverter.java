@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,21 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Set;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 
-import java.util.Set;
-
+/**
+ * A converter which converts any object to 'void', returning {@code null} as the result.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ObjectToVoidConverter implements GenericConverter, ConditionalConverter {
 
     @Override

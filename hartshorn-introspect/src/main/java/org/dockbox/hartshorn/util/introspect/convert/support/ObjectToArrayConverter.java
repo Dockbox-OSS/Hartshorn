@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,22 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.lang.reflect.Array;
+import java.util.Set;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 
-import java.lang.reflect.Array;
-import java.util.Set;
-
+/**
+ * Converts any object to an array of the same type, containing only the object. If the given object is a primitive,
+ * an array of the primitive type is returned.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ObjectToArrayConverter implements GenericConverter {
 
     @Override
@@ -35,7 +43,7 @@ public class ObjectToArrayConverter implements GenericConverter {
     @Override
     public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
         if (sourceType.isPrimitive()) {
-            return this.convertPrimitive(source, sourceType, targetType);
+            return this.convertPrimitive(source, sourceType);
         }
 
         I[] array = (I[]) Array.newInstance(sourceType, 1);
@@ -43,7 +51,7 @@ public class ObjectToArrayConverter implements GenericConverter {
         return array;
     }
 
-    private <I, O> Object convertPrimitive(Object source, Class<I> sourceType, Class<O> targetType) {
+    private <I, O> Object convertPrimitive(Object source, Class<I> sourceType) {
         switch (sourceType.getName()) {
             case "boolean" -> {
                 boolean[] booleanArray = new boolean[1];

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,25 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
+/**
+ * A {@link ConverterCache} for {@link GenericConverter}s. If a converter implements {@link ConditionalConverter},
+ * it will be used to narrow the source/target type. Otherwise, the {@link ConvertibleTypePair} will be used to
+ * determine whether a converter can be used.
+ *
+ * <p>It is possible for multiple {@link GenericConverter}s exist for a single {@link ConvertibleTypePair}, which
+ * may be required for factory-based converters. In this case, the most specific converter will be used. In all
+ * cases, if multiple converters are found, it is expected that they implement {@link ConditionalConverter} to
+ * narrow the match.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class GenericConverters implements ConverterCache {
 
     private final Set<ConditionalConverter> globalConverters = ConcurrentHashMap.newKeySet();
@@ -49,6 +64,7 @@ public class GenericConverters implements ConverterCache {
         }
     }
 
+    @Nullable
     @Override
     public GenericConverter getConverter(Object source, Class<?> targetType) {
         GenericConverter converter = this.getTypeMatchingConverter(source, targetType);
@@ -70,6 +86,7 @@ public class GenericConverters implements ConverterCache {
         return converters;
     }
 
+    @Nullable
     private GenericConverter getClosestMatchingConverter(Object source, Class<?> targetType) {
         Set<GenericConverter> matchingConverters = new HashSet<>();
         for (ConvertibleTypePair typePair : this.converters.keySet()) {
@@ -135,6 +152,7 @@ public class GenericConverters implements ConverterCache {
         return -1;
     }
 
+    @Nullable
     private GenericConverter getGlobalConverter(Object source, Class<?> targetType) {
         Set<GenericConverter> candidateConverters = new HashSet<>();
         for (ConditionalConverter converter : this.globalConverters) {
@@ -151,12 +169,15 @@ public class GenericConverters implements ConverterCache {
         return null;
     }
 
+    @Nullable
     private GenericConverter findMatchingConverter(Object source, Class<?> targetType, Set<GenericConverter> candidateConverters) {
         if (candidateConverters.isEmpty()) {
             return null;
         }
 
-        DistantConverterMatch<GenericConverter> bestMatch = null;
+        int bestDistance = -1;
+        GenericConverter bestConverter = null;
+
         for (GenericConverter candidateConverter : candidateConverters) {
             if (candidateConverter instanceof ConditionalConverter conditionalConverter) {
                 if (!conditionalConverter.canConvert(source, targetType)) {
@@ -180,26 +201,27 @@ public class GenericConverters implements ConverterCache {
                     .orElse(-1);
 
             if (distance >= 0) {
-                if (bestMatch != null && distance == bestMatch.distance()) {
-                    throw new AmbiguousConverterException("Ambiguous converters found for source type [" + source.getClass().getName() + "] and target type [" + targetType.getName() + "]: " + bestMatch.target() + ", " + candidateConverter);
+                if (bestConverter != null && distance == bestDistance) {
+                    throw new AmbiguousConverterException("Ambiguous converters found for source type [" + source.getClass().getName() + "] and target type [" + targetType.getName() + "]: " + bestConverter + ", " + candidateConverter);
                 }
 
-                if (bestMatch == null || distance < bestMatch.distance()) {
-                    bestMatch = new DistantConverterMatch<>(candidateConverter, distance);
+                if (bestConverter == null || distance < bestDistance) {
+                    bestDistance = distance;
+                    bestConverter = candidateConverter;
                 }
             }
         }
 
-        return bestMatch != null
-                ? bestMatch.target()
-                : null;
+        return bestConverter;
     }
 
+    @Nullable
     protected GenericConverter getTypeMatchingConverter(Object source, Class<?> targetType) {
-        ConvertibleTypePair pair = new ConvertibleTypePair(source.getClass() == null ? null : source.getClass(), targetType);
+        ConvertibleTypePair pair = new ConvertibleTypePair(source == null ? null : source.getClass(), targetType);
         return this.getConverterForPair(source, targetType, pair);
     }
 
+    @Nullable
     private GenericConverter getConverterForPair(Object source, Class<?> targetType, ConvertibleTypePair pair) {
         List<GenericConverter> matchingConverters = new ArrayList<>();
         for (GenericConverter converter : this.converters.get(pair)) {
@@ -220,6 +242,4 @@ public class GenericConverters implements ConverterCache {
         }
         return null;
     }
-
-    private record DistantConverterMatch<T>(T target, int distance) {}
 }

@@ -305,11 +305,30 @@ public final class StringUtilities {
         return sb.toString();
     }
 
+    /**
+     * Joins the given elements into a string, separated by the given delimiter. The elements are
+     * converted to strings using the given function. If the given collection is empty, an empty
+     * string is returned.
+     *
+     * <p>Examples:
+     * <ul>
+     *     <li>{@code join(", ", Arrays.asList(1, 2, 3), String::valueOf)} -> {@code "1, 2, 3"}</li>
+     *     <li>{@code join(", ", Arrays.asList("a", "b", "c"), String::toUpperCase)} -> {@code "A, B, C"}</li>
+     * </ul>
+     *
+     * @param delimiter the delimiter to use
+     * @param elements the elements to join
+     * @param toStringFunction the function to convert elements to strings
+     * @return the joined string
+     * @param <T> the type of elements to join
+     */
     public static <T> String join(String delimiter, Iterable<T> elements, Function<T, String> toStringFunction) {
         StringBuilder builder = new StringBuilder();
         int i = 0;
         for (T element : elements) {
-            if (i > 0) builder.append(delimiter);
+            if (i > 0) {
+                builder.append(delimiter);
+            }
             builder.append(toStringFunction.apply(element));
             i++;
         }

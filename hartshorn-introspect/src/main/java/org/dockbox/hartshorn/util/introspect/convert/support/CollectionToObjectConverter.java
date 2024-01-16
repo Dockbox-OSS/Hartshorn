@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,14 @@ import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 
+/**
+ * Converts any {@link Collection} to an {@link Object} by returning the first and only element of the
+ * collection. The collection must have exactly one element.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class CollectionToObjectConverter implements GenericConverter, ConditionalConverter {
 
     @Override
