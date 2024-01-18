@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,18 @@
 
 package test.org.dockbox.hartshorn.util.introspect.convert;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
+
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterCache;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterRegistry;
-import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverters;
 import org.dockbox.hartshorn.util.introspect.convert.NullAccess;
@@ -30,13 +35,6 @@ import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
 
 public abstract class ConversionServiceTests {
 
@@ -216,27 +214,56 @@ public abstract class ConversionServiceTests {
 
     @Test
     void testImplicitlyTypedConverterIsAdaptedCorrectly() {
-        this.testConverterTypeIsAdaptedCorrectly(registry -> registry.addConverter(new SimpleConverter()), "1", Integer.class, ConverterType.CONVERTER);
+        this.testConverterTypeIsAdaptedCorrectly(
+                registry -> registry.addConverter(new SimpleConverter()),
+                "1", Integer.class,
+                ConverterType.CONVERTER
+        );
+    }
+
+    @Test
+    void testLambdaConverterWithoutExplicitTypesIsRejected() {
+        ConverterCache converterCache = new GenericConverters();
+        ConverterCache defaultValueProviderCache = new GenericConverters();
+        ConverterRegistry registry = new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
+        // Not allowed because the source and target types cannot practically be determined due to type erasure
+        Assertions.assertThrows(IllegalArgumentException.class, () -> registry.addConverter((Converter<String, Integer>) source -> Integer.parseInt(source)));
+    }
+
+    @Test
+    void testLambdaConverterWithExplicitTypesIsAdaptedCorrectly() {
+        this.testConverterTypeIsAdaptedCorrectly(
+                registry -> registry.addConverter(String.class, Integer.class, source -> Integer.parseInt(source)),
+                "1", Integer.class,
+                ConverterType.CONVERTER
+        );
     }
 
     @Test
     void testExplicitlyTypedConverterIsAdapterCorrectly() {
-        this.testConverterTypeIsAdaptedCorrectly(registry -> registry.addConverter(String.class, Integer.class, new SimpleConverter()), "1", Integer.class, ConverterType.CONVERTER);
+        this.testConverterTypeIsAdaptedCorrectly(
+                registry -> registry.addConverter(String.class, Integer.class, new SimpleConverter()),
+                "1", Integer.class,
+                ConverterType.CONVERTER
+        );
     }
 
     @Test
     void testImplicitDefaultValueProviderIsAdaptedCorrectly() {
-        this.testConverterTypeIsAdaptedCorrectly(registry -> registry.addDefaultValueProvider(new DefaultValueProvider<String>() {
-            @Override
-            public @Nullable String defaultValue() {
-                return "";
-            }
-        }), NullAccess.getInstance(), String.class, ConverterType.DEFAULT_VALUE_PROVIDER);
+        this.testConverterTypeIsAdaptedCorrectly(
+                registry -> registry.addDefaultValueProvider(() -> ""),
+                NullAccess.getInstance(), String.class,
+                ConverterType.DEFAULT_VALUE_PROVIDER
+        );
     }
 
     @Test
     void testExplicitDefaultValueProviderIsAdaptedCorrectly() {
-        this.testConverterTypeIsAdaptedCorrectly(registry -> registry.addDefaultValueProvider(String.class, () -> ""), NullAccess.getInstance(), String.class, ConverterType.DEFAULT_VALUE_PROVIDER);
+        this.testConverterTypeIsAdaptedCorrectly(
+                registry -> registry.addDefaultValueProvider(String.class, () -> ""),
+                NullAccess.getInstance(), String.class,
+                ConverterType.DEFAULT_VALUE_PROVIDER
+        );
     }
 
     private void testConverterTypeIsAdaptedCorrectly(Consumer<ConverterRegistry> registerAction, Object source, Class<?> targetType, ConverterType converterType) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 
 public class WildcardPackageView extends DefaultContext implements PackageView {
@@ -35,5 +36,45 @@ public class WildcardPackageView extends DefaultContext implements PackageView {
     @Override
     public String qualifiedName() {
         return "";
+    }
+
+    @Override
+    public ElementAnnotationsIntrospector annotations() {
+        return new WildcardElementAnnotationsIntrospector();
+    }
+
+    @Override
+    public String specificationTitle() {
+        return "";
+    }
+
+    @Override
+    public String specificationVendor() {
+        return "";
+    }
+
+    @Override
+    public String specificationVersion() {
+        return "";
+    }
+
+    @Override
+    public String implementationTitle() {
+        return "";
+    }
+
+    @Override
+    public String implementationVendor() {
+        return "";
+    }
+
+    @Override
+    public String implementationVersion() {
+        return "";
+    }
+
+    @Override
+    public boolean isSealed() {
+        return false;
     }
 }

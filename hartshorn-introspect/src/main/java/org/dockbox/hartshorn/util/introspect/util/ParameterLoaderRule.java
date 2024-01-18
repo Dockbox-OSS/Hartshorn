@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public interface ParameterLoaderRule<C extends ParameterLoaderContext> {
      * @param index the index of the parameter in the parameter list
      * @param context the context to use when looking up the parameter value
      * @param args the arguments that are passed to the method that is being invoked
-     * @return whether or not this rule accepts the provided parameter
+     * @return whether this rule accepts the provided parameter
      */
     boolean accepts(ParameterView<?> parameter, int index, C context, Object... args);
 

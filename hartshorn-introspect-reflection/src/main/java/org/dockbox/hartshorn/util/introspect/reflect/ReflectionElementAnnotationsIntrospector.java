@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
     private final AnnotationLookup annotationLookup;
     private Map<Class<?>, Annotation> annotationCache;
 
-    public ReflectionElementAnnotationsIntrospector(ReflectionIntrospector introspector, AnnotatedElement element) {
+    public ReflectionElementAnnotationsIntrospector(Introspector introspector, AnnotatedElement element) {
         this.introspector = introspector;
         this.element = element;
         // Could be instantiated early during application startup, so we don't want to use component provision here. This

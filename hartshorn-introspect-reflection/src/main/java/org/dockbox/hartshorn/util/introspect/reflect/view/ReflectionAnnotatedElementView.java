@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.reflect.AnnotatedElement;
+
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementAnnotationsIntrospector;
-import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.IntrospectorAwareView;
-
-import java.lang.reflect.AnnotatedElement;
+import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardElementAnnotationsIntrospector;
 
 public abstract class ReflectionAnnotatedElementView extends DefaultContext implements AnnotatedElementView, IntrospectorAwareView {
 
-    private final ReflectionIntrospector introspector;
+    private final Introspector introspector;
     private ElementAnnotationsIntrospector annotationsIntrospector;
 
-    protected ReflectionAnnotatedElementView(ReflectionIntrospector introspector) {
+    protected ReflectionAnnotatedElementView(Introspector introspector) {
         this.introspector = introspector;
     }
 
@@ -39,8 +39,11 @@ public abstract class ReflectionAnnotatedElementView extends DefaultContext impl
 
     @Override
     public ElementAnnotationsIntrospector annotations() {
-        if (this.annotationsIntrospector == null) {
-            this.annotationsIntrospector = new ReflectionElementAnnotationsIntrospector(this.introspector, this.annotatedElement());
+        if(this.annotationsIntrospector == null) {
+            AnnotatedElement element = this.annotatedElement();
+            this.annotationsIntrospector = element != null
+                    ? new ReflectionElementAnnotationsIntrospector(this.introspector, element)
+                    : new WildcardElementAnnotationsIntrospector();
         }
         return this.annotationsIntrospector;
     }

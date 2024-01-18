@@ -16,11 +16,40 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+/**
+ * Represents a view of a method- or constructor parameter. This view can be used to introspect
+ * the parameter's annotations, as well as its name and type.
+ *
+ * @param <T> the type of the parameter
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public interface ParameterView<T> extends AnnotatedGenericTypeView<T> {
 
+    /**
+     * Returns {@code true} if this parameter represents a variable argument list, or {@code false}
+     * otherwise.
+     *
+     * @return {@code true} if this parameter represents a variable argument list, or {@code false}
+     */
     boolean isVarArgs();
 
+    /**
+     * Returns true if the parameter has a name according to the class file, or {@code false}
+     * otherwise. Whether a parameter has a name is determined by the {@literal MethodParameters}
+     * attribute of the method which declares the parameter.
+     *
+     * @return {@code true} if the parameter has a name according to the class file.
+     */
     boolean isNamePresent();
 
+    /**
+     * Returns the executable element that declares this parameter. This can be either a method or
+     * a constructor.
+     *
+     * @return the executable element that declares this parameter
+     */
     ExecutableElementView<?> declaredBy();
 }

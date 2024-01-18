@@ -28,6 +28,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @author Guus Lieben
  */
+@FunctionalInterface
 public interface DefaultValueProvider<T> extends Converter<Null, T> {
 
     @Override
