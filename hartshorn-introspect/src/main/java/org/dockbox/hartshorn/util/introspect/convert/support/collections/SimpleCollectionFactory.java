@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,15 @@ import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * Simple implementation of {@link CollectionFactory} that uses {@link CollectionProvider}s if possible, and
+ * otherwise will attempt to create collections using the default constructor or a constructor with a single
+ * int parameter (for capacity).
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 @SuppressWarnings("rawtypes")
 public class SimpleCollectionFactory implements CollectionFactory {
 
