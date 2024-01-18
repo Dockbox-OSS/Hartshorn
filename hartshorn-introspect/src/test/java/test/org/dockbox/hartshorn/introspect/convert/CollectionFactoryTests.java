@@ -32,7 +32,8 @@ import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.convert.support.CollectionFactory;
+import org.dockbox.hartshorn.util.introspect.convert.support.collections.CollectionFactory;
+import org.dockbox.hartshorn.util.introspect.convert.support.collections.SimpleCollectionFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -101,16 +102,16 @@ public class CollectionFactoryTests {
 
     private <T extends Collection<?>> CollectionFactory createFactory(Class<T> targetType, Supplier<T> constructor) {
         Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(targetType, constructor);
-        return new CollectionFactory(introspector);
+        return new SimpleCollectionFactory(introspector);
     }
 
     private <T extends Collection<?>> CollectionFactory createFactory(Class<T> targetType, Supplier<T> constructor, IntFunction<T> capacityConstructor) {
         Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(targetType, constructor, capacityConstructor);
-        return new CollectionFactory(introspector);
+        return new SimpleCollectionFactory(introspector);
     }
 
     private CollectionFactory createDefaultFactory() {
-        return new CollectionFactory(null).withDefaults();
+        return new SimpleCollectionFactory(null).withDefaults();
     }
 
     enum Color {

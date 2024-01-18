@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util.introspect.convert.support;
+package org.dockbox.hartshorn.util.introspect.convert.support.collections;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,49 +29,60 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
-
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.option.Option;
 
 @SuppressWarnings("rawtypes")
-public class CollectionFactory {
+public class SimpleCollectionFactory implements CollectionFactory {
 
     private static final int USE_COLLECTION_DEFAULT_CAPACITY = -1;
 
     private final Introspector introspector;
-    private final Map<Class<?>, Supplier<Collection<?>>> defaults = new HashMap<>();
+    private final Map<Class<?>, CollectionProvider> defaults = new HashMap<>();
 
-    public CollectionFactory(Introspector introspector) {
+    public SimpleCollectionFactory(Introspector introspector) {
         this.introspector = introspector;
     }
 
-    // TODO: #1051 Support for custom initial capacity in defaults
-    public <T extends Collection<?>> CollectionFactory withDefault(Class<T> type, Supplier<T> supplier) {
-        //noinspection unchecked
-        this.defaults.put(type, (Supplier<Collection<?>>) supplier);
+    public <T extends Collection<?>> SimpleCollectionFactory withDefault(Class<T> type, CollectionProvider<T> provider) {
+        this.defaults.put(type, provider);
         return this;
     }
 
-    public CollectionFactory withDefaults() {
+    public <T extends Collection<?>> SimpleCollectionFactory withDefault(Class<T> type, Supplier<T> supplier) {
+        this.defaults.put(type, new SupplierCollectionProvider<>(supplier, capacity -> supplier.get()));
+        return this;
+    }
+
+    public <T extends Collection<?>> SimpleCollectionFactory withDefault(Class<T> type, Supplier<T> supplier, IntFunction<T> capacityConstructor) {
+        this.defaults.put(type, new SupplierCollectionProvider<>(supplier, capacityConstructor));
+        return this;
+    }
+
+    public SimpleCollectionFactory withDefaults() {
         return this
-                .withDefault(Collection.class, ArrayList::new)
-                .withDefault(List.class, ArrayList::new)
-                .withDefault(Set.class, HashSet::new)
+                .withDefault(Collection.class, ArrayList::new, ArrayList::new)
+                .withDefault(List.class, ArrayList::new, ArrayList::new)
+                .withDefault(Set.class, HashSet::new, HashSet::new)
                 .withDefault(SortedSet.class, TreeSet::new)
                 .withDefault(Queue.class, LinkedList::new)
                 .withDefault(Deque.class, LinkedList::new)
                 ;
     }
 
-    public <O extends Collection> O createCollection(Class<O> targetType, Class<?> elementType) {
+    @Override
+    public <O extends Collection<E>, E> O createCollection(Class<O> targetType, Class<E> elementType) {
         return this.createCollection(targetType, elementType, USE_COLLECTION_DEFAULT_CAPACITY);
     }
 
-    public <O extends Collection> O createCollection(Class<O> targetType, Class<?> elementType, int length) {
-        O collection = this.maybeCreateCollectionFromDefaults(targetType, elementType);
+    @Override
+    public <O extends Collection<E>, E> O createCollection(Class<O> targetType, Class<E> elementType, int length) {
+        O collection = this.maybeCreateCollectionFromDefaults(targetType, elementType, length);
         if (collection != null) {
             return collection;
         }
@@ -88,7 +99,7 @@ public class CollectionFactory {
         throw new IllegalArgumentException("Unsupported Collection implementation: " + targetType.getName());
     }
 
-    private <O extends Collection> O createCollectionWithCapacity(Class<O> targetType, int length) {
+    private <O extends Collection> @Nullable O createCollectionWithCapacity(Class<O> targetType, int length) {
         TypeConstructorsIntrospector<O> constructors = this.introspector.introspect(targetType).constructors();
         Option<ConstructorView<O>> defaultCapacityConstructor = constructors.withParameters(int.class);
         if (defaultCapacityConstructor.present()) {
@@ -102,7 +113,7 @@ public class CollectionFactory {
         return null;
     }
 
-    private <O extends Collection> O createCollectionWithDefaultConstructor(Class<O> targetType) {
+    private <O extends Collection> @Nullable O createCollectionWithDefaultConstructor(Class<O> targetType) {
         TypeConstructorsIntrospector<O> constructors = this.introspector.introspect(targetType).constructors();
         Option<ConstructorView<O>> defaultConstructor = constructors.defaultConstructor();
         if (defaultConstructor.present()) {
@@ -117,10 +128,12 @@ public class CollectionFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private <O extends Collection> O maybeCreateCollectionFromDefaults(Class<O> targetType, Class<?> elementType) {
-        Supplier<Collection<?>> supplier = this.defaults.get(targetType);
+    private <O extends Collection> @Nullable O maybeCreateCollectionFromDefaults(Class<O> targetType, Class<?> elementType, int length) {
+        CollectionProvider<?> supplier = this.defaults.get(targetType);
         if (supplier != null) {
-            return (O) supplier.get();
+            return length != USE_COLLECTION_DEFAULT_CAPACITY
+                    ? (O) supplier.createWithCapacity(length)
+                    : (O) supplier.createEmpty();
         }
         else if (targetType == EnumSet.class || EnumSet.class.isAssignableFrom(targetType)) {
             if (elementType.isEnum()) {
