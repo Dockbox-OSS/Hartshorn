@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
+import org.dockbox.hartshorn.util.introspect.convert.support.collections.SimpleCollectionFactory;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -30,11 +31,11 @@ import org.dockbox.hartshorn.util.option.Option;
 public class CollectionDefaultValueProviderFactory implements DefaultValueProviderFactory<Collection<?>> {
 
     private final Introspector introspector;
-    private final CollectionFactory helperFactory;
+    private final SimpleCollectionFactory helperFactory;
 
     public CollectionDefaultValueProviderFactory(Introspector introspector) {
         this.introspector = introspector;
-        this.helperFactory = new CollectionFactory(introspector);
+        this.helperFactory = new SimpleCollectionFactory(introspector);
     }
 
     public <E, O extends Collection<E>> DefaultValueProvider<O> create(Class<O> targetType, Class<E> elementType) {
@@ -74,7 +75,7 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
                 .map(Class.class::cast)
                 .orElse(Object.class);
 
-        return this.create((Class) targetType, (Class) componentType);
+        return this.create((Class) targetType, componentType);
     }
 
     public CollectionDefaultValueProviderFactory withDefaults() {
