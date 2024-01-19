@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,16 @@ import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A reflection-based implementation of {@link TypeView}. This implementation is used by the {@link
+ * ReflectionIntrospector}, and supports both {@link Class} and {@link ParameterizedType} instances.
+ *
+ * @param <T> the type of the reflected type
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implements TypeView<T> {
 
     private static final BiMap<Class<?>, Class<?>> WRAPPERS = BiMap.ofEntries(
@@ -452,7 +462,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
 
     @Override
     public PackageView packageInfo() {
-        return new ReflectionPackageView(this.introspector, this.type.getPackage());
+        return this.introspector.introspect(this.type.getPackage());
     }
 
     @Override

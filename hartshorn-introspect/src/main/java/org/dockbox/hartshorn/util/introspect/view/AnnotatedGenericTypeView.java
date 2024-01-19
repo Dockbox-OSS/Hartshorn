@@ -16,5 +16,16 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+/**
+ * Marker interface for {@link AnnotatedElementView} and {@link GenericTypeView}. For example, a
+ * {@link TypeView} is both an {@link AnnotatedElementView} and a {@link GenericTypeView}, but a
+ * {@link PackageView} is only an {@link AnnotatedElementView}.
+ *
+ * @param <T> the type of the element's generic type
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface AnnotatedGenericTypeView<T> extends AnnotatedElementView, GenericTypeView<T> {
 }

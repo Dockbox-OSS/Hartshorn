@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -50,6 +51,7 @@ public class ConcurrentIntrospectionViewCache implements IntrospectionViewCache 
     private final Map<Field, FieldView<?, ?>> fieldViewCache = new ConcurrentHashMap<>();
     private final Map<Parameter, ParameterView<?>> parameterViewCache = new ConcurrentHashMap<>();
     private final Map<Constructor<?>, ConstructorView<?>> constructorViewCache = new ConcurrentHashMap<>();
+    private final Map<Package, PackageView> packageViewCache = new ConcurrentHashMap<>();
 
     @Override
     public <T> TypeView<T> computeIfAbsent(Class<T> type, Supplier<TypeView<T>> viewSupplier) {
@@ -74,5 +76,10 @@ public class ConcurrentIntrospectionViewCache implements IntrospectionViewCache 
     @Override
     public <T> ConstructorView<T> computeIfAbsent(Constructor<T> constructor, Supplier<ConstructorView<T>> viewSupplier) {
         return TypeUtils.adjustWildcards(this.constructorViewCache.computeIfAbsent(constructor, key0 -> viewSupplier.get()), ConstructorView.class);
+    }
+
+    @Override
+    public PackageView computeIfAbsent(Package pkg, Supplier<PackageView> viewSupplier) {
+        return this.packageViewCache.computeIfAbsent(pkg, key0 -> viewSupplier.get());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -93,4 +94,14 @@ public interface IntrospectionViewCache {
      * @param <T> the type of the view
      */
     <T> ConstructorView<T> computeIfAbsent(Constructor<T> constructor, Supplier<ConstructorView<T>> viewSupplier);
+
+    /**
+     * Returns the {@link PackageView} for the provided {@link Package}. If the view is not yet cached, the
+     * provided {@link Supplier} is used to create a new instance, which is then cached and returned.
+     *
+     * @param pkg the package to introspect
+     * @param viewSupplier the supplier to create a new view instance
+     * @return the cached view instance
+     */
+    PackageView computeIfAbsent(Package pkg, Supplier<PackageView> viewSupplier);
 }

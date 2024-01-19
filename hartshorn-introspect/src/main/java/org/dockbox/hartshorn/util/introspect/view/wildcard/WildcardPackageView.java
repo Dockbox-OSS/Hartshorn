@@ -21,6 +21,13 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 
+/**
+ * A {@link PackageView} implementation for wildcard types.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class WildcardPackageView extends DefaultContext implements PackageView {
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,16 @@
 
 package org.dockbox.hartshorn.config.jackson.introspect;
 
+import java.lang.reflect.AnnotatedElement;
+import java.util.function.Function;
+
+import org.dockbox.hartshorn.config.annotations.IgnoreProperty;
+import org.dockbox.hartshorn.config.jackson.JacksonIntrospectionException;
+import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.annotations.Property;
+import org.dockbox.hartshorn.util.option.Option;
+
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.PropertyName;
@@ -25,16 +35,6 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.type.MapLikeType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-
-import org.dockbox.hartshorn.config.annotations.IgnoreProperty;
-import org.dockbox.hartshorn.config.jackson.JacksonIntrospectionException;
-import org.dockbox.hartshorn.util.introspect.annotations.Property;
-import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.reflect.AnnotatedElement;
-import java.util.function.Function;
 
 /**
  * A {@link JacksonAnnotationIntrospector} that supports the {@link Property} and {@link IgnoreProperty} annotations.
@@ -174,7 +174,7 @@ public class HartshornJacksonAnnotationIntrospector extends JacksonAnnotationInt
     private PropertyName findName(Annotated annotated, Function<Annotated, PropertyName> defaultValue) {
         AnnotatedElement element = annotated.getAnnotated();
         if (element != null) {
-            ElementAnnotationsIntrospector introspector = this.introspector.introspect(element);
+            ElementAnnotationsIntrospector introspector = this.introspector.introspect(element).annotations();
             Option<Property> annotation = introspector.get(Property.class);
             if (annotation.present()) {
                 return new PropertyName(annotation.get().name());
@@ -185,7 +185,7 @@ public class HartshornJacksonAnnotationIntrospector extends JacksonAnnotationInt
 
     @Override
     public boolean hasIgnoreMarker(AnnotatedMember member) {
-        if (this.introspector.introspect(member.getAnnotated()).has(IgnoreProperty.class)) {
+        if (this.introspector.introspect(member.getAnnotated()).annotations().has(IgnoreProperty.class)) {
             return true;
         }
         return super.hasIgnoreMarker(member);

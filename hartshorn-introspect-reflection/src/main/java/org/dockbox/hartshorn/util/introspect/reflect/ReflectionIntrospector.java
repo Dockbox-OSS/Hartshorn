@@ -16,28 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
-import org.dockbox.hartshorn.util.introspect.ConcurrentIntrospectionViewCache;
-import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
-import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
-import org.dockbox.hartshorn.util.introspect.ParameterizableType;
-import org.dockbox.hartshorn.util.introspect.ProxyLookup;
-import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
-import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionConstructorView;
-import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionFieldView;
-import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionMethodView;
-import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionParameterView;
-import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeView;
-import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
-import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -45,6 +23,30 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+
+import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
+import org.dockbox.hartshorn.util.introspect.ConcurrentIntrospectionViewCache;
+import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
+import org.dockbox.hartshorn.util.introspect.ProxyLookup;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionConstructorView;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionFieldView;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionMethodView;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionPackageView;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionParameterView;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeView;
+import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.PackageView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Introspector implementation based on the {@link java.lang.reflect} package. This implementation
@@ -204,8 +206,21 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     }
 
     @Override
-    public ElementAnnotationsIntrospector introspect(AnnotatedElement annotatedElement) {
-        return new ReflectionElementAnnotationsIntrospector(this, annotatedElement);
+    public PackageView introspect(Package pkg) {
+        return this.viewCache().computeIfAbsent(pkg, () -> new ReflectionPackageView(this, pkg));
+    }
+
+    @Override
+    public AnnotatedElementView introspect(AnnotatedElement element) {
+        return switch(element) {
+            case Type type -> this.introspect(type);
+            case Method method -> this.introspect(method);
+            case Constructor<?> constructor -> this.introspect(constructor);
+            case Field field -> this.introspect(field);
+            case Parameter parameter -> this.introspect(parameter);
+            case Package pkg -> this.introspect(pkg);
+            default -> this.voidType();
+        };
     }
 
     @Override
