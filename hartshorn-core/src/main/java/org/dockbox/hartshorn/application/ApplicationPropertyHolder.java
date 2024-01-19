@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,26 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Properties;
 
+import org.dockbox.hartshorn.util.option.Option;
+
 /**
- * This class is used to store application properties.
+ * Represents a holder of application properties. This can be used to obtain configuration values
+ * from the application's configuration file.
+ *
+ * @since 0.4.7
+ *
+ * @author Guus Lieben
  */
 public interface ApplicationPropertyHolder {
 
+    /**
+     * Returns all configuration values. Configuration values can also represent system/environment
+     * variables.
+     *
+     * @return all configuration values
+     */
     Properties properties();
 
     /**

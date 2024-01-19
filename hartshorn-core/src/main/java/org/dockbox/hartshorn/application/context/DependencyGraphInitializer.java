@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.application.context.validate.CompositeDependencyGra
 import org.dockbox.hartshorn.application.context.validate.CyclicDependencyGraphValidator;
 import org.dockbox.hartshorn.application.context.validate.DependenciesVisitedGraphValidator;
 import org.dockbox.hartshorn.application.context.validate.DependencyGraphValidator;
+import org.dockbox.hartshorn.inject.ApplicationContextConfigurationDependencyVisitor;
 import org.dockbox.hartshorn.inject.ApplicationDependencyResolver;
 import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor;
 import org.dockbox.hartshorn.inject.DependencyContext;
@@ -90,6 +91,12 @@ public final class DependencyGraphInitializer {
         return this.graphBuilder.buildDependencyGraph(dependencyContexts);
     }
 
+    /**
+     * Creates a new {@link DependencyGraphInitializer} which may be customized using the given {@link Customizer}.
+     *
+     * @param customizer the customizer
+     * @return the new {@link DependencyGraphInitializer}
+     */
     public static ContextualInitializer<ApplicationContext, DependencyGraphInitializer> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
@@ -98,43 +105,93 @@ public final class DependencyGraphInitializer {
         };
     }
 
+    /**
+     * Configuration class for the {@link DependencyGraphInitializer}. This class is used to configure the
+     * {@link DependencyGraphInitializer} before it is created.
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer {
 
         private ContextualInitializer<ApplicationContext, DependencyResolver> dependencyResolver = ApplicationDependencyResolver.create(Customizer.useDefaults());
         private ContextualInitializer<DependencyResolver, DependencyGraphBuilder> dependencyGraphBuilder = ContextualInitializer.of(DependencyGraphBuilder::create);
-        private ContextualInitializer<ApplicationContext, ConfigurationDependencyVisitor> dependencyVisitor = ContextualInitializer.of(ConfigurationDependencyVisitor::new);
+        private ContextualInitializer<ApplicationContext, ConfigurationDependencyVisitor> dependencyVisitor = ContextualInitializer.of(ApplicationContextConfigurationDependencyVisitor::new);
         private final LazyStreamableConfigurer<ApplicationContext, DependencyGraphValidator> graphValidator = LazyStreamableConfigurer.of(Set.of(
             new DependenciesVisitedGraphValidator(),
             new CyclicDependencyGraphValidator()
         ));
 
+        /**
+         * Configures the dependency resolver to use the given {@link DependencyResolver}.
+         *
+         * @param dependencyResolver the dependency resolver
+         * @return the current instance
+         */
         public Configurer dependencyResolver(DependencyResolver dependencyResolver) {
             return this.dependencyResolver(ContextualInitializer.of(dependencyResolver));
         }
 
+        /**
+         * Configures the dependency resolver to use the given {@link ContextualInitializer} to create a {@link DependencyResolver}.
+         *
+         * @param dependencyResolver the dependency resolver initializer
+         * @return the current instance
+         */
         public Configurer dependencyResolver(ContextualInitializer<ApplicationContext, DependencyResolver> dependencyResolver) {
             this.dependencyResolver = dependencyResolver;
             return this;
         }
 
+        /**
+         * Configures the dependency graph builder to use the given {@link DependencyGraphBuilder}.
+         *
+         * @param dependencyGraphBuilder the dependency graph builder
+         * @return the current instance
+         */
         public Configurer dependencyGraphBuilder(DependencyGraphBuilder dependencyGraphBuilder) {
             return this.dependencyGraphBuilder(ContextualInitializer.of(dependencyGraphBuilder));
         }
 
+        /**
+         * Configures the dependency graph builder to use the given {@link ContextualInitializer} to create a {@link DependencyGraphBuilder}.
+         *
+         * @param dependencyGraphBuilder the dependency graph builder initializer
+         * @return the current instance
+         */
         public Configurer dependencyGraphBuilder(ContextualInitializer<DependencyResolver, DependencyGraphBuilder> dependencyGraphBuilder) {
             this.dependencyGraphBuilder = dependencyGraphBuilder;
             return this;
         }
 
+        /**
+         * Configures the dependency visitor to use the given {@link ConfigurationDependencyVisitor}.
+         *
+         * @param dependencyVisitor the dependency visitor
+         * @return the current instance
+         */
         public Configurer dependencyVisitor(ConfigurationDependencyVisitor dependencyVisitor) {
             return this.dependencyVisitor(ContextualInitializer.of(dependencyVisitor));
         }
 
+        /**
+         * Configures the dependency visitor to use the given {@link ContextualInitializer} to create a {@link ConfigurationDependencyVisitor}.
+         *
+         * @param dependencyVisitor the dependency visitor initializer
+         * @return the current instance
+         */
         public Configurer dependencyVisitor(ContextualInitializer<ApplicationContext, ConfigurationDependencyVisitor> dependencyVisitor) {
             this.dependencyVisitor = dependencyVisitor;
             return this;
         }
 
+        /**
+         * Configures the graph validator to use the given {@link DependencyGraphValidator}.
+         *
+         * @param graphValidator the graph validator
+         * @return the current instance
+         */
         public Configurer graphValidator(Customizer<StreamableConfigurer<ApplicationContext, DependencyGraphValidator>> graphValidator) {
             this.graphValidator.customizer(graphValidator);
             return this;

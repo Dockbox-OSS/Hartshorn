@@ -45,6 +45,24 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * Simple implementation of the {@link ApplicationContext} interface. This implementation primarily delegates to individual
+ * components, such as the {@link DependencyGraphInitializer} and {@link PostProcessingComponentProvider}. It also supports
+ * pre-processing of components, which is performed immediately when {@link #loadContext() the context is loaded}.
+ *
+ * <p>This context is limited to only being initialized once, and is not refreshable (unless its individual components support
+ * this).
+ *
+ * @see DependencyGraphInitializer
+ * @see PostProcessingComponentProvider
+ * @see ComponentPreProcessor
+ * @see DelegatingApplicationContext
+ * @see ProcessableApplicationContext
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SimpleApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
 
     protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
@@ -95,7 +113,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     }
 
     @Override
-    public void loadContext() {
+    public synchronized void loadContext() {
         this.checkRunning();
 
         Collection<ComponentContainer<?>> containers = this.locator().containers();
@@ -148,6 +166,12 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         return this.preProcessors;
     }
 
+    /**
+     * Pre-processes all components with the registered {@link ComponentPreProcessor component pre-processors}. This method
+     * is called immediately after the dependency graph has been initialized.
+     *
+     * @param containers the components to process
+     */
     protected void processComponents(Collection<ComponentContainer<?>> containers) {
         this.checkRunning();
         for (ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
@@ -169,6 +193,12 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         serviceProcessor.process(context);
     }
 
+    /**
+     * Creates a new {@link SimpleApplicationContext} which may be customized using the given {@link Customizer}.
+     *
+     * @param customizer the customizer
+     * @return the new {@link SimpleApplicationContext}
+     */
     public static ContextualInitializer<ApplicationEnvironment, ApplicationContext> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
@@ -177,18 +207,37 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         };
     }
 
+    /**
+     * Configuration class for the {@link SimpleApplicationContext}. This class is used to configure the {@link SimpleApplicationContext}
+     * before it is created.
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer extends DelegatingApplicationContext.Configurer {
 
         private ContextualInitializer<ApplicationContext, ? extends DependencyGraphInitializer> dependencyGraphInitializer = DependencyGraphInitializer.create(Customizer.useDefaults());
 
+        /**
+         * Configures the dependency graph initializer to use the given {@link DependencyGraphInitializer}.
+         *
+         * @param dependencyGraphInitializer the dependency graph initializer
+         * @return the current instance
+         */
         public Configurer dependencyGraphInitializer(DependencyGraphInitializer dependencyGraphInitializer) {
             return this.dependencyGraphInitializer(ContextualInitializer.of(dependencyGraphInitializer));
         }
 
+        /**
+         * Configures the dependency graph initializer to use the given {@link ContextualInitializer} to create a {@link DependencyGraphInitializer}.
+         *
+         * @param dependencyGraphInitializer the initializer of the dependency graph initializer
+         * @return the current instance
+         */
         public Configurer dependencyGraphInitializer(ContextualInitializer<ApplicationContext, DependencyGraphInitializer> dependencyGraphInitializer) {
             this.dependencyGraphInitializer = dependencyGraphInitializer;
             return this;
         }
-
     }
 }

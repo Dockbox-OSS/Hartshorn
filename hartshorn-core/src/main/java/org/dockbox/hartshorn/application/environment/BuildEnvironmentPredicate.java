@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,24 @@ package org.dockbox.hartshorn.application.environment;
 
 import java.util.Set;
 
+/**
+ * A predicate that checks if the application is running in a build environment. This is useful
+ * to determine if certain features should be enabled or disabled.
+ *
+ * <p>Supported environments include:
+ * <ul>
+ *     <li>GitLab CI, using the <a href="https://docs.gitlab.com/ee/ci/variables/predefined_variables.html">{@code GITLAB_CI}</a> environment variable</li>
+ *     <li>Jenkins, using the <a href="https://www.jenkins.io/doc/book/managing/system-configuration/">{@code JENKINS_HOME}</a> environment variable</li>
+ *     <li>Travis CI, using the <a href="https://docs.travis-ci.com/user/environment-variables/#default-environment-variables">{@code TRAVIS}</a> environment variable</li>
+ *     <li>GitHub Actions, using the <a href="https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables">{@code GITHUB_ACTIONS}</a> environment variable</li>
+ *     <li>AppVeyor, using the <a href="https://www.appveyor.com/docs/environment-variables/">{@code APPVEYOR}</a> environment variable</li>
+ *     <li>Any environment that defines any of the above environment variables, where the value equals {@code "true"}</li>
+ * </ul>
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class BuildEnvironmentPredicate {
 
     private static final Set<String> BUILD_ENVIRONMENT_VARIABLES = Set.of(
@@ -28,13 +46,21 @@ public class BuildEnvironmentPredicate {
             "APPVEYOR"
     );
 
+    /**
+     * Checks if the application is running in a build environment. Returns {@code true} if any of the
+     * supported environment variables are defined, and the value of the variable equals {@code "true"}.
+     *
+     * @return whether the application is running in a build environment
+     */
     public static boolean isBuildEnvironment() {
         for(String buildEnvironmentVariable : BUILD_ENVIRONMENT_VARIABLES) {
             if(System.getenv().containsKey(buildEnvironmentVariable)) {
-                return true;
+                String value = System.getenv().get(buildEnvironmentVariable);
+                if (Boolean.parseBoolean(value)) {
+                    return true;
+                }
             }
         }
         return false;
     }
-
 }
