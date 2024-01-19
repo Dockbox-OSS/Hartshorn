@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,24 @@ package org.dockbox.hartshorn.application.environment.banner;
 
 import org.slf4j.Logger;
 
+/**
+ * Represents a banner that can be printed to the active logging system. Banners are usually printed
+ * when the application starts.
+ *
+ * @since 0.5.0
+ *
+ * @see HartshornBanner
+ *
+ * @author Guus Lieben
+ */
 @FunctionalInterface
 public interface Banner {
+
+    /**
+     * Prints the banner to the given {@link Logger}. The logger is expected to be the primary logger
+     * of the application.
+     *
+     * @param logger The logger to print the banner to.
+     */
     void print(Logger logger);
 }
