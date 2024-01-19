@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ApplicationDependencyResolver extends CompositeDependencyResolver {
 
@@ -41,7 +41,6 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
             Set<DependencyResolver> resolvers = configurer.stream()
                     .map(initializer -> initializer.initialize(context))
                     .collect(Collectors.toSet());
-//
 
             return new ApplicationDependencyResolver(resolvers, context.input());
         };
