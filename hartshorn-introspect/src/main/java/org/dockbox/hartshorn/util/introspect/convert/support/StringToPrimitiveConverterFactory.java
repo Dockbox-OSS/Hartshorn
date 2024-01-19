@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,25 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Map;
+
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 
-import java.util.Map;
-
+/**
+ * Converts a {@link String} to a primitive value. Supports all primitive types except {@code void}. Delegates to
+ * {@link StringToNumberConverterFactory} for numeric types, and {@link StringToBooleanConverter} and
+ * {@link StringToCharacterConverter} for boolean and character types respectively.
+ *
+ * @since 0.5.0
+ *
+ * @see StringToNumberConverterFactory
+ * @see StringToBooleanConverter
+ * @see StringToCharacterConverter
+ *
+ * @author Guus Lieben
+ */
 public class StringToPrimitiveConverterFactory implements ConverterFactory<String, Object>, ConditionalConverter {
 
     private static final ConverterFactory<String, Number> NUMBER_CONVERTER_FACTORY = new StringToNumberConverterFactory();

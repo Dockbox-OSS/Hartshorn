@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,32 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.function.Function;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 
-import java.util.function.Function;
-
+/**
+ * Converts a {@link String} to a {@link Number}. Supports all primitive type wrappers, but not
+ * primitives themselves. Supports both decimal and hexadecimal numbers.
+ *
+ * @since 0.5.0
+ *
+ * @see Integer#parseInt(String)
+ * @see Integer#decode(String)
+ * @see Long#parseLong(String)
+ * @see Long#decode(String)
+ * @see Float#parseFloat(String)
+ * @see Double#parseDouble(String)
+ * @see Short#parseShort(String)
+ * @see Short#decode(String)
+ * @see Byte#parseByte(String)
+ * @see Byte#decode(String)
+ * @see #isHexNumber(String)
+ *
+ * @author Guus Lieben
+ */
 public class StringToNumberConverterFactory implements ConverterFactory<String, Number> {
 
     @Override
@@ -52,27 +72,48 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
         return (Converter<String, O>) converter;
     }
 
-    private record StringToNumberConverter<T extends Number>(Function<String, T> parseFunction, Function<String, T> decodeFunction)
-            implements Converter<String, T> {
+    /**
+     * A {@link Converter} implementation that converts a {@link String} to a {@link Number}. Supports both decimal and
+     * hexadecimal numbers. Uses the provided {@link Function}s to parse and decode the input.
+     *
+     * @param parseFunction The function to use for parsing decimal numbers
+     * @param decodeFunction The function to use for decoding hexadecimal numbers
+     * @param <T> The type of the number
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
+    private record StringToNumberConverter<T extends Number>(
+            Function<String, T> parseFunction,
+            Function<String, T> decodeFunction
+    ) implements Converter<String, T> {
 
         @Override
-            public @Nullable T convert(@Nullable String input) {
-                assert input != null;
-                try {
-                    if(isHexNumber(input)) {
-                        return this.decodeFunction.apply(input);
-                    }
-                    else {
-                        return this.parseFunction.apply(input);
-                    }
+        public @Nullable T convert(@Nullable String input) {
+            assert input != null;
+            try {
+                if(isHexNumber(input)) {
+                    return this.decodeFunction.apply(input);
                 }
-                catch(NumberFormatException e) {
-                    // If primitive, the conversion service will default to zero
-                    return null;
+                else {
+                    return this.parseFunction.apply(input);
                 }
             }
+            catch(NumberFormatException e) {
+                // If primitive, the conversion service will default to zero
+                return null;
+            }
         }
+    }
 
+    /**
+     * Returns whether the given {@link String} is a hexadecimal number. A hexadecimal number is prefixed with either
+     * {@code 0x} or {@code #}. The prefix may be preceded by a minus sign.
+     *
+     * @param value the value to check
+     * @return {@code true} if the given value is a hexadecimal number, {@code false} otherwise
+     */
     public static boolean isHexNumber(String value) {
         int index = value.startsWith("-") ? 1 : 0;
         return value.toLowerCase().startsWith("0x", index) || value.startsWith("#", index);
