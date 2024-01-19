@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,22 @@
 
 package org.dockbox.hartshorn.reporting.application;
 
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.Reportable;
-
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
+
+/**
+ * A reportable that reports the contents of a {@link Properties} instance. The keys of the properties are used as
+ * property names, and the values of the properties are used as property values.
+ *
+ * @since 0.5.0
+ *
+ * @see Properties
+ *
+ * @author Guus Lieben
+ */
 public class PropertiesReporter implements Reportable {
 
     private final Properties properties;

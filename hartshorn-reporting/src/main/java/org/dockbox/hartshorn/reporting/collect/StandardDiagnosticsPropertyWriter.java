@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,13 @@ import org.dockbox.hartshorn.util.Node;
 import org.dockbox.hartshorn.util.SimpleNode;
 import org.dockbox.hartshorn.util.TypeUtils;
 
+/**
+ * A diagnostics property writer that writes to a {@link GroupNode} in a {@link StandardDiagnosticsReportCollector}.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWriter {
 
     private boolean closed = false;
@@ -137,7 +144,7 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
             throw new IllegalStateException("Property writer is closed");
         }
     }
-    
+
     private DiagnosticsReportCollector exit(Node<?> node) {
         this.group.add(node);
         this.closed = true;
