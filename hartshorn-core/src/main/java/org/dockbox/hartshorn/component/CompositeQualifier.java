@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.inject.Named;
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.StringUtilities;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import org.dockbox.hartshorn.inject.Named;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.StringUtilities;
 
 /**
  * A {@link CompositeQualifier} is a collection of {@link QualifierKey}s. It is used to qualify a {@link ComponentKey}
@@ -99,6 +99,10 @@ public class CompositeQualifier implements Reportable {
      */
     public Set<QualifierKey<?>> qualifiers() {
         return Set.copyOf(this.qualifiers.values());
+    }
+
+    public boolean isEmpty() {
+        return this.qualifiers.isEmpty();
     }
 
     @Override

@@ -67,6 +67,7 @@ public @interface Binds {
      * @deprecated use the {@link Named} annotation or a custom {@link Qualifier} annotation instead
      */
     @Deprecated(since = "0.6.0", forRemoval = true)
+    @AttributeAlias("name")
     String value() default "";
 
     /**
@@ -101,18 +102,12 @@ public @interface Binds {
     boolean lazy() default false;
 
     /**
-     * Bindings that should be registered after this binding, for example to prepare configuration for these
-     * bindings. If not specified, no guarantees are made about the order in which bindings are registered, besides
-     * their priority.
-     *
-     * @return the bindings that should be registered before this binding
-     */
-    Class<?>[] before() default {};
-
-    /**
      * Bindings that should be registered before this binding, for example if this binding depends on other
      * bindings, but doesn't require them to be provided by the container. If not specified, no guarantees are made
      * about the order in which bindings are registered, besides their priority.
+     *
+     * <p>Bindings declared here are considered to be dependencies of this binding. This is similar to requiring the
+     * bindings as method parameters, but without the requirement to actually declare method parameters.
      *
      * @return the bindings that should be registered before this binding
      */

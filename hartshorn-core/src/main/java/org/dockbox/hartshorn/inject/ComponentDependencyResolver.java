@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.inject.strategy.DependencyResolverUtils;
+import org.dockbox.hartshorn.inject.strategy.IntrospectionDependencyResolver;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Set;
 
 public class ComponentDependencyResolver extends AbstractContainerDependencyResolver {
 
@@ -47,8 +47,9 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
             return Set.of();
         }
 
-        Set<ComponentKey<?>> constructorDependencies = DependencyResolverUtils.resolveDependencies(constructorView, this.applicationContext().environment());
-        Set<ComponentKey<?>> typeDependencies = DependencyResolverUtils.resolveDependencies(type, this.applicationContext().environment());
+        IntrospectionDependencyResolver resolver = new IntrospectionDependencyResolver(this.applicationContext().environment());
+        Set<ComponentKey<?>> constructorDependencies = resolver.resolveDependencies(constructorView);
+        Set<ComponentKey<?>> typeDependencies = resolver.resolveDependencies(type);
 
         DependencyMap dependencies = DependencyMap.create()
                 .immediate(constructorDependencies)

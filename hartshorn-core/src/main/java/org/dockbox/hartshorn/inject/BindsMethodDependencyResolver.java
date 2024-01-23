@@ -16,17 +16,18 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.inject.strategy.BindingStrategy;
 import org.dockbox.hartshorn.inject.strategy.BindingStrategyContext;
 import org.dockbox.hartshorn.inject.strategy.BindingStrategyRegistry;
 import org.dockbox.hartshorn.inject.strategy.MethodAwareBindingStrategyContext;
@@ -34,6 +35,8 @@ import org.dockbox.hartshorn.inject.strategy.MethodInstanceBindingStrategy;
 import org.dockbox.hartshorn.inject.strategy.SimpleBindingStrategyRegistry;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
+import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -78,12 +81,12 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
         // is no incorrect usage of the @Binds annotation.
         if (this.componentLocator.container(componentType.type()).absent()) {
             throw new IllegalStateException(
-                "Component " + componentType.type().getName() + " is not a managed component, but contains @Binds methods.");
+                "Component " + componentType.type().getName() + " is not a managed component, but contains binding declarations.");
         }
         else {
             if (!componentType.annotations().has(Configuration.class)){
                 throw new IllegalStateException(
-                    "Component " + componentType.type().getName() + " is not a configuration component, but contains @Binds methods.");
+                    "Component " + componentType.type().getName() + " is not a configuration component, but contains binding declarations.");
             }
             return bindsMethods.stream()
                 .filter(this.conditionMatcher::match)
@@ -102,14 +105,11 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
 
+            List<BindingStrategy> strategies = configurer.bindingStrategies.initialize(context);
             BindingStrategyRegistry registry = new SimpleBindingStrategyRegistry();
+            strategies.forEach(registry::register);
+
             ApplicationContext applicationContext = context.input();
-
-            ApplicationEnvironment environment = applicationContext.environment();
-            registry.register(new MethodInstanceBindingStrategy(environment));
-
-            configurer.registryCustomizer.configure(registry);
-
             ConditionMatcher conditionMatcher = configurer.conditionMatcher.initialize(context.transform(applicationContext));
             DefaultBindingConfigurerContext.compose(context, binder -> {
                 binder.bind(ConditionMatcher.class).singleton(conditionMatcher);
@@ -121,8 +121,10 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
 
     public static class Configurer {
 
+        private final LazyStreamableConfigurer<ApplicationContext, BindingStrategy> bindingStrategies = LazyStreamableConfigurer.ofInitializer(
+            MethodInstanceBindingStrategy.create(Customizer.useDefaults())
+        );
         private ContextualInitializer<ApplicationContext, ConditionMatcher> conditionMatcher = context -> new ConditionMatcher(context.input());
-        private Customizer<BindingStrategyRegistry> registryCustomizer = Customizer.useDefaults();
 
         public Configurer conditionMatcher(ConditionMatcher conditionMatcher) {
             return this.conditionMatcher(ContextualInitializer.of(conditionMatcher));
@@ -133,8 +135,8 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
             return this;
         }
 
-        public Configurer registry(Customizer<BindingStrategyRegistry> customizer) {
-            this.registryCustomizer = customizer;
+        public Configurer bindingStrategies(Customizer<StreamableConfigurer<ApplicationContext, BindingStrategy>> customizer) {
+            this.bindingStrategies.customizer(customizer);
             return this;
         }
     }

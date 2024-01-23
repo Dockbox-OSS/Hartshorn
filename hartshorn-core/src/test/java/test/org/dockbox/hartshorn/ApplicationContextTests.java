@@ -16,6 +16,15 @@
 
 package test.org.dockbox.hartshorn;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.application.context.validate.CyclicDependencyGraphValidator;
@@ -37,7 +46,7 @@ import org.dockbox.hartshorn.inject.DependencyResolutionType;
 import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.TypePathNode;
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
-import org.dockbox.hartshorn.inject.strategy.DependencyResolverUtils;
+import org.dockbox.hartshorn.inject.strategy.IntrospectionDependencyResolver;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
@@ -56,15 +65,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.boot.EmptyService;
@@ -89,6 +89,7 @@ import test.org.dockbox.hartshorn.components.NonProxyComponentType;
 import test.org.dockbox.hartshorn.components.PopulatedType;
 import test.org.dockbox.hartshorn.components.ProvidedInterface;
 import test.org.dockbox.hartshorn.components.ProviderService;
+import test.org.dockbox.hartshorn.components.SampleConfiguration;
 import test.org.dockbox.hartshorn.components.SampleContext;
 import test.org.dockbox.hartshorn.components.SampleField;
 import test.org.dockbox.hartshorn.components.SampleFieldImplementation;
@@ -96,7 +97,6 @@ import test.org.dockbox.hartshorn.components.SampleImplementation;
 import test.org.dockbox.hartshorn.components.SampleInterface;
 import test.org.dockbox.hartshorn.components.SampleMetaAnnotatedImplementation;
 import test.org.dockbox.hartshorn.components.SampleProviderConfiguration;
-import test.org.dockbox.hartshorn.components.SampleConfiguration;
 import test.org.dockbox.hartshorn.components.SampleType;
 import test.org.dockbox.hartshorn.components.SetterInjectedComponent;
 import test.org.dockbox.hartshorn.components.SetterInjectedComponentWithAbsentBinding;
@@ -319,7 +319,7 @@ public class ApplicationContextTests {
 
         ComponentPopulator populator = populatorFactory.apply(this.applicationContext);
         ContextInjectedType instance = populator.populate(new ContextInjectedType());
-        
+
         Assertions.assertNotNull(instance.context());
         Assertions.assertEquals(contextName, instance.context().name());
     }
@@ -473,13 +473,14 @@ public class ApplicationContextTests {
 
     private DependencyGraph buildDependencyGraph(List<Class<?>> components) {
         Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
+        IntrospectionDependencyResolver dependencyResolver = new IntrospectionDependencyResolver(this.applicationContext.environment());
         for(Class<?> component : components) {
             ComponentKey<?> componentKey = ComponentKey.of(component);
             TypeView<?> typeView = this.applicationContext.environment().introspector().introspect(component);
 
             DependencyMap dependencyMap = DependencyMap.create()
                     // Fields and methods are always delayed
-                    .delayed(DependencyResolverUtils.resolveDependencies(typeView, this.applicationContext.environment()));
+                    .delayed(dependencyResolver.resolveDependencies(typeView));
 
             View origin = typeView;
             if (!typeView.isInterface()) {
@@ -491,7 +492,7 @@ public class ApplicationContextTests {
                     ConstructorView<?> constructorView = constructorViews.get(0);
                     origin = constructorView;
                     // Constructors are always immediate
-                    Set<ComponentKey<?>> immediateDependencies = DependencyResolverUtils.resolveDependencies(constructorView, this.applicationContext.environment());
+                    Set<ComponentKey<?>> immediateDependencies = dependencyResolver.resolveDependencies(constructorView);
                     dependencyMap.putAll(DependencyResolutionType.IMMEDIATE, immediateDependencies);
                 }
             }
