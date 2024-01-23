@@ -21,15 +21,33 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
- * Indicates that a component is a configuration. Configurations are components that are used to configure other
- * components. Typically, this is done by offering {@link Binds binding providers}.
+ * Indicates that a component is a configuration. Configurations provide declarations of component
+ * bindings which should be made available to the application. For example:
+ * <pre>{@code
+ * @Configuration
+ * public class ApplicationConfiguration {
+ *    @Binds
+ *    public ComplexComponent complexComponent(...) {
+ *       // ...
+ *    }
+ * }
+ * }</pre>
  *
- * <p>Configurations are not expected to have any dependencies, other than components that are provided by the
- * container during the configuration process. As such, configurations are never proxied or processed.
+ * <p>Configurations should often be conditional, so that they are only loaded when the application
+ * meets certain requirements. This can be achieved by annotating the configuration with {@link
+ * org.dockbox.hartshorn.component.condition.RequiresCondition} or appropriate meta-annotations. For
+ * example:
+ *
+ * <pre>{@code
+ * @RequiresActivator(UseBootstrap.class)
+ * public class ApplicationConfiguration {
+ *    // ...
+ * }
+ * }</pre>
  *
  * @since 0.6.0
  *

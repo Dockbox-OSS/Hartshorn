@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,32 @@
 
 package org.dockbox.hartshorn.component.processing.proxy;
 
+import java.util.Collection;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapper;
 import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallback;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.util.Collection;
+public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProcessor {
 
-public abstract class PhasedProxyCallbackPostProcessor extends FunctionalComponentPostProcessor {
+    @Override
+    public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
+        return processingContext.permitsProxying();
+    }
 
     @Override
     public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         ComponentKey<T> key = processingContext.key();
         Collection<MethodView<T, ?>> methods = this.modifiableMethods(context, key, instance);
 
-        ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
+        ProxyFactory<T> factory = processingContext.get(ProxyFactory.class);
         if (factory == null) {
             return;
         }

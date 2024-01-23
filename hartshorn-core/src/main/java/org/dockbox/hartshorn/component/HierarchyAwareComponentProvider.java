@@ -59,7 +59,6 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.IllegalModificationException;
-import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
@@ -175,7 +174,9 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
     protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, T instance, @Nullable ComponentContainer<?> container) {
         ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(
-                this.applicationContext(), key, instance, latest -> this.storeSingletons(key, latest));
+                this.applicationContext(), key, instance,
+                container == null || container.permitsProxying(),
+                latest -> this.storeSingletons(key, latest));
 
         if (container != null) {
             processingContext.put(ComponentKey.of(ComponentContainer.class), container);
@@ -225,7 +226,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
     @Override
     public <T> T get(ComponentKey<T> componentKey) {
-        if (componentKey.type() == ApplicationContext.class && StringUtilities.empty(componentKey.name())) {
+        if (componentKey.type() == ApplicationContext.class && componentKey.qualifier().isEmpty()) {
             return TypeUtils.adjustWildcards(this.applicationContext(), Object.class);
         }
 
