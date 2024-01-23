@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import jakarta.inject.Singleton;
 
 @Configuration
 @RequiresActivator(UseConfigurations.class)
-@IncludeResourceConfiguration({"application", "classpath:application"})
+@IncludeResourceConfiguration({"fs:application", "classpath:application"})
 public class ApplicationPropertiesConfiguration {
 
     /**
@@ -54,6 +54,7 @@ public class ApplicationPropertiesConfiguration {
     }
 
     @Binds
+    @Singleton
     public URIConfigProcessor uriConfigProcessor() {
         return new StandardURIConfigProcessor();
     }

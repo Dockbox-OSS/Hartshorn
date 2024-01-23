@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import java.util.concurrent.Callable;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.config.DefaultObjectMapper;
 import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.FileFormats;
@@ -56,14 +55,22 @@ import jakarta.inject.Inject;
 public class JacksonObjectMapper extends DefaultObjectMapper {
 
     private final ApplicationContext context;
+    private final JacksonDataMapperRegistry dataMapperRegistry;
+    private final JacksonObjectMapperConfigurator configurator;
 
     private ObjectMapper objectMapper;
     private JsonInclusionRule inclusionRule;
 
     @Inject
-    public JacksonObjectMapper(ApplicationContext applicationContext) {
+    public JacksonObjectMapper(
+            ApplicationContext applicationContext,
+            JacksonDataMapperRegistry dataMapperRegistry,
+            JacksonObjectMapperConfigurator configurator
+    ) {
         super(FileFormats.JSON);
         this.context = applicationContext;
+        this.dataMapperRegistry = dataMapperRegistry;
+        this.configurator = configurator;
     }
 
     @Override
@@ -269,7 +276,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     public ObjectMapper configureMapper() {
         if (null == this.objectMapper) {
             this.context.log().debug("Internal object mapper was not configured yet, configuring now with filetype " + this.fileType());
-            MapperBuilder<?, ?> builder = this.context.get(JacksonObjectMapperConfigurator.class)
+            MapperBuilder<?, ?> builder = this.configurator
                     .configure(this.mapper(this.fileType()), this.fileType(), this.inclusionRule);
             this.objectMapper = builder.build();
         }
@@ -277,9 +284,9 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     protected MapperBuilder<?, ?> mapper(FileFormat fileFormat) {
-        JacksonDataMapper dataMapper = this.context.get(ComponentKey.of(JacksonDataMapper.class, fileFormat.extension()));
-        // Do not throw an exception here as subclasses may wish to extend functionality
-        return dataMapper == null ? null : dataMapper.get();
+        return this.dataMapperRegistry.resolve(fileFormat)
+                .map(JacksonDataMapper::get)
+                .orNull();
     }
 
     private void addKeys(String currentPath, TreeNode jsonNode, Map<String, Object> map) {

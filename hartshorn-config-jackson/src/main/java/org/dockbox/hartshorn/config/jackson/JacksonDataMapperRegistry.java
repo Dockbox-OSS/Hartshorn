@@ -17,12 +17,13 @@
 package org.dockbox.hartshorn.config.jackson;
 
 import org.dockbox.hartshorn.config.FileFormat;
+import org.dockbox.hartshorn.util.option.Option;
 
-import com.fasterxml.jackson.databind.cfg.MapperBuilder;
+public interface JacksonDataMapperRegistry {
 
-public interface JacksonDataMapper {
+    void register(JacksonDataMapper mapper);
 
-    FileFormat fileFormat();
+    boolean isCompatible(FileFormat format);
 
-    MapperBuilder<?, ?> get();
+    Option<JacksonDataMapper> resolve(FileFormat format);
 }

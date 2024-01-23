@@ -16,13 +16,28 @@
 
 package org.dockbox.hartshorn.config.jackson;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.config.FileFormat;
+import org.dockbox.hartshorn.util.option.Option;
 
-import com.fasterxml.jackson.databind.cfg.MapperBuilder;
+public class SimpleJacksonDataMapperRegistry implements JacksonDataMapperRegistry {
 
-public interface JacksonDataMapper {
+    private final Map<FileFormat, JacksonDataMapper> dataMappers = new ConcurrentHashMap<>();
 
-    FileFormat fileFormat();
+    @Override
+    public void register(JacksonDataMapper mapper) {
+        this.dataMappers.put(mapper.fileFormat(), mapper);
+    }
 
-    MapperBuilder<?, ?> get();
+    @Override
+    public boolean isCompatible(FileFormat format) {
+        return dataMappers.containsKey(format);
+    }
+
+    @Override
+    public Option<JacksonDataMapper> resolve(FileFormat format) {
+        return Option.of(this.dataMappers.get(format));
+    }
 }

@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.config;
 
+import java.net.URI;
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
@@ -27,9 +30,6 @@ import org.dockbox.hartshorn.util.resources.FileSystemLookupStrategy;
 import org.dockbox.hartshorn.util.resources.MissingSourceException;
 import org.dockbox.hartshorn.util.resources.ResourceLookup;
 import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
-
-import java.net.URI;
-import java.util.Set;
 
 /**
  * Processes all services annotated with {@link IncludeResourceConfiguration} by loading the indicated file and registering the
@@ -68,7 +68,7 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
         Set<URI> config = resourceLookup.lookup(source);
 
         if (config.isEmpty()) {
-            context.log().warn("No configuration file found for " + key.type().getSimpleName());
+            context.log().warn("Configuration source '%s' was not found for %s".formatted(source, key.type().getSimpleName()));
             return false;
         }
         else if (config.size() > 1) {
