@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,10 @@ import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 /**
  * Represents the type of a component, typically represented through {@link Component#type()} or
  * {@link ComponentContainer#componentType()}.
+ *
+ * @deprecated Component stereotypes and metadata should be used instead of this enum.
  */
+@Deprecated(since = "0.6.0", forRemoval = true)
 public enum ComponentType {
     /**
      * Components range from POJO's to {@link Context} types. The common property of

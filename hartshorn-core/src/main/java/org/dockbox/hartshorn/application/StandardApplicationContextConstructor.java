@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentLocator;
-import org.dockbox.hartshorn.component.ComponentType;
 import org.dockbox.hartshorn.component.UseProxying;
 import org.dockbox.hartshorn.component.processing.ComponentFinalizingPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -229,7 +228,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
             }
         }
 
-        for (ComponentContainer<?> container : applicationContext.get(ComponentLocator.class).containers(ComponentType.FUNCTIONAL)) {
+        for (ComponentContainer<?> container : applicationContext.get(ComponentLocator.class).containers()) {
             this.buildContext.logger().debug("Instantiating non-lazy singleton {} in application context", container.id());
             if (container.singleton() && !container.lazy()) {
                 applicationContext.get(container.type().type());
