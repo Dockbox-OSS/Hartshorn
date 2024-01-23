@@ -16,20 +16,23 @@
 
 package org.dockbox.hartshorn.component.condition;
 
-public class ClassCondition implements Condition {
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+
+public class AnnotationConditionDeclaration implements ConditionDeclaration {
+
+    private final RequiresCondition annotation;
+
+    public AnnotationConditionDeclaration(RequiresCondition annotation) {
+        this.annotation = annotation;
+    }
 
     @Override
-    public ConditionResult matches(ConditionContext context) {
-        return context.annotatedElement().annotations().get(RequiresClass.class).map(condition -> {
-            for (String name : condition.value()) {
-                try {
-                    Class.forName(name);
-                }
-                catch (ClassNotFoundException e) {
-                    return ConditionResult.notFound("class", name);
-                }
-            }
-            return ConditionResult.matched();
-        }).orElse(ConditionResult.invalidCondition("class"));
+    public Condition condition(ApplicationContext applicationContext) {
+        return applicationContext.get(this.annotation.condition());
+    }
+
+    @Override
+    public boolean failOnNoMatch() {
+        return this.annotation.failOnNoMatch();
     }
 }

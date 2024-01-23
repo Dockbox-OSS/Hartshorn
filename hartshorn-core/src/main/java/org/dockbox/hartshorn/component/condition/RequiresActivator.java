@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.component.condition;
 
-
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -33,5 +33,6 @@ public @interface RequiresActivator {
 
     Class<? extends Annotation>[] value();
 
+    @AttributeAlias(value = "failOnNoMatch", target = RequiresCondition.class)
     boolean failOnNoMatch() default false;
 }

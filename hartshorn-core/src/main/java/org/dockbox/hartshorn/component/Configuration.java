@@ -41,7 +41,7 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 @Component(
         singleton = true,
         permitProxying = false,
-        permitProcessing = false
+        lazy = false
 )
 public @interface Configuration {
 
@@ -49,11 +49,13 @@ public @interface Configuration {
      * @see Component#id()
      * @return The id of the configuration.
      */
+    @AttributeAlias(value = "id", target = Component.class)
     String id() default "";
 
     /**
      * @see Component#name()
      * @return The name of the configuration.
      */
+    @AttributeAlias(value = "name", target = Component.class)
     String name() default "";
 }
