@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import java.util.function.BiPredicate;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 
@@ -61,7 +61,7 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                     int value = (Character) right;
                     yield (double) left + value;
                 }
-                throw new RuntimeError(node.operator(), "Unsupported child for PLUS.\n");
+                throw new ScriptEvaluationError("Unsupported child for PLUS.\n", Phase.INTERPRETING, operator);
             }
             case ArithmeticTokenType.MINUS -> {
                 InterpreterUtilities.checkNumberOperands(node.operator(), left, right);
@@ -96,7 +96,7 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
             case ArithmeticTokenType.SLASH -> {
                 InterpreterUtilities.checkNumberOperands(node.operator(), left, right);
                 if ((double) right == 0) {
-                    throw new RuntimeError(node.operator(), "Can't use slash with zero double.");
+                    throw new ScriptEvaluationError("Can't use slash with zero double.", Phase.INTERPRETING, operator);
                 }
                 yield (double) left / (double) right;
             }

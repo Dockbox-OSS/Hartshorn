@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,12 @@ import java.util.Map;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
@@ -70,7 +71,10 @@ public class ExternalInstance implements ExternalObjectReference {
                 field.get().set(this.instance(), value);
             }
             catch(Throwable throwable) {
-                throw new RuntimeError(name, "Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.type.name()), throwable);
+                throw new ScriptEvaluationError(
+                        throwable, "Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.type.name()),
+                        Phase.INTERPRETING, name
+                );
             }
         }
         else {
@@ -85,7 +89,10 @@ public class ExternalInstance implements ExternalObjectReference {
                 .toArray();
 
         if (methods.length > 1 && !options.permitAmbiguousExternalFunctions()) {
-            throw new RuntimeError(name, "Ambiguous method call for method %s".formatted(name.lexeme()));
+            throw new ScriptEvaluationError(
+                    "Ambiguous method call for method %s".formatted(name.lexeme()),
+                    Phase.INTERPRETING, name
+            );
         }
 
         if (methods.length > 0) {
@@ -98,7 +105,12 @@ public class ExternalInstance implements ExternalObjectReference {
                 return field.get().get(this.instance());
             }
             catch(Throwable throwable) {
-                throw new RuntimeError(name, "Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.type.name()), throwable);
+                throw new ScriptEvaluationError(
+                        throwable,
+                        "Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.type.name()),
+                        Phase.INTERPRETING,
+                        name
+                );
             }
         }
         else {
@@ -106,8 +118,11 @@ public class ExternalInstance implements ExternalObjectReference {
         }
     }
 
-    private RuntimeError propertyDoesNotExist(Token name) {
-        return new RuntimeError(name, "Property %s does not exist on external instance of type %s".formatted(name.lexeme(), this.type.name()));
+    private ScriptEvaluationError propertyDoesNotExist(Token name) {
+        return new ScriptEvaluationError(
+                "Property %s does not exist on external instance of type %s".formatted(name.lexeme(), this.type.name()),
+                Phase.INTERPRETING, name
+        );
     }
 
     @Override

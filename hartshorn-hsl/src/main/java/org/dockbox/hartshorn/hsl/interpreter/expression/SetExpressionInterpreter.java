@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 public class SetExpressionInterpreter implements ASTNodeInterpreter<Object, SetExpression> {
 
@@ -33,6 +34,6 @@ public class SetExpressionInterpreter implements ASTNodeInterpreter<Object, SetE
             instance.set(node.name(), value, interpreter.visitingScope(), interpreter.executionOptions());
             return value;
         }
-        throw new RuntimeError(node.name(), "Only instances have properties.");
+        throw new ScriptEvaluationError("Only instances have properties.", Phase.INTERPRETING, node.name());
     }
 }

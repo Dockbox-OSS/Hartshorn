@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ package org.dockbox.hartshorn.hsl.interpreter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
@@ -55,11 +56,11 @@ public class VariableScope {
      * Gets the variable value for the given identifier, if it exists. If the variable
      * doesn't exist in this scope, an attempt is made to look it up in the enclosing
      * scope. If the token doesn't exist in any of the accessible scopes, a
-     * {@link RuntimeError} is thrown.
+     * {@link ScriptEvaluationError} is thrown.
      *
      * @param name The identifier for the variable.
      * @return The value of the variable.
-     * @throws RuntimeError If the variable is not defined.
+     * @throws ScriptEvaluationError If the variable is not defined.
      */
     public Object get(Token name) {
         if (this.valuesMap.containsKey(name.lexeme())) {
@@ -71,7 +72,7 @@ public class VariableScope {
             return this.enclosing.get(name);
         }
 
-        throw new RuntimeError(name, "Undefined variable '" + name.lexeme() + "'.");
+        throw new ScriptEvaluationError("Undefined variable '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
     }
 
     /**
@@ -88,11 +89,11 @@ public class VariableScope {
     /**
      * Reassigns the given value to an existing variable. If the variable does not exist
      * within this scope, it will be looked up in enclosing scopes. If the variable does
-     * not exist in any enclosing scope, a {@link RuntimeError} is thrown.
+     * not exist in any enclosing scope, a {@link ScriptEvaluationError} is thrown.
      *
      * @param name The identifier for the variable.
      * @param value The value to assign.
-     * @throws RuntimeError If the variable does not exist.
+     * @throws ScriptEvaluationError If the variable does not exist.
      */
     public void assign(Token name, Object value) {
         if (this.valuesMap.containsKey(name.lexeme())) {
@@ -104,7 +105,7 @@ public class VariableScope {
             this.enclosing.assign(name, value);
             return;
         }
-        throw new RuntimeError(name, "Undefined variable '" + name.lexeme() + "'.");
+        throw new ScriptEvaluationError("Undefined variable '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
     }
 
     public void assignAt(int distance, Token name, Object value) {
@@ -130,13 +131,13 @@ public class VariableScope {
      * Gets the value of the variable with the given name in a scope which is a given amount
      * of steps up from the current scope. Every step up indicates the enclosing scope of
      * the previous step is selected. If there is no enclosing scope matching the amount of
-     * steps, a {@link RuntimeError} is thrown.
+     * steps, a {@link ScriptEvaluationError} is thrown.
      *
      * @param at The position from where the request is made.
      * @param distance The amount of steps up.
      * @param name The name of the variable.
      * @return The value of the variable.
-     * @throws RuntimeError If there is no enclosing scope matching the amount of steps.
+     * @throws ScriptEvaluationError If there is no enclosing scope matching the amount of steps.
      */
     public Object getAt(Token at, int distance, String name) {
         return this.ancestor(at, distance).valuesMap.get(name);
@@ -146,12 +147,12 @@ public class VariableScope {
      * Gets the value of the variable with the given name in a scope which is a given amount
      * of steps up from the current scope. Every step up indicates the enclosing scope of
      * the previous step is selected. If there is no enclosing scope matching the amount of
-     * steps, a {@link RuntimeError} is thrown.
+     * steps, a {@link ScriptEvaluationError} is thrown.
      *
      * @param name The identifier for the variable
      * @param distance The amount of steps up.
      * @return The value of the variable.
-     * @throws RuntimeError If there is no enclosing scope matching the amount of steps.
+     * @throws ScriptEvaluationError If there is no enclosing scope matching the amount of steps.
      */
     public Object getAt(Token name, int distance) {
         return this.getAt(name, distance, name.lexeme());
@@ -162,7 +163,7 @@ public class VariableScope {
         for (int i = 0; i < distance; i++) {
             variableScope = variableScope.enclosing;
             if (variableScope == null) {
-                throw new RuntimeError(name, "No enclosing scope at distance %s for active scope.".formatted(distance));
+                throw new ScriptEvaluationError("No enclosing scope at distance %s for active scope.".formatted(distance), Phase.INTERPRETING, name);
             }
         }
         return variableScope;

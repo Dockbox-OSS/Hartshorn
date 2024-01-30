@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 
@@ -50,6 +51,6 @@ public class LogicalExpressionInterpreter extends BitwiseInterpreter<Object, Log
             final Object right = interpreter.evaluate(node.rightExpression());
             return this.xor(left, right);
         }
-        throw new RuntimeError(node.operator(), "Unsupported logical operator.");
+        throw new ScriptEvaluationError("Unsupported logical operator.", Phase.INTERPRETING, node.operator());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.hsl.objects.virtual;
 
 import java.util.List;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -25,8 +26,8 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Return;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
@@ -75,10 +76,11 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
         VariableScope variableScope = new VariableScope(this.closure);
         List<Parameter> parameters = this.declaration.parameters();
         if (parameters.size() != arguments.size()) {
-            throw new RuntimeError(at, "Expected %d %s, but got %d".formatted(
+            throw new ScriptEvaluationError("Expected %d %s, but got %d".formatted(
                     parameters.size(),
                     (parameters.size() == 1 ? "argument" : "arguments"),
-                    arguments.size()));
+                    arguments.size()),
+                    Phase.INTERPRETING, at);
         }
         for (int i = 0; i < parameters.size(); i++) {
             variableScope.define(parameters.get(i).name().lexeme(), arguments.get(i));

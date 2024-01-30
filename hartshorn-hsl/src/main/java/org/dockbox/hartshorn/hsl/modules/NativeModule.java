@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.hsl.modules;
 import java.util.List;
 
 import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
@@ -47,7 +47,7 @@ public interface NativeModule extends ContextCarrier {
      * @param arguments The arguments to pass to the native function.
      * @return The return value of the native function.
      * @throws NativeExecutionException If the native function can not be invoked.
-     * @throws RuntimeError If the native function throws an exception.
+     * @throws ScriptEvaluationError If the native function throws an exception.
      */
     Object call(Token at, Interpreter interpreter, NativeFunctionStatement function, List<Object> arguments) throws NativeExecutionException;
 

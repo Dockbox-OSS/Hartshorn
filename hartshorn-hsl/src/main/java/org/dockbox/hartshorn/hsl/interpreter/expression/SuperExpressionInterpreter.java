@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.SuperExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
 public class SuperExpressionInterpreter implements ASTNodeInterpreter<Object, SuperExpression> {
@@ -35,7 +36,7 @@ public class SuperExpressionInterpreter implements ASTNodeInterpreter<Object, Su
         MethodReference method = superClass.method(node.method().lexeme());
 
         if (method == null) {
-            throw new RuntimeError(node.method(), "Undefined property '" + node.method().lexeme() + "'.");
+            throw new ScriptEvaluationError("Undefined property '" + node.method().lexeme() + "'.", Phase.INTERPRETING, node.method());
         }
         return method.bind(object);
     }

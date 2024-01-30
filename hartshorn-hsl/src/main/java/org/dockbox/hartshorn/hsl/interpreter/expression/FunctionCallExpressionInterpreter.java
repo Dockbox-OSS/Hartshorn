@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
@@ -27,7 +28,7 @@ import org.dockbox.hartshorn.hsl.objects.BindableNode;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Object, FunctionCallExpression> {
@@ -45,7 +46,7 @@ public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Obj
 
         // Can't call non-callable nodes..
         if (!(callee instanceof final CallableNode function)) {
-            throw new RuntimeError(node.openParenthesis(), "Can only call functions and classes, but received " + callee + ".");
+            throw new ScriptEvaluationError("Can only call functions and classes, but received " + callee + ".", Phase.INTERPRETING, openParenthesis);
         }
 
         try {
@@ -59,8 +60,8 @@ public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Obj
                 return function.call(node.openParenthesis(), interpreter, null, arguments);
             }
         }
-        catch (final ApplicationException e) {
-            throw new RuntimeError(node.openParenthesis(), e.getMessage());
+        catch (ApplicationException e) {
+            throw new ScriptEvaluationError(e, Phase.INTERPRETING, openParenthesis);
         }
     }
 }

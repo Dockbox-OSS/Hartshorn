@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,10 +43,10 @@ public class ClassStatementInterpreter implements ASTNodeInterpreter<Void, Class
         if (node.superClass() != null) {
             superClass = interpreter.evaluate(node.superClass());
             if (!(superClass instanceof ClassReference virtualClass)) {
-                throw new RuntimeError(node.superClass().name(), "Superclass must be a class.");
+                throw new ScriptEvaluationError("Superclass must be a class.", Phase.INTERPRETING, superClassExpression.name());
             }
             if (virtualClass.isFinal()) {
-                throw new ScriptEvaluationError("Cannot extend final class '" + virtualClass.name() + "'.", Phase.INTERPRETING, node.superClass().name());
+                throw new ScriptEvaluationError("Cannot extend final class '" + virtualClass.name() + "'.", Phase.INTERPRETING, superClassExpression.name());
             }
         }
 

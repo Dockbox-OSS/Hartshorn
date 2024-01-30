@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ package test.org.dockbox.hartshorn.hsl.interpreter.expression;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.expression.AssignExpressionInterpreter;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.junit.jupiter.api.Assertions;
@@ -83,7 +83,7 @@ public class AssignExpressionInterpreterTests {
 
         Interpreter interpreter = InterpreterTestHelper.createInterpreter();
 
-        RuntimeError error = Assertions.assertThrows(RuntimeError.class, () -> expressionInterpreter.interpret(expression, interpreter));
-        Assertions.assertSame(variableName, error.token());
+        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, () -> expressionInterpreter.interpret(expression, interpreter));
+        Assertions.assertSame(variableName, error.at());
     }
 }

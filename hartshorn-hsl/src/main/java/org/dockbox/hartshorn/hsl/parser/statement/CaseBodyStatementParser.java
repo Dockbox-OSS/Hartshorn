@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,28 +30,28 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
-import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class CaseBodyStatementParser implements ASTNodeParser<Statement> {
 
     @Override
-    public Attempt<? extends Statement, ScriptEvaluationError> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends Statement> parse(TokenParser parser, TokenStepValidator validator) throws ScriptEvaluationError {
         if (parser.match(BaseTokenType.COLON)) {
-            final Token colon = parser.previous();
-            final List<Statement> statements = new ArrayList<>();
+            Token colon = parser.previous();
+            List<Statement> statements = new ArrayList<>();
             while (!parser.check(ControlTokenType.CASE, ControlTokenType.DEFAULT,parser.tokenRegistry().tokenPairs().block().close())) {
                 statements.add(parser.statement());
             }
-            return Attempt.of(new BlockStatement(colon, statements));
+            return Option.of(new BlockStatement(colon, statements));
         }
         else if (parser.match(ControlTokenType.ARROW)) {
-            return Attempt.of(parser.expressionStatement());
+            return Option.of(parser.expressionStatement());
         }
         else {
-            return Attempt.of(new ScriptEvaluationError("Expected '%s' or '%s'".formatted(
+            throw new ScriptEvaluationError("Expected '%s' or '%s'".formatted(
                     BaseTokenType.COLON.representation(),
                     ControlTokenType.ARROW.representation()
-            ), Phase.PARSING, parser.peek()));
+            ), Phase.PARSING, parser.peek());
         }
     }
 
