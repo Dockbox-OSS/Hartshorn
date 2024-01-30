@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.reporting.system;
-
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.Reportable;
+package org.dockbox.hartshorn.reporting.component;
 
 /**
- * A {@link Reportable} that reports information about the operating system.
+ * The attributes by which components can be grouped.
  *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public class OSDiagnosticsReporter implements Reportable {
-
-    @Override
-    public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("name").write(System.getProperty("os.name"));
-        collector.property("version").write(System.getProperty("os.version"));
-        collector.property("arch").write(System.getProperty("os.arch"));
-    }
+public enum ComponentAttribute {
+    /**
+     * Group components by their component stereotype, for example {@link org.dockbox.hartshorn.component.Component},
+     * {@link org.dockbox.hartshorn.component.Configuration}, or {@link org.dockbox.hartshorn.component.Service}.
+     */
+    STEREOTYPE,
+    /**
+     * Group components by their package.
+     */
+    PACKAGE,
+    /**
+     * Do not explicitly group components, but report them all in a single group.
+     */
+    NONE,
 }

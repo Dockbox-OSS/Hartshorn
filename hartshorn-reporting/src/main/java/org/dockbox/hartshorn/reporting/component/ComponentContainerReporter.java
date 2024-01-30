@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
@@ -28,7 +27,6 @@ import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.reporting.component.ComponentReportingConfiguration.ComponentAttribute;
 import org.dockbox.hartshorn.util.StringUtilities;
 
 /**
@@ -99,18 +97,8 @@ class ComponentContainerReporter implements Reportable {
             componentCollector.property("conditions").write(reporters);
         }
 
-        for (Entry<ComponentAttribute, Boolean> entry : this.componentDiagnosticsReporter.configuration().attributes()
-                .entrySet()) {
-            if (entry.getValue()) {
-                switch (entry.getKey()) {
-                    case STEREOTYPE -> componentCollector.property("stereotype")
-                            .write(ComponentDiagnosticsReporter.stereotype(this.container)
-                                    .getCanonicalName());
-                    case PACKAGE -> componentCollector.property("package")
-                            .write(this.container.type().packageInfo());
-                }
-            }
-        }
+        componentCollector.property("stereotype").write(ComponentDiagnosticsReporter.stereotype(this.container).getCanonicalName());
+        componentCollector.property("package").write(this.container.type().packageInfo());
     }
 
     private void reportAnnotatedField(DiagnosticsPropertyCollector injectCollector) {

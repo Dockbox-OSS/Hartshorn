@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
@@ -25,13 +30,18 @@ import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.reporting.component.ComponentReportingConfiguration.ComponentAttribute;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+/**
+ * A {@link Reportable} that reports information about the components that are registered in the application context. This
+ * reporter can be configured to group components by their {@link ComponentAttribute attribute}. Individual components are
+ * reported using {@link ComponentContainerReporter}s.
+ *
+ * @since 0.5.0
+ *
+ * @see ComponentContainerReporter
+ *
+ * @author Guus Lieben
+ */
 public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ComponentReportingConfiguration>, CategorizedDiagnosticsReporter {
 
     public static final String COMPONENTS_CATEGORY = "components";
@@ -72,7 +82,14 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
                 .toArray(Reportable[]::new);
     }
 
-    static Class<?> stereotype(ComponentContainer<?> container) {
+    /**
+     * Returns the stereotype of the given {@link ComponentContainer container}. The stereotype is the annotation that
+     * is used to mark the component as a component, which is always a subtype of {@link Component}.
+     *
+     * @param container the container for which the stereotype should be returned
+     * @return the stereotype of the given container
+     */
+    public static Class<?> stereotype(ComponentContainer<?> container) {
         Component component = container.type().annotations().get(Component.class).get();
         return component.annotationType();
     }
