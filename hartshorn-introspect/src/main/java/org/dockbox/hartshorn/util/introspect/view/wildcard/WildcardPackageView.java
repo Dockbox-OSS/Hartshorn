@@ -19,7 +19,9 @@ package org.dockbox.hartshorn.util.introspect.view.wildcard;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A {@link PackageView} implementation for wildcard types.
@@ -83,5 +85,15 @@ public class WildcardPackageView extends DefaultContext implements PackageView {
     @Override
     public boolean isSealed() {
         return false;
+    }
+
+    @Override
+    public boolean isEnclosed() {
+        return false;
+    }
+
+    @Override
+    public Option<EnclosableView> enclosingView() {
+        return Option.empty();
     }
 }

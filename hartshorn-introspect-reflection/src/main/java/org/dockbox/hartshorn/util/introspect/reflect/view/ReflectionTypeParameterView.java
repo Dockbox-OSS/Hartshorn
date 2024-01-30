@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
@@ -274,5 +275,15 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView 
     @Override
     protected AnnotatedElement annotatedElement() {
         return this.type instanceof AnnotatedElement annotatedElement ? annotatedElement : null;
+    }
+
+    @Override
+    public boolean isEnclosed() {
+        return false;
+    }
+
+    @Override
+    public Option<EnclosableView> enclosingView() {
+        return Option.empty();
     }
 }

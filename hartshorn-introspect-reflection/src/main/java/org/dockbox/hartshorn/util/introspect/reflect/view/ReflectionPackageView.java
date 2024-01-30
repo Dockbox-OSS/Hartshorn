@@ -21,7 +21,9 @@ import java.lang.reflect.AnnotatedElement;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class ReflectionPackageView extends ReflectionAnnotatedElementView implements PackageView {
 
@@ -88,5 +90,15 @@ public class ReflectionPackageView extends ReflectionAnnotatedElementView implem
         collector.property("specificationTitle").write(this.specificationTitle());
         collector.property("specificationVendor").write(this.specificationVendor());
         collector.property("specificationVersion").write(this.specificationVersion());
+    }
+
+    @Override
+    public boolean isEnclosed() {
+        return false;
+    }
+
+    @Override
+    public Option<EnclosableView> enclosingView() {
+        return Option.empty();
     }
 }

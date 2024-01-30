@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,27 @@ package org.dockbox.hartshorn.util.introspect.view;
 
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * Represents a view that may be enclosed in another view. A common example of this is a nested class {@link
+ * TypeView view} that is enclosed in another {@link TypeView}.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface EnclosableView extends View {
 
+    /**
+     * Returns whether this view is enclosed in another view.
+     *
+     * @return {@code true} if this view is enclosed in another view, {@code false} otherwise
+     */
     boolean isEnclosed();
 
+    /**
+     * Returns the enclosing view of this view, if any.
+     *
+     * @return the enclosing view of this view, if any
+     */
     Option<EnclosableView> enclosingView();
 }
