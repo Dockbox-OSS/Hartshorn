@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@ package test.org.dockbox.hartshorn.i18n;
 
 import java.util.Locale;
 
+import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.i18n.DefaultTranslationBundle;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.MessageReceiver;
@@ -47,12 +49,15 @@ public class MessageTemplateServiceTests {
             .build();
 
     @Inject
-    private ApplicationContext applicationContext;
+    private ObjectMapper objectMapper;
+
+    @Inject
+    private ExceptionHandler exceptionHandler;
 
     private TranslationBundle bundle() {
         Message english = new MessageTemplate("value", "demo", EN_US);
         Message dutch = new MessageTemplate("waarde", "demo", NL_NL);
-        TranslationBundle bundle = new DefaultTranslationBundle(this.applicationContext);
+        TranslationBundle bundle = new DefaultTranslationBundle(this.objectMapper, this.exceptionHandler);
         bundle.register(english);
         bundle.register(dutch);
         return bundle;

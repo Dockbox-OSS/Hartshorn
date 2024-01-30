@@ -25,7 +25,8 @@ import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import jakarta.inject.Singleton;
 
 /**
- * Providers for {@link ResourceLookupStrategy} based {@link ResourceLookup} implementations.
+ * Configuration for {@link ResourceLookupStrategy resource lookup strategies} based {@link ResourceLookup}
+ * implementations.
  *
  * @see ResourceLookup
  * @see ResourceLookupStrategy

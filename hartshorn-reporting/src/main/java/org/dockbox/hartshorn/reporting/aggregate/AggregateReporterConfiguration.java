@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.reporting.aggregate;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +50,18 @@ public class AggregateReporterConfiguration {
             throw new IllegalArgumentException("Reporter with category '" + reporter.category() + "' already registered");
         }
         this.reporters.put(reporter.category(), reporter);
+    }
+
+    /**
+     * Registers all given reporters. If a reporter with the same category is already registered, an
+     * {@link IllegalArgumentException} is thrown.
+     *
+     * @param reporters the reporters to register
+     *
+     * @throws IllegalArgumentException when a reporter with the same category is already registered
+     */
+    public void addAll(Collection<CategorizedDiagnosticsReporter> reporters) {
+        reporters.forEach(this::add);
     }
 
     /**
