@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,8 +73,8 @@ public class TokenMetaDataBuilder {
     }
 
     public TokenMetaDataBuilder combines(TokenCharacter... characters) {
-        final StringBuilder combined = new StringBuilder();
-        for (final TokenCharacter type : characters) {
+        StringBuilder combined = new StringBuilder();
+        for (TokenCharacter type : characters) {
             combined.append(type.character());
         }
         this.representation = combined.toString();
@@ -106,16 +106,16 @@ public class TokenMetaDataBuilder {
         return this;
     }
 
-    public TokenMetaDataBuilder defaultLexeme(final String defaultLexeme) {
+    public TokenMetaDataBuilder defaultLexeme(String defaultLexeme) {
         this.defaultLexeme = defaultLexeme;
         return this;
     }
 
-    public TokenMetaDataBuilder characters(final TokenCharacter... characters) {
+    public TokenMetaDataBuilder characters(TokenCharacter... characters) {
         this.characters = characters;
         if (this.representation == null) {
-            final StringBuilder builder = new StringBuilder();
-            for (final TokenCharacter character : characters) {
+            StringBuilder builder = new StringBuilder();
+            for (TokenCharacter character : characters) {
                 builder.append(character.character());
             }
             this.representation = builder.toString();

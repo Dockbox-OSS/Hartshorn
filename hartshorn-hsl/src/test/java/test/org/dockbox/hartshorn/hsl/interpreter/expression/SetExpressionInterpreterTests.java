@@ -19,11 +19,11 @@ package test.org.dockbox.hartshorn.hsl.interpreter.expression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.expression.SetExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.introspect.NativeProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
@@ -41,7 +41,7 @@ public class SetExpressionInterpreterTests {
 
     @Test
     void testSetExpressionCanSetIfDefined() {
-        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        Interpreter interpreter = InterpreterTestHelper.createInterpreter();
         TestClass reference = new TestClass();
 
         ReflectionIntrospector introspector = new ReflectionIntrospector(new NativeProxyLookup(),
@@ -49,19 +49,19 @@ public class SetExpressionInterpreterTests {
         TypeView<TestClass> typeView = introspector.introspect(TestClass.class);
 
         ExternalInstance externalInstance = new ExternalInstance(reference, typeView);
-        adapter.visitingScope().define("reference", externalInstance);
+        interpreter.visitingScope().define("reference", externalInstance);
 
-        Token externalName = Token.of(TokenType.IDENTIFIER).lexeme("reference").build();
+        Token externalName = Token.of(LiteralTokenType.IDENTIFIER).lexeme("reference").build();
         VariableExpression variableExpression = new VariableExpression(externalName);
 
-        Token propertyValue = Token.of(TokenType.STRING).literal("test").build();
+        Token propertyValue = Token.of(LiteralTokenType.STRING).literal("test").build();
         LiteralExpression literalValue = new LiteralExpression(propertyValue, propertyValue.literal());
 
-        Token propertyName = Token.of(TokenType.IDENTIFIER).lexeme("value").build();
+        Token propertyName = Token.of(LiteralTokenType.IDENTIFIER).lexeme("value").build();
         SetExpression setExpression = new SetExpression(variableExpression, propertyName, literalValue);
-        SetExpressionInterpreter interpreter = new SetExpressionInterpreter();
+        SetExpressionInterpreter expressionInterpreter = new SetExpressionInterpreter();
 
-        Object interpretedValue = interpreter.interpret(setExpression, adapter);
+        Object interpretedValue = expressionInterpreter.interpret(setExpression, interpreter);
         Assertions.assertEquals(literalValue.value(), interpretedValue);
 
         Object value = reference.value;

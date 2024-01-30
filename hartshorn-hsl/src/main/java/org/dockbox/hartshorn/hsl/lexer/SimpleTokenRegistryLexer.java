@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -228,7 +228,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
      * to scan the token.
      */
     protected void scanToken() {
-        final TokenCharacter tokenCharacter = this.pointToNextChar();
+        TokenCharacter tokenCharacter = this.pointToNextChar();
         if (tokenCharacter instanceof SharedTokenCharacter sharedTokenCharacter) {
             switch(sharedTokenCharacter) {
             case SPACE:
@@ -391,8 +391,8 @@ public class SimpleTokenRegistryLexer implements Lexer {
     }
 
     protected void scanMultilineComment() {
-        final StringBuilder text = new StringBuilder();
-        final int line = this.line();
+        StringBuilder text = new StringBuilder();
+        int line = this.line();
         while (!this.isAtEnd()) {
             if (this.currentChar() == DefaultTokenCharacter.STAR && this.nextChar() == DefaultTokenCharacter.SLASH) {
                 this.incrementCurrent(2);
@@ -423,12 +423,12 @@ public class SimpleTokenRegistryLexer implements Lexer {
         this.pointToNextChar();
 
         // Trim the surrounding quotes
-        final String value = this.source().substring(this.start() + 1, this.current() - 1);
+        String value = this.source().substring(this.start() + 1, this.current() - 1);
         this.addToken(tokenRegistry().literals().string(), value);
     }
 
     protected void scanChar() {
-        final String value = this.source().substring(this.start() + 1, this.start() + 2);
+        String value = this.source().substring(this.start() + 1, this.start() + 2);
         this.pointToNextChar();
         if (this.currentChar() != DefaultTokenCharacter.SINGLE_QUOTE) {
             throw new ScriptEvaluationError("Unterminated char variable", Phase.TOKENIZING, this.line(), this.column());

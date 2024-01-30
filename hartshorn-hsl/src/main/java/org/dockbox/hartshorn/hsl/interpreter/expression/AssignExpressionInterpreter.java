@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ import org.dockbox.hartshorn.hsl.token.Token;
 public class AssignExpressionInterpreter implements ASTNodeInterpreter<Object, AssignExpression> {
 
     @Override
-    public Object interpret(final AssignExpression node, final Interpreter interpreter) {
-        final Token name = node.name();
-        final Object value = interpreter.evaluate(node.value());
+    public Object interpret(AssignExpression node, Interpreter interpreter) {
+        Token name = node.name();
+        Object value = interpreter.evaluate(node.value());
 
-        final Integer distance = interpreter.distance(node);
+        Integer distance = interpreter.distance(node);
         if (distance != null) {
             interpreter.visitingScope().assignAt(distance, name, value);
         }

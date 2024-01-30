@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 public class SwitchCaseInterpreter implements ASTNodeInterpreter<Void, SwitchCase> {
 
     @Override
-    public Void interpret(final SwitchCase node, final Interpreter interpreter) {
+    public Void interpret(SwitchCase node, Interpreter interpreter) {
         interpreter.withNextScope(() -> {
             try {
                 interpreter.execute(node.body());
-            } catch (final MoveKeyword moveKeyword) {
+            } catch (MoveKeyword moveKeyword) {
                 if (moveKeyword.moveType() != MoveKeyword.MoveType.BREAK) {
                     throw new RuntimeException("Unexpected move keyword " + moveKeyword.moveType());
                 }

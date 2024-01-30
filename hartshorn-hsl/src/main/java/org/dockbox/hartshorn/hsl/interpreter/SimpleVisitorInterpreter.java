@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,8 +63,8 @@ public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
     private boolean isRunning;
 
     public SimpleVisitorInterpreter(
-            final ResultCollector resultCollector,
-            final ApplicationContext applicationContext
+            ResultCollector resultCollector,
+            ApplicationContext applicationContext
     ) {
         this.resultCollector = resultCollector;
         this.applicationContext = applicationContext;
@@ -97,7 +97,7 @@ public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
     }
 
     @Override
-    public Interpreter executionOptions(final ExecutionOptions options) {
+    public Interpreter executionOptions(ExecutionOptions options) {
         this.executionOptions = options;
         return this;
     }
@@ -108,13 +108,13 @@ public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
     }
 
     @Override
-    public void interpret(final List<Statement> statements) {
+    public void interpret(List<Statement> statements) {
         if (this.isRunning) {
             throw new IllegalAccessException("Cannot reuse the same interpreter instance for multiple executions");
         }
         this.isRunning = true;
         try {
-            for (final Statement statement : statements) {
+            for (Statement statement : statements) {
                 this.execute(statement);
             }
         }
@@ -124,7 +124,7 @@ public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
     }
 
     @Override
-    public Object evaluate(final Expression expression) {
+    public Object evaluate(Expression expression) {
         if (expression instanceof CustomASTNode<?,?> customASTNode) {
             return customASTNode.interpret(this.visitor.interpreter());
         }
@@ -134,7 +134,7 @@ public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
     }
 
     @Override
-    public void execute(final Statement statement) {
+    public void execute(Statement statement) {
         if (statement instanceof CustomASTNode<?,?> customASTNode) {
             customASTNode.interpret(this.visitor.interpreter());
         }
@@ -144,18 +144,18 @@ public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
     }
 
     @Override
-    public void execute(final BlockStatement blockStatement, final VariableScope localVariableScope) {
+    public void execute(BlockStatement blockStatement, VariableScope localVariableScope) {
         this.execute(blockStatement.statements(), localVariableScope);
     }
 
     @Override
-    public void execute(final List<Statement> statementList, final VariableScope localVariableScope) {
+    public void execute(List<Statement> statementList, VariableScope localVariableScope) {
         this.state().withScope(localVariableScope, () -> {
-            for (final Statement statement : statementList) {
+            for (Statement statement : statementList) {
                 try {
                     this.execute(statement);
                 }
-                catch (final MoveKeyword type) {
+                catch (MoveKeyword type) {
                     if (type.moveType() == MoveKeyword.MoveType.CONTINUE) {
                         break;
                     }
@@ -167,12 +167,12 @@ public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
     }
 
     @Override
-    public Object lookUpVariable(final Token name, final Expression expression) {
+    public Object lookUpVariable(Token name, Expression expression) {
         return this.state().lookUpVariable(name, expression);
     }
 
     @Override
-    public void resolve(final Expression expression, final int depth) {
+    public void resolve(Expression expression, int depth) {
         this.state().resolve(expression, depth);
     }
 
@@ -187,17 +187,17 @@ public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
     }
 
     @Override
-    public void withNextScope(final Runnable runnable) {
+    public void withNextScope(Runnable runnable) {
         this.state().withNextScope(runnable);
     }
 
     @Override
-    public void enterScope(final VariableScope scope) {
+    public void enterScope(VariableScope scope) {
         this.state().enterScope(scope);
     }
 
     @Override
-    public Integer distance(final Expression expression) {
+    public Integer distance(Expression expression) {
         return this.state().distance(expression);
     }
 

@@ -30,9 +30,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
 public class PrefixExpressionInterpreter implements ASTNodeInterpreter<Object, PrefixExpression> {
 
     @Override
-    public Object interpret(final PrefixExpression node, final Interpreter interpreter) {
-        final CallableNode value = (CallableNode) interpreter.visitingScope().get(node.prefixOperatorName());
-        final List<Object> args = new ArrayList<>();
+    public Object interpret(PrefixExpression node, Interpreter interpreter) {
+        CallableNode value = (CallableNode) interpreter.visitingScope().get(node.prefixOperatorName());
+        List<Object> args = new ArrayList<>();
         args.add(interpreter.evaluate(node.rightExpression()));
         try {
             return value.call(node.prefixOperatorName(), interpreter, null, args);

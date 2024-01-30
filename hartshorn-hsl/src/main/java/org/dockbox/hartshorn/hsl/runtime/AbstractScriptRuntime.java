@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class AbstractScriptRuntime extends ExpressionConditionContext implements MutableScriptRuntime {
 
-    private final ParserCustomizer parserCustomizer;
-    private final ApplicationContext applicationContext;
     private final ScriptComponentFactory factory;
+    private final ApplicationContext applicationContext;
+
+    private ParserCustomizer parserCustomizer;
 
     protected AbstractScriptRuntime(
         ApplicationContext applicationContext,
@@ -113,14 +114,15 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     @Override
     public ScriptContext runOnly(ScriptContext context, Phase only) {
         try {
-            switch (only) {
-                case TOKENIZING -> this.tokenize(context);
-                case PARSING -> this.parse(context);
-                case RESOLVING -> this.resolve(context);
-                case INTERPRETING -> this.interpret(context);
-                default -> throw new IllegalArgumentException("Unsupported standalone phase: " + only);
+            switch(only) {
+            case TOKENIZING -> this.tokenize(context);
+            case PARSING -> this.parse(context);
+            case RESOLVING -> this.resolve(context);
+            case INTERPRETING -> this.interpret(context);
+            default -> throw new IllegalArgumentException("Unsupported standalone phase: " + only);
             }
-        } catch (ScriptEvaluationError e) {
+        }
+        catch (ScriptEvaluationError e) {
             this.handleScriptEvaluationError(context, e);
         }
         return context;
@@ -140,7 +142,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         return interpreter;
     }
 
-    protected void tokenize(final ScriptContext context) {
+    protected void tokenize(ScriptContext context) {
         context.lexer(this.factory.lexer(context.tokenRegistry(), context.source()));
         this.customizePhase(Phase.TOKENIZING, context);
         List<Token> tokens = context.lexer().scanTokens();
@@ -221,7 +223,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
             message = "%s\n%s\n%s".formatted(message, lineText, marker);
         }
 
-        ScriptEvaluationError evaluationError = new ScriptEvaluationError(error.getCause(), message, phase, error.at(), line, column);
+        ScriptEvaluationError evaluationError = new ScriptEvaluationError(error, message, phase, error.at(), line, column);
         // We only want to customize the error message, not the stack trace, so we
         // keep the original stack trace.
         evaluationError.setStackTrace(evaluationError.getStackTrace());
@@ -230,11 +232,11 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
 
     @Override
     public void expressionParser(ASTNodeParser<? extends Expression> expressionParser) {
-        this.parserCustomizer.compose(parser -> parser.expressionParser(expressionParser));
+        this.parserCustomizer = this.parserCustomizer.compose(parser -> parser.expressionParser(expressionParser));
     }
 
     @Override
     public void statementParser(ASTNodeParser<? extends Statement> statementParser) {
-        this.parserCustomizer.compose(parser -> parser.statementParser(statementParser));
+        this.parserCustomizer = this.parserCustomizer.compose(parser -> parser.statementParser(statementParser));
     }
 }

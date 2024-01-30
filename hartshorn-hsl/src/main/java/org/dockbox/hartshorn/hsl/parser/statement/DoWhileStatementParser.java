@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,14 +31,14 @@ import org.dockbox.hartshorn.util.option.Option;
 public class DoWhileStatementParser extends AbstractBodyStatementParser<DoWhileStatement> {
 
     @Override
-    public Option<? extends DoWhileStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends DoWhileStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(LoopTokenType.DO)) {
-            final BlockStatement loopBody = this.blockStatement("do", parser.previous(), parser, validator);
+            BlockStatement loopBody = this.blockStatement("do", parser.previous(), parser, validator);
             validator.expect(LoopTokenType.WHILE);
 
             TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
             validator.expectAfter(parameters.open(), LoopTokenType.WHILE);
-            final Expression condition = parser.expression();
+            Expression condition = parser.expression();
             validator.expectAfter(parameters.close(), "do while condition");
             validator.expectAfter(BaseTokenType.SEMICOLON, "do while condition");
             return Option.of(new DoWhileStatement(condition, loopBody));

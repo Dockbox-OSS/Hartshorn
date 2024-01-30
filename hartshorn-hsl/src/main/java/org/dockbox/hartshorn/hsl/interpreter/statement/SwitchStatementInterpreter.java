@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 public class SwitchStatementInterpreter implements ASTNodeInterpreter<Void, SwitchStatement> {
 
     @Override
-    public Void interpret(final SwitchStatement node, final Interpreter interpreter) {
+    public Void interpret(SwitchStatement node, Interpreter interpreter) {
         Object value = interpreter.evaluate(node.expression());
         value = InterpreterUtilities.unwrap(value);
-        for (final SwitchCase switchCase : node.cases()) {
+        for (SwitchCase switchCase : node.cases()) {
             if (InterpreterUtilities.isEqual(value, switchCase.expression().value())) {
                 interpreter.execute(switchCase);
                 return null;

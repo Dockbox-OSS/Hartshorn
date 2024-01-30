@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,17 +46,17 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
     private final FieldStatementParser fieldParser;
 
     @Inject
-    public ClassStatementParser(final FieldStatementParser fieldParser) {
+    public ClassStatementParser(FieldStatementParser fieldParser) {
         this.fieldParser = fieldParser;
     }
 
     @Override
-    public Option<? extends ClassStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends ClassStatement> parse(TokenParser parser, TokenStepValidator validator) {
         TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.match(ClassTokenType.CLASS)) {
-            final Token name = validator.expect(LiteralTokenType.IDENTIFIER, "class name");
+            Token name = validator.expect(LiteralTokenType.IDENTIFIER, "class name");
 
-            final boolean isDynamic = parser.match(BaseTokenType.QUESTION_MARK);
+            boolean isDynamic = parser.match(BaseTokenType.QUESTION_MARK);
 
             VariableExpression superClass = null;
             if (parser.match(ClassTokenType.EXTENDS)) {
@@ -66,23 +66,17 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
 
             validator.expectBefore(block.open(), "class body");
 
-            final List<FunctionStatement> methods = new ArrayList<>();
-            final List<FieldStatement> fields = new ArrayList<>();
+            List<FunctionStatement> methods = new ArrayList<>();
+            List<FieldStatement> fields = new ArrayList<>();
             ConstructorStatement constructor = null;
             while (!parser.check(block.close()) && !parser.isAtEnd()) {
-                final Statement declaration = this.classBodyStatement(parser, validator);
-                if (declaration instanceof ConstructorStatement constructorStatement) {
-                    constructor = constructorStatement;
-                }
-                else if (declaration instanceof FunctionStatement function) {
-                    methods.add(function);
-                }
-                else if (declaration instanceof FieldStatement field) {
-                    fields.add(field);
-                }
-                else {
-                    throw new ScriptEvaluationError("Unsupported class body statement type: " + declaration.getClass()
-                            .getSimpleName(), Phase.PARSING, parser.peek());
+                Statement declaration = this.classBodyStatement(parser, validator);
+                switch(declaration) {
+                case ConstructorStatement constructorStatement -> constructor = constructorStatement;
+                case FunctionStatement function -> methods.add(function);
+                case FieldStatement field -> fields.add(field);
+                case null -> throw new ScriptEvaluationError("Unsupported class body statement type: null", Phase.PARSING, parser.peek());
+                default -> throw new ScriptEvaluationError("Unsupported class body statement type: " + declaration.getClass().getSimpleName(), Phase.PARSING, parser.peek());
                 }
             }
 
@@ -93,7 +87,7 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
         return Option.empty();
     }
 
-    private Statement classBodyStatement(final TokenParser parser, final TokenStepValidator validator) {
+    private Statement classBodyStatement(TokenParser parser, TokenStepValidator validator) {
         if (parser.check(FunctionTokenType.CONSTRUCTOR)) {
             return this.handleDelegate(parser, validator, parser.firstCompatibleParser(ConstructorStatement.class));
         }
@@ -105,12 +99,10 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
         }
     }
 
-    private <T extends Statement> T handleDelegate(final TokenParser parser, final TokenStepValidator validator,
-                                                   final Option<ASTNodeParser<T>> statement) {
+    private <T extends Statement> T handleDelegate(TokenParser parser, TokenStepValidator validator,
+                                                   Option<ASTNodeParser<T>> statement) {
         return statement
                 .flatMap(nodeParser -> nodeParser.parse(parser, validator))
-                .attempt(ScriptEvaluationError.class)
-                .rethrow()
                 .orNull();
     }
 

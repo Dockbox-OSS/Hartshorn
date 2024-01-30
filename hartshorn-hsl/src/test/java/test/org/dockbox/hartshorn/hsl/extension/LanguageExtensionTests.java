@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class LanguageExtensionTests {
     private ApplicationContext applicationContext;
 
     @Test
-    void name() {
+    void testLanguageExtensionCanInject() {
         ExpressionScript script = ExpressionScript.of(this.applicationContext, "@hello == \"hello\" && @world == \"world\"");
 
         AtNameModule module = new AtNameModule();
@@ -56,15 +56,11 @@ public class LanguageExtensionTests {
         List<Statement> statements = ValidateExpressionRuntime.actualStatements(script);
         Assertions.assertEquals(1, statements.size());
 
-        Statement statement = statements.get(0);
-        Assertions.assertTrue(statement instanceof ReturnStatement);
-
-        ReturnStatement returnStatement = (ReturnStatement) statement;
+        Statement statement = statements.getFirst();
+        ReturnStatement returnStatement = Assertions.assertInstanceOf(ReturnStatement.class, statement);
         Expression expression = returnStatement.expression();
 
-        Assertions.assertTrue(expression instanceof LogicalExpression);
-        LogicalExpression logicalExpression = (LogicalExpression) expression;
-
+        LogicalExpression logicalExpression = Assertions.assertInstanceOf(LogicalExpression.class, expression);
         Expression helloExpression = logicalExpression.leftExpression();
         Expression worldExpression = logicalExpression.rightExpression();
 
@@ -73,14 +69,13 @@ public class LanguageExtensionTests {
     }
 
     private static void assertExpressionContainsAtName(Expression expression) {
-        Assertions.assertTrue(expression instanceof BinaryExpression);
-        BinaryExpression binaryExpression = (BinaryExpression) expression;
+        BinaryExpression binaryExpression = Assertions.assertInstanceOf(BinaryExpression.class, expression);
 
         Expression leftExpression = binaryExpression.leftExpression();
         Expression rightExpression = binaryExpression.rightExpression();
 
-        Assertions.assertTrue(leftExpression instanceof AtNameExpression);
-        Assertions.assertTrue(rightExpression instanceof LiteralExpression);
+        Assertions.assertInstanceOf(AtNameExpression.class, leftExpression);
+        Assertions.assertInstanceOf(LiteralExpression.class, rightExpression);
     }
 
 }

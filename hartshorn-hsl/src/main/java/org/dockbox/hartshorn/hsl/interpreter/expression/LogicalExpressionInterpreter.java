@@ -20,23 +20,23 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
-import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 public class LogicalExpressionInterpreter extends BitwiseInterpreter<Object, LogicalExpression> {
 
     @Override
-    public Object interpret(final LogicalExpression node, final Interpreter interpreter) {
-        final Object left = interpreter.evaluate(node.leftExpression());
+    public Object interpret(LogicalExpression node, Interpreter interpreter) {
+        Object left = interpreter.evaluate(node.leftExpression());
         TokenType type = node.operator().type();
         if (type == ConditionTokenType.AND) {
             if (!InterpreterUtilities.isTruthy(left)) {
                 return false;
             }
             // Don't evaluate right if left is not truthy
-            final Object right = interpreter.evaluate(node.rightExpression());
+            Object right = interpreter.evaluate(node.rightExpression());
             return InterpreterUtilities.isTruthy(right);
         }
         else if (type == ConditionTokenType.OR) {
@@ -44,11 +44,11 @@ public class LogicalExpressionInterpreter extends BitwiseInterpreter<Object, Log
                 return true;
             }
             // No need to evaluate right if left is already truthy
-            final Object right = interpreter.evaluate(node.rightExpression());
+            Object right = interpreter.evaluate(node.rightExpression());
             return InterpreterUtilities.isTruthy(right);
         }
         else if (type == BitwiseTokenType.XOR) {
-            final Object right = interpreter.evaluate(node.rightExpression());
+            Object right = interpreter.evaluate(node.rightExpression());
             return this.xor(left, right);
         }
         throw new ScriptEvaluationError("Unsupported logical operator.", Phase.INTERPRETING, node.operator());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
-import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
+import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
@@ -45,7 +45,7 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class ScriptContext extends DefaultApplicationAwareContext implements ResultCollector {
 
-    private static final String GLOBAL_RESULT = "$__result__$";
+    private static final String GLOBAL_RESULT = ScriptContext.createSafeRuntimeVariable("result");
     protected Map<String, Object> results = new ConcurrentHashMap<>();
 
     private final ScriptRuntime runtime;
@@ -84,7 +84,7 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.tokenRegistry;
     }
 
-    public ScriptContext tokenRegistry(final TokenRegistry tokenRegistry) {
+    public ScriptContext tokenRegistry(TokenRegistry tokenRegistry) {
         this.tokenRegistry = tokenRegistry;
         return this;
     }
@@ -180,5 +180,9 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     @Override
     public void clear() {
         this.results.clear();
+    }
+
+    public static String createSafeRuntimeVariable(String name) {
+        return "$__%s__$".formatted(name);
     }
 }

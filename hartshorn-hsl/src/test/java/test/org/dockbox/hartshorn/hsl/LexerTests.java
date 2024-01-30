@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class LexerTests {
         Assertions.assertNotNull(tokens);
         Assertions.assertEquals(2, tokens.size());
 
-        Token token = tokens.get(0);
+        Token token = tokens.getFirst();
         Assertions.assertEquals(expected, token.type());
         Assertions.assertEquals(1, token.line());
 
@@ -88,14 +88,14 @@ public class LexerTests {
         Assertions.assertNotNull(tokens);
         Assertions.assertEquals(1, tokens.size());
 
-        Token token = tokens.get(0);
+        Token token = tokens.getFirst();
         Assertions.assertEquals(LiteralTokenType.EOF, token.type());
 
         List<Comment> comments = lexer.comments();
         Assertions.assertNotNull(comments);
         Assertions.assertEquals(1, comments.size());
 
-        Comment comment = comments.get(0);
+        Comment comment = comments.getFirst();
         // Comments are not trimmed, include whitespace
         Assertions.assertEquals(" Comment", comment.text());
     }

@@ -18,19 +18,19 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 public class SetExpressionInterpreter implements ASTNodeInterpreter<Object, SetExpression> {
 
     @Override
-    public Object interpret(final SetExpression node, final Interpreter interpreter) {
-        final Object object = interpreter.evaluate(node.object());
+    public Object interpret(SetExpression node, Interpreter interpreter) {
+        Object object = interpreter.evaluate(node.object());
 
         if (object instanceof PropertyContainer instance) {
-            final Object value = interpreter.evaluate(node.value());
+            Object value = interpreter.evaluate(node.value());
             instance.set(node.name(), value, interpreter.visitingScope(), interpreter.executionOptions());
             return value;
         }

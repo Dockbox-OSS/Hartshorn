@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 public class SuperExpressionInterpreter implements ASTNodeInterpreter<Object, SuperExpression> {
 
     @Override
-    public Object interpret(final SuperExpression node, final Interpreter interpreter) {
+    public Object interpret(SuperExpression node, Interpreter interpreter) {
         int distance = interpreter.distance(node);
         ClassReference superClass = (ClassReference) interpreter.visitingScope().getAt(node.method(), distance, ObjectTokenType.SUPER.representation());
         InstanceReference object = (InstanceReference) interpreter.visitingScope().getAt(node.method(), distance - 1, ObjectTokenType.THIS.representation());

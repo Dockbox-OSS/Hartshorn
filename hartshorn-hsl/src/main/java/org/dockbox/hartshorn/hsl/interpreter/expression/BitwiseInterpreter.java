@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 
 public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNodeInterpreter<R, T> {
 
@@ -31,13 +32,16 @@ public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNod
             int iRight = ((Number) right).intValue();
 
             return switch (operator.type()) {
-                case SHIFT_RIGHT -> iLeft >> iRight;
-                case SHIFT_LEFT -> iLeft << iRight;
-                case LOGICAL_SHIFT_RIGHT -> iLeft >>> iRight;
-                case BITWISE_AND -> iLeft & iRight;
-                case BITWISE_OR -> iLeft | iRight;
-                case XOR -> this.xor(iLeft, iRight);
-                default -> throw new RuntimeError(operator, "Unsupported bitwise operator.");
+                case BitwiseTokenType.SHIFT_RIGHT -> iLeft >> iRight;
+                case BitwiseTokenType.SHIFT_LEFT -> iLeft << iRight;
+                case BitwiseTokenType.LOGICAL_SHIFT_RIGHT -> iLeft >>> iRight;
+                case BitwiseTokenType.BITWISE_AND -> iLeft & iRight;
+                case BitwiseTokenType.BITWISE_OR -> iLeft | iRight;
+                case BitwiseTokenType.XOR -> this.xor(iLeft, iRight);
+                default -> throw new ScriptEvaluationError(
+                        "Unsupported operator type " + operator.type() + " for bitwise operation",
+                        Phase.INTERPRETING, operator
+                );
             };
         }
         String leftType = left != null ? left.getClass().getSimpleName() : null;

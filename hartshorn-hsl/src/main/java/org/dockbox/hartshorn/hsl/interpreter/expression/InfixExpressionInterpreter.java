@@ -30,9 +30,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
 public class InfixExpressionInterpreter implements ASTNodeInterpreter<Object, InfixExpression> {
 
     @Override
-    public Object interpret(final InfixExpression node, final Interpreter interpreter) {
-        final CallableNode value = (CallableNode) interpreter.visitingScope().get(node.infixOperatorName());
-        final List<Object> args = new ArrayList<>();
+    public Object interpret(InfixExpression node, Interpreter interpreter) {
+        CallableNode value = (CallableNode) interpreter.visitingScope().get(node.infixOperatorName());
+        List<Object> args = new ArrayList<>();
         args.add(interpreter.evaluate(node.leftExpression()));
         args.add(interpreter.evaluate(node.rightExpression()));
 

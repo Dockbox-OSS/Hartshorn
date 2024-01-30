@@ -19,18 +19,18 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpreter<Object, ArrayComprehensionExpression> {
 
     @Override
-    public Object interpret(final ArrayComprehensionExpression node, final Interpreter interpreter) {
+    public Object interpret(ArrayComprehensionExpression node, Interpreter interpreter) {
         List<Object> values = new ArrayList<>();
         Object collection = interpreter.evaluate(node.collection());
         if (collection instanceof Iterable<?> iterable) {
@@ -41,21 +41,21 @@ public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpret
             });
         }
         else {
-            throw new RuntimeError(node.open(), "Collection must be iterable");
+            throw new ScriptEvaluationError("Collection must be iterable", Phase.INTERPRETING, node.open());
         }
         return new Array(values.toArray());
     }
 
-    private static void visitIterable(final ArrayComprehensionExpression node, final Interpreter interpreter,
-                                      final List<Object> values, final Iterable<?> iterable) {
-        for (final Object element : iterable) {
+    private static void visitIterable(ArrayComprehensionExpression node, Interpreter interpreter,
+                                      List<Object> values, Iterable<?> iterable) {
+        for (Object element : iterable) {
             interpreter.visitingScope().assign(node.selector(), element);
 
             if (node.condition() != null) {
-                final Object condition = interpreter.evaluate(node.condition());
+                Object condition = interpreter.evaluate(node.condition());
                 if (!InterpreterUtilities.isTruthy(condition)) {
                     if (node.elseExpression() != null) {
-                        final Object elseValue = interpreter.evaluate(node.elseExpression());
+                        Object elseValue = interpreter.evaluate(node.elseExpression());
                         values.add(elseValue);
                     }
                     continue;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,13 @@ import org.dockbox.hartshorn.util.option.Option;
 public class IfStatementParser extends AbstractBodyStatementParser<IfStatement> {
 
     @Override
-    public Option<? extends IfStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends IfStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(ControlTokenType.IF)) {
             TokenTypePair parameter = parser.tokenRegistry().tokenPairs().parameters();
             validator.expectAfter(parameter.open(), ControlTokenType.IF);
-            final Expression condition = parser.expression();
+            Expression condition = parser.expression();
             validator.expectAfter(parameter.close(), "if condition");
-            final BlockStatement thenBlock = this.blockStatement("if", condition, parser, validator);
+            BlockStatement thenBlock = this.blockStatement("if", condition, parser, validator);
             BlockStatement elseBlock = null;
             if (parser.match(ControlTokenType.ELSE)) {
                 elseBlock = this.blockStatement("else", condition, parser, validator);

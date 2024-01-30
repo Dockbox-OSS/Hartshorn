@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,17 +25,17 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 public class RangeExpressionInterpreter implements ASTNodeInterpreter<Object, RangeExpression> {
 
     @Override
-    public Object interpret(final RangeExpression node, final Interpreter interpreter) {
-        final Object start = InterpreterUtilities.unwrap(interpreter.evaluate(node.leftExpression()));
-        final Object end = InterpreterUtilities.unwrap(interpreter.evaluate(node.rightExpression()));
+    public Object interpret(RangeExpression node, Interpreter interpreter) {
+        Object start = InterpreterUtilities.unwrap(interpreter.evaluate(node.leftExpression()));
+        Object end = InterpreterUtilities.unwrap(interpreter.evaluate(node.rightExpression()));
 
         InterpreterUtilities.checkNumberOperands(node.operator(), start, end);
 
-        final int min = ((Number) start).intValue();
-        final int max = ((Number) end).intValue();
+        int min = ((Number) start).intValue();
+        int max = ((Number) end).intValue();
 
-        final int length = max - min + 1;
-        final Object[] result = new Object[length];
+        int length = max - min + 1;
+        Object[] result = new Object[length];
         for (int i = 0; i < length; i++) {
             result[i] = (double) min + i;
         }

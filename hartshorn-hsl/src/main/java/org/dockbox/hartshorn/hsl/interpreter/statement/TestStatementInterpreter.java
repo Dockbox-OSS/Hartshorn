@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,19 +26,19 @@ import org.dockbox.hartshorn.hsl.runtime.Return;
 public class TestStatementInterpreter implements ASTNodeInterpreter<Void, TestStatement> {
 
     @Override
-    public Void interpret(final TestStatement node, final Interpreter interpreter) {
-        final String name = String.valueOf(node.name().literal());
+    public Void interpret(TestStatement node, Interpreter interpreter) {
+        String name = String.valueOf(node.name().literal());
         VariableScope previousScope = interpreter.visitingScope();
 
-        final VariableScope variableScope = new VariableScope(previousScope);
+        VariableScope variableScope = new VariableScope(previousScope);
         interpreter.enterScope(variableScope);
 
         try {
             interpreter.execute(node.body(), variableScope);
         }
-        catch (final Return r) {
-            final Object value = r.value();
-            final boolean val = InterpreterUtilities.isTruthy(value);
+        catch (Return r) {
+            Object value = r.value();
+            boolean val = InterpreterUtilities.isTruthy(value);
             interpreter.resultCollector().addResult(name, val);
         }
         finally {

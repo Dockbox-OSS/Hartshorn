@@ -19,25 +19,25 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.PostfixExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
-import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 public class PostfixExpressionInterpreter implements ASTNodeInterpreter<Object, PostfixExpression> {
 
     @Override
-    public Object interpret(final PostfixExpression node, final Interpreter interpreter) {
-        final Object left = interpreter.evaluate(node.leftExpression());
+    public Object interpret(PostfixExpression node, Interpreter interpreter) {
+        Object left = interpreter.evaluate(node.leftExpression());
         InterpreterUtilities.checkNumberOperand(node.operator(), left);
 
         TokenType type = node.operator().type();
         if (!(type instanceof ArithmeticTokenType arithmeticTokenType)) {
-            throw new RuntimeError(node.operator(), "Invalid postfix operator " + type);
+            throw new ScriptEvaluationError("Invalid postfix operator " + type, Phase.INTERPRETING, node.operator());
         }
-        final double newValue = switch (arithmeticTokenType) {
+        double newValue = switch (arithmeticTokenType) {
             case PLUS_PLUS -> (double) left + 1;
             case MINUS_MINUS -> (double) left -1;
             default -> throw new ScriptEvaluationError("Invalid postfix operator " + type, Phase.INTERPRETING, node.operator());

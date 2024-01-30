@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,14 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 public class ForStatementInterpreter implements ASTNodeInterpreter<Void, ForStatement> {
 
     @Override
-    public Void interpret(final ForStatement node, final Interpreter interpreter) {
+    public Void interpret(ForStatement node, Interpreter interpreter) {
         interpreter.withNextScope(() -> {
             interpreter.execute(node.initializer());
             while (InterpreterUtilities.isTruthy(interpreter.evaluate(node.condition()))) {
                 try {
                     interpreter.execute(node.body());
                 }
-                catch (final MoveKeyword moveKeyword) {
+                catch (MoveKeyword moveKeyword) {
                     if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
                         break;
                     }

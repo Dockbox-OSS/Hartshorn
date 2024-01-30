@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 public class ArrayGetExpressionInterpreter extends ArrayInterpreter<Object, ArrayGetExpression> {
 
     @Override
-    public Object interpret(final ArrayGetExpression node, final Interpreter interpreter) {
+    public Object interpret(ArrayGetExpression node, Interpreter interpreter) {
         return this.accessArray(interpreter, node.name(), node.index(), Array::value);
     }
 }

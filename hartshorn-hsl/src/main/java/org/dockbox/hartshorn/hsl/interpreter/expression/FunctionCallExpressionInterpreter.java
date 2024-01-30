@@ -29,35 +29,39 @@ import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Object, FunctionCallExpression> {
 
     @Override
-    public Object interpret(final FunctionCallExpression node, final Interpreter interpreter) {
-        final Object callee = interpreter.evaluate(node.callee());
+    public Object interpret(FunctionCallExpression node, Interpreter interpreter) {
+        Object callee = interpreter.evaluate(node.callee());
 
-        final List<Object> arguments = new ArrayList<>();
-        for (final Expression argument : node.arguments()) {
+        List<Object> arguments = new ArrayList<>();
+        for (Expression argument : node.arguments()) {
             Object evaluated = interpreter.evaluate(argument);
-            if (evaluated instanceof ExternalObjectReference external) evaluated = external.externalObject();
+            if (evaluated instanceof ExternalObjectReference external) {
+                evaluated = external.externalObject();
+            }
             arguments.add(evaluated);
         }
 
         // Can't call non-callable nodes..
-        if (!(callee instanceof final CallableNode function)) {
+        Token openParenthesis = node.openParenthesis();
+        if (!(callee instanceof CallableNode function)) {
             throw new ScriptEvaluationError("Can only call functions and classes, but received " + callee + ".", Phase.INTERPRETING, openParenthesis);
         }
 
         try {
             if (callee instanceof InstanceReference instance) {
-                return function.call(node.openParenthesis(), interpreter, instance, arguments);
+                return function.call(openParenthesis, interpreter, instance, arguments);
             }
             else if (callee instanceof BindableNode<?> bindable){
-                return function.call(node.openParenthesis(), interpreter, bindable.bound(), arguments);
+                return function.call(openParenthesis, interpreter, bindable.bound(), arguments);
             }
             else {
-                return function.call(node.openParenthesis(), interpreter, null, arguments);
+                return function.call(openParenthesis, interpreter, null, arguments);
             }
         }
         catch (ApplicationException e) {

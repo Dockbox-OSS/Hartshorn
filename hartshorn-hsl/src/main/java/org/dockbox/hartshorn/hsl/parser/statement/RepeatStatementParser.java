@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,13 @@ import org.dockbox.hartshorn.util.option.Option;
 public class RepeatStatementParser extends AbstractBodyStatementParser<RepeatStatement> {
 
     @Override
-    public Option<? extends RepeatStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends RepeatStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(LoopTokenType.REPEAT)) {
             TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
             validator.expectAfter(parameters.open(), "repeat");
-            final Expression value = parser.expression();
+            Expression value = parser.expression();
             validator.expectAfter(parameters.close(), "repeat value");
-            final BlockStatement loopBody = this.blockStatement("repeat", value, parser, validator);
+            BlockStatement loopBody = this.blockStatement("repeat", value, parser, validator);
             return Option.of(new RepeatStatement(value, loopBody));
         }
         return Option.empty();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,12 +31,12 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ConstructorStatementParser extends AbstractBodyStatementParser<ConstructorStatement> implements ParametricStatementParser {
 
     @Override
-    public Option<? extends ConstructorStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
-        final Token keyword = parser.peek();
+    public Option<? extends ConstructorStatement> parse(TokenParser parser, TokenStepValidator validator) {
+        Token keyword = parser.peek();
         if (keyword.type() == FunctionTokenType.CONSTRUCTOR) {
             parser.advance();
-            final List<Parameter> parameters = this.parameters(parser, validator, "constructor", Integer.MAX_VALUE, keyword.type());
-            final BlockStatement body = this.blockStatement("constructor", keyword, parser, validator);
+            List<Parameter> parameters = this.parameters(parser, validator, "constructor", Integer.MAX_VALUE, keyword.type());
+            BlockStatement body = this.blockStatement("constructor", keyword, parser, validator);
             return Option.of(new ConstructorStatement(keyword, parameters, body));
         }
         return Option.empty();

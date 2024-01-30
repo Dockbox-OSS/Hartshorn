@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,11 +39,11 @@ import org.dockbox.hartshorn.util.option.Option;
 public class FunctionStatementParser extends AbstractBodyStatementParser<Function> {
 
     @Override
-    public Option<? extends Function> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends Function> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.check(FunctionTokenType.PREFIX, FunctionTokenType.INFIX, FunctionTokenType.FUNCTION)) {
-            final Token functionType = parser.advance();
-            final Token functionToken = functionType.type() == FunctionTokenType.FUNCTION ? functionType : parser.advance();
-            final Token name = validator.expect(LiteralTokenType.IDENTIFIER, "function name");
+            Token functionType = parser.advance();
+            Token functionToken = functionType.type() == FunctionTokenType.FUNCTION ? functionType : parser.advance();
+            Token name = validator.expect(LiteralTokenType.IDENTIFIER, "function name");
 
             int expectedNumberOrArguments = Integer.MAX_VALUE;
 
@@ -56,35 +56,35 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
                 expectedNumberOrArguments = 2;
             }
 
-            final List<Parameter> parameters = this.functionParameters(parser, validator, "function name", expectedNumberOrArguments, functionToken);
-            final BlockStatement body = this.blockStatement("function", name, parser, validator);
+            List<Parameter> parameters = this.functionParameters(parser, validator, "function name", expectedNumberOrArguments, functionToken);
+            BlockStatement body = this.blockStatement("function", name, parser, validator);
 
             return Option.of(new FunctionStatement(functionType, name, parameters, body));
         }
         return Option.empty();
     }
 
-    private FunctionParserContext functionParserContext(final TokenParser parser) {
-        final Option<FunctionParserContext> context = parser.first(FunctionParserContext.class);
+    private FunctionParserContext functionParserContext(TokenParser parser) {
+        Option<FunctionParserContext> context = parser.first(FunctionParserContext.class);
         // Compute locally, to avoid auto-creation of this context
         return context.orCompute(() -> {
-            final FunctionParserContext newContext = new FunctionParserContext();
+            FunctionParserContext newContext = new FunctionParserContext();
             parser.add(newContext);
             return newContext;
         }).get();
     }
 
-    private List<Parameter> functionParameters(final TokenParser parser, final TokenStepValidator validator, final String functionName, final int expectedNumberOrArguments, final Token token) {
+    private List<Parameter> functionParameters(TokenParser parser, TokenStepValidator validator, String functionName, int expectedNumberOrArguments, Token token) {
         TokenTypePair parameter = parser.tokenRegistry().tokenPairs().parameters();
         validator.expectAfter(parameter.open(), functionName);
-        final List<Parameter> parameters = new ArrayList<>();
+        List<Parameter> parameters = new ArrayList<>();
         if (!parser.check(parameter.close())) {
             do {
                 if (parameters.size() >= expectedNumberOrArguments) {
-                    final String message = "Cannot have more than " + expectedNumberOrArguments + " parameters" + (token == null ? "" : " for " + token.type() + " functions");
+                    String message = "Cannot have more than " + expectedNumberOrArguments + " parameters" + (token == null ? "" : " for " + token.type() + " functions");
                     throw new ScriptEvaluationError(message, Phase.PARSING, parser.peek());
                 }
-                final Token parameterName = validator.expect(LiteralTokenType.IDENTIFIER, "parameter name");
+                Token parameterName = validator.expect(LiteralTokenType.IDENTIFIER, "parameter name");
                 parameters.add(new Parameter(parameterName));
             }
             while (parser.match(BaseTokenType.COMMA));

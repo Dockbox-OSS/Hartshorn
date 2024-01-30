@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ContinueStatementParser implements ASTNodeParser<ContinueStatement> {
 
     @Override
-    public Option<? extends ContinueStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends ContinueStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(ControlTokenType.CONTINUE)) {
-            final Token keyword = parser.previous();
+            Token keyword = parser.previous();
             validator.expectAfter(BaseTokenType.SEMICOLON, "value");
             return Option.of(new ContinueStatement(keyword));
         }

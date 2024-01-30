@@ -24,20 +24,23 @@ import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 
 public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, BinaryExpression> {
 
     @Override
-    public Object interpret(final BinaryExpression node, final Interpreter interpreter) {
+    public Object interpret(BinaryExpression node, Interpreter interpreter) {
         Object left = interpreter.evaluate(node.leftExpression());
         Object right = interpreter.evaluate(node.rightExpression());
 
         left = InterpreterUtilities.unwrap(left);
         right = InterpreterUtilities.unwrap(right);
 
-        return switch (node.operator().type()) {
+        Token operator = node.operator();
+        return switch (operator.type()) {
             case ArithmeticTokenType.PLUS -> {
                 // Math plus
                 if (left instanceof Double && right instanceof Double) {
@@ -50,51 +53,51 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                 }
 
                 // Special cases
-                if ((left instanceof Character && right instanceof Character)) {
+                if (left instanceof Character && right instanceof Character) {
                     yield String.valueOf(left) + right;
                 }
-                if ((left instanceof Character) && (right instanceof Double)) {
+                if (left instanceof Character && right instanceof Double) {
                     int value = (Character) left;
                     yield (double) right + value;
                 }
-                if ((left instanceof Double) && (right instanceof Character)) {
+                if (left instanceof Double && right instanceof Character) {
                     int value = (Character) right;
                     yield (double) left + value;
                 }
                 throw new ScriptEvaluationError("Unsupported child for PLUS.\n", Phase.INTERPRETING, operator);
             }
             case ArithmeticTokenType.MINUS -> {
-                InterpreterUtilities.checkNumberOperands(node.operator(), left, right);
+                InterpreterUtilities.checkNumberOperands(operator, left, right);
                 yield (double) left - (double) right;
             }
             case ArithmeticTokenType.STAR -> {
                 if ((left instanceof String || left instanceof Character) && right instanceof Double) {
-                    int times = (int) ((double) right);
-                    int finalLen = left.toString().length() * times;
-                    StringBuilder result = new StringBuilder(finalLen);
-                    String strValue = left.toString();
-                    result.append(strValue.repeat(Math.max(0, times)));
+                    int times = (int) (double) right;
+                    int length = left.toString().length() * times;
+                    StringBuilder result = new StringBuilder(length);
+                    String value = left.toString();
+                    result.append(value.repeat(Math.max(0, times)));
                     yield result.toString();
                 }
                 else if (left instanceof Array array && right instanceof Double) {
-                    int times = (int) ((double) right);
-                    int finalLen = array.length() * times;
-                    Array result = new Array(finalLen);
+                    int times = (int) (double) right;
+                    int length = array.length() * times;
+                    Array result = new Array(length);
                     for (int i = 0; i < times; i++) {
                         int originalIndex = times % array.length();
                         result.value(array.value(originalIndex), i);
                     }
                     yield result;
                 }
-                InterpreterUtilities.checkNumberOperands(node.operator(), left, right);
+                InterpreterUtilities.checkNumberOperands(operator, left, right);
                 yield (double) left * (double) right;
             }
             case ArithmeticTokenType.MODULO -> {
-                InterpreterUtilities.checkNumberOperands(node.operator(), left, right);
+                InterpreterUtilities.checkNumberOperands(operator, left, right);
                 yield (double) left % (double) right;
             }
             case ArithmeticTokenType.SLASH -> {
-                InterpreterUtilities.checkNumberOperands(node.operator(), left, right);
+                InterpreterUtilities.checkNumberOperands(operator, left, right);
                 if ((double) right == 0) {
                     throw new ScriptEvaluationError("Can't use slash with zero double.", Phase.INTERPRETING, operator);
                 }

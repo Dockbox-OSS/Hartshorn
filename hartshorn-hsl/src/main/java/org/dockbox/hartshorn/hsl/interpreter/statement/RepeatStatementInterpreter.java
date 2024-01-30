@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,23 +24,25 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 public class RepeatStatementInterpreter implements ASTNodeInterpreter<Void, RepeatStatement> {
 
     @Override
-    public Void interpret(final RepeatStatement node, final Interpreter interpreter) {
+    public Void interpret(RepeatStatement node, Interpreter interpreter) {
         interpreter.withNextScope(() -> {
-            final Object value = interpreter.evaluate(node.value());
+            Object value = interpreter.evaluate(node.value());
 
-            final boolean isNotNumber = !(value instanceof Number);
+            boolean isNotNumber = !(value instanceof Number);
 
             if (isNotNumber) {
                 throw new RuntimeException("Repeat Counter must be number");
             }
 
-            final int counter = (int) Double.parseDouble(value.toString());
+            int counter = (int) Double.parseDouble(value.toString());
             for (int i = 0; i < counter; i++) {
                 try {
                     interpreter.execute(node.body());
                 }
-                catch (final MoveKeyword moveKeyword) {
-                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
+                catch (MoveKeyword moveKeyword) {
+                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
+                        break;
+                    }
                 }
             }
         });

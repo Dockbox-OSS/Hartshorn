@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 public class LogicalAssignExpressionInterpreter extends BitwiseInterpreter<Object, LogicalAssignExpression> {
 
     @Override
-    public Object interpret(final LogicalAssignExpression node, final Interpreter interpreter) {
-        final Token name = node.name();
-        final Object left = interpreter.lookUpVariable(name, node);
+    public Object interpret(LogicalAssignExpression node, Interpreter interpreter) {
+        Token name = node.name();
+        Object left = interpreter.lookUpVariable(name, node);
 
-        final Object right = interpreter.evaluate(node.value());
+        Object right = interpreter.evaluate(node.value());
 
         Token op = node.assignmentOperator();
         TokenType bitwiseOperator = node.logicalOperator();

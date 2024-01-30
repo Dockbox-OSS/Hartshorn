@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,10 +33,10 @@ import org.dockbox.hartshorn.util.option.Option;
 public class FieldStatementParser implements ASTNodeParser<FieldStatement> {
 
     @Override
-    public Option<? extends FieldStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
-        final Token modifier = parser.find(MemberModifierTokenType.PUBLIC, MemberModifierTokenType.PRIVATE);
-        final boolean isFinal = parser.match(MemberModifierTokenType.FINAL);
-        final Token name = validator.expect(LiteralTokenType.IDENTIFIER, "variable name");
+    public Option<? extends FieldStatement> parse(TokenParser parser, TokenStepValidator validator) {
+        Token modifier = parser.find(MemberModifierTokenType.PUBLIC, MemberModifierTokenType.PRIVATE);
+        boolean isFinal = parser.match(MemberModifierTokenType.FINAL);
+        Token name = validator.expect(LiteralTokenType.IDENTIFIER, "variable name");
 
         Expression initializer = null;
         if(parser.match(BaseTokenType.EQUAL)) {
@@ -44,7 +44,7 @@ public class FieldStatementParser implements ASTNodeParser<FieldStatement> {
         }
 
         validator.expectAfter(BaseTokenType.SEMICOLON, "variable declaration");
-        final VariableStatement variable = new VariableStatement(name, initializer);
+        VariableStatement variable = new VariableStatement(name, initializer);
 
         return Option.of(new FieldStatement(modifier, variable.name(), variable.initializer(), isFinal));
     }

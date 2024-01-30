@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
@@ -44,33 +43,33 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
     private final CaseBodyStatementParser caseBodyStatementParser;
 
     @Inject
-    public SwitchStatementParser(final CaseBodyStatementParser caseBodyStatementParser) {
+    public SwitchStatementParser(CaseBodyStatementParser caseBodyStatementParser) {
         this.caseBodyStatementParser = caseBodyStatementParser;
     }
 
     @Override
-    public Option<? extends SwitchStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends SwitchStatement> parse(TokenParser parser, TokenStepValidator validator) {
         TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
         TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.match(ControlTokenType.SWITCH)) {
-            final Token switchToken = parser.previous();
+            Token switchToken = parser.previous();
             validator.expectAfter(parameters.open(), "switch");
-            final Expression expression = parser.expression();
+            Expression expression = parser.expression();
             validator.expectAfter(parameters.close(), "expression");
 
             validator.expectAfter(block.open(), "switch");
 
             SwitchCase defaultBody = null;
-            final List<SwitchCase> cases = new ArrayList<>();
-            final Set<Object> matchedLiterals = new HashSet<>();
+            List<SwitchCase> cases = new ArrayList<>();
+            Set<Object> matchedLiterals = new HashSet<>();
 
             while (parser.match(ControlTokenType.CASE, ControlTokenType.DEFAULT)) {
-                final Token caseToken = parser.previous();
+                Token caseToken = parser.previous();
 
                 if (caseToken.type() == ControlTokenType.CASE) {
+                    Expression caseExpression = parser.expression();
+                    if (!(caseExpression instanceof LiteralExpression literal)) {
                         throw new ScriptEvaluationError("Case expression must be a literal.", Phase.PARSING, caseToken);
-                    final Expression caseExpression = parser.expression();
-                    if (!(caseExpression instanceof final LiteralExpression literal)) {
                     }
 
                     if (matchedLiterals.contains(literal.value())) {
@@ -78,18 +77,16 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
                     }
                     matchedLiterals.add(literal.value());
 
-                    final Attempt<? extends Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
-                    if (body.errorPresent()) {
-                        return Attempt.of(body.error());
+                    Option<? extends Statement> body = this.caseBodyStatementParser.parse(parser, validator);
+                    if(body.present()) {
+                        cases.add(new SwitchCase(caseToken, body.get(), literal, false));
                     }
-                    cases.add(new SwitchCase(caseToken, body.get(), literal, false));
                 }
                 else {
-                    final Attempt<? extends Statement, ScriptEvaluationError> body = this.caseBodyStatementParser.parse(parser, validator);
-                    if (body.errorPresent()) {
-                        return Attempt.of(body.error());
+                    Option<? extends Statement> body = this.caseBodyStatementParser.parse(parser, validator);
+                    if (body.present()) {
+                        defaultBody = new SwitchCase(caseToken, body.get(), null, true);
                     }
-                    defaultBody = new SwitchCase(caseToken, body.get(), null, true);
                 }
             }
 

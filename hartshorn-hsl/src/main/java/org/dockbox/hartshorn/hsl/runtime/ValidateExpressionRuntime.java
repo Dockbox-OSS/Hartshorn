@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.ParserCustomizer;
-import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import java.util.List;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ExpressionScript;
+import org.dockbox.hartshorn.hsl.ParserCustomizer;
 import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
@@ -81,7 +79,7 @@ public class ValidateExpressionRuntime extends StandardRuntime {
                 .map(TestStatement.class::cast)
                 .toList();
         if (testStatements.size() == 1) {
-            BlockStatement body = testStatements.get(0).body();
+            BlockStatement body = testStatements.getFirst().body();
             return body.statements().stream()
                     .filter(statement -> !(excludeModuleStatements && statement instanceof ModuleStatement))
                     .toList();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,20 +36,20 @@ import org.dockbox.hartshorn.util.option.Option;
 public class TestStatementParser extends AbstractBodyStatementParser<TestStatement> {
 
     @Override
-    public Option<? extends TestStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends TestStatement> parse(TokenParser parser, TokenStepValidator validator) {
         TokenTypePair parameter = parser.tokenRegistry().tokenPairs().parameters();
         TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.match(AssertTokenType.TEST)) {
             validator.expectAfter(parameter.open(), "test statement");
 
-            final Token name = validator.expect(LiteralTokenType.STRING, "test name");
+            Token name = validator.expect(LiteralTokenType.STRING, "test name");
             validator.expectAfter(parameter.close(), "test statement name value");
             validator.expectBefore(block.open(), "test body");
 
-            final List<Statement> statements = new ArrayList<>();
-            final Token bodyStart = parser.peek();
+            List<Statement> statements = new ArrayList<>();
+            Token bodyStart = parser.peek();
             while (!parser.match(block.close()) && !parser.isAtEnd()) {
-                final Statement statement = parser.statement();
+                Statement statement = parser.statement();
                 statements.add(statement);
             }
 
@@ -60,7 +60,7 @@ public class TestStatementParser extends AbstractBodyStatementParser<TestStateme
                 throw new IllegalStateException("Test body must end with a return statement");
             }
 
-            final BlockStatement body = new BlockStatement(bodyStart, statements);
+            BlockStatement body = new BlockStatement(bodyStart, statements);
             return Option.of(new TestStatement(name, body));
         }
         return Option.empty();

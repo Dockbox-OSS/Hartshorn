@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,17 +25,17 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 public class IfStatementInterpreter implements ASTNodeInterpreter<Void, IfStatement> {
 
     @Override
-    public Void interpret(final IfStatement node, final Interpreter interpreter) {
-        final Object conditionResult = interpreter.evaluate(node.condition());
-        final VariableScope previous = interpreter.visitingScope();
+    public Void interpret(IfStatement node, Interpreter interpreter) {
+        Object conditionResult = interpreter.evaluate(node.condition());
+        VariableScope previous = interpreter.visitingScope();
 
         if (InterpreterUtilities.isTruthy(conditionResult)) {
-            final VariableScope thenVariableScope = new VariableScope(previous);
+            VariableScope thenVariableScope = new VariableScope(previous);
             interpreter.enterScope(thenVariableScope);
             interpreter.execute(node.thenBranch(), thenVariableScope);
         }
         else if (node.elseBranch() != null) {
-            final VariableScope elseVariableScope = new VariableScope(previous);
+            VariableScope elseVariableScope = new VariableScope(previous);
             interpreter.enterScope(elseVariableScope);
             interpreter.execute(node.elseBranch(), elseVariableScope);
         }

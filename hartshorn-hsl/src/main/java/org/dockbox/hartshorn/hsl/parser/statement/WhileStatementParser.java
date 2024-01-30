@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,14 +30,14 @@ import org.dockbox.hartshorn.util.option.Option;
 public class WhileStatementParser extends AbstractBodyStatementParser<WhileStatement> {
 
     @Override
-    public Option<? extends WhileStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends WhileStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(LoopTokenType.WHILE)) {
 
             TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
             validator.expectAfter(parameters.open(), LoopTokenType.WHILE);
-            final Expression condition = parser.expression();
+            Expression condition = parser.expression();
             validator.expectAfter(parameters.close(), "while condition");
-            final BlockStatement loopBody = this.blockStatement("while", condition, parser, validator);
+            BlockStatement loopBody = this.blockStatement("while", condition, parser, validator);
             return Option.of(new WhileStatement(condition, loopBody));
         }
         return Option.empty();

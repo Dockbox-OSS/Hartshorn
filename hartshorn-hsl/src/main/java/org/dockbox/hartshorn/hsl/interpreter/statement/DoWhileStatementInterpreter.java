@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,16 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 public class DoWhileStatementInterpreter implements ASTNodeInterpreter<Void, DoWhileStatement> {
 
     @Override
-    public Void interpret(final DoWhileStatement node, final Interpreter interpreter) {
+    public Void interpret(DoWhileStatement node, Interpreter interpreter) {
         interpreter.withNextScope(() -> {
             do {
                 try {
                     interpreter.execute(node.body());
                 }
-                catch (final MoveKeyword moveKeyword) {
-                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) break;
+                catch (MoveKeyword moveKeyword) {
+                    if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
+                        break;
+                    }
                 }
             }
             while (InterpreterUtilities.isTruthy(interpreter.evaluate(node.condition())));

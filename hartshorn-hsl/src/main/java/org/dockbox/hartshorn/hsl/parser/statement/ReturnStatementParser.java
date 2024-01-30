@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,9 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ReturnStatementParser implements ASTNodeParser<ReturnStatement> {
 
     @Override
-    public Option<? extends ReturnStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends ReturnStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(ControlTokenType.RETURN)) {
-            final Token keyword = parser.previous();
+            Token keyword = parser.previous();
             Expression value = null;
             if (!parser.check(BaseTokenType.SEMICOLON)) {
                 value = parser.expression();

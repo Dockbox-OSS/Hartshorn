@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 public class FunctionStatementInterpreter implements ASTNodeInterpreter<Void, FunctionStatement> {
 
     @Override
-    public Void interpret(final FunctionStatement node, final Interpreter interpreter) {
-        final VirtualFunction function = new VirtualFunction(node, interpreter.visitingScope(), false);
+    public Void interpret(FunctionStatement node, Interpreter interpreter) {
+        VirtualFunction function = new VirtualFunction(node, interpreter.visitingScope(), false);
         interpreter.visitingScope().define(node.name().lexeme(), function);
         return null;
     }

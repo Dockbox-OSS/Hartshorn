@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,17 +32,17 @@ import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 
 public interface ParametricStatementParser {
 
-    default List<Parameter> parameters(final TokenParser parser, final TokenStepValidator validator, final String functionName, final int expectedNumberOfArguments, final TokenType functionType) {
+    default List<Parameter> parameters(TokenParser parser, TokenStepValidator validator, String functionName, int expectedNumberOfArguments, TokenType functionType) {
         TokenTypePair parameterTokens = parser.tokenRegistry().tokenPairs().parameters();
         validator.expectAfter(parameterTokens.open(), functionName);
-        final List<Parameter> parameters = new ArrayList<>();
+        List<Parameter> parameters = new ArrayList<>();
         if (!parser.check(parameterTokens.close())) {
             do {
                 if (parameters.size() >= expectedNumberOfArguments) {
-                    final String message = "Cannot have more than " + expectedNumberOfArguments + " parameters" + (functionType == null ? "" : " for " + functionType.representation() + " functions");
+                    String message = "Cannot have more than " + expectedNumberOfArguments + " parameters" + (functionType == null ? "" : " for " + functionType.representation() + " functions");
                     throw new ScriptEvaluationError(message, Phase.PARSING, parser.peek());
                 }
-                final Token parameterName = validator.expect(LiteralTokenType.IDENTIFIER, "parameter name");
+                Token parameterName = validator.expect(LiteralTokenType.IDENTIFIER, "parameter name");
                 parameters.add(new Parameter(parameterName));
             }
             while (parser.match(BaseTokenType.COMMA));

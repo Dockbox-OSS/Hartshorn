@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,42 +44,42 @@ public record SimpleTokenType(
         private String defaultLexeme;
         private TokenCharacter[] characters = new TokenCharacter[0];
 
-        public Builder tokenName(final String tokenName) {
+        public Builder tokenName(String tokenName) {
             this.tokenName = tokenName;
             return this;
         }
 
-        public Builder representation(final String representation) {
+        public Builder representation(String representation) {
             this.representation = representation;
             return this;
         }
 
-        public Builder keyword(final boolean keyword) {
+        public Builder keyword(boolean keyword) {
             this.keyword = keyword;
             return this;
         }
 
-        public Builder standaloneStatement(final boolean standaloneStatement) {
+        public Builder standaloneStatement(boolean standaloneStatement) {
             this.standaloneStatement = standaloneStatement;
             return this;
         }
 
-        public Builder reserved(final boolean reserved) {
+        public Builder reserved(boolean reserved) {
             this.reserved = reserved;
             return this;
         }
 
-        public Builder assignsWith(final TokenType assignsWith) {
+        public Builder assignsWith(TokenType assignsWith) {
             this.assignsWith = assignsWith;
             return this;
         }
 
-        public Builder defaultLexeme(final String defaultLexeme) {
+        public Builder defaultLexeme(String defaultLexeme) {
             this.defaultLexeme = defaultLexeme;
             return this;
         }
 
-        public Builder characters(final TokenCharacter... characters) {
+        public Builder characters(TokenCharacter... characters) {
             this.characters = characters;
             if (this.representation == null) {
                 StringBuilder builder = new StringBuilder();

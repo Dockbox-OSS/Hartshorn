@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,11 +29,11 @@ import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, UnaryExpression> {
 
     @Override
-    public Object interpret(final UnaryExpression node, final Interpreter interpreter) {
+    public Object interpret(UnaryExpression node, Interpreter interpreter) {
         TokenType type = node.operator().type();
-        final Object right = interpreter.evaluate(node.rightExpression());
+        Object right = interpreter.evaluate(node.rightExpression());
 
-        final Object newValue;
+        Object newValue;
         if (type instanceof ArithmeticTokenType arithmeticTokenType) {
              newValue = switch (arithmeticTokenType) {
                 case MINUS -> {
@@ -57,7 +57,7 @@ public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, Un
         else if (type == BitwiseTokenType.COMPLEMENT) {
 
             InterpreterUtilities.checkNumberOperand(node.operator(), right);
-            final int value = ((Double) right).intValue();
+            int value = ((Double) right).intValue();
             // Cast to int is redundant, but required to suppress false-positive inspections.
             //noinspection RedundantCast
             newValue = (int) ~value;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,12 +32,12 @@ import org.dockbox.hartshorn.util.option.Option;
 public class BlockStatementParser implements ASTNodeParser<BlockStatement> {
 
     @Override
-    public Option<? extends BlockStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends BlockStatement> parse(TokenParser parser, TokenStepValidator validator) {
         TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.check(block.open())) {
-            final Token start = parser.advance();
+            Token start = parser.advance();
 
-            final List<Statement> statements = new ArrayList<>();
+            List<Statement> statements = new ArrayList<>();
             while (!parser.check(block.close()) && !parser.isAtEnd()) {
                 statements.add(parser.statement());
             }

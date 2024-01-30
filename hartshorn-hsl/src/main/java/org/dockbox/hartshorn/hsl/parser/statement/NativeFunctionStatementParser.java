@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,23 +32,23 @@ import org.dockbox.hartshorn.util.option.Option;
 public class NativeFunctionStatementParser extends AbstractBodyStatementParser<NativeFunctionStatement> implements ParametricStatementParser {
 
     @Override
-    public Option<? extends NativeFunctionStatement> parse(final TokenParser parser, final TokenStepValidator validator) {
+    public Option<? extends NativeFunctionStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(FunctionTokenType.NATIVE) && parser.match(FunctionTokenType.FUNCTION)) {
-            final Token moduleName = validator.expect(LiteralTokenType.IDENTIFIER, "module name");
+            Token moduleName = validator.expect(LiteralTokenType.IDENTIFIER, "module name");
 
             while (parser.match(BaseTokenType.COLON)) {
-                final Token token = Token.of(BaseTokenType.DOT)
+                Token token = Token.of(BaseTokenType.DOT)
                         .position(moduleName)
                         .build();
                 moduleName.concat(token);
                 
-                final Token submodule = validator.expect(LiteralTokenType.IDENTIFIER, "module name");
+                Token submodule = validator.expect(LiteralTokenType.IDENTIFIER, "module name");
                 moduleName.concat(submodule);
             }
 
             validator.expectBefore(BaseTokenType.DOT, "method body");
-            final Token funcName = validator.expect(LiteralTokenType.IDENTIFIER, "function name");
-            final List<Parameter> parameters = ParametricStatementParser.super.parameters(parser, validator, "method name", Integer.MAX_VALUE, FunctionTokenType.NATIVE);
+            Token funcName = validator.expect(LiteralTokenType.IDENTIFIER, "function name");
+            List<Parameter> parameters = ParametricStatementParser.super.parameters(parser, validator, "method name", Integer.MAX_VALUE, FunctionTokenType.NATIVE);
 
             validator.expectAfter(BaseTokenType.SEMICOLON, "value");
             return Option.of(new NativeFunctionStatement(funcName, moduleName, null, parameters));
