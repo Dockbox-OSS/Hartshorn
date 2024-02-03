@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.component.CompositeQualifier;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class ComponentContainerDependencyDeclarationContext<T> implements DependencyDeclarationContext<T> {
@@ -30,6 +31,11 @@ public class ComponentContainerDependencyDeclarationContext<T> implements Depend
     @Override
     public TypeView<T> type() {
         return this.container.type();
+    }
+
+    @Override
+    public CompositeQualifier qualifier() {
+        return new CompositeQualifier();
     }
 
     @Override
