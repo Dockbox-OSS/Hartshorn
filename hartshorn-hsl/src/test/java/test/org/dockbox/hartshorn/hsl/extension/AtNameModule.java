@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,17 @@
 
 package test.org.dockbox.hartshorn.hsl.extension;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.dockbox.hartshorn.hsl.extension.ResolverExtension;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.extension.ExpressionModule;
 import org.dockbox.hartshorn.hsl.token.SimpleTokenCharacter;
 import org.dockbox.hartshorn.hsl.token.type.SimpleTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
+import org.junit.jupiter.api.Assertions;
 
 public class AtNameModule implements ExpressionModule<AtNameExpression> {
 
@@ -29,6 +34,12 @@ public class AtNameModule implements ExpressionModule<AtNameExpression> {
             .characters(SimpleTokenCharacter.of('@', true))
             .tokenName("at")
             .build();
+
+    private final AtomicBoolean resolverAccessed = new AtomicBoolean(false);
+
+    public boolean resolverAccessed() {
+        return this.resolverAccessed.get();
+    }
 
     @Override
     public TokenType tokenType() {
@@ -43,5 +54,24 @@ public class AtNameModule implements ExpressionModule<AtNameExpression> {
     @Override
     public ASTNodeInterpreter<Object, AtNameExpression> interpreter() {
         return (node, adapter) -> node.identifier().lexeme();
+    }
+
+    @Override
+    public ResolverExtension<AtNameExpression> resolver() {
+        return (node, resolver) -> {
+            // This is where you would resolve the expression to a value
+            resolverAccessed.set(true);
+        };
+    }
+
+    @Override
+    public <U> U accept(ExpressionVisitor<U> visitor) {
+        // Default runtime has two visitors:
+        // - ResolverVisitor for semantics, which should delegate to #resolver()
+        // - InterpreterVisitor for runtime, which should delegate to #interpreter()
+        // Other visitors should not be in the default runtime, so we fail the test if
+        // one is encountered. In regular implementations this method should be overridden
+        // to handle visitor delegation.
+        return Assertions.fail("Expression should not be visited by default runtime");
     }
 }

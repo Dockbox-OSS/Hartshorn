@@ -52,6 +52,7 @@ public class LanguageExtensionTests {
         script.runtime().customizer(customizer);
 
         Assertions.assertTrue(script.valid());
+        Assertions.assertTrue(module.resolverAccessed());
 
         List<Statement> statements = ValidateExpressionRuntime.actualStatements(script);
         Assertions.assertEquals(1, statements.size());

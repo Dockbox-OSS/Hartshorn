@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.extension;
 
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
  * Base module for custom statements. This class is non-sealed to allow for custom implementations
@@ -31,4 +32,5 @@ import org.dockbox.hartshorn.hsl.ast.statement.Statement;
  */
 public non-sealed interface StatementModule<T extends Statement & CustomASTNode<T, Void>> extends ASTExtensionModule<T, Void> {
 
+    <U> U accept(StatementVisitor<U> visitor);
 }
