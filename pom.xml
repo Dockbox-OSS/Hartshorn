@@ -6,7 +6,7 @@
     <groupId>org.dockbox.hartshorn</groupId>
     <artifactId>hartshorn</artifactId>
     <packaging>pom</packaging>
-    <version>0.6.0</version>
+    <version>${revision}</version>
 
     <name>Hartshorn Framework</name>
     <description>Hartshorn is a modern JVM-based full stack Java framework</description>
@@ -48,10 +48,18 @@
     </issueManagement>
 
     <properties>
+        <!-- Project version, inherited by all submodules -->
+        <revision>0.6.0</revision>
+        <hartshorn.version>${revision}</hartshorn.version>
+
+        <!-- Project properties, inherited by all submodules -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
 
-        <hartshorn.version>${project.version}</hartshorn.version>
+        <!--
+        Feature toggles for CI, defaults to opt-out behavior.
+        Use the 'ci' profile to disable by default, making this opt-in instead.
+        -->
         <checkstyle.skip>false</checkstyle.skip>
         <javadoc.skip>false</javadoc.skip>
         <owasp.skip>false</owasp.skip>

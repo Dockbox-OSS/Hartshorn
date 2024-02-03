@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-staging</artifactId>
-        <version>0.6.0</version>
+        <version>${revision}</version>
         <relativePath>../pom.staging.xml</relativePath>
     </parent>
 
@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>org.dockbox.hartshorn</groupId>
                 <artifactId>hartshorn-bom</artifactId>
-                <version>${hartshorn.version}</version>
+                <version>${revision}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
