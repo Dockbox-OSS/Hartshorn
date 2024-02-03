@@ -65,6 +65,28 @@
         <owasp.skip>false</owasp.skip>
         <jacoco.skip>false</jacoco.skip>
         <coverage.skip>false</coverage.skip>
+
+        <!-- Language versions, also inherited by BOM -->
+        <groovy.version>4.0.18</groovy.version>
+        <kotlin.version>1.9.22</kotlin.version>
+        <scala.version>3.3.1</scala.version>
+
+        <!-- Maven plugin versions, in alphabetical order -->
+        <plugin.buildhelper.version>3.5.0</plugin.buildhelper.version>
+        <plugin.compiler.version>3.12.1</plugin.compiler.version>
+        <plugin.checkstyle.version>3.3.1</plugin.checkstyle.version>
+        <plugin.deploy.version>3.1.1</plugin.deploy.version>
+        <plugin.gpg.version>1.6</plugin.gpg.version>
+        <plugin.groovy.version>2.1.1</plugin.groovy.version>
+        <plugin.jacoco.version>0.8.11</plugin.jacoco.version>
+        <plugin.jar.version>3.3.0</plugin.jar.version>
+        <plugin.javadoc.version>3.6.3</plugin.javadoc.version>
+        <plugin.kotlin.version>${kotlin.version}</plugin.kotlin.version>
+        <plugin.license.version>4.3</plugin.license.version>
+        <plugin.owasp.version>9.0.9</plugin.owasp.version>
+        <plugin.scala.version>4.8.1</plugin.scala.version>
+        <plugin.source.version>3.3.0</plugin.source.version>
+        <plugin.staging.version>1.6.13</plugin.staging.version>
     </properties>
 
     <licenses>
@@ -115,14 +137,12 @@
         </profile>
         <profile>
             <id>staging</id>
-
             <build>
                 <plugins>
                     <!-- Distribution staging -->
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
@@ -145,12 +165,92 @@
     </profiles>
 
     <build>
+        <pluginManagement>
+            <!-- Plugin management, in alphabetical order of version property -->
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${plugin.buildhelper.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${plugin.compiler.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${plugin.checkstyle.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${plugin.deploy.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${plugin.gpg.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>groovy-maven-plugin</artifactId>
+                    <version>${plugin.groovy.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${plugin.jacoco.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${plugin.jar.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${plugin.javadoc.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <version>${plugin.kotlin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${plugin.license.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>${plugin.owasp.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <version>${plugin.scala.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${plugin.source.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${plugin.staging.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <!-- License headers -->
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>4.2</version>
                 <configuration>
                     <headerDefinitions>
                         <headerDefinition>hartshorn-assembly/licenses/JavaBlockStyleHeader.xml</headerDefinition>
@@ -175,8 +275,7 @@
                     <dependency>
                         <groupId>com.mycila</groupId>
                         <artifactId>license-maven-plugin-git</artifactId>
-                        <!-- make sure you use the same version as license-maven-plugin -->
-                        <version>4.2</version>
+                        <version>${plugin.license.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -185,7 +284,6 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>8.4.0</version>
                 <configuration>
                     <skip>${owasp.skip}</skip>
                     <failBuildOnCVSS>1</failBuildOnCVSS>
@@ -207,7 +305,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.0</version>
                 <configuration>
                     <skip>${javadoc.skip}</skip>
                     <show>package</show>
@@ -246,7 +343,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.3.0</version>
                 <configuration>
                     <skip>${checkstyle.skip}</skip>
                     <configLocation>src/checkstyle/checkstyle.xml</configLocation>
@@ -271,8 +367,8 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.1.1</version>
                 <configuration>
                     <!-- Skip root pom, re-enabled in hartshorn-assembly/pom.staging.xml -->
                     <skip>true</skip>
