@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class ModuleStatementInterpreter implements ASTNodeInterpreter<Void, Modu
         String moduleName = node.name().lexeme();
         NativeModule module = interpreter.state().externalModules().get(moduleName);
 
-        List<NativeFunctionStatement> supportedFunctions = module.supportedFunctions(node.name());
+        List<NativeFunctionStatement> supportedFunctions = module.supportedFunctions(node.name(), interpreter);
         Map<String, List<NativeFunctionStatement>> functionsByName = supportedFunctions.stream()
                 .collect(Collectors.groupingBy(function -> function.name().lexeme()));
 

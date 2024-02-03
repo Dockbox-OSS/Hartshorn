@@ -30,10 +30,10 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.parser.expression.FunctionParserContext;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
-import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
 
 public class FunctionStatementParser extends AbstractBodyStatementParser<Function> {
@@ -43,7 +43,8 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
         if (parser.check(FunctionTokenType.PREFIX, FunctionTokenType.INFIX, FunctionTokenType.FUNCTION)) {
             Token functionType = parser.advance();
             Token functionToken = functionType.type() == FunctionTokenType.FUNCTION ? functionType : parser.advance();
-            Token name = validator.expect(LiteralTokenType.IDENTIFIER, "function name");
+            TokenType identifier = parser.tokenRegistry().literals().identifier();
+            Token name = validator.expect(identifier, "function name");
 
             int expectedNumberOrArguments = Integer.MAX_VALUE;
 
@@ -79,12 +80,13 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
         validator.expectAfter(parameter.open(), functionName);
         List<Parameter> parameters = new ArrayList<>();
         if (!parser.check(parameter.close())) {
+            TokenType identifier = parser.tokenRegistry().literals().identifier();
             do {
                 if (parameters.size() >= expectedNumberOrArguments) {
                     String message = "Cannot have more than " + expectedNumberOrArguments + " parameters" + (token == null ? "" : " for " + token.type() + " functions");
                     throw new ScriptEvaluationError(message, Phase.PARSING, parser.peek());
                 }
-                Token parameterName = validator.expect(LiteralTokenType.IDENTIFIER, "parameter name");
+                Token parameterName = validator.expect(identifier, "parameter name");
                 parameters.add(new Parameter(parameterName));
             }
             while (parser.match(BaseTokenType.COMMA));

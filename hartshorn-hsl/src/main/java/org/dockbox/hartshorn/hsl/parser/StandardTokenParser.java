@@ -36,9 +36,8 @@ import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
-import org.dockbox.hartshorn.hsl.token.type.TokenType;
-import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -183,7 +182,7 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
         if (this.check(type)) {
             return this.advance();
         }
-        if (type != BaseTokenType.SEMICOLON) {
+        if (type != this.tokenRegistry().statementEnd()) {
             throw new ScriptEvaluationError(message, Phase.PARSING, this.peek());
         }
         return null;
@@ -208,7 +207,7 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
     @Override
     public ExpressionStatement expressionStatement() {
         Expression expression = this.expression();
-        this.validator.expectAfter(BaseTokenType.SEMICOLON, "expression");
+        this.validator.expectAfter(this.tokenRegistry().statementEnd(), "expression");
         return new ExpressionStatement(expression);
     }
 

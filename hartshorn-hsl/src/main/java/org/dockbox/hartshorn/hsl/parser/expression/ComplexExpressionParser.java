@@ -182,7 +182,7 @@ public class ComplexExpressionParser {
     }
 
     private Expression parsePrefixFunctionCall() {
-        if (this.parser.check(LiteralTokenType.IDENTIFIER) && this.hasPrefixFunction(this.parser.peek())) {
+        if (this.parser.check(this.parser.tokenRegistry().literals().identifier()) && this.hasPrefixFunction(this.parser.peek())) {
             Token prefixFunctionName = this.parser.advance();
             Expression right = this.comparison();
             return new PrefixExpression(prefixFunctionName, right);
@@ -230,7 +230,8 @@ public class ComplexExpressionParser {
     private Expression parseInfixExpressions() {
         Expression expression = this.unary();
 
-        while (this.parser.check(LiteralTokenType.IDENTIFIER) && this.hasInfixFunction(this.parser.peek())) {
+        TokenType identifier = this.parser.tokenRegistry().literals().identifier();
+        while (this.parser.check(identifier) && this.hasInfixFunction(this.parser.peek())) {
             Token operator = this.parser.advance();
             Expression right = this.unary();
             expression = new InfixExpression(expression, operator, right);
@@ -254,12 +255,13 @@ public class ComplexExpressionParser {
     private Expression call() {
         Expression expression = this.primary();
         if (expression != null) {
+            TokenType identifier = this.parser.tokenRegistry().literals().identifier();
             while(true) {
                 if(this.parser.match(this.parser.tokenRegistry().tokenPairs().parameters().open())) {
                     expression = this.finishCall(expression);
                 }
                 else if(this.parser.match(BaseTokenType.DOT)) {
-                    Token name = this.parser.consume(LiteralTokenType.IDENTIFIER, "Expected property name after '.'.");
+                    Token name = this.parser.consume(identifier, "Expected property name after '.'.");
                     expression = new GetExpression(name, expression);
                 }
                 else if(this.parser.match(ArithmeticTokenType.PLUS_PLUS, ArithmeticTokenType.MINUS_MINUS)) {
@@ -307,7 +309,7 @@ public class ComplexExpressionParser {
         if (this.parser.match(LiteralTokenType.NUMBER, LiteralTokenType.STRING, LiteralTokenType.CHAR)) {
             return new LiteralExpression(this.parser.peek(), this.parser.previous().literal());
         }
-        if (this.parser.match(LiteralTokenType.IDENTIFIER)) {
+        if (this.parser.match(this.parser.tokenRegistry().literals().identifier())) {
             return this.identifierExpression();
         }
         if (this.parser.match(this.parser.tokenRegistry().tokenPairs().parameters().open())) {
@@ -326,7 +328,8 @@ public class ComplexExpressionParser {
     private SuperExpression superExpression() {
         Token keyword = this.parser.previous();
         this.validator.expectAfter(BaseTokenType.DOT, ObjectTokenType.SUPER);
-        Token method = this.validator.expect(LiteralTokenType.IDENTIFIER, "super class method name");
+        TokenType identifier = this.parser.tokenRegistry().literals().identifier();
+        Token method = this.validator.expect(identifier, "super class method name");
         return new SuperExpression(keyword, method);
     }
 
@@ -379,7 +382,8 @@ public class ComplexExpressionParser {
 
     private ArrayComprehensionExpression arrayComprehensionExpression(Token open, Expression expression) {
         Token forToken = this.validator.expectAfter(LoopTokenType.FOR, "expression");
-        Token name = this.validator.expect(LiteralTokenType.IDENTIFIER, "variable name");
+        TokenType identifier = this.parser.tokenRegistry().literals().identifier();
+        Token name = this.validator.expect(identifier, "variable name");
 
         Token inToken = this.validator.expectAfter(LoopTokenType.IN, "variable name");
         Expression iterable = this.parser.expression();

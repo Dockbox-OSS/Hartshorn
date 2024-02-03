@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
-import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.VariableTokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -34,14 +34,15 @@ public class VariableDeclarationParser implements ASTNodeParser<VariableStatemen
     @Override
     public Option<? extends VariableStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(VariableTokenType.VAR)) {
-            Token name = validator.expect(LiteralTokenType.IDENTIFIER, "variable name");
+            TokenType identifier = parser.tokenRegistry().literals().identifier();
+            Token name = validator.expect(identifier, "variable name");
 
             Expression initializer = null;
             if (parser.match(BaseTokenType.EQUAL)) {
                 initializer = parser.expression();
             }
 
-            validator.expectAfter(BaseTokenType.SEMICOLON, "variable declaration");
+            validator.expectAfter(parser.tokenRegistry().statementEnd(), "variable declaration");
             return Option.of(new VariableStatement(name, initializer));
         }
         return Option.empty();

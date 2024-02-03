@@ -23,9 +23,8 @@ import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ImportTokenType;
-import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
 public class ModuleStatementParser implements ASTNodeParser<ModuleStatement> {
@@ -33,8 +32,9 @@ public class ModuleStatementParser implements ASTNodeParser<ModuleStatement> {
     @Override
     public Option<? extends ModuleStatement> parse(TokenParser parser, TokenStepValidator validator) {
         if (parser.match(ImportTokenType.IMPORT)) {
-            Token name = validator.expect(LiteralTokenType.IDENTIFIER, "module name");
-            validator.expectAfter(BaseTokenType.SEMICOLON, ImportTokenType.IMPORT);
+            TokenType identifier = parser.tokenRegistry().literals().identifier();
+            Token name = validator.expect(identifier, "module name");
+            validator.expectAfter(parser.tokenRegistry().statementEnd(), ImportTokenType.IMPORT);
             return Option.of(new ModuleStatement(name));
         }
         return Option.empty();

@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.hsl.objects.external.ExecutableLookup;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
@@ -108,10 +108,11 @@ public abstract class AbstractNativeModule implements NativeModule {
     }
 
     @Override
-    public List<NativeFunctionStatement> supportedFunctions(Token moduleName) {
+    public List<NativeFunctionStatement> supportedFunctions(Token moduleName, Interpreter interpreter) {
         if (this.supportedFunctions == null) {
             List<NativeFunctionStatement> functionStatements = new ArrayList<>();
 
+            TokenType identifier = interpreter.tokenRegistry().literals().identifier();
             TypeView<?> typeView = this.applicationContext().environment().introspector().introspect(this.moduleClass());
             for (MethodView<?, ?> method : typeView.methods().all()) {
                 if (!method.modifiers().isPublic()) {
@@ -121,13 +122,13 @@ public abstract class AbstractNativeModule implements NativeModule {
                     continue;
                 }
 
-                Token token = Token.of(LiteralTokenType.IDENTIFIER, method.name())
+                Token token = Token.of(identifier, method.name())
                         .virtual()
                         .build();
 
                 List<Parameter> parameters = new ArrayList<>();
                 for (ParameterView<?> parameter : method.parameters().all()) {
-                    Token parameterName = Token.of(LiteralTokenType.IDENTIFIER)
+                    Token parameterName = Token.of(identifier)
                             .lexeme(parameter.name())
                             .virtual()
                             .build();

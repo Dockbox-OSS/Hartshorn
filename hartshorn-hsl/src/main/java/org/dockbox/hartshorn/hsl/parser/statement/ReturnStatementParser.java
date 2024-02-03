@@ -24,8 +24,8 @@ import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
 public class ReturnStatementParser implements ASTNodeParser<ReturnStatement> {
@@ -35,10 +35,11 @@ public class ReturnStatementParser implements ASTNodeParser<ReturnStatement> {
         if (parser.match(ControlTokenType.RETURN)) {
             Token keyword = parser.previous();
             Expression value = null;
-            if (!parser.check(BaseTokenType.SEMICOLON)) {
+            TokenType statementEnd = parser.tokenRegistry().statementEnd();
+            if (!parser.check(statementEnd)) {
                 value = parser.expression();
             }
-            validator.expectAfter(BaseTokenType.SEMICOLON, "return value");
+            validator.expectAfter(statementEnd, "return value");
             return Option.of(new ReturnStatement(keyword, value));
         }
         return Option.empty();

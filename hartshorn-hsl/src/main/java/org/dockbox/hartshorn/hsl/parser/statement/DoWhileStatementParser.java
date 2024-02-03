@@ -23,9 +23,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
-import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
-import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.LoopTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
 
 public class DoWhileStatementParser extends AbstractBodyStatementParser<DoWhileStatement> {
@@ -40,7 +39,7 @@ public class DoWhileStatementParser extends AbstractBodyStatementParser<DoWhileS
             validator.expectAfter(parameters.open(), LoopTokenType.WHILE);
             Expression condition = parser.expression();
             validator.expectAfter(parameters.close(), "do while condition");
-            validator.expectAfter(BaseTokenType.SEMICOLON, "do while condition");
+            validator.expectAfter(parser.tokenRegistry().statementEnd(), "do while condition");
             return Option.of(new DoWhileStatement(condition, loopBody));
         }
         return Option.empty();

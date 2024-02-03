@@ -31,7 +31,6 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.LoopTokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -64,10 +63,10 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
 
     @NonNull
     private Option<BodyStatement> parseForStatement(Token forToken, TokenParser parser, TokenStepValidator validator, VariableStatement initializer) {
-        validator.expectAfter(BaseTokenType.SEMICOLON, "for assignment");
+        validator.expectAfter(parser.tokenRegistry().statementEnd(), "for assignment");
 
         Expression condition = parser.expression();
-        validator.expectAfter(BaseTokenType.SEMICOLON, "for condition");
+        validator.expectAfter(parser.tokenRegistry().statementEnd(), "for condition");
 
         Statement increment = parser.expressionStatement();
         validator.expectAfter(parser.tokenRegistry().tokenPairs().parameters().close(), "for increment");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 public class InlineStandardLibraryCustomizer extends AbstractCodeCustomizer {
 
@@ -34,13 +34,16 @@ public class InlineStandardLibraryCustomizer extends AbstractCodeCustomizer {
 
     @Override
     public void call(ScriptContext context) {
-        List<Statement> enhancedStatements = this.enhanceModuleStatements(context.statements(), context.interpreter().state().externalModules());
+        List<Statement> enhancedStatements = this.enhanceModuleStatements(context);
         context.statements(enhancedStatements);
     }
 
-    private List<Statement> enhanceModuleStatements(List<Statement> statements, Map<String, NativeModule> modules) {
+    private List<Statement> enhanceModuleStatements(ScriptContext context) {
+        List<Statement> statements = context.statements();
+        Map<String, NativeModule> modules = context.interpreter().state().externalModules();
+        TokenType identifier = context.tokenRegistry().literals().identifier();
         for (String module : modules.keySet()) {
-            Token moduleToken = Token.of(LiteralTokenType.IDENTIFIER, module)
+            Token moduleToken = Token.of(identifier, module)
                     .virtual()
                     .build();
             ModuleStatement moduleStatement = new ModuleStatement(moduleToken);

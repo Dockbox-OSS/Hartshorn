@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,18 +32,18 @@ public final class InterpreterTestHelper {
 
     public static Interpreter createInterpreter() {
         final ResultCollector resultCollector = new CacheOnlyResultCollector(null);
-        return new SimpleVisitorInterpreter(resultCollector, null);
+        return new SimpleVisitorInterpreter(resultCollector, null, defaultTokenRegistry());
     }
 
     public static <T extends ASTNode, R> R interpret(T node, ASTNodeInterpreter<R, T> interpreter) {
         return interpreter.interpret(node, createInterpreter());
     }
 
-    public static TokenRegistry defaultTokenSet() {
+    public static TokenRegistry defaultTokenRegistry() {
         return DefaultTokenRegistry.createDefault();
     }
 
     public static TokenPairList defaultTokenPairs() {
-        return defaultTokenSet().tokenPairs();
+        return defaultTokenRegistry().tokenPairs();
     }
 }

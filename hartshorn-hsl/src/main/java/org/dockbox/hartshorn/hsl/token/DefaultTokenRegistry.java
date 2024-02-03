@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,6 +123,11 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
             this.tokenGraph = TokenGraph.of(this);
         }
         return this.tokenGraph;
+    }
+
+    @Override
+    public TokenType statementEnd() {
+        return BaseTokenType.SEMICOLON;
     }
 
     private Map<Character, TokenCharacter> characterMapping() {

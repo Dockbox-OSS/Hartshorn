@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,7 +111,7 @@ public class IfStatementInterpreterTests {
         AtomicBoolean executed = new AtomicBoolean(false);
         JavaStatement trueExecutionCheck = new JavaStatement(visitor -> {
             executed.set(true);
-            Assertions.assertTrue(visitor instanceof DelegatingInterpreterVisitor);
+            Assertions.assertInstanceOf(DelegatingInterpreterVisitor.class, visitor);
 
             DelegatingInterpreterVisitor interpreterVisitor = (DelegatingInterpreterVisitor) visitor;
             Interpreter visitorInterpreter = interpreterVisitor.interpreter();

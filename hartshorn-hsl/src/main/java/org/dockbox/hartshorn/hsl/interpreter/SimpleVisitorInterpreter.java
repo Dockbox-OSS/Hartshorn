@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.extension.CustomASTNode;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.slf4j.Logger;
 
 /**
@@ -58,16 +59,19 @@ public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
     private final ApplicationContext applicationContext;
     private final ResultCollector resultCollector;
     private final InterpreterState state;
+    private final TokenRegistry tokenRegistry;
 
     private ExecutionOptions executionOptions = new ExecutionOptions();
     private boolean isRunning;
 
     public SimpleVisitorInterpreter(
             ResultCollector resultCollector,
-            ApplicationContext applicationContext
+            ApplicationContext applicationContext,
+            TokenRegistry tokenRegistry
     ) {
         this.resultCollector = resultCollector;
         this.applicationContext = applicationContext;
+        this.tokenRegistry = tokenRegistry;
         this.state = new InterpreterState(this);
     }
 
@@ -89,6 +93,11 @@ public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
     @Override
     public InterpreterState state() {
         return this.state;
+    }
+
+    @Override
+    public TokenRegistry tokenRegistry() {
+        return this.tokenRegistry;
     }
 
     @Override

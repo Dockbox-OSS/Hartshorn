@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,41 @@ import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * TODO: Document this
+ * Represents a graph of tokens, where each node is a character in a token and each edge is a transition from one character to
+ * another. The graph is used to determine the {@link TokenType type of a token} based on its {@link TokenCharacter characters}.
+ * The graph is usually built from a {@link TokenRegistry}, which contains all the token types and their characters.
+ *
+ * <p>Token graphs may be used by {@link org.dockbox.hartshorn.hsl.lexer.Lexer lexers} to dynamically tokenize input strings
+ * without making any assumptions about the token types or their characters.
+ *
+ * <p>Token graphs are directed graphs, where each node has at most one parent and at most one child. The graph may have
+ * multiple roots, which represent the starting characters of tokens. A basic example of a token graph is the following:
+ *
+ * <pre>{@code
+ * PLUS (+)
+ * |- PLUS_PLUS (++)
+ * |- PLUS_EQUALS (+=)
+ * }</pre>
+ *
+ * <p>Here, the root node is the {@code PLUS} node, which has two children: {@code PLUS_PLUS} and {@code PLUS_EQUALS}. The root
+ * node {@code PLUS} is identified by the character {@code +}, and its children are identified by the root character, combined
+ * with the child character. For example {@code PLUS_EQUALS} consists of the characters {@code +} (from {@code PLUS} and {@code =}
+ * (from {@code PLUS_EQUALS}).
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class TokenGraph extends SimpleGraph<TokenNode> {
 
+    /**
+     * Generates a token graph from the given token registry. The graph is built by visiting each token type and its characters,
+     * and adding them to the graph. The graph is built by adding a root node for each character, and then adding children for
+     * each subsequent character.
+     *
+     * @param tokenRegistry the token registry to build the graph from
+     * @return the token graph
+     */
     public static TokenGraph of(TokenRegistry tokenRegistry) {
         TokenGraph graph = new TokenGraph();
         for (TokenType tokenType : tokenRegistry.tokenTypes()) {
@@ -58,7 +89,7 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
             graph.addRoot(node);
         }
         else if (nodeType != null && node.value().character == character) {
-            updateNodeTokenType(node, nodeType);
+            node.value().tokenType(nodeType);
         }
         previous = finalizeNode(previous, node);
         return previous;
@@ -84,13 +115,6 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
         return previous;
     }
 
-    private static void updateNodeTokenType(MutableGraphNode<TokenNode> node, TokenType nodeType) {
-        if (node.value().tokenType() != null) {
-            throw new IllegalStateException("Node already has a value");
-        }
-        node.value().tokenType(nodeType);
-    }
-
     private static MutableGraphNode<TokenNode> getExisting(Collection<GraphNode<TokenNode>> candidates, TokenCharacter character) {
         return (MutableGraphNode<TokenNode>) candidates.stream()
                 .filter(node -> node.value().character().equals(character))
@@ -98,6 +122,12 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
                 .orElse(null);
     }
 
+    /**
+     * Represents a node in the token graph. Each node contains a {@link TokenCharacter character} and a {@link TokenType type}.
+     * The character is the character that is added by the node, any preceding characters are added by the parent node (if any).
+     * The type is the type of the token that is represented by the characters that are added by the node and its parents, if
+     * this is an intermediate node, the type is {@code null}.
+     */
     public static final class TokenNode {
 
         private final TokenCharacter character;
@@ -108,15 +138,38 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
             this.tokenType = tokenType;
         }
 
+        /**
+         * Returns the character that is added by this node. Any preceding characters are added by the parent node (if any),
+         * and are not composed by this node.
+         *
+         * @return the character that is added by this node
+         */
         public TokenCharacter character() {
             return character;
         }
 
+        /**
+         * Returns the type of the token that is represented by the characters that are added by this node and its parents. If
+         * this is an intermediate node, the type is {@code null}.
+         *
+         * @return the type of the token that is represented by the characters that are added by this node and its parents
+         */
         public TokenType tokenType() {
             return tokenType;
         }
 
+        /**
+         * Sets the type of the token that is represented by the characters that are added by this node and its parents. If
+         * this node already contains a type, an {@link IllegalStateException} is thrown.
+         *
+         * @param tokenType the type of the token that is represented by the characters that are added by this node and its parents
+         *
+         * @throws IllegalStateException if this node already contains a type
+         */
         public void tokenType(TokenType tokenType) {
+            if (this.tokenType() != null) {
+                throw new IllegalStateException("Node already has a value");
+            }
             this.tokenType = tokenType;
         }
 

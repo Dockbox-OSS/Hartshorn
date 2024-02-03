@@ -25,10 +25,9 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
-import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
-import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 
 public interface ParametricStatementParser {
 
@@ -37,12 +36,13 @@ public interface ParametricStatementParser {
         validator.expectAfter(parameterTokens.open(), functionName);
         List<Parameter> parameters = new ArrayList<>();
         if (!parser.check(parameterTokens.close())) {
+            TokenType identifier = parser.tokenRegistry().literals().identifier();
             do {
                 if (parameters.size() >= expectedNumberOfArguments) {
                     String message = "Cannot have more than " + expectedNumberOfArguments + " parameters" + (functionType == null ? "" : " for " + functionType.representation() + " functions");
                     throw new ScriptEvaluationError(message, Phase.PARSING, parser.peek());
                 }
-                Token parameterName = validator.expect(LiteralTokenType.IDENTIFIER, "parameter name");
+                Token parameterName = validator.expect(identifier, "parameter name");
                 parameters.add(new Parameter(parameterName));
             }
             while (parser.match(BaseTokenType.COMMA));

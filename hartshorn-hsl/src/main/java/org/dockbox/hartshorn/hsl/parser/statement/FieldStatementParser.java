@@ -26,8 +26,8 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
-import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
 public class FieldStatementParser implements ASTNodeParser<FieldStatement> {
@@ -36,14 +36,15 @@ public class FieldStatementParser implements ASTNodeParser<FieldStatement> {
     public Option<? extends FieldStatement> parse(TokenParser parser, TokenStepValidator validator) {
         Token modifier = parser.find(MemberModifierTokenType.PUBLIC, MemberModifierTokenType.PRIVATE);
         boolean isFinal = parser.match(MemberModifierTokenType.FINAL);
-        Token name = validator.expect(LiteralTokenType.IDENTIFIER, "variable name");
+        TokenType identifier = parser.tokenRegistry().literals().identifier();
+        Token name = validator.expect(identifier, "variable name");
 
         Expression initializer = null;
         if(parser.match(BaseTokenType.EQUAL)) {
             initializer = parser.expression();
         }
 
-        validator.expectAfter(BaseTokenType.SEMICOLON, "variable declaration");
+        validator.expectAfter(parser.tokenRegistry().statementEnd(), "variable declaration");
         VariableStatement variable = new VariableStatement(name, initializer);
 
         return Option.of(new FieldStatement(modifier, variable.name(), variable.initializer(), isFinal));

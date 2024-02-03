@@ -32,11 +32,11 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ClassTokenType;
 import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
-import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
@@ -54,13 +54,14 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
     public Option<? extends ClassStatement> parse(TokenParser parser, TokenStepValidator validator) {
         TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.match(ClassTokenType.CLASS)) {
-            Token name = validator.expect(LiteralTokenType.IDENTIFIER, "class name");
+            TokenType identifier = parser.tokenRegistry().literals().identifier();
+            Token name = validator.expect(identifier, "class name");
 
             boolean isDynamic = parser.match(BaseTokenType.QUESTION_MARK);
 
             VariableExpression superClass = null;
             if (parser.match(ClassTokenType.EXTENDS)) {
-                validator.expect(LiteralTokenType.IDENTIFIER, "super class name");
+                validator.expect(identifier, "super class name");
                 superClass = new VariableExpression(parser.previous());
             }
 
