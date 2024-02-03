@@ -31,11 +31,11 @@ import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.util.Customizer;
 import org.jetbrains.annotations.NotNull;
 
 public class AbstractScriptRuntime extends ExpressionConditionContext implements MutableScriptRuntime {
@@ -69,7 +69,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         return this.applicationContext;
     }
 
-    protected Map<String, NativeModule> standardLibraries() {
+    protected Map<String, NativeModule> standardLibraries(ScriptContext context) {
         return new HashMap<>();
     }
 
@@ -135,8 +135,8 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         return context;
     }
 
-    protected Interpreter createInterpreter(ResultCollector resultCollector) {
-        Interpreter interpreter = this.factory.interpreter(resultCollector, this.standardLibraries(), this.applicationContext());
+    protected Interpreter createInterpreter(ScriptContext context) {
+        Interpreter interpreter = this.factory.interpreter(context, this.standardLibraries(context), context.tokenRegistry(), this.applicationContext());
         interpreter.state().externalModules(this.externalModules());
         interpreter.executionOptions(this.interpreterOptions());
         return interpreter;
@@ -238,5 +238,21 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     @Override
     public void statementParser(ASTNodeParser<? extends Statement> statementParser) {
         this.parserCustomizer = this.parserCustomizer.compose(parser -> parser.statementParser(statementParser));
+    }
+
+    @Override
+    public void scriptContextCustomizer(Customizer<ScriptContext> customizer) {
+        this.customizer(new CodeCustomizer() {
+
+            @Override
+            public Phase phase() {
+                return Phase.TOKENIZING;
+            }
+
+            @Override
+            public void call(ScriptContext context) {
+                customizer.configure(context);
+            }
+        });
     }
 }

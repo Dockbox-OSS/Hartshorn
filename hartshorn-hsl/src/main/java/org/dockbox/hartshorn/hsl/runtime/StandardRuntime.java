@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.InlineStandardLibraryCustomizer;
+import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.modules.StandardLibrary;
 
@@ -58,7 +59,7 @@ public class StandardRuntime extends AbstractScriptRuntime {
     }
 
     @Override
-    protected Map<String, NativeModule> standardLibraries() {
-        return StandardLibrary.asModules(this.applicationContext());
+    protected Map<String, NativeModule> standardLibraries(ScriptContext context) {
+        return StandardLibrary.asModules(context);
     }
 }

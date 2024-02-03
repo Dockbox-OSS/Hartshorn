@@ -51,6 +51,8 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     private final ScriptRuntime runtime;
     private final String source;
 
+    private String scriptName = "HSL Script %d".formatted(this.hashCode());
+
     private TokenRegistry tokenRegistry = DefaultTokenRegistry.createDefault();
     private List<Token> tokens;
     private List<Statement> statements;
@@ -69,6 +71,15 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
 
     public String source() {
         return this.source;
+    }
+
+    public String scriptName() {
+        return this.scriptName;
+    }
+
+    public ScriptContext scriptName(String scriptName) {
+        this.scriptName = scriptName;
+        return this;
     }
 
     public List<Token> tokens() {

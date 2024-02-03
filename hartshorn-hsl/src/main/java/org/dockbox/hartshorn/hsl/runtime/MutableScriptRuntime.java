@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,15 @@ package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
+import org.dockbox.hartshorn.util.Customizer;
 
 public interface MutableScriptRuntime extends ScriptRuntime {
 
     void expressionParser(ASTNodeParser<? extends Expression> parser);
 
     void statementParser(ASTNodeParser<? extends Statement> parser);
+
+    void scriptContextCustomizer(Customizer<ScriptContext> customizer);
 }
