@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ public class ComponentObjectContainer<T> extends ObjectContainer<T> {
      *
      * @return {@code true} if the object instance has been processed, {@code false} otherwise
      */
+    @Override
     public boolean processed() {
         return this.processed;
     }
@@ -49,6 +50,7 @@ public class ComponentObjectContainer<T> extends ObjectContainer<T> {
      *
      * @param processed whether the object instance has been processed or not
      */
+    @Override
     public void processed(boolean processed) {
         this.processed = processed;
     }

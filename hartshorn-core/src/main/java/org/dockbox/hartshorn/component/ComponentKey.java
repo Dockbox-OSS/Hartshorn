@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.component;
 
+import java.util.Objects;
+import java.util.Set;
+
 import org.dockbox.hartshorn.inject.HighestPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.ProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
@@ -26,9 +29,6 @@ import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * A key that can be used to identify a component. This contains required metadata to identify a component, such as
@@ -446,59 +446,4 @@ public final class ComponentKey<T> implements Reportable {
             return new ComponentKeyView<>(this.type, this.qualifier);
         }
     }
-
-    public static final class ComponentKeyView<T> {
-
-        private final ParameterizableType type;
-        private final CompositeQualifier qualifier;
-
-        public ComponentKeyView(ParameterizableType type, CompositeQualifier qualifier) {
-            this.type = type;
-            this.qualifier = qualifier;
-        }
-
-        private ComponentKeyView(ComponentKey<T> key) {
-            this.type = key.type;
-            this.qualifier = key.qualifier;
-        }
-
-        public ParameterizableType type() {
-            return this.type;
-        }
-
-        @Deprecated(since = "0.6.0", forRemoval = true)
-        public String name() {
-            return null;
-        }
-
-        public Set<QualifierKey<?>> qualifiers() {
-            return this.qualifier.qualifiers();
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if(this == other) {
-                return true;
-            }
-            if(other == null || this.getClass() != other.getClass()) {
-                return false;
-            }
-            ComponentKeyView<?> otherKeyView = (ComponentKeyView<?>) other;
-            return Objects.equals(this.type, otherKeyView.type) && Objects.equals(this.qualifier, otherKeyView.qualifier);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(this.type, this.qualifier);
-        }
-
-        public boolean matches(ComponentKey<?> componentKey) {
-            return this.type.equals(componentKey.type) && Objects.equals(this.qualifier, componentKey.qualifier);
-        }
-
-        public boolean matches(ComponentKeyView<?> componentKeyView) {
-            return this.type.equals(componentKeyView.type) && Objects.equals(this.qualifier, componentKeyView.qualifier);
-        }
-    }
-
 }

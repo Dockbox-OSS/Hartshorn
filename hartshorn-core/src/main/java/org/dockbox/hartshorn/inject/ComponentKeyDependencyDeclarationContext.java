@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.CompositeQualifier;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -34,6 +35,11 @@ public class ComponentKeyDependencyDeclarationContext<T> implements DependencyDe
     @Override
     public TypeView<T> type() {
         return this.type;
+    }
+
+    @Override
+    public CompositeQualifier qualifier() {
+        return this.key.qualifier();
     }
 
     @Override
