@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,17 @@
 package org.dockbox.hartshorn.hsl.token;
 
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
 public interface CommentTokenList {
 
-    MultiMap<CommentType, TokenType> commentTypes();
+    MultiMap<CommentType, TokenTypePair> commentTypes();
 
-    Option<CommentType> commentType(TokenType tokenType);
+    Option<CommentType> resolveFromOpenToken(TokenType tokenType);
+
+    Option<TokenTypePair> resolveTokenPairFromOpen(TokenType tokenType);
 
     public enum CommentType {
         LINE,

@@ -19,10 +19,13 @@ package org.dockbox.hartshorn.hsl.token;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.dockbox.hartshorn.hsl.token.TokenGraph.TokenNode;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
@@ -92,7 +95,12 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
 
     @Override
     public Set<TokenType> tokenTypes() {
-        return CollectionUtilities.merge(this.types, this.comments().commentTypes().allValues());
+        List<TokenType> commentTokenTypes = this.comments().commentTypes()
+                .allValues().stream()
+                .flatMap(tokenTypePair -> Stream.of(tokenTypePair.open(), tokenTypePair.close()))
+                .filter(Objects::nonNull) // Closing tokens are optional, thus may be null
+                .toList();
+        return CollectionUtilities.merge(this.types, commentTokenTypes);
     }
 
     @Override

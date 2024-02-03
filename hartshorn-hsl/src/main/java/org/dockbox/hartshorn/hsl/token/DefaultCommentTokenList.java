@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.LinkedHashSet;
 
 import org.dockbox.hartshorn.hsl.token.type.SimpleTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -43,15 +45,20 @@ public class DefaultCommentTokenList implements CommentTokenList {
             DefaultTokenCharacter.SLASH, DefaultTokenCharacter.STAR
     );
 
-    private static final MultiMap<CommentType, TokenType> COMMENT_TYPES = MultiMap.<CommentType, TokenType>builder()
+    private static final TokenType BLOCK_COMMENT_END = buildCommentType(
+            "BLOCK_COMMENT_END",
+            DefaultTokenCharacter.STAR, DefaultTokenCharacter.SLASH
+    );
+
+    private static final MultiMap<CommentType, TokenTypePair> COMMENT_TYPES = MultiMap.<CommentType, TokenTypePair>builder()
             .mapSupplier(() -> new EnumMap<>(CommentType.class))
             .collectionSupplier(LinkedHashSet::new)
             .build();
 
     static {
-        COMMENT_TYPES.put(CommentType.LINE, LINE_COMMENT_START);
-        COMMENT_TYPES.put(CommentType.LINE, HASH_COMMENT_START);
-        COMMENT_TYPES.put(CommentType.BLOCK, BLOCK_COMMENT_START);
+        COMMENT_TYPES.put(CommentType.LINE, new TokenTypePair(LINE_COMMENT_START, null));
+        COMMENT_TYPES.put(CommentType.LINE, new TokenTypePair(HASH_COMMENT_START, null));
+        COMMENT_TYPES.put(CommentType.BLOCK, new TokenTypePair(BLOCK_COMMENT_START, BLOCK_COMMENT_END));
     }
 
     private static TokenType buildCommentType(String name, TokenCharacter... characters) {
@@ -67,14 +74,24 @@ public class DefaultCommentTokenList implements CommentTokenList {
     }
 
     @Override
-    public MultiMap<CommentType, TokenType> commentTypes() {
+    public MultiMap<CommentType, TokenTypePair> commentTypes() {
         return COMMENT_TYPES;
     }
 
     @Override
-    public Option<CommentType> commentType(TokenType tokenType) {
+    public Option<CommentType> resolveFromOpenToken(TokenType tokenType) {
         return Option.of(COMMENT_TYPES.keySet().stream()
-                .filter(type -> COMMENT_TYPES.get(type).contains(tokenType))
+                .filter(type -> {
+                    Collection<TokenTypePair> tokenTypePairs = COMMENT_TYPES.get(type);
+                    return tokenTypePairs.stream().anyMatch(pair -> pair.open().equals(tokenType));
+                })
+                .findFirst());
+    }
+
+    @Override
+    public Option<TokenTypePair> resolveTokenPairFromOpen(TokenType tokenType) {
+        return Option.of(COMMENT_TYPES.allValues().stream()
+                .filter(pair -> pair.open().equals(tokenType))
                 .findFirst());
     }
 }

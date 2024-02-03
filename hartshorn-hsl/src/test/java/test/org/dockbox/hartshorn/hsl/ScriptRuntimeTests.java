@@ -153,9 +153,17 @@ public class ScriptRuntimeTests {
         Assertions.assertEquals(3, comments.size());
 
         // Comments are not trimmed, so we need to include spaces in the expected result
-        Assertions.assertEquals(" This is a comment", comments.get(0).text());
-        Assertions.assertEquals(" This is also a comment, print(\"Hello world 3!\");", comments.get(1).text());
-        Assertions.assertEquals(" This is a multi-line comment\nsee?!\n", comments.get(2).text());
+        Comment commentOne = comments.getFirst();
+        Assertions.assertEquals(" This is a comment", commentOne.text());
+        Assertions.assertEquals(3, commentOne.line());
+
+        Comment commentTwo = comments.get(1);
+        Assertions.assertEquals(" This is also a comment, print(\"Hello world 3!\");", commentTwo.text());
+        Assertions.assertEquals(6, commentTwo.line());
+
+        Comment commentThree = comments.get(2);
+        Assertions.assertEquals(" This is a multi-line comment\nsee?!\n", commentThree.text());
+        Assertions.assertEquals(9, commentThree.line());
     }
 
     @Test
