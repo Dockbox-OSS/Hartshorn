@@ -106,6 +106,7 @@
             </activation>
 
             <modules>
+                <module>hartshorn-assembly/pom.staging.xml</module>
                 <module>hartshorn-bom</module>
                 <module>hartshorn-assembly/parent/pom.parent.xml</module>
                 <module>hartshorn-util</module>
