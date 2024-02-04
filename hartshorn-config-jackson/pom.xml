@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-parent</artifactId>
-        <version>0.6.0</version>
+        <version>${revision}</version>
         <relativePath>../hartshorn-assembly/parent/pom.parent.xml</relativePath>
     </parent>
 
@@ -44,14 +44,14 @@
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
             <artifactId>hartshorn-config</artifactId>
-            <version>${hartshorn.version}</version>
+            <version>${revision}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
             <artifactId>hartshorn-core</artifactId>
-            <version>${hartshorn.version}</version>
+            <version>${revision}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
