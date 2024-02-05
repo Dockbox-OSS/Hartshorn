@@ -36,7 +36,6 @@ import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.Customizer;
-import org.jetbrains.annotations.NotNull;
 
 public class AbstractScriptRuntime extends ExpressionConditionContext implements MutableScriptRuntime {
 
@@ -128,7 +127,6 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         return context;
     }
 
-    @NotNull
     private ScriptContext createScriptContext(String source) {
         ScriptContext context = new ScriptContext(this, source);
         context.interpreter(this.createInterpreter(context));

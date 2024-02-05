@@ -16,20 +16,20 @@
 
 package org.dockbox.hartshorn.application.environment;
 
-import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
-import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
-import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
-import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
+import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class EnvironmentTypeCollector {
 
@@ -48,7 +48,7 @@ public class EnvironmentTypeCollector {
         return this.collectTypes(predicate, collectorContext);
     }
 
-    @NotNull
+    @NonNull
     private <T> Collection<TypeView<? extends T>> collectTypes(Predicate<TypeView<?>> predicate,
             Option<TypeReferenceCollectorContext> collectorContext) {
         try {

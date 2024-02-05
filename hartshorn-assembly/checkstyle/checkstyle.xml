@@ -10,6 +10,11 @@
             <property name="allowStaticMemberImports" value="true"/>
         </module>
         <module name="UnusedImports"/>
+        <module name="IllegalImport">
+            <!-- Should use Checker framework annotations -->
+            <property name="illegalPkgs" value="org.jetbrains.annotations"/>
+            <property name="illegalClasses" value="jakarta.annotation.Nonnull,jakarta.annotation.Nullable"/>
+        </module>
 
         <!-- General Javadoc rules -->
         <module name="InvalidJavadocPosition"/>

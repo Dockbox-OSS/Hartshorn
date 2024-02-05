@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import org.dockbox.hartshorn.util.SimpleSingleElementContext;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -105,13 +104,11 @@ public class ComponentPopulationTests {
         return component;
     }
 
-    @NotNull
     private static ComponentInjectionPoint<PopulationTestComponent> createFieldInjectionPoint(String fieldName, TypeView<PopulationTestComponent> typeView) {
         FieldView<PopulationTestComponent, ?> fieldView = typeView.fields().named(fieldName).get();
         return new ComponentFieldInjectionPoint<>(fieldView);
     }
 
-    @NotNull
     private static ComponentInjectionPoint<PopulationTestComponent> createMethodInjectionPoint(String methodName, List<Class<?>> parameterTypes, TypeView<PopulationTestComponent> typeView) {
         MethodView<PopulationTestComponent, ?> methodView = typeView.methods().named(methodName, parameterTypes).get();
         return new ComponentMethodInjectionPoint<>(methodView);
