@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,28 @@ package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * Represents a functional interface that can be used to read a value from a field. This is used to
+ * abstract the process of getting a value from a field, and is typically used by {@link
+ * org.dockbox.hartshorn.util.introspect.view.FieldView#get(Object)} to get a value from a field.
+ *
+ * @param <T> the type of the field
+ * @param <P> the type of the instance
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 @FunctionalInterface
 public interface ReflectiveFieldAccess<T, P> {
+
+    /**
+     * Gets the value of the field on the given instance. If the field could not be read from, an
+     * exception is thrown.
+     *
+     * @param instance the instance from which to get the value
+     * @return the value of the field
+     * @throws Throwable if the field could not be read from
+     */
     Option<T> get(P instance) throws Throwable;
 }
