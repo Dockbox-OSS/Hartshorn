@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.proxy.Proxy;
-import org.dockbox.hartshorn.proxy.ProxyManager;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.proxy.Proxy;
+import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
  * Annotation to indicate a component is a functional component, better known as a service. A service is a component
@@ -39,8 +38,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Extends(Component.class)
-@Component(type = ComponentType.FUNCTIONAL)
-@ServiceActivator
+@Component
 public @interface Service {
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.prefix;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 
 import jakarta.inject.Singleton;
 
@@ -37,5 +38,10 @@ public class DemoServicePreProcessor extends ComponentPreProcessor {
             context.log().debug("Processing %s".formatted(processingContext));
             this.processed++;
         }
+    }
+
+    @Override
+    public int priority() {
+        return ProcessingPriority.NORMAL_PRECEDENCE;
     }
 }

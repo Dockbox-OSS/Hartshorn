@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.component;
 
-import jakarta.inject.Singleton;
 import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
@@ -32,6 +31,8 @@ import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.slf4j.Logger;
 
+import jakarta.inject.Singleton;
+
 /**
  * Configuration for core components that are required by the framework. This includes the {@link Logger} and
  * {@link ConversionService}.
@@ -39,10 +40,10 @@ import org.slf4j.Logger;
  * @author Guus Lieben
  * @since 0.4.6
  */
-@Service
+@Configuration
 @RequiresActivator(UseBootstrap.class)
 @LogExclude
-public class ApplicationProviders {
+public class ApplicationConfiguration {
 
     @Binds
     public Logger logger(ApplicationContext context) {

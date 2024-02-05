@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.inject.strategy;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.populate.ComponentInjectionPoint;
@@ -23,33 +26,26 @@ import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+public final class IntrospectionDependencyResolver {
 
-public final class DependencyResolverUtils {
+    private final ApplicationEnvironment environment;
 
-    private DependencyResolverUtils() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    public IntrospectionDependencyResolver(ApplicationEnvironment environment) {
+        this.environment = environment;
     }
 
-    public static Set<ComponentKey<?>> resolveDependencies(
-            TypeView<?> type,
-            ApplicationEnvironment environment
-    ) {
-        Set<? extends ComponentInjectionPoint<?>> points = environment.injectionPointsResolver().resolve(type);
+    public Set<ComponentKey<?>> resolveDependencies(TypeView<?> type) {
+        Set<? extends ComponentInjectionPoint<?>> points = this.environment.injectionPointsResolver().resolve(type);
         return points.stream()
                 .map(ComponentInjectionPoint::declaration)
-                .map(environment.componentKeyResolver()::resolve)
+                .map(this.environment.componentKeyResolver()::resolve)
                 .collect(Collectors.toSet());
     }
 
-    public static Set<ComponentKey<?>> resolveDependencies(
-            ExecutableElementView<?> executable,
-            ApplicationEnvironment environment
-    ) {
+    public Set<ComponentKey<?>> resolveDependencies(ExecutableElementView<?> executable) {
         return executable.parameters().all().stream()
                 .filter(parameter -> !parameter.type().isChildOf(Context.class))
-                .map(environment.componentKeyResolver()::resolve)
+                .map(this.environment.componentKeyResolver()::resolve)
                 .collect(Collectors.toSet());
     }
 }

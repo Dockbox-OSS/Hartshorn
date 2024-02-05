@@ -129,7 +129,7 @@ public class CollectionScopeTests {
 
     @InjectTest
     @DisplayName("Collection components can be obtained with a collection component key")
-    @TestComponents(components = StaticComponentService.class)
+    @TestComponents(components = StaticComponentConfiguration.class)
     void testCollectionsAreCollected() {
         ComponentKey<ComponentCollection<StaticComponent>> componentKey = ComponentKey.collect(StaticComponent.class);
         ComponentCollection<StaticComponent> collection = this.applicationContext.get(componentKey);
@@ -138,9 +138,9 @@ public class CollectionScopeTests {
         Assertions.assertEquals(0, collection.size());
 
         String[] names = {
-                StaticComponentService.USER,
-                StaticComponentService.ADMIN,
-                StaticComponentService.GUEST
+                StaticComponentConfiguration.USER,
+                StaticComponentConfiguration.ADMIN,
+                StaticComponentConfiguration.GUEST
         };
         for(String name : names) {
             componentKey = componentKey.mutable().name(name).build();

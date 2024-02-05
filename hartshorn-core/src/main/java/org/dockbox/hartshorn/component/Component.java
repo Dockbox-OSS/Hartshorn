@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.processing.ComponentProcessor;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 
 /**
  * An annotation for components. Components are the building blocks of the framework. If a type is annotated with this
@@ -55,7 +55,6 @@ import java.lang.annotation.Target;
  * @see ComponentLocator
  * @see ComponentContainer
  * @see ComponentProcessor
- * @see ComponentType
  *
  * @author Guus Lieben
  * @since 0.4.1
@@ -109,7 +108,10 @@ public @interface Component {
      *
      * @return The type of the component
      * @see ComponentContainer#type()
+     *
+     * @deprecated See {@link ComponentType}
      */
+    @Deprecated(since = "0.6.0", forRemoval = true)
     ComponentType type() default ComponentType.INJECTABLE;
 
     /**

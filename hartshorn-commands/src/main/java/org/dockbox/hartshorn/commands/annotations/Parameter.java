@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import java.lang.annotation.Target;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.component.ComponentType;
 import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
@@ -37,7 +36,7 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Extends(Component.class)
-@Component(type = ComponentType.FUNCTIONAL)
+@Component
 public @interface Parameter {
 
     /**

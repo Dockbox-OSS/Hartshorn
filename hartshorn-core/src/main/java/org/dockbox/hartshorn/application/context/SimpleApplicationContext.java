@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,12 @@
  */
 
 package org.dockbox.hartshorn.application.context;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentContainer;
@@ -38,12 +44,6 @@ import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class SimpleApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
 
@@ -164,7 +164,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     private void processStandaloneComponent(ComponentContainer<?> container, ComponentPreProcessor serviceProcessor) {
         TypeView<?> service = container.type();
         ComponentKey<?> key = ComponentKey.of(service.type());
-        ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
+        ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null, container.permitsProxying());
         this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
         serviceProcessor.process(context);
     }

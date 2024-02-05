@@ -17,10 +17,9 @@
 package org.dockbox.hartshorn.reporting;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateReporterConfiguration;
 import org.dockbox.hartshorn.reporting.application.ApplicationDiagnosticsReporter;
@@ -29,9 +28,9 @@ import org.dockbox.hartshorn.reporting.component.ComponentDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.component.ComponentProcessorDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.system.SystemDiagnosticsReporter;
 
-@Service
+@Configuration
 @RequiresActivator(UseReporting.class)
-public class ReportingProviders {
+public class ReportingConfiguration {
 
     @Binds
     public Reportable applicationReportable(ApplicationContext applicationContext) {

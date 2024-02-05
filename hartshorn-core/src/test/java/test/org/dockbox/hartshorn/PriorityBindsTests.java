@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.Priority;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -39,21 +39,21 @@ public class PriorityBindsTests {
     private ApplicationContext applicationContext;
 
     @Test
-    @TestComponents(components = {TestProvider.class, TestProviderImplicitPriority.class})
+    @TestComponents(components = { ZeroAndDefaultPriorityConfiguration.class, ImplicitPriorityConfiguration.class})
     void testProvisionWithImplicitPriority() {
         SampleInterface sampleInterface = this.applicationContext.get(SampleInterface.class);
         Assertions.assertEquals(PRIORITY_ZERO + PRIORITY_ONE, sampleInterface.name());
     }
 
     @Test
-    @TestComponents(components = {TestProvider.class, TestProviderExplicitPriority.class})
+    @TestComponents(components = { ZeroAndDefaultPriorityConfiguration.class, ExplicitPriorityConfiguration.class})
     void testProvisionWithExplicitPriority() {
         SampleInterface sampleInterface = this.applicationContext.get(SampleInterface.class);
         Assertions.assertEquals(PRIORITY_DEFAULT + PRIORITY_ONE, sampleInterface.name());
     }
 
-    @Service
-    public static class TestProvider {
+    @Configuration
+    public static class ZeroAndDefaultPriorityConfiguration {
 
         @Binds
         public SampleInterface sampleInterfaceDefaultPriority() {
@@ -67,8 +67,8 @@ public class PriorityBindsTests {
         }
     }
 
-    @Service
-    public static class TestProviderImplicitPriority {
+    @Configuration
+    public static class ImplicitPriorityConfiguration {
 
         @Binds
         @Priority(1)
@@ -77,8 +77,8 @@ public class PriorityBindsTests {
         }
     }
 
-    @Service
-    public static class TestProviderExplicitPriority {
+    @Configuration
+    public static class ExplicitPriorityConfiguration {
 
         @Binds
         @Priority(1)

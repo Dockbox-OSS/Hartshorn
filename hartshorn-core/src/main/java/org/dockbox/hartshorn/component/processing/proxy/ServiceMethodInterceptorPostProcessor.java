@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,29 @@
 
 package org.dockbox.hartshorn.component.processing.proxy;
 
+import java.util.Collection;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
-import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
-import java.util.Collection;
+public abstract class ServiceMethodInterceptorPostProcessor extends ComponentPostProcessor {
 
-public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalComponentPostProcessor {
+    @Override
+    public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
+        return processingContext.permitsProxying();
+    }
 
     @Override
     public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext);
 
-        ProxyFactory<T> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
+        ProxyFactory<T> factory = processingContext.get(ProxyFactory.class);
         if (factory == null) {
             return;
         }
@@ -65,10 +68,5 @@ public abstract class ServiceMethodInterceptorPostProcessor extends FunctionalCo
 
     public boolean failOnPrecondition() {
         return true;
-    }
-
-    @Override
-    public int priority() {
-        return ProcessingPriority.HIGH_PRECEDENCE;
     }
 }

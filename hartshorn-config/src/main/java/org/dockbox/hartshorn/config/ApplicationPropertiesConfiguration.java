@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.config.annotations.Configuration;
+import org.dockbox.hartshorn.config.annotations.IncludeResourceConfiguration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.properties.ConfigurationObjectPostProcessor;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
@@ -31,10 +31,10 @@ import org.dockbox.hartshorn.config.properties.URIConfigProcessor;
 
 import jakarta.inject.Singleton;
 
-@Service
+@Configuration
 @RequiresActivator(UseConfigurations.class)
-@Configuration({"application", "classpath:application"})
-public class ConfigurationProviders {
+@IncludeResourceConfiguration({"fs:application", "classpath:application"})
+public class ApplicationPropertiesConfiguration {
 
     /**
      * Registers the default implementation of the property holder before any other (standard)
@@ -54,6 +54,7 @@ public class ConfigurationProviders {
     }
 
     @Binds
+    @Singleton
     public URIConfigProcessor uriConfigProcessor() {
         return new StandardURIConfigProcessor();
     }

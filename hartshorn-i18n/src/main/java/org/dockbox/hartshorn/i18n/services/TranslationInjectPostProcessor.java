@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.i18n.services;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
@@ -48,5 +49,10 @@ public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterc
     @Override
     public Class<InjectTranslation> annotation() {
         return InjectTranslation.class;
+    }
+
+    @Override
+    public int priority() {
+        return ProcessingPriority.NORMAL_PRECEDENCE;
     }
 }

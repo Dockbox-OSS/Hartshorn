@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistryCustomize
 import org.dockbox.hartshorn.commands.context.SimpleArgumentConverterRegistry;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.CooldownExtension;
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
@@ -33,9 +33,9 @@ import org.dockbox.hartshorn.inject.Priority;
 
 import jakarta.inject.Singleton;
 
-@Service
+@Configuration
 @RequiresActivator(UseCommands.class)
-public class CommandProviders {
+public class CommandConfiguration {
 
     @Binds
     public CommandListener listener(ApplicationContext applicationContext, CommandGateway gateway) {

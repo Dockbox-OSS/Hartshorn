@@ -72,7 +72,7 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
         function.processAfterInitialization(this.processAfterInitialization());
 
         switch(this.type()) {
-            case COMPONENT -> this.configureComponent(function);
+            case STANDALONE -> this.configureComponent(function);
             case COLLECTION -> this.configureCollection(function);
         }
     }

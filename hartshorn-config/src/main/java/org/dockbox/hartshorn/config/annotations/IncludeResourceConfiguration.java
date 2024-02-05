@@ -16,21 +16,21 @@
 
 package org.dockbox.hartshorn.config.annotations;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import org.dockbox.hartshorn.config.ConfigurationServicePreProcessor;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.util.resources.ClassPathResourceLookupStrategy;
 import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
- * Component type to specify a source for a configuration file. This supports files with any registered
- * {@link ResourceLookupStrategy}. For example a {@link ClassPathResourceLookupStrategy} will accept a
- * source formatted as {@code classpath:filename}.
+ * Declaration for a configuration file that should be included in the resource configuration, if it
+ * exists. This supports files with any registered {@link ResourceLookupStrategy}. For example a
+ * {@link ClassPathResourceLookupStrategy} will accept a source formatted as {@code classpath:filename}.
  *
  * <p>The {@link #value()} does not have to include the file extension, the file format is automatically
  * adjusted based on available files if no explicit file extension is provided.
@@ -53,7 +53,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Configuration {
+public @interface IncludeResourceConfiguration {
     String[] value();
     boolean failOnMissing() default false;
 }

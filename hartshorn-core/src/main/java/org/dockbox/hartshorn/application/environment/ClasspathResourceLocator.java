@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,21 @@ public interface ClasspathResourceLocator {
      */
     Option<Path> resource(String name) throws IOException;
 
+    /**
+     * Attempts to look up all resources with the given name. If no resources are found or an I/O
+     * error occurs, an empty set is returned.
+     *
+     * @param name The name of the resources to look up
+     * @return A set of all resources with the given name
+     */
     Set<Path> resources(String name);
 
+    /**
+     * Returns a URI pointing to the root of the classpath. This URI can be used to access resources
+     * in the classpath. It is not ensured that the URI is a valid location if the classpath is
+     * not a file system or contains multiple locations.
+     *
+     * @return A URI pointing to the root of the classpath
+     */
     URI classpathUri();
 }

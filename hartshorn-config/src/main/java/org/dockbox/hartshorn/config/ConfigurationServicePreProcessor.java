@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,26 @@
 
 package org.dockbox.hartshorn.config;
 
+import java.net.URI;
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
-import org.dockbox.hartshorn.config.annotations.Configuration;
+import org.dockbox.hartshorn.config.annotations.IncludeResourceConfiguration;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.util.resources.FileSystemLookupStrategy;
 import org.dockbox.hartshorn.util.resources.MissingSourceException;
 import org.dockbox.hartshorn.util.resources.ResourceLookup;
 import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
 
-import java.net.URI;
-import java.util.Set;
-
 /**
- * Processes all services annotated with {@link Configuration} by loading the indicated file and registering the
+ * Processes all services annotated with {@link IncludeResourceConfiguration} by loading the indicated file and registering the
  * properties to {@link PropertyHolder#set(String, Object)}. To support different file sources
  * {@link ResourceLookupStrategy strategies} are used. Each strategy is able to define behavior specific to sources
- * defined with its name. Strategies can be indicated in the {@link Configuration#value()} of a {@link Configuration}
+ * defined with its name. Strategies can be indicated in the {@link IncludeResourceConfiguration#value()} of a {@link IncludeResourceConfiguration}
  * in the format {@code strategy_name:source_name}. If a strategy is not registered, or no name is defined, behavior
  * defaults to {@link FileSystemLookupStrategy}.
  */
@@ -43,8 +43,8 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
 
     @Override
     public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
-        if (processingContext.type().annotations().has(Configuration.class)) {
-            Configuration configuration = processingContext.type().annotations().get(Configuration.class).get();
+        if (processingContext.type().annotations().has(IncludeResourceConfiguration.class)) {
+            IncludeResourceConfiguration configuration = processingContext.type().annotations().get(IncludeResourceConfiguration.class).get();
             String[] sources = configuration.value();
 
             for (String source : sources) {
@@ -68,7 +68,7 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
         Set<URI> config = resourceLookup.lookup(source);
 
         if (config.isEmpty()) {
-            context.log().warn("No configuration file found for " + key.type().getSimpleName());
+            context.log().warn("Configuration source '%s' was not found for %s".formatted(source, key.type().getSimpleName()));
             return false;
         }
         else if (config.size() > 1) {
@@ -87,6 +87,6 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
     @Override
     public int priority() {
         // Run before the ProviderServicePreProcessor, so this context is available for configuration objects
-        return ProcessingPriority.NORMAL_PRECEDENCE;
+        return ProcessingPriority.HIGH_PRECEDENCE;
     }
 }

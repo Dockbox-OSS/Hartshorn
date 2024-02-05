@@ -84,7 +84,7 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
 
     @Override
     public BindingType type() {
-        return BindingType.COMPONENT;
+        return BindingType.STANDALONE;
     }
 
     @Override

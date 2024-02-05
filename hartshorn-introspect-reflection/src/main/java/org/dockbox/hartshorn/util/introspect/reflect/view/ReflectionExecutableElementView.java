@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Executable;
+import java.util.List;
+
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
@@ -25,12 +29,10 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementModifiersI
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeVariablesIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Executable;
-import java.util.List;
+import org.dockbox.hartshorn.util.option.Option;
 
 public abstract class ReflectionExecutableElementView<Parent> extends ReflectionAnnotatedElementView implements ExecutableElementView<Parent> {
 
@@ -85,5 +87,15 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     @Override
     public ElementModifiersIntrospector modifiers() {
         return new ReflectionElementModifiersIntrospector(this.executable);
+    }
+
+    @Override
+    public boolean isEnclosed() {
+        return true;
+    }
+
+    @Override
+    public Option<EnclosableView> enclosingView() {
+        return Option.of(this.declaredBy());
     }
 }

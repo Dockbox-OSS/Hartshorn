@@ -17,6 +17,8 @@
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionParameterizedType
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeMethodsIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -299,6 +302,37 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
                     : new ReflectionParameterizedTypeParametersIntrospector<>(this, this.parameterizedType, this.introspector);
         }
         return this.typeParametersIntrospector;
+    }
+
+    @Override
+    public boolean isEnclosed() {
+        return this.type.isMemberClass();
+    }
+
+    @Override
+    public Option<EnclosableView> enclosingView() {
+        EnclosableView enclosingView = null;
+
+        Method enclosingMethod = this.type.getEnclosingMethod();
+        if (enclosingMethod != null) {
+            enclosingView = this.introspector().introspect(enclosingMethod);
+        }
+
+        if (enclosingView == null) {
+            Constructor<?> enclosingConstructor = this.type.getEnclosingConstructor();
+            if (enclosingConstructor != null) {
+                enclosingView = this.introspector().introspect(enclosingConstructor);
+            }
+        }
+
+        if (enclosingView == null) {
+            Class<?> enclosingClass = this.type.getEnclosingClass();
+            if (enclosingClass != null) {
+                enclosingView = this.introspector().introspect(enclosingClass);
+            }
+        }
+
+        return Option.of(enclosingView);
     }
 
     @Override

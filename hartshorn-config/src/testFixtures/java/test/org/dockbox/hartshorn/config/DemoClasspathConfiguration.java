@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.config.annotations.Configuration;
+import org.dockbox.hartshorn.config.annotations.IncludeResourceConfiguration;
 import org.dockbox.hartshorn.config.annotations.Value;
 
 import java.util.Collection;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
-@Configuration({ "fs:junit", "classpath:junit" })
+@IncludeResourceConfiguration({ "fs:junit", "classpath:junit" })
 public class DemoClasspathConfiguration {
 
     @Value("junit.cp")

@@ -47,7 +47,7 @@ public class ActivatorScanningTests {
     }
 
     @InjectTest
-    @TestComponents(components = DemoProvider.class)
+    @TestComponents(components = DemoConfiguration.class)
     void testBindingsFromActivatorPrefixArePresent(ApplicationContext applicationContext) {
         Demo demo = applicationContext.get(Demo.class);
         Assertions.assertNotNull(demo);

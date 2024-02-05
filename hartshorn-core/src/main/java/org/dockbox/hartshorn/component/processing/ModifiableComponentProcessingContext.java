@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.component.processing;
 
+import java.util.function.Consumer;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.IllegalModificationException;
-
-import java.util.function.Consumer;
 
 public class ModifiableComponentProcessingContext<T> extends ComponentProcessingContext<T> {
 
@@ -28,8 +28,8 @@ public class ModifiableComponentProcessingContext<T> extends ComponentProcessing
     private boolean requestInstanceLock = false;
 
     public ModifiableComponentProcessingContext(ApplicationContext applicationContext, ComponentKey<T> key,
-                                                T instance, Consumer<T> onLockRequested) {
-        super(applicationContext, key, instance);
+                                                T instance, boolean permitsProxying, Consumer<T> onLockRequested) {
+        super(applicationContext, key, instance, permitsProxying);
         this.onLockRequested = onLockRequested;
     }
 

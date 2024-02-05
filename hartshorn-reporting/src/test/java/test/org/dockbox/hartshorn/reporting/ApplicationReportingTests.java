@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.reporting.UseReporting;
 import org.dockbox.hartshorn.reporting.application.ApplicationDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.component.ComponentDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.component.ComponentProcessorDiagnosticsReporter;
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
 
+@UseReporting
 @HartshornTest(includeBasePackages = false)
 public class ApplicationReportingTests {
 

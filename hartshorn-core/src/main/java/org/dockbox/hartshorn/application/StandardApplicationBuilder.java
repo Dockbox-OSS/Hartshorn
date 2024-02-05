@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,8 +142,9 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         this.state = FactoryState.CREATING;
 
         RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        String applicationName = this.buildContext.mainClass().getSimpleName();
         this.buildContext.logger()
-                .info("Starting application " + this.buildContext.mainClass().getSimpleName() + " on " + this.host(runtimeMXBean)
+                .info("Starting application " + applicationName + " on " + this.host(runtimeMXBean)
                         + " using Java " + runtimeMXBean.getVmVersion() + " with PID " + runtimeMXBean.getPid());
 
         long applicationStartTimestamp = System.currentTimeMillis();
@@ -154,7 +155,7 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         double jvmUptime = ((double) runtimeMXBean.getUptime()) / 1000;
 
         this.buildContext.logger()
-                .info("Started " + Hartshorn.PROJECT_NAME + " in " + startupTime + " seconds (JVM running for " + jvmUptime + ")");
+                .info("Started " + applicationName + " in " + startupTime + " seconds (JVM running for " + jvmUptime + ")");
 
         this.state = FactoryState.WAITING;
 

@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
  * @author Guus Lieben
  * @since 0.4.13
  */
-public interface AnnotatedElementView extends View {
+public interface AnnotatedElementView extends EnclosableView {
 
     /**
      * Returns an {@link ElementAnnotationsIntrospector} for the element. This introspector

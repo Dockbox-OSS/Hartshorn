@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component.processing;
+package org.dockbox.hartshorn.config.jackson;
 
-/**
- * An interface which defines the methods for processing components in an ordered manner.
- */
-@FunctionalInterface
-public interface OrderedComponentProcessor {
+import org.dockbox.hartshorn.config.FileFormat;
+import org.dockbox.hartshorn.util.option.Option;
 
-    /**
-     * Returns the phase of when the component should be processed. Lower numbers are processed first.
-     *
-     * @return The phase of when the component should be processed.
-     */
-    int priority();
+public interface JacksonDataMapperRegistry {
+
+    void register(JacksonDataMapper mapper);
+
+    boolean isCompatible(FileFormat format);
+
+    Option<JacksonDataMapper> resolve(FileFormat format);
 }
