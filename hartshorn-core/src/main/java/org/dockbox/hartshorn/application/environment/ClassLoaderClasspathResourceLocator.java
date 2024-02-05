@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,25 +57,29 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
 
     @Override
     public Set<Path> resources(String name) {
-        try {
-            String normalizedPath = name.replaceAll("\\\\", "/");
-            int lastIndex = normalizedPath.lastIndexOf("/");
-            String path = lastIndex == -1 ? "" : normalizedPath.substring(0, lastIndex + 1);
-            String fileName = lastIndex == -1 ? normalizedPath : normalizedPath.substring(lastIndex + 1);
+        String normalizedPath = name.replaceAll("\\\\", "/");
+        int lastIndex = normalizedPath.lastIndexOf("/");
+        String path = lastIndex == -1 ? "" : normalizedPath.substring(0, lastIndex + 1);
+        String fileName = lastIndex == -1 ? normalizedPath : normalizedPath.substring(lastIndex + 1);
 
-            Set<File> files = new HashSet<>();
-            Set<File> resources = Resources.getResourcesAsFiles(path);
-            for (File parent : resources) {
-                File[] filteredResources = parent.listFiles((dir, file) -> file.startsWith(fileName));
-                if (filteredResources != null) {
-                    files.addAll(Arrays.asList(filteredResources));
-                }
-            }
-            return files.stream().map(File::toPath).collect(Collectors.toUnmodifiableSet());
+        Set<File> files = new HashSet<>();
+        Set<File> resources;
+
+        try {
+            resources = Resources.getResourcesAsFiles(path);
         }
         catch (NullPointerException | IOException e) {
             return new HashSet<>();
         }
+
+        for (File parent : resources) {
+            File[] filteredResources = parent.listFiles((dir, file) -> file.startsWith(fileName));
+            if(filteredResources != null) {
+                files.addAll(Arrays.asList(filteredResources));
+            }
+        }
+
+        return files.stream().map(File::toPath).collect(Collectors.toUnmodifiableSet());
     }
 
     @Override

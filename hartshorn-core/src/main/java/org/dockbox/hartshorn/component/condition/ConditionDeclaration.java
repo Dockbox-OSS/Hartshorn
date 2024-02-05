@@ -18,10 +18,34 @@ package org.dockbox.hartshorn.component.condition;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
+/**
+ * Represents a condition declaration, which may put constraints on the usage of a component
+ * or element in the application. This may be used to enforce certain conditions, such as
+ * the presence of a service activator, or the presence and value of a certain property.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface ConditionDeclaration {
 
+    /**
+     * Returns the condition that is declared by this instance. The condition may use any
+     * context that is provided by the application context.
+     *
+     * @param applicationContext The application context that is used to resolve the condition
+     * @return The condition that is declared by this instance
+     */
     Condition condition(ApplicationContext applicationContext);
 
+    /**
+     * Indicates whether the {@link ConditionMatcher} should fail when the condition does not match.
+     * When this method returns {@code true}, the condition matcher will throw a {@link ConditionFailedException}
+     * when the condition does not match. When this method returns {@code false}, the condition matcher will
+     * only indicate that the condition does not match.
+     *
+     * @return {@code true} when the condition matcher should fail when the condition does not match, {@code false} otherwise
+     */
     boolean failOnNoMatch();
 
 }

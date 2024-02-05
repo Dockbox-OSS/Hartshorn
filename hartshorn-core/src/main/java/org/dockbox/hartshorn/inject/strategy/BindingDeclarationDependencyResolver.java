@@ -20,9 +20,39 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 
+/**
+ * Resolves dependencies for a given binding declaration. This is used to determine the dependencies of a binding
+ * declaration, which are then used to determine the order in which bindings are created. This is important for
+ * resolving circular dependencies, and ensuring every component has its dependencies resolved before it is created.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface BindingDeclarationDependencyResolver {
 
+    /**
+     * Determines if this resolver can handle the given context. If this method returns {@code true}, the
+     * {@link #dependencies(BindingStrategyContext)} method should be able to resolve the dependencies for the
+     * given context.
+     *
+     * <p>This method should typically perform the minimum amount of work required to determine if the resolver
+     * can handle the given context. It should not perform any actual dependency resolution, as that is the
+     * responsibility of the {@link #dependencies(BindingStrategyContext)} method.
+     *
+     * @param context The context for which dependencies should be resolved
+     * @return {@code true} when this resolver can handle the given context, {@code false} otherwise
+     * @param <T> the type of the binding as declared by the context
+     */
     <T> boolean canHandle(BindingStrategyContext<T> context);
 
+    /**
+     * Resolves the dependencies for the given context. The returned set of dependencies should be resolved before
+     * the binding that is being resolved. This method should only be called when the {@link #canHandle(BindingStrategyContext)}
+     * method returns {@code true}, and should not perform the same checks again.
+     *
+     * @param context The context for which dependencies should be resolved
+     * @return The set of dependencies that should be resolved before the binding that is being resolved
+     */
     Set<ComponentKey<?>> dependencies(BindingStrategyContext<?> context);
 }

@@ -21,6 +21,16 @@ import java.util.Set;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentKey;
 
+/**
+ * Resolves dependencies for a binding declaration using a {@link IntrospectionDependencyResolver} to
+ * introspect the method and resolve the dependencies.
+ *
+ * @see IntrospectionDependencyResolver
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class IntrospectionBindingDependencyResolver implements BindingDeclarationDependencyResolver {
 
     private final IntrospectionDependencyResolver introspectionDependencyResolver;

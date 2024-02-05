@@ -18,6 +18,17 @@ package org.dockbox.hartshorn.component.condition;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
+/**
+ * Represents an annotation-based condition declaration. This may represent
+ * a direct use of the {@link RequiresCondition} annotation, or a meta-annotation
+ * that contains the {@link RequiresCondition} annotation.
+ *
+ * @see RequiresCondition
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class AnnotationConditionDeclaration implements ConditionDeclaration {
 
     private final RequiresCondition annotation;

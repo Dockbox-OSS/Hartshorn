@@ -21,6 +21,17 @@ import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 
+/**
+ * A composite dependency resolver that combines multiple dependency resolvers into a single resolver.
+ * This resolver will delegate to all resolvers that can handle the given context and combine the results
+ * into a single set of dependencies.
+ *
+ * @param resolvers The resolvers to combine
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public record CompositeBindingDependencyResolver(Set<BindingDeclarationDependencyResolver> resolvers) implements BindingDeclarationDependencyResolver {
 
     @Override
