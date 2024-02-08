@@ -43,8 +43,8 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
         return switch (operator.type()) {
             case ArithmeticTokenType.PLUS -> {
                 // Math plus
-                if (left instanceof Double && right instanceof Double) {
-                    yield (double) left + (double) right;
+                if (left instanceof Double leftDouble && right instanceof Double rightDouble) {
+                    yield leftDouble + rightDouble;
                 }
                 // String Addition
                 if (left instanceof String || right instanceof String) {
@@ -56,13 +56,13 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                 if (left instanceof Character && right instanceof Character) {
                     yield String.valueOf(left) + right;
                 }
-                if (left instanceof Character && right instanceof Double) {
-                    int value = (Character) left;
-                    yield (double) right + value;
+                if (left instanceof Character leftCharacter && right instanceof Double rightDouble) {
+                    int value = leftCharacter;
+                    yield rightDouble + value;
                 }
-                if (left instanceof Double && right instanceof Character) {
-                    int value = (Character) right;
-                    yield (double) left + value;
+                if (left instanceof Double leftDouble && right instanceof Character rightCharacter) {
+                    int value = rightCharacter;
+                    yield leftDouble + value;
                 }
                 throw new ScriptEvaluationError("Unsupported child for PLUS.\n", Phase.INTERPRETING, operator);
             }
@@ -71,16 +71,16 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                 yield (double) left - (double) right;
             }
             case ArithmeticTokenType.STAR -> {
-                if ((left instanceof String || left instanceof Character) && right instanceof Double) {
-                    int times = (int) (double) right;
+                if ((left instanceof String || left instanceof Character) && right instanceof Double rightDouble) {
+                    int times = rightDouble.intValue();
                     int length = left.toString().length() * times;
                     StringBuilder result = new StringBuilder(length);
                     String value = left.toString();
                     result.append(value.repeat(Math.max(0, times)));
                     yield result.toString();
                 }
-                else if (left instanceof Array array && right instanceof Double) {
-                    int times = (int) (double) right;
+                else if (left instanceof Array array && right instanceof Double rightDouble) {
+                    int times = rightDouble.intValue();
                     int length = array.length() * times;
                     Array result = new Array(length);
                     for (int i = 0; i < times; i++) {

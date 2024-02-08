@@ -238,16 +238,9 @@ public class SimpleTokenRegistryLexer implements Lexer {
         TokenCharacter tokenCharacter = this.pointToNextChar();
         if (tokenCharacter instanceof SharedTokenCharacter sharedTokenCharacter) {
             switch(sharedTokenCharacter) {
-            case SPACE:
-            case CARRIAGE_RETURN:
-            case TAB:
-                // Ignore whitespace.
-                return;
-            case NEWLINE:
-                this.nextLine();
-                return;
-            case NULL:
-                throw new ScriptEvaluationError("Unexpected null character", Phase.TOKENIZING, this.line(), this.column());
+                case SPACE, CARRIAGE_RETURN, TAB -> { /* Ignore whitespace. */ }
+                case NEWLINE -> this.nextLine();
+                case NULL -> throw new ScriptEvaluationError("Unexpected null character", Phase.TOKENIZING, this.line(), this.column());
             }
         }
 
@@ -402,6 +395,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
             switch(commentType.get()) {
             case LINE -> scanComment();
             case BLOCK -> scanMultilineComment(closeToken);
+            default -> throw new ScriptEvaluationError("Invalid comment type", Phase.TOKENIZING, this.line(), this.column());
             }
         }
         else {
@@ -574,7 +568,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
         }
 
         String number = this.source.substring(this.start, this.current);
-        number = number.replaceAll("_", "");
+        number = number.replace("_", "");
         this.addToken(tokenRegistry.literals().number(), Double.parseDouble(number));
     }
 

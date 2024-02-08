@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
-public class DefaultCommentTokenList implements CommentTokenList {
+public final class DefaultCommentTokenList implements CommentTokenList {
 
     public static final DefaultCommentTokenList INSTANCE = new DefaultCommentTokenList();
 
