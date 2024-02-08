@@ -16,11 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
@@ -63,7 +65,7 @@ public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, Un
             newValue = (int) ~value;
         }
         else {
-            throw new RuntimeException("Unsupported unary operator.");
+            throw new ScriptEvaluationError("Unsupported unary operator.", Phase.INTERPRETING, node.operator());
         }
 
         if (node.rightExpression() instanceof VariableExpression variable) {
