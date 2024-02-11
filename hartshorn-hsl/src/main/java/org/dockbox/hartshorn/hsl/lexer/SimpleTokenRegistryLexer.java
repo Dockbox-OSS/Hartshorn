@@ -189,7 +189,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
                 this.scanToken();
             }
 
-            Token token = Token.of(tokenRegistry.literals().eof())
+            Token token = Token.of(this.tokenRegistry.literals().eof())
                     .line(this.line)
                     .column(this.start)
                     .build();
@@ -243,14 +243,15 @@ public class SimpleTokenRegistryLexer implements Lexer {
                 case NULL -> throw new ScriptEvaluationError("Unexpected null character", Phase.TOKENIZING, this.line(), this.column());
             }
         }
-
-        TokenCharacterList characterList = tokenRegistry().characterList();
-        if(!scanCharacterList(tokenCharacter, characterList)) {
-            if (tokenCharacter.isStandaloneCharacter()) {
-                scanRegistryToken(tokenCharacter);
-            }
-            else {
-                scanOtherToken(tokenCharacter);
+        else {
+            TokenCharacterList characterList = this.tokenRegistry().characterList();
+            if (!this.scanCharacterList(tokenCharacter, characterList)) {
+                if (tokenCharacter.isStandaloneCharacter()) {
+                    this.scanRegistryToken(tokenCharacter);
+                }
+                else {
+                    this.scanOtherToken(tokenCharacter);
+                }
             }
         }
     }
@@ -302,7 +303,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
         while (next != null) {
             boolean match = false;
             for(GraphNode<TokenNode> child : next.children()) {
-                if (match(child.value().character())) {
+                if (this.match(child.value().character())) {
                     next = (ContainableGraphNode<TokenNode>) child;
                     match = true;
                     break;
@@ -314,12 +315,12 @@ public class SimpleTokenRegistryLexer implements Lexer {
             // that the token is invalid.
             if (!match) {
                 if (next.value().tokenType() != null) {
-                    addMatchedToken(next.value());
+                    this.addMatchedToken(next.value());
                 }
                 else {
-                    Option<GraphNode<TokenNode>> parent = tryFindValidParent(next, depth);
+                    Option<GraphNode<TokenNode>> parent = this.tryFindValidParent(next, depth);
                     if (parent.present()) {
-                        addMatchedToken(parent.get().value());
+                        this.addMatchedToken(parent.get().value());
                     }
                     else {
                         String expectedTokens = CollectionUtilities.toString(next.children(), node -> {
@@ -335,7 +336,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
 
             depth++;
         }
-        throw new ScriptEvaluationError("Unexpected character '" + currentChar().character() + "'", Phase.TOKENIZING, this.line(), this.column());
+        throw new ScriptEvaluationError("Unexpected character '" + this.currentChar().character() + "'", Phase.TOKENIZING, this.line(), this.column());
     }
 
     /**
@@ -393,8 +394,8 @@ public class SimpleTokenRegistryLexer implements Lexer {
             }
             TokenType closeToken = tokenTypePair.get().close();
             switch(commentType.get()) {
-            case LINE -> scanComment();
-            case BLOCK -> scanMultilineComment(closeToken);
+            case LINE -> this.scanComment();
+            case BLOCK -> this.scanMultilineComment(closeToken);
             default -> throw new ScriptEvaluationError("Invalid comment type", Phase.TOKENIZING, this.line(), this.column());
             }
         }
@@ -414,7 +415,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
      * @throws ScriptEvaluationError If the character is not matched.
      */
     protected ContainableGraphNode<TokenNode> findNext(TokenCharacter tokenCharacter) {
-        Optional<ContainableGraphNode<TokenNode>> first = tokenGraph().roots().stream()
+        Optional<ContainableGraphNode<TokenNode>> first = this.tokenGraph().roots().stream()
                 .filter(node -> node.value().character() == tokenCharacter)
                 .map(node -> (ContainableGraphNode<TokenNode>) node)
                 .findFirst();
@@ -475,7 +476,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
                 this.incrementCurrent(characters.length);
                 break;
             }
-            if (tokenRegistry().isLineSeparator(this.currentChar())) {
+            if (this.tokenRegistry().isLineSeparator(this.currentChar())) {
                 this.nextLine();
                 // If there is no explicit close token, treat line separators as the end of the comment
                 if (characters.length == 0) {
@@ -492,8 +493,8 @@ public class SimpleTokenRegistryLexer implements Lexer {
      * the list of tokens as a string literal.
      */
     protected void scanString() {
-        while (this.currentChar() != tokenRegistry().characterList().quoteCharacter() && !this.isAtEnd()) {
-            if (tokenRegistry().isLineSeparator(this.currentChar())) {
+        while (this.currentChar() != this.tokenRegistry().characterList().quoteCharacter() && !this.isAtEnd()) {
+            if (this.tokenRegistry().isLineSeparator(this.currentChar())) {
                 this.nextLine();
             }
             this.pointToNextChar();
@@ -509,7 +510,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
 
         // Trim the surrounding quotes
         String value = this.source().substring(this.start() + 1, this.current() - 1);
-        this.addToken(tokenRegistry().literals().string(), value);
+        this.addToken(this.tokenRegistry().literals().string(), value);
     }
 
     /**
@@ -519,11 +520,11 @@ public class SimpleTokenRegistryLexer implements Lexer {
     protected void scanChar() {
         String value = this.source().substring(this.start() + 1, this.start() + 2);
         this.pointToNextChar();
-        if (this.currentChar() != tokenRegistry().characterList().charCharacter()) {
+        if (this.currentChar() != this.tokenRegistry().characterList().charCharacter()) {
             throw new ScriptEvaluationError("Unterminated char variable", Phase.TOKENIZING, this.line(), this.column());
         }
         this.pointToNextChar();
-        this.addToken(tokenRegistry().literals().character(), value.charAt(0));
+        this.addToken(this.tokenRegistry().literals().character(), value.charAt(0));
     }
 
     @Override
@@ -569,7 +570,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
 
         String number = this.source.substring(this.start, this.current);
         number = number.replace("_", "");
-        this.addToken(tokenRegistry.literals().number(), Double.parseDouble(number));
+        this.addToken(this.tokenRegistry.literals().number(), Double.parseDouble(number));
     }
 
     /**
@@ -608,7 +609,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
                 return literal;
             }
         }
-        return tokenRegistry.literals().identifier();
+        return this.tokenRegistry.literals().identifier();
     }
 
     protected TokenCharacter pointToNextChar() {
