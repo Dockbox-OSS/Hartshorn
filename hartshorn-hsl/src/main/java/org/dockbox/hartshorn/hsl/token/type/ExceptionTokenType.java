@@ -19,10 +19,44 @@ package org.dockbox.hartshorn.hsl.token.type;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
 
+/**
+ * Represents the different types of exception handling tokens.
+ *
+ * <b>Note</b>: Exception handling is a feature that is not yet implemented in the HSL language,
+ * but is planned for a future release. This enum is a placeholder for that feature. All tokens
+ * in this enum are reserved keywords that will not be used in the current version of the language.
+ *
+ * @see TokenType
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public enum ExceptionTokenType implements EnumTokenType {
+    /**
+     * The 'throw' keyword, used to throw an exception. This is a standalone statement, and
+     * can be used anywhere in the script to indicate a problem.
+     */
     THROW(true),
+    /**
+     * The 'try' keyword, used to start a try-catch block. This is a standalone statement, and
+     * can be used anywhere in the script to indicate that a block of code should be executed
+     * and that exceptions may be thrown during that execution. This does not require a catch-
+     * or finally block, but it is recommended to have at least one of the two.
+     */
     TRY(true),
+    /**
+     * The 'catch' keyword, used to catch exceptions thrown in a try block. This should always
+     * come directly after a try block, and should be followed by a block of code that should
+     * be executed when an exception is thrown in the try block.
+     */
     CATCH(false),
+    /**
+     * The 'finally' keyword, used to execute a block of code after a try block, regardless of
+     * whether an exception was thrown or not. This should always come directly after a try- or
+     * catch block, and should be followed by a block of code that should be executed after the
+     * try- or catch block has been completely executed.
+     */
     FINALLY(false),
     ;
 

@@ -21,12 +21,36 @@ import java.util.function.Consumer;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
 
+/**
+ * Represents keyword tokens that are related to class definitions in the HSL language.
+ *
+ * @see TokenType
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public enum ClassTokenType implements EnumTokenType {
+    /**
+     * The 'class' keyword representing a class definition.
+     */
     CLASS,
-    EXTENDS,
+    /**
+     * The 'interface' keyword representing an interface definition.
+     */
     INTERFACE,
-    IMPLEMENTS,
+    /**
+     * The 'enum' keyword representing an enum definition.
+     */
     ENUM,
+    /**
+     * The 'extends' keyword representing an extension of a class or interface.
+     */
+    EXTENDS,
+    /**
+     * The 'implements' keyword representing an implementation of an interface.
+     */
+    IMPLEMENTS,
     ;
 
     private final TokenMetaData metaData;

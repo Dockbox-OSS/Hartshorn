@@ -18,8 +18,23 @@ package org.dockbox.hartshorn.hsl.token.type;
 
 import org.dockbox.hartshorn.hsl.token.TokenCharacter;
 
+/**
+ * Represents a token type that delegates to another token type. This is useful for creating
+ * token types that are based on other token types, but have additional behavior or metadata.
+ *
+ * @see TokenType
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface DelegateTokenType extends TokenType {
 
+    /**
+     * Returns the token type that is being delegated to.
+     *
+     * @return the token type that is being delegated to
+     */
     TokenType delegate();
 
     @Override

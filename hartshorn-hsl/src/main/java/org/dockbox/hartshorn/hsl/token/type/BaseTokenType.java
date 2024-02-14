@@ -20,13 +20,46 @@ import org.dockbox.hartshorn.hsl.token.DefaultTokenCharacter;
 import org.dockbox.hartshorn.hsl.token.TokenCharacter;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 
+/**
+ * Represents the basic token types that are used in the HSL language. These
+ * tokens are often used as building blocks for more complex tokens.
+ *
+ * @see TokenType
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public enum BaseTokenType implements EnumTokenType {
+    /**
+     * '?' character, often used to indicate an elvis or ternary expression.
+     */
     QUESTION_MARK(DefaultTokenCharacter.QUESTION_MARK),
+    /**
+     * ':' character, often used to identify a label or to separate
+     * ternary expressions.
+     */
     COLON(DefaultTokenCharacter.COLON),
+    /**
+     * ',' character, often used to separate elements in a list or array.
+     */
     COMMA(DefaultTokenCharacter.COMMA),
+    /**
+     * '.' character, often used to access properties of objects, separate
+     * namespaces, or to indicate a decimal number.
+     */
     DOT(DefaultTokenCharacter.DOT),
+    /**
+     * ';' character, often used to terminate statements.
+     */
     SEMICOLON(DefaultTokenCharacter.SEMICOLON),
+    /**
+     * '=' character, often used for assignment or comparison.
+     */
     EQUAL(DefaultTokenCharacter.EQUAL),
+    /**
+     * '!' character, often used for evaluation of boolean expressions.
+     */
     BANG(DefaultTokenCharacter.BANG),
     ;
 

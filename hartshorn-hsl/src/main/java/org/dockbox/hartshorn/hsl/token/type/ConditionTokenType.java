@@ -23,18 +23,61 @@ import org.dockbox.hartshorn.hsl.token.TokenCharacter;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
 
+/**
+ * Represents a token type that is used to define conditions in the HSL language.
+ *
+ * @see TokenType
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public enum ConditionTokenType implements EnumTokenType {
+    /**
+     * '>' character, representing a 'greater than' condition.
+     */
     GREATER(DefaultTokenCharacter.GREATER),
+    /**
+     * '<' character, representing a 'less than' condition.
+     */
     LESS(DefaultTokenCharacter.LESS),
 
+    /**
+     * '==' character, representing an 'equal to' condition.
+     */
     EQUAL_EQUAL(BaseTokenType.EQUAL),
+    /**
+     * '!=' character, representing a 'not equal to' condition.
+     */
     BANG_EQUAL(BaseTokenType.BANG),
+
+    /**
+     * '>=' character, representing a 'greater than or equal to' condition.
+     */
     GREATER_EQUAL(GREATER),
+    /**
+     * '<=' character, representing a 'less than or equal to' condition.
+     */
     LESS_EQUAL(LESS),
 
+    /**
+     * '&&' character, representing a 'logical and' condition. Logical and conditions are
+     * used to combine two or more conditions, and are only true if all conditions are true.
+     */
     AND(builder -> builder.repeats(BitwiseTokenType.BITWISE_AND)),
+    /**
+     * '||' character, representing a 'logical or' condition. Logical or conditions are
+     * used to combine two or more conditions, and are true if at least one condition is true.
+     */
     OR(builder -> builder.repeats(BitwiseTokenType.BITWISE_OR)),
 
+    /**
+     * '?:' character, representing a shorthand ternary (elvis) condition. Ternary conditions are
+     * used to evaluate a condition and return one of two values, based on the result of the condition.
+     * The shorthand ternary condition is used to return a value if the condition is truthy, and a default
+     * value if the condition is falsy. This is a shorthand for the full ternary condition, which is
+     * not expressed in a single token, but rather an expression of multiple individual tokens.
+     */
     ELVIS(builder -> builder.combines(BaseTokenType.QUESTION_MARK, BaseTokenType.COLON)),
 
     ;

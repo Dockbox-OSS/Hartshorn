@@ -20,9 +20,26 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
 import org.dockbox.hartshorn.util.Customizer;
 
+/**
+ * Represents the different types of tokens that are used to assert or test conditions in a script.
+ *
+ * @see TokenType
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public enum AssertTokenType implements EnumTokenType {
+    /**
+     * Represents the 'assert' keyword for a standalone statement.
+     *
+     * <p>Reserved for future use, but not yet implemented.
+     */
     ASSERT(builder -> builder.keyword(true).standaloneStatement(true).reserved(true)),
-    TEST(builder -> builder.keyword(true).standaloneStatement(true).reserved(true)),
+    /**
+     * Represents the 'expect' keyword for a block statement.
+     */
+    TEST(builder -> builder.keyword(true).standaloneStatement(true)),
     ;
 
     private final TokenMetaData metaData;
