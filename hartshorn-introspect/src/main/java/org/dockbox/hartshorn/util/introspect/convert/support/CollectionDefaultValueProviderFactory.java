@@ -62,7 +62,7 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
     public <E, O extends Collection<E>> DefaultValueProvider<O> create(Class<O> targetType, Class<E> elementType) {
         return () -> {
             try {
-                return this.helperFactory.createCollection(targetType, elementType, 0);
+                return this.helperFactory.createCollection(targetType, elementType);
             }
             catch(IllegalArgumentException e) {
                 return null;

@@ -49,7 +49,13 @@ import org.dockbox.hartshorn.util.option.Option;
 @SuppressWarnings("rawtypes")
 public class SimpleCollectionFactory implements CollectionFactory {
 
-    private static final int USE_COLLECTION_DEFAULT_CAPACITY = -1;
+    /**
+     * A constant that can be used to indicate that the default capacity should be used when creating a collection.
+     * This is useful when a collection is created without a specific capacity requirement. Zero is used, as it is
+     * a logical choice to call {@link #createCollection(Class, Class, int)} with length zero if not aware of the
+     * {@link #createCollection(Class, Class)} method, so this covers some risks.
+     */
+    private static final int USE_COLLECTION_DEFAULT_CAPACITY = 0;
 
     private final Introspector introspector;
     private final Map<Class<?>, CollectionProvider> defaults = new HashMap<>();
