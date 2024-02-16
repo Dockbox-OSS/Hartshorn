@@ -50,12 +50,12 @@ public class TokenMetaDataBuilder {
 
     public TokenMetaDataBuilder combines(TokenType... types) {
         StringBuilder combined = new StringBuilder();
-        List<TokenCharacter> characters = new LinkedList<>();
+        List<TokenCharacter> tokenCharacters = new LinkedList<>();
         boolean inheritCharacters = true;
         for(TokenType type : types) {
             combined.append(type.representation());
             if(type.characters().length > 0) {
-                characters.addAll(List.of(type.characters()));
+                tokenCharacters.addAll(List.of(type.characters()));
             }
             else {
                 inheritCharacters = false;
@@ -63,7 +63,7 @@ public class TokenMetaDataBuilder {
         }
         this.representation = combined.toString();
         if (inheritCharacters) {
-            this.characters = characters.toArray(TokenCharacter[]::new);
+            this.characters = tokenCharacters.toArray(TokenCharacter[]::new);
         }
         return this;
     }
@@ -74,8 +74,8 @@ public class TokenMetaDataBuilder {
 
     public TokenMetaDataBuilder combines(TokenCharacter... characters) {
         StringBuilder combined = new StringBuilder();
-        for (TokenCharacter type : characters) {
-            combined.append(type.character());
+        for (TokenCharacter tokenCharacter : characters) {
+            combined.append(tokenCharacter.character());
         }
         this.representation = combined.toString();
         this.characters = characters;

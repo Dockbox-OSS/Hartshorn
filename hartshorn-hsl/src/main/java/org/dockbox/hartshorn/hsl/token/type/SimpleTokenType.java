@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.token.type;
 
+import java.util.Arrays;
+import java.util.Objects;
 import org.dockbox.hartshorn.hsl.token.TokenCharacter;
 
 public record SimpleTokenType(
@@ -28,6 +30,28 @@ public record SimpleTokenType(
         String defaultLexeme,
         TokenCharacter[] characters
 ) implements TokenType {
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        SimpleTokenType that = (SimpleTokenType) o;
+        return this.keyword == that.keyword
+            && this.standaloneStatement == that.standaloneStatement
+            && this.reserved == that.reserved
+            && Objects.equals(this.tokenName, that.tokenName)
+            && Objects.equals(this.representation, that.representation)
+            && Objects.equals(this.assignsWith, that.assignsWith)
+            && Objects.equals(this.defaultLexeme, that.defaultLexeme)
+            && Arrays.equals(this.characters, that.characters);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(this.tokenName, this.representation, this.keyword, this.standaloneStatement, this.reserved, this.assignsWith, this.defaultLexeme);
+        result = 31 * result + Arrays.hashCode(this.characters);
+        return result;
+    }
 
     public static Builder builder() {
         return new Builder();

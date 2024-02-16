@@ -83,6 +83,15 @@ public class SimpleTokenRegistryLexer implements Lexer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleTokenRegistryLexer.class);
 
+    private static final String UNEXPECTED_CHAR = "Unexpected character '%s'";
+    private static final String UNEXPECTED_EOT = "Unexpected end of token, expected any of: %s";
+    private static final String UNEXPECTED_DANGLING_NUMBER = "Unexpected dangling number separator";
+    private static final String UNEXPECTED_NULL = "Unexpected null character";
+    private static final String INVALID_COMMENT_TP = "Invalid comment token pair";
+    private static final String INVALID_COMMENT_TYPE = "Invalid comment type";
+    private static final String UNTERMINATED_STR = "Unterminated string";
+    private static final String UNTERMINATED_CHAR = "Unterminated char variable";
+
     private final List<Token> tokens = new ArrayList<>();
     private final List<Comment> comments = new ArrayList<>();
     private final Map<String, TokenType> keywords = new HashMap<>();
@@ -240,8 +249,11 @@ public class SimpleTokenRegistryLexer implements Lexer {
             switch(sharedTokenCharacter) {
                 case SPACE, CARRIAGE_RETURN, TAB -> { /* Ignore whitespace. */ }
                 case NEWLINE -> this.nextLine();
-                case NULL -> throw new ScriptEvaluationError("Unexpected null character", Phase.TOKENIZING, this.line(), this.column());
+                case NULL -> throw new ScriptEvaluationError(UNEXPECTED_NULL, Phase.TOKENIZING, this.line(), this.column());
             }
+        }
+        else if(tokenCharacter == this.tokenRegistry().characterList().nullCharacter()) {
+            throw new ScriptEvaluationError(UNEXPECTED_NULL, Phase.TOKENIZING, this.line(), this.column());
         }
         else {
             TokenCharacterList characterList = this.tokenRegistry().characterList();
@@ -274,7 +286,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
     protected boolean scanCharacterList(TokenCharacter tokenCharacter, TokenCharacterList characterList) throws ScriptEvaluationError {
         if (tokenCharacter == characterList.nullCharacter()) {
             // Null character is not allowed. This is injected into the analysis when the source length is exceeded.
-            throw new ScriptEvaluationError("Unexpected null character", Phase.TOKENIZING, this.line(), this.column());
+            throw new ScriptEvaluationError(UNEXPECTED_NULL, Phase.TOKENIZING, this.line(), this.column());
         }
         else if(tokenCharacter == characterList.quoteCharacter()) {
             this.scanString();
@@ -286,7 +298,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
         }
         else if(tokenCharacter == characterList.numberSeparator()) {
             // Should only occur in #scanNumber(), so any other occurrence is an error.
-            throw new ScriptEvaluationError("Unexpected dangling number separator", Phase.TOKENIZING, this.line(), this.column());
+            throw new ScriptEvaluationError(UNEXPECTED_DANGLING_NUMBER, Phase.TOKENIZING, this.line(), this.column());
         }
         return false;
     }
@@ -327,7 +339,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
                             TokenNode tokenNode = node.value();
                             return "'%s' (%s)".formatted(tokenNode.tokenType().representation(), tokenNode.tokenType().tokenName());
                         });
-                        throw new ScriptEvaluationError("Unexpected end of token, expected any of: " + expectedTokens, Phase.TOKENIZING,
+                        throw new ScriptEvaluationError(UNEXPECTED_EOT.formatted(expectedTokens), Phase.TOKENIZING,
                                 this.line(), this.column());
                     }
                 }
@@ -336,7 +348,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
 
             depth++;
         }
-        throw new ScriptEvaluationError("Unexpected character '" + this.currentChar().character() + "'", Phase.TOKENIZING, this.line(), this.column());
+        throw new ScriptEvaluationError(UNEXPECTED_CHAR.formatted(this.currentChar().character()), Phase.TOKENIZING, this.line(), this.column());
     }
 
     /**
@@ -390,13 +402,13 @@ public class SimpleTokenRegistryLexer implements Lexer {
         if (commentType.present()) {
             Option<TokenTypePair> tokenTypePair = commentTokenList.resolveTokenPairFromOpen(tokenType);
             if (tokenTypePair.absent()) {
-                throw new ScriptEvaluationError("Invalid comment token pair", Phase.TOKENIZING, this.line(), this.column());
+                throw new ScriptEvaluationError(INVALID_COMMENT_TP, Phase.TOKENIZING, this.line(), this.column());
             }
             TokenType closeToken = tokenTypePair.get().close();
             switch(commentType.get()) {
             case LINE -> this.scanComment();
             case BLOCK -> this.scanMultilineComment(closeToken);
-            default -> throw new ScriptEvaluationError("Invalid comment type", Phase.TOKENIZING, this.line(), this.column());
+            default -> throw new ScriptEvaluationError(INVALID_COMMENT_TYPE, Phase.TOKENIZING, this.line(), this.column());
             }
         }
         else {
@@ -419,7 +431,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
                 .filter(node -> node.value().character() == tokenCharacter)
                 .map(node -> (ContainableGraphNode<TokenNode>) node)
                 .findFirst();
-        return first.orElseThrow(() -> new ScriptEvaluationError("Unexpected character '" + tokenCharacter.character() + "'", Phase.TOKENIZING, this.line(), this.column()));
+        return first.orElseThrow(() -> new ScriptEvaluationError(UNEXPECTED_CHAR.formatted(tokenCharacter.character()), Phase.TOKENIZING, this.line(), this.column()));
     }
 
     /**
@@ -440,7 +452,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
             this.scanIdentifier();
         }
         else {
-            throw new ScriptEvaluationError("Unexpected character '" + character.character() + "'", Phase.TOKENIZING, this.line(), this.column());
+            throw new ScriptEvaluationError(UNEXPECTED_CHAR.formatted(character.character()), Phase.TOKENIZING, this.line(), this.column());
         }
     }
 
@@ -502,7 +514,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
 
         // Unterminated string
         if (this.isAtEnd()) {
-            throw new ScriptEvaluationError("Unterminated string", Phase.TOKENIZING, this.line(), this.column());
+            throw new ScriptEvaluationError(UNTERMINATED_STR, Phase.TOKENIZING, this.line(), this.column());
         }
 
         // The closing quote
@@ -521,7 +533,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
         String value = this.source().substring(this.start() + 1, this.start() + 2);
         this.pointToNextChar();
         if (this.currentChar() != this.tokenRegistry().characterList().charCharacter()) {
-            throw new ScriptEvaluationError("Unterminated char variable", Phase.TOKENIZING, this.line(), this.column());
+            throw new ScriptEvaluationError(UNTERMINATED_CHAR, Phase.TOKENIZING, this.line(), this.column());
         }
         this.pointToNextChar();
         this.addToken(this.tokenRegistry().literals().character(), value.charAt(0));

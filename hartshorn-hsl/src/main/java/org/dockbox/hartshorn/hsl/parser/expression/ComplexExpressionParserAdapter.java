@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * TODO: Rewrite docs
+ * TODO #748: Rewrite docs
  *
  * <p>This parser is a wrapper around the {@link ComplexExpressionParser} and is used to parse
  * the tokens into a syntax tree. The {@link ComplexExpressionParser} is a recursive descent

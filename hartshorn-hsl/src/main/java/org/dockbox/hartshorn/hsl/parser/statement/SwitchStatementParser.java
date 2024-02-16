@@ -40,6 +40,8 @@ import jakarta.inject.Inject;
 
 public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
 
+    private static final String SWITCH = "switch";
+
     private final CaseBodyStatementParser caseBodyStatementParser;
 
     @Inject
@@ -53,11 +55,11 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
         TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.match(ControlTokenType.SWITCH)) {
             Token switchToken = parser.previous();
-            validator.expectAfter(parameters.open(), "switch");
+            validator.expectAfter(parameters.open(), SWITCH);
             Expression expression = parser.expression();
             validator.expectAfter(parameters.close(), "expression");
 
-            validator.expectAfter(block.open(), "switch");
+            validator.expectAfter(block.open(), SWITCH);
 
             SwitchCase defaultBody = null;
             List<SwitchCase> cases = new ArrayList<>();
@@ -90,7 +92,7 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
                 }
             }
 
-            validator.expectAfter(block.close(), "switch");
+            validator.expectAfter(block.close(), SWITCH);
 
             return Option.of(new SwitchStatement(switchToken, expression, cases, defaultBody));
         }
