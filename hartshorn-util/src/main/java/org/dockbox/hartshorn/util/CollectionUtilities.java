@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,6 +28,8 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A collection of utility methods for working with collections. This class is not meant to be
@@ -206,11 +206,22 @@ public final class CollectionUtilities {
         }
     }
 
+    /**
+     * Returns an aggregated string representation of the given collection. The string representation
+     * is created by mapping each element of the collection to a string using the given value mapper
+     * and then joining the strings using a comma and a space. If the collection is empty an empty
+     * string is returned.
+     *
+     * @param collection The collection to create a string representation of
+     * @param valueMapper The function to map each element to a string
+     * @return The aggregated string representation of the collection
+     * @param <T> The type of the elements in the collection
+     */
     public static <T> String toString(Collection<T> collection, Function<T, ?> valueMapper) {
         return collection.stream()
                 .map(valueMapper)
                 .map(Object::toString)
-                .reduce((a, b) -> a + ", " + b).orElse("");
+                .reduce("", (a, b) -> a + ", " + b);
     }
 
     /**
