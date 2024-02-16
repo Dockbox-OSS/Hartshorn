@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.StringUtilities;
 
 /**
  * A reportable that reports the contents of a {@link ComponentContainer} instance. This includes the following information:
@@ -37,7 +36,6 @@ import org.dockbox.hartshorn.util.StringUtilities;
  *     <li>Component name, {@link ComponentContainer#name()}</li>
  *     <li>Component singleton status, {@link ComponentContainer#singleton()}</li>
  *     <li>Component lazy status, {@link ComponentContainer#lazy()}</li>
- *     <li>Component type, {@link ComponentContainer#componentType()}</li>
  *     <li>Whether the component permits proxying, {@link ComponentContainer#permitsProxying()}</li>
  *     <li>Whether the component permits processing, {@link ComponentContainer#permitsProcessing()}</li>
  *     <li>Component stereotype, {@link ComponentDiagnosticsReporter#stereotype(ComponentContainer)}</li>
@@ -73,10 +71,6 @@ class ComponentContainerReporter implements Reportable {
         componentCollector.property("name").write(this.container.name());
         componentCollector.property("singleton").write(this.container.singleton());
         componentCollector.property("lazy").write(this.container.lazy());
-
-        String componentType = StringUtilities.capitalize(this.container.componentType().name().toLowerCase());
-
-        componentCollector.property("componentType").write(componentType);
         componentCollector.property("permitsProxying").write(this.container.permitsProxying());
         componentCollector.property("permitsProcessing").write(this.container.permitsProcessing());
 
