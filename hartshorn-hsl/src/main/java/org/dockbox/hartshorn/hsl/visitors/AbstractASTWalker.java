@@ -71,6 +71,10 @@ import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
  * the AST.
  *
  * @param <R> the return type of the visitor
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractASTWalker<R> implements ExpressionVisitor<R>, StatementVisitor<R> {
 

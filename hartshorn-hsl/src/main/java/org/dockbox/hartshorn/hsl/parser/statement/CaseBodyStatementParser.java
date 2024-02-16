@@ -32,6 +32,20 @@ import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A parser for the body of a case statement. A case may take two forms: a block of statements, or a single
+ * expression statement. A block statement should be indicated by the use of a {@link BaseTokenType#COLON},
+ * while a single expression statement should be indicated by the use of a {@link ControlTokenType#ARROW}.
+ *
+ * <p>As this is a parser for a non-standalone statement, it should not be used for dynamic parsing. As such,
+ * the {@link #types()} method returns an empty set.
+ *
+ * @since 0.5.0
+ *
+ * @see SwitchStatementParser
+ *
+ * @author Guus Lieben
+ */
 public class CaseBodyStatementParser implements ASTNodeParser<Statement> {
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,17 +35,25 @@ import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
  * <p>An expression should follow the standard HSL syntax, and any restrictions introduces by the active
  * {@link ValidateExpressionRuntime}.
  *
- * <p>The runtime is always enhanced with the active {@link ApplicationContext}, under the global alias configured
+ * <p>The runtime is by default always enhanced with the active {@link ApplicationContext}, under the global alias configured
  * in {@link #GLOBAL_APPLICATION_CONTEXT_NAME}. If the {@link ConditionContext} contains a {@link ExpressionConditionContext}
- * all configured customizers, imports, variables, and modules are made available to the runtime automatically. Other
- * variables should not use the {@link #GLOBAL_APPLICATION_CONTEXT_NAME} alias, unless the instance is the same as the
- * active {@link ApplicationContext}. If a conflict arises a warning is logged, but the runtime will proceed as usual.
+ * which has the {@link ExpressionConditionContext#includeApplicationContext()} set to {@code false}, the application context
+ * will not be included in the runtime. Any configured customizers, imports, variables, and modules in the {@link
+ * ExpressionConditionContext} are made available to the runtime automatically.
+ *
+ * <p>Note that if the application context is not explicitly disabled, other variables should not use the {@link
+ * #GLOBAL_APPLICATION_CONTEXT_NAME} alias, unless the instance is the same as the active {@link ApplicationContext}. If a
+ * conflict arises a warning is logged, but the runtime will proceed as usual.
  *
  * @author Guus Lieben
  * @since 0.4.12
  */
 public class ExpressionCondition implements Condition {
 
+    /**
+     * The global alias for the application context in the expression runtime. This should be the default alias for any
+     * application context that is exposed in a HSL runtime, and should not be used for any other variables.
+     */
     public static final String GLOBAL_APPLICATION_CONTEXT_NAME = "applicationContext";
 
     @Override
@@ -71,11 +79,37 @@ public class ExpressionCondition implements Condition {
         }
     }
 
+    /**
+     * Creates a new {@link ValidateExpressionRuntime} from the given {@link ConditionContext}. This will customize
+     * the runtime based on the presence of a {@link ExpressionConditionContext} and a {@link ProvidedParameterContext}
+     * in the given context.
+     *
+     * @param context the context to create the runtime from
+     * @return a new runtime
+     */
     protected ValidateExpressionRuntime createRuntime(ConditionContext context) {
         ValidateExpressionRuntime runtime = context.applicationContext().get(ValidateExpressionRuntime.class);
         return this.enhance(runtime, context);
     }
 
+    /**
+     * Enhances the given {@link ValidateExpressionRuntime} with the given {@link ConditionContext}. This will customize
+     * the runtime based on the presence of a {@link ExpressionConditionContext} and a {@link ProvidedParameterContext}
+     * in the given context.
+     *
+     * <p>To allow customizers to work on parameters and imports, the context is first checked for a {@link ProvidedParameterContext}
+     * and the parameters are loaded into the runtime. Then, the context is checked for a {@link ExpressionConditionContext}
+     * and the customizers, imports, global variables, and external modules are loaded into the runtime.
+     *
+     * <p>If no {@link ExpressionConditionContext} is present, the runtime is enhanced with the active {@link ApplicationContext}
+     * from the given context. If the context contains a {@link ExpressionConditionContext}, the application context will only
+     * be included if the context's {@link ExpressionConditionContext#includeApplicationContext()} returns {@code true}. If the
+     * application context is exposed, it will always be exposed under the global alias configured in {@link #GLOBAL_APPLICATION_CONTEXT_NAME}.
+     *
+     * @param runtime the runtime to enhance
+     * @param context the context to enhance the runtime with
+     * @return the enhanced runtime
+     */
     protected ValidateExpressionRuntime enhance(ValidateExpressionRuntime runtime, ConditionContext context) {
         // Load parameters first, so they can be overwritten by the customizers and imports.
         context.first(ProvidedParameterContext.class).peek(parameterContext -> {
@@ -92,6 +126,8 @@ public class ExpressionCondition implements Condition {
             if (expressionContext.includeApplicationContext()) {
                 this.enhanceWithApplicationContext(runtime, context.applicationContext());
             }
+        }).onEmpty(() -> {
+            this.enhanceWithApplicationContext(runtime, context.applicationContext());
         });
         return runtime;
     }

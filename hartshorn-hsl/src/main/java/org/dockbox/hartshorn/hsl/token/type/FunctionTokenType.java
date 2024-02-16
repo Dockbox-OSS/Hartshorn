@@ -79,7 +79,7 @@ public enum FunctionTokenType implements EnumTokenType {
     FunctionTokenType(Consumer<TokenMetaDataBuilder> metaData) {
         TokenMetaDataBuilder builder = TokenMetaData.builder(this);
         metaData.accept(builder);
-        this.metaData = builder.ok();
+        this.metaData = builder.build();
     }
 
     @Override

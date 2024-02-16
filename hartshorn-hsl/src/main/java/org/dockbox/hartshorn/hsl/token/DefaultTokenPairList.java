@@ -19,9 +19,16 @@ package org.dockbox.hartshorn.hsl.token;
 import org.dockbox.hartshorn.hsl.token.type.PairTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 
+/**
+ * Default implementation of {@link TokenPairList} using {@link PairTokenType} definitions.
+ *
+ * @since 0.6.0
+ *
+ * @see PairTokenType
+ *
+ * @author Guus Lieben
+ */
 public final class DefaultTokenPairList implements TokenPairList {
-
-    public static final DefaultTokenPairList INSTANCE = new DefaultTokenPairList();
 
     @Override
     public TokenTypePair block() {
@@ -37,5 +44,4 @@ public final class DefaultTokenPairList implements TokenPairList {
     public TokenTypePair array() {
         return PairTokenType.ARRAY_OPEN.pair();
     }
-
 }

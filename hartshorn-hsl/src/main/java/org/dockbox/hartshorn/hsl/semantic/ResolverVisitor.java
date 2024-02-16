@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.semantic;
 import java.util.Map;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
+import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
@@ -76,6 +76,17 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
+/**
+ * Support for {@link Resolver semantic analysis} of the AST. This visitor is used to resolve all references originating
+ * in the AST. The visitor itself doesn't track the resolved references, but instead delegates to the {@link Resolver}
+ * to do so.
+ *
+ * @since 0.5.0
+ *
+ * @see Resolver
+ *
+ * @author Guus Lieben
+ */
 public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisitor<Void> {
 
     private final Resolver resolver;
@@ -233,8 +244,8 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(WhileStatement statement) {
-        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
-        this.resolver.currentScopeType(MoveKeyword.ScopeType.LOOP);
+        FlowControlKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        this.resolver.currentScopeType(FlowControlKeyword.ScopeType.LOOP);
         this.resolve(statement.condition());
         this.resolve(statement.body());
         this.resolver.currentScopeType(enclosingType);
@@ -243,8 +254,8 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(DoWhileStatement statement) {
-        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
-        this.resolver.currentScopeType(MoveKeyword.ScopeType.LOOP);
+        FlowControlKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        this.resolver.currentScopeType(FlowControlKeyword.ScopeType.LOOP);
         this.resolver.beginScope();
         this.resolve(statement.condition());
         this.resolve(statement.body());
@@ -255,8 +266,8 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(ForStatement statement) {
-        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
-        this.resolver.currentScopeType(MoveKeyword.ScopeType.LOOP);
+        FlowControlKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        this.resolver.currentScopeType(FlowControlKeyword.ScopeType.LOOP);
         this.resolver.beginScope();
         this.resolve(statement.initializer());
         this.resolve(statement.condition());
@@ -269,8 +280,8 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(ForEachStatement statement) {
-        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
-        this.resolver.currentScopeType(MoveKeyword.ScopeType.LOOP);
+        FlowControlKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        this.resolver.currentScopeType(FlowControlKeyword.ScopeType.LOOP);
         this.resolver.beginScope();
         this.resolver.declare(statement.selector().name());
         this.resolve(statement.body());
@@ -281,8 +292,8 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(RepeatStatement statement) {
-        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
-        this.resolver.currentScopeType(MoveKeyword.ScopeType.LOOP);
+        FlowControlKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        this.resolver.currentScopeType(FlowControlKeyword.ScopeType.LOOP);
         this.resolver.beginScope();
         this.resolve(statement.value());
         this.resolve(statement.body());
@@ -294,7 +305,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     @Override
     public Void visit(BreakStatement statement) {
         // add this case inside semantic to make sure it inside loop
-        if (this.resolver.currentScopeType() != MoveKeyword.ScopeType.LOOP && this.resolver.currentScopeType() != MoveKeyword.ScopeType.SWITCH) {
+        if (this.resolver.currentScopeType() != FlowControlKeyword.ScopeType.LOOP && this.resolver.currentScopeType() != FlowControlKeyword.ScopeType.SWITCH) {
             throw new ScriptEvaluationError("Break can only used be inside loops and switch cases.", Phase.RESOLVING, statement.keyword());
         }
         return null;
@@ -303,7 +314,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     @Override
     public Void visit(ContinueStatement statement) {
         // add this case inside semantic to make sure it inside loop
-        if (this.resolver.currentScopeType() != MoveKeyword.ScopeType.LOOP) {
+        if (this.resolver.currentScopeType() != FlowControlKeyword.ScopeType.LOOP) {
             throw new ScriptEvaluationError("Continue can only used be inside loops and switch cases.", Phase.RESOLVING, statement.keyword());
         }
         return null;
@@ -474,8 +485,8 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     @Override
     public Void visit(ArrayComprehensionExpression expression) {
         this.resolve(expression.collection());
-        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
-        this.resolver.currentScopeType(MoveKeyword.ScopeType.LOOP);
+        FlowControlKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        this.resolver.currentScopeType(FlowControlKeyword.ScopeType.LOOP);
 
         this.resolver.beginScope();
         this.resolver.declare(expression.selector());
@@ -539,8 +550,8 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
             this.resolve(statement.expression());
         }
 
-        MoveKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
-        this.resolver.currentScopeType(MoveKeyword.ScopeType.SWITCH);
+        FlowControlKeyword.ScopeType enclosingType = this.resolver.currentScopeType();
+        this.resolver.currentScopeType(FlowControlKeyword.ScopeType.SWITCH);
         this.resolver.beginScope();
         this.resolve(statement.body());
         this.resolver.endScope();

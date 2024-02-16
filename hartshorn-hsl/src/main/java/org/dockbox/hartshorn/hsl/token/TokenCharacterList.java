@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,54 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
+/**
+ * A collection of characters that are used for basic literals in the HSL language.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface TokenCharacterList {
 
+    /**
+     * The character that represents a null value in HSL. This is often used by
+     * lexers to denote the absence of a valid character at a certain position.
+     * This typically indicates that the lexer exceeded the input string.
+     *
+     * @return the character that represents the null value in HSL.
+     */
     TokenCharacter nullCharacter();
 
-    // Open/close quote character for strings
+    /**
+     * The character that represents the quotes around a string in HSL. This is
+     * often used by lexers to denote the start and end of a string.
+     *
+     * @return the character that represents the true value in HSL.
+     */
     TokenCharacter quoteCharacter();
 
-    // Open/close quote character for characters
+    /**
+     * The character that represents the quotes around a single character in HSL.
+     * This is often used by lexers to denote the start and end of a character.
+     *
+     * @return the character that represents the true value in HSL.
+     */
     TokenCharacter charCharacter();
 
-    // Separator for numbers
+    /**
+     * The character that represents a separator between numbers in HSL. This is
+     * ignored by the lexer, but can be used by script authors to improve the
+     * readability of long numbers.
+     *
+     * @return the character that represents the number separator in HSL.
+     */
     TokenCharacter numberSeparator();
 
+    /**
+     * The character that represents a delimiter between decimal numbers in HSL.
+     *
+     * @return the character that represents the number delimiter in HSL.
+     */
     TokenCharacter numberDelimiter();
 
 }

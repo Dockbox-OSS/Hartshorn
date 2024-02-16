@@ -25,7 +25,6 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.graph.MutableGraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleGraph;
 import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a graph of tokens, where each node is a character in a token and each edge is a transition from one character to
@@ -101,7 +100,6 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
         return getExisting(candidates, character);
     }
 
-    @Nullable
     private static TokenType determineNodeType(TokenType tokenType, int i, TokenCharacter[] characters) {
         return i == characters.length - 1 ? tokenType : null;
     }
@@ -127,6 +125,10 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
      * The character is the character that is added by the node, any preceding characters are added by the parent node (if any).
      * The type is the type of the token that is represented by the characters that are added by the node and its parents, if
      * this is an intermediate node, the type is {@code null}.
+     *
+     * @since 0.6.0
+     *
+     * @author Guus Lieben
      */
     public static final class TokenNode {
 

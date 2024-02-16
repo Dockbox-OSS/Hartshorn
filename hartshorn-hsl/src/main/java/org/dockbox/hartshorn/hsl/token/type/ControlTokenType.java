@@ -87,7 +87,7 @@ public enum ControlTokenType implements EnumTokenType {
      * statement. This is not a standalone statement, and is required to be combined with a 'case' or
      * 'default' statement.
      */
-    ARROW(builder -> builder.combines(ArithmeticTokenType.MINUS, ConditionTokenType.GREATER).ok()),
+    ARROW(builder -> builder.combines(ArithmeticTokenType.MINUS, ConditionTokenType.GREATER).build()),
     ;
 
     private final TokenMetaData metaData;
@@ -102,7 +102,7 @@ public enum ControlTokenType implements EnumTokenType {
     ControlTokenType(Consumer<TokenMetaDataBuilder> metaData) {
         TokenMetaDataBuilder builder = TokenMetaData.builder(this);
         metaData.accept(builder);
-        this.metaData = builder.ok();
+        this.metaData = builder.build();
     }
 
     @Override

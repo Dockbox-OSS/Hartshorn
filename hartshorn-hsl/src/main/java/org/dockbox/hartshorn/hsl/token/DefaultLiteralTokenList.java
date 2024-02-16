@@ -21,9 +21,16 @@ import java.util.Set;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
+/**
+ * Default implementation of {@link LiteralTokenList} using {@link LiteralTokenType}.
+ *
+ * @since 0.6.0
+ *
+ * @see LiteralTokenType
+ *
+ * @author Guus Lieben
+ */
 public final class DefaultLiteralTokenList implements LiteralTokenList {
-
-    public static final DefaultLiteralTokenList INSTANCE = new DefaultLiteralTokenList();
 
     @Override
     public Set<TokenType> literals() {

@@ -37,6 +37,22 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.Customizer;
 
+/**
+ * Base implementation of {@link ScriptRuntime} that provides a default implementation for the
+ * runtime phases. This class is designed to be extended by specific runtime implementations, such as
+ * {@link ValidateExpressionRuntime}.
+ *
+ * <p>Implementations of this class should only have to provide the standard libraries and external
+ * modules that are used by the runtime. The runtime itself is provided by this class.
+ *
+ * @since 0.4.12
+ *
+ * @see ScriptRuntime
+ * @see ValidateExpressionRuntime
+ * @see StandardRuntime
+ *
+ * @author Guus Lieben
+ */
 public class AbstractScriptRuntime extends ExpressionConditionContext implements MutableScriptRuntime {
 
     private final ScriptComponentFactory factory;
@@ -68,6 +84,13 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         return this.applicationContext;
     }
 
+    /**
+     * Provides the standard libraries that are used by the runtime. These libraries are made
+     * available to the script during the interpretation phase.
+     *
+     * @param context the context in which the libraries are used
+     * @return the standard libraries
+     */
     protected Map<String, NativeModule> standardLibraries(ScriptContext context) {
         return new HashMap<>();
     }
@@ -127,12 +150,27 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         return context;
     }
 
-    private ScriptContext createScriptContext(String source) {
+    /**
+     * Creates a new script context for the given source. The context is used to store the state of
+     * the script's execution, and to provide access to the various executors that are used during
+     * the execution.
+     *
+     * @param source the source code to execute
+     * @return the context that was created during the execution
+     */
+    public ScriptContext createScriptContext(String source) {
         ScriptContext context = new ScriptContext(this, source);
         context.interpreter(this.createInterpreter(context));
         return context;
     }
 
+    /**
+     * Creates a new interpreter for the given context. The interpreter is used to evaluate the
+     * script's statements and expressions.
+     *
+     * @param context the context in which the interpreter is used
+     * @return the interpreter that was created
+     */
     protected Interpreter createInterpreter(ScriptContext context) {
         Interpreter interpreter = this.factory.interpreter(context, this.standardLibraries(context), context.tokenRegistry(), this.applicationContext());
         interpreter.state().externalModules(this.externalModules());
@@ -140,6 +178,12 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         return interpreter;
     }
 
+    /**
+     * Tokenizes the given source code, and stores the resulting tokens in the given context. Any
+     * comments that are found in the source code are also stored in the context.
+     *
+     * @param context the context in which the tokenization is performed
+     */
     protected void tokenize(ScriptContext context) {
         context.lexer(this.factory.lexer(context.tokenRegistry(), context.source()));
         this.customizePhase(Phase.TOKENIZING, context);
@@ -148,6 +192,12 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         context.comments(context.lexer().comments());
     }
 
+    /**
+     * Parses the tokens that are stored in the given context, and stores the resulting statements in
+     * the context.
+     *
+     * @param context the context in which the parsing is performed
+     */
     protected void parse(ScriptContext context) {
         TokenParser parser = this.factory.parser(context.tokenRegistry(), context.tokens());
         this.parserCustomizer.configure(parser);
@@ -158,6 +208,12 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         context.statements(statements);
     }
 
+    /**
+     * Performs semantic analysis on the statements that are stored in the given context, preparing
+     * any necessary resolution for the interpretation phase.
+     *
+     * @param context the context in which the resolution is performed
+     */
     protected void resolve(ScriptContext context) {
         context.resolver(this.factory.resolver(context.interpreter()));
         context.interpreter().restore();
@@ -165,6 +221,12 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         context.resolver().resolve(context.statements());
     }
 
+    /**
+     * Interprets the statements that are stored in the given context, and stores the results in the
+     * interpreter's {@link Interpreter#resultCollector() result collector}.
+     *
+     * @param context the context in which the interpretation is performed
+     */
     protected void interpret(ScriptContext context) {
         Interpreter interpreter = context.interpreter();
         // Interpreter modification is not allowed at this point, as it was restored before
@@ -175,6 +237,13 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         interpreter.interpret(context.statements());
     }
 
+    /**
+     * Customizes the given phase of the script's execution. This method is called for each of the
+     * phases that are performed during the execution of a script.
+     *
+     * @param phase the phase that is being customized
+     * @param context the context in which the customization is performed
+     */
     protected void customizePhase(Phase phase, ScriptContext context) {
         for (CodeCustomizer customizer : this.customizers()) {
             if (customizer.phase() == phase) {
@@ -183,6 +252,14 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         }
     }
 
+    /**
+     * Handles the given script evaluation error. This method is called when an error occurs during
+     * the evaluation of a script, and allows for the cause of the error to be displayed in a more
+     * user-friendly way.
+     *
+     * @param context the context in which the error occurred
+     * @param error the error that occurred
+     */
     protected void handleScriptEvaluationError(ScriptContext context, ScriptEvaluationError error) {
         String source = context.source();
         Phase phase = error.phase();

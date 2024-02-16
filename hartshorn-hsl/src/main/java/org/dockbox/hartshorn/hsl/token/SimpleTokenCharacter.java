@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,27 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
+/**
+ * Represents a single character that is used to represent a token in the HSL language. This
+ * follows basic rules for tokenization, such as whether a character is a digit, letter or
+ * alphanumeric character.
+ *
+ * @since 0.6.0
+ *
+ * @see TokenCharacter
+ *
+ * @author Guus Lieben
+ */
 public interface SimpleTokenCharacter extends TokenCharacter {
 
+    /**
+     * Creates a new instance of {@link SimpleTokenCharacter} with the given character. If the
+     * character is standalone, it will be treated as such.
+     *
+     * @param character the character to represent
+     * @param standalone whether the character is standalone
+     * @return a new instance of {@link SimpleTokenCharacter}
+     */
     static SimpleTokenCharacter of(char character, boolean standalone) {
         return new SimpleTokenCharacter() {
 

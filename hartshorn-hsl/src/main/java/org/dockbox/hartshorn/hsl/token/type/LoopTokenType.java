@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,48 @@
 
 package org.dockbox.hartshorn.hsl.token.type;
 
+import java.util.function.Consumer;
+
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
 
-import java.util.function.Consumer;
-
+/**
+ * Represents the different types of loop tokens that can be used in the HSL language. Loop tokens are used to define
+ * blocks of code that are executed repeatedly, based on a condition or a range of values.
+ *
+ * @see TokenType
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public enum LoopTokenType implements EnumTokenType {
+    /**
+     * 'repeat' token, representing a loop that is executed a fixed number of times.
+     */
     REPEAT(true),
+    /**
+     * 'do' token, representing a loop that is executed at least once, and then repeatedly as long as a condition is
+     * met.
+     */
     DO(true),
+    /**
+     * 'while' token, representing a loop that is executed repeatedly as long as a condition is met.
+     */
     WHILE(true),
+    /**
+     * 'for' token, representing a loop that is executed repeatedly either for a range of values (for-each) or for a
+     * condition (for-i).
+     */
     FOR(true),
+    /**
+     * 'in' token, representing a loop that is executed repeatedly for a range of values.
+     */
     IN(false),
-
-    RANGE(builder -> builder.repeats(BaseTokenType.DOT).ok()),
+    /**
+     * 'range' token, representing a loop that is executed repeatedly for a range of values from a start to an end.
+     */
+    RANGE(builder -> builder.repeats(BaseTokenType.DOT).build()),
     ;
 
     private final TokenMetaData metaData;
@@ -43,7 +72,7 @@ public enum LoopTokenType implements EnumTokenType {
     LoopTokenType(Consumer<TokenMetaDataBuilder> metaData) {
         TokenMetaDataBuilder builder = TokenMetaData.builder(this);
         metaData.accept(builder);
-        this.metaData = builder.ok();
+        this.metaData = builder.build();
     }
 
     @Override

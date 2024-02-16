@@ -47,7 +47,7 @@ public enum AssertTokenType implements EnumTokenType {
     AssertTokenType(Customizer<TokenMetaDataBuilder> customizer) {
         TokenMetaDataBuilder builder = TokenMetaData.builder(this);
         customizer.configure(builder);
-        this.metaData = builder.ok();
+        this.metaData = builder.build();
     }
 
     @Override
