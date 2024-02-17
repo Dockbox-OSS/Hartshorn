@@ -109,7 +109,7 @@ public enum PairTokenType implements EnumTokenType {
                 .representation(String.valueOf(character.character()))
                 .defaultLexeme(String.valueOf(character.character()))
                 .characters(character)
-                .ok();
+                .build();
         this.position = position;
     }
 

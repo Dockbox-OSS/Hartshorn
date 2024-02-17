@@ -51,7 +51,7 @@ public enum MemberModifierTokenType implements EnumTokenType {
     MemberModifierTokenType() {
         this.metaData = TokenMetaData.builder(this)
                 .keyword(true)
-                .ok();
+                .build();
     }
 
     @Override

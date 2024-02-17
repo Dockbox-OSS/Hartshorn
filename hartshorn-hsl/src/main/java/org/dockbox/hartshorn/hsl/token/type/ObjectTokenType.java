@@ -45,7 +45,7 @@ public enum ObjectTokenType implements EnumTokenType {
     ObjectTokenType() {
         this.metaData = TokenMetaData.builder(this)
                 .keyword(true)
-                .ok();
+                .build();
     }
 
     @Override

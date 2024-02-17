@@ -40,7 +40,7 @@ public enum ImportTokenType implements EnumTokenType {
         this.metaData = TokenMetaData.builder(this)
                 .keyword(true)
                 .standaloneStatement(true)
-                .ok();
+                .build();
     }
 
     @Override
