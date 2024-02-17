@@ -245,15 +245,18 @@ public class SimpleTokenRegistryLexer implements Lexer {
      */
     protected void scanToken() {
         TokenCharacter tokenCharacter = this.pointToNextChar();
-        if (tokenCharacter instanceof SharedTokenCharacter sharedTokenCharacter) {
+        if(tokenCharacter == this.tokenRegistry().characterList().nullCharacter()) {
+            throw new ScriptEvaluationError(UNEXPECTED_NULL, Phase.TOKENIZING, this.line(), this.column());
+        }
+        else if(this.tokenRegistry().isLineSeparator(tokenCharacter)) {
+            this.nextLine();
+        }
+        else if (tokenCharacter instanceof SharedTokenCharacter sharedTokenCharacter) {
             switch(sharedTokenCharacter) {
                 case SPACE, CARRIAGE_RETURN, TAB -> { /* Ignore whitespace. */ }
                 case NEWLINE -> this.nextLine();
                 case NULL -> throw new ScriptEvaluationError(UNEXPECTED_NULL, Phase.TOKENIZING, this.line(), this.column());
             }
-        }
-        else if(tokenCharacter == this.tokenRegistry().characterList().nullCharacter()) {
-            throw new ScriptEvaluationError(UNEXPECTED_NULL, Phase.TOKENIZING, this.line(), this.column());
         }
         else {
             TokenCharacterList characterList = this.tokenRegistry().characterList();
