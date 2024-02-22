@@ -23,11 +23,13 @@ import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterCache;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterRegistry;
+import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverters;
 import org.dockbox.hartshorn.util.introspect.convert.NullAccess;
@@ -251,7 +253,12 @@ public abstract class ConversionServiceTests {
     @Test
     void testImplicitDefaultValueProviderIsAdaptedCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
-                registry -> registry.addDefaultValueProvider(() -> ""),
+                registry -> registry.addDefaultValueProvider(new DefaultValueProvider<String>() {
+                    @Override
+                    public @Nullable String defaultValue() {
+                        return "";
+                    }
+                }),
                 NullAccess.getInstance(), String.class,
                 ConverterType.DEFAULT_VALUE_PROVIDER
         );
