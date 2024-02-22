@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.runtime.Return;
@@ -26,16 +26,23 @@ import org.dockbox.hartshorn.hsl.runtime.Return;
 public class TestStatementInterpreter implements ASTNodeInterpreter<Void, TestStatement> {
 
     @Override
-    public Void interpret(TestStatement node, InterpreterAdapter adapter) {
+    public Void interpret(TestStatement node, Interpreter interpreter) {
         String name = String.valueOf(node.name().literal());
-        VariableScope variableScope = new VariableScope(adapter.global());
+        VariableScope previousScope = interpreter.visitingScope();
+
+        VariableScope variableScope = new VariableScope(previousScope);
+        interpreter.enterScope(variableScope);
+
         try {
-            adapter.execute(node.body(), variableScope);
+            interpreter.execute(node.body(), variableScope);
         }
         catch (Return r) {
             Object value = r.value();
             boolean val = InterpreterUtilities.isTruthy(value);
-            adapter.interpreter().resultCollector().addResult(name, val);
+            interpreter.resultCollector().addResult(name, val);
+        }
+        finally {
+            interpreter.enterScope(previousScope);
         }
         return null;
     }

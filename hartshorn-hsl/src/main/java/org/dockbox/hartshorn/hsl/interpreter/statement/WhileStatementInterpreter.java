@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,16 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
 public class WhileStatementInterpreter implements ASTNodeInterpreter<Void, WhileStatement> {
 
     @Override
-    public Void interpret(WhileStatement node, InterpreterAdapter adapter) {
-        while (InterpreterUtilities.isTruthy(adapter.evaluate(node.condition()))) {
+    public Void interpret(WhileStatement node, Interpreter interpreter) {
+        while (InterpreterUtilities.isTruthy(interpreter.evaluate(node.condition()))) {
             try {
-                adapter.execute(node.body());
+                interpreter.execute(node.body());
             }
             catch (MoveKeyword moveKeyword) {
                 if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {

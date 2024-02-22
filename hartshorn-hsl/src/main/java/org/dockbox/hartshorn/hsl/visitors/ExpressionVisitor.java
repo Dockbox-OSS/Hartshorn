@@ -50,51 +50,51 @@ import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
  */
 public interface ExpressionVisitor<R> {
 
-    R visit(BinaryExpression expr);
+    R visit(BinaryExpression expression);
 
-    R visit(RangeExpression expr);
+    R visit(RangeExpression expression);
 
-    R visit(GroupingExpression expr);
+    R visit(GroupingExpression expression);
 
-    R visit(LiteralExpression expr);
+    R visit(LiteralExpression expression);
 
-    R visit(AssignExpression expr);
+    R visit(AssignExpression expression);
 
-    R visit(LogicalAssignExpression expr);
+    R visit(LogicalAssignExpression expression);
 
-    R visit(UnaryExpression expr);
+    R visit(UnaryExpression expression);
 
-    R visit(PostfixExpression expr);
+    R visit(PostfixExpression expression);
 
-    R visit(LogicalExpression expr);
+    R visit(LogicalExpression expression);
 
-    R visit(BitwiseExpression expr);
+    R visit(BitwiseExpression expression);
 
-    R visit(FunctionCallExpression expr);
+    R visit(FunctionCallExpression expression);
 
-    R visit(GetExpression expr);
+    R visit(GetExpression expression);
 
-    R visit(SetExpression expr);
+    R visit(SetExpression expression);
 
-    R visit(ThisExpression expr);
+    R visit(ThisExpression expression);
 
-    R visit(SuperExpression expr);
+    R visit(SuperExpression expression);
 
-    R visit(VariableExpression expr);
+    R visit(VariableExpression expression);
 
-    R visit(ElvisExpression expr);
+    R visit(ElvisExpression expression);
 
-    R visit(TernaryExpression expr);
+    R visit(TernaryExpression expression);
 
-    R visit(ArraySetExpression expr);
+    R visit(ArraySetExpression expression);
 
-    R visit(ArrayGetExpression expr);
+    R visit(ArrayGetExpression expression);
 
-    R visit(ArrayLiteralExpression expr);
+    R visit(ArrayLiteralExpression expression);
 
-    R visit(ArrayComprehensionExpression expr);
+    R visit(ArrayComprehensionExpression expression);
 
-    R visit(PrefixExpression expr);
+    R visit(PrefixExpression expression);
 
-    R visit(InfixExpression expr);
+    R visit(InfixExpression expression);
 }

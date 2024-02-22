@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
-import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-
 import java.util.List;
+
+import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
+import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 public class ConstructorStatement extends ParametricExecutableStatement {
 
@@ -38,11 +39,14 @@ public class ConstructorStatement extends ParametricExecutableStatement {
     }
 
     public Token initializerIdentifier() {
-        return Token.of(TokenType.CONSTRUCTOR)
-                .lexeme("<init>")
+        return Token.of(this.type())
                 .literal(this.keyword().line())
                 .position(this.keyword())
                 .build();
+    }
+
+    protected TokenType type() {
+        return FunctionTokenType.CONSTRUCTOR;
     }
 
     @Override

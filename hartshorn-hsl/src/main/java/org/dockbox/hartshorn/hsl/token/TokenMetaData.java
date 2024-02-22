@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+
 /**
  * A set of metadata providing extra information about a single {@link TokenType}. Token
  * metadata is immutable, as it is part of the lexical definition of a token.
@@ -23,7 +25,7 @@ package org.dockbox.hartshorn.hsl.token;
  * @author Guus Lieben
  * @since 0.4.12
  */
-public class TokenMetaData {
+public class TokenMetaData implements TokenType {
 
     private final TokenType type;
     private final String representation;
@@ -31,16 +33,21 @@ public class TokenMetaData {
     private final boolean standaloneStatement;
     private final boolean reserved;
     private final TokenType assignsWith;
+    private final String defaultLexeme;
+    private final TokenCharacter[] characters;
 
     TokenMetaData(TokenType type, String representation,
-                  boolean keyword, boolean standaloneStatement, 
-                  boolean reserved, TokenType assignsWith) {
+            boolean keyword, boolean standaloneStatement,
+            boolean reserved, TokenType assignsWith,
+            String defaultLexeme, TokenCharacter[] characters) {
         this.type = type;
         this.representation = representation;
         this.keyword = keyword;
         this.standaloneStatement = standaloneStatement;
         this.reserved = reserved;
         this.assignsWith = assignsWith;
+        this.defaultLexeme = defaultLexeme;
+        this.characters = characters;
     }
 
     /**
@@ -51,10 +58,16 @@ public class TokenMetaData {
         return this.type;
     }
 
+    @Override
+    public String tokenName() {
+        return this.type.tokenName();
+    }
+
     /**
      * Gets the standard representation of the {@link TokenType}.
      * @return The representation of the token.
      */
+    @Override
     public String representation() {
         return this.representation;
     }
@@ -63,6 +76,7 @@ public class TokenMetaData {
      * Gets whether the {@link TokenType} represents a keyword.
      * @return {@code true} if the token represents a keyword, or {@code false}.
      */
+    @Override
     public boolean keyword() {
         return this.keyword;
     }
@@ -73,6 +87,7 @@ public class TokenMetaData {
      * but can optionally accept expressions when parsed.
      * @return {@code true} if the token can be used as a standalone statement.
      */
+    @Override
     public boolean standaloneStatement() {
         return this.standaloneStatement;
     }
@@ -82,6 +97,7 @@ public class TokenMetaData {
      * to indicate a token that is not yet supported, but is reserved for future use.
      * @return {@code true} if the token is reserved.
      */
+    @Override
     public boolean reserved() {
         return this.reserved;
     }
@@ -91,8 +107,19 @@ public class TokenMetaData {
      * typically used to indicate a token that can be used as an assignment operator.
      * @return The {@link TokenType} which this {@link TokenType} assigns with.
      */
+    @Override
     public TokenType assignsWith() {
         return this.assignsWith;
+    }
+
+    @Override
+    public String defaultLexeme() {
+        return this.defaultLexeme;
+    }
+
+    @Override
+    public TokenCharacter[] characters() {
+        return this.characters;
     }
 
     /**

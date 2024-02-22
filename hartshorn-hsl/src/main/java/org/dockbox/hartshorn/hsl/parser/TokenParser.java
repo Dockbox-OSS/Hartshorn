@@ -16,20 +16,25 @@
 
 package org.dockbox.hartshorn.hsl.parser;
 
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
-import java.util.Set;
 
 public interface TokenParser extends Context {
 
+    TokenRegistry tokenRegistry();
+
     TokenParser statementParser(ASTNodeParser<? extends Statement> parser);
+
+    TokenParser expressionParser(ASTNodeParser<? extends Expression> parser);
 
     List<Statement> parse();
 

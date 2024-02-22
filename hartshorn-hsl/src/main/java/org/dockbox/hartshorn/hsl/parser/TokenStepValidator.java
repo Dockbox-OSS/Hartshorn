@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.hsl.parser;
 
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 public interface TokenStepValidator {
 

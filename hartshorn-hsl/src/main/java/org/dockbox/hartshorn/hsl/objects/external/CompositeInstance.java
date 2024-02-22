@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
@@ -29,7 +30,7 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -94,7 +95,10 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
                     field.get().set(this.instance, value);
                 }
                 catch (Throwable throwable) {
-                    throw new RuntimeError(name, "Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()), throwable);
+                    throw new ScriptEvaluationError(
+                            throwable, "Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()),
+                            Phase.INTERPRETING, name
+                    );
                 }
             }
             else {
@@ -117,7 +121,10 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
                     return field.get().get(this.instance);
                 }
                 catch (Throwable throwable) {
-                    throw new RuntimeError(name, "Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()), throwable);
+                    throw new ScriptEvaluationError(
+                            throwable, "Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()),
+                            Phase.INTERPRETING, name
+                    );
                 }
             }
             else {

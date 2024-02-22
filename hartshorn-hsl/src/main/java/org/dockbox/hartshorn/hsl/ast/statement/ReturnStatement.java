@@ -23,20 +23,20 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 public class ReturnStatement extends Statement {
 
     private final Token keyword;
-    private final Expression value;
+    private final Expression expression;
 
-    public ReturnStatement(Token keyword, Expression value) {
+    public ReturnStatement(Token keyword, Expression expression) {
         super(keyword);
         this.keyword = keyword;
-        this.value = value;
+        this.expression = expression;
     }
 
     public Token keyword() {
         return this.keyword;
     }
 
-    public Expression value() {
-        return this.value;
+    public Expression expression() {
+        return this.expression;
     }
 
     @Override

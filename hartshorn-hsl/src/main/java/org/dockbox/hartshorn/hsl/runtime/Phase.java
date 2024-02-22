@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
+import org.dockbox.hartshorn.hsl.lexer.SimpleTokenRegistryLexer;
+
 /**
  * Represents each of the primary runtime phases which are performed when evaluating
  * a single HSL source.
@@ -25,14 +27,14 @@ package org.dockbox.hartshorn.hsl.runtime;
  */
 public enum Phase {
     /**
-     * Performed by the {@link org.dockbox.hartshorn.hsl.lexer.Lexer}, to convert the
+     * Performed by the {@link SimpleTokenRegistryLexer}, to convert the
      * source content into {@link org.dockbox.hartshorn.hsl.token.Token}s. This is the
      * first step of the script evaluation process.
      */
     TOKENIZING,
     /**
      * Performed by the {@link org.dockbox.hartshorn.hsl.parser.TokenParser}, to convert
-     * the token output of the {@link org.dockbox.hartshorn.hsl.lexer.Lexer} into
+     * the token output of the {@link SimpleTokenRegistryLexer} into
      * {@link org.dockbox.hartshorn.hsl.ast.statement.Statement}s. This is the second
      * step of the script evaluation process.
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,31 +16,32 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class BlockStatementParser implements ASTNodeParser<BlockStatement> {
 
     @Override
-    public Option<BlockStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.check(TokenType.LEFT_BRACE)) {
+    public Option<? extends BlockStatement> parse(TokenParser parser, TokenStepValidator validator) {
+        TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
+        if (parser.check(block.open())) {
             Token start = parser.advance();
 
             List<Statement> statements = new ArrayList<>();
-            while (!parser.check(TokenType.RIGHT_BRACE) && !parser.isAtEnd()) {
+            while (!parser.check(block.close()) && !parser.isAtEnd()) {
                 statements.add(parser.statement());
             }
-            validator.expectAfter(TokenType.RIGHT_BRACE, "block");
+            validator.expectAfter(block.close(), "block");
 
             return Option.of(new BlockStatement(start, statements));
         }

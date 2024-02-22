@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,11 @@ public class ScriptEvaluationError extends RuntimeException {
     }
 
     public ScriptEvaluationError(Throwable cause, Phase phase, ASTNode at) {
-        this(cause, cause.getMessage(), phase, at, at.line(), at.column());
+        this(cause, cause.getMessage(), phase, at);
+    }
+
+    public ScriptEvaluationError(Throwable cause, String message, Phase phase, ASTNode at) {
+        this(cause, message, phase, at, at.line(), at.column());
     }
 
     public ScriptEvaluationError(Throwable cause, String message, Phase phase, ASTNode at, int line, int column) {

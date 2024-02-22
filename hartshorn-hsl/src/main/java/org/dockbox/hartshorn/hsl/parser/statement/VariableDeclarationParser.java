@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,30 +16,33 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.VariableTokenType;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
 
 public class VariableDeclarationParser implements ASTNodeParser<VariableStatement> {
 
     @Override
-    public Option<VariableStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(TokenType.VAR)) {
-            Token name = validator.expect(TokenType.IDENTIFIER, "variable name");
+    public Option<? extends VariableStatement> parse(TokenParser parser, TokenStepValidator validator) {
+        if (parser.match(VariableTokenType.VAR)) {
+            TokenType identifier = parser.tokenRegistry().literals().identifier();
+            Token name = validator.expect(identifier, "variable name");
 
             Expression initializer = null;
-            if (parser.match(TokenType.EQUAL)) {
+            if (parser.match(BaseTokenType.EQUAL)) {
                 initializer = parser.expression();
             }
 
-            validator.expectAfter(TokenType.SEMICOLON, "variable declaration");
+            validator.expectAfter(parser.tokenRegistry().statementEnd(), "variable declaration");
             return Option.of(new VariableStatement(name, initializer));
         }
         return Option.empty();

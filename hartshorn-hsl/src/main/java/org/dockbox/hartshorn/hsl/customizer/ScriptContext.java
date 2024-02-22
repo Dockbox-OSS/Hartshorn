@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -25,12 +29,10 @@ import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The standard context which tracks the state of the execution of a script. It is used by the
@@ -43,12 +45,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ScriptContext extends DefaultApplicationAwareContext implements ResultCollector {
 
-    private static final String GLOBAL_RESULT = "$__result__$";
+    private static final String GLOBAL_RESULT = ScriptContext.createSafeRuntimeVariable("result");
     protected Map<String, Object> results = new ConcurrentHashMap<>();
 
     private final ScriptRuntime runtime;
     private final String source;
 
+    private String scriptName = "HSL Script %d".formatted(this.hashCode());
+
+    private TokenRegistry tokenRegistry = DefaultTokenRegistry.createDefault();
     private List<Token> tokens;
     private List<Statement> statements;
     private List<Comment> comments;
@@ -68,12 +73,30 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
         return this.source;
     }
 
+    public String scriptName() {
+        return this.scriptName;
+    }
+
+    public ScriptContext scriptName(String scriptName) {
+        this.scriptName = scriptName;
+        return this;
+    }
+
     public List<Token> tokens() {
         return this.tokens;
     }
 
     public ScriptContext tokens(List<Token> tokens) {
         this.tokens = tokens;
+        return this;
+    }
+
+    public TokenRegistry tokenRegistry() {
+        return this.tokenRegistry;
+    }
+
+    public ScriptContext tokenRegistry(TokenRegistry tokenRegistry) {
+        this.tokenRegistry = tokenRegistry;
         return this;
     }
 
@@ -168,5 +191,9 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
     @Override
     public void clear() {
         this.results.clear();
+    }
+
+    public static String createSafeRuntimeVariable(String name) {
+        return "$__%s__$".formatted(name);
     }
 }

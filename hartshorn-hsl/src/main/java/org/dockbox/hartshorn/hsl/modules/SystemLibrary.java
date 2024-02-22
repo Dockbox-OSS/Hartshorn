@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
-import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.slf4j.Logger;
+import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -28,7 +28,11 @@ import org.slf4j.LoggerFactory;
  */
 public class SystemLibrary {
 
-    private final Logger logger = LoggerFactory.getLogger("HSL Script::" + this.hashCode());
+    private final ScriptContext context;
+
+    public SystemLibrary(ScriptContext context) {
+        this.context = context;
+    }
 
     /**
      * @see System#getenv(String)
@@ -39,12 +43,13 @@ public class SystemLibrary {
 
     public void print(Object object) {
         String text = this.stringify(object);
-        this.logger.info(text);
+        // Create logger late, in case the script name changes.
+        LoggerFactory.getLogger(context.scriptName()).info(text);
     }
 
     public String stringify(Object object) {
         if (object == null) {
-            return TokenType.NULL.representation();
+            return LiteralTokenType.NULL.representation();
         }
         // Hack. Work around Java adding ".0" to integer-valued doubles.
         if (object instanceof Double) {

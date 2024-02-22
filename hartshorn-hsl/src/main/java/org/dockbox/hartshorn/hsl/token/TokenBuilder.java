@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+
 public class TokenBuilder {
 
     private final TokenType type;
@@ -30,6 +33,9 @@ public class TokenBuilder {
 
     public TokenBuilder literal(Object literal) {
         this.literal = literal;
+        if (this.lexeme == null) {
+            this.lexeme = String.valueOf(literal);
+        }
         return this;
     }
 
@@ -55,6 +61,17 @@ public class TokenBuilder {
     }
 
     public Token build() {
+        if (lexeme == null) {
+            if (this.type.keyword()) {
+                this.lexeme = this.type.representation();
+            }
+            else if (this.type == LiteralTokenType.EOF) {
+                this.lexeme = "";
+            }
+            else {
+                throw new IllegalArgumentException("Cannot create a token of a non-keyword type without a lexeme");
+            }
+        }
         return new Token(this.type, this.lexeme, this.literal, this.line, this.column);
     }
 

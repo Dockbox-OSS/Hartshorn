@@ -28,6 +28,7 @@ import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * A collection of utility methods for working with collections. This class is not meant to be
@@ -202,5 +203,12 @@ public final class CollectionUtilities {
         else {
             return iterable.iterator().next();
         }
+    }
+
+    public static <T> String toString(Collection<T> collection, Function<T, ?> valueMapper) {
+        return collection.stream()
+                .map(valueMapper)
+                .map(Object::toString)
+                .reduce((a, b) -> a + ", " + b).orElse("");
     }
 }

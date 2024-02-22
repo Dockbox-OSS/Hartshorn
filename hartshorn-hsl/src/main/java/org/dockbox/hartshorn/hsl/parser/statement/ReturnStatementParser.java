@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,30 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
 
 public class ReturnStatementParser implements ASTNodeParser<ReturnStatement> {
 
     @Override
-    public Option<ReturnStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(TokenType.RETURN)) {
+    public Option<? extends ReturnStatement> parse(TokenParser parser, TokenStepValidator validator) {
+        if (parser.match(ControlTokenType.RETURN)) {
             Token keyword = parser.previous();
             Expression value = null;
-            if (!parser.check(TokenType.SEMICOLON)) {
+            TokenType statementEnd = parser.tokenRegistry().statementEnd();
+            if (!parser.check(statementEnd)) {
                 value = parser.expression();
             }
-            validator.expectAfter(TokenType.SEMICOLON, "return value");
+            validator.expectAfter(statementEnd, "return value");
             return Option.of(new ReturnStatement(keyword, value));
         }
         return Option.empty();

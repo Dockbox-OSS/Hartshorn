@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+
+import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
+import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
+import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 
 /**
  * Standard libraries for HSL runtimes. These libraries can be loaded by the {@link ScriptRuntime},
- * making them accessible to the {@link org.dockbox.hartshorn.hsl.interpreter.Interpreter}, but are
+ * making them accessible to the {@link SimpleVisitorInterpreter}, but are
  * not guaranteed to be.
  *
  * <p>The libraries in this class are sorted alphabetically by name, and should never contain duplicate
@@ -34,16 +36,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 0.4.12
  */
 public enum StandardLibrary {
-    MATH("math", MathLibrary.class),
-    SYSTEM("system", SystemLibrary.class),
+    MATH("math", context -> new MathLibrary()),
+    SYSTEM("system", SystemLibrary::new),
     ;
 
     private final String name;
-    private final Class<?> libraryClass;
+    private final Function<ScriptContext, NativeModule> moduleProvider;
 
-    StandardLibrary(String name, Class<?> libraryClass) {
+    StandardLibrary(String name, Function<ScriptContext, ?> initializer) {
         this.name = name;
-        this.libraryClass = libraryClass;
+        this.moduleProvider = context -> {
+            Object instance = initializer.apply(context);
+            return new InstanceNativeModule(context.applicationContext(), instance);
+        };
     }
 
     /**
@@ -56,22 +61,13 @@ public enum StandardLibrary {
     }
 
     /**
-     * Get the class representing this library. This is typically only used to create
-     * a new {@link NativeModule}.
-     * @return The class of this library.
-     */
-    public Class<?> libraryClass() {
-        return this.libraryClass;
-    }
-
-    /**
      * Get the {@link NativeModule} instance for this library. This is lazily loaded, and only created
      * when it is requested.
      * @param context The application context.
      * @return The {@link NativeModule} instance for this library.
      */
-    public NativeModule asModule(ApplicationContext context) {
-        return new ApplicationBoundNativeModule(this.libraryClass, context);
+    public NativeModule asModule(ScriptContext context) {
+        return moduleProvider.apply(context);
     }
 
     /**
@@ -80,7 +76,7 @@ public enum StandardLibrary {
      * @param context The application context.
      * @return The {@link NativeModule} instances for all libraries.
      */
-    public static Map<String, NativeModule> asModules(ApplicationContext context) {
+    public static Map<String, NativeModule> asModules(ScriptContext context) {
         Map<String, NativeModule> modules = new ConcurrentHashMap<>();
         for (StandardLibrary library : StandardLibrary.values()) {
             modules.put(library.libaryName(), library.asModule(context));

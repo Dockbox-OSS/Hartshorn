@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
@@ -24,8 +26,6 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
 
 public abstract class AbstractBodyStatementParser<T extends ASTNode> implements ASTNodeParser<T> {
 
@@ -36,7 +36,7 @@ public abstract class AbstractBodyStatementParser<T extends ASTNode> implements 
         }
 
         for (ASTNodeParser<BlockStatement> nodeParser : parsers) {
-            Option<BlockStatement> statement = nodeParser.parse(parser, validator);
+            Option<? extends BlockStatement> statement = nodeParser.parse(parser, validator);
             if (statement.present()) {
                 return statement.get();
             }

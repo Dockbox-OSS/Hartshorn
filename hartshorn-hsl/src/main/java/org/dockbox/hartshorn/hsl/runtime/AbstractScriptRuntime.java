@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,33 +20,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ParserCustomizer;
 import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.util.Customizer;
 import org.jetbrains.annotations.NotNull;
 
-public class AbstractScriptRuntime extends ExpressionConditionContext implements ScriptRuntime {
+public class AbstractScriptRuntime extends ExpressionConditionContext implements MutableScriptRuntime {
 
-    private final ParserCustomizer parserCustomizer;
-
-    private final ApplicationContext applicationContext;
     private final ScriptComponentFactory factory;
+    private final ApplicationContext applicationContext;
+
+    private ParserCustomizer parserCustomizer;
 
     protected AbstractScriptRuntime(
         ApplicationContext applicationContext,
         ScriptComponentFactory factory
     ) {
-        this(applicationContext, factory, parser -> {});
+        this(applicationContext, factory, parser -> {
+        });
     }
 
     protected AbstractScriptRuntime(
@@ -65,7 +69,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         return this.applicationContext;
     }
 
-    protected Map<String, NativeModule> standardLibraries() {
+    protected Map<String, NativeModule> standardLibraries(ScriptContext context) {
         return new HashMap<>();
     }
 
@@ -110,14 +114,15 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     @Override
     public ScriptContext runOnly(ScriptContext context, Phase only) {
         try {
-            switch (only) {
-                case TOKENIZING -> this.tokenize(context);
-                case PARSING -> this.parse(context);
-                case RESOLVING -> this.resolve(context);
-                case INTERPRETING -> this.interpret(context);
-                default -> throw new IllegalArgumentException("Unsupported standalone phase: " + only);
+            switch(only) {
+            case TOKENIZING -> this.tokenize(context);
+            case PARSING -> this.parse(context);
+            case RESOLVING -> this.resolve(context);
+            case INTERPRETING -> this.interpret(context);
+            default -> throw new IllegalArgumentException("Unsupported standalone phase: " + only);
             }
-        } catch (ScriptEvaluationError e) {
+        }
+        catch (ScriptEvaluationError e) {
             this.handleScriptEvaluationError(context, e);
         }
         return context;
@@ -130,15 +135,15 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         return context;
     }
 
-    protected Interpreter createInterpreter(ResultCollector resultCollector) {
-        Interpreter interpreter = this.factory.interpreter(resultCollector, this.standardLibraries(), this.applicationContext());
+    protected Interpreter createInterpreter(ScriptContext context) {
+        Interpreter interpreter = this.factory.interpreter(context, this.standardLibraries(context), context.tokenRegistry(), this.applicationContext());
         interpreter.state().externalModules(this.externalModules());
         interpreter.executionOptions(this.interpreterOptions());
         return interpreter;
     }
 
     protected void tokenize(ScriptContext context) {
-        context.lexer(this.factory.lexer(context.source()));
+        context.lexer(this.factory.lexer(context.tokenRegistry(), context.source()));
         this.customizePhase(Phase.TOKENIZING, context);
         List<Token> tokens = context.lexer().scanTokens();
         context.tokens(tokens);
@@ -146,7 +151,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     }
 
     protected void parse(ScriptContext context) {
-        TokenParser parser = this.factory.parser(context.tokens());
+        TokenParser parser = this.factory.parser(context.tokenRegistry(), context.tokens());
         this.parserCustomizer.configure(parser);
 
         context.parser(parser);
@@ -218,10 +223,36 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
             message = "%s\n%s\n%s".formatted(message, lineText, marker);
         }
 
-        ScriptEvaluationError evaluationError = new ScriptEvaluationError(error.getCause(), message, phase, error.at(), line, column);
+        ScriptEvaluationError evaluationError = new ScriptEvaluationError(error, message, phase, error.at(), line, column);
         // We only want to customize the error message, not the stack trace, so we
         // keep the original stack trace.
         evaluationError.setStackTrace(evaluationError.getStackTrace());
         throw evaluationError;
+    }
+
+    @Override
+    public void expressionParser(ASTNodeParser<? extends Expression> expressionParser) {
+        this.parserCustomizer = this.parserCustomizer.compose(parser -> parser.expressionParser(expressionParser));
+    }
+
+    @Override
+    public void statementParser(ASTNodeParser<? extends Statement> statementParser) {
+        this.parserCustomizer = this.parserCustomizer.compose(parser -> parser.statementParser(statementParser));
+    }
+
+    @Override
+    public void scriptContextCustomizer(Customizer<ScriptContext> customizer) {
+        this.customizer(new CodeCustomizer() {
+
+            @Override
+            public Phase phase() {
+                return Phase.TOKENIZING;
+            }
+
+            @Override
+            public void call(ScriptContext context) {
+                customizer.configure(context);
+            }
+        });
     }
 }

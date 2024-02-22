@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 public class BitwiseExpressionInterpreter extends BitwiseInterpreter<Object, BitwiseExpression> {
 
     @Override
-    public Object interpret(BitwiseExpression node, InterpreterAdapter adapter) {
-        Object left = adapter.evaluate(node.leftExpression());
-        Object right = adapter.evaluate(node.rightExpression());
+    public Object interpret(BitwiseExpression node, Interpreter interpreter) {
+        Object left = interpreter.evaluate(node.leftExpression());
+        Object right = interpreter.evaluate(node.rightExpression());
         return this.getBitwiseResult(node.operator(), left, right);
     }
 }

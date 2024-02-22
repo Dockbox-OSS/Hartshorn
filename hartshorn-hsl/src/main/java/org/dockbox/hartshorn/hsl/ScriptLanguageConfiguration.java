@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.hsl.customizer.DefaultScriptStatementsParserCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
@@ -29,6 +30,7 @@ import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 
 @Configuration
 @RequiresActivator(UseExpressionValidation.class)
@@ -41,12 +43,12 @@ public class ScriptLanguageConfiguration {
 
     @Binds
     private TokenParser tokenParser() {
-        return new StandardTokenParser();
+        return new StandardTokenParser(DefaultTokenRegistry.createDefault());
     }
 
     @Binds
     private ExpressionParser expressionParser() {
-        return new ComplexExpressionParserAdapter();
+        return new ComplexExpressionParserAdapter(() -> null);
     }
 
     @Binds

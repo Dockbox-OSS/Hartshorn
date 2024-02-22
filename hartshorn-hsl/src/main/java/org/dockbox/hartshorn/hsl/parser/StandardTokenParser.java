@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.parser;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
@@ -26,17 +35,11 @@ import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapte
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 
@@ -46,42 +49,70 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
     private final List<Token> tokens;
 
     private final Set<ASTNodeParser<? extends Statement>> statementParsers = ConcurrentHashMap.newKeySet();
+    private final Set<ASTNodeParser<? extends Expression>> expressionParsers = ConcurrentHashMap.newKeySet();
     private final TokenStepValidator validator;
     private final ExpressionParser expressionParser;
+    private final TokenRegistry tokenRegistry;
 
     @Inject
-    public StandardTokenParser() {
-        this(new ArrayList<>());
+    public StandardTokenParser(TokenRegistry tokenRegistry) {
+        this(tokenRegistry, new ArrayList<>());
     }
 
-    @Inject
-    public StandardTokenParser(ExpressionParser parser, TokenStepValidator validator) {
-        this(new ArrayList<>(), parser, validator);
-    }
-
-    public StandardTokenParser(List<Token> tokens) {
-        this.expressionParser = new ComplexExpressionParserAdapter();
+    public StandardTokenParser(TokenRegistry tokenRegistry, List<Token> tokens) {
+        this.tokenRegistry = tokenRegistry;
+        this.expressionParser = new ComplexExpressionParserAdapter(this::parseModuleExpression);
         this.validator = new StandardTokenStepValidator(this);
-        this.tokens = tokens;
+        this.tokens = new LinkedList<>(tokens);
     }
 
-    public StandardTokenParser(List<Token> tokens, ExpressionParser parser, TokenStepValidator validator) {
-        this.tokens = tokens;
-        this.expressionParser = parser;
-        this.validator = validator;
+    private Expression parseModuleExpression() {
+        for(ASTNodeParser<? extends Expression> parser : this.expressionParsers()) {
+            Option<? extends Expression> result = parser.parse(this, this.validator);
+            if (result.present()) {
+                return result.get();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public TokenRegistry tokenRegistry() {
+        return this.tokenRegistry;
     }
 
     @Override
     public StandardTokenParser statementParser(ASTNodeParser<? extends Statement> parser) {
         if (parser != null) {
-            for(Class<? extends Statement> type : parser.types()) {
-                if (!Statement.class.isAssignableFrom(type)) {
-                    throw new IllegalArgumentException("Parser " + parser.getClass().getName() + " indicated potential yield of type type " + type.getName() + " which is not a child of Statement");
-                }
-            }
+            validateParser(parser, Statement.class);
             this.statementParsers.add(parser);
         }
         return this;
+    }
+
+    @Override
+    public TokenParser expressionParser(ASTNodeParser<? extends Expression> parser) {
+        if (parser != null) {
+            validateParser(parser, Expression.class);
+            this.expressionParsers.add(parser);
+        }
+        return this;
+    }
+
+    public Set<ASTNodeParser<? extends Statement>> statementParsers() {
+        return statementParsers;
+    }
+
+    public Set<ASTNodeParser<? extends Expression>> expressionParsers() {
+        return expressionParsers;
+    }
+
+    private static <T extends ASTNode> void validateParser(ASTNodeParser<? extends T> parser, Class<T> expectedType) {
+        for(Class<? extends T> type : parser.types()) {
+            if (!expectedType.isAssignableFrom(type)) {
+                throw new IllegalArgumentException("Parser " + parser.getClass().getName() + " indicated potential yield of type type " + type.getName() + " which is not a child of " + expectedType.getSimpleName());
+            }
+        }
     }
 
     @Override
@@ -133,7 +164,7 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
 
     @Override
     public boolean isAtEnd() {
-        return this.peek().type() == TokenType.EOF;
+        return this.peek().type() == LiteralTokenType.EOF;
     }
 
     @Override
@@ -151,7 +182,7 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
         if (this.check(type)) {
             return this.advance();
         }
-        if (type != TokenType.SEMICOLON) {
+        if (type != this.tokenRegistry().statementEnd()) {
             throw new ScriptEvaluationError(message, Phase.PARSING, this.peek());
         }
         return null;
@@ -160,9 +191,7 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
     @Override
     public Statement statement() {
         for (ASTNodeParser<? extends Statement> parser : this.statementParsers) {
-            Option<? extends Statement> statement = parser.parse(this, this.validator)
-                    .attempt(ScriptEvaluationError.class)
-                    .rethrow();
+            Option<? extends Statement> statement = parser.parse(this, this.validator);
             if (statement.present()) {
                 return statement.get();
             }
@@ -172,23 +201,20 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
         if (type.standaloneStatement()) {
             throw new ScriptEvaluationError("Unsupported standalone statement type: " + type, Phase.PARSING, this.peek());
         }
-
         return this.expressionStatement();
     }
 
     @Override
     public ExpressionStatement expressionStatement() {
-        Expression expr = this.expression();
-        this.validator.expectAfter(TokenType.SEMICOLON, "expression");
-        return new ExpressionStatement(expr);
+        Expression expression = this.expression();
+        this.validator.expectAfter(this.tokenRegistry().statementEnd(), "expression");
+        return new ExpressionStatement(expression);
     }
 
     @Override
     public Expression expression() {
         return this.expressionParser.parse(this, this.validator)
-                .attempt(ScriptEvaluationError.class)
-                .rethrow()
-                .orElseThrow(() -> new ScriptEvaluationError("Unsupported expression type", Phase.PARSING, this.peek()));
+                .orElseThrow(() -> new ScriptEvaluationError("Expected expression, but found " + this.peek(), Phase.PARSING, this.peek()));
     }
 
     @Override

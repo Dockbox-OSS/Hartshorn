@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.LogicalAssignExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 public class LogicalAssignExpressionInterpreter extends BitwiseInterpreter<Object, LogicalAssignExpression> {
 
     @Override
-    public Object interpret(LogicalAssignExpression node, InterpreterAdapter adapter) {
+    public Object interpret(LogicalAssignExpression node, Interpreter interpreter) {
         Token name = node.name();
-        Object left = adapter.lookUpVariable(name, node);
+        Object left = interpreter.lookUpVariable(name, node);
 
-        Object right = adapter.evaluate(node.value());
+        Object right = interpreter.evaluate(node.value());
 
         Token op = node.assignmentOperator();
         TokenType bitwiseOperator = node.logicalOperator();
@@ -40,12 +40,12 @@ public class LogicalAssignExpressionInterpreter extends BitwiseInterpreter<Objec
                 .build();
         Object result = this.getBitwiseResult(token, left, right);
 
-        Integer distance = adapter.distance(node);
+        Integer distance = interpreter.distance(node);
         if (distance != null) {
-            adapter.visitingScope().assignAt(distance, name, result);
+            interpreter.visitingScope().assignAt(distance, name, result);
         }
         else {
-            adapter.global().assign(name, result);
+            interpreter.global().assign(name, result);
         }
         return result;
     }

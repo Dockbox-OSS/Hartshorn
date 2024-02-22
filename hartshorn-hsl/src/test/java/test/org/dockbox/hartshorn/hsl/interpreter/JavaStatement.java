@@ -16,19 +16,19 @@
 
 package test.org.dockbox.hartshorn.hsl.interpreter;
 
+import java.util.function.Consumer;
+
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-
-import java.util.function.Consumer;
 
 public class JavaStatement extends Statement {
 
     private final Consumer<StatementVisitor<?>> consumer;
 
     public JavaStatement(Consumer<StatementVisitor<?>> consumer) {
-        super(Token.of(TokenType.NATIVE).build());
+        super(Token.of(FunctionTokenType.NATIVE).build());
         this.consumer = consumer;
     }
 

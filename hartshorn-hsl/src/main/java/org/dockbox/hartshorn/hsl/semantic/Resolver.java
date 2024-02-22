@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.semantic;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
 import org.dockbox.hartshorn.hsl.ast.MoveKeyword.ScopeType;
@@ -24,15 +29,12 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.extension.CustomExpression;
+import org.dockbox.hartshorn.hsl.extension.CustomStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.Finalizable;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
 
 /**
  * Standard resolver to perform semantic analysis and type checking before a collection
@@ -124,24 +126,34 @@ public class Resolver {
         this.finals.pop();
     }
 
-    public void resolve(List<Statement> stmtList) {
-        for (Statement statement : stmtList) {
+    public void resolve(List<Statement> statements) {
+        for (Statement statement : statements) {
             this.resolve(statement);
         }
     }
 
-    public void resolve(Statement stmt) {
-        stmt.accept(this.visitor);
+    public void resolve(Statement statement) {
+        if (statement instanceof CustomStatement<?> customStatement) {
+            customStatement.resolve(this);
+        }
+        else {
+            statement.accept(this.visitor);
+        }
     }
 
-    public void resolve(Expression expr) {
-        expr.accept(this.visitor);
+    public void resolve(Expression expression) {
+        if (expression instanceof CustomExpression<?> customExpression) {
+            customExpression.resolve(this);
+        }
+        else {
+            expression.accept(this.visitor);
+        }
     }
 
-    public void resolveLocal(Expression expr, Token name) {
+    public void resolveLocal(Expression expression, Token name) {
         for (int i = this.scopes.size() - 1; i >= 0; i--) {
             if (this.scopes.get(i).containsKey(name.lexeme())) {
-                this.interpreter.resolve(expr, this.scopes.size() - 1 - i);
+                this.interpreter.resolve(expression, this.scopes.size() - 1 - i);
                 return;
             }
         }

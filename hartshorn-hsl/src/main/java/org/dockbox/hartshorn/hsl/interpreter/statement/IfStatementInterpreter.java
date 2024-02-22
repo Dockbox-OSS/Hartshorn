@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,28 +18,28 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 
 public class IfStatementInterpreter implements ASTNodeInterpreter<Void, IfStatement> {
 
     @Override
-    public Void interpret(IfStatement node, InterpreterAdapter adapter) {
-        Object conditionResult = adapter.evaluate(node.condition());
-        VariableScope previous = adapter.visitingScope();
+    public Void interpret(IfStatement node, Interpreter interpreter) {
+        Object conditionResult = interpreter.evaluate(node.condition());
+        VariableScope previous = interpreter.visitingScope();
 
         if (InterpreterUtilities.isTruthy(conditionResult)) {
             VariableScope thenVariableScope = new VariableScope(previous);
-            adapter.enterScope(thenVariableScope);
-            adapter.execute(node.thenBranch(), thenVariableScope);
+            interpreter.enterScope(thenVariableScope);
+            interpreter.execute(node.thenBranch(), thenVariableScope);
         }
         else if (node.elseBranch() != null) {
             VariableScope elseVariableScope = new VariableScope(previous);
-            adapter.enterScope(elseVariableScope);
-            adapter.execute(node.elseBranch(), elseVariableScope);
+            interpreter.enterScope(elseVariableScope);
+            interpreter.execute(node.elseBranch(), elseVariableScope);
         }
-        adapter.enterScope(previous);
+        interpreter.enterScope(previous);
         return null;
     }
 }

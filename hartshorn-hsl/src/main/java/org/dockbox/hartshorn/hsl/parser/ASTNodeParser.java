@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.option.Option;
 
 public interface ASTNodeParser<T extends ASTNode> {
 
-    Option<T> parse(TokenParser parser, TokenStepValidator validator) throws ScriptEvaluationError;
+    Option<? extends T> parse(TokenParser parser, TokenStepValidator validator) throws ScriptEvaluationError;
 
     Set<Class<? extends T>> types();
 }
