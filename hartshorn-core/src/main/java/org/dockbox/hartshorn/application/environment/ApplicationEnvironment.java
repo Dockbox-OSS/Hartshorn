@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Documented;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
+
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
@@ -28,15 +34,13 @@ import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Documented;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
-
 /**
  * The environment of an active application. The environment can only be responsible for one {@link ApplicationContext},
  * and will never be bound to multiple contexts at the same time.
+ *
+ * @since 0.4.4
+ *
+ * @author Guus Lieben
  */
 public interface ApplicationEnvironment extends ContextCarrier, ApplicationLogger, ExceptionHandler {
 

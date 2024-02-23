@@ -32,6 +32,8 @@ public interface DefaultBindingConfigurer {
 
     /**
      * Configures the default bindings of the application.
+     *
+     * @param binder The binder to use for configuring the default bindings.
      */
     void configure(Binder binder);
 

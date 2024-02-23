@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,47 +47,202 @@ import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
  * @since 0.4.12
  */
 public interface StatementVisitor<R> {
+
+    /**
+     * Visits the given {@link ExpressionStatement expression statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ExpressionStatement statement);
 
+    /**
+     * Visits the given {@link PrintStatement print statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(PrintStatement statement);
 
+    /**
+     * Visits the given {@link BlockStatement block statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(BlockStatement statement);
 
+    /**
+     * Visits the given {@link IfStatement if statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(IfStatement statement);
 
+    /**
+     * Visits the given {@link WhileStatement while statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(WhileStatement statement);
 
+    /**
+     * Visits the given {@link DoWhileStatement do-while statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(DoWhileStatement statement);
 
+    /**
+     * Visits the given {@link ForStatement for statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ForStatement statement);
 
+    /**
+     * Visits the given {@link ForEachStatement for-each statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ForEachStatement statement);
 
+    /**
+     * Visits the given {@link RepeatStatement repeat statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(RepeatStatement statement);
 
+    /**
+     * Visits the given {@link BreakStatement break statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(BreakStatement statement);
 
+    /**
+     * Visits the given {@link ContinueStatement continue statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ContinueStatement statement);
 
+    /**
+     * Visits the given {@link FunctionStatement function statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(FunctionStatement statement);
 
+    /**
+     * Visits the given {@link FieldStatement field statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(FieldStatement statement);
 
+    /**
+     * Visits the given {@link ConstructorStatement constructor statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ConstructorStatement statement);
 
+    /**
+     * Visits the given {@link VariableStatement variable statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(VariableStatement statement);
 
+    /**
+     * Visits the given {@link ReturnStatement return statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ReturnStatement statement);
 
+    /**
+     * Visits the given {@link ClassStatement class statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ClassStatement statement);
 
+    /**
+     * Visits the given {@link NativeFunctionStatement native function statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(NativeFunctionStatement statement);
 
+    /**
+     * Visits the given {@link TestStatement test statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(TestStatement statement);
 
+    /**
+     * Visits the given {@link ModuleStatement module statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ModuleStatement statement);
 
+    /**
+     * Visits the given {@link SwitchStatement switch statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(SwitchStatement statement);
 
+    /**
+     * Visits the given {@link SwitchCase switch case statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(SwitchCase statement);
 }

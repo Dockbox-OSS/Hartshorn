@@ -23,6 +23,14 @@ import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.jackson.JacksonDataMapper;
 
+/**
+ * A {@link JacksonDataMapper} that uses the JSON format. This mapper uses Jackson's {@link JsonMapper} to
+ * support {@link FileFormats#JSON JSON sources}.
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public class JsonDataMapper implements JacksonDataMapper {
 
     @Override

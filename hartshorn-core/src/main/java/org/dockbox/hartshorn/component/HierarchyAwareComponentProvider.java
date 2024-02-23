@@ -64,7 +64,7 @@ import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.TreeMultiMap;
+import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -481,7 +481,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             .collect(Collectors.toSet());
 
         // Track entire hierarchy, so potential duplicate top-priority hierarchies can be reported
-        TreeMultiMap<Integer, BindingHierarchy<?>> providers = new ConcurrentSetTreeMultiMap<>();
+        NavigableMultiMap<Integer, BindingHierarchy<?>> providers = new ConcurrentSetTreeMultiMap<>();
         for (BindingHierarchy<?> compatibleHierarchy : compatibleHierarchies) {
             int highestPriority = compatibleHierarchy.highestPriority();
             compatibleHierarchy.get(highestPriority).peek(provider -> {

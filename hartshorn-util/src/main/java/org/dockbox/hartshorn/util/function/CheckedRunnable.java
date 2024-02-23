@@ -23,8 +23,18 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * {@code throws ApplicationException} clause.
  *
  * @see Runnable
+ *
+ * @since 0.4.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface CheckedRunnable {
+
+    /**
+     * Executes this runnable.
+     *
+     * @throws ApplicationException if an error occurs during the execution of the runnable
+     */
     void run() throws ApplicationException;
 }

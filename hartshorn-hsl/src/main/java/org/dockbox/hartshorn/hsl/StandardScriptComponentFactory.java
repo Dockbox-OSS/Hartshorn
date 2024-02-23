@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
@@ -33,8 +31,14 @@ import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 
-@Service
-@RequiresActivator(UseExpressionValidation.class)
+/**
+ * A standard implementation of the {@link ScriptComponentFactory} interface, using
+ * the default implementations of the various components.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class StandardScriptComponentFactory implements ScriptComponentFactory {
 
     @Override

@@ -26,6 +26,10 @@ import org.dockbox.hartshorn.util.option.Option;
  * The context provided to a {@link org.dockbox.hartshorn.commands.CommandExecutor} during
  * command execution. This context provides access to parsed arguments, flags and other
  * related command context.
+ *
+ * @since 0.4.0
+ *
+ * @author Guus Lieben
  */
 public interface CommandContext extends ParserContext, ContextCarrier {
 
@@ -35,6 +39,7 @@ public interface CommandContext extends ParserContext, ContextCarrier {
      * instead. The value of the argument is cast to type {@code T}.
      *
      * @param key The key of the argument or flag
+     * @param type The expected type of the argument or flag
      * @param <T> The expected type of the argument or flag
      *
      * @return The argument or flag, or {@code null}
@@ -58,6 +63,7 @@ public interface CommandContext extends ParserContext, ContextCarrier {
      * {@code T}, or does not exist, {@link Option#empty()} is returned instead.
      *
      * @param key The key of the argument or flag
+     * @param type The expected type of the argument or flag
      * @param <T> The expected type of the argument or flag
      *
      * @return The argument or flag wrapped in a {@link Option}, or {@link Option#empty()}

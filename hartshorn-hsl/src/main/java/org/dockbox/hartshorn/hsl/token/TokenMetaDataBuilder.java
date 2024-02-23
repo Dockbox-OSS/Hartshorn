@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.hsl.token;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.dockbox.hartshorn.hsl.token.type.SimpleTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
@@ -27,27 +28,22 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * @author Guus Lieben
  * @since 0.4.12
  */
-public class TokenMetaDataBuilder {
+public class TokenMetaDataBuilder extends SimpleTokenType.Builder<TokenMetaDataBuilder> {
 
     private final TokenType type;
-    private String representation;
-    private boolean keyword;
-    private boolean standaloneStatement;
-    private boolean reserved;
-    private TokenType assignsWith;
-    private String defaultLexeme;
-    private TokenCharacter[] characters = new TokenCharacter[0];
 
     TokenMetaDataBuilder(TokenType type) {
         this.type = type;
-        this.representation = type.tokenName();
+        this.representation(type.tokenName());
     }
 
-    public TokenMetaDataBuilder representation(String representation) {
-        this.representation = representation;
-        return this;
-    }
-
+    /**
+     * Combines multiple token types into a single token type. This merges the
+     * representations and characters of the given types.
+     *
+     * @param types the types to combine
+     * @return the builder
+     */
     public TokenMetaDataBuilder combines(TokenType... types) {
         StringBuilder combined = new StringBuilder();
         List<TokenCharacter> tokenCharacters = new LinkedList<>();
@@ -61,69 +57,54 @@ public class TokenMetaDataBuilder {
                 inheritCharacters = false;
             }
         }
-        this.representation = combined.toString();
+        this.representation(combined.toString());
         if (inheritCharacters) {
-            this.characters = tokenCharacters.toArray(TokenCharacter[]::new);
+            this.characters(tokenCharacters.toArray(TokenCharacter[]::new));
         }
         return this;
     }
 
+    /**
+     * Repeats a token type. This is a shortcut for combining a type with itself.
+     *
+     * @param type the type to repeat
+     * @return the builder
+     */
     public TokenMetaDataBuilder repeats(TokenType type) {
         return this.combines(type, type);
     }
 
+    /**
+     * Repeats multiple characters. This merges the characters to determine the
+     * representation, and uses the given characters as the characters of the new
+     * token type.
+     *
+     * @param characters the characters to repeat
+     * @return the builder
+     */
     public TokenMetaDataBuilder combines(TokenCharacter... characters) {
         StringBuilder combined = new StringBuilder();
         for (TokenCharacter tokenCharacter : characters) {
             combined.append(tokenCharacter.character());
         }
-        this.representation = combined.toString();
-        this.characters = characters;
+        this.representation(combined.toString());
+        this.characters(characters);
         return this;
     }
 
+    /**
+     * Repeats a character. This is a shortcut for combining a character with itself.
+     *
+     * @param type the type to repeat
+     * @return the builder
+     */
     public TokenMetaDataBuilder repeats(TokenCharacter type) {
         return this.combines(type, type);
     }
 
-    public TokenMetaDataBuilder keyword(boolean keyword) {
-        this.keyword = keyword;
-        return this;
-    }
-
-    public TokenMetaDataBuilder standaloneStatement(boolean standaloneStatement) {
-        this.standaloneStatement = standaloneStatement;
-        return this;
-    }
-
-    public TokenMetaDataBuilder reserved(boolean reserved) {
-        this.reserved = reserved;
-        return this;
-    }
-
-    public TokenMetaDataBuilder assignsWith(TokenType assignsWith) {
-        this.assignsWith = assignsWith;
-        return this;
-    }
-
-    public TokenMetaDataBuilder defaultLexeme(String defaultLexeme) {
-        this.defaultLexeme = defaultLexeme;
-        return this;
-    }
-
-    public TokenMetaDataBuilder characters(TokenCharacter... characters) {
-        this.characters = characters;
-        if (this.representation == null) {
-            StringBuilder builder = new StringBuilder();
-            for (TokenCharacter character : characters) {
-                builder.append(character.character());
-            }
-            this.representation = builder.toString();
-        }
-        return this;
-    }
-
-    public TokenMetaData ok() {
-        return new TokenMetaData(this.type, this.representation, this.keyword, this.standaloneStatement, this.reserved, this.assignsWith, this.defaultLexeme, this.characters);
+    @Override
+    public TokenMetaData build() {
+        TokenType tokenType = super.build();
+        return new TokenMetaData(this.type, tokenType);
     }
 }

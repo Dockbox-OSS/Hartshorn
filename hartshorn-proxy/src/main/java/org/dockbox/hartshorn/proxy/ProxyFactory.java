@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import java.lang.reflect.Constructor;
-import java.util.Set;
-import java.util.function.Consumer;
-
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptorContext;
 import org.dockbox.hartshorn.proxy.advice.registry.AdvisorRegistry;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.Constructor;
+import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * The entrypoint for creating proxy objects. This class is responsible for creating proxy objects for
@@ -243,6 +243,17 @@ public interface ProxyFactory<T> {
      */
     Option<T> proxy(ConstructorView<? extends T> constructor, Object[] args) throws ApplicationException;
 
+    /**
+     * Creates a proxy instance of the given {@code type} and returns it. This will create a new proxy and
+     * invokes the given {@link Constructor} to create the proxy instance. This also creates a new
+     * {@link ProxyManager} responsible for managing the proxy. The proxy will be created with all currently
+     * known behaviors.
+     *
+     * @param constructor The constructor to use
+     * @param args The arguments to pass to the constructor
+     * @return A proxy instance
+     * @throws ApplicationException If the proxy could not be created
+     */
     Option<T> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException;
 
     /**

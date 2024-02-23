@@ -22,6 +22,15 @@ import org.dockbox.hartshorn.util.GenericType;
 
 import java.lang.reflect.Type;
 
+/**
+ * A compatibility wrapper to allow {@link GenericType} to be used as a {@link TypeReference}.
+ *
+ * @param <T> The type of the reference
+ *
+ * @since 0.4.3
+ *
+ * @author Guus Lieben
+ */
 public class GenericTypeReference<T> extends TypeReference<T> {
 
     private final GenericType<T> genericType;

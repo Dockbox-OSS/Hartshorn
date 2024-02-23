@@ -16,11 +16,46 @@
 
 package org.dockbox.hartshorn.util;
 
+import org.dockbox.hartshorn.util.graph.GraphNode;
+
+/**
+ * A node in a property structure. A node has a name and a value. The name of a node is
+ * commonly used to identify the node, but is not required to be unique.
+ *
+ * <p><b>Note</b>: This interface is intended to be used for reporting purposes. It is not
+ * intended to be used as a vertex in a graph. For that purpose, use {@link GraphNode}.
+ *
+ * @param <T> the type of the value of the node
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public interface Node<T> {
 
+    /**
+     * Returns the name of the node. This is commonly used to identify the node.
+     *
+     * <p>The name of a node is not required to be unique, but it is recommended. Typically,
+     * the name of a node is equal to a property name.
+     *
+     * @return the name of the node
+     */
     String name();
 
+    /**
+     * Returns the value of the node.
+     *
+     * @return the value of the node
+     */
     T value();
 
+    /**
+     * Accepts a {@link NodeVisitor} and returns the result of the visit.
+     *
+     * @param visitor the visitor to accept
+     * @return the result of the visit
+     * @param <R> the type of the result
+     */
     <R> R accept(NodeVisitor<R> visitor);
 }

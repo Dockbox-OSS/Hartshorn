@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,25 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
-import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import java.util.Collection;
+
+import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
-import java.util.Collection;
-
+/**
+ * A {@link Reportable} that reports all provided {@link ComponentProcessor}s.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ComponentProcessorsReportable implements Reportable {
-    private final MultiMap<Integer, ComponentPostProcessor> processors;
 
-    public ComponentProcessorsReportable(MultiMap<Integer, ComponentPostProcessor> processors) {
+    private final MultiMap<Integer, ? extends ComponentProcessor> processors;
+
+    public ComponentProcessorsReportable(MultiMap<Integer, ? extends ComponentProcessor> processors) {
         this.processors = processors;
     }
 
@@ -36,7 +44,7 @@ public class ComponentProcessorsReportable implements Reportable {
                 .flatMap(Collection::stream)
                 .map(processor -> (Reportable) processorCollector -> {
                     processorCollector.property("name").write(processor.getClass().getCanonicalName());
-                    processorCollector.property("order").write(processor.priority());
+                    processorCollector.property("priority").write(processor.priority());
                 }).toArray(Reportable[]::new);
 
         propertyCollector.property("processors").write(reportables);

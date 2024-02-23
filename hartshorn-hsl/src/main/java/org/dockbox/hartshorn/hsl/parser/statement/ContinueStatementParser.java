@@ -19,23 +19,29 @@ package org.dockbox.hartshorn.hsl.parser.statement;
 import java.util.Set;
 
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
-import org.dockbox.hartshorn.hsl.parser.TokenParser;
-import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
-import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
-public class ContinueStatementParser implements ASTNodeParser<ContinueStatement> {
+/**
+ * A parser for the 'continue' statement, using the {@link ControlTokenType#CONTINUE} token type.
+ *
+ * @since 0.5.0
+ *
+ * @see ContinueStatement
+ *
+ * @author Guus Lieben
+ */
+public class ContinueStatementParser extends AbstractControlStatementParser<ContinueStatement> {
 
     @Override
-    public Option<? extends ContinueStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(ControlTokenType.CONTINUE)) {
-            Token keyword = parser.previous();
-            validator.expectAfter(parser.tokenRegistry().statementEnd(), "value");
-            return Option.of(new ContinueStatement(keyword));
-        }
-        return Option.empty();
+    protected TokenType keyword() {
+        return ControlTokenType.CONTINUE;
+    }
+
+    @Override
+    protected ContinueStatement create(Token keyword) {
+        return new ContinueStatement(keyword);
     }
 
     @Override

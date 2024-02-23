@@ -20,6 +20,22 @@ import org.dockbox.hartshorn.reporting.Reportable;
 
 import java.util.Set;
 
+/**
+ * A {@link TypeReferenceCollector} is responsible for collecting {@link TypeReference}s. The result of a collection
+ * is a {@link Set} of {@link TypeReference}s. Type collecting is often used by application environments to discover
+ * types that are available on the classpath.
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public interface TypeReferenceCollector extends Reportable {
+
+    /**
+     * Collects {@link TypeReference}s.
+     *
+     * @return A {@link Set} of {@link TypeReference}s
+     * @throws TypeCollectionException When an error occurs while collecting {@link TypeReference}s.
+     */
     Set<TypeReference> collect() throws TypeCollectionException;
 }

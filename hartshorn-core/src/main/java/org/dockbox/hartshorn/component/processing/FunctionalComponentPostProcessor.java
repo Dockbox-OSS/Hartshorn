@@ -32,6 +32,16 @@ public abstract class FunctionalComponentPostProcessor extends ComponentPostProc
     }
 
     /**
+     * @param <T> The type of the component
+     * @param context The application context
+     * @param instance The component instance
+     * @param container The component container
+     * @param processingContext The processing context
+     *
+     * @return Nothing, this method is deprecated and will be removed in a future release
+     *
+     * @throws UnsupportedOperationException This method is deprecated and will be removed in a future release
+     *
      * @deprecated This method is deprecated and will be removed in a future release. Instead use
      * {@link #preConfigureComponent(ApplicationContext, Object, ComponentProcessingContext)},
      * {@link #postConfigureComponent(ApplicationContext, Object, ComponentProcessingContext)} or

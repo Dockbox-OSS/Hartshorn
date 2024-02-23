@@ -49,7 +49,13 @@ import org.dockbox.hartshorn.util.option.Option;
 @SuppressWarnings("rawtypes")
 public class SimpleCollectionFactory implements CollectionFactory {
 
-    private static final int USE_COLLECTION_DEFAULT_CAPACITY = -1;
+    /**
+     * A constant that can be used to indicate that the default capacity should be used when creating a collection.
+     * This is useful when a collection is created without a specific capacity requirement. Zero is used, as it is
+     * a logical choice to call {@link #createCollection(Class, Class, int)} with length zero if not aware of the
+     * {@link #createCollection(Class, Class)} method, so this covers some risks.
+     */
+    private static final int USE_COLLECTION_DEFAULT_CAPACITY = 0;
 
     private final Introspector introspector;
     private final Map<Class<?>, CollectionProvider> defaults = new HashMap<>();
@@ -58,21 +64,68 @@ public class SimpleCollectionFactory implements CollectionFactory {
         this.introspector = introspector;
     }
 
+    /**
+     * Registers a default {@link CollectionProvider} for the provided type. If a collection of the provided
+     * type is requested, the provider will be used to create the collection.
+     *
+     * @param type the type of collection to register the provider for
+     * @param provider the provider to register
+     * @return the current instance
+     * @param <T> the type of collection to register the provider for
+     */
     public <T extends Collection<?>> SimpleCollectionFactory withDefault(Class<T> type, CollectionProvider<T> provider) {
         this.defaults.put(type, provider);
         return this;
     }
 
+    /**
+     * Registers a default {@link CollectionProvider} for the provided type. If a collection of the provided
+     * type is requested, the provider will be used to create the collection. As the provided supplier is used
+     * for both non-capacity and capacity-based creation of collections, it is recommended to only use this
+     * method for collections that do not support capacity-based creation. For collections that do support
+     * capacity-based creation, use {@link #withDefault(Class, Supplier, IntFunction)} or {@link
+     * #withDefault(Class, CollectionProvider)}.
+     *
+     * @param type the type of collection to register the provider for
+     * @param supplier the supplier to register
+     * @return the current instance
+     * @param <T> the type of collection to register the provider for
+     */
     public <T extends Collection<?>> SimpleCollectionFactory withDefault(Class<T> type, Supplier<T> supplier) {
         this.defaults.put(type, new SupplierCollectionProvider<>(supplier, capacity -> supplier.get()));
         return this;
     }
 
+    /**
+     * Registers a default {@link CollectionProvider} for the provided type. If a collection of the provided
+     * type is requested, the provider will be used to create the collection. The provided supplier is used
+     * for non-capacity creation of collections, and the provided capacity constructor is used for
+     * capacity-based creation of collections.
+     *
+     * @param type the type of collection to register the provider for
+     * @param supplier the supplier to register
+     * @param capacityConstructor the capacity constructor to register
+     * @return the current instance
+     * @param <T> the type of collection to register the provider for
+     */
     public <T extends Collection<?>> SimpleCollectionFactory withDefault(Class<T> type, Supplier<T> supplier, IntFunction<T> capacityConstructor) {
         this.defaults.put(type, new SupplierCollectionProvider<>(supplier, capacityConstructor));
         return this;
     }
 
+    /**
+     * Registers sensible defaults for common collection types. The following types are registered:
+     * <ul>
+     *     <li>{@link Collection} - {@link ArrayList}</li>
+     *     <li>{@link List} - {@link ArrayList}</li>
+     *     <li>{@link Set} - {@link HashSet}</li>
+     *     <li>{@link SortedSet} - {@link TreeSet}</li>
+     *     <li>{@link Queue} - {@link LinkedList}</li>
+     *     <li>{@link Deque} - {@link LinkedList}</li>
+     * </ul>
+     *
+     * @return the current instance
+     */
     public SimpleCollectionFactory withDefaults() {
         return this
                 .withDefault(Collection.class, ArrayList::new, ArrayList::new)

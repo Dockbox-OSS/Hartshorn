@@ -32,5 +32,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.PARAMETER})
 public @interface Unproxy {
+
+    /**
+     * If {@code true}, the proxy instance will be provided to the method if the parameter is a proxy, but
+     * there is no underlying delegate instance.
+     *
+     * @return {@code true} if the proxy instance may be used as a fallback, {@code false} otherwise
+     */
     boolean fallbackToProxy() default false;
 }

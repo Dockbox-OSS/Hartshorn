@@ -26,9 +26,21 @@ import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
-public final class DefaultCommentTokenList implements CommentTokenList {
-
-    public static final DefaultCommentTokenList INSTANCE = new DefaultCommentTokenList();
+/**
+ * Default implementation of {@link CommentTokenList}, supporting three types of comments:
+ * <ul>
+ *     <li>Line comments starting with {@code //}</li>
+ *     <li>Line comments starting with {@code #}</li>
+ *     <li>Block comments, starting with {@code /*} and ending with <code>&#42;/</code></li>
+ * </ul>
+ *
+ * @since 0.6.0
+ *
+ * @see CommentTokenList
+ *
+ * @author Guus Lieben
+ */
+public class DefaultCommentTokenList implements CommentTokenList {
 
     private static final TokenType LINE_COMMENT_START = buildCommentType(
             "LINE_COMMENT_START",
@@ -36,7 +48,7 @@ public final class DefaultCommentTokenList implements CommentTokenList {
     );
 
     private static final TokenType HASH_COMMENT_START = buildCommentType(
-            "LINE_COMMENT_START",
+            "HASH_COMMENT_START",
             DefaultTokenCharacter.HASH
     );
 
@@ -61,7 +73,15 @@ public final class DefaultCommentTokenList implements CommentTokenList {
         COMMENT_TYPES.put(CommentType.BLOCK, new TokenTypePair(BLOCK_COMMENT_START, BLOCK_COMMENT_END));
     }
 
-    private static TokenType buildCommentType(String name, TokenCharacter... characters) {
+    /**
+     * Builds a new {@link TokenType} that represents a comment. The token is a simple token that is nothing but
+     * a sequence of characters.
+     *
+     * @param name the name of the token
+     * @param characters the characters that make up the token
+     * @return a new token type
+     */
+    protected static TokenType buildCommentType(String name, TokenCharacter... characters) {
         return SimpleTokenType.builder()
                 .tokenName(name)
                 .keyword(false)
@@ -80,9 +100,10 @@ public final class DefaultCommentTokenList implements CommentTokenList {
 
     @Override
     public Option<CommentType> resolveFromOpenToken(TokenType tokenType) {
-        return Option.of(COMMENT_TYPES.keySet().stream()
+        MultiMap<CommentType, TokenTypePair> commentTypes = commentTypes();
+        return Option.of(commentTypes.keySet().stream()
                 .filter(type -> {
-                    Collection<TokenTypePair> tokenTypePairs = COMMENT_TYPES.get(type);
+                    Collection<TokenTypePair> tokenTypePairs = commentTypes.get(type);
                     return tokenTypePairs.stream().anyMatch(pair -> pair.open().equals(tokenType));
                 })
                 .findFirst());
@@ -90,7 +111,7 @@ public final class DefaultCommentTokenList implements CommentTokenList {
 
     @Override
     public Option<TokenTypePair> resolveTokenPairFromOpen(TokenType tokenType) {
-        return Option.of(COMMENT_TYPES.allValues().stream()
+        return Option.of(commentTypes().allValues().stream()
                 .filter(pair -> pair.open().equals(tokenType))
                 .findFirst());
     }

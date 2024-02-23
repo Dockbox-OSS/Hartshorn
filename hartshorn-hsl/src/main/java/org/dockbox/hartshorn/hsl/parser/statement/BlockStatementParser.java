@@ -29,6 +29,15 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A parser for block statements which respects the block token pair defined in the token registry.
+ *
+ * @since 0.5.0
+ *
+ * @see BlockStatement
+ *
+ * @author Guus Lieben
+ */
 public class BlockStatementParser implements ASTNodeParser<BlockStatement> {
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,15 +72,10 @@ public class ConditionTests {
     }
 
     @Test
-    void testApplicationContextIsNotAvailableDefault() {
+    void testApplicationContextIsAvailableDefault() {
         String expression = "null != applicationContext";
         ConditionResult result = this.match(expression);
-        Assertions.assertFalse(result.matches());
-
-        String message = result.message();
-        String withoutMarker = message.substring(0, message.indexOf('.'));
-        // Ensure the failure is due to the absence of the application context, not due to it being null
-        Assertions.assertEquals("Undefined variable 'applicationContext'", withoutMarker);
+        Assertions.assertTrue(result.matches());
     }
 
     ConditionResult match(String expression, Context... contexts) {

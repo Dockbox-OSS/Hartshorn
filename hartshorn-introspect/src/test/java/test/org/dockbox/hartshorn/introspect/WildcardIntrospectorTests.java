@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,16 +30,16 @@ public class WildcardIntrospectorTests {
         TypeView<Object> view = new WildcardTypeView();
 
         Assertions.assertTrue(view.isParentOf(Object.class));
-        Assertions.assertTrue(view.isChildOf(Object.class));
         Assertions.assertTrue(view.is(Object.class));
+        Assertions.assertFalse(view.isChildOf(Object.class));
 
         Assertions.assertTrue(view.isParentOf(String.class));
-        Assertions.assertTrue(view.isChildOf(String.class));
         Assertions.assertTrue(view.is(String.class));
+        Assertions.assertFalse(view.isChildOf(String.class));
 
         Assertions.assertTrue(view.isParentOf(WildcardIntrospectorTests.class));
-        Assertions.assertTrue(view.isChildOf(WildcardIntrospectorTests.class));
         Assertions.assertTrue(view.is(WildcardIntrospectorTests.class));
+        Assertions.assertFalse(view.isChildOf(WildcardIntrospectorTests.class));
     }
 
     @Test

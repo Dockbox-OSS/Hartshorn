@@ -19,6 +19,16 @@ package org.dockbox.hartshorn.util.graph;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * A simple implementation of a {@link Graph}, which is a collection of nodes that are not
+ * necessarily connected.
+ *
+ * @param <T> the type of the content of the graph
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SimpleGraph<T> implements Graph<T> {
 
     private final Set<GraphNode<T>> roots;

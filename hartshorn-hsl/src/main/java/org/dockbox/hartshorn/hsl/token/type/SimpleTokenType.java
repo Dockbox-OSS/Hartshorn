@@ -20,6 +20,28 @@ import java.util.Arrays;
 import java.util.Objects;
 import org.dockbox.hartshorn.hsl.token.TokenCharacter;
 
+/**
+ * Represents a simple token type, which is a basic implementation of the {@link TokenType} interface.
+ * This can be used to create custom token types, or to further extend the functionality of existing
+ * token types.
+ *
+ * <p>Simple token types are immutable and can be created using the {@link SimpleTokenType#builder()} method.
+ *
+ * @param tokenName the name of the token type
+ * @param representation the representation of the token type
+ * @param keyword whether the token type is a keyword
+ * @param standaloneStatement whether the token type is a standalone statement
+ * @param reserved whether the token type is reserved
+ * @param assignsWith the token type that this token type assigns with
+ * @param defaultLexeme the default lexeme of the token type
+ * @param characters the characters that the token type can be represented with
+ *
+ * @since 0.6.0
+ *
+ * @see TokenType
+ *
+ * @author Guus Lieben
+ */
 public record SimpleTokenType(
         String tokenName,
         String representation,
@@ -53,11 +75,25 @@ public record SimpleTokenType(
         return result;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    /**
+     * Creates a new builder for a simple token type.
+     *
+     * @return the builder
+     */
+    public static Builder<?> builder() {
+        return new Builder<>();
     }
 
-    public static class Builder {
+    /**
+     * A builder for simple token types.
+     *
+     * @since 0.6.0
+     *
+     * @see SimpleTokenType
+     *
+     * @author Guus Lieben
+     */
+    public static class Builder<S extends Builder<S>> {
 
         private String tokenName;
         private String representation;
@@ -68,42 +104,106 @@ public record SimpleTokenType(
         private String defaultLexeme;
         private TokenCharacter[] characters = new TokenCharacter[0];
 
-        public Builder tokenName(String tokenName) {
+        /**
+         * Sets the name of the token type.
+         *
+         * @param tokenName the name of the token type
+         * @return the builder
+         *
+         * @see TokenType#tokenName()
+         */
+        public S tokenName(String tokenName) {
             this.tokenName = tokenName;
-            return this;
+            return this.self();
         }
 
-        public Builder representation(String representation) {
+        /**
+         * Sets the representation of the token type.
+         *
+         * @param representation the representation of the token type
+         * @return the builder
+         *
+         * @see TokenType#representation()
+         */
+        public S representation(String representation) {
             this.representation = representation;
-            return this;
+            return this.self();
         }
 
-        public Builder keyword(boolean keyword) {
+        /**
+         * Sets whether the token type is a keyword.
+         *
+         * @param keyword whether the token type is a keyword
+         * @return the builder
+         *
+         * @see TokenType#keyword()
+         */
+        public S keyword(boolean keyword) {
             this.keyword = keyword;
-            return this;
+            return this.self();
         }
 
-        public Builder standaloneStatement(boolean standaloneStatement) {
+        /**
+         * Sets whether the token type is a standalone statement.
+         *
+         * @param standaloneStatement whether the token type is a standalone statement
+         * @return the builder
+         *
+         * @see TokenType#standaloneStatement()
+         */
+        public S standaloneStatement(boolean standaloneStatement) {
             this.standaloneStatement = standaloneStatement;
-            return this;
+            return this.self();
         }
 
-        public Builder reserved(boolean reserved) {
+        /**
+         * Sets whether the token type is reserved.
+         *
+         * @param reserved whether the token type is reserved
+         * @return the builder
+         *
+         * @see TokenType#reserved()
+         */
+        public S reserved(boolean reserved) {
             this.reserved = reserved;
-            return this;
+            return this.self();
         }
 
-        public Builder assignsWith(TokenType assignsWith) {
+        /**
+         * Sets the token type that this token type assigns with.
+         *
+         * @param assignsWith the token type that this token type assigns with
+         * @return the builder
+         *
+         * @see TokenType#assignsWith()
+         */
+        public S assignsWith(TokenType assignsWith) {
             this.assignsWith = assignsWith;
-            return this;
+            return this.self();
         }
 
-        public Builder defaultLexeme(String defaultLexeme) {
+        /**
+         * Sets the default lexeme of the token type.
+         *
+         * @param defaultLexeme the default lexeme of the token type
+         * @return the builder
+         *
+         * @see TokenType#defaultLexeme()
+         */
+        public S defaultLexeme(String defaultLexeme) {
             this.defaultLexeme = defaultLexeme;
-            return this;
+            return this.self();
         }
 
-        public Builder characters(TokenCharacter... characters) {
+        /**
+         * Sets the characters that the token type can be represented with.
+         *
+         * @param characters the characters that the token type can be represented with
+         * @return the builder
+         *
+         * @see TokenType#characters()
+         */
+        public S characters(TokenCharacter... characters) {
             this.characters = characters;
             if (this.representation == null) {
                 StringBuilder builder = new StringBuilder();
@@ -112,12 +212,29 @@ public record SimpleTokenType(
                 }
                 this.representation = builder.toString();
             }
-            return this;
+            return this.self();
         }
 
-        public SimpleTokenType build() {
-            return new SimpleTokenType(this.tokenName, this.representation, this.keyword, this.standaloneStatement, this.reserved,
-                    this.assignsWith, this.defaultLexeme, this.characters);
+        protected S self() {
+            return (S) this;
+        }
+
+        /**
+         * Builds the simple token type.
+         *
+         * @return the simple token type
+         */
+        public TokenType build() {
+            return new SimpleTokenType(
+                    this.tokenName,
+                    this.representation,
+                    this.keyword,
+                    this.standaloneStatement,
+                    this.reserved,
+                    this.assignsWith,
+                    this.defaultLexeme,
+                    this.characters
+            );
         }
     }
 }

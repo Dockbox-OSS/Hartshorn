@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,29 @@ import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 
+/**
+ * A diagnostics reporter that reports information about the application. This includes the following information:
+ * <ul>
+ *     <li>Version of Hartshorn</li>
+ *     <li>Location of the application JAR file</li>
+ *     <li>Application properties</li>
+ *     <li>Service activators</li>
+ *     <li>Observers</li>
+ *     <li>Application-level contexts</li>
+ * </ul>
+ *
+ * <p>Each of these can be enabled or disabled individually, using the {@link ApplicationReportingConfiguration} that
+ * is provided by this reporter.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ApplicationReportingConfiguration>, CategorizedDiagnosticsReporter {
 
+    /**
+     * The category of this reporter.
+     */
     public static final String APPLICATION_CATEGORY = "application";
 
     private final ApplicationReportingConfiguration configuration = new ApplicationReportingConfiguration();
@@ -70,7 +91,12 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
         }
     }
 
-    private static void reportJarLocation(DiagnosticsPropertyCollector collector) {
+    /**
+     * Reports the location of the application JAR file.
+     *
+     * @param collector the collector to write to
+     */
+    protected static void reportJarLocation(DiagnosticsPropertyCollector collector) {
         String jarLocation;
         try {
             jarLocation = Hartshorn.class.getProtectionDomain().getCodeSource().getLocation().toURI().toString();
@@ -80,20 +106,37 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
         collector.property("jar").write(jarLocation);
     }
 
-    private void reportApplicationProperties(DiagnosticsPropertyCollector collector) {
+    /**
+     * Reports the application properties. This includes all properties that are available in the application context.
+     *
+     * @param collector the collector to write to
+     */
+    protected void reportApplicationProperties(DiagnosticsPropertyCollector collector) {
         Properties properties = this.applicationContext.properties();
         Reportable reporter = new PropertiesReporter(properties);
         collector.property("properties").write(reporter);
     }
 
-    private void reportServiceActivators(DiagnosticsPropertyCollector collector) {
+    /**
+     * Reports the canonical names of all service activators that are registered with the application context.
+     *
+     * @param collector the collector to write to
+     */
+    protected void reportServiceActivators(DiagnosticsPropertyCollector collector) {
         String[] activators = this.applicationContext.activators().stream()
                 .map(activator -> activator.annotationType().getCanonicalName())
                 .toArray(String[]::new);
         collector.property("activators").write(activators);
     }
 
-    private void reportObservers(DiagnosticsPropertyCollector collector) {
+    /**
+     * Reports the number of observers that are registered with the application context. Observers are reported by
+     * their class name, and the number of instances that are registered. If the application environment is not an
+     * instance of {@link ObservableApplicationEnvironment}, no observers are reported.
+     *
+     * @param collector the collector to write to
+     */
+    protected void reportObservers(DiagnosticsPropertyCollector collector) {
         ApplicationEnvironment environment = this.applicationContext.environment();
         if (environment instanceof ObservableApplicationEnvironment observable) {
             Map<Class<? extends Observer>, List<Observer>> observers = observable.observers(Observer.class).stream()
@@ -107,7 +150,15 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
         }
     }
 
-    private void reportContexts(DiagnosticsPropertyCollector collector) {
+    /**
+     * Reports all application-level contexts that are registered with the application context. Contexts are reported
+     * by their class name. If a context is an instance of {@link Reportable}, its data is also reported. If a context
+     * is an instance of {@link NamedContext}, its name is also reported. If a context has child contexts, these are
+     * reported recursively.
+     *
+     * @param collector the collector to write to
+     */
+    protected void reportContexts(DiagnosticsPropertyCollector collector) {
         AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference = new AtomicReference<>();
 
         BiConsumer<DiagnosticsPropertyCollector, Context> reporter = (contextsCollector, context) -> {
@@ -115,7 +166,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
             if (context instanceof Reportable reportable) {
                 contextsCollector.property("data").write(reportable);
             }
-            else if (context instanceof NamedContext namedContext) {
+            if (context instanceof NamedContext namedContext) {
                 contextsCollector.property("name").write(namedContext.name());
             }
             if (!context.all().isEmpty()) {

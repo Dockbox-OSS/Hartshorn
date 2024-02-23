@@ -23,16 +23,36 @@ import java.lang.annotation.Target;
 import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
+import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
+
+/**
+ * A condition that requires classes to be present in the classpath.
+ *
+ * @see ClassCondition
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Extends(RequiresCondition.class)
 @RequiresCondition(condition = ClassCondition.class)
 public @interface RequiresClass {
 
-    String[] value() default {};
-
-    Class<?>[] types() default {};
-
+    /**
+     * The fully qualified name of the classes that are required to be present.
+     *
+     * @return the fully qualified name of the classes that are required to be present
+     */
     @AttributeAlias(value = "failOnNoMatch", target = RequiresCondition.class)
+    String[] value();
+
+    /**
+     * @see RequiresCondition#failOnNoMatch()
+     * @return whether to fail on no match
+     */
+    @AttributeAlias(value = "failsOnNoMatch", target = RequiresCondition.class)
     boolean failOnNoMatch() default false;
 }

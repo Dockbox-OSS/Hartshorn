@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,24 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.dockbox.hartshorn.util.introspect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A {@link MethodInvoker} that uses reflection to invoke methods. This requires the method to be
+ * available in the given {@link MethodView}, and to be accessible to this invoker.
+ *
+ * @param <T> the return type of the method
+ * @param <P> the type of the instance on which the method is invoked
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
 
     @Override
@@ -37,11 +49,8 @@ public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
             //noinspection unchecked
             return Option.of((T) jlrMethod.get().invoke(instance, args));
         }
-        catch (Throwable throwable) {
-            if (throwable.getCause() != null) {
-                throw throwable.getCause();
-            }
-            throw throwable;
+        catch (InvocationTargetException e) {
+            throw e.getCause();
         }
     }
 }

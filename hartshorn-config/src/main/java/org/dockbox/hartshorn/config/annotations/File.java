@@ -30,6 +30,9 @@ import java.lang.annotation.RetentionPolicy;
 public @interface File {
     /**
      * The owner of the file, to act as synthetic hierarchical category.
+     *
+     * @return The owner of the file.
+     *
      * @deprecated To be removed in a future release.
      */
     @Deprecated(since = "0.4.12", forRemoval = true)
@@ -37,6 +40,8 @@ public @interface File {
 
     /**
      * The name of the file.
+     *
+     * @return The name of the file.
      */
     String value();
 }

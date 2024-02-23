@@ -218,7 +218,7 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
     protected TypeView<?> resolveCollectionElementType(TypeView<?> type) {
         Option<TypeView<?>> elementType = type
                 .typeParameters()
-                .resolveInputFor(Collection.class)
+                .inputFor(Collection.class)
                 .atIndex(0)
                 .flatMap(TypeParameterView::resolvedType);
 

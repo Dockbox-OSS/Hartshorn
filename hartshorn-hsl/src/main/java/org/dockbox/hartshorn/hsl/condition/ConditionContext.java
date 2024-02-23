@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,41 @@
 
 package org.dockbox.hartshorn.hsl.condition;
 
-import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
-import org.dockbox.hartshorn.hsl.modules.NativeModule;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+/**
+ * Context which allows for the configuration of a script runtime. This context allows for the configuration of
+ * modules, global variables, imports, customizers and more. It also allows for the configuration of whether the
+ * application context should be exposed to the script.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public interface ConditionContext extends Context {
 
+    /**
+     * Gets whether the application context should be exposed to the script.
+     *
+     * @return {@code true} if the application context should be exposed, {@code false} otherwise.
+     */
     boolean includeApplicationContext();
 
+    /**
+     * Sets whether the application context should be exposed to the script.
+     *
+     * @param includeApplicationContext {@code true} if the application context should be exposed, {@code false} otherwise.
+     *
+     * @return The current context.
+     */
     ConditionContext includeApplicationContext(boolean includeApplicationContext);
 
     /**
@@ -83,6 +104,14 @@ public interface ConditionContext extends Context {
      */
     void imports(String name, Class<?> type);
 
+    /**
+     * Adds the given class as an import under the given aliases to the context. This allows
+     * it to be used in the executing runtime. This will override existing imports if the
+     * alias already exists in the context.
+     *
+     * @param name The alias to use for the import.
+     * @param type The class to import.
+     */
     void imports(String name, TypeView<?> type);
 
     /**
@@ -94,6 +123,13 @@ public interface ConditionContext extends Context {
      */
     void imports(Class<?> type);
 
+    /**
+     * Adds the given class as an import to the context. The class will be made available using
+     * its simple name (e.g. {@code org.example.User} will be accessible using {@code User}). This
+     * will override existing imports if there is another import with the same name or alias.
+     *
+     * @param type The class to import.
+     */
     void imports(TypeView<?> type);
 
     /**
@@ -127,7 +163,23 @@ public interface ConditionContext extends Context {
      */
     Map<String, NativeModule> externalModules();
 
+    /**
+     * Configures the execution options for the script runtime. Typically, these are passed
+     * to the {@link org.dockbox.hartshorn.hsl.interpreter.Interpreter} to configure the
+     * evaluation behavior.
+     *
+     * @param executionOptions The execution options to use.
+     *
+     * @see org.dockbox.hartshorn.hsl.interpreter.Interpreter#executionOptions(ExecutionOptions)
+     */
     void interpreterOptions(ExecutionOptions executionOptions);
 
+    /**
+     * Gets the execution options for the script runtime.
+     *
+     * @return The execution options used by the executor.
+     *
+     * @see org.dockbox.hartshorn.hsl.interpreter.Interpreter#executionOptions(ExecutionOptions)
+     */
     ExecutionOptions interpreterOptions();
 }

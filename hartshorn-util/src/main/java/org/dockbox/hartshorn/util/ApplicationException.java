@@ -20,6 +20,10 @@ package org.dockbox.hartshorn.util;
  * Thrown when the application runs a validated problem. Typically, this means an
  * exception was caught and is rethrown as a {@link ApplicationException} with the
  * original exception as cause.
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public class ApplicationException extends Exception {
 

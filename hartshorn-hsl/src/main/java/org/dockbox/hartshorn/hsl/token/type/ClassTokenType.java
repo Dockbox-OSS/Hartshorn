@@ -62,7 +62,7 @@ public enum ClassTokenType implements EnumTokenType {
     ClassTokenType(Consumer<TokenMetaDataBuilder> metaData) {
         TokenMetaDataBuilder builder = TokenMetaData.builder(this);
         metaData.accept(builder);
-        this.metaData = builder.ok();
+        this.metaData = builder.build();
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,51 +50,219 @@ import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
  */
 public interface ExpressionVisitor<R> {
 
+    /**
+     * Visits the given {@link BinaryExpression binary expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(BinaryExpression expression);
 
+    /**
+     * Visits the given {@link RangeExpression range expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(RangeExpression expression);
 
+    /**
+     * Visits the given {@link GroupingExpression grouping expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(GroupingExpression expression);
 
+    /**
+     * Visits the given {@link LiteralExpression literal expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(LiteralExpression expression);
 
+    /**
+     * Visits the given {@link AssignExpression assign expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(AssignExpression expression);
 
+    /**
+     * Visits the given {@link LogicalAssignExpression logical assign expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(LogicalAssignExpression expression);
 
+    /**
+     * Visits the given {@link UnaryExpression unary expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(UnaryExpression expression);
 
+    /**
+     * Visits the given {@link PostfixExpression postfix expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(PostfixExpression expression);
 
+    /**
+     * Visits the given {@link LogicalExpression logical expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(LogicalExpression expression);
 
+    /**
+     * Visits the given {@link BitwiseExpression bitwise expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(BitwiseExpression expression);
 
+    /**
+     * Visits the given {@link FunctionCallExpression function call expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(FunctionCallExpression expression);
 
+    /**
+     * Visits the given {@link GetExpression get expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(GetExpression expression);
 
+    /**
+     * Visits the given {@link SetExpression set expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(SetExpression expression);
 
+    /**
+     * Visits the given {@link ThisExpression 'this' expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ThisExpression expression);
 
+    /**
+     * Visits the given {@link SuperExpression 'super' expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(SuperExpression expression);
 
+    /**
+     * Visits the given {@link VariableExpression variable expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(VariableExpression expression);
 
+    /**
+     * Visits the given {@link ElvisExpression elvis expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ElvisExpression expression);
 
+    /**
+     * Visits the given {@link TernaryExpression ternary expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(TernaryExpression expression);
 
+    /**
+     * Visits the given {@link ArraySetExpression array set expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ArraySetExpression expression);
 
+    /**
+     * Visits the given {@link ArrayGetExpression array get expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ArrayGetExpression expression);
 
+    /**
+     * Visits the given {@link ArrayLiteralExpression array literal expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ArrayLiteralExpression expression);
 
+    /**
+     * Visits the given {@link ArrayComprehensionExpression array comprehension expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(ArrayComprehensionExpression expression);
 
+    /**
+     * Visits the given {@link PrefixExpression prefix expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(PrefixExpression expression);
 
+    /**
+     * Visits the given {@link InfixExpression infix expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
     R visit(InfixExpression expression);
 }

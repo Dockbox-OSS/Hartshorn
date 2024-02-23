@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
+import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
@@ -307,12 +307,12 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
 
     @Override
     public Void visit(BreakStatement statement) {
-        throw new MoveKeyword(MoveKeyword.MoveType.BREAK);
+        throw new FlowControlKeyword(FlowControlKeyword.MoveType.BREAK);
     }
 
     @Override
     public Void visit(ContinueStatement statement) {
-        throw new MoveKeyword(MoveKeyword.MoveType.CONTINUE);
+        throw new FlowControlKeyword(FlowControlKeyword.MoveType.CONTINUE);
     }
 
     @Override

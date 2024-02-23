@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import java.lang.reflect.Constructor;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-
 import org.dockbox.hartshorn.proxy.advice.registry.AdvisorRegistry;
 import org.dockbox.hartshorn.proxy.advice.registry.ConfigurationAdvisorRegistry;
 import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
@@ -33,6 +28,11 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.Constructor;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * The default implementation of {@link ProxyFactory}. This implementation is state-aware, as is suggested by its
@@ -175,6 +175,11 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         return this.validator;
     }
 
+    /**
+     * Returns the {@link ProxyOrchestrator} that owns this factory.
+     *
+     * @return the {@link ProxyOrchestrator} that owns this factory
+     */
     public ProxyOrchestrator orchestrator() {
         return this.proxyOrchestrator;
     }

@@ -21,8 +21,30 @@ import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.JsonInclusionRule;
 
+/**
+ * Configuration interface for {@link MapperBuilder}s. This allows for the configuration of the {@link MapperBuilder}
+ * based on the {@link FileFormat} of the source and the {@link JsonInclusionRule} that is used.
+ *
+ * @since 0.4.12
+ *
+ * @see JacksonObjectMapper
+ * @see MapperBuilder
+ * @see FileFormat
+ * @see JsonInclusionRule
+ *
+ * @author Guus Lieben
+ */
 public interface JacksonObjectMapperConfigurator {
 
+    /**
+     * Configures the provided {@link MapperBuilder} based on the provided {@link FileFormat} and {@link
+     * JsonInclusionRule}.
+     *
+     * @param builder the builder to configure
+     * @param format the format of the source
+     * @param inclusionRule the inclusion rule to use
+     * @return the configured builder
+     */
     MapperBuilder<?, ?> configure(MapperBuilder<?, ?> builder, FileFormat format, JsonInclusionRule inclusionRule);
 
 }

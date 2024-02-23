@@ -99,7 +99,7 @@ public enum BitwiseTokenType implements EnumTokenType {
     BitwiseTokenType(Customizer<TokenMetaDataBuilder> customizer) {
         TokenMetaDataBuilder builder = TokenMetaData.builder(this);
         customizer.configure(builder);
-        this.metaData = builder.ok();
+        this.metaData = builder.build();
     }
 
     @Override

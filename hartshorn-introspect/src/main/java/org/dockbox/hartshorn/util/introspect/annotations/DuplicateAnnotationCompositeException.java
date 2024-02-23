@@ -22,6 +22,14 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Thrown when a duplicate annotation is found on a target. This can happen when an annotation is
+ * extended by multiple annotations, and both of those annotations are used on the same target.
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class DuplicateAnnotationCompositeException extends ApplicationRuntimeException {
     public DuplicateAnnotationCompositeException(Object target, List<? extends Annotation> annotations) {
         super("Found more than one annotation on " + target + ":\n"

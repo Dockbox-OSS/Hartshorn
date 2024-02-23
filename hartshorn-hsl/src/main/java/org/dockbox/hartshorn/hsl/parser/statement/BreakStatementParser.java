@@ -19,23 +19,29 @@ package org.dockbox.hartshorn.hsl.parser.statement;
 import java.util.Set;
 
 import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
-import org.dockbox.hartshorn.hsl.parser.TokenParser;
-import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
-import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
-public class BreakStatementParser implements ASTNodeParser<BreakStatement> {
+/**
+ * A parser for the 'break' statement, using the {@link ControlTokenType#BREAK} token type.
+ *
+ * @since 0.5.0
+ *
+ * @see BreakStatement
+ *
+ * @author Guus Lieben
+ */
+public class BreakStatementParser extends AbstractControlStatementParser<BreakStatement> {
 
     @Override
-    public Option<? extends BreakStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(ControlTokenType.BREAK)) {
-            Token keyword = parser.previous();
-            validator.expectAfter(parser.tokenRegistry().statementEnd(), "value");
-            return Option.of(new BreakStatement(keyword));
-        }
-        return Option.empty();
+    protected TokenType keyword() {
+        return ControlTokenType.BREAK;
+    }
+
+    @Override
+    protected BreakStatement create(Token keyword) {
+        return new BreakStatement(keyword);
     }
 
     @Override

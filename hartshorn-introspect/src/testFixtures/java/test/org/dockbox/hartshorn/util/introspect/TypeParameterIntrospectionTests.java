@@ -16,15 +16,6 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.collections.BiMultiMap;
@@ -36,6 +27,15 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"rawtypes", "InterfaceMayBeAnnotatedFunctional"})
 public abstract class TypeParameterIntrospectionTests {
@@ -268,7 +268,7 @@ public abstract class TypeParameterIntrospectionTests {
         Assertions.assertSame(Collection.class, typeView.type());
 
         TypeParametersIntrospector typeParameters = typeView.typeParameters();
-        List<TypeParameterView> collectionParameters = typeParameters.resolveInputFor(Collection.class).asList();
+        List<TypeParameterView> collectionParameters = typeParameters.inputFor(Collection.class).asList();
         Assertions.assertEquals(1, collectionParameters.size());
 
         TypeParameterView collectionParameter = collectionParameters.get(0);
@@ -282,7 +282,7 @@ public abstract class TypeParameterIntrospectionTests {
         Assertions.assertSame(Collection.class, typeView.type());
 
         TypeParametersIntrospector typeParameters = typeView.typeParameters();
-        List<TypeParameterView> collectionParameters = typeParameters.resolveInputFor(Iterable.class).asList();
+        List<TypeParameterView> collectionParameters = typeParameters.inputFor(Iterable.class).asList();
         Assertions.assertEquals(1, collectionParameters.size());
 
         TypeParameterView collectionParameter = collectionParameters.get(0);
@@ -296,7 +296,7 @@ public abstract class TypeParameterIntrospectionTests {
         Assertions.assertSame(LinkedList.class, typeView.type());
 
         TypeParametersIntrospector typeParameters = typeView.typeParameters();
-        List<TypeParameterView> collectionParameters = typeParameters.resolveInputFor(Iterable.class).asList();
+        List<TypeParameterView> collectionParameters = typeParameters.inputFor(Iterable.class).asList();
         Assertions.assertEquals(1, collectionParameters.size());
 
         TypeParameterView collectionParameter = collectionParameters.get(0);

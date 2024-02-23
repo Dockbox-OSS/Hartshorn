@@ -20,9 +20,28 @@ import org.dockbox.hartshorn.config.FileFormat;
 
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 
+/**
+ * A wrapper for a {@link MapperBuilder} that provides a {@link FileFormat} to indicate the format that the
+ * {@link MapperBuilder} supports. This allows for a {@link org.dockbox.hartshorn.config.ObjectMapper} to
+ * swap out the supported {@link MapperBuilder} based on the {@link FileFormat} of the source.
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public interface JacksonDataMapper {
 
+    /**
+     * Returns the {@link FileFormat} that this {@link JacksonDataMapper} supports.
+     *
+     * @return The {@link FileFormat} that this {@link JacksonDataMapper} supports.
+     */
     FileFormat fileFormat();
 
+    /**
+     * Returns the {@link MapperBuilder} that this {@link JacksonDataMapper} wraps.
+     *
+     * @return The {@link MapperBuilder} that this {@link JacksonDataMapper} wraps.
+     */
     MapperBuilder<?, ?> get();
 }

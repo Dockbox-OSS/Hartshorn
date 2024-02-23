@@ -58,5 +58,10 @@ public interface StateAwareAdvisorRegistry<T> extends AdvisorRegistry<T>, ProxyA
     @Override
     StateAwareAdvisorRegistry<T> defaultStub(Supplier<MethodStub<T>> stub);
 
+    /**
+     * Returns the state of the registry.
+     *
+     * @return the state of the registry
+     */
     AdvisorRegistryState state();
 }

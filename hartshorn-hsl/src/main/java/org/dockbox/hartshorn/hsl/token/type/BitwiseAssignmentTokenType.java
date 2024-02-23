@@ -70,7 +70,7 @@ public enum BitwiseAssignmentTokenType implements EnumTokenType {
         this.metaData = TokenMetaData.builder(this)
                 .combines(assignsWithToken, BaseTokenType.EQUAL)
                 .assignsWith(assignsWithToken)
-                .ok();
+                .build();
     }
     @Override
     public TokenType delegate() {

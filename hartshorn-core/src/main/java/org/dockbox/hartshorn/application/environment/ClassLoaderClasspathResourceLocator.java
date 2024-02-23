@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.resources.Resources;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -27,16 +31,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.dockbox.hartshorn.application.Hartshorn;
-import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.resources.Resources;
-
 /**
  * The default implementation of {@link ClasspathResourceLocator}. This implementation will copy the resource to a temporary
  * location and return the path to the temporary location.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLocator {
 

@@ -45,15 +45,29 @@ import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.hsl.token.type.PairTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
-import org.dockbox.hartshorn.hsl.token.type.TypeTokenType;
 import org.dockbox.hartshorn.hsl.token.type.VariableTokenType;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Default {@link TokenRegistry} implementation, supporting all default token types defined in the
+ * {@link org.dockbox.hartshorn.hsl.token.type} package. This implementation is mutable, and can be
+ * used to add custom token types.
+ *
+ * @since 0.6.0
+ *
+ * @see TokenRegistry
+ *
+ * @author Guus Lieben
+ */
 public final class DefaultTokenRegistry implements MutableTokenRegistry {
 
     private final Set<TokenType> types = new HashSet<>();
+    private final CommentTokenList comments = new DefaultCommentTokenList();
+    private final TokenCharacterList characters = new DefaultCharacterList();
+    private final LiteralTokenList literals = new DefaultLiteralTokenList();
+    private final TokenPairList tokenPairs = new DefaultTokenPairList();
 
     private Map<Character, TokenCharacter> characterMapping;
     private TokenGraph tokenGraph;
@@ -62,6 +76,11 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
         // Should use factory methods
     }
 
+    /**
+     * Creates a new instance of {@link DefaultTokenRegistry} with all default token types loaded.
+     *
+     * @return A new instance of {@link DefaultTokenRegistry} with all default token types loaded.
+     */
     public static DefaultTokenRegistry createDefault() {
         return new DefaultTokenRegistry().loadDefaults();
     }
@@ -90,7 +109,7 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
 
     @Override
     public TokenCharacterList characterList() {
-        return DefaultCharacterList.INSTANCE;
+        return this.characters;
     }
 
     @Override
@@ -112,17 +131,17 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
 
     @Override
     public LiteralTokenList literals() {
-        return DefaultLiteralTokenList.INSTANCE;
+        return this.literals;
     }
 
     @Override
     public CommentTokenList comments() {
-        return DefaultCommentTokenList.INSTANCE;
+        return this.comments;
     }
 
     @Override
     public TokenPairList tokenPairs() {
-        return DefaultTokenPairList.INSTANCE;
+        return this.tokenPairs;
     }
 
     @Override
@@ -188,13 +207,17 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
         }
     }
 
+    /**
+     * Loads all default token types into this registry.
+     *
+     * @return This registry, with all default token types loaded.
+     */
     public DefaultTokenRegistry loadDefaults() {
         this.addTokens(ArithmeticTokenType.values());
         this.addTokens(PairTokenType.values());
         this.addTokens(MemberModifierTokenType.values());
         this.addTokens(ImportTokenType.values());
         this.addTokens(ObjectTokenType.values());
-        this.addTokens(TypeTokenType.values());
         this.addTokens(ClassTokenType.values());
         this.addTokens(ConditionTokenType.values());
         this.addTokens(BitwiseTokenType.values());

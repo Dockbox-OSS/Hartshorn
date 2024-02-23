@@ -16,18 +16,31 @@
 
 package org.dockbox.hartshorn.util.introspect.util;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.option.Option;
-
-public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends ParameterLoader {
+/**
+ * A {@link ParameterLoader} that loads parameters based on a set of rules. The rules are evaluated in no
+ * particular order, and the first rule that accepts the parameter will be used to load the parameter. In
+ * case no rule accepts the parameter, the default value of the parameter type will be used.
+ *
+ * <p>As there is no particular order in which the rules are evaluated, it remains the responsibility of
+ * the caller to ensure that the rules are not conflicting.
+ *
+ * @param <C> the context type that is used to provide context to the rules
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
+public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implements ParameterLoader {
 
     private final Set<ParameterLoaderRule<C>> rules = ConcurrentHashMap.newKeySet();
 
@@ -37,13 +50,24 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
         this.contextType = contextType;
     }
 
+    /**
+     * Adds the provided rule to the set of rules that are used to load parameters.
+     *
+     * @param rule the rule to add
+     * @return the current instance
+     */
     public RuleBasedParameterLoader<?> add(ParameterLoaderRule<? super C> rule) {
         this.rules.add((ParameterLoaderRule<C>) rule);
         return this;
     }
 
+    /**
+     * Returns an unmodifiable set of rules that are used to load parameters.
+     *
+     * @return an unmodifiable set of rules that are used to load parameters
+     */
     protected Set<ParameterLoaderRule<C>> rules() {
-        return this.rules;
+        return Set.copyOf(this.rules);
     }
 
     @Override
@@ -60,7 +84,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
         if (parameterCandidate.present()) {
             C adjustedContext = this.contextType.cast(context);
             ParameterView<?> parameter = parameterCandidate.get();
-            return loadArgument(index, args, parameter, adjustedContext);
+            return this.loadArgument(index, args, parameter, adjustedContext);
         }
         return null;
     }
@@ -82,29 +106,30 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
         if (!this.isCompatible(context)) {
             return List.of(args);
         }
+
         C adjustedContext = this.contextType.cast(context);
         List<Object> arguments = new ArrayList<>();
         List<ParameterView<?>> parameters = context.executable().parameters().all();
-        parameters:
+
         for (int i = 0; i < parameters.size(); i++) {
             ParameterView<?> parameter = parameters.get(i);
-            try {
-                for (ParameterLoaderRule<C> rule : this.rules) {
-                    if (rule.accepts(parameter, i, adjustedContext, args)) {
-                        Option<?> argument = rule.load(parameter, i, adjustedContext, args);
-                        arguments.add(argument.orNull());
-                        continue parameters;
-                    }
-                }
-                arguments.add(this.loadDefault(parameter, i, adjustedContext, args));
-            }
-            catch (ApplicationRuntimeException e) {
-                throw new ParameterLoadException(parameter, e);
-            }
+            Object argument = this.loadArgument(i, args, parameter, adjustedContext);
+            arguments.add(argument);
         }
         return Collections.unmodifiableList(arguments);
     }
 
+    /**
+     * Loads the default value for the provided parameter. This method is invoked when no rule accepts the
+     * parameter.
+     *
+     * @param parameter the parameter to load the default value for
+     * @param index the index of the parameter in the parameter list
+     * @param context the context to use when looking up the parameter value
+     * @param args the original arguments that are passed to the method that is being invoked
+     * @return the default value for the provided parameter
+     * @param <T> the type of the parameter
+     */
     protected <T> T loadDefault(ParameterView<T> parameter, int index, C context, Object... args) {
         return parameter.type().defaultOrNull();
     }

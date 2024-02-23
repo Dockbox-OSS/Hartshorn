@@ -20,6 +20,15 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 import java.lang.annotation.Annotation;
 
+/**
+ * Thrown when a circular inheritance is detected in an annotation hierarchy. For example, when
+ * {@link org.dockbox.hartshorn.util.introspect.annotations.Extends} is used to extend an annotation
+ * that already extends the current annotation.
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class CircularHierarchyException extends ApplicationRuntimeException {
     public CircularHierarchyException(Class<? extends Annotation> current) {
         super("Annotation hierarchy circular inheritance detected: " + current);

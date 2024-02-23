@@ -35,6 +35,11 @@ public class ProxyParameterLoaderContext extends ParameterLoaderContext {
         this.proxyOrchestrator = proxyOrchestrator;
     }
 
+    /**
+     * Returns the {@link ProxyOrchestrator} instance that owns the proxy that is being created or used.
+     *
+     * @return the proxy orchestrator
+     */
     public ProxyOrchestrator proxyOrchestrator() {
         return this.proxyOrchestrator;
     }

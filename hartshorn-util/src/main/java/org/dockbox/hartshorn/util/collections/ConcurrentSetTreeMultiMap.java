@@ -18,9 +18,27 @@ package org.dockbox.hartshorn.util.collections;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.NavigableMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
-public class ConcurrentSetTreeMultiMap<K extends Comparable<K>, V> extends TreeMultiMap<K, V> {
+/**
+ * A {@link MultiMap} implementation that uses {@link ConcurrentHashMap#newKeySet()} as its backing
+ * collection, and a {@link ConcurrentSkipListMap} as its backing map. This implementation is thread-safe.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @see ConcurrentHashMap#newKeySet()
+ * @see ConcurrentSkipListMap
+ * @see MultiMap
+ * @see NavigableMultiMap
+ *
+ * @author Guus Lieben
+ */
+public class ConcurrentSetTreeMultiMap<K extends Comparable<K>, V> extends NavigableMultiMap<K, V> {
 
     public ConcurrentSetTreeMultiMap() {
         this(Comparator.naturalOrder());
@@ -37,5 +55,10 @@ public class ConcurrentSetTreeMultiMap<K extends Comparable<K>, V> extends TreeM
     @Override
     protected Collection<V> createEmptyCollection() {
         return ConcurrentHashMap.newKeySet();
+    }
+
+    @Override
+    protected NavigableMap<K, Collection<V>> createEmptyMap() {
+        return new ConcurrentSkipListMap<>();
     }
 }

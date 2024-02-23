@@ -21,6 +21,14 @@ import org.dockbox.hartshorn.util.introspect.view.View;
 
 import java.lang.reflect.Member;
 
+/**
+ * Thrown when an illegal introspection operation is attempted, or when an introspection operation
+ * fails due to an incorrect state.
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class IllegalIntrospectionException extends ApplicationRuntimeException {
 
     public IllegalIntrospectionException(View view, String reason) {

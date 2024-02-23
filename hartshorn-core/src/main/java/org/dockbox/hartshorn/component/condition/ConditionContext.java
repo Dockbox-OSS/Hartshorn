@@ -20,6 +20,17 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
+/**
+ * A context that is used during the evaluation of a condition. This includes the annotated element that is being
+ * evaluated, and the {@link RequiresCondition} annotation that is used to evaluate the condition. Note that this
+ * annotation is not necessarily present on the annotated element, but may be composed from extending annotations.
+ *
+ * @see RequiresCondition
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class ConditionContext extends DefaultApplicationAwareContext {
 
     private final AnnotatedElementView annotatedElementContext;
@@ -31,10 +42,20 @@ public class ConditionContext extends DefaultApplicationAwareContext {
         this.condition = condition;
     }
 
+    /**
+     * Returns the annotated element that is being evaluated.
+     *
+     * @return the annotated element that is being evaluated
+     */
     public AnnotatedElementView annotatedElement() {
         return this.annotatedElementContext;
     }
 
+    /**
+     * Returns the {@link ConditionDeclaration declaration} that is used to evaluate the condition.
+     *
+     * @return the {@link ConditionDeclaration declaration} that is used to evaluate the condition
+     */
     public ConditionDeclaration condition() {
         return this.condition;
     }

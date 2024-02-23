@@ -69,7 +69,7 @@ public enum BaseTokenType implements EnumTokenType {
         this.metaData = TokenMetaData.builder(this)
                 .representation(String.valueOf(character.character()))
                 .characters(character)
-                .ok();
+                .build();
     }
 
     @Override

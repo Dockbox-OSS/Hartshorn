@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NavigableSet;
@@ -29,6 +28,8 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A collection of utility methods for working with collections. This class is not meant to be
@@ -205,10 +206,39 @@ public final class CollectionUtilities {
         }
     }
 
+    /**
+     * Returns an aggregated string representation of the given collection. The string representation
+     * is created by mapping each element of the collection to a string using the given value mapper
+     * and then joining the strings using a comma and a space. If the collection is empty an empty
+     * string is returned.
+     *
+     * @param collection The collection to create a string representation of
+     * @param valueMapper The function to map each element to a string
+     * @return The aggregated string representation of the collection
+     * @param <T> The type of the elements in the collection
+     */
     public static <T> String toString(Collection<T> collection, Function<T, ?> valueMapper) {
         return collection.stream()
                 .map(valueMapper)
                 .map(Object::toString)
-                .reduce((a, b) -> a + ", " + b).orElse("");
+                .reduce("", (a, b) -> a + ", " + b);
+    }
+
+    /**
+     * Returns a new set containing all elements of the given set. The returned set is a new set
+     * and does not modify the original set. The advantage of this compared to {@link Set#copyOf(Collection)}
+     * is that the order of the elements is preserved if the given set is a {@link NavigableSet}.
+     *
+     * @param set The set to copy
+     * @return The new set containing all elements
+     * @param <T> The type of the elements in the set
+     */
+    public static <T> Set<T> copyOf(Set<T> set) {
+        if (set instanceof NavigableSet<T> navigableSet) {
+            return Collections.unmodifiableNavigableSet(navigableSet);
+        }
+        else {
+            return Set.copyOf(set);
+        }
     }
 }

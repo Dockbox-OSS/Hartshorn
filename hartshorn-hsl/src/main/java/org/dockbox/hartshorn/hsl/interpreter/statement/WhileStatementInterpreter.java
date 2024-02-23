@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
-import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
+import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -30,8 +30,8 @@ public class WhileStatementInterpreter implements ASTNodeInterpreter<Void, While
             try {
                 interpreter.execute(node.body());
             }
-            catch (MoveKeyword moveKeyword) {
-                if (moveKeyword.moveType() == MoveKeyword.MoveType.BREAK) {
+            catch (FlowControlKeyword keyword) {
+                if (keyword.moveType() == FlowControlKeyword.MoveType.BREAK) {
                     break;
                 }
             }

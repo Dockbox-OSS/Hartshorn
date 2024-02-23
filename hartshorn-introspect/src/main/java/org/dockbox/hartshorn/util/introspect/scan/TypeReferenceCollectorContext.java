@@ -24,18 +24,41 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A {@link TypeReferenceCollectorContext} is a {@link org.dockbox.hartshorn.context.Context} that is used
+ * to track {@link TypeReferenceCollector} which are used by the application to discover types on the classpath.
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class TypeReferenceCollectorContext extends DefaultContext implements Reportable {
 
     private final Set<TypeReferenceCollector> collectors = ConcurrentHashMap.newKeySet();
 
+    /**
+     * Registers a {@link TypeReferenceCollector} with this context.
+     *
+     * @param collector The collector to register
+     */
     public void register(TypeReferenceCollector collector) {
         this.collectors.add(collector);
     }
 
+    /**
+     * Creates a new {@link AggregateTypeReferenceCollector} that combines all registered collectors.
+     *
+     * @return A new {@link AggregateTypeReferenceCollector}
+     */
     public TypeReferenceCollector collector() {
         return new AggregateTypeReferenceCollector(this.collectors);
     }
 
+    /**
+     * Returns all registered collectors.
+     *
+     * @return A {@link Set} of {@link TypeReferenceCollector}s
+     */
     public Set<TypeReferenceCollector> collectors() {
         return Collections.unmodifiableSet(this.collectors);
     }

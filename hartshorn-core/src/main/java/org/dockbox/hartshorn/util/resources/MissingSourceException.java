@@ -18,6 +18,13 @@ package org.dockbox.hartshorn.util.resources;
 
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
+/**
+ * Thrown when a resource is requested, but no source is available.
+ *
+ * @since 0.4.7
+ *
+ * @author Guus Lieben
+ */
 public class MissingSourceException extends ApplicationRuntimeException {
     public MissingSourceException(String message) {
         super(message);

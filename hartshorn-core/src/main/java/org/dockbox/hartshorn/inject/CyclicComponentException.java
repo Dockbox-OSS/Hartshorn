@@ -16,11 +16,31 @@
 
 package org.dockbox.hartshorn.inject;
 
-import java.util.Iterator;
 import org.dockbox.hartshorn.inject.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
+import java.util.Iterator;
+
+/**
+ * Thrown when a cyclic dependency is detected during component discovery. This exception contains
+ * the full path of the cyclic dependency, which can be used to debug the issue. A simple example:
+ * <pre>{@code
+ * Cyclic dependency detected in constructor of ConcreteComponentA. Complete dependency path:
+ * ┌───┐
+ * ↑  com.sample.ConcreteComponentA
+ * |   ↓
+ * ↑  com.sample.ConcreteComponentB
+ * |   ↓
+ * ↑  com.sample.AbstractComponentC
+ * |   ↓   ↳ Implemented by com.sample.ConcreteComponentC
+ * └───┘
+ * }</pre>
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class CyclicComponentException extends ApplicationException {
 
     private static final String CYCLE_TOP     = " ┌───┐\n";

@@ -23,26 +23,71 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Locale;
 import java.util.function.Function;
 
+/**
+ * Utilities for working with {@link ComponentContainer}s, specifically for generating IDs and names.
+ *
+ * @since 0.4.10
+ *
+ * @author Guus Lieben
+ */
 public final class ComponentUtilities {
 
     private ComponentUtilities() {
     }
 
+    /**
+     * Generates an ID for the given type. If the type is a {@link ComponentContainer}, the ID of the container is
+     * returned. Otherwise, the ID is generated based on the type's simple name.
+     *
+     * @param context the application context
+     * @param type the type to generate an ID for
+     * @return the ID
+     */
     public static String id(ApplicationContext context, Class<?> type) {
         return id(context, type, false);
     }
 
-    public static String id(ApplicationContext context, Class<?> type, boolean ignoreExisting) {
-        return format(context, type, ignoreExisting, '-', ComponentContainer::id).toLowerCase(Locale.ROOT);
+    /**
+     * Generates an ID for the given type. If the type is a {@link ComponentContainer}, the ID of the container is
+     * returned. Otherwise, the ID is generated based on the type's simple name. If {@code ignoreContainerName} is
+     * {@code true}, the container name is ignored and the ID is generated based on the type's simple name.
+     *
+     * @param context the application context
+     * @param type the type to generate an ID for
+     * @param ignoreContainerName whether or not to ignore the container name
+     * @return the ID
+     */
+    public static String id(ApplicationContext context, Class<?> type, boolean ignoreContainerName) {
+        return format(context, type, ignoreContainerName, '-', ComponentContainer::id).toLowerCase(Locale.ROOT);
     }
 
-    public static String name(ApplicationContext context, Class<?> type, boolean ignoreExisting) {
-        return format(context, type, ignoreExisting, ' ', ComponentContainer::name);
+    /**
+     * Generates a name for the given type. If the type is a {@link ComponentContainer}, the name of the container is
+     * returned. Otherwise, the name is generated based on the type's simple name.
+     *
+     * @param context the application context
+     * @param type the type to generate a name for
+     * @param ignoreContainerName whether or not to ignore the container name
+     * @return the name
+     */
+    public static String name(ApplicationContext context, Class<?> type, boolean ignoreContainerName) {
+        return format(context, type, ignoreContainerName, ' ', ComponentContainer::name);
     }
 
-    public static String format(ApplicationContext context, Class<?> type, boolean ignoreExisting, char delimiter, Function<ComponentContainer<?>, String> attribute) {
+    /**
+     * Generates a name for the given type. If the type is a {@link ComponentContainer}, the name of the container is
+     * returned. Otherwise, the name is generated based on the type's simple name.
+     *
+     * @param context the application context
+     * @param type the type to generate a name for
+     * @param ignoreContainerName whether or not to ignore the container name
+     * @param delimiter the delimiter to use when generating the name
+     * @param attribute the attribute to use when generating the name
+     * @return the name
+     */
+    public static String format(ApplicationContext context, Class<?> type, boolean ignoreContainerName, char delimiter, Function<ComponentContainer<?>, String> attribute) {
         Option<ComponentContainer<?>> container = context.get(ComponentLocator.class).container(type);
-        if (!ignoreExisting && container.present()) {
+        if (!ignoreContainerName && container.present()) {
             String name = attribute.apply(container.get());
             if (StringUtilities.notEmpty(name)) {
                 return name;

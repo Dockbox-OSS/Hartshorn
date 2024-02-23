@@ -53,11 +53,15 @@ public @interface Command {
 
     /**
      * The parent command for the command. When specified, the command will be executed as a sub-command.
+     *
+     * @return the parent command for the command.
      */
     @AttributeAlias("owner")
     Class<?> parent() default Void.class;
 
     /**
+     * @return whether the command should be lazy loaded or not.
+     *
      * @see Service#lazy()
      */
     boolean lazy() default false;

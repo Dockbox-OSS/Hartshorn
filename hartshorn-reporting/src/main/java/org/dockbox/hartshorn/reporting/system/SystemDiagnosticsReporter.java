@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,30 @@ import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 
+/**
+ * A {@link ConfigurableDiagnosticsReporter} that reports information about the system. The information that is
+ * reported can be configured using {@link SystemReportingConfiguration}. The following information is reported by
+ * default:
+ * <ul>
+ *     <li>Uptime</li>
+ *     <li>Java runtime, through {@link JavaDiagnosticsReporter}</li>
+ *     <li>JVM, through {@link JVMDiagnosticsReporter}</li>
+ *     <li>Operating system, through {@link OSDiagnosticsReporter}</li>
+ *     <li>Device name</li>
+ *     <li>Process ID</li>
+ *     <li>Responsible service or user</li>
+ *     <li>Memory usage, through {@link MemoryUsageDiagnosticsReporter}</li>
+ * </ul>
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SystemDiagnosticsReporter implements ConfigurableDiagnosticsReporter<SystemReportingConfiguration>, CategorizedDiagnosticsReporter {
 
+    /**
+     * Default category for {@link SystemDiagnosticsReporter} instances.
+     */
     public static final String SYSTEM_CATEGORY = "system";
 
     private final SystemReportingConfiguration configuration = new SystemReportingConfiguration();

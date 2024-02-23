@@ -16,17 +16,21 @@
 
 package org.dockbox.hartshorn.util;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * Generic type reference, allowing for generic type reading. This is derived
  * from Jackson's TypeReference.
  *
  * @param <T> The generic type
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public abstract class GenericType<T> implements Comparable<GenericType<T>> {
 
@@ -40,13 +44,22 @@ public abstract class GenericType<T> implements Comparable<GenericType<T>> {
         this.type = ((ParameterizedType) superClass).getActualTypeArguments()[0];
     }
 
+    /**
+     * Returns the type of the generic type.
+     *
+     * @return the type of the generic type
+     */
     public Type type() {
         return this.type;
     }
 
+    /**
+     * If this generic type represents a class, returns the class.
+     *
+     * @return the class, if this generic type represents a class
+     */
     public Option<Class<T>> asClass() {
-        Type type = this.type();
-        if (type instanceof Class<?> clazz) {
+        if (this.type() instanceof Class<?> clazz) {
             return Option.of((Class<T>) clazz);
         }
         return Option.empty();

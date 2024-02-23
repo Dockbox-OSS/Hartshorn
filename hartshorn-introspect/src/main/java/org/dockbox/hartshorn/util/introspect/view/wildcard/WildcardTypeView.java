@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,18 @@ import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A {@link TypeView} that represents a wildcard type. This type is used to represent the type of
+ * a wildcard parameterized type, such as the {@code ?} in {@code List<?>}.
+ *
+ * <p>This type is not a real type, and as such, does not provide access to any information about
+ * the type it represents. It does, however, provide empty introspectors for e.g. annotations and
+ * type parameters.
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class WildcardTypeView extends DefaultContext implements TypeView<Object> {
 
     @Override
@@ -171,7 +183,7 @@ public class WildcardTypeView extends DefaultContext implements TypeView<Object>
 
     @Override
     public boolean isChildOf(Class<?> type) {
-        return true;
+        return false;
     }
 
     @Override

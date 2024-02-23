@@ -46,8 +46,11 @@ public interface ResultCollector extends ContextCarrier {
     /**
      * Gets the global result from the stack. If no global result exists {@link Option#empty()}
      * is returned.
-     * @return The result value, or {@link Option#empty()}.
+     *
+     * @param type The type of the result.
      * @param <T> The type of the result.
+     *
+     * @return The result value, or {@link Option#empty()}.
      */
     <T> Option<T> result(Class<T> type);
 
@@ -56,8 +59,12 @@ public interface ResultCollector extends ContextCarrier {
     /**
      * Gets a result with the given ID. If no result with the given ID exists
      * {@link Option#empty()} is returned.
+     *
      * @param id The ID of the result.
+     * @param type The type of the result.
+     *
      * @return The result value, or {@link Option#empty()}.
+     *
      * @param <T> The type of the result.
      */
     <T> Option<T> result(String id, Class<T> type);

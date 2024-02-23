@@ -23,7 +23,16 @@ import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.jackson.JacksonDataMapper;
 
+/**
+ * A {@link JacksonDataMapper} that uses the XML format. This mapper uses Jackson's {@link XmlMapper} to
+ * support {@link FileFormats#XML XML sources}.
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public class XmlDataMapper implements JacksonDataMapper {
+
     @Override
     public FileFormat fileFormat() {
         return FileFormats.XML;

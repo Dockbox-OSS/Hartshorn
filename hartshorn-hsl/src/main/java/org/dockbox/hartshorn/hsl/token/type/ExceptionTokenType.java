@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.token.type;
 
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
-import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
 
 /**
  * Represents the different types of exception handling tokens.
@@ -60,14 +59,14 @@ public enum ExceptionTokenType implements EnumTokenType {
     FINALLY(false),
     ;
 
-    private final TokenMetaData metaData;
+    private final TokenType metaData;
 
     ExceptionTokenType(boolean standalone) {
-        TokenMetaDataBuilder builder = TokenMetaData.builder(this)
+        this.metaData = TokenMetaData.builder(this)
                 .reserved(true)
                 .standaloneStatement(standalone)
-                .keyword(true);
-        this.metaData = builder.ok();
+                .keyword(true)
+                .build();
     }
 
     @Override

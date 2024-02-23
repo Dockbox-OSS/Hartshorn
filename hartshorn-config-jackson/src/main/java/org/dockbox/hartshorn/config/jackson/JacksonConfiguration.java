@@ -34,6 +34,13 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 
 import jakarta.inject.Singleton;
 
+/**
+ * Default bindings for Jackson data mappers, and the {@link ObjectMapper} interface.
+ *
+ * @since 0.4.10
+ *
+ * @author Guus Lieben
+ */
 @Configuration
 @RequiresActivator(UseSerialization.class)
 @RequiresClass("com.fasterxml.jackson.databind.ObjectMapper")

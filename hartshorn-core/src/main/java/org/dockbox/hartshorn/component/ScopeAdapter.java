@@ -16,9 +16,21 @@
 
 package org.dockbox.hartshorn.component;
 
-import java.util.Objects;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
+import java.util.Objects;
+
+/**
+ * A {@link ScopeAdapter} is a wrapper around a non-{@link Scope} object that allows for the object to be used as a
+ * {@link Scope}. This is useful when a scope is based on certain properties of an object, but the object itself is not
+ * a {@link Scope}. For example, a {@link Scope} can be based on an active HTTP request.
+ *
+ * @param <T> the type of the adaptee
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ScopeAdapter<T> implements Scope {
 
     private final T adaptee;
@@ -29,18 +41,43 @@ public class ScopeAdapter<T> implements Scope {
         this.adapteeType = adapteeType;
     }
 
+    /**
+     * Returns the adaptee of this adapter.
+     *
+     * @return the adaptee
+     */
     public T adaptee() {
         return this.adaptee;
     }
 
+    /**
+     * Returns the parameterized type of the adaptee.
+     *
+     * @return the parameterized type of the adaptee
+     */
     public ParameterizableType adapteeType() {
         return this.adapteeType;
     }
 
+    /**
+     * Creates a new {@link ScopeAdapter} for the given adaptee.
+     *
+     * @param adaptee the adaptee
+     * @param type the parameterized type of the adaptee
+     * @return the new adapter
+     * @param <T> the type of the adaptee
+     */
     public static <T> ScopeAdapter<T> of(T adaptee, ParameterizableType type) {
         return new ScopeAdapter<>(adaptee, type);
     }
 
+    /**
+     * Creates a new {@link ScopeAdapter} for the given adaptee.
+     *
+     * @param adaptee the adaptee
+     * @return the new adapter
+     * @param <T> the type of the adaptee
+     */
     public static <T> ScopeAdapter<T> of(T adaptee) {
         return new ScopeAdapter<>(adaptee, ParameterizableType.create(adaptee.getClass()));
     }

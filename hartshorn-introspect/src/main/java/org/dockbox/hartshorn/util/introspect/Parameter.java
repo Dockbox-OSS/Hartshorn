@@ -21,8 +21,22 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Explicitly assigns a name to a parameter. This is especially useful when parameter names are
+ * not retained at runtime.
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface Parameter {
+
+    /**
+     * The name of the parameter.
+     *
+     * @return the name of the parameter
+     */
     String value();
 }

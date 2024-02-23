@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,23 @@
 
 package org.dockbox.hartshorn.reporting;
 
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.dockbox.hartshorn.component.processing.ServiceActivator;
+
+/**
+ * A {@link ServiceActivator} annotation that enables the default configurations for reporting
+ * capabilities.
+ *
+ * @since 0.5.0
+ *
+ * @see ReportingConfiguration
+ *
+ * @author Guus Lieben
+ */
 @ServiceActivator
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

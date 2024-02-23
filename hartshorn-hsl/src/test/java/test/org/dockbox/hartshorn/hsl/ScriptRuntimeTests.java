@@ -241,7 +241,7 @@ public class ScriptRuntimeTests {
 
     ScriptContext assertValid(ExpressionScript expression) {
         ScriptContext context = Assertions.assertDoesNotThrow(expression::evaluate);
-        Assertions.assertTrue(expression.valid(context));
+        Assertions.assertTrue(ExpressionScript.valid(context));
         return context;
     }
 

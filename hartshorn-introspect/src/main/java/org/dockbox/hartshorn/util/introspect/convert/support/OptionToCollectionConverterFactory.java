@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,22 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Collection;
+
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.Collection;
-
+/**
+ * Converts an {@link Option} to a {@link Collection}. If the {@link Option} is empty, an empty {@link Collection} is
+ * returned. Otherwise, a {@link Collection} containing the value of the {@link Option} is returned.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class OptionToCollectionConverterFactory implements ConverterFactory<Option<?>, Collection<?>> {
 
     private final DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory;
@@ -41,9 +49,7 @@ public class OptionToCollectionConverterFactory implements ConverterFactory<Opti
         return input -> {
             //noinspection unchecked
             Collection<Object> collection = (Collection<Object>) this.defaultValueProviderFactory.create(targetType).defaultValue();
-            if (input.present()) {
-                collection.add(input.get());
-            }
+            input.peek(collection::add);
             return targetType.cast(collection);
         };
     }

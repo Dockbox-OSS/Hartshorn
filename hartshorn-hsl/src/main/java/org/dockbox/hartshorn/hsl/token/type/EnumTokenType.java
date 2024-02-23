@@ -22,12 +22,16 @@ import java.util.Locale;
  * Represents a token type that is an enum. This is a convenience interface that allows for the
  * creation of token types that are based on an enum. The name of the enum is used as the token
  * name, and the token type is delegated to the enum's metadata.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public interface EnumTokenType extends DelegateTokenType {
 
     /**
      * Returns the name of this enum constant, exactly as declared in its enum declaration.
-     * 
+     *
      * @return the name of this enum constant
      */
     String name();

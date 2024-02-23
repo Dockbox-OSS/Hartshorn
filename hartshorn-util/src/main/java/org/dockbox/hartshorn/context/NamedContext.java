@@ -16,6 +16,20 @@
 
 package org.dockbox.hartshorn.context;
 
+/**
+ * A context that has a name, which can be used for identification purposes. The name is not
+ * necessarily unique, but is encouraged to be.
+ *
+ * @author Guus Lieben
+ *
+ * @since 0.4.3
+ */
 public interface NamedContext extends Context {
+
+    /**
+     * Returns the name of this context. The name is not necessarily unique, but is encouraged to be.
+     *
+     * @return The name of this context.
+     */
     String name();
 }

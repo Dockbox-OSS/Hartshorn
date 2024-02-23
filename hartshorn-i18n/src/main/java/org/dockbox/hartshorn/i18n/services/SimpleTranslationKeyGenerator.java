@@ -26,6 +26,15 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
 
+/**
+ * A simple implementation of {@link TranslationKeyGenerator} that generates keys based on the
+ * method name of the method that is annotated with {@link InjectTranslation}. If the method
+ * is in a component, the component ID is prepended to the key.
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 public class SimpleTranslationKeyGenerator implements TranslationKeyGenerator {
 
     private final ComponentLocator componentLocator;

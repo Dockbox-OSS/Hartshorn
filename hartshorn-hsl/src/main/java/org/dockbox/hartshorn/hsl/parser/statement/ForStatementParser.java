@@ -48,8 +48,8 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
 
             if (parser.match(LoopTokenType.IN)) {
                 return this.parseForEachStatement(forToken, parser, validator, initializer);
-
-            } else {
+            }
+            else {
                 return this.parseForStatement(forToken, parser, validator, initializer);
             }
         }

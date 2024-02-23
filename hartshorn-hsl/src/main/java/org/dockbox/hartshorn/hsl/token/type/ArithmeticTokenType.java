@@ -81,7 +81,7 @@ public enum ArithmeticTokenType implements EnumTokenType {
     ArithmeticTokenType(Customizer<TokenMetaDataBuilder> customizer) {
         TokenMetaDataBuilder builder = TokenMetaData.builder(this);
         customizer.configure(builder);
-        this.metaData = builder.ok();
+        this.metaData = builder.build();
     }
 
     @Override

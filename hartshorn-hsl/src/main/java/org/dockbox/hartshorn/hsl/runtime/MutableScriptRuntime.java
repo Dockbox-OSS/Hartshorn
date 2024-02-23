@@ -18,15 +18,54 @@ package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.condition.ConditionContext;
+import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.util.Customizer;
 
+/**
+ * A mutable version of {@link ScriptRuntime} that allows for additional customization of the
+ * runtime. This interface is often a requirement for {@link CodeCustomizer}s that need to
+ * customize the runtime.
+ *
+ * <p>Note that {@link ScriptRuntime} itself is already partially customizable through the
+ * implementation of {@link ConditionContext}, which allows for the customization of the
+ * runtime context.
+ *
+ * @since 0.5.0
+ *
+ * @see ScriptRuntime
+ *
+ * @author Guus Lieben
+ */
 public interface MutableScriptRuntime extends ScriptRuntime {
 
+    /**
+     * Adds an expression parser to the runtime, which can be used to parse expressions in the
+     * script.
+     *
+     * @param parser the parser to add
+     *
+     * @see org.dockbox.hartshorn.hsl.parser.TokenParser#expressionParser(ASTNodeParser)
+     */
     void expressionParser(ASTNodeParser<? extends Expression> parser);
 
+    /**
+     * Adds a statement parser to the runtime, which can be used to parse statements in the
+     * script.
+     *
+     * @param parser the parser to add
+     *
+     * @see org.dockbox.hartshorn.hsl.parser.TokenParser#statementParser(ASTNodeParser)
+     */
     void statementParser(ASTNodeParser<? extends Statement> parser);
 
+    /**
+     * Adds a customizer to the runtime, which can be used to customize the script runtime
+     * context before phase execution.
+     *
+     * @param customizer the customizer to add
+     */
     void scriptContextCustomizer(Customizer<ScriptContext> customizer);
 }

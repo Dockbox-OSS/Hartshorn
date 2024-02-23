@@ -30,5 +30,11 @@ import java.util.concurrent.Callable;
  */
 @FunctionalInterface
 public interface ThrowingSupplier<T, E extends Throwable> {
+
+    /**
+     * Gets a result.
+     * @return a result
+     * @throws E if an error occurs during the execution of the supplier
+     */
     T get() throws E;
 }

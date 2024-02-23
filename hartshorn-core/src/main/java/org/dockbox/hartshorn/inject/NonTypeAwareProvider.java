@@ -21,6 +21,10 @@ package org.dockbox.hartshorn.inject;
  * is not known at compile time, but only at runtime (e.g. in suppliers).
  *
  * @param <T> The type instance to provide.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public non-sealed interface NonTypeAwareProvider<T> extends Provider<T> {

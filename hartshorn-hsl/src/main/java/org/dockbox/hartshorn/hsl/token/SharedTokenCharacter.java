@@ -16,13 +16,38 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
+/**
+ * Represents the default characters that are always available to represent certain tokens in the
+ * HSL language. This covers whitespace characters and the null character.
+ *
+ * @since 0.6.0
+ *
+ * @see TokenCharacter
+ *
+ * @author Guus Lieben
+ */
 public enum SharedTokenCharacter implements SimpleTokenCharacter {
+    /**
+     * The space character. By default, this will be ignored by the lexer.
+     */
     SPACE(' '),
+    /**
+     * The tab character. By default, this will be ignored by the lexer.
+     */
     TAB('\t'),
+    /**
+     * The newline character. By default, this will be used to determine line numbers.
+     */
     NEWLINE('\n'),
+    /**
+     * The carriage return character. By default, this will be ignored by the lexer.
+     */
     CARRIAGE_RETURN('\r'),
+    /**
+     * The null character. By default, this will be used to represent characters that
+     * are looked up outside the bounds of a string.
+     */
     NULL('\0'),
-
     ;
 
     private final char character;

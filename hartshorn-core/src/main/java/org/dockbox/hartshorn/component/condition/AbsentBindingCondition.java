@@ -19,6 +19,17 @@ package org.dockbox.hartshorn.component.condition;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 
+/**
+ * A condition that matches when a binding is absent. This does not require an instance
+ * of the binding to be present, but only that a binding is defined in a {@link BindingHierarchy}.
+ *
+ * @see RequiresAbsentBinding
+ * @see BindingHierarchy
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class AbsentBindingCondition implements Condition {
 
     @Override

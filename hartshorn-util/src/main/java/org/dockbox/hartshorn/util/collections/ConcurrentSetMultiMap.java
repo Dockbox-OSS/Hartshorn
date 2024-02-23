@@ -19,6 +19,23 @@ package org.dockbox.hartshorn.util.collections;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A {@link MultiMap} implementation that uses {@link ConcurrentHashMap} as its backing map, and
+ * {@link ConcurrentHashMap#newKeySet()} as the factory for new collections. This implementation
+ * is thread-safe.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @see ConcurrentHashMap
+ * @see MultiMap
+ * @see StandardMultiMap
+ * @see ConcurrentMultiMap
+ *
+ * @author Guus Lieben
+ */
 public class ConcurrentSetMultiMap<K, V> extends ConcurrentMultiMap<K, V> {
 
     public ConcurrentSetMultiMap() {

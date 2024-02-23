@@ -157,7 +157,7 @@ public class LexerTests {
         public TokenType delegate() {
             return TokenMetaData.builder(this)
                     .combines(character, character, character, character)
-                    .ok();
+                    .build();
         }
     }
 }

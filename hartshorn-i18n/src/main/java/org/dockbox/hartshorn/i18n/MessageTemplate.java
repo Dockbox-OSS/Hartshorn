@@ -22,6 +22,19 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * A message template is a message that can be translated to a specific language, and can be formatted with
+ * arguments. The template is used to store the default value of a message, and can be used to merge with
+ * other messages.
+ *
+ * <p>This class is mutable, and tracks the current language together with translations and formatting arguments
+ * for each language. The {@link #translate(Locale)} method can be used to change the current language, and
+ * {@link #format(Object...)} can be used to add formatting arguments for the current language.
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 public class MessageTemplate implements Message {
 
     private Locale language;
@@ -68,6 +81,9 @@ public class MessageTemplate implements Message {
             template.resourceMap.putAll(messageTemplate.resourceMap);
             template.formattingArgs.putAll(messageTemplate.formattingArgs);
         }
+        else {
+            throw new IllegalArgumentException("Cannot merge message of type '" + message.getClass().getSimpleName() + "'");
+        }
 
         return template.translate(language);
     }
@@ -80,6 +96,12 @@ public class MessageTemplate implements Message {
         return template;
     }
 
+    /**
+     * Returns the translation of the message for the current language, or the default translation if no value is
+     * available for the current language.
+     *
+     * @return the translation of the message for the current language, or the default translation
+     */
     protected String safeValue() {
         return this.resourceMap.getOrDefault(this.language(), this.defaultValue);
     }

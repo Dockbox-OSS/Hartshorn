@@ -18,9 +18,28 @@ package org.dockbox.hartshorn.util.graph;
 
 import java.util.Set;
 
+/**
+ * A function that iterates over a {@link Graph} and returns a set of all visited {@link GraphNode}s in the graph.
+ * The order in which the nodes are visited is not guaranteed.
+ *
+ * @param <T> the type of the value of the node
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 @FunctionalInterface
 public interface GraphIterator<T> {
 
+    /**
+     * Iterates over the given {@link Graph} and returns a set of all visited {@link GraphNode}s in the graph.
+     * It remains up to the implementation to determine the order in which the nodes are visited, and which
+     * nodes are visited.
+     *
+     * @param graph the graph to iterate over
+     * @return a set of all visited nodes
+     * @throws GraphException if the graph could not be iterated
+     */
     Set<GraphNode<T>> iterate(Graph<T> graph) throws GraphException;
 
 }

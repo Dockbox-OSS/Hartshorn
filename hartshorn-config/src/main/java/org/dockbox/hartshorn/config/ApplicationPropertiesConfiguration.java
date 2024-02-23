@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.config;
 
+import jakarta.inject.Singleton;
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
@@ -23,27 +24,16 @@ import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.config.annotations.IncludeResourceConfiguration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
-import org.dockbox.hartshorn.config.properties.ConfigurationObjectPostProcessor;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.config.properties.StandardPropertyHolder;
 import org.dockbox.hartshorn.config.properties.StandardURIConfigProcessor;
 import org.dockbox.hartshorn.config.properties.URIConfigProcessor;
-
-import jakarta.inject.Singleton;
 
 @Configuration
 @RequiresActivator(UseConfigurations.class)
 @IncludeResourceConfiguration({"fs:application", "classpath:application"})
 public class ApplicationPropertiesConfiguration {
 
-    /**
-     * Registers the default implementation of the property holder before any other (standard)
-     * provider except the {@link ObjectMapper}, to allow it to be used directly in the
-     * {@link ConfigurationObjectPostProcessor} for other provided components. The {@link ObjectMapper}
-     * should be bound first, as this is typically used internally be the property holder.
-     *
-     * @return {@link StandardPropertyHolder}
-     */
     @Binds
     @Singleton
     public PropertyHolder propertyHolder(ApplicationContext applicationContext,

@@ -38,13 +38,18 @@ public class ProxyContextContainer extends DefaultContext {
         this.onModify = onModify;
     }
 
+    /**
+     * Returns all contexts that are stored in this container.
+     *
+     * @return all contexts
+     */
     public Set<Context> contexts() {
         return super.unnamedContexts();
     }
 
-    // Change access level to public
     @Override
     public MultiMap<String, Context> namedContexts() {
+        // Change access level to public
         return super.namedContexts();
     }
 

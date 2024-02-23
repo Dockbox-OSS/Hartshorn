@@ -25,8 +25,19 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * @param <T> the type of the argument to consume
  *
  * @see java.util.function.Consumer
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface CheckedConsumer<T> {
+
+    /**
+     * Performs this operation on the given argument.
+     *
+     * @param t the input argument
+     * @throws ApplicationException if an error occurs during the execution of the consumer
+     */
     void accept(T t) throws ApplicationException;
 }

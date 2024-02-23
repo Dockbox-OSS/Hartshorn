@@ -35,6 +35,35 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * A {@link JacksonObjectMapperConfigurator} that configures the {@link MapperBuilder} with sensible defaults.
+ * This includes the following:
+ * <ul>
+ *     <li>Accepting case-insensitive properties</li>
+ *     <li>Allowing comments in JSON/YAML</li>
+ *     <li>Indenting output</li>
+ *     <li>Accepting single values as arrays</li>
+ *     <li>Ignoring unknown properties</li>
+ *     <li>Using empty values in place of null for setters</li>
+ *     <li>Using {@link Visibility#ANY} for field visibility</li>
+ * </ul>
+ *
+ * <p>This also adds support for {@link org.dockbox.hartshorn.util.introspect.annotations.Property} and
+ * {@link org.dockbox.hartshorn.config.annotations.IgnoreProperty} annotations through the {@link
+ * HartshornJacksonAnnotationIntrospector}.
+ *
+ * <p>Provided {@link JsonInclusionRule}s are mapped to {@link Include} values as follows:
+ * <ul>
+ *     <li>{@link JsonInclusionRule#SKIP_EMPTY} -&gt; {@link Include#NON_EMPTY}</li>
+ *     <li>{@link JsonInclusionRule#SKIP_NULL} -&gt; {@link Include#NON_NULL}</li>
+ *     <li>{@link JsonInclusionRule#SKIP_DEFAULT} -&gt; {@link Include#NON_DEFAULT}</li>
+ *     <li>{@link JsonInclusionRule#SKIP_NONE} -&gt; {@link Include#ALWAYS}</li>
+ * </ul>
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class StandardJacksonObjectMapperConfigurator implements JacksonObjectMapperConfigurator {
 
     private static final Map<JsonInclusionRule, Include> RULE_MAPPINGS = new EnumMap<>(JsonInclusionRule.class);

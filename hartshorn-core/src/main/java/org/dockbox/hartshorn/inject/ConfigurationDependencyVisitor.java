@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,43 +16,34 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.processing.ComponentProcessor;
-import org.dockbox.hartshorn.inject.binding.BindingFunction;
-import org.dockbox.hartshorn.util.graph.BreadthFirstGraphVisitor;
-import org.dockbox.hartshorn.util.graph.GraphException;
-import org.dockbox.hartshorn.util.graph.GraphNode;
+import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.util.graph.GraphIterator;
 
-public class ConfigurationDependencyVisitor implements BreadthFirstGraphVisitor<DependencyContext<?>> {
+/**
+ * A visitor that visits all {@link DependencyContext}s in a {@link org.dockbox.hartshorn.application.context.DependencyGraph}
+ * and registers them with the {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+public interface ConfigurationDependencyVisitor extends GraphIterator<DependencyContext<?>>, ContextCarrier {
 
-    private final ApplicationContext applicationContext;
+    /**
+     * Registers the given {@link DependencyContext} with the {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
+     *
+     * @param dependencyContext the context to register
+     * @param <T> the type of the component that is registered
+     * @throws ComponentConfigurationException when the context cannot be registered
+     */
+    <T> void registerProvider(DependencyContext<T> dependencyContext) throws ComponentConfigurationException;
 
-    public ConfigurationDependencyVisitor(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    @Override
-    public boolean visit(GraphNode<DependencyContext<?>> node) throws GraphException {
-        DependencyContext<?> dependencyContext = node.value();
-        try {
-            this.registerProvider(dependencyContext);
-            this.doAfterRegister(dependencyContext);
-            return true;
-        }
-        catch (ComponentConfigurationException e) {
-            throw new GraphException(e);
-        }
-    }
-
-    private <T> void registerProvider(DependencyContext<T> dependencyContext) throws ComponentConfigurationException {
-        BindingFunction<T> function = this.applicationContext.bind(dependencyContext.componentKey());
-        dependencyContext.configure(function);
-    }
-
-    private void doAfterRegister(DependencyContext<?> dependencyContext) {
-        if (ComponentProcessor.class.isAssignableFrom(dependencyContext.componentKey().type())) {
-            ComponentProcessor processor = (ComponentProcessor) this.applicationContext.get(dependencyContext.componentKey());
-            this.applicationContext.add(processor);
-        }
-    }
+    /**
+     * Invoked after a {@link DependencyContext} has been registered with the {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
+     * This may be used to perform additional actions, such as registering a {@link org.dockbox.hartshorn.component.processing.ComponentProcessor}
+     * with the {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
+     *
+     * @param dependencyContext the context that was registered
+     */
+    void doAfterRegister(DependencyContext<?> dependencyContext);
 }

@@ -16,21 +16,40 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.condition.RequiresCondition;
+import org.dockbox.hartshorn.component.populate.ComponentInjectionPoint;
 import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.reporting.component.ComponentReportingConfiguration.ComponentAttribute;
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
 
-import java.util.List;
-import java.util.Map.Entry;
-
+/**
+ * A reportable that reports the contents of a {@link ComponentContainer} instance. This includes the following information:
+ * <ul>
+ *     <li>Component class type, {@link ComponentContainer#type()}</li>
+ *     <li>Component ID, {@link ComponentContainer#id()}</li>
+ *     <li>Component name, {@link ComponentContainer#name()}</li>
+ *     <li>Component singleton status, {@link ComponentContainer#singleton()}</li>
+ *     <li>Component lazy status, {@link ComponentContainer#lazy()}</li>
+ *     <li>Whether the component permits proxying, {@link ComponentContainer#permitsProxying()}</li>
+ *     <li>Whether the component permits processing, {@link ComponentContainer#permitsProcessing()}</li>
+ *     <li>Component stereotype, {@link ComponentDiagnosticsReporter#stereotype(ComponentContainer)}</li>
+ *     <li>Conditions that are required for the component to be active</li>
+ *     <li>Dependencies of the component. Dependencies are resolved according to the rules defined by the active environment.</li>
+ * </ul>
+ *
+ * <p>Each of these can be enabled or disabled individually, using the {@link ComponentReportingConfiguration} that
+ * is provided by this reporter.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 class ComponentContainerReporter implements Reportable {
 
     private final ComponentDiagnosticsReporter componentDiagnosticsReporter;
@@ -52,11 +71,6 @@ class ComponentContainerReporter implements Reportable {
         componentCollector.property("name").write(this.container.name());
         componentCollector.property("singleton").write(this.container.singleton());
         componentCollector.property("lazy").write(this.container.lazy());
-
-        String componentType = StringUtilities.capitalize(this.container.componentType().name()
-                .toLowerCase());
-
-        componentCollector.property("componentType").write(componentType);
         componentCollector.property("permitsProxying").write(this.container.permitsProxying());
         componentCollector.property("permitsProcessing").write(this.container.permitsProcessing());
 
@@ -77,31 +91,18 @@ class ComponentContainerReporter implements Reportable {
             componentCollector.property("conditions").write(reporters);
         }
 
-        for (Entry<ComponentAttribute, Boolean> entry : this.componentDiagnosticsReporter.configuration().attributes()
-                .entrySet()) {
-            if (entry.getValue()) {
-                switch (entry.getKey()) {
-                    case STEREOTYPE -> componentCollector.property("stereotype")
-                            .write(ComponentDiagnosticsReporter.stereotype(this.container)
-                                    .getCanonicalName());
-                    case PACKAGE -> componentCollector.property("package")
-                            .write(this.container.type().packageInfo());
-                }
-            }
-        }
+        componentCollector.property("stereotype").write(ComponentDiagnosticsReporter.stereotype(this.container).getCanonicalName());
+        componentCollector.property("package").write(this.container.type().packageInfo());
     }
 
     private void reportAnnotatedField(DiagnosticsPropertyCollector injectCollector) {
         ComponentInjectionPointsResolver injectionPointsResolver = this.environment.injectionPointsResolver();
         ComponentKeyResolver componentKeyResolver = this.environment.componentKeyResolver();
-        List<? extends FieldView<?, ?>> injectFields = this.container.type().fields()
-                .all().stream()
-                .filter(injectionPointsResolver::isInjectable)
-                .toList();
+        Set<? extends ComponentInjectionPoint<?>> injectionPoints = injectionPointsResolver.resolve(this.container.type());
 
-        for (FieldView<?, ?> injectField : injectFields) {
-            injectCollector.property(injectField.name()).write(fieldCollector -> {
-                ComponentKey<?> key = componentKeyResolver.resolve(injectField);
+        for (ComponentInjectionPoint<?> injectionPoint : injectionPoints) {
+            injectCollector.property(injectionPoint.declaration().name()).write(fieldCollector -> {
+                ComponentKey<?> key = componentKeyResolver.resolve(injectionPoint.declaration());
                 fieldCollector.property("key").write(key);
             });
         }

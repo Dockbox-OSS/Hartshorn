@@ -31,9 +31,9 @@ import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A customized runtime specifically targeted at evaluating single expressions.
- * This makes use of the {@link StandardRuntime} to evaluate the script, and
- * customizes the input using the {@link ExpressionCustomizer}.
+ * A customized runtime specifically targeted at evaluating single expressions. This makes use of
+ * the {@link StandardRuntime} to evaluate the script, and customizes the input using the {@link
+ * ExpressionCustomizer}.
  *
  * @author Guus Lieben
  * @since 0.4.12
@@ -57,8 +57,8 @@ public class ValidateExpressionRuntime extends StandardRuntime {
     }
 
     /**
-     * Looks up the validation result in the given {@link ResultCollector}. If there
-     * is no validation result present, {@code false} is returned.
+     * Looks up the validation result in the given {@link ResultCollector}. If there is no validation result
+     * present, {@code false} is returned.
      *
      * @param collector The result collector in which the validation result may be stored.
      * @return The validation result, or {@code false} if it does not exist.
@@ -68,10 +68,33 @@ public class ValidateExpressionRuntime extends StandardRuntime {
         return Boolean.TRUE.equals(result.orElse(false));
     }
 
+    /**
+     * Resolves all executable statements within the script. As expression scripts are typically wrapped in a
+     * {@link TestStatement test statement}, the {@link ExpressionScript#scriptContext() script context} would
+     * usually only return that single statement. This method returns the actual statements within the test
+     * statement's body.
+     *
+     * @param expressionScript The expression script to resolve the statements for.
+     * @return The actual statements within the script.
+     */
     public static List<Statement> actualStatements(ExpressionScript expressionScript) {
         return actualStatements(expressionScript, true);
     }
 
+    /**
+     * Resolves all executable statements within the script. As expression scripts are typically wrapped in a
+     * {@link TestStatement test statement}, the {@link ExpressionScript#scriptContext() script context} would
+     * usually only return that single statement. This method returns the actual statements within the test
+     * statement's body.
+     *
+     * <p>When {@code excludeModuleStatements} is {@code true}, module statements are excluded from the result.
+     * This can be useful when the script is to be executed in a context which implicitly imports modules, and
+     * the module statements are not directly relevant to the caller.
+     *
+     * @param expressionScript The expression script to resolve the statements for.
+     * @param excludeModuleStatements Whether to exclude module statements from the result.
+     * @return The actual statements within the script.
+     */
     public static List<Statement> actualStatements(ExpressionScript expressionScript, boolean excludeModuleStatements) {
         List<Statement> statements = expressionScript.scriptContext().statements();
         List<TestStatement> testStatements = statements.stream()

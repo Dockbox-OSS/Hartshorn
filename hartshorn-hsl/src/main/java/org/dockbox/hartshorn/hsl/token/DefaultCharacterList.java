@@ -16,9 +16,17 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
+/**
+ * Represents the default characters that are used to represent certain tokens in the
+ * HSL language.
+ *
+ * @since 0.6.0
+ *
+ * @see TokenCharacter
+ *
+ * @author Guus Lieben
+ */
 public final class DefaultCharacterList implements TokenCharacterList {
-
-    public static final DefaultCharacterList INSTANCE = new DefaultCharacterList();
 
     @Override
     public TokenCharacter nullCharacter() {

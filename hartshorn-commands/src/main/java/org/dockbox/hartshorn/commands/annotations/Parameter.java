@@ -55,6 +55,8 @@ public @interface Parameter {
     /**
      * Descriptor of the parameter. This is used for generating help pages.
      *
+     * @return the descriptor of the parameter
+     *
      * @deprecated since 0.5.0, for removal in 0.6.0. No longer used, should be part of Javadocs of the parameter type or
      *             the given {@link #pattern()} implementation.
      */

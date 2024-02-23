@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.context;
 
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.SynchronizedHashSetMultiMap;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,15 +23,29 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
+import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.SynchronizedHashSetMultiMap;
+import org.dockbox.hartshorn.util.option.Option;
+
 /**
  * The default implementation of {@link Context}. This implementation uses a {@link SynchronizedHashSetMultiMap} to store the
  * contexts.
+ *
+ * @author Guus Lieben
+ *
+ * @since 0.4.1
  */
 public abstract class DefaultContext implements Context {
 
     private transient Set<Context> unnamedContexts;
     private transient MultiMap<String, Context> namedContexts;
 
+    /**
+     * Returns all contexts that are not named.
+     *
+     * @return All contexts that are not named.
+     */
     protected Set<Context> unnamedContexts() {
         if (this.unnamedContexts == null) {
             this.unnamedContexts = ConcurrentHashMap.newKeySet();
@@ -44,6 +53,12 @@ public abstract class DefaultContext implements Context {
         return this.unnamedContexts;
     }
 
+    /**
+     * Returns all contexts that are named. This does not guarantee that the contexts are unique, or that
+     * they are an instance of {@link NamedContext}.
+     *
+     * @return All contexts that are named.
+     */
     protected MultiMap<String, Context> namedContexts() {
         if (this.namedContexts == null) {
             this.namedContexts = new SynchronizedHashSetMultiMap<>();

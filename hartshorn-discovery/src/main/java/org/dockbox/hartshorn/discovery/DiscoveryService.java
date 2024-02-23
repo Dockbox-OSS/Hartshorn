@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.discovery;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
@@ -27,9 +30,6 @@ import java.util.ServiceLoader.Provider;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A service that allows for the discovery of implementations of a given type. This service is a utility wrapper around
@@ -79,8 +79,13 @@ public final class DiscoveryService {
         }
     }
 
+    /**
+     * Returns the singleton instance of the service.
+     *
+     * @return the singleton instance of the service
+     */
     @NonNull
-    public static DiscoveryService instance() {
+    public static synchronized DiscoveryService instance() {
         if (DISCOVERY_SERVICE == null) {
             DISCOVERY_SERVICE = new DiscoveryService();
         }

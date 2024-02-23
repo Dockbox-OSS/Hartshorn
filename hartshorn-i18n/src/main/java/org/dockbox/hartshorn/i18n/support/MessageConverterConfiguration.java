@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,44 @@
 package org.dockbox.hartshorn.i18n.support;
 
 import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
-import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 
+/**
+ * Configuration for utility {@link Converter}s that affect {@link Message}s.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 @Configuration
-@RequiresActivator(UseTranslations.class)
 public class MessageConverterConfiguration {
 
+    /**
+     * Converter to convert a {@link String} to a {@link Message}. If possible this will delegate to the {@link
+     * TranslationService} to retrieve the {@link Message} for the provided {@link String}. If no {@link Message} is
+     * found, {@code null} is returned. Note that strings provided to this converter are expected to represent keys
+     * that are compatible with the active {@link TranslationService}.
+     *
+     * @param translationService the {@link TranslationService} to delegate to
+     * @return a {@link Converter} that converts a {@link String} to a {@link Message}
+     */
     @Binds(type = BindingType.COLLECTION)
     public Converter<String, Message> stringToMessageConverter(TranslationService translationService) {
         return new StringToMessageConverter(translationService);
+    }
+
+    /**
+     * Converter to convert a {@link Message} to a {@link String}. This converter will attempt to retrieve the string
+     * representation of the provided {@link Message}, translating it to the current default locale of the message.
+     *
+     * @return a {@link Converter} that converts a {@link Message} to a {@link String}
+     */
+    @Binds(type = BindingType.COLLECTION)
+    public Converter<Message, String> messageToStringConverter() {
+        return message -> message.string();
     }
 }

@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
+import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -164,8 +164,8 @@ public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
                 try {
                     this.execute(statement);
                 }
-                catch (MoveKeyword type) {
-                    if (type.moveType() == MoveKeyword.MoveType.CONTINUE) {
+                catch (FlowControlKeyword type) {
+                    if (type.moveType() == FlowControlKeyword.MoveType.CONTINUE) {
                         break;
                     }
                     // Handle in higher visitor call

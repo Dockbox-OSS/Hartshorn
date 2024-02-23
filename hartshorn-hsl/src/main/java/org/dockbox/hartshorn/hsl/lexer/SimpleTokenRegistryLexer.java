@@ -595,6 +595,13 @@ public class SimpleTokenRegistryLexer implements Lexer {
      * type of the reserved word is used instead.
      */
     protected void scanIdentifier() {
+        TokenCharacter previousCharacter = this.peekChar(-1);
+        // Ensure that the identifier is valid. The previous char should be consumed by the caller, so we need to ensure
+        // that that's the case.
+        if (!previousCharacter.isAlpha() && previousCharacter != this.tokenRegistry.characterList().nullCharacter()) {
+            throw new ScriptEvaluationError("Identifiers cannot start with a digit", Phase.TOKENIZING, this.line(), this.column());
+        }
+
         while (this.currentChar().isAlphaNumeric()) {
             this.pointToNextChar();
         }

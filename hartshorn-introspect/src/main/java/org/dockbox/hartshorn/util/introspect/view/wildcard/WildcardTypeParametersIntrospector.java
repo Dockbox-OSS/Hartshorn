@@ -24,21 +24,24 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
+/**
+ * An {@link TypeParametersIntrospector} that does not provide access to any type parameters. This
+ * introspector is commonly used for wildcard types.
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class WildcardTypeParametersIntrospector implements TypeParametersIntrospector {
 
     @Override
-    public TypeParameterList resolveInputFor(Class<?> fromParentType) {
+    public TypeParameterList inputFor(Class<?> fromParentType) {
         return new SimpleTypeParameterList(List.of());
     }
 
     @Override
     public Option<TypeParameterView> atIndex(int index) {
         return Option.empty();
-    }
-
-    @Override
-    public TypeParameterList all() {
-        return new SimpleTypeParameterList(List.of());
     }
 
     @Override
@@ -56,8 +59,4 @@ public class WildcardTypeParametersIntrospector implements TypeParametersIntrosp
         return new SimpleTypeParameterList(List.of());
     }
 
-    @Override
-    public int count() {
-        return 0;
-    }
 }

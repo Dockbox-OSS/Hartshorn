@@ -18,17 +18,43 @@ package org.dockbox.hartshorn.util.graph;
 
 import java.util.function.Predicate;
 
+/**
+ * A function that inverts a {@link Graph} for all nodes matching a given rule. The inverted graph will have a new
+ * root node, which is the first node that matches the given rule. The inverted graph will only contain all nodes
+ * that are reachable from the new root node.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class GraphInverter {
 
+    /**
+     * Inverts the given graph using the node with the given value as the new root node. The inverted graph will only
+     * contain all nodes that are reachable from the new root node. If there are multiple nodes with the given value,
+     * the graph will contain the first of these nodes as a root node.
+     *
+     * @param graph the graph to invert
+     * @param root the value of the node to use as the new root node
+     * @return the inverted graph
+     * @param <T> the type of the value of the node
+     * @throws GraphException if the graph could not be inverted
+     */
     public <T> Graph<T> invertGraphForValue(Graph<T> graph, T root) throws GraphException {
-        try {
-            return this.invertGraph(graph, node -> node.equals(root));
-        }
-        catch (GraphException e) {
-            throw new GraphException("Could not find root node " + root + " for inverted graph", e);
-        }
+        return this.invertGraph(graph, node -> node.equals(root));
     }
 
+    /**
+     * Inverts the given graph using the node that matches the given rule as the new root node. The inverted graph will
+     * only contain all nodes that are reachable from the new root node. If there are multiple nodes that match the
+     * given rule, the graph will contain the first of these nodes as a root node.
+     *
+     * @param graph the graph to invert
+     * @param rule the rule to match the new root node
+     * @return the inverted graph
+     * @param <T> the type of the value of the node
+     * @throws GraphException if the graph could not be inverted
+     */
     public <T> Graph<T> invertGraph(Graph<T> graph, Predicate<T> rule) throws GraphException {
         Graph<T> inverted = new SimpleGraph<>();
         GraphNodeLookupVisitor<T> visitor = new GraphNodeLookupVisitor<>(rule);

@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.resources;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -23,8 +25,28 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
+/**
+ * A {@link ResourceLookup} implementation that allows for multiple {@link ResourceLookupStrategy} implementations to be
+ * used. The strategy to use is determined by the prefix of the source string. If no prefix is provided, the fallback
+ * strategy is used.
+ *
+ * <p>Source strings are expected to be in the format {@code strategy:source}, where {@code strategy} is the {@link
+ * ResourceLookupStrategy#name() name} of the strategy to use, and {@code source} is the source string to use for the
+ * strategy. Strategy names are case-sensitive.
+ *
+ * <p>For example, the source string {@code classpath:data.json} will be resolved using the {@link
+ * ClassPathResourceLookupStrategy}, while the source string {@code fs:data.json} will be resolved using the {@link
+ * FileSystemLookupStrategy} (assuming both strategies are registered with this {@link ResourceLookup} instance).
+ *
+ * <p>If no strategies are registered, the fallback strategy is used for all source strings.
+ *
+ * @see ResourceLookup
+ * @see ResourceLookupStrategy
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class FallbackResourceLookup implements ResourceLookup {
 
     private static final Pattern STRATEGY_PATTERN = Pattern.compile("(.+):(.+)");
@@ -52,7 +74,13 @@ public class FallbackResourceLookup implements ResourceLookup {
         return strategy.lookup(this.applicationContext, matchedSource);
     }
 
-    @Override
+    /**
+     * Adds a new strategy to this {@link ResourceLookup}. If a strategy with the same name already exists, an {@link
+     * IllegalArgumentException} is thrown.
+     *
+     * @param strategy the strategy to add
+     * @throws IllegalArgumentException if a strategy with the same name already exists
+     */
     public void addLookupStrategy(ResourceLookupStrategy strategy) {
         if (this.strategies.containsKey(strategy.name())) {
             throw new IllegalArgumentException("A strategy for source " + strategy.name() + " already exists");
@@ -60,12 +88,21 @@ public class FallbackResourceLookup implements ResourceLookup {
         this.strategies.put(strategy.name(), strategy);
     }
 
-    @Override
+    /**
+     * Removes a strategy from this {@link ResourceLookup}. If no strategy with the given name exists, no action is
+     * taken.
+     *
+     * @param strategy the strategy to remove
+     */
     public void removeLookupStrategy(ResourceLookupStrategy strategy) {
         this.strategies.remove(strategy.name());
     }
 
-    @Override
+    /**
+     * Returns a set of all strategies that are registered with this {@link ResourceLookup}.
+     *
+     * @return a set of all strategies that are registered with this {@link ResourceLookup}
+     */
     public Set<ResourceLookupStrategy> strategies() {
         return Set.copyOf(this.strategies.values());
     }

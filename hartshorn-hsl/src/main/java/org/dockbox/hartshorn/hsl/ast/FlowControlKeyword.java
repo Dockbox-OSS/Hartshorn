@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,16 @@
 
 package org.dockbox.hartshorn.hsl.ast;
 
-
-public class MoveKeyword extends RuntimeException {
+/**
+ * Represents a keyword that causes a flow control change in the interpreter. This is used to signal
+ * to the interpreter that a loop or switch statement should be exited, or that the current iteration
+ * should be skipped.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
+public class FlowControlKeyword extends RuntimeException {
 
     public enum ScopeType {
         NONE,
@@ -32,7 +40,7 @@ public class MoveKeyword extends RuntimeException {
 
     private final MoveType moveType;
 
-    public MoveKeyword(MoveType type) {
+    public FlowControlKeyword(MoveType type) {
         super(null, null, false, false);
         this.moveType = type;
     }

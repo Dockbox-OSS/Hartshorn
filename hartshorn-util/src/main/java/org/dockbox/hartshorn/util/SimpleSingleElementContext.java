@@ -16,12 +16,30 @@
 
 package org.dockbox.hartshorn.util;
 
+/**
+ * A simple implementation of {@link SingleElementContext} which can be used for simple
+ * single element contexts.
+ *
+ * @param <I> the type of the input
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SimpleSingleElementContext<I> extends AbstractSingleElementContext<I> {
 
     protected SimpleSingleElementContext(I input) {
         super(input);
     }
 
+    /**
+     * Creates a new {@link SimpleSingleElementContext} with the given input. This is a
+     * convenience method to better align with the common use of {@link SingleElementContext}.
+     *
+     * @param input the input value
+     * @return the new context
+     * @param <I> the type of the input
+     */
     public static <I> SimpleSingleElementContext<I> create(I input) {
         return new SimpleSingleElementContext<>(input);
     }

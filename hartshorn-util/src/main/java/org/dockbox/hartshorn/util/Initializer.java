@@ -21,6 +21,10 @@ package org.dockbox.hartshorn.util;
  * serves as the common interface for all initializers in Hartshorn.
  *
  * @param <T> The type of object to initialize.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface Initializer<T> {

@@ -43,6 +43,24 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
 
+/**
+ * A parser for the tokens of a script. This parser is used to parse the tokens of a script into an
+ * abstract syntax tree (AST). This implementation delegates the parsing of statements and expressions
+ * to a set of registered {@link ASTNodeParser parsers}.
+ *
+ * <p>The primary function of this implementation directly is the tracking of tokens and the current
+ * position in the token stream. It also provides a set of methods to parse the tokens into an AST.
+ *
+ * <p>When parsing a script, the parser will attempt to parse the tokens into a list of statements. As
+ * this parser tracks the state directly, it is not thread-safe. It is expected that a new instance is
+ * created for each parsing operation.
+ *
+ * @since 0.5.0
+ *
+ * @see ASTNodeParser
+ *
+ * @author Guus Lieben
+ */
 public class StandardTokenParser extends DefaultProvisionContext implements TokenParser {
 
     private int current = 0;
@@ -99,10 +117,20 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
         return this;
     }
 
+    /**
+     * Returns the set of statement parsers that are currently registered with this parser.
+     *
+     * @return the set of statement parsers that are currently registered with this parser
+     */
     public Set<ASTNodeParser<? extends Statement>> statementParsers() {
         return statementParsers;
     }
 
+    /**
+     * Returns the set of expression parsers that are currently registered with this parser.
+     *
+     * @return the set of expression parsers that are currently registered with this parser
+     */
     public Set<ASTNodeParser<? extends Expression>> expressionParsers() {
         return expressionParsers;
     }

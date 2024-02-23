@@ -18,7 +18,21 @@ package org.dockbox.hartshorn.util.collections;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ConcurrentHashBiMap<K, V> extends StandardBiMap<K, V> {
+/**
+ * A {@link BiMap} implementation that uses {@link ConcurrentHashMap} as its backing map.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @see ConcurrentHashMap
+ * @see BiMap
+ * @see AbstractBiMap
+ *
+ * @author Guus Lieben
+ */
+public class ConcurrentHashBiMap<K, V> extends AbstractBiMap<K, V> {
 
     public ConcurrentHashBiMap() {
         super(new ConcurrentHashMap<>(), new ConcurrentHashMap<>());

@@ -18,7 +18,19 @@ package org.dockbox.hartshorn.hsl.token.type;
 
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 
+/**
+ * Represents the different types of import tokens that can be used in the HSL language.
+ *
+ * @see TokenType
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public enum ImportTokenType implements EnumTokenType {
+    /**
+     * 'import' token, representing a statement that imports a declared module.
+     */
     IMPORT,
     ;
 
@@ -28,7 +40,7 @@ public enum ImportTokenType implements EnumTokenType {
         this.metaData = TokenMetaData.builder(this)
                 .keyword(true)
                 .standaloneStatement(true)
-                .ok();
+                .build();
     }
 
     @Override

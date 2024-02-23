@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.context.Context;
  * {@link Customizer} but allows for {@link Context} to be provided alongside the configuration target.
  *
  * @author Guus Lieben
+ *
  * @since 0.5.0
  */
 public interface ContextualCustomizer<T> {
@@ -31,6 +32,7 @@ public interface ContextualCustomizer<T> {
      * Configures the given target object. Implementations of this method may access the target object directly, and
      * configure it as necessary.
      *
+     * @param context The context to use for configuration.
      * @param target The object to configure.
      */
     void configure(Context context, T target);

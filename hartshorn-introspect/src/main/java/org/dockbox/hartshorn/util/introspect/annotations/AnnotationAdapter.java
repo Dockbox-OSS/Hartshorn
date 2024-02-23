@@ -18,7 +18,21 @@ package org.dockbox.hartshorn.util.introspect.annotations;
 
 import java.lang.annotation.Annotation;
 
+/**
+ * An adapter for {@link Annotation} instances that allows for easy unproxying of annotation
+ * proxies.
+ *
+ * @since 0.4.11
+ *
+ * @author Guus Lieben
+ */
 @FunctionalInterface
 public interface AnnotationAdapter {
+
+    /**
+     * Returns the actual annotation instance that is proxied by this adapter.
+     *
+     * @return the actual annotation instance
+     */
     Annotation actualAnnotation();
 }

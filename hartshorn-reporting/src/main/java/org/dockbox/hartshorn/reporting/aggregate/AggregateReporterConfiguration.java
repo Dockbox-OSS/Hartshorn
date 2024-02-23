@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,60 @@
 
 package org.dockbox.hartshorn.reporting.aggregate;
 
-import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
-
-import java.util.LinkedHashSet;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
+import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
+
+/**
+ * A configuration for an {@link AggregateDiagnosticsReporter}. This configuration is used to register the reporters
+ * that are aggregated by the {@link AggregateDiagnosticsReporter}. No ordering is guaranteed.
+ *
+ * @since 0.5.0
+ *
+ * @see AggregateDiagnosticsReporter
+ *
+ * @author Guus Lieben
+ */
 public class AggregateReporterConfiguration {
 
-    private final Set<CategorizedDiagnosticsReporter> reporters = new LinkedHashSet<>();
+    private final Map<String, CategorizedDiagnosticsReporter> reporters = new LinkedHashMap<>();
 
+    /**
+     * Registers the given reporter. If a reporter with the same category is already registered, an
+     * {@link IllegalArgumentException} is thrown.
+     *
+     * @param reporter the reporter to register
+     *
+     * @throws IllegalArgumentException when a reporter with the same category is already registered
+     */
     public void add(CategorizedDiagnosticsReporter reporter) {
-        this.reporters.add(reporter);
+        if (this.reporters.containsKey(reporter.category())) {
+            throw new IllegalArgumentException("Reporter with category '" + reporter.category() + "' already registered");
+        }
+        this.reporters.put(reporter.category(), reporter);
     }
 
+    /**
+     * Registers all given reporters. If a reporter with the same category is already registered, an
+     * {@link IllegalArgumentException} is thrown.
+     *
+     * @param reporters the reporters to register
+     *
+     * @throws IllegalArgumentException when a reporter with the same category is already registered
+     */
+    public void addAll(Collection<CategorizedDiagnosticsReporter> reporters) {
+        reporters.forEach(this::add);
+    }
+
+    /**
+     * Returns a set of all registered reporters.
+     *
+     * @return a set of all registered reporters
+     */
     public Set<CategorizedDiagnosticsReporter> reporters() {
-        return this.reporters;
+        return Set.copyOf(this.reporters.values());
     }
 }

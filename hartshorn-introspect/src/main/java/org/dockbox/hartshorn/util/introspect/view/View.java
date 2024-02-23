@@ -20,6 +20,16 @@ import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.Named;
 
+/**
+ * A view is a representation of an element in the Java language. Exact details of the element
+ * are implementation specific, but all views provide access to the element's name, and can
+ * be reported to extract information about the element. Views are also {@link Context}s, which
+ * allows for the element to be enhanced with custom data if required.
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public interface View extends Named, Reportable, Context {
 
     /**
