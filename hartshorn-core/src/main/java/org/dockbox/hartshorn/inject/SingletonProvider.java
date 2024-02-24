@@ -39,7 +39,7 @@ public class SingletonProvider<T> implements NonTypeAwareProvider<T> {
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(ApplicationContext context) {
+    public Option<ObjectContainer<T>> provide(ApplicationContext context, ComponentRequestContext requestContext) {
         return Option.of(this.container);
     }
 

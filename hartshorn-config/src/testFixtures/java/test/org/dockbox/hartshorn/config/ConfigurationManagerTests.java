@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
@@ -120,7 +121,11 @@ public abstract class ConfigurationManagerTests {
                     fs: "This is a value"
                     """);
 
-        ComponentProcessingContext<DemoFSConfiguration> processingContext = new ComponentProcessingContext<>(this.applicationContext, ComponentKey.of(DemoFSConfiguration.class), null, false);
+        ComponentProcessingContext<DemoFSConfiguration> processingContext = new ComponentProcessingContext<>(
+                this.applicationContext,
+                ComponentRequestContext.createForComponent(),
+                ComponentKey.of(DemoFSConfiguration.class),
+                null, false);
         new ConfigurationServicePreProcessor().process(this.applicationContext, processingContext);
 
         DemoFSConfiguration configuration = this.applicationContext.get(DemoFSConfiguration.class);

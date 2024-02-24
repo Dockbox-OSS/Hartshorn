@@ -26,18 +26,21 @@ import java.util.function.Function;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class ComponentProcessingContext<T> extends DefaultApplicationAwareContext {
 
+    private final ComponentRequestContext requestContext;
     private final Map<ComponentKey<?>, Object> data;
     private final boolean permitsProxying;
 
     protected ComponentKey<T> key;
     protected T instance;
 
-    public ComponentProcessingContext(ApplicationContext applicationContext, ComponentKey<T> key, T instance, boolean permitsProxying) {
+    public ComponentProcessingContext(ApplicationContext applicationContext, ComponentRequestContext requestContext, ComponentKey<T> key, T instance, boolean permitsProxying) {
         super(applicationContext);
+        this.requestContext = requestContext;
         this.key = key;
         this.instance = instance;
         this.data = new ConcurrentHashMap<>();

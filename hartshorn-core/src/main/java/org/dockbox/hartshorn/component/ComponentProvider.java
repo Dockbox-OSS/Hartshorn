@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 
 /**
  * A component provider is a class that is capable of providing components. Components are identified using
@@ -43,10 +44,15 @@ public interface ComponentProvider {
     /**
      * Returns the component for the given key.
      * @param key The key of the component to return.
+     * @param requestContext The context in which the component is requested.
      * @param <T> The type of the component to return.
      * @return The component for the given key.
      */
-    <T> T get(ComponentKey<T> key);
+    <T> T get(ComponentKey<T> key, ComponentRequestContext requestContext);
+
+    default <T> T get(ComponentKey<T> key) {
+        return get(key, ComponentRequestContext.createForComponent());
+    }
 
     /**
      * Returns the component for the given type and name metadata. If {@code named} is null, the given

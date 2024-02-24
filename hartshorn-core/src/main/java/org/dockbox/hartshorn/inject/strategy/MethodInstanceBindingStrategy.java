@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.DependencyMap;
 import org.dockbox.hartshorn.inject.Priority;
@@ -40,7 +41,6 @@ import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -91,9 +91,10 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
 
         DependencyMap dependenciesMap = DependencyMap.create().immediate(dependencies);
 
-        ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
-        CheckedSupplier<T> supplier = () -> {
+        ContextAwareComponentSupplier<T> supplier = requestContext -> {
             try {
+                ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
+                contextAdapter.add(requestContext);
                 return contextAdapter.load(bindsMethod).orNull();
             }
             catch(Throwable throwable) {

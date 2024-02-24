@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
@@ -32,7 +33,7 @@ public class ContextDrivenComponentInstanceFactory implements ComponentInstanceF
     }
 
     @Override
-    public <T> Option<ObjectContainer<T>> instantiate(ComponentKey<T> key) throws ApplicationException {
-        return new ContextDrivenProvider<>(key).provide(this.applicationContext);
+    public <T> Option<ObjectContainer<T>> instantiate(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
+        return new ContextDrivenProvider<>(key).provide(this.applicationContext, requestContext);
     }
 }

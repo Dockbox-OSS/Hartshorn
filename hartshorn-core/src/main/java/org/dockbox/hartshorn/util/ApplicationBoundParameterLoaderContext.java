@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentProvider;
@@ -25,11 +27,10 @@ import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.context.ProvisionContext;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
 
 public class ApplicationBoundParameterLoaderContext extends ParameterLoaderContext implements ContextCarrier, ProvisionContext {
 
@@ -65,13 +66,13 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
         }
         return new ComponentProvider() {
             @Override
-            public <T> T get(ComponentKey<T> key) {
+            public <T> T get(ComponentKey<T> key, ComponentRequestContext requestContext) {
                 ApplicationBoundParameterLoaderContext self = ApplicationBoundParameterLoaderContext.this;
                 // Explicit scopes get priority, otherwise use our local scope
                 if (key.scope() == Scope.DEFAULT_SCOPE) {
-                    return self.provider.get(key.mutable().scope(self.scope).build());
+                    return self.provider.get(key.mutable().scope(self.scope).build(), requestContext);
                 }
-                return self.provider.get(key);
+                return self.provider.get(key, requestContext);
             }
         };
     }

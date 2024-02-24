@@ -69,8 +69,8 @@ public final class ComposedProvider<T> implements Provider<T> {
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(ApplicationContext context) throws ApplicationException {
-        return this.provider.provide(context)
+    public Option<ObjectContainer<T>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
+        return this.provider.provide(context, requestContext)
                 .map(this::doMapContainer);
     }
 

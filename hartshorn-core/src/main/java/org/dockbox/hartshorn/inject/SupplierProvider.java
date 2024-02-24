@@ -38,7 +38,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements NonTypeAwareProvider<C> {
 
     @Override
-    public Option<ObjectContainer<C>> provide(ApplicationContext context) throws ApplicationException {
+    public Option<ObjectContainer<C>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
         C instance = this.supplier.get();
         return Option.of(instance).map(ComponentObjectContainer::new);
     }

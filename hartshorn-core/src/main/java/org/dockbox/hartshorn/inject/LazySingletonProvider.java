@@ -43,7 +43,7 @@ public class LazySingletonProvider<T> implements NonTypeAwareProvider<T> {
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(ApplicationContext context) throws ApplicationException {
+    public Option<ObjectContainer<T>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
         if (this.container == null) {
             this.container = this.supplier.get();
         }

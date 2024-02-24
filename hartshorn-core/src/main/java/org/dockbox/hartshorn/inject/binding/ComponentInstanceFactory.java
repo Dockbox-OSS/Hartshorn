@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.option.Option;
@@ -35,10 +36,11 @@ public interface ComponentInstanceFactory {
      * may contain a scope. Depending on the implementation, these attributes may be used to determine the
      * instance that is created.
      *
-     * @param key The key of the component to create
+     * @param <T>            The type of the component
+     * @param key            The key of the component to create
+     * @param requestContext
      * @return The created instance
-     * @param <T> The type of the component
      * @throws ApplicationException When the instance cannot be created
      */
-    <T> Option<ObjectContainer<T>> instantiate(ComponentKey<T> key) throws ApplicationException;
+    <T> Option<ObjectContainer<T>> instantiate(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException;
 }

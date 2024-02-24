@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.binding.collection;
 
+import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
@@ -50,6 +51,8 @@ public interface CollectorBindingFunction<T> {
      * @return The binder
      */
     Binder supplier(CheckedSupplier<T> supplier);
+
+    Binder supplier(ContextAwareComponentSupplier<T> supplier);
 
     /**
      * Binds to the given instance, this will always return the same instance
