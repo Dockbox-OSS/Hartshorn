@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.parallel.Execution;
@@ -33,7 +34,8 @@ public class ApplicationBatchingTest {
     /**
      * Test that multiple applications can be created and be active at the same time without interfering with each other.
      */
-    @RepeatedTest(1)
+    @Ignore("Only for manual testing")
+    @RepeatedTest(100)
     void testApplicationContextBatching() {
         ApplicationContext applicationContext = Assertions.assertDoesNotThrow(() ->
                 HartshornApplication.create(ApplicationBatchingTest.class, builder ->
