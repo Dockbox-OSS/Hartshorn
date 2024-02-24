@@ -50,13 +50,13 @@ antora:
 # TODO #1049: Create custom UI bundle for documentation
 ui:
   bundle:
-    url: ./ui-bundle.zip
+    url: ./hartshorn-assembly/antora/ui-bundle.zip
     snapshot: true
   supplemental_files:
     - path: css/vendor/tabs.css
-      contents: 'C:\Users\guusl\AppData\Roaming\npm\node_modules/@asciidoctor/tabs/dist/css/tabs.css'
+      contents: './hartshorn-assembly/antora/tabs/tabs.css'
     - path: js/vendor/tabs.js
-      contents: 'C:\Users\guusl\AppData\Roaming\npm\node_modules/@asciidoctor/tabs/dist/js/tabs.js'
+      contents: './hartshorn-assembly/antora/tabs/tabs.js'
     - path: partials/footer-scripts.hbs
       contents: |
         <script id="site-script" src="{{{uiRootPath}}}/js/site.js" data-ui-root-path="{{{uiRootPath}}}"></script>
