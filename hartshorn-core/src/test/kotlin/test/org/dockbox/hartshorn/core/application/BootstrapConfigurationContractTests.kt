@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.application.context.SimpleApplicationContext
 import org.dockbox.hartshorn.application.environment.*
 import org.dockbox.hartshorn.component.*
 import org.dockbox.hartshorn.component.condition.ConditionMatcher
-import org.dockbox.hartshorn.inject.ApplicationDependencyResolver
 import org.dockbox.hartshorn.inject.BindsMethodDependencyResolver
 import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor
 import org.dockbox.hartshorn.inject.DependencyResolver
@@ -31,8 +30,6 @@ import org.dockbox.hartshorn.inject.binding.Binder
 import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder
 import org.dockbox.hartshorn.introspect.ViewContextAdapter
-import org.dockbox.hartshorn.logging.ApplicationLogger
-import org.dockbox.hartshorn.logging.AutoSwitchingApplicationLogger
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator
 import org.dockbox.hartshorn.util.ContextualInitializer
 import org.dockbox.hartshorn.util.Customizer
@@ -109,9 +106,6 @@ class BootstrapConfigurationContractTests {
         assertDeferred(instance) { configurer, deferred: ApplicationArgumentParser? -> configurer.applicationArgumentParser(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.applicationArgumentParser(initializer) }
 
-        assertDeferred(instance) { configurer, deferred: ApplicationLogger? -> configurer.applicationLogger(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.applicationLogger(initializer) }
-
         assertDeferred(instance) { configurer, deferred: ClasspathResourceLocator? -> configurer.classpathResourceLocator(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.classpathResourceLocator(initializer) }
 
@@ -120,14 +114,6 @@ class BootstrapConfigurationContractTests {
 
         assertDeferred(instance) { configurer, deferred: ApplicationContext? -> configurer.applicationContext(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.applicationContext(initializer) }
-    }
-
-    @Test
-    fun testAutoSwitchingApplicationLoggerContract() {
-        val instance = AutoSwitchingApplicationLogger.Configurer()
-
-        assertDeferred(instance) { configurer, deferred: ApplicationLogger? -> configurer.defaultFallback(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.defaultFallback(initializer) }
     }
 
     @Test

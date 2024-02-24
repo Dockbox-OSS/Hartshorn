@@ -110,7 +110,7 @@ public class ScriptRuntimeTests {
 
     @Test
     void testExpressionWithGlobalFunctionAccess() {
-        String expression = "context != null && context.log() != null";
+        String expression = "context != null && context.environment() != null";
         ExpressionScript script = ExpressionScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
         this.assertValid(script);
@@ -118,7 +118,7 @@ public class ScriptRuntimeTests {
 
     @Test
     void testScriptWithGlobalFunctionAccess() {
-        String expression = "context.log().info(\"Hello world!\")";
+        String expression = "context.environment().isBatchMode()";
         ExecutableScript script = ExecutableScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
         this.assertNoErrorsReported(script);

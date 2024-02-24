@@ -227,11 +227,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public void enableDebugLogging(boolean active) {
-        this.environment().enableDebugLogging(active);
-    }
-
-    @Override
     public void close() {
         if (this.isClosed()) {
             throw new ContextClosedException(ApplicationContext.class);

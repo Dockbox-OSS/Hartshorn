@@ -19,15 +19,13 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.DelegatingApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.application.environment.FileSystemProvider;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
+import org.dockbox.hartshorn.application.environment.FileSystemProvider;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentLocator;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.inject.binding.Binder;
-import org.dockbox.hartshorn.logging.ApplicationLogger;
-import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
@@ -56,7 +54,6 @@ import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
  * @author Guus Lieben
  * @since 0.5.0
  */
-@LogExclude
 public class ContextualEnvironmentBinderConfiguration implements EnvironmentBinderConfiguration {
 
     @Override
@@ -77,7 +74,6 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
         binder.bind(Introspector.class).singleton(environment.introspector());
         binder.bind(ApplicationEnvironment.class).singleton(environment);
         binder.bind(ProxyLookup.class).singleton(environment.proxyOrchestrator());
-        binder.bind(ApplicationLogger.class).singleton(environment);
         binder.bind(ProxyOrchestrator.class).singleton(environment.proxyOrchestrator());
         binder.bind(FileSystemProvider.class).singleton(environment.fileSystem());
         binder.bind(AnnotationLookup.class).singleton(environment.introspector().annotations());
