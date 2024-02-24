@@ -59,9 +59,9 @@ public interface MethodInterceptor<T, R> {
      */
     default MethodInterceptor<T, R> andThen(MethodInterceptor<T, R> after) {
         Objects.requireNonNull(after);
-        return ctx -> {
-            R previous = this.intercept(ctx);
-            return after.intercept(new MethodInterceptorContext<>(ctx, previous));
+        return context -> {
+            R previous = this.intercept(context);
+            return after.intercept(new MethodInterceptorContext<>(context, previous));
         };
     }
 }

@@ -35,7 +35,7 @@ public abstract class ServiceMethodInterceptorPostProcessor extends ComponentPos
     }
 
     @Override
-    public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(ApplicationContext applicationContext, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext);
 
         ProxyFactory<T> factory = processingContext.get(ProxyFactory.class);
@@ -44,10 +44,10 @@ public abstract class ServiceMethodInterceptorPostProcessor extends ComponentPos
         }
 
         for (MethodView<T, ?> method : methods) {
-            MethodProxyContext<T> ctx = new MethodProxyContextImpl<>(context, processingContext.type(), method);
+            MethodProxyContext<T> context = new MethodProxyContextImpl<>(applicationContext, processingContext.type(), method);
 
-            if (this.preconditions(context, ctx, processingContext)) {
-                MethodInterceptor<T, ?> function = this.process(context, ctx, processingContext);
+            if (this.preconditions(applicationContext, context, processingContext)) {
+                MethodInterceptor<T, ?> function = this.process(applicationContext, context, processingContext);
                 if (function != null) {
                     factory.advisors().method(method).intercept(TypeUtils.adjustWildcards(function, MethodInterceptor.class));
                 }

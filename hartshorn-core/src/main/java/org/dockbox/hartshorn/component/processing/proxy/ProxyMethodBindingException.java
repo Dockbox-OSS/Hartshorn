@@ -16,18 +16,18 @@
 
 package org.dockbox.hartshorn.component.processing.proxy;
 
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-
 import java.lang.reflect.Method;
+
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 public class ProxyMethodBindingException extends RuntimeException {
 
-    public ProxyMethodBindingException(MethodProxyContext<?> ctx) {
-        this(ctx.method());
+    public ProxyMethodBindingException(MethodProxyContext<?> context) {
+        this(context.method());
     }
 
-    public ProxyMethodBindingException(MethodView<?, ?> ctx) {
-        super("Could not bind proxy to " + ctx.name() + " because preconditions failed");
+    public ProxyMethodBindingException(MethodView<?, ?> method) {
+        super("Could not bind proxy to " + method.name() + " because preconditions failed");
     }
 
     public ProxyMethodBindingException(Method method) {
