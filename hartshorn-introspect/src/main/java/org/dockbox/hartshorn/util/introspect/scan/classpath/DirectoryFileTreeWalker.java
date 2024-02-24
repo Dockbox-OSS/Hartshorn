@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,13 +49,30 @@ public class DirectoryFileTreeWalker implements FileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-        return FileVisitResult.CONTINUE;
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+        String canonicalPath = dir.toFile().getCanonicalPath();
+        if (canonicalPath.length() == this.rootDirNameLength) {
+            return FileVisitResult.CONTINUE;
+        }
+
+        String resourceName = canonicalPath.substring(this.rootDirNameLength + 1);
+        String canonicalName = resourceName
+                .replace('/', '.')
+                .replace('\\', '.');
+
+        for (String beginFilterName : this.classPathScanner.filteredPrefixes()) {
+            // If path starts with a filtered prefix, continue
+            // If the path is part of a filtered package, continue, may match later
+            if (canonicalName.startsWith(beginFilterName) || beginFilterName.startsWith(canonicalName)) {
+                return FileVisitResult.CONTINUE;
+            }
+        }
+        return FileVisitResult.SKIP_SUBTREE;
     }
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        String resourceName = file.toFile().getCanonicalPath().substring(this.rootDirNameLength + 1);
+        String resourceName = file.toFile().getAbsolutePath().substring(this.rootDirNameLength + 1);
         this.classPathScanner.processPathResource(this.handler, this.classLoader, resourceName, file);
         return FileVisitResult.CONTINUE;
     }
