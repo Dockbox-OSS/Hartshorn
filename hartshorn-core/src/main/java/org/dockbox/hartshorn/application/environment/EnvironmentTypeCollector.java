@@ -24,13 +24,31 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
 import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A collector for types in the environment. This delegates to the {@link TypeReferenceCollector type reference collectors}
+ * defined in the {@link TypeReferenceCollectorContext} attached to the environment's {@link ApplicationContext}. If no
+ * such context is available, a warning is logged and an empty collection is returned.
+ *
+ * <p>All type references are resolved to their respective classes and then introspected using the environment's
+ * {@link org.dockbox.hartshorn.util.introspect.Introspector}. Note that while classes are loaded, it is not ensured they
+ * are immediately initialized.
+ *
+ * @since 0.5.0
+ *
+ * @see TypeReferenceCollector
+ * @see TypeReferenceCollectorContext
+ *
+ * @author Guus Lieben
+ */
 public class EnvironmentTypeCollector {
 
     private final ApplicationEnvironment environment;
@@ -39,6 +57,15 @@ public class EnvironmentTypeCollector {
         this.environment = environment;
     }
 
+    /**
+     * Collects all types that match the given predicate. The collection is performed by delegating to the
+     * {@link TypeReferenceCollector type reference collectors} defined in the {@link TypeReferenceCollectorContext}
+     * attached to the environment's {@link ApplicationContext}.
+     *
+     * @param predicate the predicate to match
+     * @return a collection of types that match the given predicate
+     * @param <T> the type of the elements in the collection
+     */
     public <T> Collection<TypeView<? extends T>> types(Predicate<TypeView<?>> predicate) {
         Option<TypeReferenceCollectorContext> collectorContext = this.environment.applicationContext().first(TypeReferenceCollectorContext.class);
         if (collectorContext.absent()) {
@@ -67,10 +94,11 @@ public class EnvironmentTypeCollector {
     }
 
     private Collection<Class<?>> loadClasses(Collection<TypeReference> references) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return references.stream()
                 .map(reference -> {
                     try {
-                        return reference.getOrLoad();
+                        return reference.getOrLoad(classLoader);
                     }
                     catch (ClassReferenceLoadException e) {
                         this.environment.handle(e);
