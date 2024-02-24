@@ -53,5 +53,10 @@ public @interface ServiceActivator {
      */
     String[] scanPackages() default {};
 
+    /**
+     * The component processors that become active when this service activator is present.
+     *
+     * @return The component processors that become active when this service activator is present.
+     */
     Class<? extends ComponentProcessor>[] processors() default {};
 }

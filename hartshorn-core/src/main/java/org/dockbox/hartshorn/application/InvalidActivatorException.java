@@ -18,7 +18,18 @@ package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
+/**
+ * Thrown when an attempt is made to register a type as service activator, but the type does not
+ * meet the requirements of a service activator.
+ *
+ * @since 0.4.12
+ *
+ * @see org.dockbox.hartshorn.component.processing.ServiceActivator
+ *
+ * @author Guus Lieben
+ */
 public class InvalidActivatorException extends ApplicationRuntimeException {
+
     public InvalidActivatorException(String message) {
         super(message);
     }
