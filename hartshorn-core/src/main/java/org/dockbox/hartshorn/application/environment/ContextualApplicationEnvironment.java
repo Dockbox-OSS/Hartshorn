@@ -16,6 +16,16 @@
 
 package org.dockbox.hartshorn.application.environment;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.LoggingExceptionHandler;
@@ -35,9 +45,6 @@ import org.dockbox.hartshorn.discovery.DiscoveryService;
 import org.dockbox.hartshorn.discovery.ServiceDiscoveryException;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
-import org.dockbox.hartshorn.logging.ApplicationLogger;
-import org.dockbox.hartshorn.logging.AutoSwitchingApplicationLogger;
-import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
@@ -52,23 +59,11 @@ import org.dockbox.hartshorn.util.introspect.SupplierAdapterProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import jakarta.inject.Singleton;
 
-@LogExclude
 public final class ContextualApplicationEnvironment implements ObservableApplicationEnvironment, ModifiableContextCarrier {
 
     private final Set<Observer> observers = ConcurrentHashMap.newKeySet();
@@ -76,7 +71,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     private final EnvironmentTypeCollector typeCollector = new EnvironmentTypeCollector(this);
 
     private final FileSystemProvider fileSystemProvider;
-    private final ApplicationLogger applicationLogger;
     private final ProxyOrchestrator proxyOrchestrator;
     private final ExceptionHandler exceptionHandler;
     private final AnnotationLookup annotationLookup;
@@ -101,7 +95,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         this.exceptionHandler = this.configure(environmentInitializerContext, configurer.exceptionHandler);
         this.annotationLookup = this.configure(environmentInitializerContext, configurer.annotationLookup);
         this.proxyOrchestrator = this.configure(environmentInitializerContext.transform(this.introspector()), configurer.proxyOrchestrator);
-        this.applicationLogger = this.configure(environmentInitializerContext, configurer.applicationLogger);
         this.fileSystemProvider = this.configure(environmentInitializerContext, configurer.applicationFSProvider);
         this.argumentParser = this.configure(environmentInitializerContext, configurer.applicationArgumentParser);
         this.resourceLocator = this.configure(environmentInitializerContext, configurer.classpathResourceLocator);
@@ -111,7 +104,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         this.arguments = this.argumentParser.parse(context.input().arguments());
 
         SingleElementContext<Properties> argumentsInitializerContext = context.transform(this.arguments);
-        this.printStacktraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
+        this.printStackTraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
         this.isBatchMode = configurer.enableBatchMode.initialize(argumentsInitializerContext);
         this.isStrictMode = configurer.enableStrictMode.initialize(argumentsInitializerContext);
         if (this.introspector() instanceof BatchCapableIntrospector batchCapableIntrospector) {
@@ -123,7 +116,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
             isBuildEnvironment = false;
         }
         this.isBuildEnvironment = isBuildEnvironment;
-        this.checkForDebugging();
 
         if (!this.isBuildEnvironment && configurer.enableBanner.initialize(argumentsInitializerContext)) {
             this.printBanner(context.input().mainClass());
@@ -170,10 +162,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
     public FileSystemProvider applicationFSProvider() {
         return this.fileSystemProvider;
-    }
-
-    public ApplicationLogger applicationLogger() {
-        return this.applicationLogger;
     }
 
     public ExceptionHandler exceptionHandler() {
@@ -287,8 +275,8 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     }
 
     @Override
-    public ExceptionHandler printStacktraces(boolean stacktraces) {
-        return this.exceptionHandler.printStacktraces(stacktraces);
+    public ExceptionHandler printStackTraces(boolean stacktraces) {
+        return this.exceptionHandler.printStackTraces(stacktraces);
     }
 
     @Override
@@ -299,26 +287,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     @Override
     public void register(Class<? extends Observer> observer) {
         this.lazyObservers.add(observer);
-    }
-
-    @Override
-    public Logger log() {
-        return this.applicationLogger.log();
-    }
-
-    @Override
-    public void enableDebugLogging(boolean active) {
-        this.applicationLogger.enableDebugLogging(active);
-    }
-
-    private void checkForDebugging() {
-        // TODO #1002: Better property? This does not align with current property definition standard
-        boolean debug = Boolean.TRUE.equals(Option.of(this.arguments.get("hartshorn:debug"))
-                .cast(String.class)
-                .map(Boolean::valueOf)
-                .orElse(false));
-
-        this.enableDebugLogging(debug);
     }
 
     @Override
@@ -394,7 +362,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
                 PathFileSystemProvider::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler = ContextualInitializer.of(LoggingExceptionHandler::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser = ContextualInitializer.of(StandardApplicationArgumentParser::new);
-        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationLogger> applicationLogger = AutoSwitchingApplicationLogger.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ContextualInitializer.of(ClassLoaderClasspathResourceLocator::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup = ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext = SimpleApplicationContext.create(Customizer.useDefaults());
@@ -624,31 +591,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          */
         public Configurer applicationArgumentParser(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser) {
             this.applicationArgumentParser = applicationArgumentParser;
-            return this;
-        }
-
-        /**
-         * Sets the {@link ApplicationLogger} to use. The {@link ApplicationLogger} is responsible for logging
-         * messages during the application's lifecycle. The default implementation is {@link AutoSwitchingApplicationLogger}.
-         *
-         * @param applicationLogger the {@link ApplicationLogger} to use
-         * @see ApplicationLogger
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer applicationLogger(ApplicationLogger applicationLogger) {
-            return this.applicationLogger(ContextualInitializer.of(applicationLogger));
-        }
-
-        /**
-         * Sets the {@link ApplicationLogger} to use. The {@link ApplicationLogger} is responsible for logging
-         * messages during the application's lifecycle. The default implementation is {@link AutoSwitchingApplicationLogger}.
-         *
-         * @param applicationLogger the {@link ApplicationLogger} to use
-         * @see ApplicationLogger
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer applicationLogger(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationLogger> applicationLogger) {
-            this.applicationLogger = applicationLogger;
             return this;
         }
 

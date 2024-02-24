@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,25 +25,32 @@ import org.slf4j.LoggerFactory;
 /**
  * This class is used to handle exceptions that occur during the application lifecycle. This default implementation
  * of the {@link ExceptionHandler} interface logs the exception to the {@link Logger} and is able to correctly display
- * stacktraces when {@link #stacktraces()} is {@code true}.
+ * stacktraces when {@link #printStackTraces()} is {@code true}.
  *
  * @author Guus Lieben
  * @since 0.4.8
  */
 public class LoggingExceptionHandler implements ExceptionHandler, ApplicationManaged {
 
-    private boolean stacktraces;
+    private static final Logger LOG = LoggerFactory.getLogger(LoggingExceptionHandler.class);
+
+    private boolean printStackTraces;
     private ApplicationEnvironment environment;
 
     @Override
-    public LoggingExceptionHandler printStacktraces(boolean stacktraces) {
-        this.stacktraces = stacktraces;
-        this.findLogger().debug("{} stacktraces for all reported errors", stacktraces ? "Enabled" : "Disabled");
+    public LoggingExceptionHandler printStackTraces(boolean stacktraces) {
+        this.printStackTraces = stacktraces;
+        LOG.debug("{} stacktraces for all reported errors", stacktraces ? "Enabled" : "Disabled");
         return this;
     }
 
-    public boolean stacktraces() {
-        return this.stacktraces;
+    /**
+     * Returns whether stacktraces are printed for all reported errors.
+     *
+     * @return {@code true} if stacktraces are printed, {@code false} otherwise
+     */
+    public boolean printStackTraces() {
+        return this.printStackTraces;
     }
 
     @Override
@@ -69,57 +76,68 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
     @Override
     public void handle(String message, Throwable throwable) {
         if (null != throwable) {
-            Logger log = this.findLogger();
-
-            String location = "";
-            if (0 < throwable.getStackTrace().length) {
-                StackTraceElement root = throwable.getStackTrace()[0];
-                String line = 0 < root.getLineNumber() ? ":" + root.getLineNumber() : "(internal call)";
-                location = root.getFileName() + line;
-            }
-
+            String location = resolveCauseLocation(throwable);
             if (message == null) {
                 message = "";
             }
-            String[] lines = message.split("\n");
-            log.error("Exception: " + throwable.getClass().getCanonicalName() + " ("+ location +"): " + lines[0]);
-            if (lines.length > 1) {
-                for (int i = 1; i < lines.length; i++) {
-                    log.error("  " + lines[i]);
-                }
-            }
 
-            if (this.stacktraces()) {
-                Throwable nextException = throwable;
-
-                while (null != nextException) {
-                    StackTraceElement[] trace = nextException.getStackTrace();
-                    String nextMessage = String.valueOf(nextException.getMessage());
-                    String[] nextLines = nextMessage.split("\n");
-                    log.error(nextException.getClass().getCanonicalName() + ": " + nextLines[0]);
-                    if (nextLines.length > 1) {
-                        for (int i = 1; i < nextLines.length; i++) {
-                            log.error("  " + nextLines[i]);
-                        }
-                    }
-
-                    for (StackTraceElement element : trace) {
-                        String elLine = 0 < element.getLineNumber() ? ":" + element.getLineNumber() : "(internal call)";
-                        String logMessage = "  at " + element.getClassName() + "." + element.getMethodName() + "(" + element.getFileName() + elLine + ")";
-                        if (logMessage.indexOf('\r') >= 0) {
-                            // Use half indentation, \r is permitted to be in the message to request additional visual focus.
-                            logMessage = " " + logMessage.substring(logMessage.indexOf('\r') + 1);
-                        }
-                        log.error(logMessage);
-                    }
-                    nextException = nextException.getCause();
-                }
+            printErrorMessage(message, throwable, location);
+            if (this.printStackTraces()) {
+                printFullStacktrace(throwable);
             }
         }
     }
 
-    private Logger findLogger() {
-        return this.environment() != null ? this.environment().log() : LoggerFactory.getLogger(LoggingExceptionHandler.class);
+    private static String resolveCauseLocation(Throwable throwable) {
+        String location = "";
+        if (0 < throwable.getStackTrace().length) {
+            StackTraceElement root = throwable.getStackTrace()[0];
+            String line = 0 < root.getLineNumber() ? ":" + root.getLineNumber() : "(internal call)";
+            location = root.getFileName() + line;
+        }
+        return location;
+    }
+
+    private static void printErrorMessage(String message, Throwable throwable, String location) {
+        String[] lines = message.split("\n");
+        LOG.error("Exception: " + throwable.getClass().getCanonicalName() + " ("+ location +"): " + lines[0]);
+        if (lines.length > 1) {
+            for (int i = 1; i < lines.length; i++) {
+                LOG.error("  " + lines[i]);
+            }
+        }
+    }
+
+    private static void printFullStacktrace(Throwable throwable) {
+        Throwable nextException = throwable;
+
+        while (null != nextException) {
+            StackTraceElement[] trace = nextException.getStackTrace();
+            String nextMessage = String.valueOf(nextException.getMessage());
+            String[] nextLines = nextMessage.split("\n");
+            LOG.error(nextException.getClass().getCanonicalName() + ": " + nextLines[0]);
+            if (nextLines.length > 1) {
+                for (int i = 1; i < nextLines.length; i++) {
+                    LOG.error("  " + nextLines[i]);
+                }
+            }
+
+            for (StackTraceElement element : trace) {
+                String logMessage = getLogLine(element);
+                LOG.error(logMessage);
+            }
+            nextException = nextException.getCause();
+        }
+    }
+
+    private static String getLogLine(StackTraceElement element) {
+        String elLine = 0 < element.getLineNumber() ? ":" + element.getLineNumber() : "(internal call)";
+        String logMessage = "  at " + element.getClassName() + "." + element.getMethodName() + "(" + element.getFileName() + elLine + ")";
+        if (logMessage.indexOf('\r') >= 0) {
+            // Use half indentation, \r is permitted to be in the message to request additional visual focus.
+            logMessage = " " + logMessage.substring(logMessage.indexOf('\r') + 1);
+        }
+        return logMessage;
     }
 
     /**

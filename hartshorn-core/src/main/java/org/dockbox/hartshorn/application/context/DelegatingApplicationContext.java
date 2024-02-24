@@ -179,8 +179,8 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public ExceptionHandler printStacktraces(boolean stacktraces) {
-        return this.environment().printStacktraces(stacktraces);
+    public ExceptionHandler printStackTraces(boolean stacktraces) {
+        return this.environment().printStackTraces(stacktraces);
     }
 
     @Override
