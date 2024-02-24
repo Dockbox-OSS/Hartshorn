@@ -21,8 +21,27 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * An annotation to specify the scope to which a component should be installed. This will be used by
+ * the IoC container to resolve or create a compatible scope.
+ *
+ * <p>Note that this annotation may not be supported by all IoC containers, often only {@link
+ * ScopeAwareComponentProvider} implementations will support this annotation.
+ *
+ * @since 0.5.0
+ *
+ * @see Scope
+ *
+ * @author Guus Lieben
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.FIELD })
 public @interface InstallTo {
+
+    /**
+     * The scope to which the component should be installed.
+     *
+     * @return the scope to which the component should be installed
+     */
     Class<? extends Scope> value();
 }

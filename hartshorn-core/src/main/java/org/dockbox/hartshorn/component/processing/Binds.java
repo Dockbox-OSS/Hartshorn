@@ -134,6 +134,10 @@ public @interface Binds {
     /**
      * The type of binding provider. This is used to indicate whether the binding provider is a standalone component,
      * or a part of a collection.
+     *
+     * @author Guus Lieben
+     *
+     * @since 0.5.0
      */
     enum BindingType {
 
