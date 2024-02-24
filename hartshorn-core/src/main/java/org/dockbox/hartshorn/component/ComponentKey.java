@@ -112,10 +112,25 @@ public final class ComponentKey<T> implements Reportable {
         return new Builder<>(type);
     }
 
+    /**
+     * Creates a new collector component key of the given type. If the type is parameterized, the key will be for
+     * the raw type. The collector key is used to collect all components of the given type.
+     *
+     * @param type the type of the component
+     * @return a new component key
+     * @param <T> the type of the component
+     */
     public static <T> ComponentKey<ComponentCollection<T>> collect(Class<T> type) {
         return TypeUtils.adjustWildcards(collect(ParameterizableType.create(type)), ComponentKey.class);
     }
 
+    /**
+     * Creates a new collector component key of the given type. If the type is parameterized, the key will retain its
+     * parameterization. The collector key is used to collect all components of the given type.
+     *
+     * @param type the type of the component
+     * @return a new component key
+     */
     public static ComponentKey<ComponentCollection<?>> collect(ParameterizableType type) {
         ParameterizableType collectionType = ParameterizableType.builder(ComponentCollection.class)
             .parameters(type)
@@ -193,9 +208,9 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new view of this key. The view will have the same type and name as this key. Views are not attached
-     * to a scope, and do not indicate whether post-construction callbacks are allowed. This method is useful for
-     * comparing keys, or for use in maps.
+     * Creates a new view of this key. The view will have the same type and qualifiers as this key. Views are not
+     * attached to a scope, and do not indicate whether post-construction callbacks are allowed. This method is useful
+     * for comparing keys, or for use in maps.
      *
      * <p>Views always retain the parameterization of the key.
      *
@@ -376,14 +391,34 @@ public final class ComponentKey<T> implements Reportable {
             this.type = type;
         }
 
+        /**
+         * Sets the type of the component. If the type is parameterized, the key will be for the raw type.
+         *
+         * @param type the type of the component
+         * @return a new builder
+         * @param <U> the type of the component
+         */
         public <U> Builder<U> type(Class<U> type) {
             return copyProperties(builder(type));
         }
 
+        /**
+         * Sets the type of the component. If the type is parameterized, the key will retain its parameterization.
+         *
+         * @param type the type of the component
+         * @return a new builder
+         * @param <U> the type of the component
+         */
         public <U> Builder<U> type(TypeView<U> type) {
             return copyProperties(builder(type));
         }
 
+        /**
+         * Sets the type of the component. If the type is parameterized, the key will retain its parameterization.
+         *
+         * @param type the type of the component
+         * @return a new builder
+         */
         public Builder<?> type(ParameterizableType type) {
             return copyProperties(builder(type));
         }
@@ -395,45 +430,105 @@ public final class ComponentKey<T> implements Reportable {
                     .postConstructionAllowed(this.postConstructionAllowed);
         }
 
+        /**
+         * Sets the strategy that should be used to select a provider for this component. This often selects
+         * a provider based on the priority of the key.
+         *
+         * @param strategy the strategy that should be used to select a provider for this component
+         * @return this builder
+         */
         public Builder<T> strategy(ProviderSelectionStrategy strategy) {
             this.strategy = strategy;
             return this;
         }
 
+        /**
+         * Sets the name of the component. This is a convenience method for setting a qualifier with the given name.
+         *
+         * @param name the name of the component
+         * @return this builder
+         */
         public Builder<T> name(String name) {
             return this.qualifier(QualifierKey.of(name));
         }
 
+        /**
+         * Adds a qualifier to the component. Qualifiers are used to differentiate between components of the same type.
+         *
+         * @param qualifier the qualifier to add
+         * @return this builder
+         */
         public Builder<T> qualifier(QualifierKey<?> qualifier) {
             this.qualifier.add(qualifier);
             return this;
         }
 
+        /**
+         * Adds multiple qualifiers to the component. Qualifiers are used to differentiate between components of the same type.
+         *
+         * @param qualifiers the qualifiers to add
+         * @return this builder
+         */
         public Builder<T> qualifiers(QualifierKey<?>... qualifiers) {
             this.qualifier.addAll(qualifiers);
             return this;
         }
 
+        /**
+         * Adds multiple qualifiers to the component. Qualifiers are used to differentiate between components of the same type.
+         *
+         * @param qualifiers the qualifiers to add
+         * @return this builder
+         */
         public Builder<T> qualifiers(Set<QualifierKey<?>> qualifiers) {
             this.qualifier.addAll(qualifiers);
             return this;
         }
 
+        /**
+         * Sets the scope of the component. The scope determines the lifecycle of the component.
+         *
+         * @param scope the scope of the component
+         * @return this builder
+         */
         public Builder<T> scope(Scope scope) {
             this.scope = scope;
             return this;
         }
 
+        /**
+         * Sets whether {@link PostConstruct} callbacks of the component should be activated on provisioning.
+         *
+         * @param postConstructionAllowed whether post-construction should be activated on provisioning
+         * @return this builder
+         */
         public Builder<T> postConstructionAllowed(boolean postConstructionAllowed) {
             this.postConstructionAllowed = postConstructionAllowed;
             return this;
         }
 
+        /**
+         * Sets whether the lookup for this component should be strict. If the lookup is strict, the type of the
+         * hierarchy has to match this key exactly. If the lookup is not strict, the type of the hierarchy can be a
+         * sub-type of this key.
+         *
+         * <p>If strict-mode is not explicitly set, {@link Tristate#UNDEFINED} is returned. In this case it remains
+         * up to the component provider to decide whether strict-mode should be applied.
+         *
+         * @param strict whether the lookup for this component should be strict
+         * @return this builder
+         */
         public Builder<T> strict(boolean strict) {
             this.strict = Tristate.valueOf(strict);
             return this;
         }
 
+        /**
+         * Builds a collector key builder for the component type of this key. The collector key builder can be used to
+         * create a new key for a collection of components of the given type.
+         *
+         * @return a new collector key builder
+         */
         public Builder<ComponentCollection<T>> collector() {
             ParameterizableType collectionType = ParameterizableType.builder(ComponentCollection.class)
                     .parameters(this.type)
@@ -445,10 +540,24 @@ public final class ComponentKey<T> implements Reportable {
             return TypeUtils.adjustWildcards(builder, Builder.class);
         }
 
+        /**
+         * Builds a new key based on the values of this builder.
+         *
+         * @return a new key
+         */
         public ComponentKey<T> build() {
             return new ComponentKey<>(this.strategy, this.type, this.qualifier, this.scope, this.postConstructionAllowed, this.strict);
         }
 
+        /**
+         * Builds a new view of the key based on the values of this builder. The view will have the same type and
+         * qualifiers as the key. Views are not attached to a scope, and do not indicate whether the component should
+         * be enabled. This method is useful for comparing keys, or for use in maps.
+         *
+         * <p>Views always retain the parameterization of the key.
+         *
+         * @return a new view
+         */
         public ComponentKeyView<T> view() {
             return new ComponentKeyView<>(this.type, this.qualifier);
         }
