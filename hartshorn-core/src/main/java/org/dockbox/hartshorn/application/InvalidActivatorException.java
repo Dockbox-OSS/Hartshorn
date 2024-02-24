@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,18 @@ package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
+/**
+ * Thrown when an attempt is made to register a type as service activator, but the type does not
+ * meet the requirements of a service activator.
+ *
+ * @since 0.4.12
+ *
+ * @see org.dockbox.hartshorn.component.processing.ServiceActivator
+ *
+ * @author Guus Lieben
+ */
 public class InvalidActivatorException extends ApplicationRuntimeException {
+
     public InvalidActivatorException(String message) {
         super(message);
     }
