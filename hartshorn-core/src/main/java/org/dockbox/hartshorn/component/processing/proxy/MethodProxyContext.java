@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,48 @@
 
 package org.dockbox.hartshorn.component.processing.proxy;
 
+import java.lang.annotation.Annotation;
+
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
-import java.lang.annotation.Annotation;
-
+/**
+ * Context for {@link ServiceMethodInterceptorPostProcessor} implementations to obtain information
+ * about the candidate method being processed.
+ *
+ * @param <T> the type of the class containing the method
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
+ */
 public interface MethodProxyContext<T> extends ApplicationAwareContext {
 
+    /**
+     * Returns the type of the class containing the method being processed. This is typically the
+     * same type as the one provided by the {@link ComponentProcessingContext}, but may differ in
+     * some cases.
+     *
+     * @return the type of the class containing the method
+     */
     TypeView<T> type();
 
+    /**
+     * Returns the method that is being processed, no guarantees are made about whether the method
+     * is compatible with the proxying process.
+     *
+     * @return the method being processed
+     */
     MethodView<T, ?> method();
 
+    /**
+     * Returns the annotation of the given type that is present on the method being processed.
+     *
+     * @param annotation the type of the annotation to find
+     * @param <A> the type of the annotation
+     * @return the annotation instance, or {@code null} if the annotation is not present
+     */
     <A extends Annotation> A annotation(Class<A> annotation);
 }
