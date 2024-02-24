@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,8 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     private ExecutableParametersIntrospector parametersIntrospector;
     private TypeVariablesIntrospector typeVariablesIntrospector;
 
+    private TypeView<Parent> declaredBy;
+
     protected ReflectionExecutableElementView(ReflectionIntrospector introspector, Executable executable) {
         super(introspector);
         this.executable = executable;
@@ -76,7 +78,10 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
 
     @Override
     public TypeView<Parent> declaredBy() {
-        return (TypeView<Parent>) this.introspector.introspect(this.executable.getDeclaringClass());
+        if (this.declaredBy == null) {
+            this.declaredBy = (TypeView<Parent>) this.introspector.introspect(this.executable.getDeclaringClass());
+        }
+        return this.declaredBy;
     }
 
     @Override

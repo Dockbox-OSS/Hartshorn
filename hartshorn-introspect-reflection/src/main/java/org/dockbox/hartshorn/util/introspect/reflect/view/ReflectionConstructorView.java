@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -28,12 +34,6 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T> implements ConstructorView<T> {
 
     private final Constructor<T> constructor;
@@ -42,6 +42,7 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     private TypeVariablesIntrospector typeParametersIntrospector;
     private ReflectiveConstructorCall<T> invoker;
     private String qualifiedName;
+    private TypeView<T> type;
 
     public ReflectionConstructorView(ReflectionIntrospector introspector, Constructor<T> constructor) {
         super(introspector, constructor);
@@ -77,7 +78,10 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
 
     @Override
     public TypeView<T> type() {
-        return this.introspector.introspect(this.constructor.getDeclaringClass());
+        if (this.type == null) {
+            this.type = this.introspector.introspect(this.constructor.getDeclaringClass());
+        }
+        return this.type;
     }
 
     @Override

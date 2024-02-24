@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView i
     private final Parameter parameter;
     private String name;
     private ExecutableElementView<?> declaredBy;
+    private TypeView<T> type;
+    private TypeView<T> genericType;
 
     public ReflectionParameterView(ReflectionIntrospector introspector, Parameter parameter) {
         super(introspector);
@@ -46,12 +48,18 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView i
 
     @Override
     public TypeView<T> type() {
-        return (TypeView<T>) this.introspector.introspect(this.parameter.getType());
+        if (this.type == null) {
+            this.type = (TypeView<T>) this.introspector.introspect(this.parameter.getType());
+        }
+        return this.type;
     }
 
     @Override
     public TypeView<T> genericType() {
-        return (TypeView<T>) this.introspector.introspect(this.parameter.getParameterizedType());
+        if (this.genericType == null) {
+            this.genericType = (TypeView<T>) this.introspector.introspect(this.parameter.getParameterizedType());
+        }
+        return this.genericType;
     }
 
     @Override
