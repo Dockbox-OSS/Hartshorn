@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
+import org.dockbox.hartshorn.component.ComponentResolutionException;
 import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
 import org.dockbox.hartshorn.component.populate.inject.RequireInjectionPointRule;
 import org.dockbox.hartshorn.context.ContextCarrier;
@@ -94,7 +95,7 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
             }
             catch(ApplicationException | ApplicationRuntimeException e) {
                 if (this.shouldRequire(point)) {
-                    throw new ComponentRequiredException("Could not resolve value for injection point " + point.injectionPoint().qualifiedName(), e);
+                    throw new ComponentResolutionException("Could not resolve value for injection point " + point.injectionPoint().qualifiedName(), e);
                 }
                 else {
                     this.applicationContext().handle(e);

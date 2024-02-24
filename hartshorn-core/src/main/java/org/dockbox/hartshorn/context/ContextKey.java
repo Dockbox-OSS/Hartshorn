@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.context;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;

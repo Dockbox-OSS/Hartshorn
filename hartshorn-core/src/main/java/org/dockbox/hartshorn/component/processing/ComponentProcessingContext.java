@@ -34,8 +34,8 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
     private final ComponentRequestContext requestContext;
     private final Map<ComponentKey<?>, Object> data;
     private final boolean permitsProxying;
+    private final ComponentKey<T> key;
 
-    protected ComponentKey<T> key;
     protected T instance;
 
     public ComponentProcessingContext(ApplicationContext applicationContext, ComponentRequestContext requestContext, ComponentKey<T> key, T instance, boolean permitsProxying) {
@@ -45,6 +45,10 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
         this.instance = instance;
         this.data = new ConcurrentHashMap<>();
         this.permitsProxying = permitsProxying;
+    }
+
+    public ComponentRequestContext requestContext() {
+        return this.requestContext;
     }
 
     public ComponentKey<T> key() {

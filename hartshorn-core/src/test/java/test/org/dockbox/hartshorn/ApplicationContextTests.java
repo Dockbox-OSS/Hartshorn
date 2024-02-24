@@ -585,9 +585,17 @@ public class ApplicationContextTests {
         Assertions.assertSame(sampleContext, component.context());
     }
 
+    @Inject
+    private Logger loggerField;
+
     @InjectTest
-    void loggerCanBeInjected(Logger logger) {
-        Assertions.assertNotNull(logger);
+    void loggerCanBeInjected(Logger loggerParameter) {
+        Assertions.assertNotNull(loggerParameter);
+        // Name should match the consuming class' name, and not the name of the configuration that uses it
+        Assertions.assertEquals(loggerParameter.getName(), ApplicationContextTests.class.getName());
+
+        Assertions.assertNotNull(this.loggerField);
+        Assertions.assertEquals(this.loggerField.getName(), ApplicationContextTests.class.getName());
     }
 
     @Test
