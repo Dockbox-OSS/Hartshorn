@@ -19,20 +19,19 @@ package org.dockbox.hartshorn.util.introspect.scan.classpath;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -200,26 +199,27 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Processes a jar file resource. This delegates the file visiting to a {@link JarFileWalker}. The walker will
-     * delegate the processing of each file to the provided {@link ResourceHandler}. The scanner will only process
-     * files that are compatible with the configured scan settings.
+     * Processes a jar file resource. This will only process files that are compatible with the configured scan
+     * settings. Any file that is compatible will be delegated to the provided {@link ResourceHandler}.
      *
      * @param handler The handler that will consume the file if it is compatible
      * @param classLoader The classloader to use for loading classes from the jar file
      * @param url The URL that represents the jar file
      * @param jarFile The jar file
-     * @throws ClassPathWalkingException When an error occurs while scanning the classpath
      */
-    private void processJarFileResource(ResourceHandler handler, URLClassLoader classLoader, URL url, File jarFile)
-            throws ClassPathWalkingException {
-        try {
-            FileSystem fileSystem = FileSystems.newFileSystem(Paths.get(url.toURI()), (ClassLoader) null);
-            for(Path rootDirectory : fileSystem.getRootDirectories()) {
-                Files.walkFileTree(rootDirectory, new JarFileWalker(this, handler, classLoader));
+    private void processJarFileResource(ResourceHandler handler, URLClassLoader classLoader, URL url, File jarFile) {
+        try(JarFile file = new JarFile(jarFile)) {
+            Enumeration<JarEntry> entries = file.entries();
+            while(entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                if(!entry.isDirectory()) {
+                    String name = entry.getName();
+                    processPathResource(handler, classLoader, name, jarFile.toPath());
+                }
             }
         }
-        catch (IOException | URISyntaxException e) {
-            throw new ClassPathWalkingException("Error while scanning jar file " + jarFile, e);
+        catch(IOException e) {
+            // Handle exception
         }
     }
 
