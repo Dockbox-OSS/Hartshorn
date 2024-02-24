@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 
 package org.dockbox.hartshorn.util.introspect.scan.classpath;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +33,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * A classpath scanner that can be used to scan the classpath for resources. This scanner is capable of scanning both
@@ -283,6 +283,13 @@ public final class ClassPathScanner {
      * @return True if the resource should be processed, false otherwise
      */
     private boolean shouldProcessResource(boolean isClassResource, String checkedResourceName) {
+        // If we're filtering by prefix, and the resource name doesn't start with any of the prefixes, don't process it
+        for (String beginFilterName : this.prefixFilters) {
+            if (!checkedResourceName.startsWith(beginFilterName)) {
+                return false;
+            }
+        }
+
         // If we're scanning for classes, and the resource is a class that was previously scanned, don't
         // process it again
         if (isClassResource && this.classesOnly && this.classNames.contains(checkedResourceName)) {
@@ -309,13 +316,6 @@ public final class ClassPathScanner {
             return false;
         }
 
-        // If we're filtering by prefix, and the resource name doesn't start with any of the prefixes, don't process it
-        for (String beginFilterName : this.prefixFilters) {
-            if (!checkedResourceName.startsWith(beginFilterName)) {
-                return false;
-            }
-        }
-
         // If none of the above conditions are met, we should process the resource
         return true;
     }
@@ -339,6 +339,16 @@ public final class ClassPathScanner {
             this.prefixFilters.add(prefix);
         }
         return this;
+    }
+
+    /**
+     * Returns the set of prefixes that are configured in the scanner. When scanning the classpath, the scanner will
+     * only process files that start with any of these prefixes.
+     *
+     * @return The set of prefixes
+     */
+    public synchronized Set<String> filteredPrefixes() {
+        return this.prefixFilters;
     }
 
     /**
