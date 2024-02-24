@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A lifecycle observer that validates the parameter names of the {@link org.dockbox.hartshorn.commands.annotations.Command}
@@ -41,6 +43,8 @@ import org.dockbox.hartshorn.component.condition.RequiresActivator;
 @RequiresActivator(UseCommands.class)
 public class CommandParameterValidator implements LifecycleObserver {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CommandParameterValidator.class);
+
     @Override
     public void onStarted(ApplicationContext applicationContext) {
         boolean namesAvailable = applicationContext.environment()
@@ -49,9 +53,9 @@ public class CommandParameterValidator implements LifecycleObserver {
                 .parameterNamesAvailable();
 
         if (namesAvailable) {
-            applicationContext.log().warn("Parameter names are obfuscated, this will cause commands with @Parameter to be unable to inject arguments.");
-            applicationContext.log().warn("   Add -parameters to your compiler args to keep parameter names.");
-            applicationContext.log().warn("   See: https://docs.oracle.com/javase/tutorial/reflect/member/methodparameterreflection.html for more information.");
+            LOG.warn("Parameter names are obfuscated, this will cause commands with @Parameter to be unable to inject arguments.");
+            LOG.warn("   Add -parameters to your compiler args to keep parameter names.");
+            LOG.warn("   See: https://docs.oracle.com/javase/tutorial/reflect/member/methodparameterreflection.html for more information.");
         }
     }
 }

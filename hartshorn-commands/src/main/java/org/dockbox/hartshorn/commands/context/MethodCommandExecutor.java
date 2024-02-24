@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,13 @@ import org.dockbox.hartshorn.component.condition.ProvidedParameterContext;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MethodCommandExecutor<T> implements CommandExecutor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MethodCommandExecutor.class);
+
     private final ConditionMatcher conditionMatcher;
     private final MethodCommandExecutorContext<T> executorContext;
     private final ApplicationContext applicationContext;
@@ -49,7 +54,7 @@ public class MethodCommandExecutor<T> implements CommandExecutor {
         List<Object> arguments = parameterLoader.loadArguments(loaderContext);
 
         if (this.conditionMatcher.match(this.method, ProvidedParameterContext.of(this.method, arguments))) {
-            this.applicationContext.log().debug("Invoking command method %s with %d arguments".formatted(this.method.qualifiedName(), arguments.size()));
+            LOG.debug("Invoking command method %s with %d arguments".formatted(this.method.qualifiedName(), arguments.size()));
             try {
                 this.method.invoke(instance, arguments.toArray());
             }
@@ -58,7 +63,7 @@ public class MethodCommandExecutor<T> implements CommandExecutor {
             }
         }
         else {
-            this.applicationContext.log().debug("Conditions didn't match for " + this.method.qualifiedName());
+            LOG.debug("Conditions didn't match for " + this.method.qualifiedName());
             Message cancelled = this.applicationContext.get(CommandResources.class).cancelled();
             commandContext.source().send(cancelled);
         }

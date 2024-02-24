@@ -25,6 +25,8 @@ import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.component.processing.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Post-processor to intercept methods annotated with {@link InjectTranslation}. This will register
@@ -36,10 +38,12 @@ import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
  */
 public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<InjectTranslation> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(TranslationInjectPostProcessor.class);
+
     @Override
     public <T, R> MethodInterceptor<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
         String key = context.get(TranslationKeyGenerator.class).key(methodContext.type(), methodContext.method());
-        context.log().debug("Determined I18N key for %s: %s".formatted(methodContext.method().qualifiedName(), key));
+        LOG.debug("Determined I18N key for %s: %s".formatted(methodContext.method().qualifiedName(), key));
 
         InjectTranslation annotation = methodContext.method().annotations().get(InjectTranslation.class).get();
         ConversionService conversionService = context.get(ConversionService.class);

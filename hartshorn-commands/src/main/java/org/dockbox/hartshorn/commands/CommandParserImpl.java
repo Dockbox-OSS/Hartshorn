@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandContextImpl;
@@ -30,14 +38,8 @@ import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.inject.Inject;
 
@@ -45,6 +47,8 @@ import jakarta.inject.Inject;
  * Simple implementation of {@link CommandParser}.
  */
 public class CommandParserImpl implements CommandParser {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CommandParserImpl.class);
 
     // Note the difference between this and SimpleCommandContainerContext.FLAG, here a space is expected before the flag
     // to indicate it is a single element and not part of a piece of text.
@@ -79,7 +83,7 @@ public class CommandParserImpl implements CommandParser {
         List<String> tokens = new ArrayList<>(Arrays.asList(stripped.split(" ")));
         List<CommandParameter<?>> parsedElements = new ArrayList<>(this.parse(elements, tokens, source));
 
-        applicationContext.log().debug("Parsed %d elements and %d flags for input %s".formatted(parsedElements.size(), parsedFlags.size(), command));
+        LOG.debug("Parsed %d elements and %d flags for input %s".formatted(parsedElements.size(), parsedFlags.size(), command));
 
         if (!tokens.isEmpty() && !"".equals(tokens.get(0))) {
             throw new ParsingException(this.resources.tooManyArguments());

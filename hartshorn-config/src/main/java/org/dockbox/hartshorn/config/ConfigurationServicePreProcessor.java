@@ -30,6 +30,8 @@ import org.dockbox.hartshorn.util.resources.FileSystemLookupStrategy;
 import org.dockbox.hartshorn.util.resources.MissingSourceException;
 import org.dockbox.hartshorn.util.resources.ResourceLookup;
 import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Processes all services annotated with {@link IncludeResourceConfiguration} by loading the indicated file and registering the
@@ -45,6 +47,8 @@ import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
  */
 public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationServicePreProcessor.class);
+
     @Override
     public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().annotations().has(IncludeResourceConfiguration.class)) {
@@ -55,14 +59,14 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
                 if (this.processSource(source, context, processingContext.key())) {
                     return;
                 }
-                context.log().debug("Skipped configuration source '{}', proceeding to next source if available", source);
+                LOG.debug("Skipped configuration source '{}', proceeding to next source if available", source);
             }
 
             if (configuration.failOnMissing()) {
                 throw new MissingSourceException("None of the configured sources in " + processingContext.type().name() + " were found");
             }
             else {
-                context.log().warn("None of the configured sources in {} were found, proceeding without configuration", processingContext.type().name());
+                LOG.warn("None of the configured sources in {} were found, proceeding without configuration", processingContext.type().name());
             }
         }
     }
@@ -72,11 +76,11 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
         Set<URI> config = resourceLookup.lookup(source);
 
         if (config.isEmpty()) {
-            context.log().warn("Configuration source '%s' was not found for %s".formatted(source, key.type().getSimpleName()));
+            LOG.warn("Configuration source '%s' was not found for %s".formatted(source, key.type().getSimpleName()));
             return false;
         }
         else if (config.size() > 1) {
-            context.log().warn("Found multiple configuration files for " + key.type().getSimpleName() + ": " + config);
+            LOG.warn("Found multiple configuration files for " + key.type().getSimpleName() + ": " + config);
         }
 
         ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();

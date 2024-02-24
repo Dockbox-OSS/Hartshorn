@@ -40,6 +40,8 @@ import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -67,6 +69,8 @@ import jakarta.inject.Inject;
  */
 public class JacksonObjectMapper extends DefaultObjectMapper {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JacksonObjectMapper.class);
+
     private final ApplicationContext context;
     private final JacksonDataMapperRegistry dataMapperRegistry;
     private final JacksonObjectMapperConfigurator configurator;
@@ -88,73 +92,73 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public <T> Option<T> read(String content, Class<T> type) throws ObjectMappingException {
-        this.context.log().debug("Reading content from string value to type " + type.getName());
+        LOG.debug("Reading content from string value to type " + type.getName());
         return this.processStep(() -> Option.of(this.configureMapper().readValue(content, type)));
     }
 
     @Override
     public <T> Option<T> read(Path path, Class<T> type) throws ObjectMappingException {
-        this.context.log().debug("Reading content from path " + path + " to type " + type.getName());
+        LOG.debug("Reading content from path " + path + " to type " + type.getName());
         return this.processStep(() -> Option.of(this.configureMapper().readValue(path.toFile(), type)));
     }
 
     @Override
     public <T> Option<T> read(URL url, Class<T> type) throws ObjectMappingException {
-        this.context.log().debug("Reading content from url " + url + " to type " + type.getName());
+        LOG.debug("Reading content from url " + url + " to type " + type.getName());
         return this.processStep(() -> Option.of(this.configureMapper().readValue(url, type)));
     }
 
     @Override
     public <T> Option<T> read(InputStream stream, Class<T> type) throws ObjectMappingException {
-        this.context.log().debug("Reading content from input stream to type " + type.getName());
+        LOG.debug("Reading content from input stream to type " + type.getName());
         return this.processStep(() -> Option.of(this.configureMapper().readValue(stream, type)));
     }
 
     @Override
     public <T> Option<T> read(String content, GenericType<T> type) throws ObjectMappingException {
-        this.context.log().debug("Reading content from string value to type " + type.type().getTypeName());
+        LOG.debug("Reading content from string value to type " + type.type().getTypeName());
         return this.processStep(() -> Option.of(this.configureMapper().readValue(content, new GenericTypeReference<>(type))));
     }
 
     @Override
     public <T> Option<T> read(Path path, GenericType<T> type) throws ObjectMappingException {
-        this.context.log().debug("Reading content from path " + path + " to type " + type.type().getTypeName());
+        LOG.debug("Reading content from path " + path + " to type " + type.type().getTypeName());
         return this.processStep(() -> Option.of(this.configureMapper().readValue(path.toFile(), new GenericTypeReference<>(type))));
     }
 
     @Override
     public <T> Option<T> read(URL url, GenericType<T> type) throws ObjectMappingException {
-        this.context.log().debug("Reading content from url " + url + " to type " + type.type().getTypeName());
+        LOG.debug("Reading content from url " + url + " to type " + type.type().getTypeName());
         return this.processStep(() -> Option.of(this.configureMapper().readValue(url, new GenericTypeReference<>(type))));
     }
 
     @Override
     public <T> Option<T> read(InputStream stream, GenericType<T> type) throws ObjectMappingException {
-        this.context.log().debug("Reading content from input stream to type " + type.type().getTypeName());
+        LOG.debug("Reading content from input stream to type " + type.type().getTypeName());
         return this.processStep(() -> Option.of(this.configureMapper().readValue(stream, new GenericTypeReference<>(type))));
     }
 
     @Override
     public <T> Option<T> update(T object, String content, Class<T> type) throws ObjectMappingException {
-        this.context.log().debug("Updating object " + object + " with content from string value to type " + type.getName());
+        LOG.debug("Updating object " + object + " with content from string value to type " + type.getName());
         return this.processStep(() -> Option.of(this.configureMapper().readerForUpdating(object).readValue(content, type)));
     }
 
     @Override
     public <T> Option<T> update(T object, Path path, Class<T> type) throws ObjectMappingException {
-        this.context.log().debug("Updating object " + object + " with content from path " + path + " to type " + type.getName());
+        LOG.debug("Updating object " + object + " with content from path " + path + " to type " + type.getName());
         return this.processStep(() -> Option.of(this.configureMapper().readerForUpdating(object).readValue(path.toFile(), type)));
     }
 
     @Override
     public <T> Option<T> update(T object, URL url, Class<T> type) throws ObjectMappingException {
-        this.context.log().debug("Updating object " + object + " with content from url " + url + " to type " + type.getName());
+        LOG.debug("Updating object " + object + " with content from url " + url + " to type " + type.getName());
         return this.processStep(() -> Option.of(this.configureMapper().readerForUpdating(object).readValue(url, type)));
     }
 
     @Override
     public <T> Option<T> update(T object, InputStream stream, Class<T> type) throws ObjectMappingException {
-        this.context.log().debug("Updating object " + object + " with content from input stream to type " + type.getName());
+        LOG.debug("Updating object " + object + " with content from input stream to type " + type.getName());
         return this.processStep(() -> Option.of(this.configureMapper().readerForUpdating(object).readValue(stream, type)));
     }
 
@@ -164,7 +168,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             return false;
         }
 
-        this.context.log().debug("Writing content of type " + content.getClass().getSimpleName() + " to path " + path);
+        LOG.debug("Writing content of type " + content.getClass().getSimpleName() + " to path " + path);
         if (content instanceof String string) {
             this.writePlain(path, string);
             return true;
@@ -180,7 +184,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             return false;
         }
 
-        this.context.log().debug("Writing content of type " + content.getClass().getSimpleName() + " to output stream");
+        LOG.debug("Writing content of type " + content.getClass().getSimpleName() + " to output stream");
         if (content instanceof String string) {
             this.writePlain(outputStream, string);
             return true;
@@ -195,7 +199,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         if (content == null) {
             return "";
         }
-        this.context.log().debug("Writing content of type " + content.getClass().getSimpleName() + " to string value");
+        LOG.debug("Writing content of type " + content.getClass().getSimpleName() + " to string value");
         return this.processStep(() -> this.writer(content).writeValueAsString(content)).replace("\\r", "");
     }
 
@@ -221,25 +225,25 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public Map<String, Object> flat(String content) throws ObjectMappingException {
-        this.context.log().debug("Reading content from string value to flat tree model");
+        LOG.debug("Reading content from string value to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(content));
     }
 
     @Override
     public Map<String, Object> flat(Path path) throws ObjectMappingException {
-        this.context.log().debug("Reading content from path " + path + " to flat tree model");
+        LOG.debug("Reading content from path " + path + " to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(path.toFile()));
     }
 
     @Override
     public Map<String, Object> flat(URL url) throws ObjectMappingException {
-        this.context.log().debug("Reading content from url " + url + " to flat tree model");
+        LOG.debug("Reading content from url " + url + " to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(url));
     }
 
     @Override
     public Map<String, Object> flat(InputStream stream) throws ObjectMappingException {
-        this.context.log().debug("Reading content from input stream to flat tree model");
+        LOG.debug("Reading content from input stream to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(stream));
     }
 
@@ -288,7 +292,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     protected ObjectMapper configureMapper() {
         if (null == this.objectMapper) {
-            this.context.log().debug("Internal object mapper was not configured yet, configuring now with filetype " + this.fileType());
+            LOG.debug("Internal object mapper was not configured yet, configuring now with filetype " + this.fileType());
             MapperBuilder<?, ?> builder = this.configurator
                     .configure(this.mapper(this.fileType()), this.fileType(), this.inclusionRule);
             this.objectMapper = builder.build();

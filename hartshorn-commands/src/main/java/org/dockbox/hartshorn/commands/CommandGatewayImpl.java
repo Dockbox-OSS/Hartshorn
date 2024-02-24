@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.commands;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
@@ -39,11 +38,18 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 /**
  * Simple implementation of {@link CommandGateway}.
  */
 public class CommandGatewayImpl implements CommandGateway {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CommandGatewayImpl.class);
 
     private final transient MultiMap<String, CommandExecutorContext> contexts = new CopyOnWriteArrayListMultiMap<>();
     private final transient List<CommandExecutorExtension> extensions = new CopyOnWriteArrayList<>();
@@ -79,7 +85,7 @@ public class CommandGatewayImpl implements CommandGateway {
         if (this.extensions.isEmpty()) {
             ComponentCollection<CommandExecutorExtension> extensions = this.context.get(ComponentKey.collect(CommandExecutorExtension.class));
             for (final CommandExecutorExtension extension : extensions) {
-                this.context.log().debug("Adding extension " + extension.getClass().getSimpleName() + " to command gateway");
+                LOG.debug("Adding extension " + extension.getClass().getSimpleName() + " to command gateway");
                 this.add(extension);
             }
         }
@@ -97,7 +103,7 @@ public class CommandGatewayImpl implements CommandGateway {
                 this.execute(context.get(), commandContext.get());
             }
             else {
-                this.context.log().warn("Could not parse command for input " + command + " but yielded no exceptions");
+                LOG.warn("Could not parse command for input " + command + " but yielded no exceptions");
             }
         }
     }
@@ -105,7 +111,7 @@ public class CommandGatewayImpl implements CommandGateway {
     private Option<CommandExecutorContext> lookupContext(String command) {
         String alias = command.split(" ")[0];
         CommandExecutorContext bestContext = null;
-        this.context.log().debug("Looking up executor context for " + command + " in " + this.contexts.size() + " contexts");
+        LOG.debug("Looking up executor context for " + command + " in " + this.contexts.size() + " contexts");
         for (CommandExecutorContext context : this.contexts.get(alias)) {
             if (context.accepts(command)) {
                 if (bestContext == null) {
@@ -132,7 +138,7 @@ public class CommandGatewayImpl implements CommandGateway {
                     commandContext.source().send(result.reason());
                 }
                 if (!result.proceed()) {
-                    context.applicationContext().log().debug("Extension " + extension.getClass().getSimpleName() + " rejected direct execution, cancelling command executor.");
+                    LOG.debug("Extension " + extension.getClass().getSimpleName() + " rejected direct execution, cancelling command executor.");
                     return;
                 }
             }

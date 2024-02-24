@@ -32,6 +32,8 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A collector for types in the environment. This delegates to the {@link TypeReferenceCollector type reference collectors}
@@ -51,6 +53,8 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class EnvironmentTypeCollector {
 
+    private static final Logger LOG = LoggerFactory.getLogger(EnvironmentTypeCollector.class);
+
     private final ApplicationEnvironment environment;
 
     public EnvironmentTypeCollector(ApplicationEnvironment environment) {
@@ -69,7 +73,7 @@ public class EnvironmentTypeCollector {
     public <T> Collection<TypeView<? extends T>> types(Predicate<TypeView<?>> predicate) {
         Option<TypeReferenceCollectorContext> collectorContext = this.environment.applicationContext().first(TypeReferenceCollectorContext.class);
         if (collectorContext.absent()) {
-            this.environment.log().warn("TypeReferenceCollectorContext not available, falling back to no-op type lookup");
+            LOG.warn("TypeReferenceCollectorContext not available, falling back to no-op type lookup");
             return Collections.emptyList();
         }
         return this.collectTypes(predicate, collectorContext);

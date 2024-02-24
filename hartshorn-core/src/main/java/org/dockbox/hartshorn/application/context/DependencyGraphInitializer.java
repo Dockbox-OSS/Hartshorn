@@ -38,6 +38,8 @@ import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.graph.GraphNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The dependency graph initializer is responsible for initializing the dependency graph. It does so by first
@@ -53,6 +55,8 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
  * @author Guus Lieben
  */
 public final class DependencyGraphInitializer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DependencyGraphInitializer.class);
 
     private final DependencyGraphBuilder graphBuilder;
     private final ConfigurationDependencyVisitor dependencyVisitor;
@@ -83,7 +87,7 @@ public final class DependencyGraphInitializer {
         Set<GraphNode<DependencyContext<?>>> visitedDependencies = this.dependencyVisitor.iterate(dependencyGraph);
         this.graphValidator.validateAfterConfiguration(dependencyGraph, this.applicationContext, visitedDependencies);
 
-        this.applicationContext.log().debug("Validated %d dependencies".formatted(visitedDependencies.size()));
+        LOG.debug("Validated %d dependencies".formatted(visitedDependencies.size()));
     }
 
     private DependencyGraph buildDependencyGraph(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException {

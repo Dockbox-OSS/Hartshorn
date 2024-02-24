@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.commands.CommandSource;
@@ -24,11 +27,12 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractParameterPattern implements CustomParameterPattern {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractParameterPattern.class);
 
     private final ArgumentConverterRegistry argumentConverterRegistry;
 
@@ -42,7 +46,7 @@ public abstract class AbstractParameterPattern implements CustomParameterPattern
         TypeView<T> typeView = context.environment().introspector().introspect(type);
 
         if (!this.preconditionsMatch(type, source, raw)) {
-            context.log().debug("Preconditions failed, rejecting raw argument " + raw);
+            LOG.debug("Preconditions failed, rejecting raw argument " + raw);
             return Option.empty();
         }
 
@@ -51,10 +55,10 @@ public abstract class AbstractParameterPattern implements CustomParameterPattern
         List<Object> arguments = new ArrayList<>();
 
         for (String rawArgument : rawArguments) {
-            context.log().debug("Parsing raw argument " + rawArgument);
+            LOG.debug("Parsing raw argument " + rawArgument);
             Option<String> argumentIdentifier = this.parseIdentifier(rawArgument);
             if (argumentIdentifier.absent()) {
-                context.log().debug("Could not determine argument identifier for raw argument '%s', this is not a error as the value likely needs to be looked up by its type instead.".formatted(rawArgument));
+                LOG.debug("Could not determine argument identifier for raw argument '%s', this is not a error as the value likely needs to be looked up by its type instead.".formatted(rawArgument));
                 // If a non-pattern argument is required, the converter needs to be looked up by type instead of by its identifier. This will be done when the constructor is being looked up
                 argumentTypes.add(null);
                 arguments.add(rawArgument);
@@ -64,11 +68,11 @@ public abstract class AbstractParameterPattern implements CustomParameterPattern
 
             Option<ArgumentConverter<?>> converter = this.argumentConverterRegistry.converter(typeIdentifier);
             if (converter.absent()) {
-                context.log().debug("Could not locate converter for identifier '%s'".formatted(typeIdentifier));
+                LOG.debug("Could not locate converter for identifier '%s'".formatted(typeIdentifier));
                 throw new MissingConverterException(context, typeView);
             }
 
-            context.log().debug("Found converter for identifier '%s'".formatted(typeIdentifier));
+            LOG.debug("Found converter for identifier '%s'".formatted(typeIdentifier));
             argumentTypes.add(converter.get().type());
             arguments.add(converter.get().convert(source, rawArgument).orNull());
         }
@@ -129,7 +133,7 @@ public abstract class AbstractParameterPattern implements CustomParameterPattern
             break; // Parameter is not what we expected, do not continue
         }
         if (passed) {
-            source.applicationContext().log().debug("Found matching constructor for " + type.name() + " with " + argumentTypes.size() + " arguments.");
+            LOG.debug("Found matching constructor for " + type.name() + " with " + argumentTypes.size() + " arguments.");
             return true;
         }
         return false;
