@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,9 +35,9 @@ public class ClassNameReference implements TypeReference {
     }
 
     @Override
-    public Class<?> getOrLoad() throws ClassReferenceLoadException {
+    public Class<?> getOrLoad(ClassLoader classLoader) throws ClassReferenceLoadException {
         try {
-            return Class.forName(this.name, false, Thread.currentThread().getContextClassLoader());
+            return Class.forName(this.name, false, classLoader);
         } catch (ClassNotFoundException e) {
             throw new ClassReferenceLoadException(e);
         }

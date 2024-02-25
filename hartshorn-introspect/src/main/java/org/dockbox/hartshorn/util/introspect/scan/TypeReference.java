@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,10 +30,12 @@ public interface TypeReference {
      * Loads the class that is referenced by this instance. Where possible, this should not initialize
      * the class.
      *
+     * @param classLoader The class loader to use to load the class.
+     *
      * @return The class that is referenced by this instance.
      * @throws ClassReferenceLoadException When the class cannot be loaded.
      */
-    Class<?> getOrLoad() throws ClassReferenceLoadException;
+    Class<?> getOrLoad(ClassLoader classLoader) throws ClassReferenceLoadException;
 
     /**
      * Returns the fully qualified name of the class that is referenced by this instance.

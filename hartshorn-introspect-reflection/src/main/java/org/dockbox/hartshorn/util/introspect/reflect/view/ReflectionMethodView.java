@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.StringJoiner;
+
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
@@ -27,11 +32,6 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.StringJoiner;
-
 public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutableElementView<Parent> implements MethodView<Parent, ReturnType> {
 
     private final Introspector introspector;
@@ -39,6 +39,9 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
 
     private MethodInvoker<ReturnType, Parent> invoker;
     private String qualifiedName;
+
+    private TypeView<ReturnType> returnType;
+    private TypeView<ReturnType> genericReturnType;
 
     public ReflectionMethodView(ReflectionIntrospector introspector, Method method) {
         super(introspector, method);
@@ -72,12 +75,18 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
 
     @Override
     public TypeView<ReturnType> returnType() {
-        return (TypeView<ReturnType>) this.introspector.introspect(this.method.getReturnType());
+        if (this.returnType == null) {
+            this.returnType = (TypeView<ReturnType>) this.introspector.introspect(this.method.getReturnType());
+        }
+        return this.returnType;
     }
 
     @Override
     public TypeView<ReturnType> genericReturnType() {
-        return (TypeView<ReturnType>) this.introspector.introspect(this.method.getGenericReturnType());
+        if (this.genericReturnType == null) {
+            this.genericReturnType = (TypeView<ReturnType>) this.introspector.introspect(this.method.getGenericReturnType());
+        }
+        return this.genericReturnType;
     }
 
     @Override

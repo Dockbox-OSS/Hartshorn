@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,10 +41,13 @@ public class ApplicationBuildContext extends DefaultContext {
     private final Logger logger;
 
     public ApplicationBuildContext(Class<?> mainClass, List<String> arguments) {
+        this(mainClass, arguments, LoggerFactory.getLogger(mainClass));
+    }
+
+    public ApplicationBuildContext(Class<?> mainClass, List<String> arguments, Logger logger) {
         this.mainClass = mainClass;
         this.arguments = arguments;
-
-        this.logger = LoggerFactory.getLogger(mainClass);
+        this.logger = logger;
     }
 
     /**

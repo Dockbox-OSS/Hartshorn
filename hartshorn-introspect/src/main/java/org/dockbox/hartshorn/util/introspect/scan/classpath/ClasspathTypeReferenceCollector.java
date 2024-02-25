@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect.scan.classpath;
 
+import java.util.Objects;
+import java.util.Set;
+
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
-
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * A {@link TypeReferenceCollector} that collects {@link TypeReference}s from a classpath. This class is abstract, as
@@ -56,7 +56,8 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
     @Override
     public Set<TypeReference> collect() throws TypeCollectionException {
         if (!BATCH_CACHE.containsKey(this.packageName)) {
-            BATCH_CACHE.putAll(this.packageName, this.createCache());
+            Set<TypeReference> cache = this.createCache();
+            BATCH_CACHE.putAll(this.packageName, cache);
         }
         // Don't use local cache in batch mode, to avoid n*2 memory usage
         return Set.copyOf(BATCH_CACHE.get(this.packageName));

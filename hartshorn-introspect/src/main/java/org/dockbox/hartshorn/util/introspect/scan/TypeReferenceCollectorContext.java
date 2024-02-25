@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.scan;
 
-import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.Reportable;
-
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
 
 /**
  * A {@link TypeReferenceCollectorContext} is a {@link org.dockbox.hartshorn.context.Context} that is used
@@ -36,13 +36,16 @@ public class TypeReferenceCollectorContext extends DefaultContext implements Rep
 
     private final Set<TypeReferenceCollector> collectors = ConcurrentHashMap.newKeySet();
 
+    private TypeReferenceCollector aggregate;
+
     /**
      * Registers a {@link TypeReferenceCollector} with this context.
      *
      * @param collector The collector to register
      */
-    public void register(TypeReferenceCollector collector) {
+    public synchronized void register(TypeReferenceCollector collector) {
         this.collectors.add(collector);
+        this.aggregate = null;
     }
 
     /**
@@ -50,8 +53,12 @@ public class TypeReferenceCollectorContext extends DefaultContext implements Rep
      *
      * @return A new {@link AggregateTypeReferenceCollector}
      */
-    public TypeReferenceCollector collector() {
-        return new AggregateTypeReferenceCollector(this.collectors);
+    public synchronized TypeReferenceCollector collector() {
+        if (this.aggregate == null) {
+            AggregateTypeReferenceCollector collector = new AggregateTypeReferenceCollector(this.collectors);
+            this.aggregate = new CachedTypeReferenceCollector(collector);
+        }
+        return this.aggregate;
     }
 
     /**

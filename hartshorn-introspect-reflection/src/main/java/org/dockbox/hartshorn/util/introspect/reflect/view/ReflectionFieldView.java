@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.util.List;
+
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
@@ -31,10 +35,6 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.util.List;
-
 public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedElementView implements FieldView<Parent, FieldType> {
 
     private final Field field;
@@ -42,6 +42,10 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
 
     private ReflectiveFieldAccess<FieldType, Parent> getter;
     private ReflectiveFieldWriter<FieldType, Parent> setter;
+
+    private TypeView<FieldType> type;
+    private TypeView<FieldType> genericType;
+    private TypeView<Parent> declaredBy;
 
     public ReflectionFieldView(ReflectionIntrospector introspector, Field field) {
         super(introspector);
@@ -130,17 +134,26 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
 
     @Override
     public TypeView<FieldType> type() {
-        return (TypeView<FieldType>) this.introspector.introspect(this.field.getType());
+        if (this.type == null) {
+            this.type = (TypeView<FieldType>) this.introspector.introspect(this.field.getType());
+        }
+        return this.type;
     }
 
     @Override
     public TypeView<FieldType> genericType() {
-        return (TypeView<FieldType>) this.introspector.introspect(this.field.getGenericType());
+        if (this.genericType == null) {
+            this.genericType = (TypeView<FieldType>) this.introspector.introspect(this.field.getGenericType());
+        }
+        return this.genericType;
     }
 
     @Override
     public TypeView<Parent> declaredBy() {
-        return (TypeView<Parent>) this.introspector.introspect(this.field.getDeclaringClass());
+        if (this.declaredBy == null) {
+            this.declaredBy = (TypeView<Parent>) this.introspector.introspect(this.field.getDeclaringClass());
+        }
+        return this.declaredBy;
     }
 
     @Override

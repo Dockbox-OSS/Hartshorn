@@ -71,6 +71,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         ApplicationBootstrapContext bootstrapContext = new ApplicationBootstrapContext(
                 this.buildContext.mainClass(),
                 this.buildContext.arguments(),
+                this.buildContext.logger(),
                 this.configurer.includeBasePackages.initialize(this.initializerContext)
         );
 

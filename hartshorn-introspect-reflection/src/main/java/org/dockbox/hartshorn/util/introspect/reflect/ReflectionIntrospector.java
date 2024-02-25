@@ -76,6 +76,8 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
 
     private static final ConcurrentIntrospectionViewCache SHARED_CACHE = new ConcurrentIntrospectionViewCache();
 
+    private static final ClassLoader DEFAULT_CLASS_LOADER = Thread.currentThread().getContextClassLoader();
+
     private final ConcurrentIntrospectionViewCache viewCache = new ConcurrentIntrospectionViewCache();
     private final IntrospectionEnvironment environment = new ReflectionIntrospectionEnvironment();
 
@@ -178,7 +180,7 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     @Override
     public TypeView<?> introspect(TypeReference reference) {
         try {
-            return this.introspect(reference.getOrLoad());
+            return this.introspect(reference.getOrLoad(DEFAULT_CLASS_LOADER));
         }
         catch(ClassReferenceLoadException e) {
             return this.voidType();
