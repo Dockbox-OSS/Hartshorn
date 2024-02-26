@@ -563,7 +563,7 @@ public class ApplicationContextTests {
     @Test
     @TestComponents(components = SetterInjectedComponentWithAbsentBinding.class)
     void testSetterInjectionWithAbsentRequiredComponent() {
-        Assertions.assertThrows(ComponentRequiredException.class, () -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
+        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
     }
 
     @Test
