@@ -193,7 +193,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     private void processStandaloneComponent(ComponentContainer<?> container, ComponentPreProcessor serviceProcessor) {
         TypeView<?> service = container.type();
         ComponentKey<?> key = ComponentKey.of(service.type());
-        this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
+        LOG.debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
         ComponentProcessingContext<?> context = new ComponentProcessingContext<>(
                 this, ComponentRequestContext.createForComponent(),
                 key, null, container.permitsProxying()
