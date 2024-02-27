@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
+import org.dockbox.hartshorn.component.ComponentResolutionException;
 import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
 import org.dockbox.hartshorn.component.populate.inject.RequireInjectionPointRule;
 import org.dockbox.hartshorn.context.ContextCarrier;
@@ -94,7 +95,7 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
             }
             catch(ApplicationException | ApplicationRuntimeException e) {
                 if (this.shouldRequire(point)) {
-                    throw new ComponentRequiredException("Could not resolve value for injection point " + point.injectionPoint().qualifiedName(), e);
+                    throw new ComponentResolutionException("Could not resolve value for injection point " + point.injectionPoint().qualifiedName(), e);
                 }
                 else {
                     this.applicationContext().handle(e);

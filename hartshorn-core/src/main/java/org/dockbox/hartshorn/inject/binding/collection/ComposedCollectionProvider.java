@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.CollectionObjectContainer;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.NonTypeAwareProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.Provider;
@@ -47,10 +48,10 @@ public class ComposedCollectionProvider<T> implements NonTypeAwareProvider<Compo
     }
 
     @Override
-    public Option<ObjectContainer<ComponentCollection<T>>> provide(ApplicationContext context) throws ApplicationException {
+    public Option<ObjectContainer<ComponentCollection<T>>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
         Set<ObjectContainer<T>> components = new HashSet<>();
         for (CollectionProvider<T> provider : this.providers) {
-            Option<ObjectContainer<ComponentCollection<T>>> containers = provider.provide(context);
+            Option<ObjectContainer<ComponentCollection<T>>> containers = provider.provide(context, requestContext);
             if (containers.present()) {
                 ComponentCollection<T> componentCollection = containers.get().instance();
                 if (componentCollection instanceof ContainerAwareComponentCollection<T> containerAwareCollection) {

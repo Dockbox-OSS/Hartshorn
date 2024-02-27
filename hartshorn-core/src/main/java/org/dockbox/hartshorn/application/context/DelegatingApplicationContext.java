@@ -39,6 +39,7 @@ import org.dockbox.hartshorn.component.ScopeAwareComponentProvider;
 import org.dockbox.hartshorn.component.TypeReferenceLookupComponentLocator;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
@@ -179,8 +180,8 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public <T> T get(ComponentKey<T> key) {
-        return this.componentProvider.get(key);
+    public <T> T get(ComponentKey<T> key, ComponentRequestContext requestContext) {
+        return this.componentProvider.get(key, requestContext);
     }
 
     @Override

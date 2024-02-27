@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.inject;
 import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ExactPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.HighestPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.MaximumPriorityProviderSelectionStrategy;
@@ -129,7 +130,7 @@ public class ProviderSelectionStrategyTests {
         else {
             Assertions.assertNotNull(provider);
 
-            Option<? extends ObjectContainer<?>> value = Assertions.assertDoesNotThrow(() -> provider.provide(null));
+            Option<? extends ObjectContainer<?>> value = Assertions.assertDoesNotThrow(() -> provider.provide(null, ComponentRequestContext.createForComponent()));
             Assertions.assertTrue(value.present());
 
             ObjectContainer<?> container = value.get();

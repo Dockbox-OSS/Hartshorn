@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
@@ -144,8 +145,8 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     }
 
     @Override
-    public <T> T get(ComponentKey<T> componentKey) {
-        return this.getOrCreateProvider(componentKey.scope()).get(componentKey);
+    public <T> T get(ComponentKey<T> key, ComponentRequestContext requestContext) {
+        return this.getOrCreateProvider(key.scope()).get(key, requestContext);
     }
 
     @Override

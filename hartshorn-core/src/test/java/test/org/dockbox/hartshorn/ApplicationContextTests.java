@@ -498,7 +498,7 @@ public class ApplicationContextTests {
             }
 
             DependencyContext<?> dependencyContext = new AutoConfiguringDependencyContext<>(componentKey,
-                    dependencyMap, Scope.DEFAULT_SCOPE.installableScopeType(), -1, BindingType.STANDALONE, origin, () -> null);
+                    dependencyMap, Scope.DEFAULT_SCOPE.installableScopeType(), -1, BindingType.STANDALONE, origin, requestContext -> null);
             dependencyContexts.add(dependencyContext);
         }
 
@@ -563,7 +563,7 @@ public class ApplicationContextTests {
     @Test
     @TestComponents(components = SetterInjectedComponentWithAbsentBinding.class)
     void testSetterInjectionWithAbsentRequiredComponent() {
-        Assertions.assertThrows(ComponentRequiredException.class, () -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
+        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
     }
 
     @Test
@@ -585,9 +585,17 @@ public class ApplicationContextTests {
         Assertions.assertSame(sampleContext, component.context());
     }
 
+    @Inject
+    private Logger loggerField;
+
     @InjectTest
-    void loggerCanBeInjected(Logger logger) {
-        Assertions.assertNotNull(logger);
+    void loggerCanBeInjected(Logger loggerParameter) {
+        Assertions.assertNotNull(loggerParameter);
+        // Name should match the consuming class' name, and not the name of the configuration that uses it
+        Assertions.assertEquals(loggerParameter.getName(), ApplicationContextTests.class.getName());
+
+        Assertions.assertNotNull(this.loggerField);
+        Assertions.assertEquals(this.loggerField.getName(), ApplicationContextTests.class.getName());
     }
 
     @Test

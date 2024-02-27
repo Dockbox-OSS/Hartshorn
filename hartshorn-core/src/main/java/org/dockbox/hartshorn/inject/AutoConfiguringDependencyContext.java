@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.IllegalScopeException;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
@@ -46,12 +45,12 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  */
 public class AutoConfiguringDependencyContext<T> extends AbstractDependencyContext<T> {
 
-    private final CheckedSupplier<T> supplier;
+    private final ContextAwareComponentSupplier<T> supplier;
     private final View view;
 
     public AutoConfiguringDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies,
                                             ScopeKey scope, int priority, BindingType bindingType,
-                                            View view, CheckedSupplier<T> supplier) {
+                                            View view, ContextAwareComponentSupplier<T> supplier) {
         super(componentKey, dependencies, scope, priority, bindingType);
         this.supplier = supplier;
         this.view = view;
@@ -83,8 +82,8 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
             try {
                 switch(instanceType) {
                 case SUPPLIER -> collector.supplier(this.supplier);
-                case SINGLETON -> collector.singleton(this.supplier.get());
-                case LAZY_SINGLETON -> collector.lazySingleton(this.supplier);
+                case SINGLETON -> collector.singleton(this.supplier.get(ComponentRequestContext.createForComponent()));
+                case LAZY_SINGLETON -> collector.lazySingleton(() -> this.supplier.get(ComponentRequestContext.createForComponent()));
                 }
             }
             catch(ApplicationException e) {
@@ -98,8 +97,8 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
         try {
             switch (instanceType) {
                 case SUPPLIER -> function.to(this.supplier);
-                case SINGLETON -> function.singleton(this.supplier.get());
-                case LAZY_SINGLETON -> function.lazySingleton(this.supplier);
+                case SINGLETON -> function.singleton(this.supplier.get(ComponentRequestContext.createForComponent()));
+                case LAZY_SINGLETON -> function.lazySingleton(() -> this.supplier.get(ComponentRequestContext.createForComponent()));
             }
         }
         catch (ApplicationException e) {

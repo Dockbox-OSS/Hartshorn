@@ -16,31 +16,17 @@
 
 package org.dockbox.hartshorn.inject;
 
-import java.util.function.Supplier;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 
-/**
- * A {@link Supplier} that is able to provide instances using the given {@link Supplier}. If the
- * {@link Supplier} is unable to provide an instance, an empty {@link Option} will be returned
- * without throwing an exception.
- *
- * @param <C> The type to be provided.
- *
- * @author Guus Lieben
- * @see Provider
- * @see ContextDrivenProvider
- * @since 0.4.3
- */
-public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements NonTypeAwareProvider<C> {
+@FunctionalInterface
+public interface ContextAwareComponentSupplier<T> extends NonTypeAwareProvider<T> {
 
     @Override
-    public Option<ObjectContainer<C>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
-        C instance = this.supplier.get();
-        return Option.of(instance).map(ComponentObjectContainer::new);
+    default Option<ObjectContainer<T>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
+        return Option.of(new ComponentObjectContainer<>(this.get(requestContext)));
     }
 
+    T get(ComponentRequestContext context) throws ApplicationException;
 }

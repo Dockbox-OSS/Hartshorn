@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.ScopeModuleContext;
 import org.dockbox.hartshorn.inject.ComponentObjectContainer;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.LazySingletonProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
@@ -171,7 +173,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     public Binder lazySingleton(Class<T> type) {
         return this.lazyContainerSingleton(() -> {
             ComponentKey<T> key = ComponentKey.builder(type).scope(this.scope).build();
-            Option<ObjectContainer<T>> object = this.instanceFactory().instantiate(key);
+            Option<ObjectContainer<T>> object = this.instanceFactory().instantiate(key, ComponentRequestContext.createForComponent());
             return object.orNull();
         });
     }

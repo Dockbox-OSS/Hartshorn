@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,15 @@
 
 package org.dockbox.hartshorn.inject.binding.collection;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.CollectionObjectContainer;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.NonTypeAwareProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.Provider;
@@ -25,12 +32,6 @@ import org.dockbox.hartshorn.inject.TypeAwareProvider;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * A provider which provides a {@link ComponentCollection} of all the provided instances. This provider
@@ -110,10 +111,10 @@ public class CollectionProvider<T> implements NonTypeAwareProvider<ComponentColl
     }
 
     @Override
-    public Option<ObjectContainer<ComponentCollection<T>>> provide(ApplicationContext context) throws ApplicationException {
+    public Option<ObjectContainer<ComponentCollection<T>>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
         Set<ObjectContainer<T>> containers = new HashSet<>();
         for(Provider<T> provider : this.providers) {
-            Option<ObjectContainer<T>> container = provider.provide(context);
+            Option<ObjectContainer<T>> container = provider.provide(context, requestContext);
             if(container.present()) {
                 containers.add(container.get());
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
@@ -32,7 +33,7 @@ public class ContextDrivenComponentInstanceFactory implements ComponentInstanceF
     }
 
     @Override
-    public <T> Option<ObjectContainer<T>> instantiate(ComponentKey<T> key) throws ApplicationException {
-        return new ContextDrivenProvider<>(key).provide(this.applicationContext);
+    public <T> Option<ObjectContainer<T>> instantiate(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
+        return new ContextDrivenProvider<>(key).provide(this.applicationContext, requestContext);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
-import org.slf4j.Logger;
 
 /**
  * The default {@link EnvironmentBinderConfiguration} used by the {@link DelegatingApplicationContext}. This configuration
@@ -87,9 +86,6 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
         if (environment instanceof ObservableApplicationEnvironment observableEnvironment) {
             binder.bind(LifecycleObservable.class).singleton(observableEnvironment);
         }
-
-        // Dynamic components
-        binder.bind(Logger.class).to(environment.applicationContext()::log);
 
         // Custom default bindings. Runs last to allow for modification of default bindings.
         configurer.configure(binder);

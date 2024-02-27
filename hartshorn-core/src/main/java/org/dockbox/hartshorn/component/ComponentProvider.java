@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 
 /**
  * A component provider is a class that is capable of providing components. Components are identified using
@@ -41,21 +42,52 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 public interface ComponentProvider {
 
     /**
+     * Returns the component for the given key, using the request context to determine the
+     * use case for the component. The request context may be used to provide additional
+     * information to the provider, such as the current component that is being resolved.
+     *
+     * <p>Both parameters are used to determine the appropriate state of the returned
+     * component. The {@link ComponentKey key} describes the component itself, whereas the
+     * {@link ComponentRequestContext request context} describes the use case for the
+     * component.
+     *
+     * <p>Note that singleton components are typically resolved using the default request
+     * context, and ignore the given request context.
+     *
+     * @param key The key of the component to return.
+     * @param requestContext The request context to use for resolving the component.
+     *
+     * @return The component for the given key.
+     *
+     * @param <T> The type of the component to return.
+     */
+    <T> T get(ComponentKey<T> key, ComponentRequestContext requestContext);
+
+    /**
      * Returns the component for the given key.
+     *
      * @param key The key of the component to return.
      * @param <T> The type of the component to return.
+     *
      * @return The component for the given key.
      */
-    <T> T get(ComponentKey<T> key);
+    default <T> T get(ComponentKey<T> key) {
+        return this.get(key, ComponentRequestContext.createForComponent());
+    }
 
     /**
      * Returns the component for the given type and name metadata. If {@code named} is null, the given
      * {@link Class} is used to identify the component.
+     *
      * @param type The type of the component to return.
      * @param qualifiers The metadata of the component to return.
      * @param <T> The type of the component to return.
+     *
      * @return The component for the given type and name metadata.
+     *
+     * @deprecated Use {@link #get(ComponentKey)} instead.
      */
+    @Deprecated(since = "0.6.0", forRemoval = true)
     default <T> T get(Class<T> type, QualifierKey<?>... qualifiers) {
         ComponentKey<T> key = ComponentKey.builder(type).qualifiers(qualifiers).build();
         return this.get(key);
@@ -63,12 +95,39 @@ public interface ComponentProvider {
 
     /**
      * Returns the component for the given type.
+     *
      * @param type The type of the component to return.
      * @param <T> The type of the component to return.
+     *
      * @return The component for the given type.
      */
     default <T> T get(Class<T> type) {
         ComponentKey<T> key = ComponentKey.of(type);
         return this.get(key);
+    }
+
+    /**
+     * Returns the component for the given type, using the request context to determine the
+     * use case for the component. The request context may be used to provide additional
+     * information to the provider, such as the current component that is being resolved.
+     *
+     * <p>Both parameters are used to determine the appropriate state of the returned
+     * component. The {@link Class type} describes the component itself, whereas the
+     * {@link ComponentRequestContext request context} describes the use case for the
+     * component.
+     *
+     * <p>Note that singleton components are typically resolved using the default request
+     * context, and ignore the given request context.
+     *
+     * @param type The type of the component to return.
+     * @param requestContext The request context to use for resolving the component.
+     *
+     * @return The component for the given type.
+     *
+     * @param <T> The type of the component to return.
+     */
+    default <T> T get(Class<T> type, ComponentRequestContext requestContext) {
+        ComponentKey<T> key = ComponentKey.of(type);
+        return this.get(key, requestContext);
     }
 }

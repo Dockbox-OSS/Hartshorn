@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.component.populate.ComponentInjectionPoint;
 import org.dockbox.hartshorn.component.populate.ComponentPopulationStrategy;
 import org.dockbox.hartshorn.component.populate.PopulateComponentContext;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.Lazy;
@@ -110,7 +111,8 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
         }
 
         ComponentKey<?> componentKey = this.applicationContext().environment().componentKeyResolver().resolve(injectionPoint.injectionPoint());
-        Object component = this.applicationContext().get(componentKey);
+        ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(injectionPoint);
+        Object component = this.applicationContext().get(componentKey, requestContext);
 
         // Ensure types are compatible, or a default value is provided if it is available. This primarily
         // applies to component collections.

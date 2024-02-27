@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.inject.ComponentContainerDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.DependencyResolutionException;
 import org.dockbox.hartshorn.inject.PostProcessorDependencyDeclarationContext;
@@ -188,8 +189,11 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     private void processStandaloneComponent(ComponentContainer<?> container, ComponentPreProcessor serviceProcessor) {
         TypeView<?> service = container.type();
         ComponentKey<?> key = ComponentKey.of(service.type());
-        ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null, container.permitsProxying());
         this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
+        ComponentProcessingContext<?> context = new ComponentProcessingContext<>(
+                this, ComponentRequestContext.createForComponent(),
+                key, null, container.permitsProxying()
+        );
         serviceProcessor.process(context);
     }
 

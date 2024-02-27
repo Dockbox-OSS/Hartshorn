@@ -19,6 +19,8 @@ package org.dockbox.hartshorn.introspect;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentRequiredException;
+import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.Required;
 import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
@@ -38,7 +40,9 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
     @Override
     protected <T> T loadDefault(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
         ComponentKey<?> componentKey = this.applicationContext.environment().componentKeyResolver().resolve(parameter);
-        Object out = context.provider().get(componentKey);
+
+        ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(new InjectionPoint(parameter));
+        Object out = context.provider().get(componentKey, requestContext);
 
         boolean required = isRequired(parameter);
 

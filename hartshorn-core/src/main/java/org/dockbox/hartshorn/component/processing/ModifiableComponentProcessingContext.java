@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 
 public class ModifiableComponentProcessingContext<T> extends ComponentProcessingContext<T> {
@@ -28,8 +29,9 @@ public class ModifiableComponentProcessingContext<T> extends ComponentProcessing
     private boolean requestInstanceLock = false;
 
     public ModifiableComponentProcessingContext(ApplicationContext applicationContext, ComponentKey<T> key,
-                                                T instance, boolean permitsProxying, Consumer<T> onLockRequested) {
-        super(applicationContext, key, instance, permitsProxying);
+            ComponentRequestContext requestContext,
+            T instance, boolean permitsProxying, Consumer<T> onLockRequested) {
+        super(applicationContext, requestContext, key, instance, permitsProxying);
         this.onLockRequested = onLockRequested;
     }
 

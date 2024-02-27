@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.component;
 import java.util.Objects;
 import java.util.Set;
 
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.HighestPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.ProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
@@ -40,6 +41,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * <p>Keys are immutable, to build a new key based on an existing key, use {@link #mutable()}.
  *
  * @see ComponentProvider#get(ComponentKey)
+ * @see ComponentProvider#get(ComponentKey, ComponentRequestContext)
  * @see ComponentKey#builder(Class)
  *
  * @param <T> the type of the component

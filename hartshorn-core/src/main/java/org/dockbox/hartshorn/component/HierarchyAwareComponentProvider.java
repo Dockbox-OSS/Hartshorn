@@ -36,6 +36,7 @@ import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ComponentObjectContainer;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.Provider;
@@ -100,14 +101,14 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         this.processor = new CompositeComponentPostProcessor(owner::postProcessors);
     }
 
-    private <T> Option<ObjectContainer<T>> create(ComponentKey<T> key) {
+    private <T> Option<ObjectContainer<T>> create(ComponentKey<T> key, ComponentRequestContext requestContext) {
         try {
-            Option<ObjectContainer<T>> objectContainer = this.provide(key);
+            Option<ObjectContainer<T>> objectContainer = this.provide(key, requestContext);
             if (objectContainer.present()) {
                 return objectContainer;
             }
 
-            return this.createContextualInstanceContainer(key);
+            return this.createContextualInstanceContainer(key, requestContext);
         } catch (ApplicationException e) {
             throw new ComponentInitializationException("Failed to create component for key " + key, e);
         }
@@ -138,43 +139,43 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return this;
     }
 
-    public <T> Option<ObjectContainer<T>> provide(ComponentKey<T> key) throws ApplicationException {
+    public <T> Option<ObjectContainer<T>> provide(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
         Option<BindingHierarchy<T>> hierarchy = Option.of(this.hierarchy(key, true));
         if (hierarchy.present()) {
             Provider<T> provider = key.strategy().selectProvider(hierarchy.get());
             if (provider != null) {
-                return provider.provide(this.applicationContext());
+                return provider.provide(this.applicationContext(), requestContext);
             }
         }
         return Option.empty();
     }
 
-    protected <T> T process(ComponentKey<T> key, ObjectContainer<T> objectContainer, @Nullable ComponentContainer<?> container) throws ApplicationException {
+    protected <T> T process(ComponentKey<T> key, ObjectContainer<T> objectContainer, @Nullable ComponentContainer<?> container, ComponentRequestContext requestContext) throws ApplicationException {
         if (container != null && !container.permitsProcessing()) {
             return objectContainer.instance();
         }
 
-        ModifiableComponentProcessingContext<T> processingContext = this.prepareProcessingContext(key, objectContainer.instance(), container);
+        ModifiableComponentProcessingContext<T> processingContext = this.prepareProcessingContext(key, objectContainer.instance(), container, requestContext);
         objectContainer.processed(true);
 
         processingContext = this.process(processingContext);
         return processingContext.instance();
     }
 
-    protected <E, T extends ContainerAwareComponentCollection<E>> T processCollection(ComponentKey<T> key, T collection) throws ApplicationException {
+    protected <E, T extends ContainerAwareComponentCollection<E>> T processCollection(ComponentKey<T> key, T collection, ComponentRequestContext requestContext) throws ApplicationException {
         ComponentKey<E> build = TypeUtils.adjustWildcards(key.mutable()
                 .type(key.parameterizedType().parameters().get(0))
                 .build(), ComponentKey.class);
 
         for(ObjectContainer<E> container : collection.containers()) {
-            this.process(build, container, null);
+            this.process(build, container, null, requestContext);
         }
         return collection;
     }
 
-    protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, T instance, @Nullable ComponentContainer<?> container) {
+    protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, T instance, @Nullable ComponentContainer<?> container, ComponentRequestContext requestContext) {
         ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(
-                this.applicationContext(), key, instance,
+                this.applicationContext(), key, requestContext, instance,
                 container == null || container.permitsProxying(),
                 latest -> this.storeSingletons(key, latest));
 
@@ -220,12 +221,12 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         }
     }
 
-    public <T> Option<ObjectContainer<T>> createContextualInstanceContainer(ComponentKey<T> key) throws ApplicationException {
-        return new ContextDrivenProvider<>(key).provide(this.applicationContext());
+    public <T> Option<ObjectContainer<T>> createContextualInstanceContainer(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
+        return new ContextDrivenProvider<>(key).provide(this.applicationContext(), requestContext);
     }
 
     @Override
-    public <T> T get(ComponentKey<T> componentKey) {
+    public <T> T get(ComponentKey<T> componentKey, ComponentRequestContext requestContext) {
         if (componentKey.type() == ApplicationContext.class && componentKey.qualifier().isEmpty()) {
             return TypeUtils.adjustWildcards(this.applicationContext(), Object.class);
         }
@@ -237,7 +238,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
         this.owner.componentLocator().validate(componentKey);
 
-        ObjectContainer<T> objectContainer = this.create(componentKey)
+        ObjectContainer<T> objectContainer = this.create(componentKey, requestContext)
                 .orElseGet(() -> new ComponentObjectContainer<>(null));
 
         T instance = objectContainer.instance();
@@ -252,14 +253,14 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         }
 
         try {
-            return this.processInstance(componentKey, objectContainer, instance);
+            return this.processInstance(componentKey, objectContainer, instance, requestContext);
         }
         catch(ApplicationException e) {
             throw new ComponentResolutionException("Failed to process component with key " + componentKey, e);
         }
     }
 
-    private <T> T processInstance(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, T instance)
+    private <T> T processInstance(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, T instance, ComponentRequestContext requestContext)
             throws ApplicationException {
         Class<? extends T> type = componentKey.type();
         if (instance != null) {
@@ -268,8 +269,8 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
         Option<ComponentContainer<?>> container = this.owner.componentLocator().container(type);
         instance = container.present()
-                ? this.getManagedComponent(componentKey, objectContainer, container)
-                : this.getUnmanagedComponent(componentKey, objectContainer, type);
+                ? this.getManagedComponent(componentKey, objectContainer, container, requestContext)
+                : this.getUnmanagedComponent(componentKey, objectContainer, type,requestContext);
 
         if (instance == null) {
             throw new ComponentResolutionException("No component found for key " + componentKey);
@@ -294,13 +295,13 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     }
 
     private <T> T getManagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer,
-                                      Option<ComponentContainer<?>> container) throws ApplicationException {
+                                      Option<ComponentContainer<?>> container, ComponentRequestContext requestContext) throws ApplicationException {
         // Will only mark the object container as processed if the component container permits
         // processing.
-        return this.process(componentKey, objectContainer, container.get());
+        return this.process(componentKey, objectContainer, container.get(), requestContext);
     }
 
-    private <T> T getUnmanagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, Class<? extends T> type)
+    private <T> T getUnmanagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, Class<? extends T> type, ComponentRequestContext requestContext)
             throws ApplicationException {
         TypeView<? extends T> typeView = this.applicationContext().environment().introspector().introspect(type);
         if (typeView.annotations().has(Component.class)) {
@@ -312,14 +313,15 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             }
             ComponentCollection<Object> collection = this.processComponentCollection(
                     TypeUtils.adjustWildcards(componentKey, ComponentKey.class),
-                    TypeUtils.adjustWildcards(objectContainer, ObjectContainer.class)
+                    TypeUtils.adjustWildcards(objectContainer, ObjectContainer.class),
+                requestContext
             );
             return componentKey.type().cast(collection);
         }
-        return this.process(componentKey, objectContainer, null);
+        return this.process(componentKey, objectContainer, null, requestContext);
     }
 
-    private <E, T extends ComponentCollection<E>> ComponentCollection<E> processComponentCollection(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer)
+    private <E, T extends ComponentCollection<E>> ComponentCollection<E> processComponentCollection(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, ComponentRequestContext requestContext)
             throws ApplicationException {
         if (objectContainer.instance() == null) {
             return new SimpleComponentCollection<>(Set.of());
@@ -334,7 +336,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
                     componentKey,
                     ComponentKey.class);
 
-            ContainerAwareComponentCollection<E> processed = this.processCollection(key, collection);
+            ContainerAwareComponentCollection<E> processed = this.processCollection(key, collection, requestContext);
             return new SimpleComponentCollection<>(Set.copyOf(processed));
         }
         else {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
@@ -42,6 +43,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
 
     private final ComponentKey<? extends C> context;
+
     private ConstructorView<? extends C> optimalConstructor;
 
     public ContextDrivenProvider(ComponentKey<? extends C> type) {
@@ -49,15 +51,15 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
     }
 
     @Override
-    public Option<ObjectContainer<C>> provide(ApplicationContext context) throws ApplicationException {
+    public Option<ObjectContainer<C>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
         Option<? extends ConstructorView<? extends C>> constructor = this.optimalConstructor(context);
         if (constructor.absent()) {
             return Option.empty();
         }
-
-        ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
         try {
-            return adapter.scope(this.context.scope())
+            ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(context);
+            contextAdapter.add(requestContext);
+            return contextAdapter.scope(this.context.scope())
                     .create(constructor.get())
                     .cast(this.type())
                     .map(ComponentObjectContainer::new);

@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.util.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
@@ -49,6 +50,11 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
         this.scope = applicationContext;
     }
 
+    private ComponentRequestContext componentRequestContext() {
+        return this.first(ComponentRequestContext.class)
+                .orElseGet(ComponentRequestContext::createForComponent);
+    }
+
     @Override
     public ApplicationContext applicationContext() {
         return this.applicationContext;
@@ -70,6 +76,10 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
         ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader(
                 this.applicationContext
         );
+
+        InjectionPointParameterLoaderRule rule = new InjectionPointParameterLoaderRule(this.componentRequestContext());
+        parameterLoader.add(rule);
+
         ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.applicationContext(), this.scope);
         this.copyTo(loaderContext);
         return parameterLoader.loadArguments(loaderContext).toArray();
@@ -81,7 +91,7 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
             return this.invokeStatic(method);
         }
         Object[] parameters = this.loadParameters(method);
-        P instance = this.applicationContext().get(this.key(method.declaredBy().type()));
+        P instance = this.applicationContext().get(this.key(method.declaredBy().type()), this.componentRequestContext());
         return method.invoke(instance, parameters);
     }
 
@@ -96,7 +106,7 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
 
     @Override
     public <P, R> Option<R> load(FieldView<P, R> field) throws Throwable {
-        P instance = this.applicationContext().get(this.key(field.declaredBy().type()));
+        P instance = this.applicationContext().get(this.key(field.declaredBy().type()), this.componentRequestContext());
         return field.get(instance);
     }
 
@@ -105,14 +115,14 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
         return switch(element) {
             case TypeView<?> typeView -> {
                 ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(typeView.type(), Class.class));
-                yield Option.of(this.applicationContext().get(key));
+                yield Option.of(this.applicationContext().get(key, this.componentRequestContext()));
             }
             case FieldView<?, ?> fieldView -> this.load(TypeUtils.adjustWildcards(fieldView, FieldView.class));
             case MethodView<?, ?> methodView -> this.invoke(TypeUtils.adjustWildcards(methodView, MethodView.class));
             case ConstructorView<?> constructorView -> this.create(TypeUtils.adjustWildcards(constructorView, ConstructorView.class));
             case ParameterView<?> parameterView -> {
                 ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(parameterView.type().type(), Class.class));
-                yield Option.of(this.applicationContext().get(key));
+                yield Option.of(this.applicationContext().get(key, this.componentRequestContext()));
             }
             default -> throw new IllegalArgumentException("Unsupported element type: " + element.getClass().getName());
         };
