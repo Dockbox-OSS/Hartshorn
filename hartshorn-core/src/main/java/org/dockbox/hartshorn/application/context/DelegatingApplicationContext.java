@@ -39,22 +39,13 @@ import org.dockbox.hartshorn.component.TypeReferenceLookupComponentLocator;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.profiles.ApplicationProfile;
-import org.dockbox.hartshorn.profiles.ComposableProfileHolder;
-import org.dockbox.hartshorn.profiles.SimpleComposableProfileHolder;
-import org.dockbox.hartshorn.profiles.loader.ApplicationProfileLoader;
-import org.dockbox.hartshorn.profiles.loader.CompositeProfileLoader;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
-import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.SingleElementContext;
-import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
@@ -97,7 +88,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     private final transient ComponentProvider componentProvider;
     private final transient ComponentLocator locator;
     private final transient ApplicationEnvironment environment;
-    private final transient ComposableProfileHolder profileHolder;
 
     private boolean isClosed = false;
     protected boolean isRunning = false;
@@ -113,8 +103,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.prepareInitialization();
 
         SingleElementContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this);
-        this.profileHolder = loadProfiles(configurer, applicationInitializerContext);
-
         this.locator = configurer.componentLocator.initialize(applicationInitializerContext);
         this.componentProvider = configurer.componentProvider.initialize(initializerContext.transform(this.locator));
 
@@ -125,18 +113,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
             bindingConfigurer = bindingConfigurer.compose(configurerContext.configurer());
         }
         configuration.configureBindings(this.environment, bindingConfigurer, this);
-    }
-
-    private ComposableProfileHolder loadProfiles(Configurer configurer, SingleElementContext<ApplicationContext> applicationInitializerContext) {
-        List<ApplicationProfileLoader> profileLoaders = configurer.profileLoaders.initialize(applicationInitializerContext);
-        CompositeProfileLoader compositeProfileLoader = new CompositeProfileLoader(Set.copyOf(profileLoaders));
-        try {
-            Set<ApplicationProfile> profiles = compositeProfileLoader.loadProfiles();
-            return new SimpleComposableProfileHolder(profiles);
-        }
-        catch(ApplicationException e) {
-            throw new ComponentInitializationException("Failed to load profiles", e);
-        }
     }
 
     /**
@@ -155,16 +131,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         if (this.isRunning) {
             throw new IllegalModificationException("Application context cannot be modified after it has been started");
         }
-    }
-
-    @Override
-    public Set<ApplicationProfile> profiles() {
-        return this.profileHolder.profiles();
-    }
-
-    @Override
-    public Option<ApplicationProfile> profile(String name) {
-        return this.profileHolder.profile(name);
     }
 
     @Override

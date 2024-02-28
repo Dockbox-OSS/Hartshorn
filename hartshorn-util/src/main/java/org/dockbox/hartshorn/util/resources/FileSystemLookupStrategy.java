@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.util.resources;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
 import java.io.File;
 import java.net.URI;
 import java.util.Arrays;
@@ -25,12 +23,14 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.util.option.Option;
+
 /**
  * Looks up a resource through the local filesystem. The file directory is looked up based on the configuration path of
  * the path representation, typically this will be similar to {@code /config/{owner-id}/}.
  *
  * <p>This strategy does not require the name to be present, as it is the default strategy used in
- * {@link Resources#getResourceURIs(ApplicationContext, String, ResourceLookupStrategy...)}.
+ * {@link Resources#getResourceURIs(String, ResourceLookupStrategy...)}.
  *
  * @since 0.4.7
  *
@@ -40,14 +40,20 @@ public class FileSystemLookupStrategy implements ResourceLookupStrategy {
 
     public static final String NAME = "fs";
 
+    private final FileSystemProvider fileSystemProvider;
+
+    public FileSystemLookupStrategy(FileSystemProvider fileSystemProvider) {
+        this.fileSystemProvider = fileSystemProvider;
+    }
+
     @Override
     public String name() {
         return NAME;
     }
 
     @Override
-    public Set<URI> lookup(ApplicationContext context, String path) {
-        File resolved = context.environment().fileSystem().applicationPath().resolve(path).toFile();
+    public Set<URI> lookup(String path) {
+        File resolved = fileSystemProvider.applicationPath().resolve(path).toFile();
         if (resolved.exists()) {
             return Collections.singleton(resolved.toURI());
         }
@@ -66,7 +72,7 @@ public class FileSystemLookupStrategy implements ResourceLookupStrategy {
     }
 
     @Override
-    public URI baseUrl(ApplicationContext context) {
-        return context.environment().fileSystem().applicationPath().toUri();
+    public Option<URI> baseUrl() {
+        return Option.of(fileSystemProvider.applicationPath().toUri());
     }
 }

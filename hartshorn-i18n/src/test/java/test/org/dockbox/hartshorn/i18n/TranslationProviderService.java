@@ -21,7 +21,7 @@ import java.nio.file.Path;
 import java.util.Locale;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
+import org.dockbox.hartshorn.util.resources.ClasspathResourceLocator;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.i18n.TranslationBundle;

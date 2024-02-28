@@ -23,7 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
-import org.dockbox.hartshorn.application.environment.FileSystemProvider;
+import org.dockbox.hartshorn.util.resources.FileSystemProvider;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.resources.ResourceLookup;

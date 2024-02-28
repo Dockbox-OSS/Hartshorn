@@ -30,8 +30,6 @@ import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.LoggingExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.DelegatingApplicationContext;
-import org.dockbox.hartshorn.application.context.DelegatingApplicationContext.Configurer;
 import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
 import org.dockbox.hartshorn.application.environment.banner.Banner;
 import org.dockbox.hartshorn.application.environment.banner.HartshornBanner;
@@ -45,10 +43,19 @@ import org.dockbox.hartshorn.component.populate.MethodsAndFieldsInjectionPointRe
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.discovery.DiscoveryService;
 import org.dockbox.hartshorn.discovery.ServiceDiscoveryException;
+import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
+import org.dockbox.hartshorn.profiles.ApplicationProfile;
+import org.dockbox.hartshorn.profiles.ComposableProfileHolder;
+import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
+import org.dockbox.hartshorn.profiles.ProfilePropertyRegistryUtilities;
+import org.dockbox.hartshorn.profiles.SimpleComposableProfileHolder;
 import org.dockbox.hartshorn.profiles.loader.ApplicationProfileLoader;
+import org.dockbox.hartshorn.profiles.loader.CompositeProfileLoader;
+import org.dockbox.hartshorn.profiles.parse.DefaultProfilePropertyParsers;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
@@ -64,6 +71,10 @@ import org.dockbox.hartshorn.util.introspect.SupplierAdapterProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.resources.ClassLoaderClasspathResourceLocator;
+import org.dockbox.hartshorn.util.resources.ClasspathResourceLocator;
+import org.dockbox.hartshorn.util.resources.FileSystemProvider;
+import org.dockbox.hartshorn.util.resources.PathFileSystemProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +91,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     private final ExceptionHandler exceptionHandler;
     private final AnnotationLookup annotationLookup;
     private final ClasspathResourceLocator resourceLocator;
+    private final ComposableProfileHolder profileHolder;
 
     private final ComponentInjectionPointsResolver injectionPointsResolver;
     private final ComponentKeyResolver componentKeyResolver;
@@ -87,9 +99,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     private final boolean isBuildEnvironment;
     private final boolean isBatchMode;
     private final boolean isStrictMode;
-
-    private final ApplicationArgumentParser argumentParser;
-    private final Properties arguments;
 
     private ApplicationContext applicationContext;
     private Introspector introspector;
@@ -101,14 +110,13 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         this.annotationLookup = this.configure(environmentInitializerContext, configurer.annotationLookup);
         this.proxyOrchestrator = this.configure(environmentInitializerContext.transform(this.introspector()), configurer.proxyOrchestrator);
         this.fileSystemProvider = this.configure(environmentInitializerContext, configurer.applicationFSProvider);
-        this.argumentParser = this.configure(environmentInitializerContext, configurer.applicationArgumentParser);
         this.resourceLocator = this.configure(environmentInitializerContext, configurer.classpathResourceLocator);
         this.injectionPointsResolver = this.configure(environmentInitializerContext, configurer.injectionPointsResolver);
         this.componentKeyResolver = this.configure(environmentInitializerContext, configurer.componentKeyResolver);
+        this.profileHolder = initializeProfileHolder(configurer, environmentInitializerContext);
 
-        this.arguments = this.argumentParser.parse(context.input().arguments());
-
-        SingleElementContext<Properties> argumentsInitializerContext = context.transform(this.arguments);
+        ProfilePropertyRegistry registry = this.profileHolder.registry();
+        SingleElementContext<ProfilePropertyRegistry> argumentsInitializerContext = context.transform(registry);
         this.printStackTraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
         this.isBatchMode = configurer.enableBatchMode.initialize(argumentsInitializerContext);
         this.isStrictMode = configurer.enableStrictMode.initialize(argumentsInitializerContext);
@@ -138,6 +146,18 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         }
     }
 
+    private ComposableProfileHolder initializeProfileHolder(Configurer configurer, SingleElementContext<ApplicationEnvironment> environmentInitializerContext) {
+        List<ApplicationProfileLoader> profileLoaders = configurer.profileLoaders.initialize(environmentInitializerContext);
+        CompositeProfileLoader profileLoader = new CompositeProfileLoader(Set.copyOf(profileLoaders));
+        try {
+            Set<ApplicationProfile> applicationProfiles = profileLoader.loadProfiles();
+            return new SimpleComposableProfileHolder(applicationProfiles);
+        }
+        catch (ApplicationException e) {
+            throw new ComponentInitializationException("Failed to load application profiles", e);
+        }
+    }
+
     private <I, T> T configure(SingleElementContext<I> context, ContextualInitializer<I, T> initializer) {
         T instance = initializer.initialize(context);
         return this.configure(instance);
@@ -145,7 +165,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
     @Override
     public Properties rawArguments() {
-        return this.arguments;
+        return ProfilePropertyRegistryUtilities.toProperties(this.profiles().registry());
     }
 
     @Override
@@ -207,6 +227,11 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
             }
         }
         return this.introspector;
+    }
+
+    @Override
+    public ComposableProfileHolder profiles() {
+        return this.profileHolder;
     }
 
     @Override
@@ -357,19 +382,31 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<ApplicationContext, ApplicationProfileLoader> profileLoaders = LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<ApplicationEnvironment, ApplicationProfileLoader> profileLoaders = LazyStreamableConfigurer.empty();
 
-        private ContextualInitializer<Properties, Boolean> enableBanner = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.banner.enabled", "true")));
-        private ContextualInitializer<Properties, Boolean> enableBatchMode = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.batch.enabled", "false")));
-        private ContextualInitializer<Properties, Boolean> enableStrictMode = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.strict.enabled", "true")));
-        private ContextualInitializer<Properties, Boolean> showStacktraces = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.exceptions.stacktraces", "true")));
+        private ContextualInitializer<ProfilePropertyRegistry, Boolean> enableBanner = ContextualInitializer.of(properties -> properties.property("hartshorn.banner.enabled")
+                .flatMap(property -> property.parseValue(DefaultProfilePropertyParsers.booleanParser()))
+                .orElse(true));
+
+        private ContextualInitializer<ProfilePropertyRegistry, Boolean> enableBatchMode = ContextualInitializer.of(properties -> properties.property("hartshorn.batch.enabled")
+                .flatMap(property -> property.parseValue(DefaultProfilePropertyParsers.booleanParser()))
+                .orElse(false));
+
+        private ContextualInitializer<ProfilePropertyRegistry, Boolean> enableStrictMode = ContextualInitializer.of(properties -> properties.property("hartshorn.strict.enabled")
+                .flatMap(property -> property.parseValue(DefaultProfilePropertyParsers.booleanParser()))
+                .orElse(true));
+
+        private ContextualInitializer<ProfilePropertyRegistry, Boolean> showStacktraces = ContextualInitializer.of(properties -> properties.property("hartshorn.exceptions.stacktraces")
+                .flatMap(property -> property.parseValue(DefaultProfilePropertyParsers.booleanParser()))
+                .orElse(true));
 
         private ContextualInitializer<Introspector, ? extends ProxyOrchestrator> proxyOrchestrator = context -> DefaultProxyOrchestratorLoader.create(Customizer.useDefaults()).initialize(context);
         private ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider = ContextualInitializer.of(
                 PathFileSystemProvider::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler = ContextualInitializer.of(LoggingExceptionHandler::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser = ContextualInitializer.of(StandardApplicationArgumentParser::new);
-        private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ContextualInitializer.of(ClassLoaderClasspathResourceLocator::new);
+        private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ContextualInitializer.of(
+                ClassLoaderClasspathResourceLocator::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup = ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext = SimpleApplicationContext.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment = environment -> BuildEnvironmentPredicate.isBuildEnvironment();
@@ -383,7 +420,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * @param enableBanner whether to enable or disable the banner
          * @return the current {@link Configurer} instance
          */
-        public Configurer enableBanner(ContextualInitializer<Properties, Boolean> enableBanner) {
+        public Configurer enableBanner(ContextualInitializer<ProfilePropertyRegistry, Boolean> enableBanner) {
             this.enableBanner = enableBanner;
             return this;
         }
@@ -415,7 +452,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * @param enableBatchMode whether to enable or disable batch mode
          * @return the current {@link Configurer} instance
          */
-        public Configurer enableBatchMode(ContextualInitializer<Properties, Boolean> enableBatchMode) {
+        public Configurer enableBatchMode(ContextualInitializer<ProfilePropertyRegistry, Boolean> enableBatchMode) {
             this.enableBatchMode = enableBatchMode;
             return this;
         }
@@ -447,7 +484,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * @param enableStrictMode whether to enable or disable strict mode
          * @return the current {@link Configurer} instance
          */
-        public Configurer enableStrictMode(ContextualInitializer<Properties, Boolean> enableStrictMode) {
+        public Configurer enableStrictMode(ContextualInitializer<ProfilePropertyRegistry, Boolean> enableStrictMode) {
             this.enableStrictMode = enableStrictMode;
             return this;
         }
@@ -478,7 +515,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * @param showStacktraces whether to enable or disable stacktraces
          * @return the current {@link Configurer} instance
          */
-        public Configurer showStacktraces(ContextualInitializer<Properties, Boolean> showStacktraces) {
+        public Configurer showStacktraces(ContextualInitializer<ProfilePropertyRegistry, Boolean> showStacktraces) {
             this.showStacktraces = showStacktraces;
             return this;
         }
@@ -731,7 +768,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
             return this.profileLoaders(loaders -> loaders.addAll(profileLoaders));
         }
 
-        public Configurer profileLoaders(Customizer<StreamableConfigurer<ApplicationContext, ApplicationProfileLoader>> customizer) {
+        public Configurer profileLoaders(Customizer<StreamableConfigurer<ApplicationEnvironment, ApplicationProfileLoader>> customizer) {
             this.profileLoaders.customizer(customizer);
             return this;
         }

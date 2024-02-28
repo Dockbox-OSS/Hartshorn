@@ -29,10 +29,12 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
-import org.dockbox.hartshorn.profiles.ProfileHolder;
+import org.dockbox.hartshorn.profiles.ComposableProfileHolder;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.resources.ClasspathResourceLocator;
+import org.dockbox.hartshorn.util.resources.FileSystemProvider;
 
 /**
  * The environment of an active application. The environment can only be responsible for one {@link ApplicationContext},
@@ -42,7 +44,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public interface ApplicationEnvironment extends ContextCarrier, ExceptionHandler, ProfileHolder {
+public interface ApplicationEnvironment extends ContextCarrier, ExceptionHandler {
 
     /**
      * Gets the {@link ProxyOrchestrator} for the current environment. The orchestrator is responsible for all proxy
@@ -79,6 +81,15 @@ public interface ApplicationEnvironment extends ContextCarrier, ExceptionHandler
      * @return The primary {@link Introspector}
      */
     Introspector introspector();
+
+    /**
+     * Gets the {@link ComposableProfileHolder} for the current environment. The holder is responsible for all profile
+     * properties within the environment. This may or may not be the same as the binding for {@link ComposableProfileHolder},
+     * but is typically the same.
+     *
+     * @return The profile holder
+     */
+    ComposableProfileHolder profiles();
 
     /**
      * Indicates whether the current environment exists within a Continuous Integration environment. If this returns
@@ -197,7 +208,10 @@ public interface ApplicationEnvironment extends ContextCarrier, ExceptionHandler
      * @see org.dockbox.hartshorn.application.environment.ApplicationArgumentParser
      *
      * @return The raw arguments
+     *
+     * @deprecated Use {@link #profiles()} instead
      */
+    @Deprecated(forRemoval = true, since = "0.6.0")
     Properties rawArguments();
 
     /**

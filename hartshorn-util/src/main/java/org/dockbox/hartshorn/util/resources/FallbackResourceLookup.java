@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.util.resources;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -52,11 +50,9 @@ public class FallbackResourceLookup implements ResourceLookup {
     private static final Pattern STRATEGY_PATTERN = Pattern.compile("(.+):(.+)");
 
     private final Map<String, ResourceLookupStrategy> strategies = new ConcurrentHashMap<>();
-    private final ApplicationContext applicationContext;
     private final ResourceLookupStrategy fallbackStrategy;
 
-    public FallbackResourceLookup(ApplicationContext applicationContext, ResourceLookupStrategy fallbackStrategy) {
-        this.applicationContext = applicationContext;
+    public FallbackResourceLookup(ResourceLookupStrategy fallbackStrategy) {
         this.fallbackStrategy = fallbackStrategy;
     }
 
@@ -71,7 +67,7 @@ public class FallbackResourceLookup implements ResourceLookup {
             matchedSource = matcher.group(2);
         }
 
-        return strategy.lookup(this.applicationContext, matchedSource);
+        return strategy.lookup(matchedSource);
     }
 
     /**

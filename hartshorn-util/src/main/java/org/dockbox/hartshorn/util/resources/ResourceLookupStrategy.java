@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.util.resources;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
 import java.net.URI;
 import java.util.Set;
+
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Defines how a resource is looked up when using {@link ResourceLookup}. It remains up to the {@link ResourceLookup}
@@ -47,18 +47,16 @@ public interface ResourceLookupStrategy {
     /**
      * Looks up all compatible resources for the given path. The returned {@link URI URIs} are expected to be absolute.
      *
-     * @param context the application context
      * @param path the path to the resource
      * @return a set of {@link URI URIs} pointing to the resource
      */
-    Set<URI> lookup(ApplicationContext context, String path);
+    Set<URI> lookup(String path);
 
     /**
      * Returns the base URL for this strategy, from where all relative resources are resolved. This URL is expected to
      * be absolute.
      *
-     * @param context the application context
      * @return the base URL for this strategy
      */
-    URI baseUrl(ApplicationContext context);
+    Option<URI> baseUrl();
 }

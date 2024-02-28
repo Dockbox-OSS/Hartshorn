@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.environment;
+package org.dockbox.hartshorn.util.resources;
 
 import java.io.IOException;
 import java.net.URI;
@@ -61,5 +61,5 @@ public interface ClasspathResourceLocator {
      *
      * @return A URI pointing to the root of the classpath
      */
-    URI classpathUri();
+    Option<URI> classpathUri();
 }

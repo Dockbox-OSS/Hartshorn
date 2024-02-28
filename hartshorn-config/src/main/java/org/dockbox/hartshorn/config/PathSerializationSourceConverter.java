@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.application.environment.FileSystemProvider;
+import org.dockbox.hartshorn.util.resources.FileSystemProvider;
 import org.dockbox.hartshorn.config.annotations.FileSource;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.option.Option;

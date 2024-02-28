@@ -36,6 +36,8 @@ import org.dockbox.hartshorn.util.Customizer
 import org.dockbox.hartshorn.util.Initializer
 import org.dockbox.hartshorn.util.StreamableConfigurer
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup
+import org.dockbox.hartshorn.util.resources.ClasspathResourceLocator
+import org.dockbox.hartshorn.util.resources.FileSystemProvider
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.function.BiFunction

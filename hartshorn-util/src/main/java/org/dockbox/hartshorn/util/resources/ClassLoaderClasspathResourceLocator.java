@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.environment;
-
-import org.dockbox.hartshorn.application.Hartshorn;
-import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.resources.Resources;
+package org.dockbox.hartshorn.util.resources;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +27,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.util.option.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * The default implementation of {@link ClasspathResourceLocator}. This implementation will copy the resource to a temporary
  * location and return the path to the temporary location.
@@ -41,11 +41,7 @@ import java.util.stream.Collectors;
  */
 public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLocator {
 
-    private final ApplicationEnvironment environment;
-
-    public ClassLoaderClasspathResourceLocator(ApplicationEnvironment environment) {
-        this.environment = environment;
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(ClassLoaderClasspathResourceLocator.class);
 
     @Override
     public Option<Path> resource(String name) throws IOException {
@@ -84,17 +80,17 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
     }
 
     @Override
-    public URI classpathUri() {
+    public Option<URI> classpathUri() {
         try {
-            URL resource = Hartshorn.class.getClassLoader().getResource("");
+            URL resource = ClassLoaderClasspathResourceLocator.class.getClassLoader().getResource("");
             if (resource == null) {
                 return null;
             }
-            return resource.toURI();
+            return Option.of(resource.toURI());
         }
         catch (URISyntaxException e) {
-            this.environment.handle("Could not look up classpath base", e);
-            return null;
+            LOG.error("Failed to retrieve classpath URI", e);
+            return Option.empty();
         }
     }
 }
