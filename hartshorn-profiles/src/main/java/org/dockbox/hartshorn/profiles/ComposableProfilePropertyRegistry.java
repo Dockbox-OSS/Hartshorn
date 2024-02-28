@@ -57,4 +57,9 @@ public class ComposableProfilePropertyRegistry implements ProfilePropertyRegistr
         }
         return false;
     }
+
+    @Override
+    public ProfilePropertyRegistry ignoreInherited() {
+        return new SimpleProfilePropertyRegistry(Set.of(), Set.of());
+    }
 }

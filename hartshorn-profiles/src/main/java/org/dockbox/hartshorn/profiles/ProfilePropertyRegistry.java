@@ -14,4 +14,6 @@ public interface ProfilePropertyRegistry {
 
     boolean has(String name);
 
+    ProfilePropertyRegistry ignoreInherited();
+
 }

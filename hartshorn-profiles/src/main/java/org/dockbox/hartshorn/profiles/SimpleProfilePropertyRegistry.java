@@ -56,4 +56,9 @@ public class SimpleProfilePropertyRegistry implements ProfilePropertyRegistry {
         }
         return false;
     }
+
+    @Override
+    public ProfilePropertyRegistry ignoreInherited() {
+        return new SimpleProfilePropertyRegistry(Set.of(), this.properties);
+    }
 }
