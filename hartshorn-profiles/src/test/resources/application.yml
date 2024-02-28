@@ -1,0 +1,5 @@
+hartshorn:
+  profiles:
+    active: child,test
+  sample:
+    enabled: true

@@ -1,0 +1,4 @@
+hartshorn:
+  batch.enabled: true
+  strict:
+    enabled: true
