@@ -17,6 +17,7 @@
 package test.org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.profiles.ProfileProperty;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.ModifyApplication;
@@ -36,8 +37,11 @@ public class ModifyApplicationTests {
 
     @InjectTest
     void testFactoryWasModified(ApplicationContext applicationContext) {
-        Option<String> property = applicationContext.property("hartshorn.modified");
+        Option<ProfileProperty> property = applicationContext.environment()
+                .profiles()
+                .registry()
+                .property("hartshorn.modified");
         Assertions.assertTrue(property.present());
-        Assertions.assertEquals("true", property.get());
+        Assertions.assertEquals("true", property.get().rawValue());
     }
 }

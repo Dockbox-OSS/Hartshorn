@@ -39,8 +39,8 @@ public abstract class ChildProfileCapableProfileLoader implements ApplicationPro
     }
 
     @Override
-    public final Set<ApplicationProfile> loadProfiles() throws ApplicationException {
-        Option<ApplicationProfile> singleProfile = loadSingleProfile();
+    public Set<ApplicationProfile> loadProfile(ApplicationProfile parentProfile, String profileName) throws ApplicationException {
+        Option<ApplicationProfile> singleProfile = loadSingleProfile(parentProfile, profileName);
         if(singleProfile.present()) {
             return resolveProfiles(singleProfile.get());
         }
@@ -50,8 +50,7 @@ public abstract class ChildProfileCapableProfileLoader implements ApplicationPro
     }
 
     @NotNull
-    private Set<ApplicationProfile> resolveProfiles(ApplicationProfile applicationProfile)
-            throws ApplicationException {
+    private Set<ApplicationProfile> resolveProfiles(ApplicationProfile applicationProfile) throws ApplicationException {
         Set<ApplicationProfile> profiles = new HashSet<>();
         profiles.add(applicationProfile);
 
@@ -67,24 +66,16 @@ public abstract class ChildProfileCapableProfileLoader implements ApplicationPro
 
                 String[] activeProfiles = property.get().parseValue(parser, new String[0]);
                 for(String activeProfile : activeProfiles) {
-                    Set<ApplicationProfile> childProfiles = this.loadChildProfile(applicationProfile, activeProfile);
-                    profiles.addAll(childProfiles);
+                    Option<ApplicationProfile> profile = this.loadSingleProfile(applicationProfile, activeProfile);
+                    if (profile.present()) {
+                        ApplicationProfile childProfile = profile.get();
+                        profiles.add(childProfile);
+                    }
                 }
             }
         }
         return profiles;
     }
 
-    private Set<ApplicationProfile> loadChildProfile(ApplicationProfile parentProfile, String profileName) throws ApplicationException {
-        ApplicationProfileLoader loader = this.childLoader(parentProfile, profileName);
-        try {
-            return loader.loadProfiles();
-        } catch (ApplicationException e) {
-            throw new ApplicationException("Failed to load child profile: " + profileName, e);
-        }
-    }
-
-    protected abstract ApplicationProfileLoader childLoader(ApplicationProfile parentProfile, String profileName);
-
-    protected abstract Option<ApplicationProfile> loadSingleProfile() throws ApplicationException;
+    protected abstract Option<ApplicationProfile> loadSingleProfile(ApplicationProfile parentProfile, String profileName) throws ApplicationException;
 }

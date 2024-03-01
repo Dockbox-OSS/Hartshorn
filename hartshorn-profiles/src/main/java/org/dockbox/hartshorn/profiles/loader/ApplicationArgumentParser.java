@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.environment;
+package org.dockbox.hartshorn.profiles.loader;
 
 import java.util.List;
 import java.util.Properties;
@@ -22,12 +22,12 @@ import java.util.Properties;
 /**
  * Argument parsers are responsible for parsing the arguments passed to the application. The arguments are typically
  * passed to the application as command line arguments, but may also be passed in other ways. The arguments are parsed
- * into a {@link Properties} object, which is typically passed to the {@link ApplicationEnvironment} as part of the
- * bootstrap process.
+ * into a {@link Properties} object, which may be used to easily access the parsed arguments.
  *
  * @since 0.4.9
  * @author Guus Lieben
  */
+@FunctionalInterface
 public interface ApplicationArgumentParser {
 
     /**

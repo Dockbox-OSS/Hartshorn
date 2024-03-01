@@ -8,6 +8,10 @@ import org.dockbox.hartshorn.util.ApplicationException;
 @FunctionalInterface
 public interface ApplicationProfileLoader {
 
-    Set<ApplicationProfile> loadProfiles() throws ApplicationException;
+    default Set<ApplicationProfile> loadProfile(String rootProfileName) throws ApplicationException {
+        return this.loadProfile(null, rootProfileName);
+    }
+
+    Set<ApplicationProfile> loadProfile(ApplicationProfile parentProfile, String profileName) throws ApplicationException;
 
 }

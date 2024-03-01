@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application.environment;
+package org.dockbox.hartshorn.profiles.loader;
 
 import java.util.List;
 import java.util.Properties;

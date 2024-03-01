@@ -30,6 +30,8 @@ import org.dockbox.hartshorn.inject.binding.Binder
 import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder
 import org.dockbox.hartshorn.introspect.ViewContextAdapter
+import org.dockbox.hartshorn.profiles.ComposableProfileHolder
+import org.dockbox.hartshorn.profiles.loader.ApplicationArgumentParser
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator
 import org.dockbox.hartshorn.util.ContextualInitializer
 import org.dockbox.hartshorn.util.Customizer
@@ -105,8 +107,8 @@ class BootstrapConfigurationContractTests {
         assertDeferred(instance) { configurer, deferred: ExceptionHandler? -> configurer.exceptionHandler(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.exceptionHandler(initializer) }
 
-        assertDeferred(instance) { configurer, deferred: ApplicationArgumentParser? -> configurer.applicationArgumentParser(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.applicationArgumentParser(initializer) }
+        assertDeferred(instance) { configurer, deferred: ComposableProfileHolder? -> configurer.profileHolder(deferred) }
+        assertContextInitializer(instance) { configurer, initializer -> configurer.profileHolder(initializer) }
 
         assertDeferred(instance) { configurer, deferred: ClasspathResourceLocator? -> configurer.classpathResourceLocator(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.classpathResourceLocator(initializer) }

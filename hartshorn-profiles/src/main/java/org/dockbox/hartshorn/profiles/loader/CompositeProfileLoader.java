@@ -1,31 +1,50 @@
 package org.dockbox.hartshorn.profiles.loader;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.profiles.ApplicationProfile;
+import org.dockbox.hartshorn.profiles.ComposableProfilePropertyRegistry;
+import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
+import org.dockbox.hartshorn.profiles.SimpleApplicationProfile;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.option.Option;
 
-public class CompositeProfileLoader implements ApplicationProfileLoader {
+public final class CompositeProfileLoader extends ChildProfileCapableProfileLoader {
 
-    private final Set<ApplicationProfileLoader> loaders;
+    private final List<ApplicationProfileLoader> loaders;
 
-    public CompositeProfileLoader(Set<ApplicationProfileLoader> loaders) {
+    public CompositeProfileLoader(List<ApplicationProfileLoader> loaders) {
         this.loaders = loaders;
     }
 
+    public List<ApplicationProfileLoader> loaders() {
+        return loaders;
+    }
+
     @Override
-    public Set<ApplicationProfile> loadProfiles() throws ApplicationException {
-        Map<String, ApplicationProfile> profiles = new HashMap<>();
-        for (ApplicationProfileLoader loader : this.loaders) {
-            Set<ApplicationProfile> applicationProfiles = loader.loadProfiles();
-            for (ApplicationProfile profile : applicationProfiles) {
-                if (profiles.put(profile.name(), profile) != null) {
-                    throw new DuplicateProfileDefinitionException(profile.name());
-                }
-            }
+    protected Option<ApplicationProfile> loadSingleProfile(ApplicationProfile parentProfile, String profileName) throws ApplicationException {
+        Set<ApplicationProfile> profiles = new HashSet<>();
+        for(ApplicationProfileLoader profileLoader : loaders) {
+            Set<ApplicationProfile> applicationProfiles = profileLoader.loadProfile(parentProfile, profileName);
+            profiles.addAll(applicationProfiles);
         }
-        return Set.copyOf(profiles.values());
+
+        // TODO: This now does not respect priorities of profiles, but it should
+        if(profiles.isEmpty()) {
+            return Option.empty();
+        }
+        else if(profiles.size() == 1) {
+            return Option.of(profiles.iterator().next());
+        }
+        else {
+            Set<ProfilePropertyRegistry> registries = profiles.stream()
+                    .map(ApplicationProfile::registry)
+                    .collect(Collectors.toSet());
+            ComposableProfilePropertyRegistry propertyRegistry = new ComposableProfilePropertyRegistry(registries);
+            return Option.of(new SimpleApplicationProfile(profileName, propertyRegistry, parentProfile));
+        }
     }
 }

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,26 +42,17 @@ import org.dockbox.hartshorn.component.populate.MethodsAndFieldsInjectionPointRe
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.discovery.DiscoveryService;
 import org.dockbox.hartshorn.discovery.ServiceDiscoveryException;
-import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
-import org.dockbox.hartshorn.profiles.ApplicationProfile;
 import org.dockbox.hartshorn.profiles.ComposableProfileHolder;
 import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
-import org.dockbox.hartshorn.profiles.ProfilePropertyRegistryUtilities;
-import org.dockbox.hartshorn.profiles.SimpleComposableProfileHolder;
-import org.dockbox.hartshorn.profiles.loader.ApplicationProfileLoader;
-import org.dockbox.hartshorn.profiles.loader.CompositeProfileLoader;
 import org.dockbox.hartshorn.profiles.parse.DefaultProfilePropertyParsers;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.Initializer;
-import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.SingleElementContext;
-import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
@@ -86,6 +76,8 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     private final Set<Class<? extends Observer>> lazyObservers = ConcurrentHashMap.newKeySet();
     private final EnvironmentTypeCollector typeCollector = new EnvironmentTypeCollector(this);
 
+    private final List<String> arguments;
+
     private final FileSystemProvider fileSystemProvider;
     private final ProxyOrchestrator proxyOrchestrator;
     private final ExceptionHandler exceptionHandler;
@@ -104,6 +96,8 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     private Introspector introspector;
 
     private ContextualApplicationEnvironment(SingleElementContext<? extends ApplicationBootstrapContext> context, Configurer configurer) {
+        this.arguments = context.input().arguments();
+
         SingleElementContext<ApplicationEnvironment> environmentInitializerContext = context.transform(this);
 
         this.exceptionHandler = this.configure(environmentInitializerContext, configurer.exceptionHandler);
@@ -113,7 +107,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         this.resourceLocator = this.configure(environmentInitializerContext, configurer.classpathResourceLocator);
         this.injectionPointsResolver = this.configure(environmentInitializerContext, configurer.injectionPointsResolver);
         this.componentKeyResolver = this.configure(environmentInitializerContext, configurer.componentKeyResolver);
-        this.profileHolder = initializeProfileHolder(configurer, environmentInitializerContext);
+        this.profileHolder = this.configure(environmentInitializerContext, configurer.profileHolder);
 
         ProfilePropertyRegistry registry = this.profileHolder.registry();
         SingleElementContext<ProfilePropertyRegistry> argumentsInitializerContext = context.transform(registry);
@@ -146,26 +140,14 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         }
     }
 
-    private ComposableProfileHolder initializeProfileHolder(Configurer configurer, SingleElementContext<ApplicationEnvironment> environmentInitializerContext) {
-        List<ApplicationProfileLoader> profileLoaders = configurer.profileLoaders.initialize(environmentInitializerContext);
-        CompositeProfileLoader profileLoader = new CompositeProfileLoader(Set.copyOf(profileLoaders));
-        try {
-            Set<ApplicationProfile> applicationProfiles = profileLoader.loadProfiles();
-            return new SimpleComposableProfileHolder(applicationProfiles);
-        }
-        catch (ApplicationException e) {
-            throw new ComponentInitializationException("Failed to load application profiles", e);
-        }
-    }
-
     private <I, T> T configure(SingleElementContext<I> context, ContextualInitializer<I, T> initializer) {
         T instance = initializer.initialize(context);
         return this.configure(instance);
     }
 
     @Override
-    public Properties rawArguments() {
-        return ProfilePropertyRegistryUtilities.toProperties(this.profiles().registry());
+    public List<String> applicationArguments() {
+        return this.arguments;
     }
 
     @Override
@@ -382,8 +364,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<ApplicationEnvironment, ApplicationProfileLoader> profileLoaders = LazyStreamableConfigurer.empty();
-
         private ContextualInitializer<ProfilePropertyRegistry, Boolean> enableBanner = ContextualInitializer.of(properties -> properties.property("hartshorn.banner.enabled")
                 .flatMap(property -> property.parseValue(DefaultProfilePropertyParsers.booleanParser()))
                 .orElse(true));
@@ -404,7 +384,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         private ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider = ContextualInitializer.of(
                 PathFileSystemProvider::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler = ContextualInitializer.of(LoggingExceptionHandler::new);
-        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser = ContextualInitializer.of(StandardApplicationArgumentParser::new);
+        private ContextualInitializer<ApplicationEnvironment, ? extends ComposableProfileHolder> profileHolder = SimpleApplicationProfileHolder.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ContextualInitializer.of(
                 ClassLoaderClasspathResourceLocator::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup = ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
@@ -614,31 +594,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         }
 
         /**
-         * Sets the {@link ApplicationArgumentParser} to use. The {@link ApplicationArgumentParser} is responsible for
-         * parsing arguments passed to the application. The default implementation is {@link StandardApplicationArgumentParser}.
-         *
-         * @param applicationArgumentParser the {@link ApplicationArgumentParser} to use
-         * @see ApplicationArgumentParser
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer applicationArgumentParser(ApplicationArgumentParser applicationArgumentParser) {
-            return this.applicationArgumentParser(ContextualInitializer.of(applicationArgumentParser));
-        }
-
-        /**
-         * Sets the {@link ApplicationArgumentParser} to use. The {@link ApplicationArgumentParser} is responsible for
-         * parsing arguments passed to the application. The default implementation is {@link StandardApplicationArgumentParser}.
-         *
-         * @param applicationArgumentParser the {@link ApplicationArgumentParser} to use
-         * @see ApplicationArgumentParser
-         * @return the current {@link Configurer} instance
-         */
-        public Configurer applicationArgumentParser(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser) {
-            this.applicationArgumentParser = applicationArgumentParser;
-            return this;
-        }
-
-        /**
          * Sets the {@link ClasspathResourceLocator} to use. The {@link ClasspathResourceLocator} is responsible for
          * locating resources on the classpath. The default implementation is {@link ClassLoaderClasspathResourceLocator}.
          *
@@ -760,16 +715,12 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
             return this;
         }
 
-        public Configurer profileLoader(ApplicationProfileLoader profileLoader) {
-            return this.profileLoaders(loaders -> loaders.add(profileLoader));
+        public Configurer profileHolder(ComposableProfileHolder profileHolder) {
+            return this.profileHolder(ContextualInitializer.of(() -> profileHolder));
         }
 
-        public Configurer profileLoaders(Collection<? extends ApplicationProfileLoader> profileLoaders) {
-            return this.profileLoaders(loaders -> loaders.addAll(profileLoaders));
-        }
-
-        public Configurer profileLoaders(Customizer<StreamableConfigurer<ApplicationEnvironment, ApplicationProfileLoader>> customizer) {
-            this.profileLoaders.customizer(customizer);
+        public Configurer profileHolder(ContextualInitializer<ApplicationEnvironment, ? extends ComposableProfileHolder> profileHolder) {
+            this.profileHolder = profileHolder;
             return this;
         }
     }

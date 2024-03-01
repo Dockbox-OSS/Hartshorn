@@ -20,7 +20,6 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.util.Collection;
 import java.util.List;
-import java.util.Properties;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
@@ -200,19 +199,13 @@ public interface ApplicationEnvironment extends ContextCarrier, ExceptionHandler
 
     /**
      * Gets the raw arguments passed to the application. This is typically the arguments passed to the main method, or
-     * indirectly set in {@link org.dockbox.hartshorn.application.HartshornApplication#create(String...)}. The
-     * arguments are returned as a {@link Properties} object, where the key is the argument name, and the value is the
-     * argument value. The key/value pair is parsed by the active {@link ApplicationArgumentParser}.
-     *
-     * @see org.dockbox.hartshorn.application.environment.StandardApplicationArgumentParser
-     * @see org.dockbox.hartshorn.application.environment.ApplicationArgumentParser
+     * indirectly set in {@link org.dockbox.hartshorn.application.HartshornApplication#create(String...)}.
      *
      * @return The raw arguments
      *
      * @deprecated Use {@link #profiles()} instead
      */
-    @Deprecated(forRemoval = true, since = "0.6.0")
-    Properties rawArguments();
+    List<String> applicationArguments();
 
     /**
      * Gets the {@link ComponentKeyResolver} for the current environment. The resolver is responsible for resolving

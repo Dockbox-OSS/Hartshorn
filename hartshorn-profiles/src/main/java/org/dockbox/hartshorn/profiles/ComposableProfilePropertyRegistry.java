@@ -12,6 +12,10 @@ public class ComposableProfilePropertyRegistry implements ProfilePropertyRegistr
 
     private final Set<ProfilePropertyRegistry> registries;
 
+    public ComposableProfilePropertyRegistry(Set<ProfilePropertyRegistry> registries) {
+        this.registries = Set.copyOf(registries);
+    }
+
     public ComposableProfilePropertyRegistry(ComposableProfileHolder profileHolder) {
         Set<ProfilePropertyRegistry> registries = new HashSet<>();
         Queue<ApplicationProfile> profiles = new ArrayDeque<>(profileHolder.profiles());

@@ -19,8 +19,6 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.DelegatingApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.util.resources.ClasspathResourceLocator;
-import org.dockbox.hartshorn.util.resources.FileSystemProvider;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentLocator;
@@ -31,6 +29,8 @@ import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
+import org.dockbox.hartshorn.util.resources.ClasspathResourceLocator;
+import org.dockbox.hartshorn.util.resources.FileSystemProvider;
 
 /**
  * The default {@link EnvironmentBinderConfiguration} used by the {@link DelegatingApplicationContext}. This configuration
@@ -63,7 +63,6 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
         binder.bind(ComponentProvider.class).singleton(environment.applicationContext());
         binder.bind(ExceptionHandler.class).singleton(environment.applicationContext());
         binder.bind(ApplicationContext.class).singleton(environment.applicationContext());
-        binder.bind(ProfileHolder.class).singleton(environment);
 
         if (environment.applicationContext() instanceof DelegatingApplicationContext delegatingApplicationContext) {
             binder.bind(ComponentLocator.class)
@@ -79,6 +78,7 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
         binder.bind(FileSystemProvider.class).singleton(environment.fileSystem());
         binder.bind(AnnotationLookup.class).singleton(environment.introspector().annotations());
         binder.bind(ClasspathResourceLocator.class).singleton(environment.classpath());
+        binder.bind(ProfileHolder.class).singleton(environment.profiles());
 
         if (environment instanceof ObservableApplicationEnvironment observableEnvironment) {
             binder.bind(LifecycleObservable.class).singleton(observableEnvironment);

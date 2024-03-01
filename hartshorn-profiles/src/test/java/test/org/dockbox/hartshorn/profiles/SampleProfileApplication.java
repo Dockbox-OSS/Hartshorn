@@ -26,7 +26,7 @@ public class SampleProfileApplication {
     public void test() throws ApplicationException {
         ApplicationProfileLoader loader = createLoader();
 
-        SimpleComposableProfileHolder profileHolder = new SimpleComposableProfileHolder(loader.loadProfiles());
+        SimpleComposableProfileHolder profileHolder = new SimpleComposableProfileHolder(loader.loadProfile("application"));
         ProfilePropertyRegistry composedRegistry = profileHolder.registry();
 
         Assertions.assertTrue(composedRegistry.has("hartshorn.name"));
@@ -63,7 +63,7 @@ public class SampleProfileApplication {
         SimpleProfilePropertyRegistry debugRegistry = new SimpleProfilePropertyRegistry(Set.of(baseRegistry), Set.of(debugProperty));
         ApplicationProfile debug = new SimpleApplicationProfile("debug", debugRegistry, base);
 
-        return () -> Set.of(debug);
+        return (parent, name) -> Set.of(debug);
     }
 
 }

@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.component.condition;
 
+import org.dockbox.hartshorn.profiles.ComposableProfileHolder;
+import org.dockbox.hartshorn.profiles.ProfileProperty;
+import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -36,7 +39,10 @@ public class PropertyCondition implements Condition {
     public ConditionResult matches(ConditionContext context) {
         return context.annotatedElement().annotations().get(RequiresProperty.class).map(condition -> {
             String name = condition.name();
-            Option<String> result = context.applicationContext().property(name);
+            ComposableProfileHolder profiles = context.applicationContext().environment().profiles();
+            ProfilePropertyRegistry propertyRegistry = profiles.registry();
+
+            Option<ProfileProperty> result = propertyRegistry.property(name);
             if (result.absent()) {
                 if (condition.matchIfMissing()) {
                     return ConditionResult.matched();
@@ -44,15 +50,16 @@ public class PropertyCondition implements Condition {
                 return ConditionResult.notFound("property", name);
             }
 
-            String value = result.get();
-            if (condition.matchIfMissing()) {
-                return ConditionResult.found("property", name, value);
-            }
-
-            if (condition.withValue().isEmpty()) {
+            ProfileProperty property = result.get();
+            String actualValue = property.rawValue();
+            String expectedValue = condition.withValue();
+            if (expectedValue.isEmpty()) {
                 return ConditionResult.matched();
             }
-            return condition.withValue().equals(value) ? ConditionResult.matched() : ConditionResult.notEqual("property", condition.withValue(), value);
+
+            return expectedValue.equals(actualValue)
+                    ? ConditionResult.matched()
+                    : ConditionResult.notEqual("property", expectedValue, actualValue);
         }).orCompute(() -> ConditionResult.invalidCondition("property")).get();
     }
 }
