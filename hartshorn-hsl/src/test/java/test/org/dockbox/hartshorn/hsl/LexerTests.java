@@ -53,7 +53,7 @@ public class LexerTests {
         Set<TokenType> nonLiteralTokens = tokenRegistry.tokenTypes(type -> {
             return !(type instanceof LiteralTokenType || tokenRegistry.comments().resolveFromOpenToken(type).present());
         });
-        for (final TokenType type : nonLiteralTokens) {
+        for (TokenType type : nonLiteralTokens) {
             arguments.add(Arguments.of(type.representation(), type));
         }
         arguments.add(Arguments.of("12.0", LiteralTokenType.NUMBER));

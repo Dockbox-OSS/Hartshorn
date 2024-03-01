@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public final class DependencyMap extends StandardMultiMap<DependencyResolutionTy
      *
      * @see DependencyResolutionType#IMMEDIATE
      */
-    public DependencyMap immediate(final ComponentKey<?> key) {
+    public DependencyMap immediate(ComponentKey<?> key) {
         this.put(DependencyResolutionType.IMMEDIATE, key);
         return this;
     }
@@ -81,7 +81,7 @@ public final class DependencyMap extends StandardMultiMap<DependencyResolutionTy
      *
      * @see DependencyResolutionType#IMMEDIATE
      */
-    public DependencyMap immediate(final Collection<ComponentKey<?>> keys) {
+    public DependencyMap immediate(Collection<ComponentKey<?>> keys) {
         this.putAll(DependencyResolutionType.IMMEDIATE, keys);
         return this;
     }
@@ -94,7 +94,7 @@ public final class DependencyMap extends StandardMultiMap<DependencyResolutionTy
      *
      * @see DependencyResolutionType#DELAYED
      */
-    public DependencyMap delayed(final ComponentKey<?> key) {
+    public DependencyMap delayed(ComponentKey<?> key) {
         this.put(DependencyResolutionType.DELAYED, key);
         return this;
     }
@@ -107,7 +107,7 @@ public final class DependencyMap extends StandardMultiMap<DependencyResolutionTy
      *
      * @see DependencyResolutionType#DELAYED
      */
-    public DependencyMap delayed(final Collection<ComponentKey<?>> keys) {
+    public DependencyMap delayed(Collection<ComponentKey<?>> keys) {
         this.putAll(DependencyResolutionType.DELAYED, keys);
         return this;
     }

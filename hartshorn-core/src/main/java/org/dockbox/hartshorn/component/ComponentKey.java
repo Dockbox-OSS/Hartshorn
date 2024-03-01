@@ -110,11 +110,11 @@ public final class ComponentKey<T> implements Reportable {
         return new Builder<>(type);
     }
 
-    public static <T> ComponentKey<ComponentCollection<T>> collect(final Class<T> type) {
+    public static <T> ComponentKey<ComponentCollection<T>> collect(Class<T> type) {
         return TypeUtils.adjustWildcards(collect(ParameterizableType.create(type)), ComponentKey.class);
     }
 
-    public static ComponentKey<ComponentCollection<?>> collect(final ParameterizableType type) {
+    public static ComponentKey<ComponentCollection<?>> collect(ParameterizableType type) {
         ParameterizableType collectionType = ParameterizableType.builder(ComponentCollection.class)
             .parameters(type)
             .build();

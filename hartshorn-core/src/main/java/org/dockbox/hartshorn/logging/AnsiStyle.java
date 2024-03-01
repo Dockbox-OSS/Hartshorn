@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.logging;
 
+/**
+ * An enum that represents the ANSI style codes for console output.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public enum AnsiStyle {
     BOLD("1"),
     UNDERLINE("4"),
@@ -23,7 +30,7 @@ public enum AnsiStyle {
 
     private final String code;
 
-    AnsiStyle(final String code) {
+    AnsiStyle(String code) {
         this.code = code;
     }
 

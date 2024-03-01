@@ -39,7 +39,7 @@ public class ResourcePathBanner extends AbstractConsoleBanner {
         try {
             return Files.readAllLines(this.resourcePath);
         }
-        catch (final Exception e) {
+        catch (Exception e) {
             throw new IllegalStateException("Failed to read banner resource %s".formatted(this.resourcePath.getFileName()), e);
         }
     }

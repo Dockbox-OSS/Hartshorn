@@ -105,7 +105,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     }
 
     @Override
-    public BindingHierarchy<T> addNext(final Provider<T> provider) {
+    public BindingHierarchy<T> addNext(Provider<T> provider) {
         int next = -1;
         if (!this.priorityProviders().isEmpty()) {
             next = this.priorityProviders().lastKey()+1;
@@ -114,21 +114,21 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     }
 
     @Override
-    public BindingHierarchy<T> merge(final BindingHierarchy<T> hierarchy) {
+    public BindingHierarchy<T> merge(BindingHierarchy<T> hierarchy) {
         BindingHierarchy<T> merged = new NativePrunableBindingHierarchy<>(this.key(), this.applicationContext());
         // Low priority, other
-        for (final Entry<Integer, Provider<T>> entry : hierarchy) {
+        for (Entry<Integer, Provider<T>> entry : hierarchy) {
             merged.add(entry.getKey(), entry.getValue());
         }
         // High priority, self
-        for (final Entry<Integer, Provider<T>> entry : this) {
+        for (Entry<Integer, Provider<T>> entry : this) {
             merged.add(entry.getKey(), entry.getValue());
         }
         return merged;
     }
 
     @Override
-    public Option<Provider<T>> get(final int priority) {
+    public Option<Provider<T>> get(int priority) {
         return Option.of(this.priorityProviders().getOrDefault(priority, null));
     }
 

@@ -53,7 +53,7 @@ public class CooldownExtension implements CommandExecutorExtension {
     }
 
     @Override
-    public boolean extend(final CommandExecutorContext context) {
+    public boolean extend(CommandExecutorContext context) {
         return context.element().annotations().has(Cooldown.class);
     }
 

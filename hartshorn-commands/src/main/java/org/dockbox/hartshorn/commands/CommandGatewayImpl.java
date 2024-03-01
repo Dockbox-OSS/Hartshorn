@@ -84,7 +84,7 @@ public class CommandGatewayImpl implements CommandGateway {
     public void enable() {
         if (this.extensions.isEmpty()) {
             ComponentCollection<CommandExecutorExtension> extensions = this.context.get(ComponentKey.collect(CommandExecutorExtension.class));
-            for (final CommandExecutorExtension extension : extensions) {
+            for (CommandExecutorExtension extension : extensions) {
                 LOG.debug("Adding extension " + extension.getClass().getSimpleName() + " to command gateway");
                 this.add(extension);
             }

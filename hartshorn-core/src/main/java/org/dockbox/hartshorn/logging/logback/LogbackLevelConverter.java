@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,15 +23,17 @@ import ch.qos.logback.core.pattern.color.ForegroundCompositeConverterBase;
 
 /**
  * A logback converter that converts the log level to a color. This affects output for
- * any known log level.
+ * any known log level. This is mostly for 'at a glance' readability of log lines in a
+ * console.
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
- * @since 23.1
  */
 public class LogbackLevelConverter extends ForegroundCompositeConverterBase<ILoggingEvent> {
 
     @Override
-    protected String getForegroundColorCode(final ILoggingEvent event) {
+    protected String getForegroundColorCode(ILoggingEvent event) {
         final Level level = event.getLevel();
         return switch (level.toInt()) {
             case Level.ERROR_INT -> ANSIConstants.RED_FG;

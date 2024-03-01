@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,11 +121,11 @@ public enum HartshornVersion implements Reportable {
         return this.major > version.major || (this.major == version.major && this.minor > version.minor) || (this.major == version.major && this.minor == version.minor && this.patch > version.patch);
     }
 
-    public boolean isBetweenExclusive(HartshornVersion min, final HartshornVersion max) {
+    public boolean isBetweenExclusive(HartshornVersion min, HartshornVersion max) {
         return this.isAfter(min) && this.isBefore(max);
     }
 
-    public boolean isBetweenInclusive(HartshornVersion min, final HartshornVersion max) {
+    public boolean isBetweenInclusive(HartshornVersion min, HartshornVersion max) {
         return this.isAtLeast(min) && this.isAtMost(max);
     }
 
@@ -188,7 +188,7 @@ public enum HartshornVersion implements Reportable {
             int major = Integer.parseInt(split[0]);
             int minor = Integer.parseInt(split[1]);
             int patch = split.length > 2 ? Integer.parseInt(split[2]) : 0;
-            for(final HartshornVersion value : HartshornVersion.values()) {
+            for(HartshornVersion value : HartshornVersion.values()) {
                 if(value.major == major && value.minor == minor && value.patch == patch) {
                     return Option.of(value);
                 }

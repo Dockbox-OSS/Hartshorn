@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,20 @@ package org.dockbox.hartshorn.application.environment.banner;
 
 import org.slf4j.Logger;
 
+/**
+ * A simple implementation of a console banner that can be used to print a banner to a given
+ * {@link Logger}.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class AbstractConsoleBanner implements Banner {
 
     protected abstract Iterable<String> lines();
 
     @Override
-    public void print(final Logger logger) {
+    public void print(Logger logger) {
         if (logger.isInfoEnabled()) {
             logger.info(String.join("\n", this.lines()));
         }

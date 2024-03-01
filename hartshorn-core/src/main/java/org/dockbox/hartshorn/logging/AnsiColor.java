@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.logging;
 
+/**
+ * An enum that represents the ANSI color codes for console output.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public enum AnsiColor {
     BLACK("30"),
     RED("31"),
@@ -29,7 +36,7 @@ public enum AnsiColor {
 
     private final String code;
 
-    AnsiColor(final String code) {
+    AnsiColor(String code) {
         this.code = code;
     }
 

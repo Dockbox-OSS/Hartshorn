@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,78 +16,123 @@
 
 package org.dockbox.hartshorn.logging;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
+/**
+ * Represents a message that can be printed to the console with ANSI color and style. This class is immutable and
+ * can only be chained together with other messages. Chaining messages allows you to mix colors and styles in a single
+ * message.
+ *
+ * <p>Example usage:
+ * <pre>{@code
+ * AnsiMessage hello = AnsiMessage.of("Hello, ", AnsiColor.GREEN, AnsiStyle.BOLD);
+ * AnsiMessage world = AnsiMessage.of("world!", AnsiColor.BLUE, AnsiStyle.UNDERLINE);
+ * AnsiMessage helloWorld = hello.append(world);
+ * }</pre>
+ *
+ * <p>This will print "Hello, " in green and bold, and "world!" in blue and underlined.
+ *
+ * @param message the message to print
+ * @param color the color of the message
+ * @param style the style of the message
+ */
+public record AnsiMessage(String message, AnsiColor color, AnsiStyle style) {
 
-public class AnsiMessage {
-
-    private final String message;
-    private final AnsiColor color;
-    private final AnsiStyle style;
-
-    public AnsiMessage(final String message, final AnsiColor color, final AnsiStyle style) {
-        this.message = message;
-        this.color = color;
-        this.style = style;
+    /**
+     * Creates a new message with the given color, using the message and style of this message.
+     *
+     * @param color the color to use
+     * @return a new message with the given color
+     */
+    public AnsiMessage color(AnsiColor color) {
+        return of(this.message, color, this.style);
     }
 
-    public String message() {
-        return this.message;
+    /**
+     * Creates a new message with the given style, using the message and color of this message.
+     *
+     * @param style the style to use
+     * @return a new message with the given style
+     */
+    public AnsiMessage style(AnsiStyle style) {
+        return of(this.message, this.color, style);
     }
 
-    public AnsiColor color() {
-        return this.color;
+    /**
+     * Appends the given message to this message, using the same color and style as this message.
+     *
+     * @param message the message to append
+     * @return a new message with the appended message
+     */
+    public AnsiMessage append(String message) {
+        return of(this + message);
     }
 
-    public AnsiStyle style() {
-        return this.style;
-    }
-
-    public AnsiMessage color(final AnsiColor color) {
-        return new AnsiMessage(this.message, color, this.style);
-    }
-
-    public AnsiMessage style(final AnsiStyle style) {
-        return new AnsiMessage(this.message, this.color, style);
-    }
-
-    public AnsiMessage append(final String message) {
-        return new AnsiMessage(this.toString() + AnsiStyle.RESET + AnsiStyle.RESET + message, AnsiColor.RESET, AnsiStyle.RESET);
-    }
-
-    public AnsiMessage append(final Object object) {
-        return this.append(String.valueOf(object));
-    }
-
-    public AnsiMessage append(final AnsiMessage message) {
+    /**
+     * Appends the given object to this message, retaining the color and style of each message.
+     *
+     * @param message the message to append
+     * @return a new message with the appended message
+     */
+    public AnsiMessage append(AnsiMessage message) {
         return this.append(message.toString());
     }
 
-    public static AnsiMessage of(final String message) {
-        return new AnsiMessage(message, AnsiColor.RESET, AnsiStyle.RESET);
+    /**
+     * Creates a new message with the given message, without any color or style.
+     *
+     * @param message the message to use
+     * @return a new message with the given message
+     */
+    public static AnsiMessage of(String message) {
+        return of(message, AnsiColor.RESET, AnsiStyle.RESET);
     }
 
-    public static AnsiMessage of(final String message, final AnsiColor color) {
-        return new AnsiMessage(message, color, AnsiStyle.RESET);
+    /**
+     * Creates a new message with the given message and color, without any style.
+     *
+     * @param message the message to use
+     * @param color the color to use
+     * @return a new message with the given message and color
+     */
+    public static AnsiMessage of(String message, AnsiColor color) {
+        return of(message, color, AnsiStyle.RESET);
     }
 
-    public static AnsiMessage of(final String message, final AnsiStyle style) {
-        return new AnsiMessage(message, AnsiColor.RESET, style);
+    /**
+     * Creates a new message with the given message and style, without any color.
+     *
+     * @param message the message to use
+     * @param style the style to use
+     * @return a new message with the given message and style
+     */
+    public static AnsiMessage of(String message, AnsiStyle style) {
+        return of(message, AnsiColor.RESET, style);
     }
 
-    public static AnsiMessage of(final String message, final AnsiColor color, final AnsiStyle style) {
+    /**
+     * Creates a new message with the given message, color, and style.
+     *
+     * @param message the message to use
+     * @param color the color to use
+     * @param style the style to use
+     * @return a new message with the given message, color, and style
+     */
+    public static AnsiMessage of(String message, AnsiColor color, AnsiStyle style) {
         return new AnsiMessage(message, color, style);
-    }
-
-    public static String parse(final Object... arguments) {
-        return Arrays.stream(arguments)
-                // Implicitly converts AnsiMessage, AnsiColor and AnsiStyle to ANSI formatted Strings
-                .map(String::valueOf)
-                .collect(Collectors.joining());
     }
 
     @Override
     public String toString() {
-        return "%s%s%s%s%s".formatted(this.color, this.style, this.message, AnsiColor.RESET, AnsiStyle.RESET);
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.color);
+        builder.append(this.style);
+        builder.append(this.message);
+        // If already reset, don't reset again
+        if (this.style != AnsiStyle.RESET) {
+            builder.append(AnsiStyle.RESET);
+        }
+        if (this.color != AnsiColor.RESET) {
+            builder.append(AnsiColor.RESET);
+        }
+        return builder.toString();
     }
 }
