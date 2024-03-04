@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.inject.Value;
 
 @Service(singleton = false)
 public class ValueTyped {

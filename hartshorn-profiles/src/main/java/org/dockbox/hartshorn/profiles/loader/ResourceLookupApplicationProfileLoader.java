@@ -4,12 +4,11 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-
 import org.dockbox.hartshorn.profiles.ApplicationProfile;
-import org.dockbox.hartshorn.profiles.ProfileProperty;
 import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
 import org.dockbox.hartshorn.profiles.SimpleApplicationProfile;
 import org.dockbox.hartshorn.profiles.SimpleProfilePropertyRegistry;
+import org.dockbox.hartshorn.profiles.ValueProfileProperty;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.collections.HashBiMap;
 import org.dockbox.hartshorn.util.resources.ResourceLookup;
@@ -23,7 +22,7 @@ public abstract class ResourceLookupApplicationProfileLoader implements Applicat
     }
 
     public ResourceLookup resourceLookup() {
-        return resourceLookup;
+        return this.resourceLookup;
     }
 
     protected abstract String fileName(ApplicationProfile parentProfile, String profileName);
@@ -33,7 +32,7 @@ public abstract class ResourceLookupApplicationProfileLoader implements Applicat
     @Override
     public Set<ApplicationProfile> loadProfile(ApplicationProfile parentProfile, String profileName) throws ApplicationException {
         String fileName = this.fileName(parentProfile, profileName);
-        Set<URI> resources = resourceLookup.lookup(fileName);
+        Set<URI> resources = this.resourceLookup.lookup(fileName);
 
         if (resources.isEmpty()) {
             return Collections.emptySet();
@@ -42,10 +41,10 @@ public abstract class ResourceLookupApplicationProfileLoader implements Applicat
             throw new DuplicateProfileDefinitionException(profileName);
         }
 
-        Map<String, ProfileProperty> propertiesByName = new HashBiMap<>();
+        Map<String, ValueProfileProperty> propertiesByName = new HashBiMap<>();
         for(URI uri : resources) {
-            Set<ProfileProperty> properties = this.propertiesLoader().loadProperties(uri);
-            for(ProfileProperty property : properties) {
+            Set<ValueProfileProperty> properties = this.propertiesLoader().loadProperties(uri);
+            for(ValueProfileProperty property : properties) {
                 if (propertiesByName.containsKey(property.name())) {
                     throw new ApplicationException("Duplicate property found: " + property.name());
                 }

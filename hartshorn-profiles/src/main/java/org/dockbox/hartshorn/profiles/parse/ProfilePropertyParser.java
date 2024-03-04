@@ -1,11 +1,12 @@
 package org.dockbox.hartshorn.profiles.parse;
 
-import org.dockbox.hartshorn.profiles.ProfileProperty;
+import org.dockbox.hartshorn.profiles.CompositeProfileProperty;
+import org.dockbox.hartshorn.profiles.ValueProfileProperty;
 import org.dockbox.hartshorn.util.option.Option;
 
-@FunctionalInterface
 public interface ProfilePropertyParser<T> {
 
-    Option<T> parse(ProfileProperty property);
+    Option<T> parse(ValueProfileProperty property);
 
+    Option<T> parse(CompositeProfileProperty property);
 }

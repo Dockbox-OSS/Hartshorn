@@ -2,10 +2,9 @@ package org.dockbox.hartshorn.profiles;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.util.option.Option;
 
 public class ComposableProfilePropertyRegistry implements ProfilePropertyRegistry {
@@ -16,7 +15,7 @@ public class ComposableProfilePropertyRegistry implements ProfilePropertyRegistr
         this.registries = Set.copyOf(registries);
     }
 
-    public ComposableProfilePropertyRegistry(ComposableProfileHolder profileHolder) {
+    public ComposableProfilePropertyRegistry(ProfileHolder profileHolder) {
         Set<ProfilePropertyRegistry> registries = new HashSet<>();
         Queue<ApplicationProfile> profiles = new ArrayDeque<>(profileHolder.profiles());
         while(!profiles.isEmpty()) {
@@ -33,10 +32,17 @@ public class ComposableProfilePropertyRegistry implements ProfilePropertyRegistr
     }
 
     @Override
-    public Set<ProfileProperty> properties() {
+    public List<ValueProfileProperty> properties() {
         return this.registries.stream()
                 .flatMap(registry -> registry.properties().stream())
-                .collect(Collectors.toSet());
+                .toList();
+    }
+
+    @Override
+    public List<ValueProfileProperty> allProperties() {
+        return this.registries.stream()
+                .flatMap(registry -> registry.allProperties().stream())
+                .toList();
     }
 
     @Override
@@ -49,7 +55,7 @@ public class ComposableProfilePropertyRegistry implements ProfilePropertyRegistr
                 }
             }
         }
-        return Option.empty();
+        return Option.of(new ComplexCompositeProfileProperty(name, this));
     }
 
     @Override

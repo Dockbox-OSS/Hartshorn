@@ -20,16 +20,16 @@ public final class SimpleApplicationProfile implements ApplicationProfile {
 
     @Override
     public String name() {
-        return name;
+        return this.name;
     }
 
     @Override
     public ProfilePropertyRegistry registry() {
-        return registry;
+        return this.registry;
     }
 
     @Override
     public Option<ApplicationProfile> parent() {
-        return Option.of(parent);
+        return Option.of(this.parent);
     }
 }

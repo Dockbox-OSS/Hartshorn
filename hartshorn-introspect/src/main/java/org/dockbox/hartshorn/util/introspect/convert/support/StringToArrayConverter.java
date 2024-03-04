@@ -18,7 +18,7 @@ public class StringToArrayConverter implements Converter<String, String[]> {
     @Override
     public String @Nullable [] convert(@Nullable String input) {
         if (null != input) {
-            return input.split(delimiter);
+            return input.split(this.delimiter);
         }
         return new String[0];
     }

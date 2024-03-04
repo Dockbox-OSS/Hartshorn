@@ -1,14 +1,15 @@
 package org.dockbox.hartshorn.profiles.loader;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-
 import org.dockbox.hartshorn.profiles.ApplicationProfile;
 import org.dockbox.hartshorn.profiles.ProfileProperty;
 import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
-import org.dockbox.hartshorn.profiles.parse.ConverterProfilePropertyParser;
+import org.dockbox.hartshorn.profiles.ValueProfileProperty;
+import org.dockbox.hartshorn.profiles.parse.support.ListProfilePropertyParser;
+import org.dockbox.hartshorn.profiles.parse.ProfilePropertyParser;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.introspect.convert.support.StringToArrayConverter;
 import org.dockbox.hartshorn.util.option.Option;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,11 +28,11 @@ public abstract class ChildProfileCapableProfileLoader implements ApplicationPro
     }
 
     public ApplicationProfile parent() {
-        return parent;
+        return this.parent;
     }
 
     public String activeProfilesPropertyName() {
-        return activeProfilesPropertyName;
+        return this.activeProfilesPropertyName;
     }
 
     public void activeProfilesPropertyName(String activeProfilesPropertyName) {
@@ -40,9 +41,9 @@ public abstract class ChildProfileCapableProfileLoader implements ApplicationPro
 
     @Override
     public Set<ApplicationProfile> loadProfile(ApplicationProfile parentProfile, String profileName) throws ApplicationException {
-        Option<ApplicationProfile> singleProfile = loadSingleProfile(parentProfile, profileName);
+        Option<ApplicationProfile> singleProfile = this.loadSingleProfile(parentProfile, profileName);
         if(singleProfile.present()) {
-            return resolveProfiles(singleProfile.get());
+            return this.resolveProfiles(singleProfile.get());
         }
         else {
             return Set.of();
@@ -55,18 +56,26 @@ public abstract class ChildProfileCapableProfileLoader implements ApplicationPro
         profiles.add(applicationProfile);
 
         ProfilePropertyRegistry registry = applicationProfile.registry().ignoreInherited();
-        Option<ProfileProperty> property = registry.property(activeProfilesPropertyName);
+        Option<ProfileProperty> property = registry.property(this.activeProfilesPropertyName);
         if(property.present()) {
             if(this.parent != null) {
                 throw new ApplicationException("Child profiles cannot have active profiles");
             }
             else {
-                StringToArrayConverter converter = new StringToArrayConverter();
-                ConverterProfilePropertyParser<String[]> parser = new ConverterProfilePropertyParser<>(converter);
+                ProfilePropertyParser<List<ProfileProperty>> parser = new ListProfilePropertyParser();
+                List<ProfileProperty> activeProfiles = property.get().parseValue(parser, List.of());
 
-                String[] activeProfiles = property.get().parseValue(parser, new String[0]);
-                for(String activeProfile : activeProfiles) {
-                    Option<ApplicationProfile> profile = this.loadSingleProfile(applicationProfile, activeProfile);
+                for(ProfileProperty activeProfile : activeProfiles) {
+                    if (!(activeProfile instanceof ValueProfileProperty valueProfileProperty)) {
+                        throw new ApplicationException("Active profiles must be value properties");
+                    }
+
+                    Option<String> profileName = valueProfileProperty.rawValue();
+                    if (profileName.absent()) {
+                        throw new ApplicationException("Active profiles must have a raw value");
+                    }
+
+                    Option<ApplicationProfile> profile = this.loadSingleProfile(applicationProfile, profileName.get());
                     if (profile.present()) {
                         ApplicationProfile childProfile = profile.get();
                         profiles.add(childProfile);

@@ -18,6 +18,7 @@ package test.org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.profiles.ProfileProperty;
+import org.dockbox.hartshorn.profiles.ValueProfileProperty;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.ModifyApplication;
@@ -42,6 +43,12 @@ public class ModifyApplicationTests {
                 .registry()
                 .property("hartshorn.modified");
         Assertions.assertTrue(property.present());
-        Assertions.assertEquals("true", property.get().rawValue());
+
+        ProfileProperty profileProperty = property.get();
+        ValueProfileProperty valueProfileProperty = Assertions.assertInstanceOf(ValueProfileProperty.class, profileProperty);
+
+        Option<String> value = valueProfileProperty.rawValue();
+        Assertions.assertTrue(value.present());
+        Assertions.assertEquals("true", value.get());
     }
 }

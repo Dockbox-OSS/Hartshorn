@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.component.condition;
 import org.dockbox.hartshorn.profiles.ComposableProfileHolder;
 import org.dockbox.hartshorn.profiles.ProfileProperty;
 import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
+import org.dockbox.hartshorn.profiles.ValueProfileProperty;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -50,16 +51,25 @@ public class PropertyCondition implements Condition {
                 return ConditionResult.notFound("property", name);
             }
 
-            ProfileProperty property = result.get();
-            String actualValue = property.rawValue();
             String expectedValue = condition.withValue();
             if (expectedValue.isEmpty()) {
                 return ConditionResult.matched();
             }
 
-            return expectedValue.equals(actualValue)
+            ProfileProperty property = result.get();
+            if (!(property instanceof ValueProfileProperty valueProfileProperty)) {
+                return ConditionResult.notMatched("Expected a value property, but found a different type");
+            }
+
+            Option<String> actualValue = valueProfileProperty.rawValue();
+            if (actualValue.absent()) {
+                return ConditionResult.notEqual("property", "not empty", name);
+            }
+
+            String value = actualValue.get();
+            return expectedValue.equals(value)
                     ? ConditionResult.matched()
-                    : ConditionResult.notEqual("property", expectedValue, actualValue);
+                    : ConditionResult.notEqual("property", expectedValue, value);
         }).orCompute(() -> ConditionResult.invalidCondition("property")).get();
     }
 }

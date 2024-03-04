@@ -1,6 +1,8 @@
-package org.dockbox.hartshorn.profiles.parse;
+package org.dockbox.hartshorn.profiles.parse.support;
 
-import org.dockbox.hartshorn.profiles.ProfileProperty;
+import org.dockbox.hartshorn.profiles.CompositeProfileProperty;
+import org.dockbox.hartshorn.profiles.ValueProfileProperty;
+import org.dockbox.hartshorn.profiles.parse.ProfilePropertyParser;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.option.Option;
@@ -26,9 +28,16 @@ public class GenericConverterProfilePropertyParser<T> implements ProfileProperty
     }
 
     @Override
-    public Option<T> parse(ProfileProperty property) {
-        String rawValue = property.rawValue();
-        Object converted = this.converter.convert(rawValue, String.class, this.type);
-        return Option.of(converted).cast(this.type);
+    public Option<T> parse(ValueProfileProperty property) {
+        return property.rawValue().map(rawValue -> {
+            Object converted = this.converter.convert(rawValue, String.class, this.type);
+            // Do not use Class#cast here, as it will fail on primitive types
+            return (T) converted;
+        });
+    }
+
+    @Override
+    public Option<T> parse(CompositeProfileProperty property) {
+        return null;
     }
 }

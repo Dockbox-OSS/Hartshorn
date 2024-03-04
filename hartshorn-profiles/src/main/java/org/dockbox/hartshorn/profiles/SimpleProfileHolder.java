@@ -14,7 +14,7 @@ public class SimpleProfileHolder implements ProfileHolder {
 
     @Override
     public Option<ApplicationProfile> profile(String name) {
-        for(ApplicationProfile profile : profiles) {
+        for(ApplicationProfile profile : this.profiles) {
             if(profile.name().equals(name)) {
                 return Option.of(profile);
             }
@@ -24,6 +24,6 @@ public class SimpleProfileHolder implements ProfileHolder {
 
     @Override
     public Set<ApplicationProfile> profiles() {
-        return profiles;
+        return this.profiles;
     }
 }

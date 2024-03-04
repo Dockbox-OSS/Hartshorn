@@ -1,17 +1,19 @@
 package org.dockbox.hartshorn.profiles;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
 import org.dockbox.hartshorn.util.option.Option;
 
 public class SimpleProfilePropertyRegistry implements ProfilePropertyRegistry {
 
     private final Set<ProfilePropertyRegistry> inheritedRegistries;
-    private final Set<ProfileProperty> properties;
+    private final Set<ValueProfileProperty> properties;
 
     public SimpleProfilePropertyRegistry(
             Set<ProfilePropertyRegistry> inheritedRegistries,
-            Set<ProfileProperty> properties
+            Set<ValueProfileProperty> properties
     ) {
         this.inheritedRegistries = inheritedRegistries;
         this.properties = properties;
@@ -19,37 +21,51 @@ public class SimpleProfilePropertyRegistry implements ProfilePropertyRegistry {
 
     @Override
     public Set<ProfilePropertyRegistry> inherited() {
-        return Set.copyOf(inheritedRegistries);
+        return Set.copyOf(this.inheritedRegistries);
     }
 
     @Override
-    public Set<ProfileProperty> properties() {
-        return Set.copyOf(properties);
+    public List<ValueProfileProperty> properties() {
+        return List.copyOf(this.properties);
+    }
+
+    @Override
+    public List<ValueProfileProperty> allProperties() {
+        Map<String, ValueProfileProperty> properties = new HashMap<>();
+        for (ProfilePropertyRegistry registry : this.inherited()) {
+            for (ValueProfileProperty property : registry.allProperties()) {
+                properties.put(property.name(), property);
+            }
+        }
+        for (ValueProfileProperty property : this.properties()) {
+            properties.put(property.name(), property);
+        }
+        return List.copyOf(properties.values());
     }
 
     @Override
     public Option<ProfileProperty> property(String name) {
-        for(ProfileProperty property : properties) {
+        for(ProfileProperty property : this.properties) {
             if(property.name().equals(name)) {
                 return Option.of(property);
             }
         }
-        for(ProfilePropertyRegistry inheritedRegistry : inheritedRegistries) {
+        for(ProfilePropertyRegistry inheritedRegistry : this.inheritedRegistries) {
             if (inheritedRegistry.has(name)) {
                 return inheritedRegistry.property(name);
             }
         }
-        return Option.empty();
+        return Option.of(new ComplexCompositeProfileProperty(name, this));
     }
 
     @Override
     public boolean has(String name) {
-        for(ProfileProperty property : properties) {
+        for(ProfileProperty property : this.properties) {
             if(property.name().equals(name)) {
                 return true;
             }
         }
-        for(ProfilePropertyRegistry inheritedRegistry : inheritedRegistries) {
+        for(ProfilePropertyRegistry inheritedRegistry : this.inheritedRegistries) {
             if (inheritedRegistry.has(name)) {
                 return true;
             }

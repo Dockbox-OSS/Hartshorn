@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config.annotations;
-
-import org.dockbox.hartshorn.config.properties.PropertyHolder;
+package org.dockbox.hartshorn.inject;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
 
 /**
- * Annotation used to indicate a field should be populated with the value obtained
- * from {@link PropertyHolder#get(String)}.
+ * Annotation used to indicate a field should be populated with a value from the
+ * configuration. The value is resolved using the key provided in the annotation,
+ * typically through the {@link ProfilePropertyRegistry} attached to the current
+ * application's environment.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.reporting.application;
 
 import java.util.Properties;
-import org.dockbox.hartshorn.profiles.ProfileProperty;
 import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
+import org.dockbox.hartshorn.profiles.ValueProfileProperty;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 
@@ -42,8 +42,8 @@ public class PropertyRegistryReporter implements Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        for (ProfileProperty property : this.properties.properties()) {
-            collector.property(property.name()).write(property.rawValue());
+        for (ValueProfileProperty property : this.properties.properties()) {
+            collector.property(property.name()).write(property.rawValue().orElse(""));
         }
     }
 }

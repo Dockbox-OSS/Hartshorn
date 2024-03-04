@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 import org.dockbox.hartshorn.config.ConfigurationServicePreProcessor;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.inject.Value;
 import org.dockbox.hartshorn.util.resources.ClassPathResourceLookupStrategy;
 import org.dockbox.hartshorn.util.resources.ResourceLookupStrategy;
 

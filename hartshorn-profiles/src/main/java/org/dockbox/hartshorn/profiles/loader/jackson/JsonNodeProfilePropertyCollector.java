@@ -1,21 +1,19 @@
 package org.dockbox.hartshorn.profiles.loader.jackson;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.dockbox.hartshorn.profiles.ProfileProperty;
 import org.dockbox.hartshorn.profiles.SimpleProfileProperty;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.dockbox.hartshorn.profiles.ValueProfileProperty;
 
 public class JsonNodeProfilePropertyCollector {
 
-    private final Set<ProfileProperty> properties = new HashSet<>();
+    private final Set<ValueProfileProperty> properties = new HashSet<>();
 
-    public synchronized Set<ProfileProperty> collectProperties(JsonNode node) {
+    public synchronized Set<ValueProfileProperty> collectProperties(JsonNode node) {
         this.properties.clear();
         Deque<String> path = new ArrayDeque<>();
         this.visitNode(node, path);
@@ -40,7 +38,7 @@ public class JsonNodeProfilePropertyCollector {
         }
     }
 
-    private void visitArray(JsonNode node, Deque<String> path) {
+    private void visitArray(Iterable<JsonNode> node, Deque<String> path) {
         int i = 0;
         for(JsonNode jsonNode : node) {
             path.addLast("[%s]".formatted(i));
@@ -60,11 +58,11 @@ public class JsonNodeProfilePropertyCollector {
     }
 
     private void visitValue(JsonNode node, Deque<String> path) {
-        String propertyName = absolutePath(path);
-        properties.add(new SimpleProfileProperty(propertyName, node.asText()));
+        String propertyName = this.absolutePath(path);
+        this.properties.add(new SimpleProfileProperty(propertyName, node.asText()));
     }
 
-    private String absolutePath(Deque<String> path) {
+    private String absolutePath(Iterable<String> path) {
         StringBuilder builder = new StringBuilder();
         for (String jsonNode : path) {
             builder.append(jsonNode);

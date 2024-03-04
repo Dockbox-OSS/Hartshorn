@@ -3,11 +3,9 @@ package org.dockbox.hartshorn.profiles;
 import org.dockbox.hartshorn.profiles.parse.ProfilePropertyParser;
 import org.dockbox.hartshorn.util.option.Option;
 
-public interface ProfileProperty {
+public sealed interface ProfileProperty permits ValueProfileProperty, CompositeProfileProperty {
 
     String name();
-
-    String rawValue();
 
     <T> Option<T> parseValue(ProfilePropertyParser<T> parser);
 

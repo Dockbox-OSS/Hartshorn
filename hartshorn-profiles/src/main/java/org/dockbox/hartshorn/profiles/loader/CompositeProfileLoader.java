@@ -21,13 +21,13 @@ public final class CompositeProfileLoader extends ChildProfileCapableProfileLoad
     }
 
     public List<ApplicationProfileLoader> loaders() {
-        return loaders;
+        return this.loaders;
     }
 
     @Override
     protected Option<ApplicationProfile> loadSingleProfile(ApplicationProfile parentProfile, String profileName) throws ApplicationException {
         Set<ApplicationProfile> profiles = new HashSet<>();
-        for(ApplicationProfileLoader profileLoader : loaders) {
+        for(ApplicationProfileLoader profileLoader : this.loaders) {
             Set<ApplicationProfile> applicationProfiles = profileLoader.loadProfile(parentProfile, profileName);
             profiles.addAll(applicationProfiles);
         }

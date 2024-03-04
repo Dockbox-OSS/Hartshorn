@@ -3,3 +3,7 @@ hartshorn:
     active: child,test
   sample:
     enabled: true
+sample.list:
+  - one
+  - two
+  - three
