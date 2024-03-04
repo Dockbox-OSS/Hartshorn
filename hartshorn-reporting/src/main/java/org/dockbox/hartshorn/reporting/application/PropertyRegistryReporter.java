@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.reporting.application;
 
-import java.util.Map.Entry;
 import java.util.Properties;
-
+import org.dockbox.hartshorn.profiles.ProfileProperty;
+import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 
@@ -32,18 +32,18 @@ import org.dockbox.hartshorn.reporting.Reportable;
  *
  * @author Guus Lieben
  */
-public class PropertiesReporter implements Reportable {
+public class PropertyRegistryReporter implements Reportable {
 
-    private final Properties properties;
+    private final ProfilePropertyRegistry properties;
 
-    public PropertiesReporter(Properties properties) {
+    public PropertyRegistryReporter(ProfilePropertyRegistry properties) {
         this.properties = properties;
     }
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        for (Entry<Object, Object> entry : this.properties.entrySet()) {
-            collector.property(String.valueOf(entry.getKey())).write(String.valueOf(entry.getValue()));
+        for (ProfileProperty property : this.properties.properties()) {
+            collector.property(property.name()).write(property.rawValue());
         }
     }
 }

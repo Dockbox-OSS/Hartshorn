@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.reporting.application;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -32,6 +31,7 @@ import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironm
 import org.dockbox.hartshorn.application.lifecycle.Observer;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.NamedContext;
+import org.dockbox.hartshorn.profiles.ProfilePropertyRegistry;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
@@ -112,8 +112,8 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
      * @param collector the collector to write to
      */
     protected void reportApplicationProperties(DiagnosticsPropertyCollector collector) {
-        Properties properties = this.applicationContext.properties();
-        Reportable reporter = new PropertiesReporter(properties);
+        ProfilePropertyRegistry propertyRegistry = this.applicationContext.environment().profiles().registry();
+        Reportable reporter = new PropertyRegistryReporter(propertyRegistry);
         collector.property("properties").write(reporter);
     }
 
