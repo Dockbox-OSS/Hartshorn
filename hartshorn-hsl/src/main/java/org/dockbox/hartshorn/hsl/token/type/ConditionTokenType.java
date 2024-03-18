@@ -34,11 +34,11 @@ import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
  */
 public enum ConditionTokenType implements EnumTokenType {
     /**
-     * '>' character, representing a 'greater than' condition.
+     * '&gt;' character, representing a 'greater than' condition.
      */
     GREATER(DefaultTokenCharacter.GREATER),
     /**
-     * '<' character, representing a 'less than' condition.
+     * '&lt;' character, representing a 'less than' condition.
      */
     LESS(DefaultTokenCharacter.LESS),
 
@@ -52,16 +52,16 @@ public enum ConditionTokenType implements EnumTokenType {
     BANG_EQUAL(BaseTokenType.BANG),
 
     /**
-     * '>=' character, representing a 'greater than or equal to' condition.
+     * '&gt;=' character, representing a 'greater than or equal to' condition.
      */
     GREATER_EQUAL(GREATER),
     /**
-     * '<=' character, representing a 'less than or equal to' condition.
+     * '&lt;=' character, representing a 'less than or equal to' condition.
      */
     LESS_EQUAL(LESS),
 
     /**
-     * '&&' character, representing a 'logical and' condition. Logical and conditions are
+     * '&amp;&amp;' character, representing a 'logical and' condition. Logical and conditions are
      * used to combine two or more conditions, and are only true if all conditions are true.
      */
     AND(builder -> builder.repeats(BitwiseTokenType.BITWISE_AND)),
