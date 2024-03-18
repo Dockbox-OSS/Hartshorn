@@ -76,68 +76,17 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
     @Override
     public void handle(String message, Throwable throwable) {
         if (null != throwable) {
-            String location = resolveCauseLocation(throwable);
             if (message == null) {
                 message = "";
             }
 
-            printErrorMessage(message, throwable, location);
             if (this.printStackTraces()) {
-                printFullStacktrace(throwable);
+                LOG.error(message, throwable);
+            }
+            else if (!message.isBlank()) {
+                LOG.error(message);
             }
         }
-    }
-
-    private static String resolveCauseLocation(Throwable throwable) {
-        String location = "";
-        if (0 < throwable.getStackTrace().length) {
-            StackTraceElement root = throwable.getStackTrace()[0];
-            String line = 0 < root.getLineNumber() ? ":" + root.getLineNumber() : "(internal call)";
-            location = root.getFileName() + line;
-        }
-        return location;
-    }
-
-    private static void printErrorMessage(String message, Throwable throwable, String location) {
-        String[] lines = message.split("\n");
-        LOG.error("Exception: " + throwable.getClass().getCanonicalName() + " ("+ location +"): " + lines[0]);
-        if (lines.length > 1) {
-            for (int i = 1; i < lines.length; i++) {
-                LOG.error("  " + lines[i]);
-            }
-        }
-    }
-
-    private static void printFullStacktrace(Throwable throwable) {
-        Throwable nextException = throwable;
-
-        while (null != nextException) {
-            StackTraceElement[] trace = nextException.getStackTrace();
-            String nextMessage = String.valueOf(nextException.getMessage());
-            String[] nextLines = nextMessage.split("\n");
-            LOG.error(nextException.getClass().getCanonicalName() + ": " + nextLines[0]);
-            if (nextLines.length > 1) {
-                for (int i = 1; i < nextLines.length; i++) {
-                    LOG.error("  " + nextLines[i]);
-                }
-            }
-
-            for (StackTraceElement element : trace) {
-                String logMessage = getLogLine(element);
-                LOG.error(logMessage);
-            }
-            nextException = nextException.getCause();
-        }
-    }
-
-    private static String getLogLine(StackTraceElement element) {
-        String elLine = 0 < element.getLineNumber() ? ":" + element.getLineNumber() : "(internal call)";
-        String logMessage = "  at " + element.getClassName() + "." + element.getMethodName() + "(" + element.getFileName() + elLine + ")";
-        if (logMessage.indexOf('\r') >= 0) {
-            // Use half indentation, \r is permitted to be in the message to request additional visual focus.
-            logMessage = " " + logMessage.substring(logMessage.indexOf('\r') + 1);
-        }
-        return logMessage;
     }
 
     /**
@@ -145,6 +94,7 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
      * {@code null}.
      *
      * @param throwable The {@link Throwable} to get the first message from.
+     *
      * @return The first message of the given {@link Throwable} or {@code null}.
      */
     public static String firstMessage(Throwable throwable) {
