@@ -48,14 +48,18 @@ import jakarta.inject.Singleton;
 public class ApplicationConfiguration {
 
     @Binds
-    public Logger logger(InjectionPoint injectionPoint) {
+    public Logger logger(InjectionPoint injectionPoint, ComponentLocator locator) {
         Class<?> declaringType = switch(injectionPoint.injectionPoint()) {
             case ExecutableElementView<?> executableElementView -> executableElementView.declaredBy().type();
             case FieldView<?, ?> fieldView -> fieldView.declaredBy().type();
             case ParameterView<?> parameterView -> parameterView.declaredBy().declaredBy().type();
             default -> throw new IllegalStateException("Unexpected value: " + injectionPoint.injectionPoint());
         };
-        return LoggerFactory.getLogger(declaringType);
+        
+        return locator.container(declaringType)
+            .map(ComponentContainer::name)
+            .map(LoggerFactory::getLogger)
+            .orElseGet(() -> LoggerFactory.getLogger(declaringType));
     }
 
     @Binds
