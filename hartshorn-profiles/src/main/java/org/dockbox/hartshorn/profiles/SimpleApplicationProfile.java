@@ -29,6 +29,11 @@ public final class SimpleApplicationProfile implements ApplicationProfile {
     }
 
     @Override
+    public int priority() {
+        return parent != null ? parent.priority() + 1 : 0;
+    }
+
+    @Override
     public Option<ApplicationProfile> parent() {
         return Option.of(this.parent);
     }

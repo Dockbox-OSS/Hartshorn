@@ -1,33 +1,33 @@
 package org.dockbox.hartshorn.profiles;
 
 import java.util.ArrayDeque;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
+
 import org.dockbox.hartshorn.util.option.Option;
 
 public class ComposableProfilePropertyRegistry implements ProfilePropertyRegistry {
 
-    private final Set<ProfilePropertyRegistry> registries;
+    private final List<ProfilePropertyRegistry> registries;
 
-    public ComposableProfilePropertyRegistry(Set<ProfilePropertyRegistry> registries) {
-        this.registries = Set.copyOf(registries);
+    public ComposableProfilePropertyRegistry(List<ProfilePropertyRegistry> registries) {
+        this.registries = List.copyOf(registries);
     }
 
     public ComposableProfilePropertyRegistry(ProfileHolder profileHolder) {
-        Set<ProfilePropertyRegistry> registries = new HashSet<>();
+        List<ProfilePropertyRegistry> registries = new ArrayList<>();
         Queue<ApplicationProfile> profiles = new ArrayDeque<>(profileHolder.profiles());
         while(!profiles.isEmpty()) {
             ApplicationProfile profile = profiles.poll();
             profile.parent().peek(profiles::add);
             registries.add(profile.registry());
         }
-        this.registries = Set.copyOf(registries);
+        this.registries = List.copyOf(registries);
     }
 
     @Override
-    public Set<ProfilePropertyRegistry> inherited() {
+    public List<ProfilePropertyRegistry> inherited() {
         return this.registries;
     }
 
@@ -70,6 +70,6 @@ public class ComposableProfilePropertyRegistry implements ProfilePropertyRegistr
 
     @Override
     public ProfilePropertyRegistry ignoreInherited() {
-        return new SimpleProfilePropertyRegistry(Set.of(), Set.of());
+        return new SimpleProfilePropertyRegistry(List.of(), List.of());
     }
 }

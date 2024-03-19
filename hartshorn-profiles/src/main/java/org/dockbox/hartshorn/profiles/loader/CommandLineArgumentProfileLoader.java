@@ -29,11 +29,11 @@ public class CommandLineArgumentProfileLoader implements ApplicationProfileLoade
         }
 
         Properties properties = this.argumentParser.parse(this.arguments);
-        Set<ValueProfileProperty> profileProperties = properties.entrySet().stream()
+        List<ValueProfileProperty> profileProperties = properties.entrySet().stream()
                 .map(entry -> new SimpleProfileProperty(entry.getKey().toString(), entry.getValue().toString()))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
-        ProfilePropertyRegistry propertyRegistry = new SimpleProfilePropertyRegistry(Set.of(), profileProperties);
+        ProfilePropertyRegistry propertyRegistry = new SimpleProfilePropertyRegistry(List.of(), profileProperties);
         ApplicationProfile profile = new SimpleApplicationProfile(profileName, propertyRegistry, null);
         return Set.of(profile);
     }

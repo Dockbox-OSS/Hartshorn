@@ -1,5 +1,6 @@
 package org.dockbox.hartshorn.profiles.loader;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,6 @@ public final class CompositeProfileLoader extends ChildProfileCapableProfileLoad
             profiles.addAll(applicationProfiles);
         }
 
-        // TODO: This now does not respect priorities of profiles, but it should
         if(profiles.isEmpty()) {
             return Option.empty();
         }
@@ -40,9 +40,10 @@ public final class CompositeProfileLoader extends ChildProfileCapableProfileLoad
             return Option.of(profiles.iterator().next());
         }
         else {
-            Set<ProfilePropertyRegistry> registries = profiles.stream()
+            List<ProfilePropertyRegistry> registries = profiles.stream()
+                    .sorted(Comparator.comparingInt(ApplicationProfile::priority))
                     .map(ApplicationProfile::registry)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
             ComposableProfilePropertyRegistry propertyRegistry = new ComposableProfilePropertyRegistry(registries);
             return Option.of(new SimpleApplicationProfile(profileName, propertyRegistry, parentProfile));
         }

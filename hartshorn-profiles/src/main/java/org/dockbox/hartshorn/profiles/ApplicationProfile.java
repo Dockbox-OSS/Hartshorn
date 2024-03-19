@@ -10,4 +10,5 @@ public interface ApplicationProfile {
 
     ProfilePropertyRegistry registry();
 
+    int priority();
 }

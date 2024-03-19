@@ -3,25 +3,25 @@ package org.dockbox.hartshorn.profiles;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
 import org.dockbox.hartshorn.util.option.Option;
 
 public class SimpleProfilePropertyRegistry implements ProfilePropertyRegistry {
 
-    private final Set<ProfilePropertyRegistry> inheritedRegistries;
-    private final Set<ValueProfileProperty> properties;
+    private final List<ProfilePropertyRegistry> inheritedRegistries;
+    private final List<ValueProfileProperty> properties;
 
     public SimpleProfilePropertyRegistry(
-            Set<ProfilePropertyRegistry> inheritedRegistries,
-            Set<ValueProfileProperty> properties
+            List<ProfilePropertyRegistry> inheritedRegistries,
+            List<ValueProfileProperty> properties
     ) {
         this.inheritedRegistries = inheritedRegistries;
         this.properties = properties;
     }
 
     @Override
-    public Set<ProfilePropertyRegistry> inherited() {
-        return Set.copyOf(this.inheritedRegistries);
+    public List<ProfilePropertyRegistry> inherited() {
+        return List.copyOf(this.inheritedRegistries);
     }
 
     @Override
@@ -75,6 +75,6 @@ public class SimpleProfilePropertyRegistry implements ProfilePropertyRegistry {
 
     @Override
     public ProfilePropertyRegistry ignoreInherited() {
-        return new SimpleProfilePropertyRegistry(Set.of(), this.properties);
+        return new SimpleProfilePropertyRegistry(List.of(), this.properties);
     }
 }

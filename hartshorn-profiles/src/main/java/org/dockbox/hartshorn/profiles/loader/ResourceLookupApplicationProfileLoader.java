@@ -2,6 +2,7 @@ package org.dockbox.hartshorn.profiles.loader;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.dockbox.hartshorn.profiles.ApplicationProfile;
@@ -52,10 +53,10 @@ public abstract class ResourceLookupApplicationProfileLoader implements Applicat
             }
         }
 
-        Set<ProfilePropertyRegistry> inheritedRegistries = parentProfile == null ? Set.of() : Set.of(parentProfile.registry());
+        List<ProfilePropertyRegistry> inheritedRegistries = parentProfile == null ? List.of() : List.of(parentProfile.registry());
         SimpleProfilePropertyRegistry registry = new SimpleProfilePropertyRegistry(
                 inheritedRegistries,
-                Set.copyOf(propertiesByName.values())
+                List.copyOf(propertiesByName.values())
         );
 
         return Set.of(new SimpleApplicationProfile(profileName, registry, parentProfile));
