@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,8 @@ import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple implementation of {@link CommandDefinitionContext}. Creates a definition based on the
@@ -53,6 +55,8 @@ import org.dockbox.hartshorn.util.option.Option;
  * explicit type is defined, {@link CommandDefinitionContextImpl#DEFAULT_TYPE} is used.
  */
 public class CommandDefinitionContextImpl extends DefaultProvisionContext implements CommandDefinitionContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CommandDefinitionContextImpl.class);
 
     /**
      * Represents the default type for command elements matched by {@link CommandDefinitionContextImpl#FLAG} or
@@ -151,7 +155,7 @@ public class CommandDefinitionContextImpl extends DefaultProvisionContext implem
             String part = genericArgumentMatcher.group();
             Matcher argumentMatcher = ARGUMENT.matcher(part);
             if (argumentMatcher.matches()) {
-                this.context.log().debug("Matched argument definition partial " + part + " as explicit argument");
+                LOG.debug("Matched argument definition partial " + part + " as explicit argument");
                 CommandDefinition definition = this.extractArguments(argumentMatcher);
                 List<CommandElement<?>> commandElements = definition.elements();
                 if (commandElements.isEmpty()) {
@@ -165,7 +169,7 @@ public class CommandDefinitionContextImpl extends DefaultProvisionContext implem
                 }
             }
             else {
-                this.context.log().debug("Matched argument definition partial " + part + " as flag");
+                LOG.debug("Matched argument definition partial " + part + " as flag");
                 Matcher flagMatcher = FLAG.matcher(part);
                 flags.addAll(this.generateFlags(flagMatcher));
             }
@@ -200,7 +204,7 @@ public class CommandDefinitionContextImpl extends DefaultProvisionContext implem
         String name;
         Matcher elementValue = ELEMENT_VALUE.matcher(definition);
         if (!elementValue.matches() || 0 == elementValue.groupCount()) {
-            this.context.log().warn("Unknown argument specification " + definition + ", use Type or Name{Type}");
+            LOG.warn("Unknown argument specification " + definition + ", use Type or Name{Type}");
         }
 
 
@@ -222,7 +226,7 @@ public class CommandDefinitionContextImpl extends DefaultProvisionContext implem
             type = elementValue.group(2);
         }
 
-        this.context.log().debug("Determined type '%s', name '%s' for %s argument (definition: %s)".formatted(type, name, optional ? "optional" : "required", definition));
+        LOG.debug("Determined type '%s', name '%s' for %s argument (definition: %s)".formatted(type, name, optional ? "optional" : "required", definition));
         return this.lookupElement(type, name, optional);
     }
 
@@ -230,22 +234,22 @@ public class CommandDefinitionContextImpl extends DefaultProvisionContext implem
         Option<ArgumentConverter<?>> converter = this.converterRegistry.converter(type.toLowerCase());
 
         if (converter.present()) {
-            this.context.log().debug("Found converter for element type " + type);
+            LOG.debug("Found converter for element type " + type);
             return new CommandElementImpl<>(converter.get(), name, optional, converter.get().size());
         }
         else {
             TypeView<?> lookup = this.context.environment().introspector().introspect(type);
             if (lookup.isVoid()) {
-                this.context.log().error("No argument of type '" + type + "' can be read");
+                LOG.error("No argument of type '" + type + "' can be read");
                 return null;
             }
 
             if (lookup.isEnum()) {
-                this.context.log().debug(type + " is an enum, creating explicit enum element.");
+                LOG.debug(type + " is an enum, creating explicit enum element.");
                 return EnumCommandElement.of(name, (TypeView<E>) lookup, optional);
             }
             else {
-                this.context.log().warn("Type '" + type.toLowerCase() + "' is not supported, using default value");
+                LOG.warn("Type '" + type.toLowerCase() + "' is not supported, using default value");
                 return this.lookupElement(DEFAULT_TYPE, name, optional);
             }
         }
@@ -264,11 +268,11 @@ public class CommandDefinitionContextImpl extends DefaultProvisionContext implem
 
     private CommandFlag parseFlag(String name, String type) {
         if (null == type) {
-            this.context.log().debug("Determined flag definition for '%s'".formatted(name));
+            LOG.debug("Determined flag definition for '%s'".formatted(name));
             return new CommandFlagImpl(name);
         }
         else {
-            this.context.log().debug("Determined flag definition with type '%s' for '%s'".formatted(type, name));
+            LOG.debug("Determined flag definition with type '%s' for '%s'".formatted(type, name));
             return new CommandFlagElement<>(this.lookupElement(type, name, true));
         }
     }

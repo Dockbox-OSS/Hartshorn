@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,7 @@ import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
-import org.dockbox.hartshorn.logging.ApplicationLogger;
-import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.slf4j.Logger;
 
 /**
  * The primary context for an application. This context is responsible for providing the application
@@ -50,12 +47,10 @@ import org.slf4j.Logger;
  * @since 0.4.0
  * @author Guus Lieben
  */
-@LogExclude
 public interface ApplicationContext extends
         HierarchicalComponentProvider,
         ApplicationPropertyHolder,
         ApplicationAwareContext,
-        ApplicationLogger,
         ExceptionHandler,
         ActivatorHolder,
         Scope,
@@ -95,11 +90,6 @@ public interface ApplicationContext extends
      * @see ApplicationEnvironment
      */
     ApplicationEnvironment environment();
-
-    @Override
-    default Logger log() {
-        return this.environment().log();
-    }
 
     /**
      * Indicates whether the application context is closed. A closed context cannot be used reliably to

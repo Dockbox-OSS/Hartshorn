@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.util.Identifiable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.inject.Inject;
 
@@ -40,6 +42,8 @@ import jakarta.inject.Inject;
  */
 public class CooldownExtension implements CommandExecutorExtension {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CooldownExtension.class);
+
     private final Map<Object, CooldownEntry> activeCooldowns = new ConcurrentHashMap<>();
     private final ApplicationContext applicationContext;
 
@@ -49,7 +53,7 @@ public class CooldownExtension implements CommandExecutorExtension {
     }
 
     @Override
-    public boolean extend(final CommandExecutorContext context) {
+    public boolean extend(CommandExecutorContext context) {
         return context.element().annotations().has(Cooldown.class);
     }
 
@@ -62,7 +66,7 @@ public class CooldownExtension implements CommandExecutorExtension {
 
         String id = this.id((Identifiable) sender, context);
         if (this.inCooldown(id)) {
-            context.applicationContext().log().debug("Executor with ID '%s' is in active cooldown, rejecting command execution of %s".formatted(id, context.command()));
+            LOG.debug("Executor with ID '%s' is in active cooldown, rejecting command execution of %s".formatted(id, context.command()));
             Message cooldownMessage = this.activeCooldownMessage();
             return ExtensionResult.reject(cooldownMessage);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,20 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jakarta.inject.Inject;
 
 public class CommandListenerImpl implements CommandListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CommandListenerImpl.class);
 
     private final ApplicationContext context;
     private final CommandGateway gateway;
@@ -72,10 +76,10 @@ public class CommandListenerImpl implements CommandListener {
         Runnable task = this.createTask();
 
         if (this.async()) {
-            this.context.log().debug("Performing startup task for command CLI asynchronously");
+            LOG.debug("Performing startup task for command CLI asynchronously");
             Executors.newSingleThreadExecutor().submit(task);
         } else {
-            this.context.log().debug("Performing startup task for command CLI on current thread");
+            LOG.debug("Performing startup task for command CLI on current thread");
             task.run();
         }
     }
@@ -89,7 +93,7 @@ public class CommandListenerImpl implements CommandListener {
                 InputStream input = this.input();
                 Scanner scanner = new Scanner(input)
         ) {
-            this.context.log().debug("Starting command CLI input listener");
+            LOG.debug("Starting command CLI input listener");
             while (this.running()) {
                 String next = scanner.nextLine();
                 try {

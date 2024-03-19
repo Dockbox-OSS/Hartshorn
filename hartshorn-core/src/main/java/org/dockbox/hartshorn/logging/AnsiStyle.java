@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,26 @@
 
 package org.dockbox.hartshorn.logging;
 
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+/**
+ * An enum that represents the ANSI style codes for console output.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
+public enum AnsiStyle {
+    BOLD("1"),
+    UNDERLINE("4"),
+    RESET("22");
 
-public class StackVisitingException extends ApplicationRuntimeException {
-    public StackVisitingException(String message) {
-        super(message);
+    private final String code;
+
+    AnsiStyle(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public String toString() {
+        return "\u001B[" + this.code + "m";
     }
 }

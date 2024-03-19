@@ -26,6 +26,8 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Condition which uses the primary {@link ValidateExpressionRuntime} to validate a given expression. The expression
@@ -49,6 +51,8 @@ import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
  * @since 0.4.12
  */
 public class ExpressionCondition implements Condition {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ExpressionCondition.class);
 
     /**
      * The global alias for the application context in the expression runtime. This should be the default alias for any
@@ -135,7 +139,7 @@ public class ExpressionCondition implements Condition {
     private void enhanceWithApplicationContext(ScriptRuntime runtime, ApplicationContext applicationContext) {
         if (runtime.globalVariables().containsKey(GLOBAL_APPLICATION_CONTEXT_NAME)) {
             if (runtime.globalVariables().get(GLOBAL_APPLICATION_CONTEXT_NAME) != applicationContext) {
-                applicationContext.log().warn("Runtime contains mismatched application context reference");
+                LOG.warn("Runtime contains mismatched application context reference");
             }
             // Ignore if the global applicationContext is equal to our active context
         }

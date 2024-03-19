@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.logging;
+package org.dockbox.hartshorn.application.environment.banner;
 
-public class Slf4jApplicationLogger extends CallerLookupApplicationLogger {
+import org.slf4j.Logger;
+
+/**
+ * A simple implementation of a console banner that can be used to print a banner to a given
+ * {@link Logger}.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
+public abstract class AbstractConsoleBanner implements Banner {
+
+    protected abstract Iterable<String> lines();
 
     @Override
-    public void enableDebugLogging(boolean active) {
-        // Not supported by SLF4J directly, so we do nothing. Specific implementations may support this.
-        log().warn("Changing level at runtime is not supported by SLF4J, please use a different application logger");
+    public void print(Logger logger) {
+        if (logger.isInfoEnabled()) {
+            logger.info(String.join("\n", this.lines()));
+        }
     }
 }

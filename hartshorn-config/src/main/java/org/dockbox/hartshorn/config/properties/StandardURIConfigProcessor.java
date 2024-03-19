@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,11 +29,15 @@ import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.util.GenericType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.inject.Singleton;
 
 @Singleton
 public class StandardURIConfigProcessor implements URIConfigProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StandardURIConfigProcessor.class);
 
     @Override
     public void process(ApplicationContext context, Set<ConfigurationURIContext> contexts) {
@@ -44,7 +48,7 @@ public class StandardURIConfigProcessor implements URIConfigProcessor {
             FileFormat format = this.lookupFileFormat(uri, source);
 
             if (format == null) {
-                context.log().error("Unknown file format: " + source + ", declared by " + uriContext.key().type().getSimpleName());
+                LOG.error("Unknown file format: " + source + ", declared by " + uriContext.key().type().getSimpleName());
                 return;
             }
 
@@ -54,11 +58,11 @@ public class StandardURIConfigProcessor implements URIConfigProcessor {
                         .read(uri, new GenericType<Map<String, Object>>() {})
                         .orElseGet(HashMap::new);
 
-                context.log().debug("Located " + cache.size() + " properties in " + uri.getPath());
+                LOG.debug("Located " + cache.size() + " properties in " + uri.getPath());
                 context.get(PropertyHolder.class).set(cache);
             }
             catch (ObjectMappingException e) {
-                context.log().error("Failed to read properties from " + uri.getPath(), e);
+                context.handle("Failed to read properties from " + uri.getPath(), e);
             }
         }
     }

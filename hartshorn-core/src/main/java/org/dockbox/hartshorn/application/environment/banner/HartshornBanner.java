@@ -16,8 +16,12 @@
 
 package org.dockbox.hartshorn.application.environment.banner;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.application.Hartshorn;
-import org.slf4j.Logger;
+import org.dockbox.hartshorn.logging.AnsiColor;
+import org.dockbox.hartshorn.logging.AnsiMessage;
+import org.dockbox.hartshorn.logging.AnsiStyle;
 
 /**
  * The default banner of Hartshorn. This banner is printed when the application starts if
@@ -27,22 +31,35 @@ import org.slf4j.Logger;
  *
  * @author Guus Lieben
  */
-public class HartshornBanner implements Banner {
+public class HartshornBanner extends AbstractConsoleBanner {
 
-    private static final String BANNER = """
-                 _   _            _       _                     \s
-                | | | | __ _ _ __| |_ ___| |__   ___  _ __ _ __ \s
-                | |_| |/ _` | '__| __/ __| '_ \\ / _ \\| '__| '_ \\\s
-                |  _  | (_| | |  | |_\\__ \\ | | | (_) | |  | | | |
-            ====|_| |_|\\__,_|_|===\\__|___/_|=|_|\\___/|_|==|_|=|_|====
-                                             -- Hartshorn v%s --
-            """.formatted(Hartshorn.VERSION);
+    private static final List<String> BANNER_LINES = List.of(
+            "",
+            "     _   _            _       _",
+            "    | | | | __ _ _ __| |_ ___| |__   ___  _ __ _ __",
+            "    | |_| |/ _` | '__| __/ __| '_ \\ / _ \\| '__| '_ \\",
+            "    |  _  | (_| | |  | |_\\__ \\ | | | (_) | |  | | | |",
+            AnsiMessage.of("====", AnsiColor.CYAN, AnsiStyle.BOLD)
+                    .append("|_| |_|\\__,_|_|")
+                    .append(AnsiMessage.of("===", AnsiColor.CYAN, AnsiStyle.BOLD))
+                    .append("\\__|___/_|")
+                    .append(AnsiMessage.of("=", AnsiColor.CYAN, AnsiStyle.BOLD))
+                    .append("|_|\\___/|_|")
+                    .append(AnsiMessage.of("==", AnsiColor.CYAN, AnsiStyle.BOLD))
+                    .append("|_|")
+                    .append(AnsiMessage.of("=", AnsiColor.CYAN, AnsiStyle.BOLD))
+                    .append("|_|")
+                    .append(AnsiMessage.of("====", AnsiColor.CYAN, AnsiStyle.BOLD))
+                    .toString(),
+            AnsiMessage.of("                                  ")
+                    .append(AnsiMessage.of("-< ", AnsiColor.WHITE))
+                    .append(AnsiMessage.of("Hartshorn v%s".formatted(Hartshorn.VERSION), AnsiColor.GREEN))
+                    .append(AnsiMessage.of(" >-\n", AnsiColor.WHITE))
+                    .toString()
+    );
 
     @Override
-    public void print(Logger logger) {
-        for (String line : BANNER.split("\n")) {
-            logger.info(line);
-        }
-        logger.info("");
+    protected Iterable<String> lines() {
+        return BANNER_LINES;
     }
 }

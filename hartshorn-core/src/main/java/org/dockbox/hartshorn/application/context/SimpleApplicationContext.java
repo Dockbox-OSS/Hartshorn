@@ -45,6 +45,8 @@ import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple implementation of the {@link ApplicationContext} interface. This implementation primarily delegates to individual
@@ -65,6 +67,8 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * @author Guus Lieben
  */
 public class SimpleApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleApplicationContext.class);
 
     protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
     private final DependencyGraphInitializer dependencyGraphInitializer;
@@ -89,15 +93,15 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         if (processor instanceof ComponentPostProcessor postProcessor && this.componentProvider() instanceof PostProcessingComponentProvider provider) {
             // Singleton binding is decided by the component provider, to allow for further optimization
             provider.postProcessor(postProcessor);
-            this.log().debug("Added %s for component post-processing with order %d".formatted(name, order));
+            LOG.debug("Added %s for component post-processing with order %d".formatted(name, order));
         }
         else if (processor instanceof ComponentPreProcessor preProcessor) {
             this.preProcessors.put(preProcessor.priority(), preProcessor);
             this.bind((Class<ComponentPreProcessor>) preProcessor.getClass()).singleton(preProcessor);
-            this.log().debug("Added %s for component pre-processing with order %d".formatted(name, order));
+            LOG.debug("Added %s for component pre-processing with order %d".formatted(name, order));
         }
         else {
-            this.log().warn("Unsupported component processor type [" + name + "]");
+            LOG.warn("Unsupported component processor type [" + name + "]");
         }
     }
 
@@ -109,7 +113,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
             provider.postProcessor(processor);
         }
         else {
-            this.log().warn("Lazy initialization of component processors is not supported by this component provider [for " + processor.getSimpleName() + "]");
+            LOG.warn("Lazy initialization of component processors is not supported by this component provider [for " + processor.getSimpleName() + "]");
         }
     }
 
@@ -118,7 +122,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         this.checkRunning();
 
         Collection<ComponentContainer<?>> containers = this.locator().containers();
-        this.log().debug("Located %d components".formatted(containers.size()));
+        LOG.debug("Located %d components".formatted(containers.size()));
 
         try {
             Collection<DependencyDeclarationContext<?>> declarationContexts = new ArrayList<>();
@@ -176,7 +180,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     protected void processComponents(Collection<ComponentContainer<?>> containers) {
         this.checkRunning();
         for (ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
-            this.log().debug("Processing %s components with registered processor %s".formatted(containers.size(), serviceProcessor.getClass().getSimpleName()));
+            LOG.debug("Processing %s components with registered processor %s".formatted(containers.size(), serviceProcessor.getClass().getSimpleName()));
             for (ComponentContainer<?> container : containers) {
                 this.processStandaloneComponent(container, serviceProcessor);
             }
@@ -189,7 +193,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     private void processStandaloneComponent(ComponentContainer<?> container, ComponentPreProcessor serviceProcessor) {
         TypeView<?> service = container.type();
         ComponentKey<?> key = ComponentKey.of(service.type());
-        this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
+        LOG.debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
         ComponentProcessingContext<?> context = new ComponentProcessingContext<>(
                 this, ComponentRequestContext.createForComponent(),
                 key, null, container.permitsProxying()

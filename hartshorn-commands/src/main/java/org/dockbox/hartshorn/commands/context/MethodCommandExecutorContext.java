@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
@@ -39,11 +40,15 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple implementation of {@link CommandExecutorContext} targeting {@link MethodView} based executors.
  */
 public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareContext implements CommandExecutorContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MethodCommandExecutorContext.class);
 
     private final MethodView<T, ?> method;
     private final TypeView<T> type;
@@ -86,7 +91,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
 
         this.parentAliases = new CopyOnWriteArrayList<>();
         if (parent != null) {
-            context.log().debug("Parent for executor context of " + method.qualifiedName() + " found, including parent aliases");
+            LOG.debug("Parent for executor context of " + method.qualifiedName() + " found, including parent aliases");
             this.parentAliases.addAll(List.of(parent.value()));
         }
         this.parameters = this.parameters();
@@ -178,7 +183,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
     @Override
     public List<String> suggestions(CommandSource source, String command, CommandParser parser) {
         String stripped = this.strip(command, false);
-        this.applicationContext().log().debug("Collecting suggestions for stripped input %s (was %s)".formatted(stripped, command));
+        LOG.debug("Collecting suggestions for stripped input %s (was %s)".formatted(stripped, command));
 
         List<CommandElement<?>> elements = this.definition().elements();
         List<String> tokens = new ArrayList<>(List.of(stripped.split(" ")));
@@ -205,11 +210,11 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
         }
 
         if (last == null) {
-            this.applicationContext().log().debug("Could not locate last command element to collect suggestions");
+            LOG.debug("Could not locate last command element to collect suggestions");
             return List.of();
         }
         Collection<String> suggestions = last.suggestions(source, String.join(" ", tokens));
-        this.applicationContext().log().debug("Found " + suggestions.size() + " suggestions");
+        LOG.debug("Found " + suggestions.size() + " suggestions");
         return List.copyOf(suggestions);
     }
 

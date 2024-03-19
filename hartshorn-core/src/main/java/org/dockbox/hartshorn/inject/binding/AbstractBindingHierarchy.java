@@ -16,14 +16,6 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.CompositeQualifier;
-import org.dockbox.hartshorn.inject.Provider;
-import org.dockbox.hartshorn.inject.TypeAwareProvider;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -34,6 +26,16 @@ import java.util.NavigableSet;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.CompositeQualifier;
+import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.inject.TypeAwareProvider;
+import org.dockbox.hartshorn.util.option.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A base implementation of a {@link BindingHierarchy}. This implementation tracks providers by priority, and allows
@@ -47,6 +49,8 @@ import java.util.stream.Collectors;
  * @author Guus Lieben
  */
 public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractBindingHierarchy.class);
 
     private final NavigableMap<Integer, Provider<T>> providers = new TreeMap<>(Collections.reverseOrder());
 
@@ -92,7 +96,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     public BindingHierarchy<T> add(int priority, Provider<T> provider) {
         // Default providers may be overwritten without further warnings
         if (this.priorityProviders().containsKey(priority) && priority != -1) {
-            this.applicationContext().log().warn(("There is already a provider for %s with priority %d. It will be overwritten! " +
+            LOG.warn(("There is already a provider for %s with priority %d. It will be overwritten! " +
                     "To avoid unexpected behavior, ensure the priority is not already present. Current hierarchy: %s").formatted(this.key()
                     .type().getSimpleName(), priority, this));
         }
@@ -101,7 +105,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     }
 
     @Override
-    public BindingHierarchy<T> addNext(final Provider<T> provider) {
+    public BindingHierarchy<T> addNext(Provider<T> provider) {
         int next = -1;
         if (!this.priorityProviders().isEmpty()) {
             next = this.priorityProviders().lastKey()+1;
@@ -110,21 +114,21 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     }
 
     @Override
-    public BindingHierarchy<T> merge(final BindingHierarchy<T> hierarchy) {
+    public BindingHierarchy<T> merge(BindingHierarchy<T> hierarchy) {
         BindingHierarchy<T> merged = new NativePrunableBindingHierarchy<>(this.key(), this.applicationContext());
         // Low priority, other
-        for (final Entry<Integer, Provider<T>> entry : hierarchy) {
+        for (Entry<Integer, Provider<T>> entry : hierarchy) {
             merged.add(entry.getKey(), entry.getValue());
         }
         // High priority, self
-        for (final Entry<Integer, Provider<T>> entry : this) {
+        for (Entry<Integer, Provider<T>> entry : this) {
             merged.add(entry.getKey(), entry.getValue());
         }
         return merged;
     }
 
     @Override
-    public Option<Provider<T>> get(final int priority) {
+    public Option<Provider<T>> get(int priority) {
         return Option.of(this.priorityProviders().getOrDefault(priority, null));
     }
 

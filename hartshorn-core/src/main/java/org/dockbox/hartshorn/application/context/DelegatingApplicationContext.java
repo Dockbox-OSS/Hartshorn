@@ -50,6 +50,8 @@ import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link ApplicationContext} implementation that delegates to a {@link ComponentLocator} and {@link ComponentProvider}.
@@ -82,6 +84,8 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public abstract class DelegatingApplicationContext extends DefaultApplicationAwareContext implements
         ApplicationContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DelegatingApplicationContext.class);
 
     private final transient Properties environmentValues;
     private final transient ComponentProvider componentProvider;
@@ -175,8 +179,8 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public ExceptionHandler printStacktraces(boolean stacktraces) {
-        return this.environment().printStacktraces(stacktraces);
+    public ExceptionHandler printStackTraces(boolean stacktraces) {
+        return this.environment().printStackTraces(stacktraces);
     }
 
     @Override
@@ -223,11 +227,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public void enableDebugLogging(boolean active) {
-        this.environment().enableDebugLogging(active);
-    }
-
-    @Override
     public void close() {
         if (this.isClosed()) {
             throw new ContextClosedException(ApplicationContext.class);
@@ -235,14 +234,14 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         ApplicationEnvironment environment = this.environment();
         if (environment instanceof ObservableApplicationEnvironment observable) {
             Set<LifecycleObserver> observers = observable.observers(LifecycleObserver.class);
-            this.log().info("Runtime shutting down, notifying {} observers", observers.size());
+            LOG.info("Runtime shutting down, notifying {} observers", observers.size());
             for (LifecycleObserver observer : observers) {
-                this.log().debug("Notifying " + observer.getClass().getSimpleName() + " of shutdown");
+                LOG.debug("Notifying " + observer.getClass().getSimpleName() + " of shutdown");
                 try {
                     observer.onExit(this);
                 }
                 catch (Throwable e) {
-                    this.log().error("Error notifying " + observer.getClass().getSimpleName() + " of shutdown", e);
+                    handle("Error notifying " + observer.getClass().getSimpleName() + " of shutdown", e);
                 }
             }
             this.isClosed = true;

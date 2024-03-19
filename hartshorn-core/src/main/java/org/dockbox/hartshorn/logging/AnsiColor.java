@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,32 @@
 
 package org.dockbox.hartshorn.logging;
 
-import org.slf4j.Logger;
-
 /**
- * The {@link ApplicationLogger} is a wrapper for the {@link Logger} class. This allows for modification and validation
- * of the logger used throughout an active application.
+ * An enum that represents the ANSI color codes for console output.
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
- * @since 0.4.8
  */
-@LogExclude
-public interface ApplicationLogger {
+public enum AnsiColor {
+    BLACK("30"),
+    RED("31"),
+    GREEN("32"),
+    YELLOW("33"),
+    BLUE("34"),
+    MAGENTA("35"),
+    CYAN("36"),
+    WHITE("37"),
+    RESET("39");
 
-    /**
-     * Gets the logger.
-     * @return The logger.
-     */
-    Logger log();
+    private final String code;
 
-    /**
-     * Sets whether the logger should log at debug level.
-     * @param active Whether the logger should log at debug level.
-     */
-    void enableDebugLogging(boolean active);
+    AnsiColor(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public String toString() {
+        return "\u001B[" + this.code + "m";
+    }
 }

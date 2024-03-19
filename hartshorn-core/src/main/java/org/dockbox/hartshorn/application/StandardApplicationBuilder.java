@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.application;
 
-import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Modifier;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -141,21 +141,14 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         }
         this.state = FactoryState.CREATING;
 
-        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-        String applicationName = this.buildContext.mainClass().getSimpleName();
-        this.buildContext.logger()
-                .info("Starting application " + applicationName + " on " + this.host(runtimeMXBean)
-                        + " using Java " + runtimeMXBean.getVmVersion() + " with PID " + runtimeMXBean.getPid());
-
+        ApplicationStartupLogger logger = new ApplicationStartupLogger(this.buildContext);
+        logger.logStartup();
         long applicationStartTimestamp = System.currentTimeMillis();
         ApplicationContext applicationContext = this.applicationContextConstructor.createContext();
         long applicationStartedTimestamp = System.currentTimeMillis();
 
-        double startupTime = ((double) (applicationStartedTimestamp - applicationStartTimestamp)) / 1000;
-        double jvmUptime = ((double) runtimeMXBean.getUptime()) / 1000;
-
-        this.buildContext.logger()
-                .info("Started " + applicationName + " in " + startupTime + " seconds (JVM running for " + jvmUptime + ")");
+        final Duration startupTime = Duration.ofMillis(applicationStartedTimestamp - applicationStartTimestamp);
+        logger.logStarted(startupTime);
 
         this.state = FactoryState.WAITING;
 

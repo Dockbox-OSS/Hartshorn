@@ -39,7 +39,7 @@ public enum BitwiseTokenType implements EnumTokenType {
      */
     XOR(DefaultTokenCharacter.CARET),
     /**
-     * The bitwise AND operator (&). AND is a binary operator that returns true if both bits are 1.
+     * The bitwise AND operator (&amp;). AND is a binary operator that returns true if both bits are 1.
      *
      * @see <a href="https://mathworld.wolfram.com/AND.html">Worlfram MathWorld: AND</a>
      */
@@ -68,19 +68,19 @@ public enum BitwiseTokenType implements EnumTokenType {
     SHIFT_RIGHT(builder -> builder.repeats(DefaultTokenCharacter.GREATER)),
 
     /**
-     * The bitwise shift left operator (<<). This operator shifts the bits of the first operand to the left
+     * The bitwise shift left operator (&lt;&lt;). This operator shifts the bits of the first operand to the left
      * by the number of positions specified by the second operand.
      *
-     * <p>For example, 8 << 1 would result in 16, as the bits of 8 (1000) are shifted to the left by 1
+     * <p>For example, 8 &lt;&lt; 1 would result in 16, as the bits of 8 (1000) are shifted to the left by 1
      * position, resulting in 10000.
      */
     SHIFT_LEFT(builder -> builder.repeats(DefaultTokenCharacter.LESS)),
 
     /**
-     * The logical shift right operator (>>>). This operator shifts the bits of the first operand to the right
+     * The logical shift right operator (&lt;&lt;&lt;). This operator shifts the bits of the first operand to the right
      * by the number of positions specified by the second operand, and fills the leftmost bits with 0s.
      *
-     * <p>For example, 1011 >>> 1 would result in 0101, as the least significant bit (1) is shifted to the
+     * <p>For example, 1011 &lt;&lt;&lt; 1 would result in 0101, as the least significant bit (1) is shifted to the
      * right by 1 position, and the leftmost bit is filled with a 0.
      */
     LOGICAL_SHIFT_RIGHT(builder -> builder.combines(DefaultTokenCharacter.GREATER, DefaultTokenCharacter.GREATER, DefaultTokenCharacter.GREATER)),
