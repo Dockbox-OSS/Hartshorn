@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.application.environment;
 
-import org.dockbox.hartshorn.discovery.DiscoveryService;
-import org.dockbox.hartshorn.discovery.ServiceDiscoveryException;
+import org.dockbox.hartshorn.spi.DiscoveryService;
+import org.dockbox.hartshorn.spi.ServiceDiscoveryException;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.ProxyOrchestratorLoader;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;

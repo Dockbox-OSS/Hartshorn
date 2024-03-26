@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.discovery;
+package org.dockbox.hartshorn.spi;
 
 import com.google.common.collect.ImmutableList;
 import com.google.testing.compile.Compilation;
@@ -41,7 +41,7 @@ public class DiscoveryServiceTests {
     private static final String IMPLEMENTATION_QUALIFIED_NAME = "%s.%s".formatted(DiscoveryServiceTests.class.getPackageName(), IMPLEMENTATION_NAME);
     private static final String HELLO_WORLD_MESSAGE = "Hello World!";
     private static final String HELLO_WORLD_SERVICE_IMPLEMENTATION_SOURCE = """
-            package org.dockbox.hartshorn.discovery;
+            package org.dockbox.hartshorn.spi;
 
             public class HelloWorldServiceImplementation implements HelloWorldService {
                         
@@ -104,7 +104,7 @@ public class DiscoveryServiceTests {
     @Test
     void testDiscoveryFailsIfImplementationClassDoesNotExist() {
         Assertions.assertThrows(ServiceDiscoveryException.class, () -> {
-            DiscoveryService.instance().override(HelloWorldService.class, "org.dockbox.hartshorn.discovery.DoesNotExist");
+            DiscoveryService.instance().override(HelloWorldService.class, "org.dockbox.hartshorn.spi.DoesNotExist");
             DiscoveryService.instance().discover(HelloWorldService.class);
         });
     }
