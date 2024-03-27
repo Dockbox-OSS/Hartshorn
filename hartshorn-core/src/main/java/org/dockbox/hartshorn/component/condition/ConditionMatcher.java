@@ -58,10 +58,27 @@ public final class ConditionMatcher implements ContextCarrier {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * Determines whether enclosing conditions should be included when matching conditions. If this method
+     * returns {@code true}, the matcher will also match any conditions that are declared on enclosing elements
+     * of the given element. For example, if the given element is a method, this method will also match any
+     * conditions that are declared on the class that declares the method.
+     *
+     * @return {@code true} if enclosing conditions should be included, {@code false} otherwise
+     */
     public boolean includeEnclosingConditions() {
         return this.includeEnclosingConditions;
     }
 
+    /**
+     * Sets whether enclosing conditions should be included when matching conditions. If this method is called
+     * with {@code true}, the matcher will also match any conditions that are declared on enclosing elements
+     * of the given element. For example, if the given element is a method, this method will also match any
+     * conditions that are declared on the class that declares the method.
+     *
+     * @param includeEnclosingConditions {@code true} if enclosing conditions should be included, {@code false} otherwise
+     * @return this matcher
+     */
     public ConditionMatcher includeEnclosingConditions(boolean includeEnclosingConditions) {
         this.includeEnclosingConditions = includeEnclosingConditions;
         return this;

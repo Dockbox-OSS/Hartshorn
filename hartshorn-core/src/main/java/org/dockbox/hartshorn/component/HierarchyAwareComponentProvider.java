@@ -139,7 +139,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return this;
     }
 
-    public <T> Option<ObjectContainer<T>> provide(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
+    protected <T> Option<ObjectContainer<T>> provide(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
         Option<BindingHierarchy<T>> hierarchy = Option.of(this.hierarchy(key, true));
         if (hierarchy.present()) {
             Provider<T> provider = key.strategy().selectProvider(hierarchy.get());
@@ -221,7 +221,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         }
     }
 
-    public <T> Option<ObjectContainer<T>> createContextualInstanceContainer(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
+    protected <T> Option<ObjectContainer<T>> createContextualInstanceContainer(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
         return new ContextDrivenProvider<>(key).provide(this.applicationContext(), requestContext);
     }
 
