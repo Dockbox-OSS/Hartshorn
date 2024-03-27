@@ -42,7 +42,7 @@
             </dependency>
             <dependency>
                 <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-discovery</artifactId>
+                <artifactId>hartshorn-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -10,8 +10,9 @@
         <relativePath>../hartshorn-assembly/parent/pom.parent.xml</relativePath>
     </parent>
 
-    <name>Hartshorn Discovery</name>
-    <artifactId>hartshorn-discovery</artifactId>
+    <name>Hartshorn Service Provider Interface</name>
+    <description>Customizable SPI wrapper for the Hartshorn Framework</description>
+    <artifactId>hartshorn-spi</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>

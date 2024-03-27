@@ -25,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-discovery</artifactId>
+            <artifactId>hartshorn-spi</artifactId>
         </dependency>
 
         <dependency>
