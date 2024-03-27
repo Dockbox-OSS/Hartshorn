@@ -21,6 +21,17 @@ import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 
+/**
+ * A pre-processor that registers lifecycle observers if the application environment is itself an
+ * observable environment. Will register any observer that is a child of the {@link Observer} interface.
+ *
+ * @see LifecycleObservable
+ * @see Observer
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public class LifecycleObserverPreProcessor extends ComponentPreProcessor {
 
     @Override
