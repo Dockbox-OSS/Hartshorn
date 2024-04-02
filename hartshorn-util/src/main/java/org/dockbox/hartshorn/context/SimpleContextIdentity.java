@@ -26,7 +26,7 @@ package org.dockbox.hartshorn.context;
  *
  * @since 0.5.0
  */
-public class SimpleContextIdentity<T extends Context> implements ContextIdentity<T> {
+public class SimpleContextIdentity<T extends ContextView> implements ContextIdentity<T> {
 
     private final Class<T> type;
     private final String name;

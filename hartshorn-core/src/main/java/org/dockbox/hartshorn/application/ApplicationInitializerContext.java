@@ -41,7 +41,7 @@ public class ApplicationInitializerContext<I> extends AbstractSingleElementConte
      * @return The current context.
      */
     public ApplicationInitializerContext<I> initializeInitial() {
-        this.add(new DefaultBindingConfigurerContext());
+        this.addContext(new DefaultBindingConfigurerContext());
         return this;
     }
 

@@ -24,9 +24,9 @@ import java.lang.annotation.Target;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 
 /**
- * Annotation for injecting a {@link org.dockbox.hartshorn.context.Context} into a class. The context is
- * obtained through the responsible {@link ApplicationContext}. If the
- * context does not exist in the active application context, the injected value will be {@code null}.
+ * Annotation for injecting a {@link org.dockbox.hartshorn.context.ContextView context} into a class. The
+ * context is obtained through the responsible {@link ApplicationContext}. If the context does not exist
+ * in the active application context, the injected value will be {@code null}.
  *
  * @author Guus Lieben
  * @since 0.4.7

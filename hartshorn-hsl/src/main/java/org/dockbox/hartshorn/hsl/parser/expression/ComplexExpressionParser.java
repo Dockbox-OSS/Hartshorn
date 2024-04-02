@@ -408,7 +408,7 @@ public class ComplexExpressionParser {
     }
 
     private boolean containedInFunctionContext(Function<FunctionParserContext, Boolean> rule) {
-        Option<FunctionParserContext> context = this.parser.first(FunctionParserContext.class);
+        Option<FunctionParserContext> context = this.parser.firstContext(FunctionParserContext.class);
         if (context.absent()) {
             return false;
         }

@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,7 @@ import jakarta.inject.Inject;
 
 /**
  * Acts as a composite between {@link Inject} and {@link Test}. This allows test method parameters to be injected
- * into the test method. Note that this will inject on provision-basis and will not inject {@link Context} types.
+ * into the test method. Note that this will inject on provision-basis and will not inject {@link ContextView} types.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

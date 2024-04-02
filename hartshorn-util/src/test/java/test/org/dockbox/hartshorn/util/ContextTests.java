@@ -16,16 +16,17 @@
 
 package test.org.dockbox.hartshorn.util;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextIdentity;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.context.DefaultNamedContext;
 import org.dockbox.hartshorn.context.SimpleContextIdentity;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 public class ContextTests {
 
@@ -34,10 +35,10 @@ public class ContextTests {
         Context context = new TestContext();
         Context child = new TestContext();
 
-        context.add(child);
+        context.addContext(child);
 
         ContextIdentity<TestContext> key = new SimpleContextIdentity<>(TestContext.class);
-        Option<TestContext> first = context.first(key);
+        Option<TestContext> first = context.firstContext(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
@@ -47,10 +48,10 @@ public class ContextTests {
         Context context = new TestContext();
         Context child = new TestContext();
 
-        context.add(child);
+        context.addContext(child);
 
         ContextIdentity<TestContext> key = new SimpleContextIdentity<>(TestContext.class);
-        List<TestContext> all = context.all(key);
+        List<TestContext> all = context.contexts(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }
@@ -60,10 +61,10 @@ public class ContextTests {
         Context context = new TestContext();
         NamedTestContext named = new NamedTestContext();
 
-        context.add(named);
+        context.addContext(named);
 
-        ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
-        Option<Context> first = context.first(key);
+        ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
+        Option<ContextView> first = context.firstContext(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
     }
@@ -73,10 +74,10 @@ public class ContextTests {
         Context context = new TestContext();
         NamedTestContext named = new NamedTestContext();
 
-        context.add(named);
+        context.addContext(named);
 
         ContextIdentity<NamedTestContext> key = new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
-        Option<NamedTestContext> first = context.first(key);
+        Option<NamedTestContext> first = context.firstContext(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
     }
@@ -84,12 +85,12 @@ public class ContextTests {
     @Test
     void testManuallyNamedContextFirstByName() {
         Context context = new TestContext();
-        Context child = new TestContext();
+        ContextView child = new TestContext();
 
-        context.add(NamedTestContext.NAME, child);
+        context.addContext(NamedTestContext.NAME, child);
 
-        ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
-        Option<Context> first = context.first(key);
+        ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
+        Option<ContextView> first = context.firstContext(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
@@ -99,10 +100,10 @@ public class ContextTests {
         Context context = new TestContext();
         NamedTestContext named = new NamedTestContext();
 
-        context.add(named);
+        context.addContext(named);
 
-        ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
-        List<Context> all = context.all(key);
+        ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
+        List<ContextView> all = context.contexts(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }
@@ -112,10 +113,10 @@ public class ContextTests {
         Context context = new TestContext();
         NamedTestContext named = new NamedTestContext();
 
-        context.add(named);
+        context.addContext(named);
 
         ContextIdentity<NamedTestContext> key = new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
-        List<NamedTestContext> all = context.all(key);
+        List<NamedTestContext> all = context.contexts(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }
@@ -123,12 +124,12 @@ public class ContextTests {
     @Test
     void testManuallyNamedContextAllByName() {
         Context context = new TestContext();
-        Context child = new TestContext();
+        ContextView child = new TestContext();
 
-        context.add(NamedTestContext.NAME, child);
+        context.addContext(NamedTestContext.NAME, child);
 
-        ContextIdentity<Context> key = new SimpleContextIdentity<>(Context.class, NamedTestContext.NAME);
-        List<Context> all = context.all(key);
+        ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
+        List<ContextView> all = context.contexts(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }

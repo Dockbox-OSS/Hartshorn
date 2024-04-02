@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-
-import java.util.Set;
 
 /**
  * A proxy context container is a {@link Context} implementation that acts as a temporary container for
@@ -38,30 +39,27 @@ public class ProxyContextContainer extends DefaultContext {
         this.onModify = onModify;
     }
 
-    /**
-     * Returns all contexts that are stored in this container.
-     *
-     * @return all contexts
-     */
-    public Set<Context> contexts() {
+    @Override
+    public Set<ContextView> unnamedContexts() {
+        // Change access level to public
         return super.unnamedContexts();
     }
 
     @Override
-    public MultiMap<String, Context> namedContexts() {
+    public MultiMap<String, ContextView> namedContexts() {
         // Change access level to public
         return super.namedContexts();
     }
 
     @Override
-    public <C extends Context> void add(C context) {
-        super.add(context);
+    public <C extends ContextView> void addContext(C context) {
+        super.addContext(context);
         this.onModify.run();
     }
 
     @Override
-    public <C extends Context> void add(String name, C context) {
-        super.add(name, context);
+    public <C extends ContextView> void addContext(String name, C context) {
+        super.addContext(name, context);
         this.onModify.run();
     }
 }

@@ -48,7 +48,7 @@ public class ContextConfiguringComponentProcessorTests {
         Assertions.assertTrue(applicationContext.environment().proxyOrchestrator().isProxy(emptyComponent));
 
         Proxy<EmptyComponent> component = (Proxy<EmptyComponent>) emptyComponent;
-        Option<SimpleContext> context = component.manager().first(ContextKey.of(SimpleContext.class));
+        Option<SimpleContext> context = component.manager().firstContext(ContextKey.of(SimpleContext.class));
         Assertions.assertTrue(context.present());
         Assertions.assertEquals("Foo", context.get().value());
     }
@@ -61,7 +61,7 @@ public class ContextConfiguringComponentProcessorTests {
         Assertions.assertNotNull(contextComponent);
         Assertions.assertFalse(applicationContext.environment().proxyOrchestrator().isProxy(contextComponent));
 
-        Option<SimpleContext> context = contextComponent.first(ContextKey.of(SimpleContext.class));
+        Option<SimpleContext> context = contextComponent.firstContext(ContextKey.of(SimpleContext.class));
         Assertions.assertTrue(context.present());
         Assertions.assertEquals("Foo", context.get().value());
     }

@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextIdentity;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.context.ProvisionContext;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
@@ -78,32 +79,37 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
     }
 
     @Override
-    public <C extends Context> void add(C context) {
-        this.context.add(context);
+    public <C extends ContextView> void addContext(C context) {
+        this.context.addContext(context);
     }
 
     @Override
-    public <C extends Context> void add(String name, C context) {
-        this.context.add(name, context);
+    public <C extends ContextView> void addContext(String name, C context) {
+        this.context.addContext(name, context);
     }
 
     @Override
-    public List<Context> all() {
-        return this.context.all();
+    public ContextView contextView() {
+        return this.context.contextView();
     }
 
     @Override
-    public <C extends Context> Option<C> first(ContextIdentity<C> key) {
-        return this.context.first(key);
+    public List<ContextView> contexts() {
+        return this.context.contexts();
     }
 
     @Override
-    public <C extends Context> List<C> all(ContextIdentity<C> key) {
-        return this.context.all(key);
+    public <C extends ContextView> Option<C> firstContext(ContextIdentity<C> key) {
+        return this.context.firstContext(key);
     }
 
     @Override
-    public void copyTo(Context context) {
-        this.context.copyTo(context);
+    public <C extends ContextView> List<C> contexts(ContextIdentity<C> key) {
+        return this.context.contexts(key);
+    }
+
+    @Override
+    public void copyContextTo(Context context) {
+        this.context.copyContextTo(context);
     }
 }

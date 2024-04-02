@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.application.context;
 
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  */
 public class ContextClosedException extends ApplicationRuntimeException {
 
-    public ContextClosedException(Class<? extends Context> type) {
+    public ContextClosedException(Class<? extends ContextView> type) {
         super("Context (" + type.getSimpleName() + ") is already closed.");
     }
 }

@@ -64,7 +64,7 @@ public class CommandParserImpl implements CommandParser {
     @Override
     public Option<CommandContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException {
         ApplicationContext applicationContext = context.applicationContext();
-        Option<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
+        Option<CommandDefinitionContext> container = context.firstContext(CommandDefinitionContext.class);
         if (container.absent()) {
             return Option.empty();
         }

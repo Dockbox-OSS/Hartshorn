@@ -25,7 +25,7 @@ public abstract class PropertyAwareComponentPostProcessor extends ComponentPostP
 
     protected void verifyPropertiesAvailable(ApplicationContext context, PropertyHolder propertyHolder) throws ObjectMappingException {
         if (propertyHolder.properties().isEmpty()) {
-            ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
+            ConfigurationURIContextList uriContextList = context.firstContext(ConfigurationURIContextList.CONTEXT_KEY).get();
             URIConfigProcessor configProcessor = context.get(URIConfigProcessor.class);
             configProcessor.process(context, uriContextList.uris());
         }

@@ -47,7 +47,7 @@ public class ComponentPopulationTests {
     @Test
     void testContextFieldPopulation() {
         SampleContext sampleContext = new SampleContext();
-        this.applicationContext.add(sampleContext);
+        this.applicationContext.addContext(sampleContext);
 
         ComponentPopulationStrategy strategy = InjectPopulationStrategy.create(Customizer.useDefaults())
                 .initialize(SimpleSingleElementContext.create(this.applicationContext));
@@ -80,7 +80,7 @@ public class ComponentPopulationTests {
     @Test
     void testInjectMixedMethodPopulation() {
         SampleContext sampleContext = new SampleContext();
-        this.applicationContext.add(sampleContext);
+        this.applicationContext.addContext(sampleContext);
 
         ComponentPopulationStrategy strategy = InjectPopulationStrategy.create(Customizer.useDefaults())
                 .initialize(SimpleSingleElementContext.create(this.applicationContext));

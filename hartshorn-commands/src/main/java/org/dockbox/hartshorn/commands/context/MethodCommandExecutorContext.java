@@ -87,7 +87,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
             this.isChild = false;
         }
 
-        this.add(new CommandDefinitionContextImpl(this.applicationContext(), converterRegistry, this.command(), this.method()));
+        this.addContext(new CommandDefinitionContextImpl(this.applicationContext(), converterRegistry, this.command(), this.method()));
 
         this.parentAliases = new CopyOnWriteArrayList<>();
         if (parent != null) {
@@ -219,7 +219,7 @@ public class MethodCommandExecutorContext<T> extends DefaultApplicationAwareCont
     }
 
     private CommandDefinitionContext definition() {
-        Option<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
+        Option<CommandDefinitionContext> definition = this.firstContext(CommandDefinitionContext.class);
         if (definition.absent()) {
             throw new DefinitionContextLostException();
         }

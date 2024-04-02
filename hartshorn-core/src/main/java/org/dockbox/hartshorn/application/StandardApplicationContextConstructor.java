@@ -104,7 +104,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         this.enhanceTypeReferenceCollectorContext(initializerContext, environment, collectorContext, activators);
 
         ServiceActivatorContext serviceActivatorContext = new ServiceActivatorContext(applicationContext, activators);
-        applicationContext.add(serviceActivatorContext);
+        applicationContext.addContext(serviceActivatorContext);
 
         Set<ServiceActivator> serviceActivatorAnnotations = activators.stream()
                 .map(environment.introspector()::introspect)
@@ -113,7 +113,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
 
 
         this.buildContext.logger().debug("Registering {} type reference collectors to application context", collectorContext.collectors().size());
-        applicationContext.add(collectorContext);
+        applicationContext.addContext(collectorContext);
 
         Set<Class<? extends ComponentProcessor>> processorTypes = serviceActivatorAnnotations.stream()
                 .flatMap(serviceActivator -> Arrays.stream(serviceActivator.processors()))

@@ -71,7 +71,7 @@ public class EnvironmentTypeCollector {
      * @param <T> the type of the elements in the collection
      */
     public <T> Collection<TypeView<? extends T>> types(Predicate<TypeView<?>> predicate) {
-        Option<TypeReferenceCollectorContext> collectorContext = this.environment.applicationContext().first(TypeReferenceCollectorContext.class);
+        Option<TypeReferenceCollectorContext> collectorContext = this.environment.applicationContext().firstContext(TypeReferenceCollectorContext.class);
         if (collectorContext.absent()) {
             LOG.warn("TypeReferenceCollectorContext not available, falling back to no-op type lookup");
             return Collections.emptyList();

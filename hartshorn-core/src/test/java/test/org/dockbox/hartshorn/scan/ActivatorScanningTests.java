@@ -32,7 +32,7 @@ public class ActivatorScanningTests {
 
     @InjectTest
     void testPrefixFromActivatorIsRegistered(ApplicationContext applicationContext) {
-        Option<TypeReferenceCollectorContext> contextCandidate = applicationContext.first(TypeReferenceCollectorContext.class);
+        Option<TypeReferenceCollectorContext> contextCandidate = applicationContext.firstContext(TypeReferenceCollectorContext.class);
         Assertions.assertTrue(contextCandidate.present());
 
         TypeReferenceCollectorContext context = contextCandidate.get();

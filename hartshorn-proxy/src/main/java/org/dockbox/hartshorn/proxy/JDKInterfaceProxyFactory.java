@@ -77,8 +77,8 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     protected Option<T> createProxy(CheckedFunction<ProxyMethodInterceptor<T>, Option<T>> instantiate) throws ApplicationException {
         LazyProxyManager<T> manager = new LazyProxyManager<>(this);
 
-        this.contextContainer().contexts().forEach(manager::add);
-        this.contextContainer().namedContexts().forEach(manager::add);
+        this.contextContainer().contexts().forEach(manager::addContext);
+        this.contextContainer().namedContexts().forEach(manager::addContext);
 
         ProxyMethodInterceptor<T> interceptor = new ProxyAdvisorMethodInterceptor<>(manager, this.orchestrator());
 

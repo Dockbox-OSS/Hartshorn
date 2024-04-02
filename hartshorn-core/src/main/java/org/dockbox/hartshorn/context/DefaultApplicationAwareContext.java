@@ -65,11 +65,11 @@ public abstract class DefaultApplicationAwareContext extends DefaultProvisionCon
     }
 
     @Override
-    public <C extends Context> Option<C> first(ContextIdentity<C> key) {
-        return super.first(key).orCompute(() -> {
+    public <C extends ContextView> Option<C> firstContext(ContextIdentity<C> key) {
+        return super.firstContext(key).orCompute(() -> {
             if (key instanceof ContextKey<C> contextKey) {
                 C context = contextKey.create(this.applicationContext);
-                this.add(context);
+                this.addContext(context);
                 return context;
             }
             return null;

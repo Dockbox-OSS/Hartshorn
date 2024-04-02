@@ -25,8 +25,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -69,7 +69,7 @@ public final class ConditionMatcher implements ContextCarrier {
 
     /**
      * Matches the {@link RequiresCondition} annotations of the given {@link AnnotatedElementView}, providing
-     * any additional {@link Context} instances to the {@link ConditionContext} that is used to match the
+     * any additional {@link ContextView} instances to the {@link ConditionContext} that is used to match the
      * {@link Condition condition implementations}. If any of the conditions does not match, this method will
      * return {@code false}. If all conditions match, this method will return {@code true}.
      *
@@ -81,7 +81,7 @@ public final class ConditionMatcher implements ContextCarrier {
      * @param contexts                the additional contexts to provide to the condition context
      * @return {@code true} if all conditions match, {@code false} otherwise
      */
-    public boolean match(AnnotatedElementView annotatedElementContext, Context... contexts) {
+    public boolean match(AnnotatedElementView annotatedElementContext, ContextView... contexts) {
         SequencedCollection<AnnotatedElementView> views = this.includeEnclosingConditions()
                 ? this.collectEnclosedViews(annotatedElementContext)
                 : List.of(annotatedElementContext);
@@ -106,7 +106,7 @@ public final class ConditionMatcher implements ContextCarrier {
 
     /**
      * Matches the given {@link ConditionDeclaration condition declarations} against the given
-     * {@link AnnotatedElementView}, providing any additional {@link Context} instances to the
+     * {@link AnnotatedElementView}, providing any additional {@link ContextView} instances to the
      * {@link ConditionContext} that is used to match the {@link Condition condition implementations}.
      * If any of the conditions does not match, this method will return {@code false}. If all
      * conditions match, this method will return {@code true}.
@@ -116,7 +116,7 @@ public final class ConditionMatcher implements ContextCarrier {
      * @param contexts                the additional contexts to provide to the condition context
      * @return {@code true} if all conditions match, {@code false} otherwise
      */
-    public boolean match(AnnotatedElementView annotatedElementContext, Set<ConditionDeclaration> declarationContexts, Context... contexts) {
+    public boolean match(AnnotatedElementView annotatedElementContext, Set<ConditionDeclaration> declarationContexts, ContextView... contexts) {
         for(ConditionDeclaration declarationContext : declarationContexts) {
             if(!this.match(annotatedElementContext, declarationContext, contexts)) {
                 return false;
@@ -127,7 +127,7 @@ public final class ConditionMatcher implements ContextCarrier {
 
     /**
      * Matches the given {@link ConditionDeclaration} against the given {@link AnnotatedElementView}, providing any
-     * additional {@link Context} instances to the {@link ConditionContext} that is used to match the {@link Condition
+     * additional {@link ContextView} instances to the {@link ConditionContext} that is used to match the {@link Condition
      * condition implementations}. If the condition does not match, this method will return {@code false}. If the
      * condition matches, this method will return {@code true}.
      *
@@ -136,11 +136,11 @@ public final class ConditionMatcher implements ContextCarrier {
      * @param contexts           the additional contexts to provide to the condition context
      * @return {@code true} if the condition matches, {@code false} otherwise
      */
-    public boolean match(AnnotatedElementView element, ConditionDeclaration declarationContext, Context... contexts) {
+    public boolean match(AnnotatedElementView element, ConditionDeclaration declarationContext, ContextView... contexts) {
         Condition condition = declarationContext.condition(this.applicationContext());
         ConditionContext context = new ConditionContext(this.applicationContext, element, declarationContext);
-        for(Context child : contexts) {
-            context.add(child);
+        for(ContextView child : contexts) {
+            context.addContext(child);
         }
         ConditionResult result = condition.matches(context);
         if(!result.matches() && declarationContext.failOnNoMatch()) {

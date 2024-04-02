@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.DefaultContext;
 
 /**
@@ -62,8 +62,8 @@ public class DefaultBindingConfigurerContext extends DefaultContext {
      * @param context The context to access the {@link DefaultBindingConfigurerContext} from.
      * @param configurer The configurer to compose with the configurer that is currently configured in the context.
      */
-    public static void compose(Context context, DefaultBindingConfigurer configurer) {
-        context.first(DefaultBindingConfigurerContext.class)
+    public static void compose(ContextView context, DefaultBindingConfigurer configurer) {
+        context.firstContext(DefaultBindingConfigurerContext.class)
                 .peek(bindingConfigurerContext -> bindingConfigurerContext.compose(configurer));
     }
 }
