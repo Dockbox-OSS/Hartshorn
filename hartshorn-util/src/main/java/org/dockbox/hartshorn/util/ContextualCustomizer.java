@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextView;
 
 /**
  * A functional interface for customizing objects with additional context. This interface is similar to
- * {@link Customizer} but allows for {@link Context} to be provided alongside the configuration target.
+ * {@link Customizer} but allows for {@link ContextView context} to be provided alongside the configuration
+ * target.
  *
  * @author Guus Lieben
  *
@@ -35,7 +36,7 @@ public interface ContextualCustomizer<T> {
      * @param context The context to use for configuration.
      * @param target The object to configure.
      */
-    void configure(Context context, T target);
+    void configure(ContextView context, T target);
 
     /**
      * Returns a customizer that composes this customizer with the given customizer. When the returned customizer is

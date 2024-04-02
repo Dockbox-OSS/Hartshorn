@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.populate.ComponentInjectionPoint;
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -44,7 +44,7 @@ public final class IntrospectionDependencyResolver {
 
     public Set<ComponentKey<?>> resolveDependencies(ExecutableElementView<?> executable) {
         return executable.parameters().all().stream()
-                .filter(parameter -> !parameter.type().isChildOf(Context.class))
+                .filter(parameter -> !parameter.type().isChildOf(ContextView.class))
                 .map(this.environment.componentKeyResolver()::resolve)
                 .collect(Collectors.toSet());
     }

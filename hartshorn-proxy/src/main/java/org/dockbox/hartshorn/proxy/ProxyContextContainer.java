@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-
-import java.util.Set;
 
 /**
  * A proxy context container is a {@link Context} implementation that acts as a temporary container for
@@ -48,7 +49,7 @@ public class ProxyContextContainer extends DefaultContext {
     }
 
     @Override
-    public MultiMap<String, Context> namedContexts() {
+    public MultiMap<String, ContextView> namedContexts() {
         // Change access level to public
         return super.namedContexts();
     }
@@ -61,7 +62,6 @@ public class ProxyContextContainer extends DefaultContext {
 
     @Override
     public <C extends Context> void add(String name, C context) {
-        super.add(name, context);
         this.onModify.run();
     }
 }

@@ -20,18 +20,18 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.populate.PopulateComponentContext;
 import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.inject.Named;
-import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextKey;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * A {@link InjectParameterResolver} implementation that resolves {@link Context} instances. This resolver
- * will only accept injection points that implement {@link Context}. If multiple contexts are available,
+ * A {@link InjectParameterResolver} implementation that resolves {@link ContextView} instances. This resolver
+ * will only accept injection points that implement {@link ContextView}. If multiple contexts are available,
  * the first one is returned.
  *
- * @see Context
+ * @see ContextView
  *
  * @since 0.6.0
  *
@@ -48,12 +48,12 @@ public class InjectContextParameterResolver implements InjectParameterResolver {
     @Override
     public boolean accepts(InjectionPoint injectionPoint) {
         TypeView<?> type = injectionPoint.type();
-        boolean childOf = type.isChildOf(Context.class);
+        boolean childOf = type.isChildOf(ContextView.class);
         if (!childOf) {
             return false;
         }
 
-        ContextIdentity<? extends Context> contextKey = getContextKey(injectionPoint);
+        ContextIdentity<? extends ContextView> contextKey = getContextKey(injectionPoint);
         // If absent, we still prefer bindings from the application context in case
         // manual bindings exist. A common example of this is the ApplicationContext
         // itself, which is a self-containing context.
@@ -62,11 +62,11 @@ public class InjectContextParameterResolver implements InjectParameterResolver {
 
     @Override
     public Object resolve(InjectionPoint injectionPoint, PopulateComponentContext<?> context) {
-        ContextIdentity<? extends Context> key = getContextKey(injectionPoint);
         return this.applicationContext.first(key).orNull();
+        ContextIdentity<? extends ContextView> key = getContextKey(injectionPoint);
     }
 
-    private static ContextKey<? extends Context> getContextKey(InjectionPoint injectionPoint) {
+    private static ContextKey<? extends ContextView> getContextKey(InjectionPoint injectionPoint) {
         String name = injectionPoint.injectionPoint().annotations()
                 // Unlike components, contexts only support named qualifiers, so we don't
                 // need to include MetaQualifier annotated annotations here.
@@ -74,8 +74,8 @@ public class InjectContextParameterResolver implements InjectParameterResolver {
                 .map(Named::value)
                 .orNull();
 
-        TypeView<? extends Context> type = TypeUtils.adjustWildcards(injectionPoint.type(), TypeView.class);
-        ContextKey<? extends Context> key = ContextKey.of(type.type());
+        TypeView<? extends ContextView> type = TypeUtils.adjustWildcards(injectionPoint.type(), TypeView.class);
+        ContextKey<? extends ContextView> key = ContextKey.of(type.type());
         if (StringUtilities.notEmpty(name)) {
             key = key.mutable().name(name).build();
         }

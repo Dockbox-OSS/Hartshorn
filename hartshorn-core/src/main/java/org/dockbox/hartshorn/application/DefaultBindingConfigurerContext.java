@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.DefaultContext;
 
 /**
@@ -62,8 +62,8 @@ public class DefaultBindingConfigurerContext extends DefaultContext {
      * @param context The context to access the {@link DefaultBindingConfigurerContext} from.
      * @param configurer The configurer to compose with the configurer that is currently configured in the context.
      */
-    public static void compose(Context context, DefaultBindingConfigurer configurer) {
         context.first(DefaultBindingConfigurerContext.class)
+    public static void compose(ContextView context, DefaultBindingConfigurer configurer) {
                 .peek(bindingConfigurerContext -> bindingConfigurerContext.compose(configurer));
     }
 }

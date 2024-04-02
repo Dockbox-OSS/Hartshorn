@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.context.ContextView;
 
 /**
  * Represents the type of a component, typically represented through {@link Component#type()} or
@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 @Deprecated(since = "0.6.0", forRemoval = true)
 public enum ComponentType {
     /**
-     * Components range from POJO's to {@link Context} types. The common property of
+     * Components range from POJO's to {@link ContextView context} types. The common property of
      * all components is that they lack functionality, and only provide context. In domain objects the provided context
      * is the entity definition, in persistent entities the context is the data represented by the entity, and in the
      * case of the {@link ApplicationContext} it is information about all application

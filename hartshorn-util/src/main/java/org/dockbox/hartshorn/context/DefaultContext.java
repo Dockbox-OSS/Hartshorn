@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,15 +38,15 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public abstract class DefaultContext implements Context {
 
-    private transient Set<Context> unnamedContexts;
-    private transient MultiMap<String, Context> namedContexts;
+    private transient Set<ContextView> unnamedContexts;
+    private transient MultiMap<String, ContextView> namedContexts;
 
     /**
      * Returns all contexts that are not named.
      *
      * @return All contexts that are not named.
      */
-    protected Set<Context> unnamedContexts() {
+    protected Set<ContextView> unnamedContexts() {
         if (this.unnamedContexts == null) {
             this.unnamedContexts = ConcurrentHashMap.newKeySet();
         }
@@ -59,7 +59,7 @@ public abstract class DefaultContext implements Context {
      *
      * @return All contexts that are named.
      */
-    protected MultiMap<String, Context> namedContexts() {
+    protected MultiMap<String, ContextView> namedContexts() {
         if (this.namedContexts == null) {
             this.namedContexts = new SynchronizedHashSetMultiMap<>();
         }
@@ -67,7 +67,7 @@ public abstract class DefaultContext implements Context {
     }
 
     @Override
-    public <C extends Context> void add(C context) {
+    public <C extends ContextView> void addContext(C context) {
         if (context instanceof NamedContext named && StringUtilities.notEmpty(named.name())) {
             this.namedContexts().put(named.name(), context);
         }
@@ -77,7 +77,7 @@ public abstract class DefaultContext implements Context {
     }
 
     @Override
-    public <C extends Context> void add(String name, C context) {
+    public <C extends ContextView> void addContext(String name, C context) {
         if (context instanceof NamedContext named && !named.name().equals(name)) {
             throw new IllegalArgumentException(("Context name does not match the provided name. " +
                     "Context name: %s, provided name: %s. Either use only the name of the context, " +
@@ -90,8 +90,8 @@ public abstract class DefaultContext implements Context {
     }
 
     @Override
-    public List<Context> all() {
-        List<Context> contexts = new ArrayList<>();
+    public List<ContextView> contexts() {
+        List<ContextView> contexts = new ArrayList<>();
         if (this.unnamedContexts != null) {
             contexts.addAll(this.unnamedContexts);
         }
@@ -102,25 +102,25 @@ public abstract class DefaultContext implements Context {
     }
 
     @Override
-    public <C extends Context> Option<C> first(ContextIdentity<C> key) {
+    public <C extends ContextView> Option<C> firstContext(ContextIdentity<C> key) {
         return Option.of(this.stream(key).findFirst())
                 .orCompute(() -> {
                     if (key.requiresApplicationContext()) {
                         return null;
                     }
                     C context = key.create();
-                    this.add(context);
+                    this.addContext(context);
                     return context;
                 });
     }
 
     @Override
-    public <C extends Context> List<C> all(ContextIdentity<C> key) {
+    public <C extends ContextView> List<C> contexts(ContextIdentity<C> key) {
         return this.stream(key).toList();
     }
 
-    protected <C extends Context> Stream<C> stream(ContextIdentity<C> key) {
-        Stream<Context> contexts = StringUtilities.empty(key.name())
+    protected <C extends ContextView> Stream<C> stream(ContextIdentity<C> key) {
+        Stream<ContextView> contexts = StringUtilities.empty(key.name())
                 ? this.unnamedContexts().stream()
                 : this.namedContexts().get(key.name()).stream();
 
@@ -129,18 +129,23 @@ public abstract class DefaultContext implements Context {
     }
 
     @Override
-    public <C extends Context> Option<C> first(Class<C> context) {
-        return this.first(new SimpleContextIdentity<>(context));
+    public <C extends ContextView> Option<C> firstContext(Class<C> context) {
+        return this.firstContext(new SimpleContextIdentity<>(context));
     }
 
     @Override
-    public <C extends Context> List<C> all(Class<C> context) {
-        return this.all(new SimpleContextIdentity<>(context));
+    public <C extends ContextView> List<C> contexts(Class<C> context) {
+        return this.contexts(new SimpleContextIdentity<>(context));
     }
 
     @Override
-    public void copyTo(Context context) {
-        this.unnamedContexts().forEach(context::add);
-        this.namedContexts().forEach(context::add);
+    public void copyContextTo(Context context) {
+        this.unnamedContexts().forEach(context::addContext);
+        this.namedContexts().forEach(context::addContext);
+    }
+
+    @Override
+    public ContextView contextView() {
+        return this;
     }
 }

@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.Observer;
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.NamedContext;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
@@ -159,9 +159,9 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
      * @param collector the collector to write to
      */
     protected void reportContexts(DiagnosticsPropertyCollector collector) {
-        AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference = new AtomicReference<>();
+        AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference = new AtomicReference<>();
 
-        BiConsumer<DiagnosticsPropertyCollector, Context> reporter = (contextsCollector, context) -> {
+        BiConsumer<DiagnosticsPropertyCollector, ContextView> reporter = (contextsCollector, context) -> {
             contextsCollector.property("type").write(context.getClass().getCanonicalName());
             if (context instanceof Reportable reportable) {
                 contextsCollector.property("data").write(reportable);
