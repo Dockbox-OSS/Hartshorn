@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.config.jackson.mapping.JsonDataMapper;
 import org.dockbox.hartshorn.config.jackson.mapping.TomlDataMapper;
 import org.dockbox.hartshorn.config.jackson.mapping.XmlDataMapper;
 import org.dockbox.hartshorn.config.jackson.mapping.YamlDataMapper;
+import org.dockbox.hartshorn.inject.SupportPriority;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
@@ -47,6 +48,7 @@ import jakarta.inject.Singleton;
 public class JacksonConfiguration {
 
     @Binds
+    @SupportPriority
     public ObjectMapper objectMapper(
             ApplicationContext applicationContext,
             JacksonDataMapperRegistry dataMapperRegistry,
@@ -57,6 +59,7 @@ public class JacksonConfiguration {
 
     @Binds
     @Singleton
+    @SupportPriority
     public JacksonDataMapperRegistry dataMapperRegistry(ComponentCollection<JacksonDataMapper> dataMappers) {
         SimpleJacksonDataMapperRegistry registry = new SimpleJacksonDataMapperRegistry();
         for (JacksonDataMapper dataMapper : dataMappers) {
@@ -67,6 +70,7 @@ public class JacksonConfiguration {
 
     @Binds
     @Singleton
+    @SupportPriority
     public JacksonObjectMapperConfigurator mapperConfigurator(Introspector introspector) {
         return new StandardJacksonObjectMapperConfigurator(introspector);
     }
@@ -77,6 +81,7 @@ public class JacksonConfiguration {
 
         @Singleton
         @Binds(type = BindingType.COLLECTION)
+        @SupportPriority
         public JacksonDataMapper properties() {
             return new JavaPropsDataMapper();
         }
@@ -88,6 +93,7 @@ public class JacksonConfiguration {
 
         @Singleton
         @Binds(type = BindingType.COLLECTION)
+        @SupportPriority
         public JacksonDataMapper json() {
             return new JsonDataMapper();
         }
@@ -99,6 +105,7 @@ public class JacksonConfiguration {
 
         @Singleton
         @Binds(type = BindingType.COLLECTION)
+        @SupportPriority
         public JacksonDataMapper toml() {
             return new TomlDataMapper();
         }
@@ -110,6 +117,7 @@ public class JacksonConfiguration {
 
         @Singleton
         @Binds(type = BindingType.COLLECTION)
+        @SupportPriority
         public JacksonDataMapper xml() {
             return new XmlDataMapper();
         }
@@ -121,6 +129,7 @@ public class JacksonConfiguration {
 
         @Singleton
         @Binds(type = BindingType.COLLECTION)
+        @SupportPriority
         public JacksonDataMapper yml() {
             return new YamlDataMapper();
         }

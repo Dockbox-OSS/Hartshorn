@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.config;
 
-import jakarta.inject.Singleton;
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
@@ -28,6 +27,9 @@ import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.config.properties.StandardPropertyHolder;
 import org.dockbox.hartshorn.config.properties.StandardURIConfigProcessor;
 import org.dockbox.hartshorn.config.properties.URIConfigProcessor;
+import org.dockbox.hartshorn.inject.SupportPriority;
+
+import jakarta.inject.Singleton;
 
 @Configuration
 @RequiresActivator(UseConfigurations.class)
@@ -36,6 +38,7 @@ public class ApplicationPropertiesConfiguration {
 
     @Binds
     @Singleton
+    @SupportPriority
     public PropertyHolder propertyHolder(ApplicationContext applicationContext,
                                          ApplicationPropertyHolder propertyHolder,
                                          ObjectMapper objectMapper,
@@ -45,6 +48,7 @@ public class ApplicationPropertiesConfiguration {
 
     @Binds
     @Singleton
+    @SupportPriority
     public URIConfigProcessor uriConfigProcessor() {
         return new StandardURIConfigProcessor();
     }
