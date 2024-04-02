@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package test.org.dockbox.hartshorn;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.testsuite.HartshornTestApplication;
 import org.junit.jupiter.api.Assertions;
@@ -27,26 +28,26 @@ public class ContextKeyTests {
 
     @Test
     void testContextKeyNameIsNullIfUndefined() {
-        ContextKey<Context> undefinedNameKey = ContextKey.builder(Context.class).build();
+        ContextIdentity<Context> undefinedNameKey = ContextKey.builder(Context.class).build();
         Assertions.assertNull(undefinedNameKey.name());
     }
 
     @Test
     void testContextKeyNameIsNullIfEmpty() {
-        ContextKey<Context> emptyNameKey = ContextKey.builder(Context.class).name("").build();
+        ContextIdentity<Context> emptyNameKey = ContextKey.builder(Context.class).name("").build();
         Assertions.assertNull(emptyNameKey.name());
     }
 
     @Test
     void testContextKeyNameIsNullIfNull() {
         // Ensure no NPE is thrown
-        ContextKey<Context> nullNameKey = Assertions.assertDoesNotThrow(() -> ContextKey.builder(Context.class).name(null).build());
+        ContextIdentity<Context> nullNameKey = Assertions.assertDoesNotThrow(() -> ContextKey.builder(Context.class).name(null).build());
         Assertions.assertNull(nullNameKey.name());
     }
 
     @Test
     void testRequiresApplicationContextIsTrueIfFunction() {
-        ContextKey<Context> key = ContextKey.builder(Context.class)
+        ContextIdentity<Context> key = ContextKey.builder(Context.class)
                 .fallback(applicationContext -> null)
                 .build();
         Assertions.assertTrue(key.requiresApplicationContext());
@@ -54,7 +55,7 @@ public class ContextKeyTests {
 
     @Test
     void testRequiresApplicationContextIsFalseIfSupplier() {
-        ContextKey<Context> key = ContextKey.builder(Context.class)
+        ContextIdentity<Context> key = ContextKey.builder(Context.class)
                 .fallback(() -> null)
                 .build();
         Assertions.assertFalse(key.requiresApplicationContext());
@@ -89,7 +90,7 @@ public class ContextKeyTests {
     @Test
     void testMutableKeyCreatesClone() {
         ContextKey<Context> key = ContextKey.builder(Context.class).build();
-        ContextKey<Context> mutableKey = key.mutable().name("mutable").build();
+        ContextIdentity<Context> mutableKey = key.mutable().name("mutable").build();
         Assertions.assertNotSame(key, mutableKey);
         Assertions.assertNull(key.name());
         Assertions.assertEquals("mutable", mutableKey.name());
