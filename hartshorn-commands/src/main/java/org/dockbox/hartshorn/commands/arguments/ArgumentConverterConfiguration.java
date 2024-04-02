@@ -32,6 +32,7 @@ import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
+import org.dockbox.hartshorn.inject.SupportPriority;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
@@ -46,6 +47,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ArgumentConverterConfiguration {
 
     @Binds
+    @SupportPriority
     public ArgumentConverterRegistryCustomizer converterRegistryCustomizer() {
         return registry -> {
             registry.registerConverter(this.stringArgumentConverter());

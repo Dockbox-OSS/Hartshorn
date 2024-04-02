@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.inject.Priority;
+import org.dockbox.hartshorn.inject.SupportPriority;
 
 import jakarta.inject.Singleton;
 
@@ -38,18 +39,21 @@ import jakarta.inject.Singleton;
 public class CommandConfiguration {
 
     @Binds
+    @SupportPriority
     public CommandListener listener(ApplicationContext applicationContext, CommandGateway gateway) {
         return new CommandListenerImpl(applicationContext, gateway);
     }
 
     @Binds
     @Singleton
+    @SupportPriority
     public SystemSubject systemSubject(ApplicationContext applicationContext) {
         return new ApplicationSystemSubject(applicationContext);
     }
 
     @Binds
     @Singleton
+    @SupportPriority
     public CommandGateway commandGateway(
         CommandParser parser,
         CommandResources resources,
@@ -59,16 +63,19 @@ public class CommandConfiguration {
     }
 
     @Binds
+    @SupportPriority
     public CommandParser commandParser(CommandResources resources) {
         return new CommandParserImpl(resources);
     }
 
     @Binds(type = BindingType.COLLECTION)
+    @SupportPriority
     public CommandExecutorExtension cooldownExtension(ApplicationContext applicationContext) {
         return new CooldownExtension(applicationContext);
     }
-    
+
     @Binds
+    @SupportPriority
     public ArgumentConverterRegistry converterRegistry(ApplicationEnvironment environment, ArgumentConverterRegistryCustomizer customizer) {
         ArgumentConverterRegistry registry = new SimpleArgumentConverterRegistry();
         customizer.configure(registry);
@@ -76,7 +83,7 @@ public class CommandConfiguration {
     }
 
     @Binds
-    @Priority(0)
+    @Priority(Priority.SUPPORT_PRIORITY + 16) // Intentionally used to compose the lower priority binding
     public ArgumentConverterRegistryCustomizer converterRegistryCustomizer(ApplicationEnvironment environment, ArgumentConverterRegistryCustomizer customizer) {
         return customizer.compose(new ParameterTypeArgumentConverterRegistryCustomizer(environment));
     }

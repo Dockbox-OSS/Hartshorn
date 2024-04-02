@@ -31,7 +31,7 @@ import jakarta.inject.Singleton;
 public class TestCommandConfiguration {
 
     @Binds
-    @Priority(0)
+    @Priority(Priority.SUPPORT_PRIORITY + 16)
     @Singleton
     public SystemSubject systemSubject(ApplicationContext applicationContext) {
         return new JUnitSystemSubject(applicationContext);

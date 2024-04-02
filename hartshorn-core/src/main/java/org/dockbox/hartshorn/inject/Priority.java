@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 
 /**
  * Allows for the explicit definition of a priority for an injectable parameter or binding method.
@@ -60,11 +60,27 @@ import java.lang.annotation.Target;
  *
  * @author Guus Lieben
  */
-@Target({ElementType.PARAMETER, ElementType.METHOD})
+@Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Priority {
 
+    /**
+     * The default priority value, used when no priority is defined. This usually indicates
+     * that a component is a major part of the application, but not a core component.
+     */
     int DEFAULT_PRIORITY = -1;
+
+    /**
+     * The support priority value, used for components that are not part of the core application,
+     * but are required for the application to function properly.
+     */
+    int SUPPORT_PRIORITY = -32;
+
+    /**
+     * The infrastructure priority value, used for components that are part of the core application,
+     * and are required for the application to function properly.
+     */
+    int INFRASTRUCTURE_PRIORITY = -64;
 
     /**
      * The priority value, directly linked to an optional entry in a {@link BindingHierarchy}. Values can be

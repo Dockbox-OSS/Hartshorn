@@ -90,7 +90,7 @@ public @interface Binds {
      * @deprecated use the {@link Priority} annotation instead
      */
     @Deprecated(since = "0.6.0", forRemoval = true)
-    int priority() default -1;
+    int priority() default Priority.DEFAULT_PRIORITY;
 
     /**
      * Whether the binding should be lazily loaded. If not specified, the binding will be loaded eagerly. Note
