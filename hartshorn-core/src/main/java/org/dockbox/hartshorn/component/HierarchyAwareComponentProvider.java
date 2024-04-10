@@ -41,6 +41,7 @@ import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -67,14 +68,20 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
     private final SingletonCache singletonCache = new ConcurrentHashSingletonCache();
     private final ComponentProviderPostProcessor processor;
-    private final HierarchyCache hierarchyCache;
+    private HierarchyCache hierarchyCache;
 
     public HierarchyAwareComponentProvider(ScopedProviderOwner owner, Scope scope) {
         this.owner = owner;
         this.scope = scope;
         CompositeComponentPostProcessor postProcessor = new CompositeComponentPostProcessor(owner::postProcessors);
         this.processor = new SimpleComponentProviderPostProcessor(owner, postProcessor, owner.applicationContext(), this::storeSingletons);
-        this.hierarchyCache = new HierarchyCache(owner.applicationContext(), owner.applicationProvider(), this);
+    }
+
+    private HierarchyCache hierarchyCache() {
+        if (this.hierarchyCache == null ) {
+            this.hierarchyCache = new HierarchyCache(this.owner.applicationContext(), this.owner.applicationProvider(), this);
+        }
+        return this.hierarchyCache;
     }
 
     private <T> Option<ObjectContainer<T>> create(ComponentKey<T> key, ComponentRequestContext requestContext) {
@@ -111,7 +118,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
     @Override
     public <C> Binder bind(BindingHierarchy<C> hierarchy) {
-        this.hierarchyCache.put(hierarchy);
+        this.hierarchyCache().put(hierarchy);
         return this;
     }
 
@@ -161,8 +168,6 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
                 .orElseThrow(() -> new ComponentResolutionException("No instance found for key " + componentKey + ", but the key was present in the singleton cache"));
         }
 
-        this.owner.componentLocator().validate(componentKey);
-
         ObjectContainer<T> objectContainer = this.create(componentKey, requestContext)
                 .orElseGet(() -> new ComponentObjectContainer<>(null));
 
@@ -170,9 +175,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
         // If the object is already processed at this point, it means that the object container was
         // reused, so we don't need to process it again. Note that this is not the same as the object
-        // being a singleton, which is handled by the singleton cache. It is however possible that the
-        // reuse of the object container is due to it being a singleton, but we do not know that for
-        // sure.
+        // being a singleton, which is handled by the singleton cache.
         if (objectContainer.processed()) {
             return instance;
         }
@@ -198,7 +201,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     @Override
     public MultiMap<Scope, BindingHierarchy<?>> hierarchies() {
         MultiMap<Scope, BindingHierarchy<?>> map = new HashSetMultiMap<>();
-        map.putAll(this.scope, this.hierarchyCache.hierarchies());
+        map.putAll(this.scope, this.hierarchyCache().hierarchies());
         return map;
     }
 
@@ -210,14 +213,15 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             throw new IllegalArgumentException("Cannot create a binding hierarchy for a component key with a different scope");
         }
 
-        BindingHierarchy<?> hierarchy = this.hierarchyCache.getOrComputeHierarchy(key, permitFallbackResolution);
+        HierarchyCache cache = this.hierarchyCache();
+        BindingHierarchy<?> hierarchy = cache.getOrComputeHierarchy(key, permitFallbackResolution);
         BindingHierarchy<T> adjustedHierarchy = TypeUtils.adjustWildcards(hierarchy, BindingHierarchy.class);
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
         if (adjustedHierarchy instanceof ContextWrappedHierarchy || adjustedHierarchy instanceof CollectionBindingHierarchy<?>) {
             return adjustedHierarchy;
         }
         else {
-            return new ContextWrappedHierarchy<>(adjustedHierarchy, this.applicationContext(), updated -> this.hierarchyCache.put(key.view(), updated));
+            return new ContextWrappedHierarchy<>(adjustedHierarchy, this.applicationContext(), updated -> cache.put(key.view(), updated));
         }
     }
 }
