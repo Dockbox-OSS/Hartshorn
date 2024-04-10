@@ -75,9 +75,18 @@ public interface ApplicationEnvironment extends ContextCarrier, ExceptionHandler
      * Gets the primary {@link Introspector} for this {@link ApplicationEnvironment}. The introspector is responsible
      * for all introspection operations within the environment. This may or may not be the same as the binding for
      * {@link Introspector}, but is typically the same.
+     *
      * @return The primary {@link Introspector}
      */
     Introspector introspector();
+
+    /**
+     * Gets the {@link EnvironmentTypeResolver} for the current environment. The resolver is responsible for resolving
+     * types within the environment, and is typically used for scanning for types and annotations.
+     *
+     * @return The environment type resolver
+     */
+    EnvironmentTypeResolver typeResolver();
 
     /**
      * Indicates whether the current environment exists within a Continuous Integration environment. If this returns
@@ -104,67 +113,6 @@ public interface ApplicationEnvironment extends ContextCarrier, ExceptionHandler
      * @return {@code true} if strict mode is enabled, {@code false} otherwise.
      */
     boolean isStrictMode();
-
-    /**
-     * Gets types decorated with a given annotation, both classes and annotations.
-     *
-     * @param <A> The annotation constraint
-     * @param annotation The annotation expected to be present on one or more types
-     * @return The annotated types
-     */
-    <A extends Annotation> Collection<TypeView<?>> types(Class<A> annotation);
-
-    /**
-     * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist for the given type,
-     * and empty list is returned.
-     *
-     * @param parent The parent type to scan for subclasses
-     * @param <T> The type of the parent
-     * @return The list of sub-types, or an empty list
-     */
-    <T> Collection<TypeView<? extends T>> children(Class<T> parent);
-
-    /**
-     * Gets annotations of the given type, which are decorated with the given annotation. For example, given the
-     * annotation and class below, the result of requesting annotations with {@link Documented} for {@code MyClass}
-     * would be a list containing {@code MyAnnotation}, but not {@code AnotherAnnotation}.
-     *
-     * <pre>{@code
-     * @Documented
-     * public @interface MyAnnotation { }
-     *
-     * public @interface AnotherAnnotation { }
-     *
-     * @MyAnnotation
-     * public class MyClass { }
-     * }</pre>
-     *
-     * @param type The type to scan for annotations
-     * @param annotation The annotation expected to be present on zero or more annotations
-     * @return The annotated annotations
-     */
-    List<Annotation> annotationsWith(TypeView<?> type, Class<? extends Annotation> annotation);
-
-    /**
-     * Gets annotations of the given type, which are decorated with the given annotation. For example, given the
-     * annotation and class below, the result of requesting annotations with {@link Documented} for {@code MyClass}
-     * would be a list containing {@code MyAnnotation}, but not {@code AnotherAnnotation}.
-     *
-     * <pre>{@code
-     * @Documented
-     * public @interface MyAnnotation { }
-     *
-     * public @interface AnotherAnnotation { }
-     *
-     * @MyAnnotation
-     * public class MyClass { }
-     * }</pre>
-     *
-     * @param type The type to scan for annotations
-     * @param annotation The annotation expected to be present on zero or more annotations
-     * @return The annotated annotations
-     */
-    List<Annotation> annotationsWith(Class<?> type, Class<? extends Annotation> annotation);
 
     /**
      * Indicates whether the given type should be treated as a singleton. How this is determined is up to the

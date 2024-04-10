@@ -17,11 +17,7 @@
 package org.dockbox.hartshorn.application.environment;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,8 +32,7 @@ import org.dockbox.hartshorn.application.environment.banner.HartshornBanner;
 import org.dockbox.hartshorn.application.environment.banner.ResourcePathBanner;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.Observer;
-import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.component.populate.MethodsAndFieldsInjectionPointResolver;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
@@ -68,7 +63,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
     private final Set<Observer> observers = ConcurrentHashMap.newKeySet();
     private final Set<Class<? extends Observer>> lazyObservers = ConcurrentHashMap.newKeySet();
-    private final EnvironmentTypeCollector typeCollector = new EnvironmentTypeCollector(this);
 
     private final FileSystemProvider fileSystemProvider;
     private final ProxyOrchestrator proxyOrchestrator;
@@ -78,6 +72,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
     private final ComponentInjectionPointsResolver injectionPointsResolver;
     private final ComponentKeyResolver componentKeyResolver;
+    private final EnvironmentTypeResolver typeResolver;
 
     private final boolean isBuildEnvironment;
     private final boolean isBatchMode;
@@ -100,6 +95,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         this.resourceLocator = this.configure(environmentInitializerContext, configurer.classpathResourceLocator);
         this.injectionPointsResolver = this.configure(environmentInitializerContext, configurer.injectionPointsResolver);
         this.componentKeyResolver = this.configure(environmentInitializerContext, configurer.componentKeyResolver);
+        this.typeResolver = this.configure(environmentInitializerContext, configurer.typeResolver);
 
         this.arguments = this.argumentParser.parse(context.input().arguments());
 
@@ -205,6 +201,11 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     }
 
     @Override
+    public EnvironmentTypeResolver typeResolver() {
+        return this.typeResolver;
+    }
+
+    @Override
     public boolean isBuildEnvironment() {
         return this.isBuildEnvironment;
     }
@@ -216,33 +217,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
     @Override
     public boolean isStrictMode() {
-        return isStrictMode;
-    }
-
-    @Override
-    public <A extends Annotation> Collection<TypeView<?>> types(Class<A> annotation) {
-        return this.typeCollector.types(type -> type.annotations().has(annotation));
-    }
-
-    @Override
-    public <T> Collection<TypeView<? extends T>> children(Class<T> parent) {
-        return this.typeCollector.types(type -> type.isChildOf(parent) && !type.is(parent));
-    }
-
-    @Override
-    public List<Annotation> annotationsWith(TypeView<?> type, Class<? extends Annotation> annotation) {
-        Collection<Annotation> annotations = new ArrayList<>();
-        for (Annotation typeAnnotation : type.annotations().all()) {
-            if (this.introspector().introspect(typeAnnotation.annotationType()).annotations().has(annotation)) {
-                annotations.add(typeAnnotation);
-            }
-        }
-        return List.copyOf(annotations);
-    }
-
-    @Override
-    public List<Annotation> annotationsWith(Class<?> type, Class<? extends Annotation> annotation) {
-        return this.annotationsWith(this.introspector().introspect(type), annotation);
+        return this.isStrictMode;
     }
 
     @Override
@@ -367,6 +342,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         private ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment = environment -> BuildEnvironmentPredicate.isBuildEnvironment();
         private ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver = MethodsAndFieldsInjectionPointResolver.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver = context -> new StandardAnnotationComponentKeyResolver();
+        private ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver = ContextualInitializer.of(environment -> new ClassPathEnvironmentTypeResolver(new EnvironmentTypeCollector(environment), environment.introspector()));
 
         /**
          * Enables or disables the banner. If the banner is enabled, it will be printed to the console when the
@@ -712,6 +688,15 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
         public Configurer componentKeyResolver(ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver) {
             this.componentKeyResolver = componentKeyResolver;
+            return this;
+        }
+
+        public Configurer typeResolver(EnvironmentTypeResolver typeResolver) {
+            return this.typeResolver(ContextualInitializer.of(typeResolver));
+        }
+
+        public Configurer typeResolver(ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver) {
+            this.typeResolver = typeResolver;
             return this;
         }
     }
