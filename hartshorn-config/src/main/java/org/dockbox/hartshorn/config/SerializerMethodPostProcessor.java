@@ -52,10 +52,9 @@ public class SerializerMethodPostProcessor extends AbstractSerializerPostProcess
             return true;
         }
         TypeParameterList typeParameters = method.genericReturnType().typeParameters().allInput();
-        return typeParameters.count() == 1 && Boolean.TRUE.equals(typeParameters.atIndex(0)
+        return typeParameters.count() == 1 && typeParameters.atIndex(0)
                 .flatMap(TypeParameterView::resolvedType)
-                .map(type -> type.is(String.class))
-                .orElse(false));
+                .test(type -> type.is(String.class));
     }
 
     @Override

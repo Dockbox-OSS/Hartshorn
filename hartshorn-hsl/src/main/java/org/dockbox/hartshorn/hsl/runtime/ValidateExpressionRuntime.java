@@ -65,7 +65,7 @@ public class ValidateExpressionRuntime extends StandardRuntime {
      */
     public static boolean valid(ResultCollector collector) {
         Option<Boolean> result = collector.result(ExpressionCustomizer.VALIDATION_ID, Boolean.class);
-        return Boolean.TRUE.equals(result.orElse(false));
+        return result.test(Boolean::booleanValue);
     }
 
     /**

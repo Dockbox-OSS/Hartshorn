@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -400,6 +400,20 @@ public interface Option<T> extends Context, Iterable<T> {
      */
     default <K extends T, A extends K> Option<A> adjust(@NonNull Class<K> type) {
         return this.ofType(type).map(value -> TypeUtils.adjustWildcards(value, type));
+    }
+
+    /**
+     * Tests the value wrapped by the current {@link Option} instance using the given {@link Predicate}. If a value is
+     * present, the result of the {@link Predicate} is returned. If no value is present, {@code false} is returned.
+     *
+     * <p>This is particularly useful as a convenience method when returning primitive {@code boolean} values directly
+     * from a {@link Option}, as it does not require explicit unboxing on the caller's end.
+     *
+     * @param predicate the {@link Predicate} to test the value with.
+     * @return the result of the {@link Predicate} if a value is present, otherwise {@code false}.
+     */
+    default boolean test(@NonNull Predicate<T> predicate) {
+        return Boolean.TRUE.equals(this.map(predicate::test).orElse(false));
     }
 
     /**

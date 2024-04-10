@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,15 +78,14 @@ public interface ProxyObject<T> {
         if (obj == null) {
             return false;
         }
-        return Boolean.TRUE.equals(this.manager().delegate().map(delegate -> {
+        return this.manager().delegate().test(delegate -> {
             if (this.manager().orchestrator().isProxy(obj)) {
                 return this.manager().orchestrator().manager(obj)
                         .flatMap(ProxyManager::delegate)
-                        .map(delegate::equals)
-                        .orElse(false);
+                        .test(delegate::equals);
             }
-            return delegate.equals(obj);
-        }).orElseGet(() -> this.manager().proxy() == obj));
+            return delegate.equals(obj) || this.manager().proxy() == obj;
+        });
     }
 
     /**
