@@ -75,7 +75,7 @@ public class InjectContextParameterResolver implements InjectParameterResolver {
                 .orNull();
 
         TypeView<? extends Context> type = TypeUtils.adjustWildcards(injectionPoint.type(), TypeView.class);
-        ContextIdentity<? extends Context> key = ContextKey.of(type.type());
+        ContextKey<? extends Context> key = ContextKey.of(type.type());
         if (StringUtilities.notEmpty(name)) {
             key = key.mutable().name(name).build();
         }
