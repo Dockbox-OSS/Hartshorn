@@ -21,7 +21,7 @@ import java.util.Collection;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.option.Option;
 
-public interface ComponentLocator extends ContextCarrier {
+public interface ComponentRegistry extends ContextCarrier {
 
     Collection<ComponentContainer<?>> containers();
 
@@ -29,6 +29,4 @@ public interface ComponentLocator extends ContextCarrier {
     Collection<ComponentContainer<?>> containers(ComponentType functional);
 
     Option<ComponentContainer<?>> container(Class<?> type);
-
-    <T> void validate(ComponentKey<T> key);
 }

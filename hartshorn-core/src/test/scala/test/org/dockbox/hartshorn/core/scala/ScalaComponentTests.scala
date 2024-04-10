@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package test.org.dockbox.hartshorn.core.scala
 
 import jakarta.inject.Inject
 import org.dockbox.hartshorn.application.context.ApplicationContext
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment
-import org.dockbox.hartshorn.component.ComponentLocator
+import org.dockbox.hartshorn.component.ComponentRegistry
 import org.dockbox.hartshorn.testsuite.HartshornTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
@@ -43,7 +42,7 @@ class ScalaComponentTests {
   private var applicationContext: ApplicationContext = _
 
   @Inject
-  private var componentLocator: ComponentLocator = _
+  private var componentRegistry: ComponentRegistry = _
 
   @ParameterizedTest
   @MethodSource(Array("components"))
@@ -51,7 +50,7 @@ class ScalaComponentTests {
     val component = this.applicationContext.get(componentType)
     Assertions.assertNotNull(component)
 
-    val container = this.componentLocator.container(componentType)
+    val container = this.componentRegistry.container(componentType)
     Assertions.assertNotNull(container)
     Assertions.assertTrue(container.present())
 

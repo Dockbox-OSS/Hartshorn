@@ -63,7 +63,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
             type = TypeUtils.adjustWildcards(instance.getClass(), Class.class);
         }
 
-        Option<ComponentContainer<?>> container = this.owner.componentLocator().container(type);
+        Option<ComponentContainer<?>> container = this.owner.componentRegistry().container(type);
         instance = container.present()
                 ? this.processManagedComponent(componentKey, objectContainer, container, requestContext)
                 : this.processUnmanagedComponent(componentKey, objectContainer, type,requestContext);

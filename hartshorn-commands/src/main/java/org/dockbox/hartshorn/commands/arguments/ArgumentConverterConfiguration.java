@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistryCustomizer;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
@@ -143,11 +143,11 @@ public class ArgumentConverterConfiguration {
     public ArgumentConverter<ComponentContainer<?>> componentContainerArgumentConverter() {
         return ArgumentConverterImpl.<ComponentContainer<?>>builder(TypeUtils.adjustWildcards(ComponentContainer.class, Class.class), "service")
                 .withConverter((src, in) -> Option.of(src.applicationContext()
-                        .get(ComponentLocator.class).containers().stream()
+                        .get(ComponentRegistry.class).containers().stream()
                         .filter(container -> container.id().equalsIgnoreCase(in))
                         .findFirst()))
                 .withSuggestionProvider((src, in) -> src.applicationContext()
-                        .get(ComponentLocator.class).containers().stream()
+                        .get(ComponentRegistry.class).containers().stream()
                         .map(ComponentContainer::id)
                         .filter(id -> id.toLowerCase(Locale.ROOT).startsWith(in.toLowerCase(Locale.ROOT)))
                         .toList())

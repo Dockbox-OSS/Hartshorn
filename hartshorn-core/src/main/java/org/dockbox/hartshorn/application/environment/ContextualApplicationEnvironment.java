@@ -253,10 +253,9 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
     @Override
     public boolean singleton(TypeView<?> type) {
-        ComponentLocator componentLocator = this.applicationContext().get(ComponentLocator.class);
-        return Boolean.TRUE.equals(componentLocator.container(type.type())
-                .map(ComponentContainer::singleton)
-                .orElseGet(() -> type.annotations().has(Singleton.class)));
+        ComponentRegistry componentRegistry = this.applicationContext().get(ComponentRegistry.class);
+        return componentRegistry.container(type.type())
+            .test(container -> container.singleton() || container.type().annotations().has(Singleton.class));
     }
 
     @Override

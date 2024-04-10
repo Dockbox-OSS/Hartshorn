@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.processing.Binds;
@@ -45,7 +45,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
 
     private final ConditionMatcher conditionMatcher;
     private final BindingStrategyRegistry registry;
-    private final ComponentLocator componentLocator;
+    private final ComponentRegistry componentRegistry;
 
     public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher) {
         this(conditionMatcher, new SimpleBindingStrategyRegistry());
@@ -55,7 +55,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
         super(conditionMatcher.applicationContext());
         this.conditionMatcher = conditionMatcher;
         this.registry = registry;
-        this.componentLocator = conditionMatcher.applicationContext().get(ComponentLocator.class);
+        this.componentRegistry = conditionMatcher.applicationContext().get(ComponentRegistry.class);
     }
 
     public BindingStrategyRegistry registry() {
@@ -79,7 +79,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
         ApplicationContext applicationContext, TypeView<T> componentType, List<? extends MethodView<T, ?>> bindsMethods) {
         // Binds methods are only processed on managed components. If the component container is not present, there is nothing to do but check that there
         // is no incorrect usage of the @Binds annotation.
-        if (this.componentLocator.container(componentType.type()).absent()) {
+        if (this.componentRegistry.container(componentType.type()).absent()) {
             throw new IllegalStateException(
                 "Component " + componentType.type().getName() + " is not a managed component, but contains binding declarations.");
         }

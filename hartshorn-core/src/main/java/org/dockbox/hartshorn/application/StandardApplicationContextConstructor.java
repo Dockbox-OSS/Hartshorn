@@ -34,7 +34,7 @@ import org.dockbox.hartshorn.application.environment.ContextualApplicationEnviro
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.UseProxying;
 import org.dockbox.hartshorn.component.processing.ComponentFinalizingPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -229,7 +229,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
             }
         }
 
-        for (ComponentContainer<?> container : applicationContext.get(ComponentLocator.class).containers()) {
+        for (ComponentContainer<?> container : applicationContext.get(ComponentRegistry.class).containers()) {
             this.buildContext.logger().debug("Instantiating non-lazy singleton {} in application context", container.id());
             if (container.singleton() && !container.lazy()) {
                 applicationContext.get(container.type().type());

@@ -121,7 +121,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     public synchronized void loadContext() {
         this.checkRunning();
 
-        Collection<ComponentContainer<?>> containers = this.locator().containers();
+        Collection<ComponentContainer<?>> containers = this.componentRegistry().containers();
         LOG.debug("Located %d components".formatted(containers.size()));
 
         try {

@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.application.environment.FileSystemProvider;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
@@ -43,7 +43,7 @@ import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
  * <p>Bindings for specific implementations will optionally be registered for the following types:
  * <ul>
  *     <li>{@link LifecycleObservable}, if the {@link ApplicationEnvironment environment} is an instance of {@link ObservableApplicationEnvironment}</li>
- *     <li>{@link ComponentLocator}, if the {@link ApplicationContext application context} is an instance of {@link DelegatingApplicationContext}</li>
+ *     <li>{@link ComponentRegistry}, if the {@link ApplicationContext application context} is an instance of {@link DelegatingApplicationContext}</li>
  * </ul>
  *
  * @see DefaultBindingConfigurer
@@ -65,9 +65,9 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
         binder.bind(ApplicationPropertyHolder.class).singleton(environment.applicationContext());
 
         if (environment.applicationContext() instanceof DelegatingApplicationContext delegatingApplicationContext) {
-            binder.bind(ComponentLocator.class)
+            binder.bind(ComponentRegistry.class)
                     .processAfterInitialization(false)
-                    .singleton(delegatingApplicationContext.locator());
+                    .singleton(delegatingApplicationContext.componentRegistry());
         }
 
         // Application environment
