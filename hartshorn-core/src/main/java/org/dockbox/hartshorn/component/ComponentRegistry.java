@@ -16,14 +16,17 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
+import java.util.Collection;
 
-public interface ScopedProviderOwner extends PostProcessingComponentProvider {
+import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.util.option.Option;
 
-    ComponentRegistry componentRegistry();
+public interface ComponentRegistry extends ContextCarrier {
 
-    ComponentInstanceFactory instanceFactory();
+    Collection<ComponentContainer<?>> containers();
 
-    HierarchicalComponentProvider applicationProvider();
+    @Deprecated(since = "0.6.0", forRemoval = true)
+    Collection<ComponentContainer<?>> containers(ComponentType functional);
 
+    Option<ComponentContainer<?>> container(Class<?> type);
 }

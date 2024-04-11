@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.commands.context;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -294,7 +295,7 @@ public class CommandDefinitionContextImpl extends DefaultProvisionContext implem
 
     private List<CommandElement<?>> requiredElements() {
         return this.elements().stream()
-                .filter(commandElement -> !commandElement.optional())
+                .filter(Predicate.not(CommandElement::optional))
                 .toList();
     }
 

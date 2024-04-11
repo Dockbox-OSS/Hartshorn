@@ -25,7 +25,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
@@ -55,14 +55,14 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        ComponentLocator componentLocator = this.applicationContext.get(ComponentLocator.class);
+        ComponentRegistry componentRegistry = this.applicationContext.get(ComponentRegistry.class);
 
         if (this.configuration.groupBy() == ComponentAttribute.NONE) {
-            Reportable[] reporters = this.diagnosticsReporters(componentLocator.containers());
+            Reportable[] reporters = this.diagnosticsReporters(componentRegistry.containers());
             collector.property("all").write(reporters);
         }
         else {
-            Map<String, List<ComponentContainer<?>>> groupedContainers = componentLocator.containers().stream()
+            Map<String, List<ComponentContainer<?>>> groupedContainers = componentRegistry.containers().stream()
                     .collect(Collectors.groupingBy(container -> switch (this.configuration.groupBy()) {
                         case STEREOTYPE -> stereotype(container).getCanonicalName();
                         case PACKAGE -> container.type().packageInfo().name();

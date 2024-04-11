@@ -16,14 +16,7 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
+public interface ComponentStoreCallback {
 
-public interface ScopedProviderOwner extends PostProcessingComponentProvider {
-
-    ComponentRegistry componentRegistry();
-
-    ComponentInstanceFactory instanceFactory();
-
-    HierarchicalComponentProvider applicationProvider();
-
+    <T> void store(ComponentKey<T> key, T instance);
 }

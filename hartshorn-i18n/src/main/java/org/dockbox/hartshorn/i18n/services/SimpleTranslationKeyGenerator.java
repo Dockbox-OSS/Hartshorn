@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.i18n.services;
 
 import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -37,11 +37,11 @@ import jakarta.inject.Inject;
  */
 public class SimpleTranslationKeyGenerator implements TranslationKeyGenerator {
 
-    private final ComponentLocator componentLocator;
+    private final ComponentRegistry componentRegistry;
 
     @Inject
-    public SimpleTranslationKeyGenerator(ComponentLocator componentLocator) {
-        this.componentLocator = componentLocator;
+    public SimpleTranslationKeyGenerator(ComponentRegistry componentRegistry) {
+        this.componentRegistry = componentRegistry;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class SimpleTranslationKeyGenerator implements TranslationKeyGenerator {
         String methodKey = String.join(".", StringUtilities.splitCapitals(methodName)).toLowerCase();
 
         TypeView<?> declaringType = method.declaredBy();
-        Option<ComponentContainer<?>> container = this.componentLocator.container(declaringType.type());
+        Option<ComponentContainer<?>> container = this.componentRegistry.container(declaringType.type());
         if (container.present()) {
             String containerKey = container.get().id();
             if (containerKey != null) {

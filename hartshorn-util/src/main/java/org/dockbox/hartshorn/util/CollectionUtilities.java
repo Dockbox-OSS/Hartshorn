@@ -29,6 +29,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import java.util.function.Predicate;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -110,7 +111,7 @@ public final class CollectionUtilities {
      */
     public static <T> Set<T> difference(Collection<T> collectionOne, Collection<T> collectionTwo) {
         BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
-                .filter(element -> !c2.contains(element))
+                .filter(Predicate.not(c2::contains))
                 .toList();
 
         List<T> differenceInOne = filter.apply(collectionOne, collectionTwo);

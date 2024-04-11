@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class ParameterTypeArgumentConverterRegistryCustomizer implements Argumen
 
     @Override
     public void configure(ArgumentConverterRegistry registry) {
-        Collection<TypeView<?>> parameterDeclarations = this.environment.types(Parameter.class);
+        Collection<TypeView<?>> parameterDeclarations = this.environment.typeResolver().types(Parameter.class);
         for(TypeView<?> parameterDeclaration : parameterDeclarations) {
             Parameter meta = parameterDeclaration.annotations().get(Parameter.class).get();
             CustomParameterPattern pattern = this.environment.applicationContext().get(meta.pattern());

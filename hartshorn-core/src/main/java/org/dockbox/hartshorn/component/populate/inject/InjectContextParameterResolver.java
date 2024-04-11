@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.component.populate.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.populate.PopulateComponentContext;
+import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.inject.Named;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextKey;
@@ -52,7 +53,7 @@ public class InjectContextParameterResolver implements InjectParameterResolver {
             return false;
         }
 
-        ContextKey<? extends Context> contextKey = getContextKey(injectionPoint);
+        ContextIdentity<? extends Context> contextKey = getContextKey(injectionPoint);
         // If absent, we still prefer bindings from the application context in case
         // manual bindings exist. A common example of this is the ApplicationContext
         // itself, which is a self-containing context.
@@ -61,7 +62,7 @@ public class InjectContextParameterResolver implements InjectParameterResolver {
 
     @Override
     public Object resolve(InjectionPoint injectionPoint, PopulateComponentContext<?> context) {
-        ContextKey<? extends Context> key = getContextKey(injectionPoint);
+        ContextIdentity<? extends Context> key = getContextKey(injectionPoint);
         return this.applicationContext.first(key).orNull();
     }
 

@@ -52,7 +52,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessor;
  * }</pre>
  *
  * @see Service
- * @see ComponentLocator
+ * @see ComponentRegistry
  * @see ComponentContainer
  * @see ComponentProcessor
  *

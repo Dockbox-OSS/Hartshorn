@@ -44,7 +44,7 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
 public class ScopeAwareComponentProvider extends DefaultProvisionContext implements HierarchicalComponentProvider, ScopedProviderOwner {
 
     private final transient ApplicationContext applicationContext;
-    private final transient ComponentLocator locator;
+    private final transient ComponentRegistry registry;
 
     private final transient MultiMap<Integer, ComponentPostProcessor> postProcessors = new ConcurrentSetTreeMultiMap<>();
     private final transient ComponentInstanceFactory factory;
@@ -53,9 +53,9 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     private final HierarchyAwareComponentProvider applicationComponentProvider;
     private final Set<Class<? extends ComponentPostProcessor>> uninitializedPostProcessors = ConcurrentHashMap.newKeySet();
 
-    protected ScopeAwareComponentProvider(SingleElementContext<? extends ComponentLocator> initializerContext, Configurer configurer) {
-        this.locator = initializerContext.input();
-        this.applicationContext = this.locator.applicationContext();
+    protected ScopeAwareComponentProvider(SingleElementContext<? extends ComponentRegistry> initializerContext, Configurer configurer) {
+        this.registry = initializerContext.input();
+        this.applicationContext = this.registry.applicationContext();
 
         SingleElementContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this.applicationContext);
         this.postConstructor = configurer.componentPostConstructor.initialize(applicationInitializerContext);
@@ -96,8 +96,8 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     }
 
     @Override
-    public ComponentLocator componentLocator() {
-        return this.locator;
+    public ComponentRegistry componentRegistry() {
+        return this.registry;
     }
 
     @Override
@@ -180,7 +180,7 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
         return this.applicationComponentProvider;
     }
 
-    public static ContextualInitializer<ComponentLocator, ComponentProvider> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<ComponentRegistry, ComponentProvider> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -188,7 +188,7 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
             ScopeAwareComponentProvider componentProvider = new ScopeAwareComponentProvider(context, configurer);
             DefaultBindingConfigurerContext.compose(context, binder -> {
                 binder.bind(ComponentInstanceFactory.class).singleton(componentProvider.factory);
-                binder.bind(ComponentLocator.class).singleton(componentProvider.locator);
+                binder.bind(ComponentRegistry.class).singleton(componentProvider.registry);
             });
             return componentProvider;
         };

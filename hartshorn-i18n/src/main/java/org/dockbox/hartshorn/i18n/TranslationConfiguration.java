@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Binds;
@@ -83,12 +83,12 @@ public class TranslationConfiguration {
      * Configures the default translation key generator to allow generating translation keys for methods
      * which rely on implicit translation keys.
      *
-     * @param componentLocator the component locator to account for component IDs
+     * @param componentRegistry the component registry to account for component IDs
      * @return the translation key generator
      */
     @Binds
     @Singleton
-    public TranslationKeyGenerator translationKeyGenerator(ComponentLocator componentLocator) {
-        return new SimpleTranslationKeyGenerator(componentLocator);
+    public TranslationKeyGenerator translationKeyGenerator(ComponentRegistry componentRegistry) {
+        return new SimpleTranslationKeyGenerator(componentRegistry);
     }
 }

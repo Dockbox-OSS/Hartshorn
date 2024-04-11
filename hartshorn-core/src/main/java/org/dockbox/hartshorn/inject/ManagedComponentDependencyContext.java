@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject;
 import java.util.Set;
 
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
@@ -29,12 +29,12 @@ import org.dockbox.hartshorn.util.introspect.view.View;
 
 /**
  * A {@link DependencyContext} implementation that is used for managed components. Managed components are components that
- * are managed by the container. Typically, these are obtained through the active {@link ComponentLocator}.
+ * are managed by the container. Typically, these are obtained through the active {@link ComponentRegistry}.
  *
  * @param <T> the type of the component that is managed
  *
  * @see DependencyContext
- * @see ComponentLocator
+ * @see ComponentRegistry
  *
  * @since 0.5.0
  *

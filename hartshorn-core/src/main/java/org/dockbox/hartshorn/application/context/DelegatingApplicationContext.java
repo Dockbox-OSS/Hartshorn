@@ -31,12 +31,12 @@ import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeAwareComponentProvider;
-import org.dockbox.hartshorn.component.TypeReferenceLookupComponentLocator;
+import org.dockbox.hartshorn.component.TypeReferenceLookupComponentRegistry;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
@@ -54,7 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link ApplicationContext} implementation that delegates to a {@link ComponentLocator} and {@link ComponentProvider}.
+ * A {@link ApplicationContext} implementation that delegates to a {@link ComponentRegistry} and {@link ComponentProvider}.
  * This implementation is used to allow for custom implementations of these interfaces, while still allowing for the
  * {@link ApplicationContext} to function in a predictable manner.
  *
@@ -74,7 +74,7 @@ import org.slf4j.LoggerFactory;
  * @author Guus Lieben
  *
  * @see ApplicationContext
- * @see ComponentLocator
+ * @see ComponentRegistry
  * @see ComponentProvider
  * @see ApplicationEnvironment
  * @see DelegatingApplicationContext.Configurer
@@ -89,7 +89,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     private final transient Properties environmentValues;
     private final transient ComponentProvider componentProvider;
-    private final transient ComponentLocator locator;
+    private final transient ComponentRegistry componentRegistry;
     private final transient ApplicationEnvironment environment;
 
     private boolean isClosed = false;
@@ -108,8 +108,8 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.environmentValues = this.environment.rawArguments();
 
         SingleElementContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this);
-        this.locator = configurer.componentLocator.initialize(applicationInitializerContext);
-        this.componentProvider = configurer.componentProvider.initialize(initializerContext.transform(this.locator));
+        this.componentRegistry = configurer.componentRegistry.initialize(applicationInitializerContext);
+        this.componentProvider = configurer.componentProvider.initialize(initializerContext.transform(this.componentRegistry));
 
         EnvironmentBinderConfiguration configuration = new ContextualEnvironmentBinderConfiguration();
 
@@ -255,10 +255,10 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     /**
-     * @return the {@link ComponentLocator} that is used by this {@link ApplicationContext} to locate components
+     * @return the {@link ComponentRegistry} that is used by this {@link ApplicationContext} to locate components
      */
-    public ComponentLocator locator() {
-        return this.locator;
+    public ComponentRegistry componentRegistry() {
+        return this.componentRegistry;
     }
 
     /**
@@ -283,30 +283,30 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
      */
     public static class Configurer {
 
-        private ContextualInitializer<ApplicationContext, ? extends ComponentLocator> componentLocator = ContextualInitializer.of(TypeReferenceLookupComponentLocator::new);
-        private ContextualInitializer<ComponentLocator, ? extends ComponentProvider> componentProvider = ScopeAwareComponentProvider.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationContext, ? extends ComponentRegistry> componentRegistry = ContextualInitializer.of(context -> new TypeReferenceLookupComponentRegistry(context.environment()));
+        private ContextualInitializer<ComponentRegistry, ? extends ComponentProvider> componentProvider = ScopeAwareComponentProvider.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings = ContextualInitializer.of(DefaultBindingConfigurer::empty);
 
         /**
-         * Configures the {@link ComponentLocator} that is used by the {@link DelegatingApplicationContext} to locate
+         * Configures the {@link ComponentRegistry} that is used by the {@link DelegatingApplicationContext} to locate
          * components.
          *
-         * @param componentLocator the {@link ComponentLocator} to use
+         * @param componentRegistry the {@link ComponentRegistry} to use
          * @return the current instance
          */
-        public Configurer componentLocator(ComponentLocator componentLocator) {
-            return this.componentLocator(ContextualInitializer.of(componentLocator));
+        public Configurer componentRegistry(ComponentRegistry componentRegistry) {
+            return this.componentRegistry(ContextualInitializer.of(componentRegistry));
         }
 
         /**
-         * Configures the {@link ComponentLocator} that is used by the {@link DelegatingApplicationContext} to locate
+         * Configures the {@link ComponentRegistry} that is used by the {@link DelegatingApplicationContext} to locate
          * components.
          *
-         * @param componentLocator the {@link ComponentLocator} to use
+         * @param componentRegistry the {@link ComponentRegistry} to use
          * @return the current instance
          */
-        public Configurer componentLocator(ContextualInitializer<ApplicationContext, ? extends ComponentLocator> componentLocator) {
-            this.componentLocator = componentLocator;
+        public Configurer componentRegistry(ContextualInitializer<ApplicationContext, ? extends ComponentRegistry> componentRegistry) {
+            this.componentRegistry = componentRegistry;
             return this;
         }
 
@@ -328,7 +328,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
          * @param componentProvider the {@link ComponentProvider} to use
          * @return the current instance
          */
-        public Configurer componentProvider(ContextualInitializer<ComponentLocator, ? extends ComponentProvider> componentProvider) {
+        public Configurer componentProvider(ContextualInitializer<ComponentRegistry, ? extends ComponentProvider> componentProvider) {
             this.componentProvider = componentProvider;
             return this;
         }

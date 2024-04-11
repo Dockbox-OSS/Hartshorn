@@ -16,19 +16,16 @@
 
 package org.dockbox.hartshorn.component;
 
-import java.util.Collection;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.ObjectContainer;
+import org.dockbox.hartshorn.util.ApplicationException;
 
-import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.util.option.Option;
+public interface ComponentProviderPostProcessor {
 
-public interface ComponentLocator extends ContextCarrier {
-
-    Collection<ComponentContainer<?>> containers();
-
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    Collection<ComponentContainer<?>> containers(ComponentType functional);
-
-    Option<ComponentContainer<?>> container(Class<?> type);
-
-    <T> void validate(ComponentKey<T> key);
+    <T> T processInstance(
+            ComponentKey<T> componentKey,
+            ObjectContainer<T> objectContainer,
+            T instance,
+            ComponentRequestContext requestContext
+    ) throws ApplicationException;
 }

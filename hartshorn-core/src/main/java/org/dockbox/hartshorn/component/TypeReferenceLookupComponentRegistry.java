@@ -20,31 +20,28 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import java.util.function.Predicate;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TypeReferenceLookupComponentLocator implements ComponentLocator {
+public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TypeReferenceLookupComponentLocator.class);
-
-    private final ApplicationContext applicationContext;
+    private final ApplicationEnvironment environment;
     private final Set<ComponentContainer<?>> componentContainers = ConcurrentHashMap.newKeySet();
 
-    public TypeReferenceLookupComponentLocator(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public TypeReferenceLookupComponentRegistry(ApplicationEnvironment environment) {
+        this.environment = environment;
     }
 
     @Override
     public Collection<ComponentContainer<?>> containers() {
         if (this.componentContainers.isEmpty()) {
-            this.applicationContext().environment().types(Component.class).stream()
-                    .filter(type -> !type.isAnnotation()) // Filter activators
-                    .map(type -> new ComponentContainerImpl<>(this.applicationContext(), type.type()))
-                    .forEach(this.componentContainers::add);
+            this.environment.typeResolver().types(Component.class).stream()
+                .filter(Predicate.not(TypeView::isAnnotation)) // Ensure stereotypes are not included
+                .map(ComponentContainerImpl::new)
+                .forEach(this.componentContainers::add);
         }
         return this.componentContainers;
     }
@@ -66,17 +63,7 @@ public class TypeReferenceLookupComponentLocator implements ComponentLocator {
     }
 
     @Override
-    public <T> void validate(ComponentKey<T> key) {
-        Introspector introspector = this.applicationContext().environment().introspector();
-        TypeView<T> contract = introspector.introspect(key.type());
-
-        if (contract.annotations().has(Component.class) && this.container(contract.type()).absent()) {
-            LOG.warn("Component key '%s' is annotated with @Component, but is not registered.".formatted(contract.qualifiedName()));
-        }
-    }
-
-    @Override
     public ApplicationContext applicationContext() {
-        return this.applicationContext;
+        return this.environment.applicationContext();
     }
 }

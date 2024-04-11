@@ -53,8 +53,7 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
     }
 
     private static boolean isRequired(AnnotatedElementView parameter) {
-        return Boolean.TRUE.equals(parameter.annotations().get(Required.class)
-                .map(Required::value)
-                .orElse(false));
+        return parameter.annotations().get(Required.class)
+                .test(Required::value);
     }
 }

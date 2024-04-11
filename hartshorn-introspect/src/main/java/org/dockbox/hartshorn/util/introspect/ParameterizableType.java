@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
+import java.util.function.Predicate;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -100,7 +101,7 @@ public final class ParameterizableType implements Reportable {
             .asList()
             .stream()
             .flatMap(parameter -> parameter.resolvedType()
-                .filter(typeView -> !typeView.isWildcard())
+                .filter(Predicate.not(TypeView::isWildcard))
                 .orComputeFlat(() -> {
                     Set<TypeView<?>> bounds = parameter.upperBounds();
                     if (bounds.size() == 1) {
