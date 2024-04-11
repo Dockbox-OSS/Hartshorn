@@ -78,14 +78,19 @@ public interface ProxyObject<T> {
         if (obj == null) {
             return false;
         }
-        return this.manager().delegate().test(delegate -> {
-            if (this.manager().orchestrator().isProxy(obj)) {
-                return this.manager().orchestrator().manager(obj)
+        else if (this.manager().proxy() == obj) {
+            return true;
+        }
+        else {
+            return this.manager().delegate().test(delegate -> {
+                if (this.manager().orchestrator().isProxy(obj)) {
+                    return this.manager().orchestrator().manager(obj)
                         .flatMap(ProxyManager::delegate)
                         .test(delegate::equals);
-            }
-            return delegate.equals(obj) || this.manager().proxy() == obj;
-        });
+                }
+                return delegate.equals(obj);
+            });
+        }
     }
 
     /**
