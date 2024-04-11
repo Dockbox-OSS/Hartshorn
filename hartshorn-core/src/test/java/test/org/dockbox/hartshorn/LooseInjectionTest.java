@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment.Configurer;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.ComponentResolutionException;
+import org.dockbox.hartshorn.component.ComponentLookupException;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.util.Tristate;
@@ -49,7 +49,7 @@ public class LooseInjectionTest {
         ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class)
                 .strict(true)
                 .build();
-        Assertions.assertThrows(ComponentResolutionException.class, () -> context.get(key));
+        Assertions.assertThrows(ComponentLookupException.class, () -> context.get(key));
     }
 
     @Test

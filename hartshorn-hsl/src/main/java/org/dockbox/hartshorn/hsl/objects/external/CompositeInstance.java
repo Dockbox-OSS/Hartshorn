@@ -32,6 +32,7 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
@@ -72,7 +73,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
             throw e;
         }
         catch (Throwable throwable) {
-            throw new ApplicationException(throwable);
+            throw new ComponentInitializationException("Failed to create instance of type " + this.firstExternalClass.name(), throwable);
         }
 
         // Virtual class constructor

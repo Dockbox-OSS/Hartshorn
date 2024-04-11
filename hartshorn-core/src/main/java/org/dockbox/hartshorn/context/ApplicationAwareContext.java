@@ -27,5 +27,5 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
  *
  * @author Guus Lieben
  */
-public interface ApplicationAwareContext extends Context, ContextCarrier {
+public interface ApplicationAwareContext extends Context, ApplicationAwareContextView {
 }

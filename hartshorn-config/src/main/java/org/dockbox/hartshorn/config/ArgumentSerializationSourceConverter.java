@@ -58,11 +58,11 @@ public class ArgumentSerializationSourceConverter implements SerializationSource
                 inputStream = new FileInputStream(file);
             }
             else {
-                throw new IllegalArgumentException("Expected a valid serialization source, but found " + (arg != null ? arg.getClass() : null));
+                throw new DataStreamInitializationException("Expected a valid serialization source, but found " + (arg != null ? arg.getClass() : null));
             }
         }
         catch (IOException e) {
-            throw new ApplicationException(e);
+            throw new DataStreamInitializationException("Failed to initialize input stream", e);
         }
 
         return new BufferedInputStream(inputStream);
@@ -91,7 +91,7 @@ public class ArgumentSerializationSourceConverter implements SerializationSource
             }
         }
         catch (IOException e) {
-            throw new ApplicationException(e);
+            throw new DataStreamInitializationException("Failed to initialize output stream", e);
         }
 
         return new BufferedOutputStream(outputStream);

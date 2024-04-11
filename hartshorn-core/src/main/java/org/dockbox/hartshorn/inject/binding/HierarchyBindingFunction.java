@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.ScopeModuleContext;
 import org.dockbox.hartshorn.inject.ComponentObjectContainer;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.LazySingletonProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
@@ -185,7 +184,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
             if (instance == null) {
                 throw new IllegalModificationException("Cannot bind null instance");
             }
-            return new ComponentObjectContainer<>(instance);
+            return ComponentObjectContainer.ofInstance(instance);
         });
     }
 

@@ -118,7 +118,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     }
 
     @Override
-    public synchronized void loadContext() {
+    public synchronized void loadContext() throws ComponentInitializationException {
         this.checkRunning();
 
         Collection<ComponentContainer<?>> containers = this.componentRegistry().containers();

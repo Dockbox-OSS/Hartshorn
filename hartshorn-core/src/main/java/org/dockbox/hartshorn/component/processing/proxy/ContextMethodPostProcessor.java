@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.component.processing.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.populate.ComponentMethodInjectionPoint;
 import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;

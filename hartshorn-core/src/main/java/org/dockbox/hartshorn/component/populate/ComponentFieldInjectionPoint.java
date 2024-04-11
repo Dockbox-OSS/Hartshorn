@@ -65,7 +65,7 @@ public class ComponentFieldInjectionPoint<T> implements ComponentInjectionPoint<
                 throw e;
             }
             catch (Throwable throwable) {
-                throw new ApplicationException(throwable);
+                throw new ComponentInjectionException(throwable);
             }
         }
         else {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.option.Option;
 
-@FunctionalInterface
-public interface ContextAwareComponentSupplier<T> extends NonTypeAwareProvider<T> {
-
-    @Override
-    default Option<ObjectContainer<T>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
-        return Option.of(ComponentObjectContainer.ofInstance(this.get(requestContext)));
-    }
-
-    T get(ComponentRequestContext context) throws ApplicationException;
+/**
+ * A {@link ContextView} which is aware of the {@link ApplicationContext} it is
+ * contained within. This is only a marker interface, and does not provide any
+ * additional functionality.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
+public interface ApplicationAwareContextView extends ContextView, ContextCarrier {
 }

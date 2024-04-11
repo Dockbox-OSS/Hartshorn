@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
 import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
@@ -36,6 +35,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.component.ComponentModificationException;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -61,8 +61,6 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.mockito.Mockito;
-
-import jakarta.inject.Inject;
 
 public class HartshornLifecycleExtension implements
         ParameterResolver,
@@ -160,7 +158,7 @@ public class HartshornLifecycleExtension implements
                     factoryModifier.invoke(null);
                 }
                 catch (Exception e) {
-                    throw new ApplicationException(e);
+                    throw new ComponentModificationException(e);
                 }
             }
             else {

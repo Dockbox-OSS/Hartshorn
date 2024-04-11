@@ -148,7 +148,14 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         ApplicationStartupLogger logger = new ApplicationStartupLogger(this.buildContext);
         logger.logStartup();
         long applicationStartTimestamp = System.currentTimeMillis();
-        ApplicationContext applicationContext = this.applicationContextConstructor.createContext();
+        ApplicationContext applicationContext;
+        try {
+            applicationContext = this.applicationContextConstructor.createContext();
+        }
+        catch(Exception e) {
+            logger.logStartupError(e);
+            throw new RuntimeException(e);
+        }
         long applicationStartedTimestamp = System.currentTimeMillis();
 
         final Duration startupTime = Duration.ofMillis(applicationStartedTimestamp - applicationStartTimestamp);

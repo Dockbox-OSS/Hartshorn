@@ -56,7 +56,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     @Override
     public Option<T> createNewProxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
         if (args.length != constructor.getParameterCount()) {
-            throw new ApplicationException("Invalid number of arguments for constructor " + constructor);
+            throw new ProxyConstructionException("Invalid number of arguments for constructor " + constructor);
         }
         if (this.type().isInterface()) {
             return this.proxy(); // Cannot invoke constructor on interface
@@ -154,7 +154,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
             return Option.of(proxy);
         }
         catch (Throwable e) {
-            throw new ApplicationException(e);
+            throw new ProxyConstructionException(e);
         }
     }
 

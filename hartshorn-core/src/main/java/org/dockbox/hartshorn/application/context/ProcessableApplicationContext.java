@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.application.context;
 
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
@@ -42,8 +43,9 @@ public interface ProcessableApplicationContext extends ApplicationContext {
      * the {@link ApplicationContext} prevent further configuration. This method may only be called once.
      *
      * @throws IllegalModificationException when the {@link ApplicationContext} is already loaded
+     * @throws ApplicationException when an error occurs during the loading of the {@link ApplicationContext}
      */
-    void loadContext();
+    void loadContext() throws ApplicationException;
 
     /**
      * Returns all {@link ComponentPreProcessor} instances that are registered to this {@link ApplicationContext}.

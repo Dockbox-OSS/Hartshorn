@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn;
 
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,13 +25,12 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.application.context.validate.CyclicDependencyGraphValidator;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.ComponentLookupException;
 import org.dockbox.hartshorn.component.ComponentPopulator;
-import org.dockbox.hartshorn.component.ComponentResolutionException;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.component.processing.Binds.BindingType;
@@ -51,7 +51,6 @@ import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.dockbox.hartshorn.testsuite.TestBinding;
 import org.dockbox.hartshorn.testsuite.TestComponents;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.SimpleSingleElementContext;
 import org.dockbox.hartshorn.util.graph.GraphNode;
@@ -64,8 +63,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
-
-import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.boot.EmptyService;
 import test.org.dockbox.hartshorn.components.BoundCircularDependencyA;
 import test.org.dockbox.hartshorn.components.BoundCircularDependencyB;
@@ -222,7 +219,7 @@ public class ApplicationContextTests {
     public void testScannedMetaBindingsCanBeProvided() {
 
         // Ensure that the binding is not bound to the default name
-        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(SampleInterface.class));
+        Assertions.assertThrows(ComponentLookupException.class, () -> this.applicationContext.get(SampleInterface.class));
 
         SampleInterface provided = this.applicationContext.get(ComponentKey.of(SampleInterface.class, "meta"));
         Assertions.assertNotNull(provided);
@@ -348,7 +345,7 @@ public class ApplicationContextTests {
 
     @Test
     void testNonComponentsAreNotProxied() {
-        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(NonComponentType.class));
+        Assertions.assertThrows(ComponentLookupException.class, () -> this.applicationContext.get(NonComponentType.class));
     }
 
     @Test
@@ -362,18 +359,14 @@ public class ApplicationContextTests {
     @Test
     @TestComponents(components = NonProxyComponentType.class)
     void testNonPermittedComponentsAreNotProxied() {
-        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(NonProxyComponentType.class));
+        Assertions.assertThrows(ComponentLookupException.class, () -> this.applicationContext.get(NonProxyComponentType.class));
     }
 
     @Test
     void testFailingConstructorIsRethrown() {
-        ComponentInitializationException exception = Assertions.assertThrows(ComponentInitializationException.class, () -> this.applicationContext.get(TypeWithFailingConstructor.class));
-        Assertions.assertTrue(exception.getCause() instanceof ApplicationException);
-
-        ApplicationException applicationException = (ApplicationException) exception.getCause();
-        Assertions.assertTrue(applicationException.getCause() instanceof IllegalStateException);
-
-        IllegalStateException illegalStateException = (IllegalStateException) applicationException.getCause();
+        ComponentLookupException exception = Assertions.assertThrows(ComponentLookupException.class, () -> this.applicationContext.get(TypeWithFailingConstructor.class));
+        ComponentInitializationException initializationException = Assertions.assertInstanceOf(ComponentInitializationException.class, exception.getCause());
+        IllegalStateException illegalStateException = Assertions.assertInstanceOf(IllegalStateException.class, initializationException.getCause());
         Assertions.assertEquals(TypeWithFailingConstructor.ERROR_MESSAGE, illegalStateException.getMessage());
     }
 
@@ -425,7 +418,7 @@ public class ApplicationContextTests {
 
         Map<? extends Class<?>, GraphNode<DependencyContext<?>>> nodesByType = nodes.stream()
             .collect(Collectors.toMap(node -> node.value().componentKey().type(), Function.identity()));
-        GraphNode<DependencyContext<?>> firstNode = nodesByType.get(path.get(0));
+        GraphNode<DependencyContext<?>> firstNode = nodesByType.get(path.getFirst());
 
         List<GraphNode<DependencyContext<?>>> recursivePath = validator.checkNodeNotCyclicRecursive(firstNode, new ArrayList<>());
         ComponentDiscoveryList discoveryList = validator.createDiscoveryList(recursivePath, this.applicationContext);
@@ -439,7 +432,7 @@ public class ApplicationContextTests {
             .map(TypePathNode::type)
             .map(TypeView::type)
             .toList();
-        int startIndex = discoveredTypes.indexOf(path.get(0));
+        int startIndex = discoveredTypes.indexOf(path.getFirst());
 
         for (int i = 0; i < path.size(); i++) {
             Assertions.assertSame(path.get(i), discoveredTypes.get((startIndex + i) % path.size()));
@@ -460,7 +453,7 @@ public class ApplicationContextTests {
 
         Map<? extends Class<?>, GraphNode<DependencyContext<?>>> nodesByType = nodes.stream()
                 .collect(Collectors.toMap(node -> node.value().componentKey().type(), Function.identity()));
-        GraphNode<DependencyContext<?>> firstNode = nodesByType.get(path.get(0));
+        GraphNode<DependencyContext<?>> firstNode = nodesByType.get(path.getFirst());
 
         List<GraphNode<DependencyContext<?>>> recursivePath = validator.checkNodeNotCyclicRecursive(firstNode, new ArrayList<>());
         ComponentDiscoveryList discoveryList = validator.createDiscoveryList(recursivePath, this.applicationContext);
@@ -488,7 +481,7 @@ public class ApplicationContextTests {
                         .toList();
                 if (!constructorViews.isEmpty()) {
                     Assertions.assertEquals(1, constructorViews.size());
-                    ConstructorView<?> constructorView = constructorViews.get(0);
+                    ConstructorView<?> constructorView = constructorViews.getFirst();
                     origin = constructorView;
                     // Constructors are always immediate
                     Set<ComponentKey<?>> immediateDependencies = dependencyResolver.resolveDependencies(constructorView);
@@ -536,7 +529,7 @@ public class ApplicationContextTests {
         List<DiscoveredComponent> discoveredComponents = discoveryList.discoveredComponentsCyclic();
         Assertions.assertEquals(3, discoveredComponents.size());
 
-        DiscoveredComponent discoveredComponentA1 = discoveredComponents.get(0);
+        DiscoveredComponent discoveredComponentA1 = discoveredComponents.getFirst();
         Assertions.assertSame(InterfaceCircularDependencyA.class, discoveredComponentA1.node().type().type());
         Assertions.assertSame(BoundCircularDependencyA.class, discoveredComponentA1.actualType().type());
 
@@ -562,7 +555,7 @@ public class ApplicationContextTests {
     @Test
     @TestComponents(components = SetterInjectedComponentWithAbsentBinding.class)
     void testSetterInjectionWithAbsentRequiredComponent() {
-        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
+        Assertions.assertThrows(ComponentLookupException.class, () -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
     }
 
     @Test
@@ -642,13 +635,9 @@ public class ApplicationContextTests {
 
     @Test
     void testFailureInComponentConstructorYieldsInitializationException() {
-        ComponentInitializationException exception = Assertions.assertThrows(ComponentInitializationException.class, () -> this.applicationContext.get(ErrorInConstructorObject.class));
-        Throwable cause = exception.getCause();
-        Assertions.assertNotNull(cause);
-        Assertions.assertTrue(cause instanceof ApplicationException);
-
-        ApplicationException applicationException = (ApplicationException) cause;
-        Assertions.assertEquals("Failed to create instance of type " + ErrorInConstructorObject.class.getName(), applicationException.getMessage());
+        ComponentLookupException exception = Assertions.assertThrows(ComponentLookupException.class, () -> this.applicationContext.get(ErrorInConstructorObject.class));
+        ComponentInitializationException initializationException = Assertions.assertInstanceOf(ComponentInitializationException.class, exception.getCause());
+        Assertions.assertInstanceOf(ErrorInConstructorObject.DummyException.class, initializationException.getCause());
     }
 
     @Test
@@ -656,7 +645,7 @@ public class ApplicationContextTests {
     void testProviderService() {
         ProviderService service = this.applicationContext.get(ProviderService.class);
         Assertions.assertNotNull(service);
-        Assertions.assertTrue(service instanceof Proxy);
+        Assertions.assertInstanceOf(Proxy.class, service);
         SampleType type = service.get();
         Assertions.assertNotNull(type);
     }

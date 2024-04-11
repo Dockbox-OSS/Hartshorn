@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.component;
 
-/**
- * Thrown when the application runs a validated problem. Typically, this means an
- * exception was caught and is rethrown as a {@link ApplicationException} with the
- * original exception as cause.
- *
- * @since 0.4.1
- *
- * @author Guus Lieben
- */
-public abstract class ApplicationException extends Exception {
+import org.dockbox.hartshorn.util.ApplicationException;
 
-    protected ApplicationException(String message) {
+public class ComponentModificationException extends ApplicationException {
+
+    public ComponentModificationException(String message) {
         super(message);
     }
 
-    protected ApplicationException(String message, Throwable cause) {
+    public ComponentModificationException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    protected ApplicationException(Throwable cause) {
+    public ComponentModificationException(Throwable cause) {
         super(cause);
     }
 }

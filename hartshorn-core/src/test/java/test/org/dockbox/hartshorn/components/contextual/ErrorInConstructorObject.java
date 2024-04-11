@@ -16,11 +16,15 @@
 
 package test.org.dockbox.hartshorn.components.contextual;
 
-import org.dockbox.hartshorn.util.ApplicationException;
-
 public class ErrorInConstructorObject {
 
-    public ErrorInConstructorObject() throws ApplicationException {
-        throw new ApplicationException("Error in constructor");
+    public ErrorInConstructorObject() throws DummyException {
+        throw new DummyException("Error in constructor");
+    }
+
+    public static class DummyException extends Exception {
+        public DummyException(String message) {
+            super(message);
+        }
     }
 }

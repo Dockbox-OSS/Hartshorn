@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.ApplicationException;
 
-public class ComponentResolutionException extends ApplicationRuntimeException {
+public class ComponentResolutionException extends ApplicationException {
 
     public ComponentResolutionException(String message) {
         super(message);

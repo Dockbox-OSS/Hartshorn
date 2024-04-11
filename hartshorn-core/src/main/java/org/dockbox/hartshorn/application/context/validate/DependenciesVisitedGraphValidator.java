@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.application.context.validate;
 
+import java.util.Set;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.DependencyPresenceValidationVisitor;
-import org.dockbox.hartshorn.util.graph.GraphException;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
-
-import java.util.Set;
 
 /**
  * A validator that checks whether all dependencies in the graph have been visited. If not, it will throw an exception.
@@ -38,7 +37,7 @@ import java.util.Set;
 public class DependenciesVisitedGraphValidator implements DependencyGraphValidator {
 
     @Override
-    public void validateAfterConfiguration(DependencyGraph dependencyGraph, ApplicationContext applicationContext, Set<GraphNode<DependencyContext<?>>> visited) throws GraphException {
+    public void validateAfterConfiguration(DependencyGraph dependencyGraph, ApplicationContext applicationContext, Set<GraphNode<DependencyContext<?>>> visited) throws ApplicationException {
         DependencyPresenceValidationVisitor validationVisitor = new DependencyPresenceValidationVisitor(visited);
         validationVisitor.iterate(dependencyGraph);
         Set<GraphNode<DependencyContext<?>>> missingDependencies = validationVisitor.missingDependencies();

@@ -41,6 +41,7 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
@@ -67,7 +68,7 @@ public final class StandardApplicationContextConstructor implements ApplicationC
     }
 
     @Override
-    public ApplicationContext createContext() {
+    public ApplicationContext createContext() throws ApplicationException {
         ApplicationBootstrapContext bootstrapContext = new ApplicationBootstrapContext(
                 this.buildContext.mainClass(),
                 this.buildContext.arguments(),

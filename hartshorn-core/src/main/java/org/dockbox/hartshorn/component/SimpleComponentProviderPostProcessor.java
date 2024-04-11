@@ -76,7 +76,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
     }
 
 
-    private <T> T finishComponentRequest(ComponentKey<T> componentKey, T instance) {
+    private <T> T finishComponentRequest(ComponentKey<T> componentKey, T instance) throws ComponentInitializationException {
         this.storeSingleton.store(componentKey, instance);
 
         // Inject properties if applicable

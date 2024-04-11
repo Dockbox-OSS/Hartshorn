@@ -30,4 +30,8 @@ public class MissingInjectConstructorException extends ApplicationException {
     public MissingInjectConstructorException(TypeView<?> type) {
         super("No injectable constructors found for " + type.name());
     }
+
+    public MissingInjectConstructorException(TypeView<?> type, Throwable throwable) {
+        super("No injectable constructors found for " + type.name(), throwable);
+    }
 }

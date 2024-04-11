@@ -62,10 +62,10 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
             return contextAdapter.scope(this.context.scope())
                     .create(constructor.get())
                     .cast(this.type())
-                    .map(ComponentObjectContainer::new);
+                    .map(ComponentObjectContainer::ofInstance);
         }
         catch (Throwable throwable) {
-            throw new ApplicationException("Failed to create instance of type " + this.type().getName(), throwable);
+            throw new ComponentInitializationException("Failed to create instance of type " + this.type().getName(), throwable);
         }
     }
 
@@ -76,7 +76,7 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
                 this.optimalConstructor = ComponentConstructorResolver.create(applicationContext).findConstructor(typeView).orNull();
             }
             catch(Throwable throwable) {
-                throw new ApplicationException(throwable);
+                throw new MissingInjectConstructorException(typeView, throwable);
             }
         }
         return Option.of(this.optimalConstructor);

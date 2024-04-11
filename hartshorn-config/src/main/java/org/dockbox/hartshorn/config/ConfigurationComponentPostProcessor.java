@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.config;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentModificationException;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.config.annotations.Value;
@@ -67,7 +68,7 @@ public class ConfigurationComponentPostProcessor extends PropertyAwareComponentP
                 context.handle(e);
             }
             catch(Throwable e) {
-                throw new ApplicationException(e);
+                throw new ComponentModificationException("Could not prepare value field " + field.name() + " in " + processingContext.type().name(), e);
             }
         }
     }

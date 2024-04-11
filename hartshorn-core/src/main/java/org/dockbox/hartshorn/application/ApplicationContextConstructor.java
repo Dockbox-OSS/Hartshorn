@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.application;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
  * A functional provider for {@link ApplicationContext} instances. This interface is often used by {@link ApplicationBuilder}
@@ -40,5 +41,5 @@ public interface ApplicationContextConstructor {
      *
      * @return The {@link ApplicationContext} instance.
      */
-    ApplicationContext createContext();
+    ApplicationContext createContext() throws ApplicationException;
 }

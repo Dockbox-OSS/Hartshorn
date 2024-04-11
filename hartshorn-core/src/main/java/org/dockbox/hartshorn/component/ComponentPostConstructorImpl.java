@@ -55,7 +55,7 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
                 throw e;
             }
             catch (Throwable e) {
-                throw new ApplicationException(e);
+                throw new FailedPostConstructionException(e);
             }
         }
         return instance;

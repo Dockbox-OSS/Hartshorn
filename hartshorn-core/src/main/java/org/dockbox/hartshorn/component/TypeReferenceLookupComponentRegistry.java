@@ -40,7 +40,7 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
         if (this.componentContainers.isEmpty()) {
             this.environment.typeResolver().types(Component.class).stream()
                 .filter(Predicate.not(TypeView::isAnnotation)) // Ensure stereotypes are not included
-                .map(ComponentContainerImpl::new)
+                .map(AnnotatedComponentContainer::new)
                 .forEach(this.componentContainers::add);
         }
         return this.componentContainers;

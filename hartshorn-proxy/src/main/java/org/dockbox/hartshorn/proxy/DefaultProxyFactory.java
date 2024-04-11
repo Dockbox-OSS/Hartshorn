@@ -157,7 +157,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
             return this.proxy(constructor.constructor().get(), args);
         }
         else {
-            throw new ApplicationException("Constructor " + constructor + " is not present on type " + this.type());
+            throw new ProxyConstructionException("Constructor " + constructor + " is not present on type " + this.type());
         }
     }
 

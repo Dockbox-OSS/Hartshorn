@@ -85,7 +85,7 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
             if (instance == null) {
                 throw new IllegalModificationException("Cannot bind null instance");
             }
-            return new ComponentObjectContainer<>(instance);
+            return ComponentObjectContainer.ofInstance(instance);
         }));
     }
 }

@@ -84,7 +84,8 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
      * @param injectionPoint the injection point to resolve the objects to inject for
      * @return a list of objects to inject into the injection point
      */
-    protected List<Object> resolveInjectedObjects(PopulateComponentContext<?> context, ComponentInjectionPoint<?> injectionPoint) {
+    protected List<Object> resolveInjectedObjects(PopulateComponentContext<?> context, ComponentInjectionPoint<?> injectionPoint)
+        throws ComponentResolutionException {
         SequencedCollection<InjectionPoint> injectionPoints = injectionPoint.injectionPoints();
 
         List<Object> objectsToInject = new ArrayList<>();
@@ -94,11 +95,12 @@ public abstract class AbstractComponentPopulationStrategy implements ComponentPo
                 object = this.resolveInjectedObject(point, context);
             }
             catch(ApplicationException | ApplicationRuntimeException e) {
+                ComponentResolutionException resolutionException = new ComponentResolutionException("Could not resolve value for injection point " + point.injectionPoint().qualifiedName(), e);
                 if (this.shouldRequire(point)) {
-                    throw new ComponentResolutionException("Could not resolve value for injection point " + point.injectionPoint().qualifiedName(), e);
+                    throw resolutionException;
                 }
                 else {
-                    this.applicationContext().handle(e);
+                    this.applicationContext().handle(resolutionException);
                     object = null;
                 }
             }

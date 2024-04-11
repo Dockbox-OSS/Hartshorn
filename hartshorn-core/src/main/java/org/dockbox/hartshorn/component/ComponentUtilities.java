@@ -104,7 +104,7 @@ public final class ComponentUtilities {
             return format(container.get(), ignoreContainerName, delimiter, attribute);
         }
         TypeView<?> typeView = context.environment().introspector().introspect(type);
-        return format(new ComponentContainerImpl<>(typeView), ignoreContainerName, delimiter, attribute);
+        return format(new AnnotatedComponentContainer<>(typeView), ignoreContainerName, delimiter, attribute);
     }
 
     public static <T> String format(ComponentContainer<T> container, boolean ignoreContainerName, char delimiter, Function<ComponentContainer<?>, String> attribute) {

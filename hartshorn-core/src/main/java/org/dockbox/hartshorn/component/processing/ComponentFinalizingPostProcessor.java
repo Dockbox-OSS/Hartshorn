@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.inject.ComponentConstructorResolver;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
+import org.dockbox.hartshorn.proxy.ProxyConstructionException;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -56,7 +57,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
 
         if (permitsProxying && !(instance instanceof Collection<?>)) {
             T finalizingInstance = instance;
-            
+
             if (processingContext.containsKey(PROXY_FACTORY)) {
                 ProxyFactory<T> factory = processingContext.get(PROXY_FACTORY);
 
@@ -89,7 +90,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
         // Ensure we use a non-default constructor if there is no default constructor to use
         if (!factoryType.isInterface() && factoryType.constructors().defaultConstructor().absent()) {
             ConstructorView<? extends T> constructor = ComponentConstructorResolver.create(context).findConstructor(factoryType)
-                    .orElseThrow(() -> new ApplicationException("No default or injectable constructor found for proxy factory " + factoryType.name()));
+                    .orElseThrow(() -> new ProxyConstructionException("No default or injectable constructor found for proxy factory " + factoryType.name()));
 
             ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
             Object[] arguments = adapter.loadParameters(constructor);

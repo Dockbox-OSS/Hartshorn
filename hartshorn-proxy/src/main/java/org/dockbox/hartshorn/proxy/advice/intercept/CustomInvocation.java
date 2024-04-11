@@ -18,8 +18,6 @@ package org.dockbox.hartshorn.proxy.advice.intercept;
 
 import java.util.concurrent.Callable;
 
-import org.dockbox.hartshorn.util.ApplicationException;
-
 /**
  * A simple functional interface for custom invocation. This is used to provide custom arguments to the
  * invocation. When used in conjunction with {@link MethodInterceptorContext}, this allows for fine-grained
@@ -52,11 +50,8 @@ public interface CustomInvocation<T> {
             try {
                 return this.call(args);
             }
-            catch(Exception e) {
-                throw e;
-            }
             catch (Throwable throwable) {
-                throw new ApplicationException(throwable);
+                throw new CustomInvocationException("Failed to invoke custom invocation", throwable);
             }
         };
     }

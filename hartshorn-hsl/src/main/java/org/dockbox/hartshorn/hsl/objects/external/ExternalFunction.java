@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
+import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -127,7 +128,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
             throw e;
         }
         catch (Throwable throwable) {
-            throw new ApplicationException(throwable);
+            throw new NativeExecutionException("Failed to call method " + this.methodName + " on external instance of type " + this.type.name(), throwable);
         }
     }
 

@@ -30,8 +30,22 @@ public class ComponentObjectContainer<T> extends ObjectContainer<T> {
 
     private boolean processed = false;
 
-    public ComponentObjectContainer(T instance) {
+    private ComponentObjectContainer(T instance) {
         super(instance);
+    }
+
+    public static <T> ComponentObjectContainer<T> ofProcessedInstance(T instance) {
+        ComponentObjectContainer<T> container = new ComponentObjectContainer<>(instance);
+        container.processed(true);
+        return container;
+    }
+
+    public static <T> ComponentObjectContainer<T> ofInstance(T instance) {
+        return new ComponentObjectContainer<>(instance);
+    }
+
+    public static <T> ComponentObjectContainer<T> empty() {
+        return new ComponentObjectContainer<>(null);
     }
 
     /**

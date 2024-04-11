@@ -219,9 +219,27 @@ public final class ComponentKey<T> implements Reportable {
         return typeName + qualifierSuffix + " @ " + scopeName;
     }
 
+    public String humanReadableName() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.type.toQualifiedString());
+        if (!this.qualifier.isEmpty()) {
+            builder.append(" with qualifiers: ");
+            builder.append(StringUtilities.join(", ", this.qualifier.qualifiers(), QualifierKey::toString));
+        }
+        if (this.scope != Scope.DEFAULT_SCOPE) {
+            builder.append(" in scope: ");
+            builder.append(this.scope.installableScopeType().name());
+        }
+        return builder.toString();
+    }
+
+    public String compactName() {
+        return "ComponentKey<" + this.qualifiedName(false) + ">";
+    }
+
     @Override
     public String toString() {
-        return "ComponentKey<" + this.qualifiedName(false) + ">";
+        return this.humanReadableName();
     }
 
     @Override

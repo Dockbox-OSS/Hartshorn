@@ -41,7 +41,6 @@ import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -84,7 +83,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return this.hierarchyCache;
     }
 
-    private <T> Option<ObjectContainer<T>> create(ComponentKey<T> key, ComponentRequestContext requestContext) {
+    private <T> Option<ObjectContainer<T>> create(ComponentKey<T> key, ComponentRequestContext requestContext) throws ComponentInitializationException {
         try {
             Option<ObjectContainer<T>> objectContainer = this.provide(key, requestContext);
             if (objectContainer.present()) {
@@ -92,6 +91,8 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             }
 
             return this.createContextualInstanceContainer(key, requestContext);
+        } catch (ComponentInitializationException e) {
+            throw e;
         } catch (ApplicationException e) {
             throw new ComponentInitializationException("Failed to create component for key " + key, e);
         }
@@ -163,13 +164,25 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             return TypeUtils.adjustWildcards(this.applicationContext(), Object.class);
         }
 
+        try {
+            return this.getUnchecked(componentKey, requestContext);
+        }
+        catch (Throwable e) {
+            throw new ComponentLookupException("Failed to resolve component with key " + componentKey, e);
+        }
+    }
+
+    protected <T> T getUnchecked(ComponentKey<T> componentKey, ComponentRequestContext requestContext)
+        throws ComponentResolutionException, ComponentInitializationException {
         if (this.singletonCache.contains(componentKey)) {
             return this.singletonCache.get(componentKey)
-                .orElseThrow(() -> new ComponentResolutionException("No instance found for key " + componentKey + ", but the key was present in the singleton cache"));
+                .orElseThrow(() -> new ComponentResolutionException(
+                    "No instance found for key " + componentKey + ", but the key was present in the singleton cache"));
         }
 
-        ObjectContainer<T> objectContainer = this.create(componentKey, requestContext)
-                .orElseGet(() -> new ComponentObjectContainer<>(null));
+        ObjectContainer<T> objectContainer;
+        objectContainer = this.create(componentKey, requestContext)
+            .orElseGet(ComponentObjectContainer::empty);
 
         T instance = objectContainer.instance();
 
@@ -183,8 +196,8 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         try {
             return this.processor.processInstance(componentKey, objectContainer, instance, requestContext);
         }
-        catch(ApplicationException e) {
-            throw new ComponentResolutionException("Failed to process component with key " + componentKey, e);
+        catch (ApplicationException e) {
+            throw new ComponentInitializationException("Failed to prepare component with key " + componentKey, e);
         }
     }
 
@@ -205,7 +218,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return map;
     }
 
-    private <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key, boolean permitFallbackResolution) {
+    protected <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key, boolean permitFallbackResolution) {
         // If the scope is default, it means that the binding is not explicitly scoped, so it can be
         // installed in any scope. If our active scope is the active application context, it means
         // the requested scope is not installed, so we can fall back to the application scope.

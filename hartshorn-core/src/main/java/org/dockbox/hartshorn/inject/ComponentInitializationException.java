@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
  * Thrown when a component cannot be initialized. This is usually caused by a missing dependency,
@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  *
  * @since 0.4.12
  */
-public class ComponentInitializationException extends ApplicationRuntimeException {
+public class ComponentInitializationException extends ApplicationException {
 
     public ComponentInitializationException(String message) {
         super(message);

@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;

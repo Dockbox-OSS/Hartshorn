@@ -185,4 +185,8 @@ public class ApplicationStartupLogger {
                 .append(System.getProperty("user.dir"))
                 .append(")");
     }
+
+    public void logStartupError(Exception exception) {
+        this.logger().error("An error occurred during application startup", exception);
+    }
 }

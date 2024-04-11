@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -66,7 +67,7 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
                 throw e;
             }
             catch (Throwable throwable) {
-                throw new ApplicationException(throwable);
+                throw new ComponentInitializationException("Failed to create instance of type " + this.type.name(), throwable);
             }
         }
         throw new ScriptEvaluationError("No constructor found for class " + this.type.name() + " with arguments " + arguments, Phase.INTERPRETING, at);

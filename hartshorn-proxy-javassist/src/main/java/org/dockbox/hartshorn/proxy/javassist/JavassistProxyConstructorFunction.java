@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.proxy.javassist;
 
+import org.dockbox.hartshorn.proxy.ProxyConstructionException;
 import org.dockbox.hartshorn.proxy.ProxyConstructorFunction;
 import org.dockbox.hartshorn.util.ApplicationException;
 
@@ -53,7 +54,7 @@ public class JavassistProxyConstructorFunction<T> implements ProxyConstructorFun
         try {
             return this.type.cast(this.factory.create(new Class<?>[0], new Object[0], this.methodHandler));
         } catch (RuntimeException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-            throw new ApplicationException(e);
+            throw new ProxyConstructionException(e);
         }
     }
 
@@ -63,7 +64,7 @@ public class JavassistProxyConstructorFunction<T> implements ProxyConstructorFun
             Class<?>[] parameterTypes = constructor.getParameterTypes();
             return this.type.cast(this.factory.create(parameterTypes, args, this.methodHandler));
         } catch (RuntimeException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-            throw new ApplicationException(e);
+            throw new ProxyConstructionException(e);
         }
     }
 }
