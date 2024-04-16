@@ -16,21 +16,19 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.inject.Named;
+import org.dockbox.hartshorn.inject.Enable;
+import org.dockbox.hartshorn.component.Component;
 
-import jakarta.inject.Singleton;
+import jakarta.inject.Inject;
 
-@Service
-public class FieldProviderService {
+@Component
+public class TypeWithPostConstructableInjectField {
 
-    @Binds
-    @Named("field")
-    private final ProvidedInterface field = () -> "Field";
+    @Inject
+    @Enable
+    private SimplePostConstructableObject postConstructableObject;
 
-    @Singleton
-    @Binds
-    @Named("singletonField")
-    private final ProvidedInterface singletonField = () -> "Field";
+    public SimplePostConstructableObject postConstructableObject() {
+        return this.postConstructableObject;
+    }
 }

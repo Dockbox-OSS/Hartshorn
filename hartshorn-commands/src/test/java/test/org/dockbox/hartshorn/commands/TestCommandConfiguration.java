@@ -21,18 +21,15 @@ import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.inject.Priority;
-
-import jakarta.inject.Singleton;
 
 @Configuration
 @RequiresActivator(UseCommands.class)
 public class TestCommandConfiguration {
 
-    @Binds
-    @Priority(Priority.SUPPORT_PRIORITY + 16)
     @Singleton
+    @Priority(Priority.SUPPORT_PRIORITY + 16)
     public SystemSubject systemSubject(ApplicationContext applicationContext) {
         return new JUnitSystemSubject(applicationContext);
     }

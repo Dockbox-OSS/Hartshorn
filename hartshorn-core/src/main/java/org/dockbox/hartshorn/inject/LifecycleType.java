@@ -14,28 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.inject.LifecycleType;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-public interface ComponentContainer<T> {
-
-    String id();
-
-    String name();
-
-    TypeView<T> type();
-
-    LifecycleType lifecycle();
-
-    boolean lazy();
-
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    ComponentType componentType();
-
-    boolean permitsProxying();
-
-    boolean permitsProcessing();
-
+public enum LifecycleType {
+    SINGLETON,
+    PROTOTYPE,
 }

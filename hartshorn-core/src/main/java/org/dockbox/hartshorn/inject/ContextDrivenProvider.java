@@ -43,11 +43,26 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
 
     private final ComponentKey<? extends C> context;
+    private final LifecycleType lifecycleType;
 
     private ConstructorView<? extends C> optimalConstructor;
 
     public ContextDrivenProvider(ComponentKey<? extends C> type) {
         this.context = type;
+        this.lifecycleType = LifecycleType.PROTOTYPE;
+    }
+
+    public ContextDrivenProvider(ComponentKey<? extends C> type, LifecycleType lifecycleType) {
+        this.context = type;
+        this.lifecycleType = lifecycleType;
+    }
+
+    public static <T> ContextDrivenProvider<T> forPrototype(ComponentKey<? extends T> type) {
+        return new ContextDrivenProvider<>(type, LifecycleType.PROTOTYPE);
+    }
+
+    public static <T> ContextDrivenProvider<T> forSingleton(ComponentKey<? extends T> type) {
+        return new ContextDrivenProvider<>(type, LifecycleType.SINGLETON);
     }
 
     @Override
@@ -62,7 +77,7 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
             return contextAdapter.scope(this.context.scope())
                     .create(constructor.get())
                     .cast(this.type())
-                    .map(ComponentObjectContainer::new);
+                    .map(instance -> ComponentObjectContainer.ofLifecycleType(instance, this.lifecycleType));
         }
         catch (Throwable throwable) {
             throw new ApplicationException("Failed to create instance of type " + this.type().getName(), throwable);

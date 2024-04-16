@@ -49,7 +49,7 @@ import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
  * this situation.
  *
  * <pre>{@code
- * @Binds
+ * @Singleton
  * @Priority(10)
  * public HelloWorldService helloWorldService(@Priority(5) HelloWorldService delegate) {
  *     // ...

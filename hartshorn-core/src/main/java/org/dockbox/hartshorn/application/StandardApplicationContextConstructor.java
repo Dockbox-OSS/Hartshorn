@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -41,6 +42,7 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
@@ -222,21 +224,28 @@ public final class StandardApplicationContextConstructor implements ApplicationC
 
     private void finalizeContext(ApplicationContext applicationContext) {
         this.buildContext.logger().debug("Finalizing application context before releasing to application");
+        this.notifyObservers(applicationContext);
+        this.activateManagedComponents(applicationContext);
+        this.registerHooks(applicationContext);
+    }
+
+    private void notifyObservers(ApplicationContext applicationContext) {
         if (applicationContext.environment() instanceof ObservableApplicationEnvironment observable) {
             this.buildContext.logger().debug("Notifying application environment observers of application context creation");
             for (LifecycleObserver observer : observable.observers(LifecycleObserver.class)) {
                 observer.onStarted(applicationContext);
             }
         }
+    }
 
-        for (ComponentContainer<?> container : applicationContext.get(ComponentRegistry.class).containers()) {
-            this.buildContext.logger().debug("Instantiating non-lazy singleton {} in application context", container.id());
-            if (container.singleton() && !container.lazy()) {
+    private void activateManagedComponents(ApplicationContext applicationContext) {
+        applicationContext.get(ComponentRegistry.class).containers().stream()
+            .filter(container -> container.lifecycle() == LifecycleType.SINGLETON)
+            .filter(Predicate.not(ComponentContainer::lazy))
+            .forEach(container -> {
+                this.buildContext.logger().debug("Activating non-lazy singleton {} in application context", container.id());
                 applicationContext.get(container.type().type());
-            }
-        }
-
-        this.registerHooks(applicationContext);
+            });
     }
 
     public static ContextualInitializer<ApplicationBuildContext, StandardApplicationContextConstructor> create(Customizer<Configurer> customizer) {

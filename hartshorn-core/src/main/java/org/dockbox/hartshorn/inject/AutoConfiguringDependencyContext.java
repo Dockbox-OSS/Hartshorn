@@ -112,15 +112,17 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
     }
 
     private InstanceType instanceType() {
-        if (this.singleton() && this.lazy()) {
-            return InstanceType.LAZY_SINGLETON;
-        }
-        else if (this.singleton()) {
-            return InstanceType.SINGLETON;
-        }
-        else {
-            return InstanceType.SUPPLIER;
-        }
+        return switch (this.lifecycleType()) {
+            case PROTOTYPE -> InstanceType.SUPPLIER;
+            case SINGLETON -> {
+                if (this.lazy()) {
+                    yield InstanceType.LAZY_SINGLETON;
+                }
+                else {
+                    yield InstanceType.SINGLETON;
+                }
+            }
+        };
     }
 
     /**

@@ -32,9 +32,6 @@ import org.dockbox.hartshorn.util.GenericType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.inject.Singleton;
-
-@Singleton
 public class StandardURIConfigProcessor implements URIConfigProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(StandardURIConfigProcessor.class);

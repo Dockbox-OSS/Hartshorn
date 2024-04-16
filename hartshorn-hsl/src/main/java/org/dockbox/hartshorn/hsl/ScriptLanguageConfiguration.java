@@ -19,7 +19,8 @@ package org.dockbox.hartshorn.hsl;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Prototype;
+import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.hsl.customizer.DefaultScriptStatementsParserCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
@@ -36,27 +37,27 @@ import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 @RequiresActivator(UseExpressionValidation.class)
 public class ScriptLanguageConfiguration {
 
-    @Binds
+    @Singleton
     private ScriptComponentFactory languageFactory() {
         return new StandardScriptComponentFactory();
     }
 
-    @Binds
+    @Prototype
     private TokenParser tokenParser() {
         return new StandardTokenParser(DefaultTokenRegistry.createDefault());
     }
 
-    @Binds
+    @Prototype
     private ExpressionParser expressionParser() {
         return new ComplexExpressionParserAdapter(() -> null);
     }
 
-    @Binds
+    @Prototype
     private Resolver resolver(Interpreter interpreter) {
         return new Resolver(interpreter);
     }
 
-    @Binds
+    @Prototype
     public ScriptRuntime runtime(
             ApplicationContext applicationContext,
             ScriptComponentFactory factory,
@@ -65,7 +66,7 @@ public class ScriptLanguageConfiguration {
         return new StandardRuntime(applicationContext, factory, parserCustomizer);
     }
 
-    @Binds
+    @Prototype
     public ValidateExpressionRuntime expressionRuntime(
             ApplicationContext applicationContext,
             ScriptComponentFactory factory,
@@ -74,7 +75,7 @@ public class ScriptLanguageConfiguration {
         return new ValidateExpressionRuntime(applicationContext, factory, parserCustomizer);
     }
 
-    @Binds
+    @Singleton
     public ParserCustomizer parserCustomizer() {
         return new DefaultScriptStatementsParserCustomizer();
     }

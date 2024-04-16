@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
@@ -30,7 +31,8 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
  * of which the methods, and thus functionality, can be directly modified through {@link ProxyManager}s to allow for
  * dynamic behavior of service definitions. This transforms the service into a {@link Proxy} instance.
  *
- * <p>By default all services are {@link #singleton() singletons}.
+ * <p>By default all services exist with a {@link LifecycleType#SINGLETON 'singleton'} lifecycle, meaning that only one
+ * instance of the service is created and shared throughout the application.
  *
  * @author Guus Lieben
  * @since 0.4.1
@@ -38,7 +40,6 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Extends(Component.class)
-@Component
 public @interface Service {
 
     /**
@@ -54,10 +55,10 @@ public @interface Service {
     String name() default "";
 
     /**
-     * @see Component#singleton()
-     * @return Whether the service is a singleton.
+     * @see Component#lifecycle()
+     * @return The lifecycle of the component
      */
-    boolean singleton() default true;
+    LifecycleType lifecycle() default LifecycleType.SINGLETON;
 
     /**
      * @see Component#lazy()

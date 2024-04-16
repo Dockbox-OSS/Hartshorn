@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,17 @@
 package test.org.dockbox.hartshorn.components;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.inject.Singleton;
 
-@Singleton
-public class SingletonEnableable {
-    private int enabled;
+public class SimplePostConstructableObject {
 
-    public int enabled() {
-        return this.enabled;
+    private int constructionCount;
+
+    public int getTimesConstructed() {
+        return this.constructionCount;
     }
 
     @PostConstruct
-    public void enable() {
-        this.enabled++;
+    public void incrementConstructionCount() {
+        this.constructionCount++;
     }
 }

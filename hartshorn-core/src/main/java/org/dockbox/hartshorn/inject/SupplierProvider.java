@@ -40,7 +40,7 @@ public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements NonTyp
     @Override
     public Option<ObjectContainer<C>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
         C instance = this.supplier.get();
-        return Option.of(instance).map(ComponentObjectContainer::new);
+        return Option.of(instance).map(ComponentObjectContainer::ofPrototype);
     }
 
 }

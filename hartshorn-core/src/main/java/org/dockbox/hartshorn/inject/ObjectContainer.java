@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,8 @@ public abstract class ObjectContainer<T> {
      * @param processed whether the object instance has been processed or not
      */
     public abstract void processed(boolean processed);
+
+    LifecycleType lifecycleType();
 
     @Override
     public String toString() {

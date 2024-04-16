@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,7 @@
 package test.org.dockbox.hartshorn.components.contextual;
 
 import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.inject.Named;
 import org.dockbox.hartshorn.inject.Priority;
 
@@ -31,19 +30,19 @@ public class StaticComponentConfiguration {
 
     @Named(USER)
     @Priority(12)
-    @Binds(type = BindingType.COLLECTION)
+    @Singleton
     public StaticComponent userComponent() {
         return new StaticComponent(USER);
     }
 
     @Named(ADMIN)
-    @Binds(type = BindingType.COLLECTION)
+    @Singleton
     public StaticComponent adminComponent() {
         return new StaticComponent(ADMIN);
     }
 
     @Named(GUEST)
-    @Binds(type = BindingType.COLLECTION)
+    @Singleton
     public StaticComponent guestComponent() {
         return new StaticComponent(GUEST);
     }

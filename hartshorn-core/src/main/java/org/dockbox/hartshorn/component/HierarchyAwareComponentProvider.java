@@ -74,7 +74,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         this.owner = owner;
         this.scope = scope;
         CompositeComponentPostProcessor postProcessor = new CompositeComponentPostProcessor(owner::postProcessors);
-        this.processor = new SimpleComponentProviderPostProcessor(owner, postProcessor, owner.applicationContext(), this::storeSingletons);
+        this.processor = new SimpleComponentProviderPostProcessor(owner, postProcessor, owner.applicationContext(), this::storeComponents);
     }
 
     private HierarchyCache hierarchyCache() {
@@ -133,23 +133,19 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return Option.empty();
     }
 
-    protected <T> void storeSingletons(ComponentKey<T> key, T instance) {
-        // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
-        // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
-        if (instance != null) {
-            TypeView<T> keyType = this.applicationContext().environment().introspector().introspect(key.type());
-            boolean isSingleton = this.applicationContext().environment().singleton(keyType);
-
-            // Same effect as ||, but this is more readable. It's important to only check the instance type if the key doesn't already match,
-            // as introspecting and unproxying the instance can be expensive when it's not necessary.
-            if (!isSingleton) {
-                TypeView<T> instanceType = this.applicationContext().environment().introspector().introspect(instance);
-                isSingleton = this.applicationContext().environment().singleton(instanceType);
-            }
-
-            if (isSingleton) {
-                this.singletonCache.put(key, instance);
-            }
+    protected <T> void storeComponents(ComponentKey<T> key, ObjectContainer<T> container) {
+        if (!container.permitsObjectCaching()) {
+            return;
+        }
+        switch (container.lifecycleType()) {
+            case SINGLETON:
+                this.singletonCache.put(key, container.instance());
+                break;
+            case PROTOTYPE:
+                // Do nothing, as prototypes are not stored
+                break;
+            default:
+                throw new IllegalModificationException("Unknown lifecycle type " + container.lifecycleType());
         }
     }
 

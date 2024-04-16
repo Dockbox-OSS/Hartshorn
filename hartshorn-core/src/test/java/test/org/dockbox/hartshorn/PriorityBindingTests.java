@@ -16,20 +16,19 @@
 
 package test.org.dockbox.hartshorn;
 
+import jakarta.inject.Inject;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Prototype;
 import org.dockbox.hartshorn.inject.Priority;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.components.SampleInterface;
 
 @HartshornTest(includeBasePackages = false)
-public class PriorityBindsTests {
+public class PriorityBindingTests {
 
     public static final String PRIORITY_DEFAULT = "Default";
     public static final String PRIORITY_ZERO = "Zero";
@@ -55,12 +54,12 @@ public class PriorityBindsTests {
     @Configuration
     public static class ZeroAndDefaultPriorityConfiguration {
 
-        @Binds
+        @Prototype
         public SampleInterface sampleInterfaceDefaultPriority() {
             return () -> PRIORITY_DEFAULT;
         }
 
-        @Binds
+        @Prototype
         @Priority(0)
         public SampleInterface sampleInterfacePriorityZero() {
             return () -> PRIORITY_ZERO;
@@ -70,7 +69,7 @@ public class PriorityBindsTests {
     @Configuration
     public static class ImplicitPriorityConfiguration {
 
-        @Binds
+        @Prototype
         @Priority(1)
         public SampleInterface sampleInterfacePriorityOne(SampleInterface lowerPriority) {
             return () -> lowerPriority.name() + PRIORITY_ONE;
@@ -80,7 +79,7 @@ public class PriorityBindsTests {
     @Configuration
     public static class ExplicitPriorityConfiguration {
 
-        @Binds
+        @Prototype
         @Priority(1)
         public SampleInterface sampleInterfacePriorityOne(@Priority(Priority.DEFAULT_PRIORITY) SampleInterface lowerPriority) {
             return () -> lowerPriority.name() + PRIORITY_ONE;

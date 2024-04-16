@@ -19,8 +19,9 @@ package org.dockbox.hartshorn.reporting;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.Prototype;
+import org.dockbox.hartshorn.component.processing.Singleton;
+import org.dockbox.hartshorn.inject.Strict;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateReporterConfiguration;
@@ -52,8 +53,8 @@ public class ReportingConfiguration {
      *
      * @see AggregateDiagnosticsReporter
      */
-    @Binds
-    public Reportable applicationReportable(ComponentCollection<CategorizedDiagnosticsReporter> diagnosticsReporters) {
+    @Prototype
+    public Reportable applicationReportable(@Strict(false) ComponentCollection<CategorizedDiagnosticsReporter> diagnosticsReporters) {
         ConfigurableDiagnosticsReporter<AggregateReporterConfiguration> reporter = new AggregateDiagnosticsReporter();
         reporter.configuration().addAll(diagnosticsReporters);
         return reporter;
@@ -67,7 +68,7 @@ public class ReportingConfiguration {
      *
      * @see SystemDiagnosticsReporter
      */
-    @Binds(type = BindingType.COLLECTION)
+    @Singleton
     public CategorizedDiagnosticsReporter systemDiagnosticsReporter() {
         return new SystemDiagnosticsReporter();
     }
@@ -81,7 +82,7 @@ public class ReportingConfiguration {
      *
      * @see ApplicationDiagnosticsReporter
      */
-    @Binds(type = BindingType.COLLECTION)
+    @Singleton
     public CategorizedDiagnosticsReporter applicationDiagnosticsReporter(ApplicationContext applicationContext) {
         return new ApplicationDiagnosticsReporter(applicationContext);
     }
@@ -96,7 +97,7 @@ public class ReportingConfiguration {
      *
      * @see ComponentDiagnosticsReporter
      */
-    @Binds(type = BindingType.COLLECTION)
+    @Singleton
     public CategorizedDiagnosticsReporter componentDiagnosticsReporter(ApplicationContext applicationContext) {
         return new ComponentDiagnosticsReporter(applicationContext);
     }
@@ -111,7 +112,7 @@ public class ReportingConfiguration {
      *
      * @see ComponentProcessorDiagnosticsReporter
      */
-    @Binds(type = BindingType.COLLECTION)
+    @Singleton
     public CategorizedDiagnosticsReporter componentProcessorDiagnosticsReporter(ApplicationContext applicationContext) {
         return new ComponentProcessorDiagnosticsReporter(applicationContext);
     }
@@ -124,7 +125,7 @@ public class ReportingConfiguration {
      *
      * @see StandardDiagnosticsReportCollector
      */
-    @Binds
+    @Singleton
     public DiagnosticsReportCollector diagnosticsReportCollector() {
         return new StandardDiagnosticsReportCollector();
     }

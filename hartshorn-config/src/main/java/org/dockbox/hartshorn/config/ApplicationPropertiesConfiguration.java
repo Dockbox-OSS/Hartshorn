@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.config.annotations.IncludeResourceConfiguration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
@@ -29,14 +29,11 @@ import org.dockbox.hartshorn.config.properties.StandardURIConfigProcessor;
 import org.dockbox.hartshorn.config.properties.URIConfigProcessor;
 import org.dockbox.hartshorn.inject.SupportPriority;
 
-import jakarta.inject.Singleton;
-
 @Configuration
 @RequiresActivator(UseConfigurations.class)
 @IncludeResourceConfiguration({"fs:application", "classpath:application"})
 public class ApplicationPropertiesConfiguration {
 
-    @Binds
     @Singleton
     @SupportPriority
     public PropertyHolder propertyHolder(ApplicationContext applicationContext,
@@ -46,7 +43,6 @@ public class ApplicationPropertiesConfiguration {
         return new StandardPropertyHolder(applicationContext, propertyHolder, objectMapper, propertyMapper);
     }
 
-    @Binds
     @Singleton
     @SupportPriority
     public URIConfigProcessor uriConfigProcessor() {

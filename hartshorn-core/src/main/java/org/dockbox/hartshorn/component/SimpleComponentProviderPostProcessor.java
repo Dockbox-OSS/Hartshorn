@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.component;
 
 import java.util.Set;
-
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
@@ -27,7 +26,6 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.binding.collection.ContainerAwareComponentCollection;
-import org.dockbox.hartshorn.inject.binding.collection.SimpleComponentCollection;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -41,24 +39,24 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
     private final ScopedProviderOwner owner;
     private final ComponentPostProcessor processor;
     private final ApplicationContext applicationContext;
-    private final ComponentStoreCallback storeSingleton;
+    private final ComponentStoreCallback componentStoreCallback;
 
     public SimpleComponentProviderPostProcessor(
             ScopedProviderOwner owner,
             ComponentPostProcessor processor,
             ApplicationContext applicationContext,
-            ComponentStoreCallback storeSingleton
+            ComponentStoreCallback componentStoreCallback
     ) {
         this.owner = owner;
         this.processor = processor;
         this.applicationContext = applicationContext;
-        this.storeSingleton = storeSingleton;
+        this.componentStoreCallback = componentStoreCallback;
     }
 
     @Override
-    public <T> T processInstance(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, T instance,
-            ComponentRequestContext requestContext) throws ApplicationException {
+    public <T> T processInstance(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, ComponentRequestContext requestContext) throws ApplicationException {
         Class<? extends T> type = componentKey.type();
+        T instance = objectContainer.instance();
         if (instance != null) {
             type = TypeUtils.adjustWildcards(instance.getClass(), Class.class);
         }
@@ -72,23 +70,24 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
             throw new ComponentResolutionException("No component found for key " + componentKey);
         }
 
-        return this.finishComponentRequest(componentKey, instance);
+        return this.finishComponentRequest(componentKey, objectContainer.copyForObject(instance));
     }
 
 
-    private <T> T finishComponentRequest(ComponentKey<T> componentKey, T instance) {
-        this.storeSingleton.store(componentKey, instance);
+    private <T> T finishComponentRequest(ComponentKey<T> componentKey, ObjectContainer<T> container) {
+        this.componentStoreCallback.store(componentKey, container);
 
         // Inject properties if applicable
-        if (componentKey.enable()) {
+        if (componentKey.postConstructionAllowed()) {
             try {
-                instance = this.owner.postConstructor().doPostConstruct(instance);
+                return this.owner.postConstructor().doPostConstruct(container.instance());
             } catch (ApplicationException e) {
                 throw new ComponentInitializationException("Failed to perform post-construction on component with key " + componentKey, e);
             }
         }
-
-        return instance;
+        else {
+            return container.instance();
+        }
     }
 
     private <T> T processManagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer,
@@ -121,7 +120,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
     private <E, T extends ComponentCollection<E>> ComponentCollection<E> processComponentCollection(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, ComponentRequestContext requestContext)
             throws ApplicationException {
         if (objectContainer.instance() == null) {
-            return new SimpleComponentCollection<>(Set.of());
+            return new ContainerAwareComponentCollection<>(Set.of());
         }
         else if (objectContainer.instance() instanceof ContainerAwareComponentCollection<?> containerAwareComponentCollection) {
 
@@ -133,8 +132,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
                     componentKey,
                     ComponentKey.class);
 
-            ContainerAwareComponentCollection<E> processed = this.processCollection(key, collection, requestContext);
-            return new SimpleComponentCollection<>(Set.copyOf(processed));
+            return this.processCollection(key, collection, requestContext);
         }
         else {
             throw new IllegalArgumentException("Component collection from provider must be of type ContainerAwareComponentCollection");
@@ -143,7 +141,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
 
     protected <T> ModifiableComponentProcessingContext<T> process(ModifiableComponentProcessingContext<T> processingContext) throws ApplicationException {
         this.processor.process(processingContext);
-        this.storeSingleton.store(processingContext.key(), processingContext.instance());
+        this.componentStoreCallback.store(processingContext.key(), processingContext.container());
         return processingContext;
     }
 
@@ -152,7 +150,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
             return objectContainer.instance();
         }
 
-        ModifiableComponentProcessingContext<T> processingContext = this.prepareProcessingContext(key, objectContainer.instance(), container, requestContext);
+        ModifiableComponentProcessingContext<T> processingContext = this.prepareProcessingContext(key, objectContainer, container, requestContext);
         objectContainer.processed(true);
 
         processingContext = this.process(processingContext);
@@ -170,20 +168,20 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
         return collection;
     }
 
-    protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, T instance, @Nullable ComponentContainer<?> container, ComponentRequestContext requestContext) {
+    protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, ObjectContainer<T> objectContainer, @Nullable ComponentContainer<?> componentContainer, ComponentRequestContext requestContext) {
         ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(
-                this.applicationContext, key, requestContext, instance,
-                container == null || container.permitsProxying(),
-                latest -> this.storeSingleton.store(key, latest));
+                this.applicationContext, key, requestContext, objectContainer,
+                componentContainer == null || componentContainer.permitsProxying(),
+                latest -> this.componentStoreCallback.store(key, latest));
 
-        if (container != null) {
-            processingContext.put(ComponentKey.of(ComponentContainer.class), container);
-            if (container.permitsProxying()) {
+        if (componentContainer != null) {
+            processingContext.put(ComponentKey.of(ComponentContainer.class), componentContainer);
+            if (componentContainer.permitsProxying()) {
                 StateAwareProxyFactory<T> factory = this.applicationContext.environment().proxyOrchestrator().factory(key.type());
 
-                if (instance != null) {
+                if (objectContainer.instance() != null) {
                     factory.trackState(false);
-                    factory.advisors().type().delegateAbstractOnly(instance);
+                    factory.advisors().type().delegateAbstractOnly(objectContainer.instance());
                     factory.trackState(true);
                 }
                 processingContext.put(ComponentKey.of(ProxyFactory.class), factory);

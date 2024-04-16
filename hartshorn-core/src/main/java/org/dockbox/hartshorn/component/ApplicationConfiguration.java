@@ -19,7 +19,8 @@ package org.dockbox.hartshorn.component;
 import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Prototype;
+import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.inject.Strict;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -34,8 +35,6 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.inject.Singleton;
-
 /**
  * Configuration for core components that are required by the framework. This includes the {@link Logger} and
  * {@link ConversionService}.
@@ -47,7 +46,7 @@ import jakarta.inject.Singleton;
 @RequiresActivator(UseBootstrap.class)
 public class ApplicationConfiguration {
 
-    @Binds
+    @Prototype
     public Logger logger(InjectionPoint injectionPoint, ComponentRegistry componentRegistry) {
         Class<?> declaringType = switch(injectionPoint.injectionPoint()) {
             case ExecutableElementView<?> executableElementView -> executableElementView.declaredBy().type();
@@ -62,7 +61,6 @@ public class ApplicationConfiguration {
             .orElseGet(() -> LoggerFactory.getLogger(declaringType));
     }
 
-    @Binds
     @Singleton
     public ConversionService conversionService(
             Introspector introspector,

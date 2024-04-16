@@ -17,8 +17,7 @@
 package org.dockbox.hartshorn.i18n.support;
 
 import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
@@ -42,7 +41,7 @@ public class MessageConverterConfiguration {
      * @param translationService the {@link TranslationService} to delegate to
      * @return a {@link Converter} that converts a {@link String} to a {@link Message}
      */
-    @Binds(type = BindingType.COLLECTION)
+    @Singleton
     public Converter<String, Message> stringToMessageConverter(TranslationService translationService) {
         return new StringToMessageConverter(translationService);
     }
@@ -53,7 +52,7 @@ public class MessageConverterConfiguration {
      *
      * @return a {@link Converter} that converts a {@link Message} to a {@link String}
      */
-    @Binds(type = BindingType.COLLECTION)
+    @Singleton
     public Converter<Message, String> messageToStringConverter() {
         return message -> message.string();
     }

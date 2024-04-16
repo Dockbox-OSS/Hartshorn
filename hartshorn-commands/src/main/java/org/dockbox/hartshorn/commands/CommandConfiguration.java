@@ -27,31 +27,28 @@ import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.CooldownExtension;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.CompositeMember;
+import org.dockbox.hartshorn.component.processing.Prototype;
+import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.inject.Priority;
 import org.dockbox.hartshorn.inject.SupportPriority;
-
-import jakarta.inject.Singleton;
 
 @Configuration
 @RequiresActivator(UseCommands.class)
 public class CommandConfiguration {
 
-    @Binds
+    @Prototype
     @SupportPriority
     public CommandListener listener(ApplicationContext applicationContext, CommandGateway gateway) {
         return new CommandListenerImpl(applicationContext, gateway);
     }
 
-    @Binds
     @Singleton
     @SupportPriority
     public SystemSubject systemSubject(ApplicationContext applicationContext) {
         return new ApplicationSystemSubject(applicationContext);
     }
 
-    @Binds
     @Singleton
     @SupportPriority
     public CommandGateway commandGateway(
@@ -62,19 +59,20 @@ public class CommandConfiguration {
         return new CommandGatewayImpl(parser, resources, context, converterRegistry);
     }
 
-    @Binds
+    @Prototype
     @SupportPriority
     public CommandParser commandParser(CommandResources resources) {
         return new CommandParserImpl(resources);
     }
 
-    @Binds(type = BindingType.COLLECTION)
+    @Prototype
+    @CompositeMember
     @SupportPriority
     public CommandExecutorExtension cooldownExtension(ApplicationContext applicationContext) {
         return new CooldownExtension(applicationContext);
     }
 
-    @Binds
+    @Prototype
     @SupportPriority
     public ArgumentConverterRegistry converterRegistry(ApplicationEnvironment environment, ArgumentConverterRegistryCustomizer customizer) {
         ArgumentConverterRegistry registry = new SimpleArgumentConverterRegistry();
@@ -82,7 +80,7 @@ public class CommandConfiguration {
         return registry;
     }
 
-    @Binds
+    @Prototype
     @Priority(Priority.SUPPORT_PRIORITY + 16) // Intentionally used to compose the lower priority binding
     public ArgumentConverterRegistryCustomizer converterRegistryCustomizer(ApplicationEnvironment environment, ArgumentConverterRegistryCustomizer customizer) {
         return customizer.compose(new ParameterTypeArgumentConverterRegistryCustomizer(environment));

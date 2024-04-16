@@ -89,7 +89,14 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
 
     @Override
     public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
-        // Do nothing, require processing or standard instance provision
+        Class<T> componentType = this.container.type().type();
+        switch (this.container.lifecycle()) {
+            // At this point we ignore the ComponentContainer#lazy() property. This will later be handled
+            // by the context constructor when the application is ready for initialization.
+            case SINGLETON -> function.lazySingleton(componentType);
+            case PROTOTYPE -> function.to(componentType);
+            default -> throw new ComponentConfigurationException("Unsupported lifecycle: " + this.container.lifecycle());
+        }
     }
 
     @Override
