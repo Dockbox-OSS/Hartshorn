@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.function.Supplier;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
 
-@FunctionalInterface
 public interface ContextAwareComponentSupplier<T> extends NonTypeAwareProvider<T> {
 
     @Override
@@ -29,4 +30,18 @@ public interface ContextAwareComponentSupplier<T> extends NonTypeAwareProvider<T
     }
 
     T get(ComponentRequestContext context) throws ApplicationException;
+
+    @Override
+    default LifecycleType defaultLifecycle() {
+        return LifecycleType.PROTOTYPE;
+    }
+
+    @Override
+    default Tristate defaultLazy() {
+        return Tristate.TRUE;
+    }
+
+    static <T> ContextAwareComponentSupplier<T> empty() {
+        return context -> null;
+    }
 }

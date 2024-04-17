@@ -21,6 +21,7 @@ import java.util.function.Function;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -56,4 +57,8 @@ public sealed interface Provider<T> permits TypeAwareProvider, NonTypeAwareProvi
     default Provider<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
         return new ComposedProvider<>(this, mappingFunction);
     }
+
+    LifecycleType defaultLifecycle();
+
+    Tristate defaultLazy();
 }

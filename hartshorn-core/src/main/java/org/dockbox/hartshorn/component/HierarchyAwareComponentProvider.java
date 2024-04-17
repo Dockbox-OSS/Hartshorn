@@ -186,6 +186,11 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     }
 
     @Override
+    public Scope scope() {
+        return this.scope;
+    }
+
+    @Override
     public ApplicationContext applicationContext() {
         return this.owner.applicationContext();
     }

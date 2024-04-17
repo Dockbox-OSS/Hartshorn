@@ -106,5 +106,10 @@ public interface ApplicationContext extends
     }
 
     @Override
+    default Scope scope() {
+        return this;
+    }
+
+    @Override
     void close() throws ApplicationException;
 }

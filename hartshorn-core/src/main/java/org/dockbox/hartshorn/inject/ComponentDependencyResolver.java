@@ -17,13 +17,11 @@
 package org.dockbox.hartshorn.inject;
 
 import java.util.Set;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.strategy.IntrospectionDependencyResolver;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.jetbrains.annotations.NotNull;
 
 public class ComponentDependencyResolver extends AbstractContainerDependencyResolver {
 
@@ -32,17 +30,10 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
     }
 
     @Override
-    protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> declarationContext, ApplicationContext applicationContext) throws DependencyResolutionException {
-        if (declarationContext instanceof ComponentContainerDependencyDeclarationContext<T> containerContext) {
-            return this.resolveManagedComponentDependencies(containerContext, applicationContext);
-        }
-        else {
-            return Set.of();
-        }
-    }
-
-    private <T> @NotNull Set<DependencyContext<?>> resolveManagedComponentDependencies(ComponentContainerDependencyDeclarationContext<T> declarationContext,
-        ApplicationContext applicationContext) throws DependencyResolutionException {
+    protected <T> Set<DependencyContext<?>> resolveSingle(
+        DependencyDeclarationContext<T> declarationContext,
+        ApplicationContext applicationContext
+    ) throws DependencyResolutionException {
         TypeView<T> type = declarationContext.type();
         ConstructorView<? extends T> constructorView;
         try {
@@ -66,8 +57,22 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
                 .immediate(constructorDependencies)
                 .delayed(typeDependencies);
 
-        ComponentKey<T> componentKey = ComponentKey.of(type);
-
-        return Set.of(new ManagedComponentDependencyContext<>(declarationContext.container(), componentKey, dependencies, constructorView));
+        if (declarationContext instanceof ComponentContainerDependencyDeclarationContext<T> containerContext) {
+            ComponentKey<T> componentKey = ComponentKey.of(type);
+            return Set.of(new ComponentContainerDependencyContext<>(containerContext.container(), componentKey, dependencies, constructorView));
+        }
+        else if (declarationContext instanceof ComponentKeyDependencyDeclarationContext<T> keyContext) {
+            Provider<T> provider = keyContext.provider();
+            ManagedComponentKeyDependencyContext<T> dependencyContext = ManagedComponentKeyDependencyContext.builder(keyContext.key(), type)
+                .dependencies(dependencies)
+                .constructorView(constructorView)
+                .lazy(provider.defaultLazy().booleanValue())
+                .lifecycleType(provider.defaultLifecycle())
+                .build();
+            return Set.of(dependencyContext);
+        }
+        else {
+            return Set.of();
+        }
     }
 }

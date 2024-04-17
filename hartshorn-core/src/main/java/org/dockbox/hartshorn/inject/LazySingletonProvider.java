@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.IllegalModificationException;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -49,5 +50,15 @@ public class LazySingletonProvider<T> implements NonTypeAwareProvider<T> {
             throw new IllegalModificationException("Cannot bind null instance");
         }
         return Option.of(ComponentObjectContainer.ofSingleton(instance));
+    }
+
+    @Override
+    public LifecycleType defaultLifecycle() {
+        return LifecycleType.SINGLETON;
+    }
+
+    @Override
+    public Tristate defaultLazy() {
+        return Tristate.TRUE;
     }
 }

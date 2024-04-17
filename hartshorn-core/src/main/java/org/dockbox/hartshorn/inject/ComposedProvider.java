@@ -22,6 +22,7 @@ import java.util.function.Function;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -86,5 +87,15 @@ public final class ComposedProvider<T> implements Provider<T> {
     public Provider<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
         this.functions.add(mappingFunction);
         return this;
+    }
+
+    @Override
+    public LifecycleType defaultLifecycle() {
+        return this.provider.defaultLifecycle();
+    }
+
+    @Override
+    public Tristate defaultLazy() {
+        return this.provider.defaultLazy();
     }
 }

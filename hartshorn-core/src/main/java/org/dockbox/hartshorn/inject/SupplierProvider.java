@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -43,4 +44,13 @@ public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements NonTyp
         return Option.of(instance).map(ComponentObjectContainer::ofPrototype);
     }
 
+    @Override
+    public LifecycleType defaultLifecycle() {
+        return LifecycleType.PROTOTYPE;
+    }
+
+    @Override
+    public Tristate defaultLazy() {
+        return Tristate.TRUE;
+    }
 }

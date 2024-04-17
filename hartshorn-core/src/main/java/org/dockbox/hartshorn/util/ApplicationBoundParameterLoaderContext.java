@@ -75,6 +75,11 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
                 }
                 return self.provider.get(key, requestContext);
             }
+
+            @Override
+            public Scope scope() {
+                return ApplicationBoundParameterLoaderContext.this.scope;
+            }
         };
     }
 

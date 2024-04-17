@@ -38,6 +38,7 @@ import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentDiscoveryList;
 import org.dockbox.hartshorn.inject.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.DependencyMap;
 import org.dockbox.hartshorn.inject.DependencyResolutionType;
@@ -498,7 +499,7 @@ public class ApplicationContextTests {
                 .priority(-1)
                 .memberType(ComponentMemberType.STANDALONE)
                 .view(origin)
-                .supplier(requestContext -> null)
+                .supplier(ContextAwareComponentSupplier.empty())
                 .build();
             dependencyContexts.add(dependencyContext);
         }
@@ -521,7 +522,7 @@ public class ApplicationContextTests {
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
         Set<GraphNode<DependencyContext<?>>> roots = dependencyGraph.roots();
-        Assertions.assertEquals(0, roots.size()); // Cyclic, but two singleton roots
+        Assertions.assertEquals(0, roots.size()); // Cyclic, so no roots
 
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
         Assertions.assertEquals(4, nodes.size()); // 4 nodes, 2 interfaces, 2 implementations

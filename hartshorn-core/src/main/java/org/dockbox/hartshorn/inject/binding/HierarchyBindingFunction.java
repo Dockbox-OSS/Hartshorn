@@ -161,7 +161,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     @Override
     public Binder lazySingleton(Class<T> type) {
         ComponentKey<? extends T> key = this.buildComponentKey(type);
-        return this.add(new ContextDrivenProvider<>(key, LifecycleType.SINGLETON));
+        return this.add(ContextDrivenProvider.forSingleton(key));
     }
 
     @Override

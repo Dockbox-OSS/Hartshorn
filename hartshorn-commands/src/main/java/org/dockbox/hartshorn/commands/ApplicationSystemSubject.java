@@ -21,13 +21,10 @@ import org.dockbox.hartshorn.i18n.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.inject.Inject;
-
 public class ApplicationSystemSubject extends SystemSubject {
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationSystemSubject.class);
 
-    @Inject
     public ApplicationSystemSubject(ApplicationContext applicationContext) {
         super(applicationContext);
     }

@@ -21,10 +21,12 @@ import java.util.Set;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.CollectionObjectContainer;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.inject.NonTypeAwareProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -62,5 +64,15 @@ public class ComposedCollectionProvider<T> implements NonTypeAwareProvider<Compo
         ContainerAwareComponentCollection<T> componentCollection = new ContainerAwareComponentCollection<>(components);
         ObjectContainer<ComponentCollection<T>> container = new CollectionObjectContainer<>(componentCollection);
         return Option.of(container);
+    }
+
+    @Override
+    public LifecycleType defaultLifecycle() {
+        return LifecycleType.PROTOTYPE;
+    }
+
+    @Override
+    public Tristate defaultLazy() {
+        return Tristate.TRUE;
     }
 }

@@ -141,6 +141,11 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     }
 
     @Override
+    public Scope scope() {
+        return this.applicationContext();
+    }
+
+    @Override
     public <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key) {
         return this.getOrDefaultProvider(key.scope()).hierarchy(key);
     }

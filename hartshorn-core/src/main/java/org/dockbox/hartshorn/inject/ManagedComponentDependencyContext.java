@@ -18,13 +18,13 @@ package org.dockbox.hartshorn.inject;
 
 import java.util.Set;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.processing.ComponentMemberType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
 /**
@@ -40,19 +40,19 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  *
  * @author Guus Lieben
  */
-public class ManagedComponentDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
+public abstract class ManagedComponentDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
 
-    private final ComponentContainer<T> container;
     private final ComponentKey<T> componentKey;
     private final DependencyMap dependencies;
     private final ConstructorView<? extends T> constructorView;
 
-    public ManagedComponentDependencyContext(ComponentContainer<T> container, ComponentKey<T> componentKey, DependencyMap dependencies, ConstructorView<? extends T> constructorView) {
-        this.container = container;
+    public ManagedComponentDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies, ConstructorView<? extends T> constructorView) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.constructorView = constructorView;
     }
+
+    protected abstract TypeView<T> type();
 
     @Override
     public ComponentKey<T> componentKey() {
@@ -90,34 +90,20 @@ public class ManagedComponentDependencyContext<T> implements LifecycleAwareDepen
     }
 
     @Override
-    public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
-        Class<T> componentType = this.container.type().type();
-        switch (this.container.lifecycle()) {
-            // At this point we ignore the ComponentContainer#lazy() property. This will later be handled
-            // by the context constructor when the application is ready for initialization.
-            case SINGLETON -> function.lazySingleton(componentType);
-            case PROTOTYPE -> function.to(componentType);
-            default -> throw new ComponentConfigurationException("Unsupported lifecycle: " + this.container.lifecycle());
-        }
-    }
-
-    @Override
     public View origin() {
         return this.constructorView;
     }
 
     @Override
-    public boolean lazy() {
-        return this.container.lazy();
-    }
-
-    @Override
-    public LifecycleType lifecycleType() {
-        return this.container.lifecycle();
-    }
-
-    @Override
-    public boolean processAfterInitialization() {
-        return this.container.permitsProcessing();
+    public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
+        Class<T> componentType = this.type().type();
+        LifecycleType lifecycleType = this.lifecycleType();
+        switch (lifecycleType) {
+            // At this point we ignore the ComponentContainer#lazy() property. This will later be handled
+            // by the context constructor when the application is ready for initialization.
+            case SINGLETON -> function.lazySingleton(componentType);
+            case PROTOTYPE -> function.to(componentType);
+            default -> throw new ComponentConfigurationException("Unsupported lifecycle: " + lifecycleType);
+        }
     }
 }
