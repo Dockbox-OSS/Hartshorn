@@ -57,12 +57,12 @@ public interface ObjectContainer<T> {
      * component provider to store objects in case they may be re-used. A common example of this is a singleton
      * being stored in the scope's {@link SingletonCache}.
      *
-     * <p>Defaults to {@code true}, but may be overridden by implementations.
+     * <p>Defaults to {@code true} if the {@link #lifecycleType()} is {@link LifecycleType#SINGLETON}.
      *
      * @return {@code true} if the object can be cached, {@code false} otherwise
      */
     default boolean permitsObjectCaching() {
-        return true;
+        return this.lifecycleType() == LifecycleType.SINGLETON;
     }
 
     ObjectContainer<T> copyForObject(T instance);

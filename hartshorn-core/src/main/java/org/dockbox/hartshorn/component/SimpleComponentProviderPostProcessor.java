@@ -140,8 +140,9 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
     }
 
     protected <T> ModifiableComponentProcessingContext<T> process(ModifiableComponentProcessingContext<T> processingContext) throws ApplicationException {
-        this.processor.process(processingContext);
+        // Store early, so cyclic dependencies may be resolved
         this.componentStoreCallback.store(processingContext.key(), processingContext.container());
+        this.processor.process(processingContext);
         return processingContext;
     }
 
@@ -172,7 +173,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
         ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(
                 this.applicationContext, key, requestContext, objectContainer,
                 componentContainer == null || componentContainer.permitsProxying(),
-                latest -> this.componentStoreCallback.store(key, latest));
+                this.componentStoreCallback);
 
         if (componentContainer != null) {
             processingContext.put(ComponentKey.of(ComponentContainer.class), componentContainer);

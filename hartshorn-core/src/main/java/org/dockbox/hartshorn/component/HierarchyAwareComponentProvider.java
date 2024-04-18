@@ -72,7 +72,11 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         this.owner = owner;
         this.scope = scope;
         CompositeComponentPostProcessor postProcessor = new CompositeComponentPostProcessor(owner::postProcessors);
-        this.processor = new SimpleComponentProviderPostProcessor(owner, postProcessor, owner.applicationContext(), this::storeComponents);
+        this.processor = new SimpleComponentProviderPostProcessor(
+            owner, postProcessor,
+            owner.applicationContext(),
+            new LocalCacheComponentStoreCallback(this.singletonCache)
+        );
     }
 
     private HierarchyCache hierarchyCache() {
@@ -134,22 +138,6 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             }
         }
         return Option.empty();
-    }
-
-    protected <T> void storeComponents(ComponentKey<T> key, ObjectContainer<T> container) {
-        if (!container.permitsObjectCaching()) {
-            return;
-        }
-        switch (container.lifecycleType()) {
-            case SINGLETON:
-                this.singletonCache.put(key, container.instance());
-                break;
-            case PROTOTYPE:
-                // Do nothing, as prototypes are not stored
-                break;
-            default:
-                throw new IllegalModificationException("Unknown lifecycle type " + container.lifecycleType());
-        }
     }
 
     protected <T> Option<ObjectContainer<T>> createContextualInstanceContainer(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {

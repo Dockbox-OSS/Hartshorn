@@ -20,5 +20,7 @@ import org.dockbox.hartshorn.inject.ObjectContainer;
 
 public interface ComponentStoreCallback {
 
-    <T> void store(ComponentKey<T> key, ObjectContainer<T> instance);
+    <T> void store(ComponentKey<T> key, ObjectContainer<T> container);
+
+    <T> void lock(ComponentKey<T> key, ObjectContainer<T> container);
 }

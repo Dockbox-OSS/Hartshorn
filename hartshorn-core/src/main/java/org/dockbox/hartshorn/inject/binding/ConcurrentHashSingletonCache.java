@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject.binding;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.dockbox.hartshorn.component.ComponentKey;
@@ -36,11 +37,20 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ConcurrentHashSingletonCache implements SingletonCache {
 
     private final Map<ComponentKey<?>, Object> cache = new ConcurrentHashMap<>();
+    private final Set<ComponentKey<?>> locked = ConcurrentHashMap.newKeySet();
+
+    @Override
+    public void lock(ComponentKey<?> key) {
+        if (!this.cache.containsKey(key)) {
+            throw new IllegalModificationException("Cannot lock a key that is not present in the cache");
+        }
+        this.locked.add(key);
+    }
 
     @Override
     public <T> void put(ComponentKey<T> key, T instance) {
-        if (this.cache.containsKey(key) && this.cache.get(key) != instance) {
-            throw new IllegalModificationException("An instance is already stored for key '" + key + "'");
+        if (this.locked.contains(key) && this.cache.get(key) != instance) {
+            throw new IllegalModificationException("Another instance is already stored for key '" + key + "'");
         }
         this.cache.put(key, instance);
     }

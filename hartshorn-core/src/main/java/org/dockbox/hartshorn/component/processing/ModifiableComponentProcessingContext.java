@@ -20,13 +20,14 @@ import java.util.function.Consumer;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.ComponentStoreCallback;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 
 public class ModifiableComponentProcessingContext<T> extends ComponentProcessingContext<T> {
 
-    private final Consumer<ObjectContainer<T>> onLockRequested;
+    private final ComponentStoreCallback componentStoreCallback;
     private boolean requestInstanceLock = false;
 
     public ModifiableComponentProcessingContext(
@@ -35,10 +36,10 @@ public class ModifiableComponentProcessingContext<T> extends ComponentProcessing
         ComponentRequestContext requestContext,
         ObjectContainer<T> container,
         boolean permitsProxying,
-        Consumer<ObjectContainer<T>> onLockRequested
+        ComponentStoreCallback componentStoreCallback
     ) {
         super(applicationContext, requestContext, key, container, permitsProxying);
-        this.onLockRequested = onLockRequested;
+        this.componentStoreCallback = componentStoreCallback;
     }
 
     public ModifiableComponentProcessingContext<T> instance(T instance) {
@@ -46,12 +47,13 @@ public class ModifiableComponentProcessingContext<T> extends ComponentProcessing
             throw new IllegalModificationException("Cannot modify instance after lock has been requested");
         }
         super.container = super.container.copyForObject(instance);
+        this.componentStoreCallback.store(this.key(), this.container());
         return this;
     }
 
     public void requestInstanceLock() {
         this.requestInstanceLock = true;
-        this.onLockRequested.accept(this.container());
+        this.componentStoreCallback.lock(this.key(), this.container());
     }
 
     public boolean isInstanceLocked() {
