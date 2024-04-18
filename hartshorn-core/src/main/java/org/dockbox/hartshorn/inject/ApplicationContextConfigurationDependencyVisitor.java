@@ -16,10 +16,13 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.Set;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.util.graph.BreadthFirstGraphVisitor;
+import org.dockbox.hartshorn.util.graph.ContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 
@@ -64,5 +67,22 @@ public record ApplicationContextConfigurationDependencyVisitor(
             ComponentProcessor processor = (ComponentProcessor) this.applicationContext.get(dependencyContext.componentKey());
             this.applicationContext.add(processor);
         }
+    }
+
+    @Override
+    public boolean hasVisitedParents(Set<GraphNode<DependencyContext<?>>> visited, Set<GraphNode<DependencyContext<?>>> allNodes, GraphNode<DependencyContext<?>> node) {
+        if (BreadthFirstGraphVisitor.super.hasVisitedParents(visited, allNodes, node)) {
+            return true;
+        }
+        // For singletons we only need to know their parents exist, not that they have been visited. This is to allow
+        // for circular dependencies in singletons. For prototypes this is not allowed, so those abide by the default
+        // implementation.
+        if (DependencyGraph.isSingletonNode(node)) {
+            if (node instanceof ContainableGraphNode<DependencyContext<?>> containable) {
+                return allNodes.containsAll(containable.parents());
+            }
+            return true;
+        }
+        return false;
     }
 }
