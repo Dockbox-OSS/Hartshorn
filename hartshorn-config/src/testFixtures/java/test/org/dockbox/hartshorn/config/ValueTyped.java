@@ -16,10 +16,12 @@
 
 package test.org.dockbox.hartshorn.config;
 
+import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.Service;
 import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.inject.LifecycleType;
 
-@Service
+@Component(lifecycle = LifecycleType.PROTOTYPE)
 public class ValueTyped {
 
     @Value("demo")
