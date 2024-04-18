@@ -244,7 +244,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.writeDelegate(collector -> collector.property("test2").writeStrings("test2"));
+        writer.writeDelegate(collector -> collector.property("test2").writeString("test2"));
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
