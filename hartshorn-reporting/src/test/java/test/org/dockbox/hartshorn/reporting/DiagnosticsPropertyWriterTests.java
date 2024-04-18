@@ -262,8 +262,8 @@ public class DiagnosticsPropertyWriterTests {
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeDelegates(
-                collector -> collector.property("test2").write("test2"),
-                collector -> collector.property("test3").write("test3")
+                collector -> collector.property("test2").writeString("test2"),
+                collector -> collector.property("test3").writeString("test3")
         );
         Assertions.assertTrue(group.has(propertyName));
 

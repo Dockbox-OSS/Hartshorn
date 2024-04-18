@@ -16,13 +16,15 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.HashSet;
 import java.util.Set;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.graph.BreadthFirstGraphVisitor;
-import org.dockbox.hartshorn.util.graph.ContainableGraphNode;
+import org.dockbox.hartshorn.util.graph.ContentAwareGraph;
+import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 
@@ -41,6 +43,37 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 public record ApplicationContextConfigurationDependencyVisitor(
         ApplicationContext applicationContext
 ) implements BreadthFirstGraphVisitor<DependencyContext<?>>, ConfigurationDependencyVisitor {
+
+    @Override
+    public Set<GraphNode<DependencyContext<?>>> iterate(Graph<DependencyContext<?>> graph) throws GraphException {
+        Set<GraphNode<DependencyContext<?>>> iterated = BreadthFirstGraphVisitor.super.iterate(graph);
+        if (graph instanceof ContentAwareGraph<DependencyContext<?>> contentAwareGraph) {
+            Set<GraphNode<DependencyContext<?>>> nodes = contentAwareGraph.nodes();
+            Set<GraphNode<DependencyContext<?>>> danglingNodes = CollectionUtilities.difference(nodes, iterated);
+            Set<GraphNode<DependencyContext<?>>> iteratedDanglingNodes = this.tryIterateDanglingNodes(danglingNodes);
+            iterated.addAll(iteratedDanglingNodes);
+        }
+        return iterated;
+    }
+
+    private Set<GraphNode<DependencyContext<?>>> tryIterateDanglingNodes(Set<GraphNode<DependencyContext<?>>> danglingNodes) throws GraphException {
+        Set<GraphNode<DependencyContext<?>>> iterated = new HashSet<>();
+        for (GraphNode<DependencyContext<?>> danglingNode : danglingNodes) {
+            DependencyContext<?> context = danglingNode.value();
+            if (context.lifecycleType() == LifecycleType.SINGLETON) {
+                if (this.visit(danglingNode)) {
+                    iterated.add(danglingNode);
+                }
+                else {
+                    throw new GraphException("Failed to register singleton dependency: " + context.componentKey());
+                }
+            }
+            else {
+                throw new GraphException("Dangling prototype node found: " + context.componentKey());
+            }
+        }
+        return iterated;
+    }
 
     @Override
     public boolean visit(GraphNode<DependencyContext<?>> node) throws GraphException {
@@ -67,22 +100,5 @@ public record ApplicationContextConfigurationDependencyVisitor(
             ComponentProcessor processor = (ComponentProcessor) this.applicationContext.get(dependencyContext.componentKey());
             this.applicationContext.add(processor);
         }
-    }
-
-    @Override
-    public boolean hasVisitedParents(Set<GraphNode<DependencyContext<?>>> visited, Set<GraphNode<DependencyContext<?>>> allNodes, GraphNode<DependencyContext<?>> node) {
-        if (BreadthFirstGraphVisitor.super.hasVisitedParents(visited, allNodes, node)) {
-            return true;
-        }
-        // For singletons we only need to know their parents exist, not that they have been visited. This is to allow
-        // for circular dependencies in singletons. For prototypes this is not allowed, so those abide by the default
-        // implementation.
-        if (DependencyGraph.isSingletonNode(node)) {
-            if (node instanceof ContainableGraphNode<DependencyContext<?>> containable) {
-                return allNodes.containsAll(containable.parents());
-            }
-            return true;
-        }
-        return false;
     }
 }

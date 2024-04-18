@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A map that can be used to define dependencies for a component. Dependencies are grouped by
@@ -128,5 +129,17 @@ public final class DependencyMap extends StandardMultiMap<DependencyResolutionTy
         builder.append(String.join(", ", parts));
         builder.append("}");
         return builder.toString();
+    }
+
+    public Option<DependencyResolutionType> resolutionType(ComponentKey<?> componentKey) {
+        if (!this.containsValue(componentKey)) {
+            return Option.empty();
+        }
+        for (Map.Entry<DependencyResolutionType, Collection<ComponentKey<?>>> entry : this.map().entrySet()) {
+            if (entry.getValue().contains(componentKey)) {
+                return Option.of(entry.getKey());
+            }
+        }
+        return Option.empty();
     }
 }

@@ -511,7 +511,6 @@ public class ApplicationContextTests {
     }
 
     @Test
-    @Ignore("TODO: Review after changes to singleton caching and circular dependencies")
     void testCircularDependencyPathOnBoundTypeCanBeDetermined() {
         // Bindings should be resolved during graph construction.
         this.applicationContext

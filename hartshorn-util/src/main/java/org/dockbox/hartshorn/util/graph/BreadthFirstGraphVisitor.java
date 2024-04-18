@@ -74,7 +74,7 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
         return nextRow;
     }
 
-    private Set<GraphNode<T>> filterNodesWithUnresolvedParents(Set<GraphNode<T>> visited, Set<GraphNode<T>> nodes) {
+    private Set<GraphNode<T>> filterNodesWithUnresolvedParents(Set<GraphNode<T>> visited, Set<GraphNode<T>> nodes) throws GraphException {
         Set<GraphNode<T>> currentRow = new HashSet<>(nodes);
         // Filter out nodes that have parents that haven't been visited yet, as they can't be visited yet
         // until their parents have been visited first.
@@ -95,7 +95,7 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
      * @param node the node to check
      * @return {@code true} if all parent nodes have been visited, {@code false} otherwise
      */
-    default boolean hasVisitedParents(Set<GraphNode<T>> visited, Set<GraphNode<T>> allNodes, GraphNode<T> node) {
+    default boolean hasVisitedParents(Set<GraphNode<T>> visited, Set<GraphNode<T>> allNodes, GraphNode<T> node) throws GraphException {
         if (node instanceof ContainableGraphNode<T> containable) {
             return visited.containsAll(containable.parents());
         }
