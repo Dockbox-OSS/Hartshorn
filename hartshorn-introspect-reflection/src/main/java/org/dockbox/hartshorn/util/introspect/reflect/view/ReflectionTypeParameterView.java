@@ -251,11 +251,11 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView 
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("name").write(this.name());
-        collector.property("index").write(this.index());
-        collector.property("declaredBy").write(this.declaredBy().name());
-        collector.property("consumedBy").write(this.consumedBy().name());
-        collector.property("type").write(this.isInputParameter() ? "input" : "output");
+        collector.property("name").writeString(this.name());
+        collector.property("index").writeInt(this.index());
+        collector.property("declaredBy").writeString(this.declaredBy().name());
+        collector.property("consumedBy").writeString(this.consumedBy().name());
+        collector.property("type").writeString(this.isInputParameter() ? "input" : "output");
     }
 
     @Override

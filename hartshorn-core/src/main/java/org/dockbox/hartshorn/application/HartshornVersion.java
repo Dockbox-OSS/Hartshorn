@@ -206,12 +206,12 @@ public enum HartshornVersion implements Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("formatted").write(this.toString());
-        collector.property("major").write(this.major);
-        collector.property("minor").write(this.minor);
-        collector.property("patch").write(this.patch);
-        collector.property("alias").write(this.alias);
-        collector.property("status").write(this.releaseStatus.name());
+        collector.property("formatted").writeString(this.toString());
+        collector.property("major").writeInt(this.major);
+        collector.property("minor").writeInt(this.minor);
+        collector.property("patch").writeInt(this.patch);
+        collector.property("alias").writeString(this.alias);
+        collector.property("status").writeString(this.releaseStatus.name());
     }
 
     /**

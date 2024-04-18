@@ -123,7 +123,7 @@ public class CompositeQualifier implements Reportable {
         String[] qualifierNames = this.qualifiers.keySet().stream()
                 .map(Class::getSimpleName)
                 .toArray(String[]::new);
-        collector.property("qualifiers").write(qualifierNames);
+        collector.property("qualifiers").writeStrings(qualifierNames);
     }
 
     @Override

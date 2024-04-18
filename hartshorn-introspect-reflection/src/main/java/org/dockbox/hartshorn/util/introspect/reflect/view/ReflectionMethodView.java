@@ -119,10 +119,10 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("name").write(this.name());
-        collector.property("elementType").write("method");
-        collector.property("returnType").write(this.genericReturnType());
-        collector.property("parameters").write(this.parameters().all().toArray(Reportable[]::new));
-        collector.property("declaredBy").write(this.declaredBy());
+        collector.property("name").writeString(this.name());
+        collector.property("elementType").writeString("method");
+        collector.property("returnType").writeDelegate(this.genericReturnType());
+        collector.property("parameters").writeDelegates(this.parameters().all().toArray(Reportable[]::new));
+        collector.property("declaredBy").writeDelegate(this.declaredBy());
     }
 }

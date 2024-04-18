@@ -59,7 +59,7 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
 
         if (this.configuration.groupBy() == ComponentAttribute.NONE) {
             Reportable[] reporters = this.diagnosticsReporters(componentRegistry.containers());
-            collector.property("all").write(reporters);
+            collector.property("all").writeDelegates(reporters);
         }
         else {
             Map<String, List<ComponentContainer<?>>> groupedContainers = componentRegistry.containers().stream()
@@ -70,7 +70,7 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
                     }));
 
             for (String key : groupedContainers.keySet()) {
-                collector.property(key).write(this.diagnosticsReporters(groupedContainers.get(key)));
+                collector.property(key).writeDelegates(this.diagnosticsReporters(groupedContainers.get(key)));
             }
         }
     }

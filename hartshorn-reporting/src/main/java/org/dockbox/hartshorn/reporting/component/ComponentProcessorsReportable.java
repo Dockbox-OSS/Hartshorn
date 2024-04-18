@@ -43,10 +43,10 @@ public class ComponentProcessorsReportable implements Reportable {
         Reportable[] reportables = processors.values().stream()
                 .flatMap(Collection::stream)
                 .map(processor -> (Reportable) processorCollector -> {
-                    processorCollector.property("name").write(processor.getClass().getCanonicalName());
-                    processorCollector.property("priority").write(processor.priority());
+                    processorCollector.property("name").writeString(processor.getClass().getCanonicalName());
+                    processorCollector.property("priority").writeInt(processor.priority());
                 }).toArray(Reportable[]::new);
 
-        propertyCollector.property("processors").write(reportables);
+        propertyCollector.property("processors").writeDelegates(reportables);
     }
 }

@@ -62,13 +62,13 @@ public class ComponentProcessorDiagnosticsReporter implements CategorizedDiagnos
     private void reportPreProcessors(DiagnosticsPropertyCollector collector,
                                      ProcessableApplicationContext processableApplicationContext) {
         MultiMap<Integer, ? extends ComponentProcessor> processors = processableApplicationContext.processors();
-        collector.property("pre").write(new ComponentProcessorsReportable(processors));
+        collector.property("pre").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 
     private void reportPostProcessors(DiagnosticsPropertyCollector collector,
                                       PostProcessingComponentProvider standardComponentProvider) {
         MultiMap<Integer, ? extends ComponentProcessor> processors = standardComponentProvider.postProcessors();
-        collector.property("post").write(new ComponentProcessorsReportable(processors));
+        collector.property("post").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 
     @Override

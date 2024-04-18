@@ -40,15 +40,15 @@ public class JVMDiagnosticsReporter implements Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("home").write(System.getProperty("java.home"));
-        collector.property("version").write(System.getProperty("java.vm.version"));
-        collector.property("vendor").write(System.getProperty("java.vm.vendor"));
-        collector.property("name").write(System.getProperty("java.vm.name"));
+        collector.property("home").writeString(System.getProperty("java.home"));
+        collector.property("version").writeString(System.getProperty("java.vm.version"));
+        collector.property("vendor").writeString(System.getProperty("java.vm.vendor"));
+        collector.property("name").writeString(System.getProperty("java.vm.name"));
 
         if (this.includeJvmFlags) {
             RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
             List<String> arguments = runtimeMXBean.getInputArguments();
-            collector.property("flags").write(arguments.toArray(String[]::new));
+            collector.property("flags").writeStrings(arguments.toArray(String[]::new));
         }
     }
 }

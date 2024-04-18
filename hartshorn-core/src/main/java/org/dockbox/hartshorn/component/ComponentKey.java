@@ -330,12 +330,12 @@ public final class ComponentKey<T> implements Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("type").write(this.type);
-        collector.property("qualifier").write(this.qualifier);
+        collector.property("type").writeDelegate(this.type);
+        collector.property("qualifier").writeDelegate(this.qualifier);
         if (scope != null) {
-            collector.property("scope").write(this.scope.installableScopeType());
+            collector.property("scope").writeDelegate(this.scope.installableScopeType());
         }
-        collector.property("enable").write(this.enable);
+        collector.property("postConstructionAllowed").writeBoolean(this.postConstructionAllowed);
     }
 
     /**

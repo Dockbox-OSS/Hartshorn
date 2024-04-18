@@ -86,10 +86,10 @@ public class ReflectionPackageView extends ReflectionAnnotatedElementView implem
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("name").write(this.name());
-        collector.property("specificationTitle").write(this.specificationTitle());
-        collector.property("specificationVendor").write(this.specificationVendor());
-        collector.property("specificationVersion").write(this.specificationVersion());
+        collector.property("name").writeString(this.name());
+        collector.property("specificationTitle").writeString(this.specificationTitle());
+        collector.property("specificationVendor").writeString(this.specificationVendor());
+        collector.property("specificationVersion").writeString(this.specificationVersion());
     }
 
     @Override

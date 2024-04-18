@@ -74,9 +74,9 @@ public class TypeReferenceCollectorContext extends DefaultContext implements Rep
     public void report(DiagnosticsPropertyCollector collector) {
         Reportable[] reporters = this.collectors.stream()
                 .map(referenceCollector -> (Reportable) trcCollector -> {
-                    trcCollector.property("type").write(referenceCollector.getClass().getName());
+                    trcCollector.property("type").writeString(referenceCollector.getClass().getName());
                     referenceCollector.report(trcCollector);
                 }).toArray(Reportable[]::new);
-        collector.property("collectors").write(reporters);
+        collector.property("collectors").writeDelegates(reporters);
     }
 }

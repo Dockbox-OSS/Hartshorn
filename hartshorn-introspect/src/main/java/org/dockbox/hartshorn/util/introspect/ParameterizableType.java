@@ -186,8 +186,8 @@ public final class ParameterizableType implements Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("type").write(this.type.getName());
-        collector.property("parameters").write(this.parameters.toArray(Reportable[]::new));
+        collector.property("type").writeString(this.type.getName());
+        collector.property("parameters").writeDelegates(this.parameters.toArray(Reportable[]::new));
     }
 
     /**

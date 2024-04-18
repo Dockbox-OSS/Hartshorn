@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ public class DiagnosticsPropertyWriterTests {
     @Test
     void testWriterClosingRejectsFurtherChanges() {
         DiagnosticsPropertyWriter writer = this.writer(new GroupNode(""));
-        writer.write("test"); // Expecting auto-close
-        Assertions.assertThrows(IllegalStateException.class, () -> writer.write("test"));
+        writer.writeString("test"); // Expecting auto-close
+        Assertions.assertThrows(IllegalStateException.class, () -> writer.writeString("test"));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write(1);
+        writer.writeInt(1);
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
@@ -60,7 +60,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write(2L);
+        writer.writeLong(2L);
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
@@ -74,7 +74,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write(3.0f);
+        writer.writeFloat(3.0f);
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
@@ -88,7 +88,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write(4.0d);
+        writer.writeDouble(4.0d);
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
@@ -102,7 +102,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write(true);
+        writer.writeBoolean(true);
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
@@ -116,7 +116,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write("test");
+        writer.writeString("test");
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
@@ -130,7 +130,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write(1, 2, 3);
+        writer.writeInts(1, 2, 3);
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
@@ -149,7 +149,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write(1L, 2L, 3L);
+        writer.writeLongs(1L, 2L, 3L);
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
@@ -168,7 +168,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write(1.0f, 2.0f, 3.0f);
+        writer.writeFloats(1.0f, 2.0f, 3.0f);
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
@@ -187,7 +187,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write(1.0d, 2.0d, 3.0d);
+        writer.writeDoubles(1.0d, 2.0d, 3.0d);
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
@@ -206,7 +206,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write(true, false, true);
+        writer.writeBooleans(true, false, true);
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
@@ -225,7 +225,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write("test1", "test2", "test3");
+        writer.writeStrings("test1", "test2", "test3");
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
@@ -244,7 +244,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write(collector -> collector.property("test2").write("test2"));
+        writer.writeDelegate(collector -> collector.property("test2").writeStrings("test2"));
         Assertions.assertTrue(group.has(propertyName));
 
         Node<?> node = group.get(propertyName);
@@ -261,7 +261,7 @@ public class DiagnosticsPropertyWriterTests {
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
-        writer.write(
+        writer.writeDelegates(
                 collector -> collector.property("test2").write("test2"),
                 collector -> collector.property("test3").write("test3")
         );

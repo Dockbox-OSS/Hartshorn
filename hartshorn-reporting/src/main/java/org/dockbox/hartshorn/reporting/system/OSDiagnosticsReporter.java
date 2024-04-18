@@ -30,8 +30,8 @@ public class OSDiagnosticsReporter implements Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("name").write(System.getProperty("os.name"));
-        collector.property("version").write(System.getProperty("os.version"));
-        collector.property("arch").write(System.getProperty("os.arch"));
+        collector.property("name").writeString(System.getProperty("os.name"));
+        collector.property("version").writeString(System.getProperty("os.version"));
+        collector.property("arch").writeString(System.getProperty("os.arch"));
     }
 }

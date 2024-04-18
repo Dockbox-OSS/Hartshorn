@@ -477,19 +477,19 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("name").write(this.name());
-        collector.property("package").write(this.packageInfo().name());
+        collector.property("name").writeString(this.name());
+        collector.property("package").writeString(this.packageInfo().name());
 
         TypeParametersIntrospector typeParameters = this.typeParameters();
-        collector.property("typeParameters").write(reporter -> {
+        collector.property("typeParameters").writeDelegate(reporter -> {
             TypeParameterList inputParameters = typeParameters.allInput();
             if (!inputParameters.isEmpty()) {
-                reporter.property("input").write(inputParameters.asList().toArray(Reportable[]::new));
+                reporter.property("input").writeDelegates(inputParameters.asList().toArray(Reportable[]::new));
             }
 
             TypeParameterList outputParameters = typeParameters.allOutput();
             if (!outputParameters.isEmpty()) {
-                reporter.property("output").write(outputParameters.asList().toArray(Reportable[]::new));
+                reporter.property("output").writeDelegates(outputParameters.asList().toArray(Reportable[]::new));
             }
         });
     }
