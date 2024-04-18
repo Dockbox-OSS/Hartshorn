@@ -28,6 +28,10 @@ public class ComponentContainerDependencyDeclarationContext<T> implements Depend
         this.container = container;
     }
 
+    public ComponentContainer<T> container() {
+        return this.container;
+    }
+
     @Override
     public TypeView<T> type() {
         return this.container.type();

@@ -75,7 +75,7 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
     @Override
     public Binder type(Class<? extends T> type) {
         ComponentKey<? extends T> componentKey = this.hierarchy.key().mutable().type(type).build();
-        return this.provider(new ContextDrivenProvider<>(componentKey));
+        return this.provider(ContextDrivenProvider.forPrototype(componentKey));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
             if (instance == null) {
                 throw new IllegalModificationException("Cannot bind null instance");
             }
-            return new ComponentObjectContainer<>(instance);
+            return instance;
         }));
     }
 }

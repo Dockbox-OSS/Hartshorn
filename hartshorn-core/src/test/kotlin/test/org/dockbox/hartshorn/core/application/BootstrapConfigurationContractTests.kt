@@ -15,19 +15,30 @@
  */
 package test.org.dockbox.hartshorn.core.application
 
-import org.dockbox.hartshorn.application.*
+import org.dockbox.hartshorn.application.ApplicationContextConstructor
+import org.dockbox.hartshorn.application.DefaultBindingConfigurer
+import org.dockbox.hartshorn.application.ExceptionHandler
+import org.dockbox.hartshorn.application.StandardApplicationBuilder
+import org.dockbox.hartshorn.application.StandardApplicationContextConstructor
 import org.dockbox.hartshorn.application.context.ApplicationContext
 import org.dockbox.hartshorn.application.context.DelegatingApplicationContext
 import org.dockbox.hartshorn.application.context.DependencyGraphInitializer
 import org.dockbox.hartshorn.application.context.SimpleApplicationContext
-import org.dockbox.hartshorn.application.environment.*
-import org.dockbox.hartshorn.component.*
+import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment
+import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator
+import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment
+import org.dockbox.hartshorn.application.environment.FileSystemProvider
+import org.dockbox.hartshorn.component.ComponentPostConstructor
+import org.dockbox.hartshorn.component.ComponentPostConstructorImpl
+import org.dockbox.hartshorn.component.ComponentProvider
+import org.dockbox.hartshorn.component.ComponentRegistry
+import org.dockbox.hartshorn.component.ScopeAwareComponentProvider
 import org.dockbox.hartshorn.component.condition.ConditionMatcher
 import org.dockbox.hartshorn.inject.BindsMethodDependencyResolver
 import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor
 import org.dockbox.hartshorn.inject.DependencyResolver
 import org.dockbox.hartshorn.inject.binding.Binder
-import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder
 import org.dockbox.hartshorn.introspect.ViewContextAdapter
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator
@@ -147,9 +158,6 @@ class BootstrapConfigurationContractTests {
 
         assertDeferred(instance) { configurer, deferred: ComponentPostConstructor? -> configurer.componentPostConstructor(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.componentPostConstructor(initializer) }
-
-        assertDeferred(instance) { configurer, deferred: ComponentInstanceFactory? -> configurer.componentInstanceFactory(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.componentInstanceFactory(initializer) }
     }
 
     @Test

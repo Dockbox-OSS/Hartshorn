@@ -70,9 +70,9 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
         function.priority(this.priority());
         function.processAfterInitialization(this.processAfterInitialization());
 
-        switch(this.type()) {
+        switch(this.memberType()) {
             case STANDALONE -> this.configureComponent(function);
-            case COLLECTION -> this.configureCollection(function);
+            case COMPOSITE -> this.configureCollection(function);
         }
     }
 

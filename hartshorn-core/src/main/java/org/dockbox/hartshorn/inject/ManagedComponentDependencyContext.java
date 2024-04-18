@@ -18,11 +18,12 @@ package org.dockbox.hartshorn.inject;
 
 import java.util.Set;
 
+import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.ComponentMemberType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.View;
@@ -40,13 +41,15 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  *
  * @author Guus Lieben
  */
-public class ManagedComponentDependencyContext<T> implements DependencyContext<T> {
+public class ManagedComponentDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
 
+    private final ComponentContainer<T> container;
     private final ComponentKey<T> componentKey;
     private final DependencyMap dependencies;
     private final ConstructorView<? extends T> constructorView;
 
-    public ManagedComponentDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies, ConstructorView<? extends T> constructorView) {
+    public ManagedComponentDependencyContext(ComponentContainer<T> container, ComponentKey<T> componentKey, DependencyMap dependencies, ConstructorView<? extends T> constructorView) {
+        this.container = container;
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.constructorView = constructorView;
@@ -83,8 +86,8 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
     }
 
     @Override
-    public BindingType type() {
-        return BindingType.STANDALONE;
+    public ComponentMemberType memberType() {
+        return ComponentMemberType.STANDALONE;
     }
 
     @Override
@@ -104,4 +107,18 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
         return this.constructorView;
     }
 
+    @Override
+    public boolean lazy() {
+        return this.container.lazy();
+    }
+
+    @Override
+    public LifecycleType lifecycleType() {
+        return this.container.lifecycle();
+    }
+
+    @Override
+    public boolean processAfterInitialization() {
+        return this.container.permitsProcessing();
+    }
 }

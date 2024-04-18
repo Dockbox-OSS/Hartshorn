@@ -63,11 +63,11 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
     }
 
     @Override
-    protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> componentContainer, ApplicationContext applicationContext) {
-        TypeView<T> componentType = componentContainer.type();
+    protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> declarationContext, ApplicationContext applicationContext) {
+        TypeView<T> componentType = declarationContext.type();
         List<? extends MethodView<T, ?>> bindsMethods = componentType.methods().annotatedWith(Binds.class);
         if (!bindsMethods.isEmpty()) {
-            return this.resolveBindingMethods(componentContainer, applicationContext, componentType, bindsMethods);
+            return this.resolveBindingMethods(declarationContext, applicationContext, componentType, bindsMethods);
         }
         else {
             return Set.of();

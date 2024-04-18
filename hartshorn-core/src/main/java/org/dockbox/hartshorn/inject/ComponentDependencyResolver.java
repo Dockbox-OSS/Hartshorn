@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.strategy.IntrospectionDependencyResolver;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.jetbrains.annotations.NotNull;
 
 public class ComponentDependencyResolver extends AbstractContainerDependencyResolver {
 
@@ -31,15 +32,25 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
     }
 
     @Override
-    protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> componentContainer, ApplicationContext applicationContext) throws DependencyResolutionException {
-        TypeView<T> type = componentContainer.type();
+    protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> declarationContext, ApplicationContext applicationContext) throws DependencyResolutionException {
+        if (declarationContext instanceof ComponentContainerDependencyDeclarationContext<T> containerContext) {
+            return this.resolveManagedComponentDependencies(containerContext, applicationContext);
+        }
+        else {
+            return Set.of();
+        }
+    }
+
+    private <T> @NotNull Set<DependencyContext<?>> resolveManagedComponentDependencies(ComponentContainerDependencyDeclarationContext<T> declarationContext,
+        ApplicationContext applicationContext) throws DependencyResolutionException {
+        TypeView<T> type = declarationContext.type();
         ConstructorView<? extends T> constructorView;
         try {
             constructorView = ComponentConstructorResolver.create(applicationContext)
                     .findConstructor(type)
                     .orNull();
         }
-        catch(Throwable throwable) {
+        catch (Throwable throwable) {
             throw new DependencyResolutionException(throwable);
         }
 
@@ -56,6 +67,7 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
                 .delayed(typeDependencies);
 
         ComponentKey<T> componentKey = ComponentKey.of(type);
-        return Set.of(new ManagedComponentDependencyContext<>(componentKey, dependencies, constructorView));
+
+        return Set.of(new ManagedComponentDependencyContext<>(declarationContext.container(), componentKey, dependencies, constructorView));
     }
 }

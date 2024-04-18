@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.reporting;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.component.processing.CompositeMember;
 import org.dockbox.hartshorn.component.processing.Prototype;
 import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.inject.Strict;
@@ -69,6 +70,7 @@ public class ReportingConfiguration {
      * @see SystemDiagnosticsReporter
      */
     @Singleton
+    @CompositeMember
     public CategorizedDiagnosticsReporter systemDiagnosticsReporter() {
         return new SystemDiagnosticsReporter();
     }
@@ -83,6 +85,7 @@ public class ReportingConfiguration {
      * @see ApplicationDiagnosticsReporter
      */
     @Singleton
+    @CompositeMember
     public CategorizedDiagnosticsReporter applicationDiagnosticsReporter(ApplicationContext applicationContext) {
         return new ApplicationDiagnosticsReporter(applicationContext);
     }
@@ -98,6 +101,7 @@ public class ReportingConfiguration {
      * @see ComponentDiagnosticsReporter
      */
     @Singleton
+    @CompositeMember
     public CategorizedDiagnosticsReporter componentDiagnosticsReporter(ApplicationContext applicationContext) {
         return new ComponentDiagnosticsReporter(applicationContext);
     }
@@ -113,6 +117,7 @@ public class ReportingConfiguration {
      * @see ComponentProcessorDiagnosticsReporter
      */
     @Singleton
+    @CompositeMember
     public CategorizedDiagnosticsReporter componentProcessorDiagnosticsReporter(ApplicationContext applicationContext) {
         return new ComponentProcessorDiagnosticsReporter(applicationContext);
     }

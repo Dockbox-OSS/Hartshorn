@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -35,18 +36,18 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class LazySingletonProvider<T> implements NonTypeAwareProvider<T> {
 
-    private final CheckedSupplier<ObjectContainer<T>> supplier;
-    private ObjectContainer<T> container;
+    private final CheckedSupplier<T> supplier;
 
-    public LazySingletonProvider(CheckedSupplier<ObjectContainer<T>> supplier) {
+    public LazySingletonProvider(CheckedSupplier<T> supplier) {
         this.supplier = supplier;
     }
 
     @Override
     public Option<ObjectContainer<T>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
-        if (this.container == null) {
-            this.container = this.supplier.get();
+        T instance = this.supplier.get();
+        if (instance == null) {
+            throw new IllegalModificationException("Cannot bind null instance");
         }
-        return Option.of(this.container);
+        return Option.of(ComponentObjectContainer.ofSingleton(instance));
     }
 }

@@ -52,10 +52,10 @@ public class CompositeDependencyResolver implements DependencyResolver {
     }
 
     @Override
-    public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException {
+    public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> declarationContexts) throws DependencyResolutionException {
         Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
         for (DependencyResolver resolver : this.resolvers()) {
-            Set<DependencyContext<?>> resolvedDependencies = resolver.resolve(containers);
+            Set<DependencyContext<?>> resolvedDependencies = resolver.resolve(declarationContexts);
             dependencyContexts.addAll(resolvedDependencies);
         }
         return dependencyContexts;

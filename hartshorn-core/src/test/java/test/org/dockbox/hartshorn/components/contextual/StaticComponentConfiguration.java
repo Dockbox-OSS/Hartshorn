@@ -17,6 +17,7 @@
 package test.org.dockbox.hartshorn.components.contextual;
 
 import org.dockbox.hartshorn.component.Configuration;
+import org.dockbox.hartshorn.component.processing.CompositeMember;
 import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.inject.Named;
 import org.dockbox.hartshorn.inject.Priority;
@@ -31,18 +32,21 @@ public class StaticComponentConfiguration {
     @Named(USER)
     @Priority(12)
     @Singleton
+    @CompositeMember
     public StaticComponent userComponent() {
         return new StaticComponent(USER);
     }
 
     @Named(ADMIN)
     @Singleton
+    @CompositeMember
     public StaticComponent adminComponent() {
         return new StaticComponent(ADMIN);
     }
 
     @Named(GUEST)
     @Singleton
+    @CompositeMember
     public StaticComponent guestComponent() {
         return new StaticComponent(GUEST);
     }

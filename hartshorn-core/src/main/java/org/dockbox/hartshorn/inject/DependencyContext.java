@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.util.Set;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.ComponentMemberType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
@@ -98,11 +98,13 @@ public interface DependencyContext<T> {
      *
      * @return the type of the binding
      */
-    BindingType type();
+    ComponentMemberType memberType();
 
     /**
-     * Returns whether the dependency is a singleton. The implementation may decide whether
-     * to configure the dependency as whichever binding it prefers, or default to a no-op.
+     * Configures the given binding function for the dependency. The binding function is
+     * used to configure the dependency in the container. The implementation may decide
+     * whether to configure the dependency as whichever binding it prefers, or default to
+     * a no-op.
      *
      * @param function the binding function to configure
      * @throws ComponentConfigurationException when the binding could not be configured
@@ -116,4 +118,10 @@ public interface DependencyContext<T> {
      * @return the origin of the dependency
      */
     View origin();
+
+    boolean lazy();
+
+    LifecycleType lifecycleType();
+
+    boolean processAfterInitialization();
 }

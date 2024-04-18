@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
+import org.dockbox.hartshorn.component.processing.CompositeMember;
 import org.dockbox.hartshorn.component.processing.Prototype;
 import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.config.ObjectMapper;
@@ -76,6 +77,7 @@ public class JacksonConfiguration {
     public static class JacksonPropertiesMapperConfiguration {
 
         @Singleton
+        @CompositeMember
         @SupportPriority
         public JacksonDataMapper properties() {
             return new JavaPropsDataMapper();
@@ -87,6 +89,7 @@ public class JacksonConfiguration {
     public static class JacksonJsonMapperConfiguration {
 
         @Singleton
+        @CompositeMember
         @SupportPriority
         public JacksonDataMapper json() {
             return new JsonDataMapper();
@@ -98,6 +101,7 @@ public class JacksonConfiguration {
     public static class JacksonTomlMapperConfiguration {
 
         @Singleton
+        @CompositeMember
         @SupportPriority
         public JacksonDataMapper toml() {
             return new TomlDataMapper();
@@ -109,6 +113,7 @@ public class JacksonConfiguration {
     public static class JacksonXmlMapperConfiguration {
 
         @Singleton
+        @CompositeMember
         @SupportPriority
         public JacksonDataMapper xml() {
             return new XmlDataMapper();
@@ -120,6 +125,7 @@ public class JacksonConfiguration {
     public static class JacksonYamlMapperConfiguration {
 
         @Singleton
+        @CompositeMember
         @SupportPriority
         public JacksonDataMapper yml() {
             return new YamlDataMapper();

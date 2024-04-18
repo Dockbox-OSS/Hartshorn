@@ -121,16 +121,17 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
             .orElse(Priority.DEFAULT_PRIORITY);
     }
 
-    private boolean isSingleton(ApplicationContext applicationContext, AnnotatedElementView view, ComponentKey<?> componentKey) {
-        return view.annotations().has(Singleton.class)
-                || applicationContext.environment().singleton(componentKey.type());
-    }
-
     private ScopeKey resolveComponentScope(AnnotatedElementView view) {
         Option<InstallTo> installToCandidate = view.annotations().get(InstallTo.class);
         return installToCandidate.present()
                 ? DirectScopeKey.of(installToCandidate.get().value())
                 : Scope.DEFAULT_SCOPE.installableScopeType();
+
+    private ComponentMemberType resolveMemberType(AnnotatedElementView bindsMethod) {
+        return bindsMethod.annotations().has(CompositeMember.class)
+            ? ComponentMemberType.COMPOSITE
+            : ComponentMemberType.STANDALONE;
+    }
     }
 
     public static ContextualInitializer<ApplicationContext, BindingStrategy> create(Customizer<Configurer> customizer) {

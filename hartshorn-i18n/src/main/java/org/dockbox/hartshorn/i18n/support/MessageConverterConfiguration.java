@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.i18n.support;
 
 import org.dockbox.hartshorn.component.Configuration;
+import org.dockbox.hartshorn.component.processing.CompositeMember;
 import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
@@ -42,6 +43,7 @@ public class MessageConverterConfiguration {
      * @return a {@link Converter} that converts a {@link String} to a {@link Message}
      */
     @Singleton
+    @CompositeMember
     public Converter<String, Message> stringToMessageConverter(TranslationService translationService) {
         return new StringToMessageConverter(translationService);
     }
@@ -53,6 +55,7 @@ public class MessageConverterConfiguration {
      * @return a {@link Converter} that converts a {@link Message} to a {@link String}
      */
     @Singleton
+    @CompositeMember
     public Converter<Message, String> messageToStringConverter() {
         return message -> message.string();
     }

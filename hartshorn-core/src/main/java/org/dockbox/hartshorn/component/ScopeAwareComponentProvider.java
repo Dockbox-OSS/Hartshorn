@@ -101,11 +101,6 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     }
 
     @Override
-    public ComponentInstanceFactory instanceFactory() {
-        return this.factory;
-    }
-
-    @Override
     public ComponentPostConstructor postConstructor() {
         return this.postConstructor;
     }
@@ -187,7 +182,6 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
 
             ScopeAwareComponentProvider componentProvider = new ScopeAwareComponentProvider(context, configurer);
             DefaultBindingConfigurerContext.compose(context, binder -> {
-                binder.bind(ComponentInstanceFactory.class).singleton(componentProvider.factory);
                 binder.bind(ComponentRegistry.class).singleton(componentProvider.registry);
             });
             return componentProvider;
@@ -197,7 +191,6 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     public static class Configurer {
 
         private ContextualInitializer<ApplicationContext, ComponentPostConstructor> componentPostConstructor = ComponentPostConstructorImpl.create(Customizer.useDefaults());
-        private ContextualInitializer<ApplicationContext, ComponentInstanceFactory> componentInstanceFactory = ContextualInitializer.of(ContextDrivenComponentInstanceFactory::new);
 
         public Configurer componentPostConstructor(ComponentPostConstructor componentPostConstructor) {
             return this.componentPostConstructor(ContextualInitializer.of(componentPostConstructor));
@@ -207,15 +200,5 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
             this.componentPostConstructor = componentPostConstructor;
             return this;
         }
-
-        public Configurer componentInstanceFactory(ComponentInstanceFactory componentInstanceFactory) {
-            return this.componentInstanceFactory(ContextualInitializer.of(componentInstanceFactory));
-        }
-
-        public Configurer componentInstanceFactory(ContextualInitializer<ApplicationContext, ComponentInstanceFactory> componentInstanceFactory) {
-            this.componentInstanceFactory = componentInstanceFactory;
-            return this;
-        }
-
     }
 }

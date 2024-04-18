@@ -22,6 +22,7 @@ import java.util.function.Function;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -71,12 +72,12 @@ public final class ComposedProvider<T> implements Provider<T> {
     @Override
     public Option<ObjectContainer<T>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
         return this.provider.provide(context, requestContext)
-                .map(this::doMapContainer);
+                .map(this::transformContainer);
     }
 
-    private ObjectContainer<T> doMapContainer(ObjectContainer<T> container) {
+    private ObjectContainer<T> transformContainer(ObjectContainer<T> container) {
         for (Function<ObjectContainer<T>, ObjectContainer<T>> function : this.functions) {
-            container = function.apply(container);
+            container = function.apply(TypeUtils.adjustWildcards(container, ObjectContainer.class));
         }
         return container;
     }

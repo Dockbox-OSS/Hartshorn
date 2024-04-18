@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.application;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.util.AbstractSingleElementContext;
 import org.dockbox.hartshorn.util.SingleElementContext;
 
@@ -31,7 +32,7 @@ import org.dockbox.hartshorn.util.SingleElementContext;
  */
 public class ApplicationInitializerContext<I> extends AbstractSingleElementContext<I> {
 
-    public ApplicationInitializerContext(I input) {
+    public ApplicationInitializerContext(@NonNull I input) {
         super(input);
     }
 
@@ -46,7 +47,7 @@ public class ApplicationInitializerContext<I> extends AbstractSingleElementConte
     }
 
     @Override
-    protected <T> SingleElementContext<T> clone(T input) {
+    protected <T> SingleElementContext<T> clone(@NonNull T input) {
         return new ApplicationInitializerContext<>(input);
     }
 }

@@ -25,7 +25,7 @@ public interface ContextAwareComponentSupplier<T> extends NonTypeAwareProvider<T
 
     @Override
     default Option<ObjectContainer<T>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
-        return Option.of(new ComponentObjectContainer<>(this.get(requestContext)));
+        return Option.of(ComponentObjectContainer.ofPrototype(this.get(requestContext)));
     }
 
     T get(ComponentRequestContext context) throws ApplicationException;

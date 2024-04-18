@@ -133,7 +133,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
             throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
         }
         ComponentKey<? extends T> key = this.buildComponentKey(type);
-        return this.add(new ContextDrivenProvider<>(key));
+        return this.add(ContextDrivenProvider.forPrototype(key));
     }
 
     @NonNull
@@ -171,22 +171,13 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     @Override
     public Binder lazySingleton(Class<T> type) {
-        return this.lazyContainerSingleton(() -> {
-            ComponentKey<T> key = ComponentKey.builder(type).scope(this.scope).build();
-            Option<ObjectContainer<T>> object = this.instanceFactory().instantiate(key, ComponentRequestContext.createForComponent());
-            return object.orNull();
-        });
+        ComponentKey<? extends T> key = this.buildComponentKey(type);
+        return this.add(new ContextDrivenProvider<>(key, LifecycleType.SINGLETON));
     }
 
     @Override
     public Binder lazySingleton(CheckedSupplier<T> supplier) {
-        return this.lazyContainerSingleton(() -> {
-            T instance = supplier.get();
-            if (instance == null) {
-                throw new IllegalModificationException("Cannot bind null instance");
-            }
-            return new ComponentObjectContainer<>(instance);
-        });
+        return this.add(new LazySingletonProvider<>(supplier));
     }
 
     @Override
@@ -208,10 +199,6 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     private ComponentKey<ComponentCollection<T>> createCollectionComponentKey() {
         return this.hierarchy().key().mutable().collector().build();
-    }
-
-    protected Binder lazyContainerSingleton(CheckedSupplier<ObjectContainer<T>> supplier) {
-        return this.add(new LazySingletonProvider<>(supplier));
     }
 
     protected Binder add(Provider<T> provider) {

@@ -14,31 +14,15 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.collection;
+package org.dockbox.hartshorn.component.processing;
 
-import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.component.processing.CompositeMember;
-import org.dockbox.hartshorn.component.processing.Prototype;
-import org.dockbox.hartshorn.inject.Named;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Configuration
-public class CollectionConfiguration {
-
-    @Prototype
-    @CompositeMember
-    String hello() {
-        return "Hello";
-    }
-
-    @Prototype
-    @CompositeMember
-    String thing(@Named("name") String name) {
-        return name;
-    }
-
-    @Prototype
-    @Named("name")
-    String name() {
-        return "World";
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.FIELD })
+public @interface CompositeMember {
 }
+

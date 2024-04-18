@@ -14,31 +14,29 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.collection;
+package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.component.processing.CompositeMember;
-import org.dockbox.hartshorn.component.processing.Prototype;
-import org.dockbox.hartshorn.inject.Named;
+public abstract class AbstractObjectContainer<T> implements ObjectContainer<T> {
 
-@Configuration
-public class CollectionConfiguration {
+    private final T instance;
 
-    @Prototype
-    @CompositeMember
-    String hello() {
-        return "Hello";
+    protected AbstractObjectContainer(T instance) {
+        this.instance = instance;
     }
 
-    @Prototype
-    @CompositeMember
-    String thing(@Named("name") String name) {
-        return name;
+    /**
+     * Returns the object instance. Note that this instance may or may not have been processed.
+     *
+     * @return the object instance
+     */
+    public T instance() {
+        return this.instance;
     }
 
-    @Prototype
-    @Named("name")
-    String name() {
-        return "World";
+    @Override
+    public String toString() {
+        return "ObjectContainer{" +
+            "instance=" + this.instance +
+            '}';
     }
 }

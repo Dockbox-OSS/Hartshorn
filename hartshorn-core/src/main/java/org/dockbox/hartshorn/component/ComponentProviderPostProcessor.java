@@ -25,7 +25,6 @@ public interface ComponentProviderPostProcessor {
     <T> T processInstance(
             ComponentKey<T> componentKey,
             ObjectContainer<T> objectContainer,
-            T instance,
             ComponentRequestContext requestContext
     ) throws ApplicationException;
 }

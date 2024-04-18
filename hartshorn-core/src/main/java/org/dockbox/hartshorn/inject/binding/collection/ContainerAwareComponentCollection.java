@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package org.dockbox.hartshorn.inject.binding.collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.inject.CollectionEntryObjectContainer;
 import org.dockbox.hartshorn.inject.ObjectContainer;
+import org.dockbox.hartshorn.util.collections.AbstractDelegatingCollection;
 
 /**
  * A {@link ComponentCollection} that is also aware of the {@link ObjectContainer}s that were used to populate it.
@@ -35,7 +37,7 @@ import org.dockbox.hartshorn.inject.ObjectContainer;
  *
  * @author Guus Lieben
  */
-public class ContainerAwareComponentCollection<T> extends SimpleComponentCollection<T> {
+public class ContainerAwareComponentCollection<T> extends AbstractDelegatingCollection<T> implements ComponentCollection<T> {
 
     private final Set<ObjectContainer<T>> containers;
 
@@ -44,7 +46,9 @@ public class ContainerAwareComponentCollection<T> extends SimpleComponentCollect
                 .map(ObjectContainer::instance)
                 .collect(Collectors.toSet())
         );
-        this.containers = containers;
+        this.containers = containers.stream()
+            .map(CollectionEntryObjectContainer::new)
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -52,6 +56,7 @@ public class ContainerAwareComponentCollection<T> extends SimpleComponentCollect
      *
      * @return the containers that were used to populate this collection
      */
+    @Override
     public Set<ObjectContainer<T>> containers() {
         return Set.copyOf(this.containers);
     }

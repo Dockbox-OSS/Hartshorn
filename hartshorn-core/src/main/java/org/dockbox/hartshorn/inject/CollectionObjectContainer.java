@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,38 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.inject.binding.collection.ContainerAwareComponentCollection;
+import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 
 /**
- * A specialized {@link ObjectContainer} for {@link ContainerAwareComponentCollection} instances. This container
+ * A specialized {@link ObjectContainer} for {@link ComponentCollection} instances. This container
  * acts as a composite container, in that it delegates all operations to the containers of the collection.
  *
- * @param <T> The type of the collection
  * @param <E> The type of the elements in the collection
  *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public class CollectionObjectContainer<T extends ContainerAwareComponentCollection<E>, E> extends ObjectContainer<T> {
+public class CollectionObjectContainer<E> extends AbstractObjectContainer<ComponentCollection<E>> {
 
-    public CollectionObjectContainer(T instance) {
+    public CollectionObjectContainer(ComponentCollection<E> instance) {
         super(instance);
+    }
+
+    @Override
+    public LifecycleType lifecycleType() {
+        // Collections are always prototype, as their content may change
+        return LifecycleType.PROTOTYPE;
+    }
+
+    @Override
+    public ObjectContainer<ComponentCollection<E>> copyForObject(ComponentCollection<E> instance) {
+        if (instance == this.instance()) {
+            return this;
+        }
+        // Do not mark any of the containers as processed, that remains up to the provider to do
+        // as this (collection) container does not have its own processing state
+        return new CollectionObjectContainer<>(instance);
     }
 
     @Override

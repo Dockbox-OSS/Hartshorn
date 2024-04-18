@@ -113,7 +113,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             throw new IllegalModificationException("Cannot add binding to non-application hierarchy without a module context");
         }
 
-        return new HierarchyBindingFunction<>(hierarchy, this, this.singletonCache, this.owner.instanceFactory(), this.scope, scopeModuleContext.orNull());
+        return new HierarchyBindingFunction<>(hierarchy, this, this.singletonCache, this.scope, scopeModuleContext.orNull());
     }
 
     @Override
@@ -150,7 +150,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
     }
 
     protected <T> Option<ObjectContainer<T>> createContextualInstanceContainer(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
-        return new ContextDrivenProvider<>(key).provide(this.applicationContext(), requestContext);
+        return ContextDrivenProvider.forPrototype(key).provide(this.applicationContext(), requestContext);
     }
 
     @Override
@@ -165,19 +165,17 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         }
 
         ObjectContainer<T> objectContainer = this.create(componentKey, requestContext)
-                .orElseGet(() -> new ComponentObjectContainer<>(null));
-
-        T instance = objectContainer.instance();
+                .orElseGet(ComponentObjectContainer::empty);
 
         // If the object is already processed at this point, it means that the object container was
         // reused, so we don't need to process it again. Note that this is not the same as the object
         // being a singleton, which is handled by the singleton cache.
         if (objectContainer.processed()) {
-            return instance;
+            return objectContainer.instance();
         }
 
         try {
-            return this.processor.processInstance(componentKey, objectContainer, instance, requestContext);
+            return this.processor.processInstance(componentKey, objectContainer, requestContext);
         }
         catch(ApplicationException e) {
             throw new ComponentResolutionException("Failed to process component with key " + componentKey, e);

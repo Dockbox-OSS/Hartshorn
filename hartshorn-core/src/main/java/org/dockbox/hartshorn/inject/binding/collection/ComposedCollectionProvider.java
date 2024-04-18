@@ -60,7 +60,7 @@ public class ComposedCollectionProvider<T> implements NonTypeAwareProvider<Compo
             }
         }
         ContainerAwareComponentCollection<T> componentCollection = new ContainerAwareComponentCollection<>(components);
-        CollectionObjectContainer<ContainerAwareComponentCollection<T>, T> container = new CollectionObjectContainer<>(componentCollection);
-        return Option.of(TypeUtils.adjustWildcards(container, ObjectContainer.class));
+        ObjectContainer<ComponentCollection<T>> container = new CollectionObjectContainer<>(componentCollection);
+        return Option.of(container);
     }
 }
