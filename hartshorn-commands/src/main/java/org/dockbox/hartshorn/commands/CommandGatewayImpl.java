@@ -81,7 +81,7 @@ public class CommandGatewayImpl implements CommandGateway {
     }
 
     @PostConstruct
-    public void enable() {
+    public void configureExtensions() {
         if (this.extensions.isEmpty()) {
             ComponentCollection<CommandExecutorExtension> extensions = this.context.get(ComponentKey.collect(CommandExecutorExtension.class));
             for (CommandExecutorExtension extension : extensions) {

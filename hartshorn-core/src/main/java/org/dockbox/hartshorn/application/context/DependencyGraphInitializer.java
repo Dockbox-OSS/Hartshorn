@@ -80,7 +80,7 @@ public final class DependencyGraphInitializer {
      * @param containers the dependency declarations
      * @throws ApplicationException when the graph is invalid, or when the validation fails
      */
-    public void initializeDependencyGraph(Collection<DependencyDeclarationContext<?>> containers) throws ApplicationException {
+    public DependencyGraph initializeDependencyGraph(Collection<DependencyDeclarationContext<?>> containers) throws ApplicationException {
         DependencyGraph dependencyGraph = this.buildDependencyGraph(containers);
         this.graphValidator.validateBeforeConfiguration(dependencyGraph, this.applicationContext);
 
@@ -88,6 +88,7 @@ public final class DependencyGraphInitializer {
         this.graphValidator.validateAfterConfiguration(dependencyGraph, this.applicationContext, visitedDependencies);
 
         LOG.debug("Validated %d dependencies".formatted(visitedDependencies.size()));
+        return dependencyGraph;
     }
 
     private DependencyGraph buildDependencyGraph(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException {
