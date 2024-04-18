@@ -18,16 +18,16 @@ package test.org.dockbox.hartshorn.scope;
 
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.DirectScopeKey;
-import org.dockbox.hartshorn.component.InstallTo;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
+import org.dockbox.hartshorn.component.Scoped;
 import org.dockbox.hartshorn.component.processing.Singleton;
 
 @Configuration
 public class ScopedBindingConfiguration {
 
-    @InstallTo(SampleScope.class)
     @Singleton
+    @Scoped(SampleScope.class)
     public String bind() {
         return "test";
     }

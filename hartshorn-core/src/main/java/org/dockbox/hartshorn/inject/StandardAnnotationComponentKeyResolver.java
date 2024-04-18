@@ -151,7 +151,7 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      * @param annotations the annotations to configure the builder with
      */
     protected void configureAutoEnabling(Builder<?> builder, ElementAnnotationsIntrospector annotations) {
-        builder.enable(this.isAutoEnabled(annotations));
+        builder.postConstructionAllowed(this.isAutoEnabled(annotations));
     }
 
     /**

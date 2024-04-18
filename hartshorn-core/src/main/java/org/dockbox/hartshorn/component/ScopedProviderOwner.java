@@ -16,13 +16,9 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory;
-
 public interface ScopedProviderOwner extends PostProcessingComponentProvider {
 
     ComponentRegistry componentRegistry();
-
-    ComponentInstanceFactory instanceFactory();
 
     HierarchicalComponentProvider applicationProvider();
 

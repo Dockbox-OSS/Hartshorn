@@ -40,7 +40,7 @@ public interface ComponentKeyResolver {
      * @return the key of the given view
      */
     default ComponentKey<?> resolve(AnnotatedGenericTypeView<?> view) {
-        return this.resolve(view, Scope.DEFAULT_SCOPE);
+        return this.resolve(view, null);
     }
 
     /**

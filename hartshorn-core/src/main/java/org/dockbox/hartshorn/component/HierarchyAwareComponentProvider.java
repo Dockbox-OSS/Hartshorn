@@ -41,8 +41,6 @@ import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -99,8 +97,13 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
     @Override
     public <C> BindingFunction<C> bind(ComponentKey<C> key) {
-        if (key.scope() != this.scope && key.scope() != Scope.DEFAULT_SCOPE) {
-            throw new IllegalArgumentException("Cannot bind to a different scope");
+        Scope componentScope = key.scope();
+        if (componentScope == null) {
+            componentScope = this.applicationContext();
+        }
+        if (componentScope != this.scope && componentScope != this.applicationContext()) {
+            throw new IllegalArgumentException("Cannot bind to a different scope. Expected " + this.scope + ", got " + componentScope
+                + " for key " + key);
         }
         BindingHierarchy<C> hierarchy = this.hierarchy(key);
 
@@ -203,7 +206,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         // If the scope is default, it means that the binding is not explicitly scoped, so it can be
         // installed in any scope. If our active scope is the active application context, it means
         // the requested scope is not installed, so we can fall back to the application scope.
-        if (key.scope() != this.scope && key.scope() != Scope.DEFAULT_SCOPE && this.scope != this.applicationContext()) {
+        if (key.scope() != this.scope && this.scope != this.applicationContext()) {
             throw new IllegalArgumentException("Cannot create a binding hierarchy for a component key with a different scope");
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,17 +47,9 @@ package org.dockbox.hartshorn.component;
 @FunctionalInterface
 public interface Scope {
 
-    ScopeKey DEFAULT_SCOPE_KEY = DirectScopeKey.of(Scope.class);
-
-    /**
-     * A common standard scope for applications. Internally this will refer to
-     * the active {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
-     */
-    Scope DEFAULT_SCOPE = () -> DEFAULT_SCOPE_KEY;
-
     /**
      * The type of the scope, or a parent scope. This is used to determine which
-     * scopes are affected by {@link InstallTo}, by allowing subclasses to be
+     * scopes are affected by {@link Scoped}, by allowing subclasses to be
      * installed based on the configuration of a parent scope.
      *
      * @return The type of the scope, or a parent scope.

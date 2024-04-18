@@ -17,11 +17,10 @@
 package org.dockbox.hartshorn.inject;
 
 import java.util.Set;
-
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentRegistry;
-import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.processing.ComponentMemberType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
@@ -82,7 +81,7 @@ public class ManagedComponentDependencyContext<T> implements LifecycleAwareDepen
 
     @Override
     public ScopeKey scope() {
-        return Scope.DEFAULT_SCOPE_KEY;
+        return ApplicationContext.APPLICATION_SCOPE;
     }
 
     @Override

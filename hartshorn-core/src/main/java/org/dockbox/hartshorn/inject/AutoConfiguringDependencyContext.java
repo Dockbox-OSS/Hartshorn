@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.ComponentMemberType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.IllegalScopeException;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -43,23 +43,25 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  *
  * @author Guus Lieben
  */
-public class AutoConfiguringDependencyContext<T> extends AbstractDependencyContext<T> {
+public class AutoConfiguringDependencyContext<T> extends AbstractDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
 
     private final ContextAwareComponentSupplier<T> supplier;
     private final View view;
 
-    public AutoConfiguringDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies,
-                                            ScopeKey scope, int priority, BindingType bindingType,
-                                            View view, ContextAwareComponentSupplier<T> supplier) {
-        super(componentKey, dependencies, scope, priority, bindingType);
-        this.supplier = supplier;
-        this.view = view;
+    private AutoConfiguringDependencyContext(AutoConfiguringDependencyContextBuilder<T> builder) {
+        super(builder);
+        this.supplier = builder.supplier;
+        this.view = builder.view;
+    }
+
+    public static <T> AutoConfiguringDependencyContextBuilder<T> builder(ComponentKey<T> componentKey) {
+        return new AutoConfiguringDependencyContextBuilder<>(componentKey);
     }
 
     @Override
     public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
         function.priority(this.priority());
-        if (this.scope() != Scope.DEFAULT_SCOPE.installableScopeType()) {
+        if (this.scope() != ApplicationContext.APPLICATION_SCOPE) {
             try {
                 function.installTo(this.scope());
             }
@@ -126,7 +128,39 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
     }
 
     /**
-     * The type of instance that is created by the container. This is either a supplier, a singleton or a lazy singleton.
+     * The type of instance that is created by the container.
      */
     private enum InstanceType { SUPPLIER, SINGLETON, LAZY_SINGLETON }
+
+    public static final class AutoConfiguringDependencyContextBuilder<T> extends AbstractDependencyContextBuilder<T, AutoConfiguringDependencyContextBuilder<T>> {
+
+        private ContextAwareComponentSupplier<T> supplier;
+        private View view;
+
+        private AutoConfiguringDependencyContextBuilder(ComponentKey<T> componentKey) {
+            super(componentKey);
+        }
+
+        @Override
+        protected AutoConfiguringDependencyContextBuilder<T> self() {
+            return this;
+        }
+
+        public AutoConfiguringDependencyContextBuilder<T> supplier(ContextAwareComponentSupplier<T> supplier) {
+            this.supplier = supplier;
+            return this;
+        }
+
+        public AutoConfiguringDependencyContextBuilder<T> view(View view) {
+            this.view = view;
+            return this;
+        }
+
+
+
+        @Override
+        public AutoConfiguringDependencyContext<T> build() {
+            return new AutoConfiguringDependencyContext<>(this);
+        }
+    }
 }
