@@ -1,19 +1,12 @@
-name: 'Enhancement'
-description: 'If you want to improve an already existing feature, please create an issue here.'
-labels: ['type: enhancement']
+name: 'Enhancement (of existing feature)'
+description: 'Propose an enhancement to an existing feature.'
+labels: [ 'type: enhancement' ]
 body:
   - type: textarea
     id: description
     attributes:
       label: 'Description'
-      description: "Provide a clear and concise description of the enhancement you'd like to request for existing functionality."
-    validations:
-      required: true
-  - type: textarea
-    id: current
-    attributes:
-      label: 'Current behavior'
-      description: "Describe the current behavior or functionality that you believe needs improvement or enhancement."
+      description: "Provide a clear and concise description of the enhancement you'd like to propose."
     validations:
       required: true
   - type: textarea
@@ -23,31 +16,10 @@ body:
       description: 'Explain the use case or scenario where this enhancement would be valuable or necessary.'
     validations:
       required: true
-  - type: textarea
-    id: expected
-    attributes:
-      label: 'Expected behavior'
-      description: 'Describe what you expect the enhanced functionality to do and how it should work.'
-    validations:
-      required: true
-  - type: textarea
-    id: additional
-    attributes:
-      label: 'Additional context'
-      description: 'Add any other context or screenshots about the feature request here.'
-    validations:
-      required: false
   - type: input
     id: related
     attributes:
       label: 'Related issues'
       description: 'If applicable, list any related issues here.'
-    validations:
-      required: false
-  - type: textarea
-    id: implementations
-    attributes:
-      label: 'Possible implementations'
-      description: 'If you have any ideas on how this feature could be implemented, please include them here.'
     validations:
       required: false
