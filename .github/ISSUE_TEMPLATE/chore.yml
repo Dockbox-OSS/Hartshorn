@@ -1,0 +1,18 @@
+name: 'Maintenance chore'
+description: 'Any issues related to maintenance tasks, such as refactoring or updating dependencies.'
+labels: ['type: chore']
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 'Description'
+      description: 'Provide a clear and concise description of the maintenance task.'
+    validations:
+      required: true
+  - type: input
+    id: related
+    attributes:
+      label: 'Related issues'
+      description: 'If applicable, list any related issues here.'
+    validations:
+      required: false

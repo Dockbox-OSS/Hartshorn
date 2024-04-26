@@ -1,0 +1,32 @@
+name: 'Bug report'
+description: 'If you found a bug in the project, please create an issue here.'
+labels: ['type: bug']
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 'Description'
+      description: 'Provide a clear and concise description of the bug you found.'
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 'Reproduction'
+      description: 'Describe the steps to reproduce the bug, if applicable.'
+    validations:
+      required: false
+  - type: textarea
+    id: expected
+    attributes:
+      label: 'Expected behavior'
+      description: 'Describe what you expected to happen.'
+    validations:
+      required: true
+  - type: input
+    id: related
+    attributes:
+      label: 'Related issues'
+      description: 'If applicable, list any related issues here.'
+    validations:
+      required: false
