@@ -58,7 +58,7 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
         }
         try {
             ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(context);
-            contextAdapter.add(requestContext);
+            contextAdapter.addContext(requestContext);
             return contextAdapter.scope(this.context.scope())
                     .create(constructor.get())
                     .cast(this.type())

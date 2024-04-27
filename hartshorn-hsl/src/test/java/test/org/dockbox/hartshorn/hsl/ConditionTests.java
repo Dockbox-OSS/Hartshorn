@@ -82,8 +82,8 @@ public class ConditionTests {
         ExpressionCondition condition = this.applicationContext.get(ExpressionCondition.class);
         AnnotatedElementView element = this.createAnnotatedElement(expression);
         ConditionContext context = new ConditionContext(this.applicationContext, element, null);
-        for (Context child : contexts) {
-            context.add(child);
+        for (ContextView child : contexts) {
+            context.addContext(child);
         }
         return condition.matches(context);
     }

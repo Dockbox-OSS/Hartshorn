@@ -39,12 +39,9 @@ public class ProxyContextContainer extends DefaultContext {
         this.onModify = onModify;
     }
 
-    /**
-     * Returns all contexts that are stored in this container.
-     *
-     * @return all contexts
-     */
-    public Set<Context> contexts() {
+    @Override
+    public Set<ContextView> unnamedContexts() {
+        // Change access level to public
         return super.unnamedContexts();
     }
 
@@ -55,13 +52,14 @@ public class ProxyContextContainer extends DefaultContext {
     }
 
     @Override
-    public <C extends Context> void add(C context) {
-        super.add(context);
+    public <C extends ContextView> void addContext(C context) {
+        super.addContext(context);
         this.onModify.run();
     }
 
     @Override
-    public <C extends Context> void add(String name, C context) {
+    public <C extends ContextView> void addContext(String name, C context) {
+        super.addContext(name, context);
         this.onModify.run();
     }
 }

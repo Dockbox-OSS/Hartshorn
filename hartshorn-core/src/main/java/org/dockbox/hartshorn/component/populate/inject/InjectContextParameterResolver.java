@@ -57,13 +57,13 @@ public class InjectContextParameterResolver implements InjectParameterResolver {
         // If absent, we still prefer bindings from the application context in case
         // manual bindings exist. A common example of this is the ApplicationContext
         // itself, which is a self-containing context.
-        return this.applicationContext.first(contextKey).present();
+        return this.applicationContext.firstContext(contextKey).present();
     }
 
     @Override
     public Object resolve(InjectionPoint injectionPoint, PopulateComponentContext<?> context) {
-        return this.applicationContext.first(key).orNull();
         ContextIdentity<? extends ContextView> key = getContextKey(injectionPoint);
+        return this.applicationContext.firstContext(key).orNull();
     }
 
     private static ContextKey<? extends ContextView> getContextKey(InjectionPoint injectionPoint) {

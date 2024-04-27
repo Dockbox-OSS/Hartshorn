@@ -169,7 +169,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
             if (context instanceof NamedContext namedContext) {
                 contextsCollector.property("name").write(namedContext.name());
             }
-            if (!context.all().isEmpty()) {
+            if (!context.contexts().isEmpty()) {
                 Reportable[] childReporters = childReporters(reporterReference, context);
                 contextsCollector.property("children").write(childReporters);
             }
@@ -181,8 +181,8 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     }
 
     @NonNull
-    private static Reportable[] childReporters(AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference, Context context) {
-        return context.all().stream()
+    private static Reportable[] childReporters(AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference, ContextView context) {
+        return context.contexts().stream()
                 .map(childContext -> (Reportable) (contextsController -> reporterReference.get().accept(contextsController, childContext)))
                 .toArray(Reportable[]::new);
     }

@@ -139,8 +139,8 @@ public final class ConditionMatcher implements ContextCarrier {
     public boolean match(AnnotatedElementView element, ConditionDeclaration declarationContext, ContextView... contexts) {
         Condition condition = declarationContext.condition(this.applicationContext());
         ConditionContext context = new ConditionContext(this.applicationContext, element, declarationContext);
-            context.add(child);
         for(ContextView child : contexts) {
+            context.addContext(child);
         }
         ConditionResult result = condition.matches(context);
         if(!result.matches() && declarationContext.failOnNoMatch()) {

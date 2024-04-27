@@ -77,7 +77,7 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
     private HierarchyAwareComponentProvider createComponentProvider(Scope scope) {
         HierarchyAwareComponentProvider provider = new HierarchyAwareComponentProvider(this, scope);
         if (scope != this.applicationContext && scope != Scope.DEFAULT_SCOPE) {
-            ScopeModuleContext scopeModuleContext = this.applicationContext.first(ScopeModuleContext.class).get();
+            ScopeModuleContext scopeModuleContext = this.applicationContext.firstContext(ScopeModuleContext.class).get();
             Collection<BindingHierarchy<?>> hierarchies = scopeModuleContext.hierarchies(scope.installableScopeType());
             for (BindingHierarchy<?> hierarchy : hierarchies) {
                 provider.bind(hierarchy);

@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.application.environment;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Documented;
-import java.util.Collection;
-import java.util.List;
 import java.util.Properties;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;

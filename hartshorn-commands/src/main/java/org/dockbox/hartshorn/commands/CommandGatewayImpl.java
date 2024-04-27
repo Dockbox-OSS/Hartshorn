@@ -163,7 +163,7 @@ public class CommandGatewayImpl implements CommandGateway {
 
     @Override
     public void register(CommandExecutorContext context) {
-        Option<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
+        Option<CommandDefinitionContext> container = context.firstContext(CommandDefinitionContext.class);
         if (container.absent()) {
             throw new InvalidExecutorException("Executor contexts should contain at least one container context");
         }
@@ -184,7 +184,7 @@ public class CommandGatewayImpl implements CommandGateway {
         for (String alias : aliases) {
             this.contexts().put(alias, context);
         }
-        this.context.add(context);
+        this.context.addContext(context);
     }
 
     @Override

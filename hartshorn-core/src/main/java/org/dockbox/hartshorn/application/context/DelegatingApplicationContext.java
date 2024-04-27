@@ -114,7 +114,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         EnvironmentBinderConfiguration configuration = new ContextualEnvironmentBinderConfiguration();
 
         DefaultBindingConfigurer bindingConfigurer = configurer.defaultBindings.initialize(applicationInitializerContext);
-        for (DefaultBindingConfigurerContext configurerContext : initializerContext.all(DefaultBindingConfigurerContext.class)) {
+        for (DefaultBindingConfigurerContext configurerContext : initializerContext.contexts(DefaultBindingConfigurerContext.class)) {
             bindingConfigurer = bindingConfigurer.compose(configurerContext.configurer());
         }
         configuration.configureBindings(this.environment, bindingConfigurer, this);
@@ -150,20 +150,20 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     @Override
     public Set<Annotation> activators() {
-        return this.first(ServiceActivatorContext.class)
+        return this.firstContext(ServiceActivatorContext.class)
                 .map(ServiceActivatorContext::activators)
                 .orElseGet(Set::of);
     }
 
     @Override
     public <A> Option<A> activator(Class<A> activator) {
-        return this.first(ServiceActivatorContext.class)
+        return this.firstContext(ServiceActivatorContext.class)
                 .map(context -> context.activator(activator));
     }
 
     @Override
     public boolean hasActivator(Class<? extends Annotation> activator) {
-        return this.first(ServiceActivatorContext.class)
+        return this.firstContext(ServiceActivatorContext.class)
                 .map(context -> context.hasActivator(activator))
                 .orElseGet(() -> false);
     }

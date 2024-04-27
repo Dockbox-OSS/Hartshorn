@@ -83,7 +83,7 @@ public class ConfigurationServicePreProcessor extends ComponentPreProcessor {
             LOG.warn("Found multiple configuration files for " + key.type().getSimpleName() + ": " + config);
         }
 
-        ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
+        ConfigurationURIContextList uriContextList = context.firstContext(ConfigurationURIContextList.CONTEXT_KEY).get();
         for (URI uri : config) {
             ConfigurationURIContext uriContext = new ConfigurationURIContext(uri, key, source);
             uriContextList.add(uriContext);

@@ -56,6 +56,10 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
     /**
      * The state of the factory. This is used to prevent multiple threads from creating a new application context at the
      * same time, even though {@link #create()} is synchronized.
+     *
+     * @since 0.4.8
+     *
+     * @author Guus Lieben
      */
     private enum FactoryState {
         /**
