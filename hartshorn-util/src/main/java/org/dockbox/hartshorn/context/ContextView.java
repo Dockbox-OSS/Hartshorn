@@ -79,5 +79,5 @@ public interface ContextView {
      *
      * @param context The context to copy to.
      */
-    void copyContextTo(Context context);
+    void copyToContext(Context context);
 }

@@ -45,7 +45,7 @@ public abstract class AbstractSingleElementContext<I> extends DefaultContext imp
     @Override
     public <T> @NonNull SingleElementContext<@Nullable T> transform(@Nullable T input) {
         SingleElementContext<T> clonedContext = this.clone(input);
-        this.copyContextTo(clonedContext);
+        this.copyToContext(clonedContext);
         return clonedContext;
     }
 

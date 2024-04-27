@@ -109,7 +109,7 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
     }
 
     @Override
-    public void copyContextTo(Context context) {
-        this.context.copyContextTo(context);
+    public void copyToContext(Context context) {
+        this.context.copyToContext(context);
     }
 }

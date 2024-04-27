@@ -81,7 +81,7 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
         parameterLoader.add(rule);
 
         ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.applicationContext(), this.scope);
-        this.copyContextTo(loaderContext);
+        this.copyToContext(loaderContext);
         return parameterLoader.loadArguments(loaderContext).toArray();
     }
 
