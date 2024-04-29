@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ package org.dockbox.hartshorn.context;
  *
  * @since 0.5.0
  */
-public class SimpleContextIdentity<T extends Context> implements ContextIdentity<T> {
+public class SimpleContextIdentity<T extends ContextView> implements ContextIdentity<T> {
 
     private final Class<T> type;
     private final String name;

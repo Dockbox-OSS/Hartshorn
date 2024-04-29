@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,8 +77,8 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     protected Option<T> createProxy(CheckedFunction<ProxyMethodInterceptor<T>, Option<T>> instantiate) throws ApplicationException {
         LazyProxyManager<T> manager = new LazyProxyManager<>(this);
 
-        this.contextContainer().contexts().forEach(manager::add);
-        this.contextContainer().namedContexts().forEach(manager::add);
+        this.contextContainer().contexts().forEach(manager::addContext);
+        this.contextContainer().namedContexts().forEach(manager::addContext);
 
         ProxyMethodInterceptor<T> interceptor = new ProxyAdvisorMethodInterceptor<>(manager, this.orchestrator());
 

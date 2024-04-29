@@ -116,11 +116,11 @@ public class ExpressionCondition implements Condition {
      */
     protected ValidateExpressionRuntime enhance(ValidateExpressionRuntime runtime, ConditionContext context) {
         // Load parameters first, so they can be overwritten by the customizers and imports.
-        context.first(ProvidedParameterContext.class).peek(parameterContext -> {
+        context.firstContext(ProvidedParameterContext.class).peek(parameterContext -> {
             parameterContext.arguments().forEach((parameter, value) -> runtime.global(parameter.name(), value));
         });
 
-        context.first(ExpressionConditionContext.class).peek(expressionContext -> {
+        context.firstContext(ExpressionConditionContext.class).peek(expressionContext -> {
 
             runtime.customizers(expressionContext.customizers());
             runtime.imports(expressionContext.imports());

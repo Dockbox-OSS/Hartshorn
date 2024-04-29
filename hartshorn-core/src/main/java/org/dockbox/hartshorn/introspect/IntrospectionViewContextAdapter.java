@@ -51,7 +51,7 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
     }
 
     private ComponentRequestContext componentRequestContext() {
-        return this.first(ComponentRequestContext.class)
+        return this.firstContext(ComponentRequestContext.class)
                 .orElseGet(ComponentRequestContext::createForComponent);
     }
 
@@ -81,7 +81,7 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
         parameterLoader.add(rule);
 
         ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.applicationContext(), this.scope);
-        this.copyTo(loaderContext);
+        this.copyToContext(loaderContext);
         return parameterLoader.loadArguments(loaderContext).toArray();
     }
 

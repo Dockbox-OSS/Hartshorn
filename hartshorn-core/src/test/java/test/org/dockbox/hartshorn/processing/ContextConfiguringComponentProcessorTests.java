@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class ContextConfiguringComponentProcessorTests {
         Assertions.assertTrue(applicationContext.environment().proxyOrchestrator().isProxy(emptyComponent));
 
         Proxy<EmptyComponent> component = (Proxy<EmptyComponent>) emptyComponent;
-        Option<SimpleContext> context = component.manager().first(ContextKey.of(SimpleContext.class));
+        Option<SimpleContext> context = component.manager().firstContext(ContextKey.of(SimpleContext.class));
         Assertions.assertTrue(context.present());
         Assertions.assertEquals("Foo", context.get().value());
     }
@@ -61,7 +61,7 @@ public class ContextConfiguringComponentProcessorTests {
         Assertions.assertNotNull(contextComponent);
         Assertions.assertFalse(applicationContext.environment().proxyOrchestrator().isProxy(contextComponent));
 
-        Option<SimpleContext> context = contextComponent.first(ContextKey.of(SimpleContext.class));
+        Option<SimpleContext> context = contextComponent.firstContext(ContextKey.of(SimpleContext.class));
         Assertions.assertTrue(context.present());
         Assertions.assertEquals("Foo", context.get().value());
     }

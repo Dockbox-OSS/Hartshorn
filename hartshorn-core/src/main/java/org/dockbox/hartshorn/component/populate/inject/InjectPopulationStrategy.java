@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.component.populate.inject;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
@@ -32,8 +34,6 @@ import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 
-import java.util.Set;
-
 import jakarta.inject.Inject;
 
 /**
@@ -46,7 +46,7 @@ import jakarta.inject.Inject;
  * <p>By default, all components are resolved through the {@link ApplicationContext}. Additional {@link InjectParameterResolver}
  * implementations can be registered to provide custom resolution logic for specific injection points. This is primarily useful
  * for injecting components which are not registered in the {@link ApplicationContext}, or cannot be resolved through the
- * {@link ApplicationContext} alone. Built-in support for {@link org.dockbox.hartshorn.context.Context} types is provided by the
+ * {@link ApplicationContext} alone. Built-in support for {@link org.dockbox.hartshorn.context.ContextView} types is provided by the
  * {@link InjectContextParameterResolver}.
  *
  * <p>Example:

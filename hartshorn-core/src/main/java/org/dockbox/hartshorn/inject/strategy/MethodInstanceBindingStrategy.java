@@ -94,7 +94,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         ContextAwareComponentSupplier<T> supplier = requestContext -> {
             try {
                 ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
-                contextAdapter.add(requestContext);
+                contextAdapter.addContext(requestContext);
                 return contextAdapter.load(bindsMethod).orNull();
             }
             catch(Throwable throwable) {

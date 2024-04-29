@@ -66,11 +66,11 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
     }
 
     private FunctionParserContext functionParserContext(TokenParser parser) {
-        Option<FunctionParserContext> context = parser.first(FunctionParserContext.class);
+        Option<FunctionParserContext> context = parser.firstContext(FunctionParserContext.class);
         // Compute locally, to avoid auto-creation of this context
         return context.orCompute(() -> {
             FunctionParserContext newContext = new FunctionParserContext();
-            parser.add(newContext);
+            parser.addContext(newContext);
             return newContext;
         }).get();
     }

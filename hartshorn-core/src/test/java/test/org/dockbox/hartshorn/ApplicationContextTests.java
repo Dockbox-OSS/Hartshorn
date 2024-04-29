@@ -30,7 +30,6 @@ import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.application.context.validate.CyclicDependencyGraphValidator;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentPopulator;
-import org.dockbox.hartshorn.component.ComponentRequiredException;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.populate.StrategyComponentPopulator;
@@ -315,7 +314,7 @@ public class ApplicationContextTests {
     @MethodSource("componentPopulators")
     void testContextFieldsAreInjected(Function<ApplicationContext, ComponentPopulator> populatorFactory) {
         String contextName = "InjectedContext";
-        this.applicationContext.add(new SampleContext(contextName));
+        this.applicationContext.addContext(new SampleContext(contextName));
 
         ComponentPopulator populator = populatorFactory.apply(this.applicationContext);
         ContextInjectedType instance = populator.populate(new ContextInjectedType());
@@ -328,7 +327,7 @@ public class ApplicationContextTests {
     @MethodSource("componentPopulators")
     void testNamedContextFieldsAreInjected(Function<ApplicationContext, ComponentPopulator> populatorFactory) {
         String contextName = "InjectedContext";
-        this.applicationContext.add("another", new SampleContext(contextName));
+        this.applicationContext.addContext("another", new SampleContext(contextName));
 
         ComponentPopulator populator = populatorFactory.apply(this.applicationContext);
         ContextInjectedType instance = populator.populate(new ContextInjectedType());
@@ -578,7 +577,7 @@ public class ApplicationContextTests {
     @TestComponents(components = {SetterInjectedComponent.class, ComponentType.class})
     void testSetterInjectionWithContext() {
         SampleContext sampleContext = new SampleContext("setter");
-        this.applicationContext.add("setter", sampleContext);
+        this.applicationContext.addContext("setter", sampleContext);
         SetterInjectedComponent component = this.applicationContext.get(SetterInjectedComponent.class);
         Assertions.assertNotNull(component);
         Assertions.assertNotNull(component.context());

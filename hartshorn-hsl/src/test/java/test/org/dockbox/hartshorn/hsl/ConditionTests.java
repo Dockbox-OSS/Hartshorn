@@ -16,10 +16,12 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.ConditionContext;
 import org.dockbox.hartshorn.component.condition.ConditionResult;
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.condition.ExpressionCondition;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
@@ -34,8 +36,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
-
-import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 
@@ -78,12 +78,12 @@ public class ConditionTests {
         Assertions.assertTrue(result.matches());
     }
 
-    ConditionResult match(String expression, Context... contexts) {
+    ConditionResult match(String expression, ContextView... contexts) {
         ExpressionCondition condition = this.applicationContext.get(ExpressionCondition.class);
         AnnotatedElementView element = this.createAnnotatedElement(expression);
         ConditionContext context = new ConditionContext(this.applicationContext, element, null);
-        for (Context child : contexts) {
-            context.add(child);
+        for (ContextView child : contexts) {
+            context.addContext(child);
         }
         return condition.matches(context);
     }

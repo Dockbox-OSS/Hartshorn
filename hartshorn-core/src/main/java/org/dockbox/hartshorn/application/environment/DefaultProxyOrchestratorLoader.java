@@ -31,6 +31,13 @@ public final class DefaultProxyOrchestratorLoader {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Creates a new {@link ContextualInitializer initializer} that will load the default {@link ProxyOrchestrator}
+     * implementation from the {@link DiscoveryService}.
+     *
+     * @param customizer The customizer to apply to the {@link Configurer} before loading the {@link ProxyOrchestrator}
+     * @return The initializer
+     */
     public static ContextualInitializer<Introspector, ProxyOrchestrator> create(Customizer<Configurer> customizer) {
         return context -> {
             // Call, but ignore the result of the customizer for now

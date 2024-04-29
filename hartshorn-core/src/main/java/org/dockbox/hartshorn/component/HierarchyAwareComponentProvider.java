@@ -107,7 +107,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         ContextIdentity<ScopeModuleContext> scopeModuleContextKey = ContextKey.builder(ScopeModuleContext.class)
                 .fallback(ScopeModuleContext::new)
                 .build();
-        Option<ScopeModuleContext> scopeModuleContext = this.applicationContext().first(scopeModuleContextKey);
+        Option<ScopeModuleContext> scopeModuleContext = this.applicationContext().firstContext(scopeModuleContextKey);
 
         if (scopeModuleContext.absent() && !(this.scope instanceof ApplicationContext)) {
             throw new IllegalModificationException("Cannot add binding to non-application hierarchy without a module context");

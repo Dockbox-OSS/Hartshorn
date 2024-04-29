@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public abstract class PropertyAwareComponentPostProcessor extends ComponentPostP
 
     protected void verifyPropertiesAvailable(ApplicationContext context, PropertyHolder propertyHolder) throws ObjectMappingException {
         if (propertyHolder.properties().isEmpty()) {
-            ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
+            ConfigurationURIContextList uriContextList = context.firstContext(ConfigurationURIContextList.CONTEXT_KEY).get();
             URIConfigProcessor configProcessor = context.get(URIConfigProcessor.class);
             configProcessor.process(context, uriContextList.uris());
         }
