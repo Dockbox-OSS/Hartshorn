@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.config.properties.StandardPropertyHolder;
 import org.dockbox.hartshorn.config.properties.StandardURIConfigProcessor;
 import org.dockbox.hartshorn.config.properties.URIConfigProcessor;
+import org.dockbox.hartshorn.inject.InfrastructurePriority;
 import org.dockbox.hartshorn.inject.SupportPriority;
 
 @Configuration
@@ -35,7 +36,7 @@ import org.dockbox.hartshorn.inject.SupportPriority;
 public class ApplicationPropertiesConfiguration {
 
     @Singleton
-    @SupportPriority
+    @InfrastructurePriority
     public PropertyHolder propertyHolder(ApplicationContext applicationContext,
                                          ApplicationPropertyHolder propertyHolder,
                                          ObjectMapper objectMapper,
@@ -44,7 +45,7 @@ public class ApplicationPropertiesConfiguration {
     }
 
     @Singleton
-    @SupportPriority
+    @InfrastructurePriority
     public URIConfigProcessor uriConfigProcessor() {
         return new StandardURIConfigProcessor();
     }

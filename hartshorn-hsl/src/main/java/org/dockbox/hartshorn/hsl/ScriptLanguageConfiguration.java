@@ -32,32 +32,38 @@ import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
+import org.dockbox.hartshorn.inject.SupportPriority;
 
 @Configuration
 @RequiresActivator(UseExpressionValidation.class)
 public class ScriptLanguageConfiguration {
 
     @Singleton
+    @SupportPriority
     private ScriptComponentFactory languageFactory() {
         return new StandardScriptComponentFactory();
     }
 
     @Prototype
+    @SupportPriority
     private TokenParser tokenParser() {
         return new StandardTokenParser(DefaultTokenRegistry.createDefault());
     }
 
     @Prototype
+    @SupportPriority
     private ExpressionParser expressionParser() {
         return new ComplexExpressionParserAdapter(() -> null);
     }
 
     @Prototype
+    @SupportPriority
     private Resolver resolver(Interpreter interpreter) {
         return new Resolver(interpreter);
     }
 
     @Prototype
+    @SupportPriority
     public ScriptRuntime runtime(
             ApplicationContext applicationContext,
             ScriptComponentFactory factory,
@@ -67,6 +73,7 @@ public class ScriptLanguageConfiguration {
     }
 
     @Prototype
+    @SupportPriority
     public ValidateExpressionRuntime expressionRuntime(
             ApplicationContext applicationContext,
             ScriptComponentFactory factory,
@@ -76,6 +83,7 @@ public class ScriptLanguageConfiguration {
     }
 
     @Singleton
+    @SupportPriority
     public ParserCustomizer parserCustomizer() {
         return new DefaultScriptStatementsParserCustomizer();
     }

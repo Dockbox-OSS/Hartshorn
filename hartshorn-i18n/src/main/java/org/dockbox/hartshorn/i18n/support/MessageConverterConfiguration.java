@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.component.processing.CompositeMember;
 import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
+import org.dockbox.hartshorn.inject.SupportPriority;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 
 /**
@@ -44,6 +45,7 @@ public class MessageConverterConfiguration {
      */
     @Singleton
     @CompositeMember
+    @SupportPriority
     public Converter<String, Message> stringToMessageConverter(TranslationService translationService) {
         return new StringToMessageConverter(translationService);
     }
@@ -56,6 +58,7 @@ public class MessageConverterConfiguration {
      */
     @Singleton
     @CompositeMember
+    @SupportPriority
     public Converter<Message, String> messageToStringConverter() {
         return message -> message.string();
     }

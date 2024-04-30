@@ -29,7 +29,6 @@ import org.dockbox.hartshorn.inject.Priority;
 public class TestCommandConfiguration {
 
     @Singleton
-    @Priority(Priority.SUPPORT_PRIORITY + 16)
     public SystemSubject systemSubject(ApplicationContext applicationContext) {
         return new JUnitSystemSubject(applicationContext);
     }

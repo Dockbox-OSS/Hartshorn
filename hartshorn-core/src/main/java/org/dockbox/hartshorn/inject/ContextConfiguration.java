@@ -37,6 +37,7 @@ import org.dockbox.hartshorn.context.ContextCarrier;
 public class ContextConfiguration {
 
     @Singleton
+    @InfrastructurePriority
     public ContextCarrier contextCarrier(ApplicationContext applicationContext) {
         return new ConcreteContextCarrier(applicationContext);
     }

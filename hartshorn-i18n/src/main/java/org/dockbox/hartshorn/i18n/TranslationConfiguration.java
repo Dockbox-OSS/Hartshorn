@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.i18n.services.SimpleTranslationKeyGenerator;
 import org.dockbox.hartshorn.i18n.services.TranslationKeyGenerator;
+import org.dockbox.hartshorn.inject.SupportPriority;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 
 /**
@@ -50,6 +51,7 @@ public class TranslationConfiguration {
      * @return the translation service
      */
     @Singleton
+    @SupportPriority
     public TranslationService translationService(ApplicationContext applicationContext, TranslationBundle bundle) {
         return new BundledTranslationService(applicationContext, bundle);
     }
@@ -64,6 +66,7 @@ public class TranslationConfiguration {
      * @return the translation bundle
      */
     @Singleton
+    @SupportPriority
     public TranslationBundle translationBundle(
             ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
             ComponentCollection<TranslationBundle> additionalBundles
@@ -83,6 +86,7 @@ public class TranslationConfiguration {
      * @return the translation key generator
      */
     @Singleton
+    @SupportPriority
     public TranslationKeyGenerator translationKeyGenerator(ComponentRegistry componentRegistry) {
         return new SimpleTranslationKeyGenerator(componentRegistry);
     }

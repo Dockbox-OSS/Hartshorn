@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.processing.CompositeMember;
 import org.dockbox.hartshorn.component.processing.Prototype;
 import org.dockbox.hartshorn.component.processing.Singleton;
+import org.dockbox.hartshorn.inject.InfrastructurePriority;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 
 /**
@@ -39,17 +40,20 @@ public class ResourceLookupConfiguration {
 
     @Prototype
     @CompositeMember
+    @InfrastructurePriority
     public ResourceLookupStrategy classPathResourceLookupStrategy() {
         return new ClassPathResourceLookupStrategy();
     }
 
     @Prototype
     @CompositeMember
+    @InfrastructurePriority
     public ResourceLookupStrategy fileSystemResourceLookupStrategy() {
         return new FileSystemLookupStrategy();
     }
 
     @Singleton
+    @InfrastructurePriority
     public ResourceLookup resourceLookup(ApplicationContext applicationContext, ComponentCollection<ResourceLookupStrategy> strategies) {
         FallbackResourceLookup resourceLookup = new FallbackResourceLookup(applicationContext, new FileSystemLookupStrategy());
         strategies.forEach(resourceLookup::addLookupStrategy);

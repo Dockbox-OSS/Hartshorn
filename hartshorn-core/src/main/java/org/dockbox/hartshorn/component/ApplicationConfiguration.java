@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
 import org.dockbox.hartshorn.component.processing.Prototype;
 import org.dockbox.hartshorn.component.processing.Singleton;
+import org.dockbox.hartshorn.inject.InfrastructurePriority;
 import org.dockbox.hartshorn.inject.Strict;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -47,6 +48,7 @@ import org.slf4j.LoggerFactory;
 public class ApplicationConfiguration {
 
     @Prototype
+    @InfrastructurePriority
     public Logger logger(InjectionPoint injectionPoint, ComponentRegistry componentRegistry) {
         Class<?> declaringType = switch(injectionPoint.injectionPoint()) {
             case ExecutableElementView<?> executableElementView -> executableElementView.declaredBy().type();
@@ -62,6 +64,7 @@ public class ApplicationConfiguration {
     }
 
     @Singleton
+    @InfrastructurePriority
     public ConversionService conversionService(
             Introspector introspector,
             @Strict(false) ComponentCollection<GenericConverter> genericConverters,
