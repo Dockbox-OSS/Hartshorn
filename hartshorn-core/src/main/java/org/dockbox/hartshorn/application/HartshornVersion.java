@@ -85,84 +85,236 @@ public enum HartshornVersion implements Reportable {
         this.releaseStatus = releaseStatus;
     }
 
+    /**
+     * Returns the alias of the version. The alias is a human-readable name for the version, which is
+     * used to identify the release series. The alias is not unique, and is shared across all versions
+     * in a release series. A series is defined by the major version number.
+     *
+     * @return The alias of the version
+     */
     public String alias() {
         return this.alias;
     }
 
+    /**
+     * Returns the major version number of the version. The major version number is incremented for
+     * significant changes to the API. Major versions are considered stable.
+     *
+     * @return The major version number
+     */
     public int major() {
         return this.major;
     }
 
+    /**
+     * Returns the minor version number of the version. The minor version number is incremented for
+     * new features.
+     *
+     * @return The minor version number
+     */
     public int minor() {
         return this.minor;
     }
 
+    /**
+     * Returns the patch version number of the version. The patch version number is incremented for
+     * bug fixes.
+     *
+     * @return The patch version number
+     */
     public int patch() {
         return this.patch;
     }
 
+    /**
+     * Returns whether this version is at least the given version. A version is considered at least
+     * the given version if:
+     * <ul>
+     *     <li>The major version is greater than the given version's major version</li>
+     *     <li>The major version is equal, and the minor version is greater</li>
+     *     <li>The major and minor versions are equal, and the patch version is greater or equal</li>
+     * </ul>
+     *
+     * @param version The version to compare to
+     * @return {@code true} if this version is at least the given version, {@code false} otherwise
+     */
     public boolean isAtLeast(HartshornVersion version) {
-        return this.major > version.major || (this.major == version.major && this.minor > version.minor) || (this.major == version.major && this.minor == version.minor && this.patch >= version.patch);
+        return this.major > version.major
+                || (this.major == version.major && this.minor > version.minor)
+                || (this.major == version.major && this.minor == version.minor && this.patch >= version.patch);
     }
 
+    /**
+     * Returns whether this version is at most the given version. A version is considered at most
+     * the given version if:
+     * <ul>
+     *     <li>The major version is less than the given version's major version</li>
+     *     <li>The major version is equal, and the minor version is less</li>
+     *     <li>The major and minor versions are equal, and the patch version is less or equal</li>
+     * </ul>
+     *
+     * @param version The version to compare to
+     * @return {@code true} if this version is at most the given version, {@code false} otherwise
+     */
     public boolean isAtMost(HartshornVersion version) {
-        return this.major < version.major || (this.major == version.major && this.minor < version.minor) || (this.major == version.major && this.minor == version.minor && this.patch <= version.patch);
+        return this.major < version.major
+                || (this.major == version.major && this.minor < version.minor)
+                || (this.major == version.major && this.minor == version.minor && this.patch <= version.patch);
     }
 
+    /**
+     * Returns whether this version is equal to the given version. A version is considered equal to
+     * the given version if the major, minor, and patch versions are equal.
+     *
+     * @param version The version to compare to
+     * @return {@code true} if this version is equal to the given version, {@code false} otherwise
+     */
     public boolean is(HartshornVersion version) {
         return this.major == version.major && this.minor == version.minor && this.patch == version.patch;
     }
 
+    /**
+     * Returns whether this version is before the given version. A version is considered before the
+     * given version if it is not equal to or at least the given version.
+     *
+     * @param version The version to compare to
+     * @return {@code true} if this version is before the given version, {@code false} otherwise
+     */
     public boolean isBefore(HartshornVersion version) {
-        return this.major < version.major || (this.major == version.major && this.minor < version.minor) || (this.major == version.major && this.minor == version.minor && this.patch < version.patch);
+        return this.major < version.major
+                || (this.major == version.major && this.minor < version.minor)
+                || (this.major == version.major && this.minor == version.minor && this.patch < version.patch);
     }
 
+    /**
+     * Returns whether this version is after the given version. A version is considered after the
+     * given version if it is not equal to or at most the given version.
+     *
+     * @param version The version to compare to
+     * @return {@code true} if this version is after the given version, {@code false} otherwise
+     */
     public boolean isAfter(HartshornVersion version) {
-        return this.major > version.major || (this.major == version.major && this.minor > version.minor) || (this.major == version.major && this.minor == version.minor && this.patch > version.patch);
+        return this.major > version.major
+                || (this.major == version.major && this.minor > version.minor)
+                || (this.major == version.major && this.minor == version.minor && this.patch > version.patch);
     }
 
+    /**
+     * Returns whether this version is between the given versions. A version is considered between
+     * the given versions if it is after the minimum version and before the maximum version, and
+     * not equal to either.
+     *
+     * @param min The minimum version
+     * @param max The maximum version
+     * @return {@code true} if this version is between the given versions, {@code false} otherwise
+     */
     public boolean isBetweenExclusive(HartshornVersion min, HartshornVersion max) {
         return this.isAfter(min) && this.isBefore(max);
     }
 
+    /**
+     * Returns whether this version is between the given versions, inclusive. A version is considered
+     * between the given versions if it is at least the minimum version and at most the maximum version.
+     *
+     * @param min The minimum version
+     * @param max The maximum version
+     * @return {@code true} if this version is between the given versions, {@code false} otherwise
+     */
     public boolean isBetweenInclusive(HartshornVersion min, HartshornVersion max) {
         return this.isAtLeast(min) && this.isAtMost(max);
     }
 
+    /**
+     * Returns the release status of the version. The release status indicates the stability of the
+     * version. Note that the release status of a version may change over time, and this is purely
+     * indicative of the status at the time of the current version's release.
+     *
+     * @return The release status of the version
+     */
     public ReleaseStatus status() {
         return this.releaseStatus;
     }
 
+    /**
+     * Returns whether this version is a major release. A release is considered major if it has no
+     * minor or patch version.
+     *
+     * @return {@code true} if this version is a major release, {@code false} otherwise
+     */
     public boolean isMajorRelease() {
         // Patches for major releases are also considered major releases
         return this.major > 0 && this.minor == 0;
     }
 
+    /**
+     * Returns whether this version is a minor release. A release is considered minor if it has a
+     * minor version. If a version has a patch version, it is also considered a minor release.
+     *
+     * @return {@code true} if this version is a minor release, {@code false} otherwise
+     */
     public boolean isMinorRelease() {
         // Patches for minor releases are also considered minor releases
         return this.minor > 0;
     }
 
+    /**
+     * Returns whether this version is a patch release. A release is considered a patch release if it
+     * has a patch version.
+     *
+     * @return {@code true} if this version is a patch release, {@code false} otherwise
+     */
     public boolean isPatchRelease() {
         return this.patch > 0;
     }
 
+    /**
+     * Returns whether this version is {@link ReleaseStatus#RELEASED released}. Note that this represents
+     * the status of the version at the time of the current version's release, and may change over time.
+     *
+     * @return {@code true} if this version is released, {@code false} otherwise
+     */
     public boolean isReleased() {
         return this.releaseStatus == ReleaseStatus.RELEASED;
     }
 
+    /**
+     * Returns whether this version is a {@link ReleaseStatus#SNAPSHOT snapshot}. Note that this represents
+     * the status of the version at the time of the current version's release, and may change over time.
+     *
+     * @return {@code true} if this version is a snapshot, {@code false} otherwise
+     */
     public boolean isSnapshot() {
         return this.releaseStatus == ReleaseStatus.SNAPSHOT;
     }
 
+    /**
+     * Returns whether this version is a {@link ReleaseStatus#CANDIDATE release candidate}. Note that this
+     * represents the status of the version at the time of the current version's release, and may change
+     * over time.
+     *
+     * @return {@code true} if this version is a release candidate, {@code false} otherwise
+     */
     public boolean isReleaseCandidate() {
         return this.releaseStatus == ReleaseStatus.CANDIDATE;
     }
 
+    /**
+     * Returns whether this version is in {@link ReleaseStatus#DEVELOPMENT development}. Note that this
+     * represents the status of the version at the time of the current version's release, and may change
+     * over time.
+     *
+     * @return {@code true} if this version is in development, {@code false} otherwise
+     */
     public boolean isDevelopment() {
         return this.releaseStatus == ReleaseStatus.DEVELOPMENT;
     }
 
+    /**
+     * Returns whether this version is a {@link ReleaseStatus#PLANNED planned} version. Planned versions
+     * are not yet released or actively developed, and serve as placeholders for future releases.
+     *
+     * @return {@code true} if this version is planned, {@code false} otherwise
+     */
     public boolean isPlaceholder() {
         return this.releaseStatus == ReleaseStatus.PLANNED;
     }
@@ -259,6 +411,13 @@ public enum HartshornVersion implements Reportable {
             this.suffix = suffix;
         }
 
+        /**
+         * Returns the suffix of the release status. The suffix is a short string that indicates the
+         * status of the version. The suffix is used in version strings to indicate the status of the
+         * version.
+         *
+         * @return The suffix of the release status
+         */
         public String suffix() {
             return this.suffix;
         }

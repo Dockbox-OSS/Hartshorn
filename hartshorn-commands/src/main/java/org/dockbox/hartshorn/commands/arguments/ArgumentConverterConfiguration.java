@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistryCustomizer;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.component.ComponentContainer;
@@ -41,10 +42,31 @@ import org.dockbox.hartshorn.util.introspect.convert.support.StringToNumberConve
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToUUIDConverter;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * Default configuration for command argument converters. This configuration targets any
+ * {@link ArgumentConverterRegistry} that supports
+ * the use of {@link ArgumentConverterRegistryCustomizer customizers}, and applies a range
+ * of default converters to the registry.
+ *
+ * @see ArgumentConverterRegistryCustomizer
+ * @see ArgumentConverter
+ * @see ArgumentConverterRegistry
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 @Configuration
 @RequiresActivator(UseCommands.class)
 public class ArgumentConverterConfiguration {
 
+    /**
+     * Provides a customizer that registers a range of default argument converters with the
+     * provided registry. Note that this only registers the converters defined in this
+     * configuration, and does not include any composite members.
+     *
+     * @return a customizer that registers default argument converters
+     */
     @Singleton
     @SupportPriority
     public ArgumentConverterRegistryCustomizer converterRegistryCustomizer() {
@@ -66,18 +88,36 @@ public class ArgumentConverterConfiguration {
         };
     }
 
+    /**
+     * Provides an argument converter for {@link String} arguments. This is a one-to-one
+     * converter that simply wraps the input in an {@link Option} for further processing.
+     *
+     * @return an argument converter for {@link String} arguments
+     */
     public ArgumentConverter<String> stringArgumentConverter() {
         return ArgumentConverterImpl.builder(String.class, "string")
                 .withConverter((String input) -> Option.of(input))
                 .build();
     }
 
+    /**
+     * Provides an argument converter for {@link Character} arguments. This converter
+     * delegates to a {@link StringToCharacterConverter} for the actual conversion.
+     *
+     * @return an argument converter for {@link Character} arguments
+     */
     public ArgumentConverter<Character> characterArgumentConverter() {
         return ArgumentConverterImpl.builder(Character.class, "char", "character")
                 .withConverter(new StringToCharacterConverter())
                 .build();
     }
 
+    /**
+     * Provides an argument converter for {@link Boolean} arguments. This converter
+     * delegates to a {@link StringToBooleanConverter} for the actual conversion.
+     *
+     * @return an argument converter for {@link Boolean} arguments
+     */
     public ArgumentConverter<Boolean> booleanArgumentConverter() {
         return ArgumentConverterImpl.builder(Boolean.class, "bool", "boolean")
                 .withConverter(new StringToBooleanConverter())
@@ -85,48 +125,101 @@ public class ArgumentConverterConfiguration {
                 .build();
     }
 
+    /**
+     * Provides an argument converter for {@link Double} arguments. This converter
+     * delegates to a {@link Double} converter created through a {@link
+     * StringToNumberConverterFactory} for the actual conversion.
+     *
+     * @return an argument converter for {@link Double} arguments
+     */
     public ArgumentConverter<Double> doubleArgumentConverter() {
         return ArgumentConverterImpl.builder(Double.class, "double")
                 .withConverter(new StringToNumberConverterFactory().create(Double.class))
                 .build();
     }
 
+    /**
+     * Provides an argument converter for {@link Float} arguments. This converter
+     * delegates to a {@link Float} converter created through a {@link
+     * StringToNumberConverterFactory} for the actual conversion.
+     *
+     * @return an argument converter for {@link Float} arguments
+     */
     public ArgumentConverter<Float> floatArgumentConverter() {
         return ArgumentConverterImpl.builder(Float.class, "float")
                 .withConverter(new StringToNumberConverterFactory().create(Float.class))
                 .build();
     }
 
+    /**
+     * Provides an argument converter for {@link Integer} arguments. This converter
+     * delegates to a {@link Integer} converter created through a {@link
+     * StringToNumberConverterFactory} for the actual conversion.
+     *
+     * @return an argument converter for {@link Integer} arguments
+     */
     public ArgumentConverter<Integer> integerArgumentConverter() {
         return ArgumentConverterImpl.builder(Integer.class, "int", "integer")
                 .withConverter(new StringToNumberConverterFactory().create(Integer.class))
                 .build();
     }
 
+    /**
+     * Provides an argument converter for {@link Long} arguments. This converter
+     * delegates to a {@link Long} converter created through a {@link
+     * StringToNumberConverterFactory} for the actual conversion.
+     *
+     * @return an argument converter for {@link Long} arguments
+     */
     public ArgumentConverter<Long> longArgumentConverter() {
         return ArgumentConverterImpl.builder(Long.class, "long")
                 .withConverter(new StringToNumberConverterFactory().create(Long.class))
                 .build();
     }
 
+    /**
+     * Provides an argument converter for {@link Short} arguments. This converter
+     * delegates to a {@link Short} converter created through a {@link
+     * StringToNumberConverterFactory} for the actual conversion.
+     *
+     * @return an argument converter for {@link Short} arguments
+     */
     public ArgumentConverter<Short> shortArgumentConverter() {
         return ArgumentConverterImpl.builder(Short.class, "short")
                 .withConverter(new StringToNumberConverterFactory().create(Short.class))
                 .build();
     }
 
+    /**
+     * Provides an argument converter for {@link UUID} arguments. This converter
+     * delegates to a {@link StringToUUIDConverter} for the actual conversion.
+     *
+     * @return an argument converter for {@link UUID} arguments
+     */
     public ArgumentConverter<UUID> uuidArgumentConverter() {
         return ArgumentConverterImpl.builder(UUID.class, "uuid", "uniqueId")
                 .withConverter(new StringToUUIDConverter())
                 .build();
     }
 
+    /**
+     * Provides an argument converter for {@link Duration} arguments. This converter
+     * uses {@link StringUtilities#durationOf(String)} to convert the input.
+     *
+     * @return an argument converter for {@link Duration} arguments
+     */
     public ArgumentConverter<Duration> durationArgumentConverter() {
         return ArgumentConverterImpl.builder(Duration.class, "duration")
                 .withConverter(StringUtilities::durationOf)
                 .build();
     }
 
+    /**
+     * Provides an argument converter for {@link Message} arguments. This converter
+     * uses the {@link TranslationService} to retrieve the message by key.
+     *
+     * @return an argument converter for {@link Message} arguments
+     */
     public ArgumentConverter<Message> messageArgumentConverter() {
         return ArgumentConverterImpl.builder(Message.class, "resource", "i18n", "translation")
                 .withConverter((src, in) -> {
@@ -141,6 +234,12 @@ public class ArgumentConverterConfiguration {
                 }).build();
     }
 
+    /**
+     * Provides an argument converter for {@link ComponentContainer} arguments. This converter
+     * uses the {@link ComponentRegistry} to retrieve the container by ID.
+     *
+     * @return an argument converter for {@link ComponentContainer} arguments
+     */
     public ArgumentConverter<ComponentContainer<?>> componentContainerArgumentConverter() {
         return ArgumentConverterImpl.<ComponentContainer<?>>builder(TypeUtils.adjustWildcards(ComponentContainer.class, Class.class), "service")
                 .withConverter((src, in) -> Option.of(src.applicationContext()
@@ -155,6 +254,13 @@ public class ArgumentConverterConfiguration {
                 .build();
     }
 
+    /**
+     * Provides an argument converter that consumes all remaining arguments as a single
+     * {@link String}. This converter is useful for commands that accept a variable number
+     * of arguments, and want to consume all remaining arguments as a single string.
+     *
+     * @return an argument converter that consumes all remaining arguments as a single string
+     */
     public ArgumentConverter<String> remainingStringArgumentConverter() {
         return ArgumentConverterImpl.builder(String.class, "remaining", "remainingString")
                 .withConverter((String input) -> Option.of(input))
@@ -162,6 +268,14 @@ public class ArgumentConverterConfiguration {
                 .build();
     }
 
+    /**
+     * Provides an argument converter that consumes all remaining arguments as an array of
+     * {@link Integer}s. This converter is useful for commands that accept a variable number
+     * of arguments, and want to consume all remaining arguments as an array of integers. The
+     * converter delegates to a {@link StringToNumberConverterFactory} for the actual conversion.
+     *
+     * @return an argument converter that consumes all remaining arguments as an array of integers
+     */
     public ArgumentConverter<Integer[]> remainingIntegersArgumentConverter() {
         Converter<String, Integer> integerConverter = new StringToNumberConverterFactory().create(Integer.class);
         return ArgumentConverterImpl.builder(Integer[].class, "remainingInt")

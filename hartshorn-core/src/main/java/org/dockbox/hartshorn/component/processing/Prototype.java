@@ -24,6 +24,20 @@ import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
+/**
+ * Stereotype of {@link Binds} for bindings that should be registered as prototypes. This annotation is a shorthand
+ * for {@code @Binds(lifecycle = LifecycleType.PROTOTYPE)}.
+ *
+ * <p>Prototype bindings are created every time they are requested from the container. This is useful for bindings
+ * that are stateful or mutable.
+ *
+ * @see Binds
+ * @see LifecycleType#PROTOTYPE
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.FIELD })
 @Extends(Binds.class)

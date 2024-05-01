@@ -61,6 +61,13 @@ public class DependencyGraph extends SimpleContentAwareGraph<DependencyContext<?
         return defaultRoots;
     }
 
+    /**
+     * Determines if the given node is a singleton node. A singleton node is a node that is a singleton
+     * in the context of the application lifecycle.
+     *
+     * @param node the node to check
+     * @return {@code true} if the node is a singleton node, {@code false} otherwise
+     */
     public static boolean isSingletonNode(GraphNode<DependencyContext<?>> node) {
         return node.value() instanceof LifecycleAwareDependencyContext<?> lifecycleAware
             && lifecycleAware.lifecycleType() == LifecycleType.SINGLETON;

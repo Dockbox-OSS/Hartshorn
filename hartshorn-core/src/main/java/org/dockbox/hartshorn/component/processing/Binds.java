@@ -123,8 +123,14 @@ public @interface Binds {
     boolean processAfterInitialization() default true;
 
     /**
-     * TODO: Document
-     * @return
+     * The lifecycle of the binding. If not specified, the binding will be registered with a {@link
+     * LifecycleType#PROTOTYPE prototype lifecycle}. Lifecycles indicate when the component is created and
+     * destroyed.
+     *
+     * <p><b>Note</b>: If you are specifying a lifecycle explicitly, consider using the {@link Singleton} or
+     * {@link Prototype} stereotype annotations instead.
+     *
+     * @return the lifecycle of the binding
      */
     LifecycleType lifecycle() default LifecycleType.PROTOTYPE;
 }

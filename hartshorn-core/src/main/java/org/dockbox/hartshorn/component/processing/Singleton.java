@@ -24,6 +24,20 @@ import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
+/**
+ * Stereotype of {@link Binds} for bindings that should be registered as singletons. This annotation is a shorthand
+ * for {@code @Binds(lifecycle = LifecycleType.SINGLETON)}.
+ *
+ * <p>Singleton bindings are only created once and are shared across all consumers. This is useful for bindings that
+ * are stateless or immutable, or for bindings that are expensive to create.
+ *
+ * @see Binds
+ * @see LifecycleType#SINGLETON
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.FIELD })
 @Extends(Binds.class)
