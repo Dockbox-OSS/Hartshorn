@@ -59,7 +59,8 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class HierarchyAwareComponentProvider extends DefaultProvisionContext implements HierarchicalComponentProvider, ContextCarrier {
+public class HierarchyAwareComponentProvider extends DefaultProvisionContext
+        implements HierarchicalComponentProvider, SingletonCacheComponentProvider, ContextCarrier {
 
     private final ScopedProviderOwner owner;
     private final Scope scope;
@@ -79,7 +80,11 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         );
     }
 
-    private HierarchyCache hierarchyCache() {
+    public SingletonCache singletonCache() {
+        return this.singletonCache;
+    }
+
+    public HierarchyCache hierarchyCache() {
         if (this.hierarchyCache == null ) {
             this.hierarchyCache = new HierarchyCache(this.owner.applicationContext(), this.owner.applicationProvider(), this);
         }
