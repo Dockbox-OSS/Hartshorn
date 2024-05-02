@@ -43,7 +43,7 @@ public class PropertiesReporter implements Reportable {
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         for (Entry<Object, Object> entry : this.properties.entrySet()) {
-            collector.property(String.valueOf(entry.getKey())).write(String.valueOf(entry.getValue()));
+            collector.property(String.valueOf(entry.getKey())).writeString(String.valueOf(entry.getValue()));
         }
     }
 }

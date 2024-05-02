@@ -17,14 +17,14 @@
 package org.dockbox.hartshorn.inject;
 
 import java.util.Set;
-
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentRegistry;
-import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.ComponentMemberType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
 /**
@@ -40,7 +40,7 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  *
  * @author Guus Lieben
  */
-public class ManagedComponentDependencyContext<T> implements DependencyContext<T> {
+public abstract class ManagedComponentDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
 
     private final ComponentKey<T> componentKey;
     private final DependencyMap dependencies;
@@ -51,6 +51,8 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
         this.dependencies = dependencies;
         this.constructorView = constructorView;
     }
+
+    protected abstract TypeView<T> type();
 
     @Override
     public ComponentKey<T> componentKey() {
@@ -79,17 +81,12 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
 
     @Override
     public ScopeKey scope() {
-        return Scope.DEFAULT_SCOPE_KEY;
+        return ApplicationContext.APPLICATION_SCOPE;
     }
 
     @Override
-    public BindingType type() {
-        return BindingType.STANDALONE;
-    }
-
-    @Override
-    public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
-        // Do nothing, require processing or standard instance provision
+    public ComponentMemberType memberType() {
+        return ComponentMemberType.STANDALONE;
     }
 
     @Override
@@ -97,4 +94,16 @@ public class ManagedComponentDependencyContext<T> implements DependencyContext<T
         return this.constructorView;
     }
 
+    @Override
+    public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
+        Class<T> componentType = this.type().type();
+        LifecycleType lifecycleType = this.lifecycleType();
+        switch (lifecycleType) {
+            // At this point we ignore the ComponentContainer#lazy() property. This will later be handled
+            // by the context constructor when the application is ready for initialization.
+            case SINGLETON -> function.lazySingleton(componentType);
+            case PROTOTYPE -> function.to(componentType);
+            default -> throw new ComponentConfigurationException("Unsupported lifecycle: " + lifecycleType);
+        }
+    }
 }

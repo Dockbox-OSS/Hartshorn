@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class StandardDiagnosticsReportCollector implements DiagnosticsReportColl
 
     @Override
     public DiagnosticsReport report(Reportable reportable) {
-        this.property("timestamp").write(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+        this.property("timestamp").writeString(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
 
         reportable.report(this);
         return this.report;
@@ -59,6 +59,6 @@ public class StandardDiagnosticsReportCollector implements DiagnosticsReportColl
 
     @Override
     public void visit(CategorizedDiagnosticsReporter reporter) {
-        this.property(reporter.category()).write(reporter);
+        this.property(reporter.category()).writeDelegate(reporter);
     }
 }

@@ -238,8 +238,8 @@ public class WildcardTypeView extends DefaultContext implements TypeView<Object>
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("name").write("*");
-        collector.property("wildcard").write(true);
+        collector.property("name").writeString("*");
+        collector.property("wildcard").writeBoolean(true);
     }
 
     @Override

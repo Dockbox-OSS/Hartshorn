@@ -20,14 +20,12 @@ import java.util.Properties;
 
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
  * The environment of an active application. The environment can only be responsible for one {@link ApplicationContext},
@@ -109,26 +107,6 @@ public interface ApplicationEnvironment extends ContextCarrier, ExceptionHandler
      * @return {@code true} if strict mode is enabled, {@code false} otherwise.
      */
     boolean isStrictMode();
-
-    /**
-     * Indicates whether the given type should be treated as a singleton. How this is determined is up to the
-     * implementation, but typically this is determined by the presence of the {@link jakarta.inject.Singleton}
-     * annotation, or the value of {@link Component#singleton()}.
-     *
-     * @param type The type to check
-     * @return {@code true} if the type should be treated as a singleton, {@code false} otherwise.
-     */
-    boolean singleton(Class<?> type);
-
-    /**
-     * Indicates whether the given type should be treated as a singleton. How this is determined is up to the
-     * implementation, but typically this is determined by the presence of the {@link jakarta.inject.Singleton}
-     * annotation, or the value of {@link Component#singleton()}.
-     *
-     * @param type The type to check
-     * @return {@code true} if the type should be treated as a singleton, {@code false} otherwise.
-     */
-    boolean singleton(TypeView<?> type);
 
     /**
      * Gets the raw arguments passed to the application. This is typically the arguments passed to the main method, or

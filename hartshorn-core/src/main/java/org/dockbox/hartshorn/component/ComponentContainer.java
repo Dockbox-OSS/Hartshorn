@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.component;
 
+import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public interface ComponentContainer<T> {
@@ -26,7 +27,7 @@ public interface ComponentContainer<T> {
 
     TypeView<T> type();
 
-    boolean singleton();
+    LifecycleType lifecycle();
 
     boolean lazy();
 

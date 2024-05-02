@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.util.Set;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.ComponentMemberType;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 
 /**
@@ -43,11 +43,22 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     private final DependencyMap dependencies;
     private final ScopeKey scope;
     private final int priority;
-    private final BindingType bindingType;
+    private final ComponentMemberType memberType;
 
     private boolean lazy;
-    private boolean singleton;
+    private LifecycleType lifecycleType;
     private boolean processAfterInitialization = true;
+
+    protected AbstractDependencyContext(AbstractDependencyContextBuilder<T, ?> builder) {
+        this.componentKey = builder.componentKey;
+        this.dependencies = builder.dependencies;
+        this.scope = builder.scope;
+        this.priority = builder.priority;
+        this.memberType = builder.memberType;
+        this.lazy = builder.lazy;
+        this.lifecycleType = builder.lifecycleType;
+        this.processAfterInitialization = builder.processAfterInitialization;
+    }
 
     protected AbstractDependencyContext(DependencyContext<T> dependencyContext) {
         this(
@@ -55,35 +66,35 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
             dependencyContext.dependencies(),
             dependencyContext.scope(),
             dependencyContext.priority(),
-            dependencyContext.type()
+            dependencyContext.memberType()
         );
 
         if (dependencyContext instanceof AbstractDependencyContext<T> abstractDependencyContext) {
             this.lazy = abstractDependencyContext.lazy();
-            this.singleton = abstractDependencyContext.singleton();
+            this.lifecycleType = abstractDependencyContext.lifecycleType();
             this.processAfterInitialization = abstractDependencyContext.processAfterInitialization();
         }
         else {
             this.lazy = false;
-            this.singleton = false;
+            this.lifecycleType = LifecycleType.PROTOTYPE; // TODO: Dynamic?
             this.processAfterInitialization = true;
         }
     }
 
     protected AbstractDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies,
-                                        ScopeKey scope, int priority, BindingType bindingType) {
+                                        ScopeKey scope, int priority, ComponentMemberType memberType) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.scope = scope;
         this.priority = priority;
-        this.bindingType = bindingType;
+        this.memberType = memberType;
     }
 
     /**
      * Whether the component should be created lazily. If {@code true}, the component will only be created when it is
      * requested for the first time. If {@code false}, the component will be created when the container is initialized.
      *
-     * <p>Only effective when the component is also a singleton.
+     * <p>Only effective when the component's {@link #lifecycleType()} is {@link LifecycleType#SINGLETON 'Singleton'}.
      *
      * @param lazy whether the component should be created lazily
      * @return this context
@@ -93,16 +104,8 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
         return this;
     }
 
-    /**
-     * Whether the component should be created as a singleton. If {@code true}, the component will be created only once,
-     * and the same instance will be returned for each request. If {@code false}, a new instance will be created for
-     * each request.
-     *
-     * @param singleton whether the component should be created as a singleton
-     * @return this context
-     */
-    public AbstractDependencyContext<T> singleton(boolean singleton) {
-        this.singleton = singleton;
+    public AbstractDependencyContext<T> lifecycleType(LifecycleType lifecycleType) {
+        this.lifecycleType = lifecycleType;
         return this;
     }
 
@@ -150,31 +153,30 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     }
 
     @Override
-    public BindingType type() {
-        return this.bindingType;
+    public ComponentMemberType memberType() {
+        return this.memberType;
     }
 
     /**
      * Whether the component should be created lazily. If {@code true}, the component will only be created when it is
      * requested for the first time. If {@code false}, the component will be created when the container is initialized.
      *
-     * <p>Only effective when the component is also a singleton.
+     * <p>Only effective when the component's {@link #lifecycleType()} is {@link LifecycleType#SINGLETON 'Singleton'}.
      *
      * @return whether the component should be created lazily
      */
+    @Override
     public boolean lazy() {
         return this.lazy;
     }
 
     /**
-     * Whether the component should be created as a singleton. If {@code true}, the component will be created only once,
-     * and the same instance will be returned for each request. If {@code false}, a new instance will be created for
-     * each request.
-     *
-     * @return whether the component should be created as a singleton
+     * TODO: Document
+     * @return
      */
-    public boolean singleton() {
-        return this.singleton;
+    @Override
+    public LifecycleType lifecycleType() {
+        return this.lifecycleType;
     }
 
     /**
@@ -184,21 +186,64 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
      *
      * @return whether the component should be processed after it has been initialized
      */
+    @Override
     public boolean processAfterInitialization() {
         return this.processAfterInitialization;
     }
 
-    @Override
-    public String toString() {
-        return "AbstractDependencyContext{" +
-                "componentKey=" + this.componentKey +
-                ", dependencies=" + this.dependencies +
-                ", scope=" + this.scope +
-                ", priority=" + this.priority +
-                ", bindingType=" + this.bindingType +
-                ", lazy=" + this.lazy +
-                ", singleton=" + this.singleton +
-                ", processAfterInitialization=" + this.processAfterInitialization +
-                '}';
+    public abstract static class AbstractDependencyContextBuilder<T, B extends AbstractDependencyContextBuilder<T, B>> {
+
+        private final ComponentKey<T> componentKey;
+
+        private DependencyMap dependencies;
+        private ScopeKey scope;
+        private int priority;
+        private ComponentMemberType memberType;
+        private boolean lazy;
+        private LifecycleType lifecycleType;
+        private boolean processAfterInitialization;
+
+        protected AbstractDependencyContextBuilder(ComponentKey<T> componentKey) {
+            this.componentKey = componentKey;
+        }
+
+        public B dependencies(DependencyMap dependencies) {
+            this.dependencies = dependencies;
+            return this.self();
+        }
+
+        public B scope(ScopeKey scope) {
+            this.scope = scope;
+            return this.self();
+        }
+
+        public B priority(int priority) {
+            this.priority = priority;
+            return this.self();
+        }
+
+        public B memberType(ComponentMemberType memberType) {
+            this.memberType = memberType;
+            return this.self();
+        }
+
+        public B lazy(boolean lazy) {
+            this.lazy = lazy;
+            return this.self();
+        }
+
+        public B lifecycleType(LifecycleType lifecycleType) {
+            this.lifecycleType = lifecycleType;
+            return this.self();
+        }
+
+        public B processAfterInitialization(boolean processAfterInitialization) {
+            this.processAfterInitialization = processAfterInitialization;
+            return this.self();
+        }
+
+        protected abstract B self();
+
+        public abstract DependencyContext<T> build();
     }
 }

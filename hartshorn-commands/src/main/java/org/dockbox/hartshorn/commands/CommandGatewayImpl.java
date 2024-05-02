@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.commands;
 
+import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterRegistry;
@@ -41,9 +41,6 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.inject.Inject;
-
 /**
  * Simple implementation of {@link CommandGateway}.
  */
@@ -59,7 +56,6 @@ public class CommandGatewayImpl implements CommandGateway {
     private final ApplicationContext context;
     private final ArgumentConverterRegistry converterRegistry;
 
-    @Inject
     public CommandGatewayImpl(
             CommandParser parser,
             CommandResources resources,
@@ -81,7 +77,7 @@ public class CommandGatewayImpl implements CommandGateway {
     }
 
     @PostConstruct
-    public void enable() {
+    public void configureExtensions() {
         if (this.extensions.isEmpty()) {
             ComponentCollection<CommandExecutorExtension> extensions = this.context.get(ComponentKey.collect(CommandExecutorExtension.class));
             for (CommandExecutorExtension extension : extensions) {

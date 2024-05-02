@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.inject.ComponentContainerDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.ComponentObjectContainer;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.DependencyResolutionException;
@@ -196,7 +197,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         LOG.debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
         ComponentProcessingContext<?> context = new ComponentProcessingContext<>(
                 this, ComponentRequestContext.createForComponent(),
-                key, null, container.permitsProxying()
+                key, ComponentObjectContainer.empty(), container.permitsProxying()
         );
         serviceProcessor.process(context);
     }

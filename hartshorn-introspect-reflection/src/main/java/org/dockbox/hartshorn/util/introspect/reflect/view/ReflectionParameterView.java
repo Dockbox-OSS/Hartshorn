@@ -114,8 +114,8 @@ public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView i
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("name").write(this.name());
-        collector.property("type").write(this.genericType());
+        collector.property("name").writeString(this.name());
+        collector.property("type").writeDelegate(this.genericType());
     }
 
     @Override

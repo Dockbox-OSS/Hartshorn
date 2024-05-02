@@ -47,15 +47,15 @@ public class MemoryUsageDiagnosticsReporter implements Reportable {
         long used = total - free;
 
         Function<Long, Reportable> byteReporter = bytes -> totalCollector -> {
-            totalCollector.property("bytes").write(bytes);
-            totalCollector.property("si").write(humanReadableByteCountSI(bytes));
-            totalCollector.property("iec").write(humanReadableByteCountIEC(bytes));
+            totalCollector.property("bytes").writeLong(bytes);
+            totalCollector.property("si").writeString(humanReadableByteCountSI(bytes));
+            totalCollector.property("iec").writeString(humanReadableByteCountIEC(bytes));
         };
 
-        collector.property("total").write(byteReporter.apply(total));
-        collector.property("free").write(byteReporter.apply(free));
-        collector.property("max").write(byteReporter.apply(max));
-        collector.property("used").write(byteReporter.apply(used));
+        collector.property("total").writeDelegate(byteReporter.apply(total));
+        collector.property("free").writeDelegate(byteReporter.apply(free));
+        collector.property("max").writeDelegate(byteReporter.apply(max));
+        collector.property("used").writeDelegate(byteReporter.apply(used));
     }
 
     /**

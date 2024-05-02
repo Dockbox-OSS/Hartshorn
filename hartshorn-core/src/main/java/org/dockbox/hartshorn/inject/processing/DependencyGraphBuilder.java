@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.ComponentMemberType;
 import org.dockbox.hartshorn.inject.ComponentKeyDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.ComposedProvider;
 import org.dockbox.hartshorn.inject.DependencyContext;
@@ -85,20 +85,19 @@ public class DependencyGraphBuilder {
         }
     }
 
-    protected <T> Set<ComponentKey<? extends T>> lookupHierarchyDeclarations(DependencyContext<T> dependencyContext) {
+    protected <T> Set<Provider<? extends T>> lookupImplementationProviders(DependencyContext<T> dependencyContext) {
         ComponentKey<T> componentKey = dependencyContext.componentKey();
         BindingHierarchy<T> hierarchy = this.hierarchicalComponentProvider.hierarchy(componentKey);
         int highestPriority = hierarchy.highestPriority();
-        return hierarchy.get(highestPriority).map(provider -> {
-            Provider<T> actualProvider = provider;
-            if (provider instanceof ComposedProvider<T> composedProvider) {
-                actualProvider = composedProvider.provider();
-            }
-            if (actualProvider instanceof TypeAwareProvider<T> typeAwareProvider) {
-                return componentKey.mutable().type(typeAwareProvider.type()).build();
-            }
-            return null;
-        }).stream().collect(Collectors.toSet());
+        return hierarchy.get(highestPriority)
+            .map(provider -> {
+                if (provider instanceof ComposedProvider<T> composedProvider) {
+                    return composedProvider.provider();
+                }
+                return provider;
+            })
+            .stream()
+            .collect(Collectors.toSet());
     }
 
     private Set<DependencyContext<?>> inflateDependencyContexts(Iterable<DependencyContext<?>> dependencyContexts)
@@ -123,10 +122,18 @@ public class DependencyGraphBuilder {
 
     @NonNull
     private <T> Set<DependencyDeclarationContext<?>> getImplementationContexts(DependencyContext<T> dependencyContext) {
-        Set<ComponentKey<? extends T>> implementationKeys = this.lookupHierarchyDeclarations(dependencyContext);
+        Set<Provider<? extends T>> implementationProviders = this.lookupImplementationProviders(dependencyContext);
         Introspector introspector = this.resolver.applicationContext().environment().introspector();
-        return implementationKeys.stream()
-            .map(key -> new ComponentKeyDependencyDeclarationContext<>(introspector, key))
+        return implementationProviders.stream()
+            .filter(provider -> provider instanceof TypeAwareProvider<? extends T>)
+            .map(provider -> (TypeAwareProvider<? extends T>) provider)
+            .map(provider -> {
+                ComponentKey<? extends T> implementationKey = dependencyContext.componentKey()
+                    .mutable()
+                    .type(provider.type())
+                    .build();
+                return new ComponentKeyDependencyDeclarationContext<>(introspector, implementationKey, TypeUtils.adjustWildcards(provider, Provider.class));
+            })
             .collect(Collectors.toSet());
     }
 
@@ -143,9 +150,9 @@ public class DependencyGraphBuilder {
 
         ComponentKey<?> componentKey = dependencyContext.componentKey();
         PriorityComponentKey key = new PriorityComponentKey(dependencyContext.priority(), componentKey);
-        switch (dependencyContext.type()) {
+        switch (dependencyContext.memberType()) {
             case STANDALONE -> nodes.put(key, node);
-            case COLLECTION -> {
+            case COMPOSITE -> {
                 ComponentKey<? extends ComponentCollection<?>> collectorComponentKey = componentKey.mutable().collector().build();
                 PriorityComponentKey collectorKey = new PriorityComponentKey(dependencyContext.priority(), collectorComponentKey);
                 nodes.put(collectorKey, node);
@@ -203,7 +210,7 @@ public class DependencyGraphBuilder {
 
     private void checkNoDuplicateContexts(ComponentKey<?> dependency, Set<GraphNode<DependencyContext<?>>> dependencyNodes) {
         if (dependencyNodes.size() > 1) {
-            boolean collectionsOnly = dependencyNodes.stream().allMatch(node -> node.value().type() == BindingType.COLLECTION);
+            boolean collectionsOnly = dependencyNodes.stream().allMatch(node -> node.value().memberType() == ComponentMemberType.COMPOSITE);
             if (!collectionsOnly) {
                 MultiMap<Integer, DependencyContext<?>> contextsByPriority = this.groupDependenciesByPriority(dependencyNodes);
                 for (int priority : contextsByPriority.keySet()) {

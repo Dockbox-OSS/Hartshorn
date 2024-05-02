@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,22 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Defines in which scope a component should be created. When defined, all scopes that are an instance
+ * of the provided type will contain the component declaration. This is useful for components that
+ * should be created in a specific scope, such as a request or session scope.
+ *
+ * <p>Scope implementations remain up to the container to define. The container will typically provide
+ * a default application scope, which does not need to be defined explicitly.
+ *
+ * @since 0.6.0
+ *
+ * @see org.dockbox.hartshorn.component.Scope
+ *
+ * @author Guus Lieben
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.FIELD })
-public @interface InstallTo {
+public @interface Scoped {
     Class<? extends Scope> value();
 }

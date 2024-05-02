@@ -106,7 +106,7 @@ public class ScopeAdapterKey implements ScopeKey {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("adapterType").write(this.adapterType);
-        collector.property("adapteeType").write(this.adapteeType);
+        collector.property("adapterType").writeDelegate(this.adapterType);
+        collector.property("adapteeType").writeDelegate(this.adapteeType);
     }
 }

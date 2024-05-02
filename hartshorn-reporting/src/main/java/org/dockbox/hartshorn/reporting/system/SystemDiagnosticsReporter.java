@@ -55,29 +55,29 @@ public class SystemDiagnosticsReporter implements ConfigurableDiagnosticsReporte
     public void report(DiagnosticsPropertyCollector collector) {
         RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         if (this.configuration.includeUptime()) {
-            collector.property("uptime").write(runtimeMXBean.getUptime());
+            collector.property("uptime").writeLong(runtimeMXBean.getUptime());
         }
         if (this.configuration.includeJavaDiagnostics()) {
-            collector.property("java").write(new JavaDiagnosticsReporter());
+            collector.property("java").writeDelegate(new JavaDiagnosticsReporter());
         }
         if (this.configuration.includeJvmDiagnostics()) {
-            collector.property("jvm").write(new JVMDiagnosticsReporter(this.configuration.includeJvmFlags()));
+            collector.property("jvm").writeDelegate(new JVMDiagnosticsReporter(this.configuration.includeJvmFlags()));
         }
         if (this.configuration.includeOsDiagnostics()) {
-            collector.property("os").write(new OSDiagnosticsReporter());
+            collector.property("os").writeDelegate(new OSDiagnosticsReporter());
         }
         if (this.configuration.includeDeviceName()) {
-            collector.property("device").write(runtimeMXBean.getName().split("@")[1]);
+            collector.property("device").writeString(runtimeMXBean.getName().split("@")[1]);
         }
         if (this.configuration.includeProcessId()) {
-            collector.property("pid").write(runtimeMXBean.getPid());
+            collector.property("pid").writeLong(runtimeMXBean.getPid());
         }
         if (this.configuration.includeResponsibleServiceOrUser()) {
             String user = System.getProperty("user.name");
-            collector.property("user").write(user);
+            collector.property("user").writeString(user);
         }
         if (this.configuration.includeMemoryUsage()) {
-            collector.property("memory").write(new MemoryUsageDiagnosticsReporter());
+            collector.property("memory").writeDelegate(new MemoryUsageDiagnosticsReporter());
         }
     }
 

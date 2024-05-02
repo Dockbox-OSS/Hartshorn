@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -35,12 +36,22 @@ public class SingletonProvider<T> implements NonTypeAwareProvider<T> {
     private final ObjectContainer<T> container;
 
     public SingletonProvider(T instance) {
-        this.container = new ComponentObjectContainer<>(instance);
+        this.container = ComponentObjectContainer.ofSingleton(instance);
     }
 
     @Override
     public Option<ObjectContainer<T>> provide(ApplicationContext context, ComponentRequestContext requestContext) {
         return Option.of(this.container);
+    }
+
+    @Override
+    public LifecycleType defaultLifecycle() {
+        return LifecycleType.SINGLETON;
+    }
+
+    @Override
+    public Tristate defaultLazy() {
+        return Tristate.FALSE;
     }
 
     @Override

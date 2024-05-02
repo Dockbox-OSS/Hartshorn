@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,9 @@ import org.dockbox.hartshorn.application.UseBootstrap;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.context.ConcreteContextCarrier;
 import org.dockbox.hartshorn.context.ContextCarrier;
-
-import jakarta.inject.Singleton;
 
 /**
  * Provides default bindings for the framework. These bindings are not required for the framework to function, but
@@ -38,8 +36,8 @@ import jakarta.inject.Singleton;
 @RequiresActivator(UseBootstrap.class)
 public class ContextConfiguration {
 
-    @Binds
     @Singleton
+    @InfrastructurePriority
     public ContextCarrier contextCarrier(ApplicationContext applicationContext) {
         return new ConcreteContextCarrier(applicationContext);
     }

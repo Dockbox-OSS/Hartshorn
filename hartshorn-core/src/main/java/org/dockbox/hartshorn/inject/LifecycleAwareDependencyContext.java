@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.components;
+package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.inject.Enable;
-import org.dockbox.hartshorn.component.Component;
+public interface LifecycleAwareDependencyContext<T> extends DependencyContext<T> {
 
-import jakarta.inject.Inject;
-
-@Component
-public class TypeWithEnabledInjectField {
-
-    @Inject
-    @Enable
-    private SingletonEnableable singletonEnableable;
-
-    public SingletonEnableable singletonEnableable() {
-        return this.singletonEnableable;
-    }
+    LifecycleType lifecycleType();
 }

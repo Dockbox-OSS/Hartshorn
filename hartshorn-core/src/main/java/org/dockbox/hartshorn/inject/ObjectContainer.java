@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.inject.binding.SingletonCache;
+
 /**
  * A simple container for an object instance. Used to track whether an object has been processed or not.
  *
@@ -24,29 +26,21 @@ package org.dockbox.hartshorn.inject;
  * @author Guus Lieben
  * @since 0.4.12
  */
-public abstract class ObjectContainer<T> {
-
-    private final T instance;
-
-    protected ObjectContainer(T instance) {
-        this.instance = instance;
-    }
+public interface ObjectContainer<T> {
 
     /**
      * Returns the object instance. Note that this instance may or may not have been processed.
      *
      * @return the object instance
      */
-    public T instance() {
-        return this.instance;
-    }
+    T instance();
 
     /**
      * Returns whether the object instance has been processed or not.
      *
      * @return {@code true} if the object instance has been processed, {@code false} otherwise
      */
-    public abstract boolean processed();
+    boolean processed();
 
     /**
      * Sets whether the object instance has been processed or not. This method is intended to be used by
@@ -54,10 +48,22 @@ public abstract class ObjectContainer<T> {
      *
      * @param processed whether the object instance has been processed or not
      */
-    public abstract void processed(boolean processed);
+    void processed(boolean processed);
 
-    @Override
-    public String toString() {
-        return this.instance.toString();
+    LifecycleType lifecycleType();
+
+    /**
+     * Returns whether the object represented by this container can be cached. This method is used by the
+     * component provider to store objects in case they may be re-used. A common example of this is a singleton
+     * being stored in the scope's {@link SingletonCache}.
+     *
+     * <p>Defaults to {@code true} if the {@link #lifecycleType()} is {@link LifecycleType#SINGLETON}.
+     *
+     * @return {@code true} if the object can be cached, {@code false} otherwise
+     */
+    default boolean permitsObjectCaching() {
+        return this.lifecycleType() == LifecycleType.SINGLETON;
     }
+
+    ObjectContainer<T> copyForObject(T instance);
 }

@@ -72,7 +72,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         if (this.configuration.includeVersion()) {
-            collector.property("version").write(Hartshorn.VERSION);
+            collector.property("version").writeDelegate(Hartshorn.VERSION);
         }
         if (this.configuration.includeJarLocation()) {
             reportJarLocation(collector);
@@ -103,7 +103,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
         } catch (Exception e) {
             jarLocation = "Unknown";
         }
-        collector.property("jar").write(jarLocation);
+        collector.property("jar").writeString(jarLocation);
     }
 
     /**
@@ -114,7 +114,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     protected void reportApplicationProperties(DiagnosticsPropertyCollector collector) {
         Properties properties = this.applicationContext.properties();
         Reportable reporter = new PropertiesReporter(properties);
-        collector.property("properties").write(reporter);
+        collector.property("properties").writeDelegate(reporter);
     }
 
     /**
@@ -126,7 +126,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
         String[] activators = this.applicationContext.activators().stream()
                 .map(activator -> activator.annotationType().getCanonicalName())
                 .toArray(String[]::new);
-        collector.property("activators").write(activators);
+        collector.property("activators").writeStrings(activators);
     }
 
     /**
@@ -142,9 +142,9 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
             Map<Class<? extends Observer>, List<Observer>> observers = observable.observers(Observer.class).stream()
                             .collect(Collectors.groupingBy(Observer::getClass));
 
-            collector.property("observers").write(observerCollector -> {
+            collector.property("observers").writeDelegate(observerCollector -> {
                 for (Entry<Class<? extends Observer>, List<Observer>> entry : observers.entrySet()) {
-                    observerCollector.property(entry.getKey().getSimpleName()).write(entry.getValue().size());
+                    observerCollector.property(entry.getKey().getSimpleName()).writeInts(entry.getValue().size());
                 }
             });
         }
@@ -162,22 +162,22 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
         AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference = new AtomicReference<>();
 
         BiConsumer<DiagnosticsPropertyCollector, ContextView> reporter = (contextsCollector, context) -> {
-            contextsCollector.property("type").write(context.getClass().getCanonicalName());
+            contextsCollector.property("type").writeString(context.getClass().getCanonicalName());
             if (context instanceof Reportable reportable) {
-                contextsCollector.property("data").write(reportable);
+                contextsCollector.property("data").writeDelegate(reportable);
             }
             if (context instanceof NamedContext namedContext) {
-                contextsCollector.property("name").write(namedContext.name());
+                contextsCollector.property("name").writeString(namedContext.name());
             }
             if (!context.contexts().isEmpty()) {
                 Reportable[] childReporters = childReporters(reporterReference, context);
-                contextsCollector.property("children").write(childReporters);
+                contextsCollector.property("children").writeDelegates(childReporters);
             }
         };
         reporterReference.set(reporter);
 
         Reportable[] reporters = childReporters(reporterReference, this.applicationContext);
-        collector.property("contexts").write(reporters);
+        collector.property("contexts").writeDelegates(reporters);
     }
 
     @NonNull

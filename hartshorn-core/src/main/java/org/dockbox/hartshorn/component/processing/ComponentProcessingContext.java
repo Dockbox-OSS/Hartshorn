@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 public class ComponentProcessingContext<T> extends DefaultApplicationAwareContext {
@@ -36,13 +37,19 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
     private final boolean permitsProxying;
     private final ComponentKey<T> key;
 
-    protected T instance;
+    protected ObjectContainer<T> container;
 
-    public ComponentProcessingContext(ApplicationContext applicationContext, ComponentRequestContext requestContext, ComponentKey<T> key, T instance, boolean permitsProxying) {
+    public ComponentProcessingContext(
+        ApplicationContext applicationContext,
+        ComponentRequestContext requestContext,
+        ComponentKey<T> key,
+        ObjectContainer<T> container,
+        boolean permitsProxying
+    ) {
         super(applicationContext);
         this.requestContext = requestContext;
         this.key = key;
-        this.instance = instance;
+        this.container = container;
         this.data = new ConcurrentHashMap<>();
         this.permitsProxying = permitsProxying;
     }
@@ -56,7 +63,11 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
     }
 
     public T instance() {
-        return this.instance;
+        return this.container.instance();
+    }
+
+    public ObjectContainer<T> container() {
+        return this.container;
     }
 
     public boolean permitsProxying() {
@@ -64,8 +75,11 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
     }
 
     public TypeView<T> type() {
-        if (this.instance != null) {
-            return this.applicationContext().environment().introspector().introspect(this.instance);
+        if(this.container != null) {
+            T instance = this.container.instance();
+            if (instance != null) {
+                return this.applicationContext().environment().introspector().introspect(instance);
+            }
         }
         return this.applicationContext().environment().introspector().introspect(this.key.type());
     }

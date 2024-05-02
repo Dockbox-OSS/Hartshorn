@@ -70,10 +70,15 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
             public <T> T get(ComponentKey<T> key, ComponentRequestContext requestContext) {
                 ApplicationBoundParameterLoaderContext self = ApplicationBoundParameterLoaderContext.this;
                 // Explicit scopes get priority, otherwise use our local scope
-                if (key.scope() == Scope.DEFAULT_SCOPE) {
+                if (key.scope() == self.applicationContext) {
                     return self.provider.get(key.mutable().scope(self.scope).build(), requestContext);
                 }
                 return self.provider.get(key, requestContext);
+            }
+
+            @Override
+            public Scope scope() {
+                return ApplicationBoundParameterLoaderContext.this.scope;
             }
         };
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,16 @@ package test.org.dockbox.hartshorn.scope;
 
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.DirectScopeKey;
-import org.dockbox.hartshorn.component.InstallTo;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.Scoped;
+import org.dockbox.hartshorn.component.processing.Singleton;
 
 @Configuration
 public class ScopedBindingConfiguration {
 
-    @Binds
-    @InstallTo(SampleScope.class)
+    @Singleton
+    @Scoped(SampleScope.class)
     public String bind() {
         return "test";
     }

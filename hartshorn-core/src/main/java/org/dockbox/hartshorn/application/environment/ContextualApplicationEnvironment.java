@@ -32,7 +32,6 @@ import org.dockbox.hartshorn.application.environment.banner.HartshornBanner;
 import org.dockbox.hartshorn.application.environment.banner.ResourcePathBanner;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.Observer;
-import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.component.populate.MethodsAndFieldsInjectionPointResolver;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
@@ -53,11 +52,8 @@ import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.SupplierAdapterProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jakarta.inject.Singleton;
 
 public final class ContextualApplicationEnvironment implements ObservableApplicationEnvironment, ModifiableContextCarrier {
 
@@ -218,19 +214,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     @Override
     public boolean isStrictMode() {
         return this.isStrictMode;
-    }
-
-    @Override
-    public boolean singleton(Class<?> type) {
-        TypeView<?> typeView = this.introspector().introspect(type);
-        return this.singleton(typeView);
-    }
-
-    @Override
-    public boolean singleton(TypeView<?> type) {
-        ComponentRegistry componentRegistry = this.applicationContext().get(ComponentRegistry.class);
-        return componentRegistry.container(type.type())
-            .test(container -> container.singleton() || container.type().annotations().has(Singleton.class));
     }
 
     @Override

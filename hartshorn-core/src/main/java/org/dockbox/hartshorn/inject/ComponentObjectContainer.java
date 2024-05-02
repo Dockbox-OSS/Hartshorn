@@ -26,12 +26,30 @@ package org.dockbox.hartshorn.inject;
  *
  * @author Guus Lieben
  */
-public class ComponentObjectContainer<T> extends ObjectContainer<T> {
+public class ComponentObjectContainer<T> extends AbstractObjectContainer<T> {
 
+    private final LifecycleType lifecycleType;
     private boolean processed = false;
 
-    public ComponentObjectContainer(T instance) {
+    private ComponentObjectContainer(T instance, LifecycleType lifecycleType) {
         super(instance);
+        this.lifecycleType = lifecycleType;
+    }
+
+    public static <T> ComponentObjectContainer<T> empty() {
+        return ofLifecycleType(null, LifecycleType.PROTOTYPE);
+    }
+
+    public static <T> ComponentObjectContainer<T> ofPrototype(T instance) {
+        return ofLifecycleType(instance, LifecycleType.PROTOTYPE);
+    }
+
+    public static <T> ComponentObjectContainer<T> ofSingleton(T instance) {
+        return ofLifecycleType(instance, LifecycleType.SINGLETON);
+    }
+
+    public static <T> ComponentObjectContainer<T> ofLifecycleType(T instance, LifecycleType lifecycleType) {
+        return new ComponentObjectContainer<>(instance, lifecycleType);
     }
 
     /**
@@ -53,5 +71,20 @@ public class ComponentObjectContainer<T> extends ObjectContainer<T> {
     @Override
     public void processed(boolean processed) {
         this.processed = processed;
+    }
+
+    @Override
+    public LifecycleType lifecycleType() {
+        return this.lifecycleType;
+    }
+
+    @Override
+    public ObjectContainer<T> copyForObject(T instance) {
+        if (instance == this.instance()) {
+            return this;
+        }
+        ComponentObjectContainer<T> container = ofLifecycleType(instance, this.lifecycleType);
+        container.processed(this.processed);
+        return container;
     }
 }

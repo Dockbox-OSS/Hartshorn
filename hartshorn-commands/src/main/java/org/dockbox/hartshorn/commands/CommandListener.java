@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,21 @@ import java.io.InputStream;
 
 /**
  * Represents a constant listener which is capable of listening to command inputs. Commands may be entered through
- * any mean, like a command line, external event bus, or similar solutions. Should be activated after the engine
+ * any means, like a command line, external event bus, or similar solutions. Should be activated after the engine
  * started. This can usually be done by implementing a {@link LifecycleObserver}.
  *
  * <p>For example
  * <pre>{@code
- * @Listener
- * public void on(EngineChangedState<Started> event) {
- *      event.applicationContext().get(CommandCLI.class).open();
- * }
- * }</pre>
+ * @Service
+ * class CommandListenerObserver implements LifecycleObserver {
+ *     @Inject
+ *     private CommandListener listener;
+ *
+ *     @Override
+ *     public void onStarted(ApplicationContext applicationContext) {
+ *         this.listener.open();
+ *     }
+ * }}</pre>
  */
 public interface CommandListener {
     void open();

@@ -25,11 +25,21 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 public class ComponentKeyDependencyDeclarationContext<T> implements DependencyDeclarationContext<T> {
 
     private final ComponentKey<T> key;
+    private final Provider<T> provider;
     private final TypeView<T> type;
 
-    public ComponentKeyDependencyDeclarationContext(Introspector introspector, ComponentKey<T> key) {
+    public ComponentKeyDependencyDeclarationContext(Introspector introspector, ComponentKey<T> key, Provider<T> provider) {
         this.key = key;
+        this.provider = provider;
         this.type = TypeUtils.adjustWildcards(introspector.introspect(key.parameterizedType()), TypeView.class);
+    }
+
+    public ComponentKey<T> key() {
+        return this.key;
+    }
+
+    public Provider<T> provider() {
+        return this.provider;
     }
 
     @Override

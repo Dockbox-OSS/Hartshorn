@@ -130,4 +130,6 @@ public interface ComponentProvider {
         ComponentKey<T> key = ComponentKey.of(type);
         return this.get(key, requestContext);
     }
+
+    Scope scope();
 }

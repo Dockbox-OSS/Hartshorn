@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -43,11 +44,27 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
 
     private final ComponentKey<? extends C> context;
+    private final LifecycleType lifecycleType;
 
     private ConstructorView<? extends C> optimalConstructor;
+    private boolean lazy = true;
 
-    public ContextDrivenProvider(ComponentKey<? extends C> type) {
+    private ContextDrivenProvider(ComponentKey<? extends C> type, LifecycleType lifecycleType) {
         this.context = type;
+        this.lifecycleType = lifecycleType;
+    }
+
+    public static <T> ContextDrivenProvider<T> forPrototype(ComponentKey<? extends T> type) {
+        return new ContextDrivenProvider<>(type, LifecycleType.PROTOTYPE);
+    }
+
+    public static <T> ContextDrivenProvider<T> forSingleton(ComponentKey<? extends T> type) {
+        return new ContextDrivenProvider<>(type, LifecycleType.SINGLETON);
+    }
+
+    public ContextDrivenProvider<C> lazy(boolean lazy) {
+        this.lazy = lazy;
+        return this;
     }
 
     @Override
@@ -62,11 +79,21 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
             return contextAdapter.scope(this.context.scope())
                     .create(constructor.get())
                     .cast(this.type())
-                    .map(ComponentObjectContainer::new);
+                    .map(instance -> ComponentObjectContainer.ofLifecycleType(instance, this.lifecycleType));
         }
         catch (Throwable throwable) {
             throw new ApplicationException("Failed to create instance of type " + this.type().getName(), throwable);
         }
+    }
+
+    @Override
+    public LifecycleType defaultLifecycle() {
+        return this.lifecycleType;
+    }
+
+    @Override
+    public Tristate defaultLazy() {
+        return Tristate.valueOf(this.lazy);
     }
 
     protected Option<? extends ConstructorView<? extends C>> optimalConstructor(ApplicationContext applicationContext) throws ApplicationException {

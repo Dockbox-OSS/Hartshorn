@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn;
 
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,21 +25,20 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.application.context.validate.CyclicDependencyGraphValidator;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
-import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.populate.StrategyComponentPopulator;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.ComponentMemberType;
 import org.dockbox.hartshorn.inject.ApplicationDependencyResolver;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentDiscoveryList;
 import org.dockbox.hartshorn.inject.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.DependencyMap;
 import org.dockbox.hartshorn.inject.DependencyResolutionType;
@@ -58,14 +58,13 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.View;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
-
-import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.boot.EmptyService;
 import test.org.dockbox.hartshorn.components.BoundCircularDependencyA;
 import test.org.dockbox.hartshorn.components.BoundCircularDependencyB;
@@ -100,8 +99,8 @@ import test.org.dockbox.hartshorn.components.SampleType;
 import test.org.dockbox.hartshorn.components.SetterInjectedComponent;
 import test.org.dockbox.hartshorn.components.SetterInjectedComponentWithAbsentBinding;
 import test.org.dockbox.hartshorn.components.SetterInjectedComponentWithNonRequiredAbsentBinding;
-import test.org.dockbox.hartshorn.components.TypeWithEnabledInjectField;
 import test.org.dockbox.hartshorn.components.TypeWithFailingConstructor;
+import test.org.dockbox.hartshorn.components.TypeWithPostConstructableInjectField;
 import test.org.dockbox.hartshorn.components.contextual.ErrorInConstructorObject;
 
 @HartshornTest(includeBasePackages = false)
@@ -234,12 +233,12 @@ public class ApplicationContextTests {
     }
 
     @Test
-    @TestComponents(components = TypeWithEnabledInjectField.class)
-    void testEnabledInjectDoesNotInjectTwice() {
-        TypeWithEnabledInjectField instance = this.applicationContext.get(TypeWithEnabledInjectField.class);
+    @TestComponents(components = TypeWithPostConstructableInjectField.class)
+    void testPostConstructInjectDoesNotInjectTwice() {
+        TypeWithPostConstructableInjectField instance = this.applicationContext.get(TypeWithPostConstructableInjectField.class);
         Assertions.assertNotNull(instance);
-        Assertions.assertNotNull(instance.singletonEnableable());
-        Assertions.assertEquals(1, instance.singletonEnableable().enabled());
+        Assertions.assertNotNull(instance.postConstructableObject());
+        Assertions.assertEquals(1, instance.postConstructableObject().getTimesConstructed());
     }
 
     public static Stream<Arguments> componentPopulators() {
@@ -339,8 +338,6 @@ public class ApplicationContextTests {
     @Test
     @TestComponents(components = EmptyService.class)
     void servicesAreSingletonsByDefault() {
-        Assertions.assertTrue(this.applicationContext.environment().singleton(EmptyService.class));
-
         EmptyService emptyService = this.applicationContext.get(EmptyService.class);
         EmptyService emptyService2 = this.applicationContext.get(EmptyService.class);
         Assertions.assertSame(emptyService, emptyService2);
@@ -496,8 +493,14 @@ public class ApplicationContextTests {
                 }
             }
 
-            DependencyContext<?> dependencyContext = new AutoConfiguringDependencyContext<>(componentKey,
-                    dependencyMap, Scope.DEFAULT_SCOPE.installableScopeType(), -1, BindingType.STANDALONE, origin, requestContext -> null);
+            AutoConfiguringDependencyContext<?> dependencyContext = AutoConfiguringDependencyContext.builder(componentKey)
+                .dependencies(dependencyMap)
+                .scope(ApplicationContext.APPLICATION_SCOPE)
+                .priority(-1)
+                .memberType(ComponentMemberType.STANDALONE)
+                .view(origin)
+                .supplier(ContextAwareComponentSupplier.empty())
+                .build();
             dependencyContexts.add(dependencyContext);
         }
 
@@ -518,7 +521,7 @@ public class ApplicationContextTests {
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
         Set<GraphNode<DependencyContext<?>>> roots = dependencyGraph.roots();
-        Assertions.assertEquals(0, roots.size()); // Cyclic, thus no roots
+        Assertions.assertEquals(0, roots.size()); // Cyclic, so no roots
 
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
         Assertions.assertEquals(4, nodes.size()); // 4 nodes, 2 interfaces, 2 implementations

@@ -41,8 +41,6 @@ import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -61,7 +59,8 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class HierarchyAwareComponentProvider extends DefaultProvisionContext implements HierarchicalComponentProvider, ContextCarrier {
+public class HierarchyAwareComponentProvider extends DefaultProvisionContext
+        implements HierarchicalComponentProvider, SingletonCacheComponentProvider, ContextCarrier {
 
     private final ScopedProviderOwner owner;
     private final Scope scope;
@@ -74,10 +73,18 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         this.owner = owner;
         this.scope = scope;
         CompositeComponentPostProcessor postProcessor = new CompositeComponentPostProcessor(owner::postProcessors);
-        this.processor = new SimpleComponentProviderPostProcessor(owner, postProcessor, owner.applicationContext(), this::storeSingletons);
+        this.processor = new SimpleComponentProviderPostProcessor(
+            owner, postProcessor,
+            owner.applicationContext(),
+            new LocalCacheComponentStoreCallback(this.singletonCache)
+        );
     }
 
-    private HierarchyCache hierarchyCache() {
+    public SingletonCache singletonCache() {
+        return this.singletonCache;
+    }
+
+    public HierarchyCache hierarchyCache() {
         if (this.hierarchyCache == null ) {
             this.hierarchyCache = new HierarchyCache(this.owner.applicationContext(), this.owner.applicationProvider(), this);
         }
@@ -99,8 +106,13 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
 
     @Override
     public <C> BindingFunction<C> bind(ComponentKey<C> key) {
-        if (key.scope() != this.scope && key.scope() != Scope.DEFAULT_SCOPE) {
-            throw new IllegalArgumentException("Cannot bind to a different scope");
+        Scope componentScope = key.scope();
+        if (componentScope == null) {
+            componentScope = this.applicationContext();
+        }
+        if (componentScope != this.scope && componentScope != this.applicationContext()) {
+            throw new IllegalArgumentException("Cannot bind to a different scope. Expected " + this.scope + ", got " + componentScope
+                + " for key " + key);
         }
         BindingHierarchy<C> hierarchy = this.hierarchy(key);
 
@@ -113,7 +125,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
             throw new IllegalModificationException("Cannot add binding to non-application hierarchy without a module context");
         }
 
-        return new HierarchyBindingFunction<>(hierarchy, this, this.singletonCache, this.owner.instanceFactory(), this.scope, scopeModuleContext.orNull());
+        return new HierarchyBindingFunction<>(hierarchy, this, this.singletonCache, this.scope, scopeModuleContext.orNull());
     }
 
     @Override
@@ -133,28 +145,8 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         return Option.empty();
     }
 
-    protected <T> void storeSingletons(ComponentKey<T> key, T instance) {
-        // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
-        // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
-        if (instance != null) {
-            TypeView<T> keyType = this.applicationContext().environment().introspector().introspect(key.type());
-            boolean isSingleton = this.applicationContext().environment().singleton(keyType);
-
-            // Same effect as ||, but this is more readable. It's important to only check the instance type if the key doesn't already match,
-            // as introspecting and unproxying the instance can be expensive when it's not necessary.
-            if (!isSingleton) {
-                TypeView<T> instanceType = this.applicationContext().environment().introspector().introspect(instance);
-                isSingleton = this.applicationContext().environment().singleton(instanceType);
-            }
-
-            if (isSingleton) {
-                this.singletonCache.put(key, instance);
-            }
-        }
-    }
-
     protected <T> Option<ObjectContainer<T>> createContextualInstanceContainer(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
-        return new ContextDrivenProvider<>(key).provide(this.applicationContext(), requestContext);
+        return ContextDrivenProvider.forPrototype(key).provide(this.applicationContext(), requestContext);
     }
 
     @Override
@@ -169,23 +161,26 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         }
 
         ObjectContainer<T> objectContainer = this.create(componentKey, requestContext)
-                .orElseGet(() -> new ComponentObjectContainer<>(null));
-
-        T instance = objectContainer.instance();
+                .orElseGet(ComponentObjectContainer::empty);
 
         // If the object is already processed at this point, it means that the object container was
         // reused, so we don't need to process it again. Note that this is not the same as the object
         // being a singleton, which is handled by the singleton cache.
         if (objectContainer.processed()) {
-            return instance;
+            return objectContainer.instance();
         }
 
         try {
-            return this.processor.processInstance(componentKey, objectContainer, instance, requestContext);
+            return this.processor.processInstance(componentKey, objectContainer, requestContext);
         }
         catch(ApplicationException e) {
             throw new ComponentResolutionException("Failed to process component with key " + componentKey, e);
         }
+    }
+
+    @Override
+    public Scope scope() {
+        return this.scope;
     }
 
     @Override
@@ -209,7 +204,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext imp
         // If the scope is default, it means that the binding is not explicitly scoped, so it can be
         // installed in any scope. If our active scope is the active application context, it means
         // the requested scope is not installed, so we can fall back to the application scope.
-        if (key.scope() != this.scope && key.scope() != Scope.DEFAULT_SCOPE && this.scope != this.applicationContext()) {
+        if (key.scope() != this.scope && this.scope != this.applicationContext()) {
             throw new IllegalArgumentException("Cannot create a binding hierarchy for a component key with a different scope");
         }
 

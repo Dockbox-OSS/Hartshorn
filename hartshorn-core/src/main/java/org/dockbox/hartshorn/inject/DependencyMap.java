@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap;
 
@@ -23,6 +26,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A map that can be used to define dependencies for a component. Dependencies are grouped by
@@ -110,5 +114,32 @@ public final class DependencyMap extends StandardMultiMap<DependencyResolutionTy
     public DependencyMap delayed(Collection<ComponentKey<?>> keys) {
         this.putAll(DependencyResolutionType.DELAYED, keys);
         return this;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("DependencyMap{");
+        List<String> parts = new ArrayList<>();
+        for (DependencyResolutionType resolutionType : DependencyResolutionType.values()) {
+            Collection<ComponentKey<?>> keys = this.get(resolutionType);
+            if (keys != null && !keys.isEmpty()) {
+                parts.add(resolutionType + ": " + keys);
+            }
+        }
+        builder.append(String.join(", ", parts));
+        builder.append("}");
+        return builder.toString();
+    }
+
+    public Option<DependencyResolutionType> resolutionType(ComponentKey<?> componentKey) {
+        if (!this.containsValue(componentKey)) {
+            return Option.empty();
+        }
+        for (Map.Entry<DependencyResolutionType, Collection<ComponentKey<?>>> entry : this.map().entrySet()) {
+            if (entry.getValue().contains(componentKey)) {
+                return Option.of(entry.getKey());
+            }
+        }
+        return Option.empty();
     }
 }

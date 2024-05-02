@@ -48,7 +48,7 @@ public class BindingAfterDeclarationDependencyResolver implements BindingDeclara
         MethodAwareBindingStrategyContext<?> strategyContext = (MethodAwareBindingStrategyContext<?>) context;
         Binds bindingDecorator = strategyContext.method().annotations()
                 .get(Binds.class)
-                .orElseThrow(() -> new IllegalStateException("Method is not annotated with @Binds"));
+                .orElseThrow(() -> new IllegalStateException("Method is not annotated with @Binds (or a compatible meta-annotation)"));
 
         Class<?>[] after = bindingDecorator.after();
         return Arrays.stream(after).map(ComponentKey::of).collect(Collectors.toSet());

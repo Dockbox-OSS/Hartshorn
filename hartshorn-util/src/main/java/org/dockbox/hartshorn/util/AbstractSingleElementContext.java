@@ -33,17 +33,17 @@ public abstract class AbstractSingleElementContext<I> extends DefaultContext imp
 
     private final I input;
 
-    protected AbstractSingleElementContext(I input) {
+    protected AbstractSingleElementContext(@NonNull I input) {
         this.input = input;
     }
 
     @Override
-    public @Nullable I input() {
+    public @NonNull I input() {
         return this.input;
     }
 
     @Override
-    public <T> @NonNull SingleElementContext<@Nullable T> transform(@Nullable T input) {
+    public <T> @NonNull SingleElementContext<@Nullable T> transform(@NonNull T input) {
         SingleElementContext<T> clonedContext = this.clone(input);
         this.copyToContext(clonedContext);
         return clonedContext;
@@ -58,5 +58,5 @@ public abstract class AbstractSingleElementContext<I> extends DefaultContext imp
      * @return The cloned context.
      * @param <T> The type of the input object.
      */
-    protected abstract <T> SingleElementContext<T> clone(T input);
+    protected abstract <T> SingleElementContext<T> clone(@NonNull T input);
 }

@@ -24,14 +24,13 @@ import java.lang.annotation.Target;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.DependencyResolver;
+import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.inject.Named;
 import org.dockbox.hartshorn.inject.Priority;
 import org.dockbox.hartshorn.inject.Qualifier;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
-
-import jakarta.inject.Singleton;
 
 /**
  * Annotation used to indicate that a method will act as a binding provider. The return type of the
@@ -56,7 +55,7 @@ import jakarta.inject.Singleton;
  * @since 0.4.1
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.FIELD })
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE })
 public @interface Binds {
 
     /**
@@ -90,14 +89,14 @@ public @interface Binds {
      * @deprecated use the {@link Priority} annotation instead
      */
     @Deprecated(since = "0.6.0", forRemoval = true)
-    int priority() default -1;
+    int priority() default Priority.DEFAULT_PRIORITY;
 
     /**
      * Whether the binding should be lazily loaded. If not specified, the binding will be loaded eagerly. Note
      * that this only applies to bindings that are registered as singletons.
      *
      * @return whether the binding should be lazily loaded
-     * @see Singleton
+     * @see Singleton#lazy()
      */
     boolean lazy() default false;
 
@@ -124,28 +123,14 @@ public @interface Binds {
     boolean processAfterInitialization() default true;
 
     /**
-     * The type of the binding. If not specified, the binding will be registered as a component. If specified as
-     * {@link BindingType#COLLECTION}, the binding will be registered as part of a {@link ComponentCollection}.
+     * The lifecycle of the binding. If not specified, the binding will be registered with a {@link
+     * LifecycleType#PROTOTYPE prototype lifecycle}. Lifecycles indicate when the component is created and
+     * destroyed.
      *
-     * @return the type of the binding
+     * <p><b>Note</b>: If you are specifying a lifecycle explicitly, consider using the {@link Singleton} or
+     * {@link Prototype} stereotype annotations instead.
+     *
+     * @return the lifecycle of the binding
      */
-    BindingType type() default BindingType.STANDALONE;
-
-    /**
-     * The type of binding provider. This is used to indicate whether the binding provider is a standalone component,
-     * or a part of a collection.
-     */
-    enum BindingType {
-
-        /**
-         * Represents a standalone component, meaning the component will be part of a direct {@link BindingHierarchy}.
-         */
-        STANDALONE,
-
-        /**
-         * Represents a component that is part of a collection, meaning the component will be part of a {@link ComponentCollection}.
-         * Collection components are typically used to provide multiple implementations of a single interface.
-         */
-        COLLECTION,
-    }
+    LifecycleType lifecycle() default LifecycleType.PROTOTYPE;
 }

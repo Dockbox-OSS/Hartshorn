@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
@@ -30,7 +31,7 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
  * <pre>{@code
  * @Configuration
  * public class ApplicationConfiguration {
- *    @Binds
+ *    @Prototype
  *    public ComplexComponent complexComponent(...) {
  *       // ...
  *    }
@@ -57,7 +58,7 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 @Target(ElementType.TYPE)
 @Extends(Component.class)
 @Component(
-        singleton = true,
+        lifecycle = LifecycleType.SINGLETON,
         permitProxying = false,
         lazy = false
 )

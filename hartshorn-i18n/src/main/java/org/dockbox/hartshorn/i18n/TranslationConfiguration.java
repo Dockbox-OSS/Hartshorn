@@ -21,14 +21,13 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.i18n.services.SimpleTranslationKeyGenerator;
 import org.dockbox.hartshorn.i18n.services.TranslationKeyGenerator;
+import org.dockbox.hartshorn.inject.SupportPriority;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
-
-import jakarta.inject.Singleton;
 
 /**
  * Sensible default configuration for internationalization services. The exposed {@link TranslationBundle}
@@ -51,8 +50,8 @@ public class TranslationConfiguration {
      * @param bundle the translation bundle to use
      * @return the translation service
      */
-    @Binds
     @Singleton
+    @SupportPriority
     public TranslationService translationService(ApplicationContext applicationContext, TranslationBundle bundle) {
         return new BundledTranslationService(applicationContext, bundle);
     }
@@ -66,8 +65,8 @@ public class TranslationConfiguration {
      * @param additionalBundles any additional translation bundles that are configured globally
      * @return the translation bundle
      */
-    @Binds
     @Singleton
+    @SupportPriority
     public TranslationBundle translationBundle(
             ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
             ComponentCollection<TranslationBundle> additionalBundles
@@ -86,8 +85,8 @@ public class TranslationConfiguration {
      * @param componentRegistry the component registry to account for component IDs
      * @return the translation key generator
      */
-    @Binds
     @Singleton
+    @SupportPriority
     public TranslationKeyGenerator translationKeyGenerator(ComponentRegistry componentRegistry) {
         return new SimpleTranslationKeyGenerator(componentRegistry);
     }

@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.inject;
 
 import java.util.Set;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.strategy.IntrospectionDependencyResolver;
@@ -31,15 +30,18 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
     }
 
     @Override
-    protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> componentContainer, ApplicationContext applicationContext) throws DependencyResolutionException {
-        TypeView<T> type = componentContainer.type();
+    protected <T> Set<DependencyContext<?>> resolveSingle(
+        DependencyDeclarationContext<T> declarationContext,
+        ApplicationContext applicationContext
+    ) throws DependencyResolutionException {
+        TypeView<T> type = declarationContext.type();
         ConstructorView<? extends T> constructorView;
         try {
             constructorView = ComponentConstructorResolver.create(applicationContext)
                     .findConstructor(type)
                     .orNull();
         }
-        catch(Throwable throwable) {
+        catch (Throwable throwable) {
             throw new DependencyResolutionException(throwable);
         }
 
@@ -55,7 +57,22 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
                 .immediate(constructorDependencies)
                 .delayed(typeDependencies);
 
-        ComponentKey<T> componentKey = ComponentKey.of(type);
-        return Set.of(new ManagedComponentDependencyContext<>(componentKey, dependencies, constructorView));
+        if (declarationContext instanceof ComponentContainerDependencyDeclarationContext<T> containerContext) {
+            ComponentKey<T> componentKey = ComponentKey.of(type);
+            return Set.of(new ComponentContainerDependencyContext<>(containerContext.container(), componentKey, dependencies, constructorView));
+        }
+        else if (declarationContext instanceof ComponentKeyDependencyDeclarationContext<T> keyContext) {
+            Provider<T> provider = keyContext.provider();
+            ManagedComponentKeyDependencyContext<T> dependencyContext = ManagedComponentKeyDependencyContext.builder(keyContext.key(), type)
+                .dependencies(dependencies)
+                .constructorView(constructorView)
+                .lazy(provider.defaultLazy().booleanValue())
+                .lifecycleType(provider.defaultLifecycle())
+                .build();
+            return Set.of(dependencyContext);
+        }
+        else {
+            return Set.of();
+        }
     }
 }

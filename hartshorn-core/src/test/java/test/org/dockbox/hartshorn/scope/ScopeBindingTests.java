@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,17 +36,6 @@ public class ScopeBindingTests {
     private ApplicationContext applicationContext;
 
     @Test
-    void testDefaultScopeBindingIsApplicationContext() {
-        ComponentKey<String> key = ComponentKey.builder(String.class)
-                .scope(Scope.DEFAULT_SCOPE)
-                .build();
-
-        this.applicationContext.bind(key).singleton("test");
-        String value = this.applicationContext.get(String.class);
-        Assertions.assertEquals("test", value);
-    }
-
-    @Test
     void testScopeBindingIsNotAccessibleFromApplication() {
         Scope scope = ScopeAdapter.of(new Object(), ParameterizableType.create(Object.class));
         ComponentKey<String> key = ComponentKey.builder(String.class)
@@ -58,7 +47,7 @@ public class ScopeBindingTests {
         Assertions.assertEquals("test", value);
 
         ComponentKey<String> componentKeyNoScope = ComponentKey.builder(String.class)
-                .scope(Scope.DEFAULT_SCOPE)
+                .scope(this.applicationContext)
                 .build();
 
         String valueNoScope = this.applicationContext.get(componentKeyNoScope);

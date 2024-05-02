@@ -105,6 +105,13 @@ public class DirectScopeKey implements ScopeKey {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("type").write(this.scopeType);
+        collector.property("type").writeDelegate(this.scopeType);
+    }
+
+    @Override
+    public String toString() {
+        return "DirectScopeKey{" +
+            "scopeType=" + this.scopeType +
+            '}';
     }
 }

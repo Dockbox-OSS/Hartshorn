@@ -20,32 +20,40 @@ import java.util.function.Consumer;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.ComponentStoreCallback;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 
 public class ModifiableComponentProcessingContext<T> extends ComponentProcessingContext<T> {
 
-    private final Consumer<T> onLockRequested;
+    private final ComponentStoreCallback componentStoreCallback;
     private boolean requestInstanceLock = false;
 
-    public ModifiableComponentProcessingContext(ApplicationContext applicationContext, ComponentKey<T> key,
-            ComponentRequestContext requestContext,
-            T instance, boolean permitsProxying, Consumer<T> onLockRequested) {
-        super(applicationContext, requestContext, key, instance, permitsProxying);
-        this.onLockRequested = onLockRequested;
+    public ModifiableComponentProcessingContext(
+        ApplicationContext applicationContext,
+        ComponentKey<T> key,
+        ComponentRequestContext requestContext,
+        ObjectContainer<T> container,
+        boolean permitsProxying,
+        ComponentStoreCallback componentStoreCallback
+    ) {
+        super(applicationContext, requestContext, key, container, permitsProxying);
+        this.componentStoreCallback = componentStoreCallback;
     }
 
     public ModifiableComponentProcessingContext<T> instance(T instance) {
         if (this.requestInstanceLock) {
             throw new IllegalModificationException("Cannot modify instance after lock has been requested");
         }
-        super.instance = instance;
+        super.container = super.container.copyForObject(instance);
+        this.componentStoreCallback.store(this.key(), this.container());
         return this;
     }
 
     public void requestInstanceLock() {
         this.requestInstanceLock = true;
-        this.onLockRequested.accept(this.instance());
+        this.componentStoreCallback.lock(this.key(), this.container());
     }
 
     public boolean isInstanceLocked() {

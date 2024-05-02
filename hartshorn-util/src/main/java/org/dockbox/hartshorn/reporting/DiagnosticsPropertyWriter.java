@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public interface DiagnosticsPropertyWriter {
      * @param value the value to write
      * @return the collector that was used to collect the value
      */
-    DiagnosticsReportCollector write(String value);
+    DiagnosticsReportCollector writeString(String value);
 
     /**
      * Writes the given value to the collector.
@@ -42,7 +42,7 @@ public interface DiagnosticsPropertyWriter {
      * @param value the value to write
      * @return the collector that was used to collect the value
      */
-    DiagnosticsReportCollector write(int value);
+    DiagnosticsReportCollector writeInt(int value);
 
     /**
      * Writes the given value to the collector.
@@ -50,7 +50,7 @@ public interface DiagnosticsPropertyWriter {
      * @param value the value to write
      * @return the collector that was used to collect the value
      */
-    DiagnosticsReportCollector write(long value);
+    DiagnosticsReportCollector writeLong(long value);
 
     /**
      * Writes the given value to the collector.
@@ -58,7 +58,7 @@ public interface DiagnosticsPropertyWriter {
      * @param value the value to write
      * @return the collector that was used to collect the value
      */
-    DiagnosticsReportCollector write(float value);
+    DiagnosticsReportCollector writeFloat(float value);
 
     /**
      * Writes the given value to the collector.
@@ -66,7 +66,7 @@ public interface DiagnosticsPropertyWriter {
      * @param value the value to write
      * @return the collector that was used to collect the value
      */
-    DiagnosticsReportCollector write(double value);
+    DiagnosticsReportCollector writeDouble(double value);
 
     /**
      * Writes the given value to the collector.
@@ -74,7 +74,16 @@ public interface DiagnosticsPropertyWriter {
      * @param value the value to write
      * @return the collector that was used to collect the value
      */
-    DiagnosticsReportCollector write(boolean value);
+    DiagnosticsReportCollector writeBoolean(boolean value);
+
+    /**
+     * Writes the given value to the collector.
+     *
+     * @param value the value to write
+     * @param <E>   the type of the enum
+     * @return the collector that was used to collect the value
+     */
+    <E extends Enum<E>> DiagnosticsReportCollector writeEnum(E value);
 
     /**
      * Creates a new group node in the collector, and delegates the writing of
@@ -83,7 +92,7 @@ public interface DiagnosticsPropertyWriter {
      * @param reportable the reportable to write
      * @return the collector that was used to collect the value
      */
-    DiagnosticsReportCollector write(Reportable reportable);
+    DiagnosticsReportCollector writeDelegate(Reportable reportable);
 
     /**
      * Writes the given values to the collector.
@@ -91,7 +100,7 @@ public interface DiagnosticsPropertyWriter {
      * @param values the values to write
      * @return the collector that was used to collect the values
      */
-    DiagnosticsReportCollector write(String... values);
+    DiagnosticsReportCollector writeStrings(String... values);
 
     /**
      * Writes the given values to the collector.
@@ -99,7 +108,7 @@ public interface DiagnosticsPropertyWriter {
      * @param values the values to write
      * @return the collector that was used to collect the values
      */
-    DiagnosticsReportCollector write(int... values);
+    DiagnosticsReportCollector writeInts(int... values);
 
     /**
      * Writes the given values to the collector.
@@ -107,7 +116,7 @@ public interface DiagnosticsPropertyWriter {
      * @param values the values to write
      * @return the collector that was used to collect the values
      */
-    DiagnosticsReportCollector write(long... values);
+    DiagnosticsReportCollector writeLongs(long... values);
 
     /**
      * Writes the given values to the collector.
@@ -115,7 +124,7 @@ public interface DiagnosticsPropertyWriter {
      * @param values the values to write
      * @return the collector that was used to collect the values
      */
-    DiagnosticsReportCollector write(float... values);
+    DiagnosticsReportCollector writeFloats(float... values);
 
     /**
      * Writes the given values to the collector.
@@ -123,7 +132,7 @@ public interface DiagnosticsPropertyWriter {
      * @param values the values to write
      * @return the collector that was used to collect the values
      */
-    DiagnosticsReportCollector write(double... values);
+    DiagnosticsReportCollector writeDoubles(double... values);
 
     /**
      * Writes the given values to the collector.
@@ -131,7 +140,16 @@ public interface DiagnosticsPropertyWriter {
      * @param values the values to write
      * @return the collector that was used to collect the values
      */
-    DiagnosticsReportCollector write(boolean... values);
+    DiagnosticsReportCollector writeBooleans(boolean... values);
+
+    /**
+     * Writes the given values to the collector.
+     *
+     * @param values the values to write
+     * @param <E>    the type of the enum
+     * @return the collector that was used to collect the values
+     */
+    <E extends Enum<E>> DiagnosticsReportCollector writeEnums(E... values);
 
     /**
      * Creates a new array node in the collector, and delegates the writing of
@@ -140,6 +158,6 @@ public interface DiagnosticsPropertyWriter {
      * @param reportables the reportables to write
      * @return the collector that was used to collect the values
      */
-    DiagnosticsReportCollector write(Reportable... reportables);
+    DiagnosticsReportCollector writeDelegates(Reportable... reportables);
 
 }

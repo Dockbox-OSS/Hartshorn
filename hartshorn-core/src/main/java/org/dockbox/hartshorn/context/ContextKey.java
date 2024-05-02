@@ -83,14 +83,13 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
      *
      * <p>If no fallback function is present, this will create or retrieve an instance of the context
      * from the application context if the context type is annotated with {@link InstallIfAbsent}. The
-     * intermediate {@link ComponentKey} used for the request will be scoped to the
-     * {@link Scope#DEFAULT_SCOPE default scope}.
+     * intermediate {@link ComponentKey} used for the request will be scoped to the application scope.
      *
      * @param context The application context to use to create the context value.
      * @return The newly created context value.
      */
     public T create(ApplicationContext context) {
-        return this.create(context, Scope.DEFAULT_SCOPE);
+        return this.create(context, context);
     }
 
     /**

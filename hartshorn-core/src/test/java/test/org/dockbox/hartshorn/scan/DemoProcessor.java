@@ -16,15 +16,12 @@
 
 package test.org.dockbox.hartshorn.scan;
 
+import jakarta.inject.Inject;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
-
-@Singleton
 public class DemoProcessor extends ComponentPreProcessor {
 
     @Inject

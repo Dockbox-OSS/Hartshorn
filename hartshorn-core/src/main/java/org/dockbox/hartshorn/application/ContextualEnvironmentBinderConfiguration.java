@@ -25,7 +25,12 @@ import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.ComponentProvider;
+import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
+import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.ScopeAwareComponentProvider;
+import org.dockbox.hartshorn.component.SingletonCacheComponentProvider;
 import org.dockbox.hartshorn.inject.binding.Binder;
+import org.dockbox.hartshorn.inject.binding.SingletonCache;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
@@ -68,6 +73,21 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
             binder.bind(ComponentRegistry.class)
                     .processAfterInitialization(false)
                     .singleton(delegatingApplicationContext.componentRegistry());
+
+            ComponentProvider componentProvider = delegatingApplicationContext.componentProvider();
+            binder.bind(Scope.class)
+                    .processAfterInitialization(false)
+                    .singleton(componentProvider.scope());
+
+            if (componentProvider instanceof ScopeAwareComponentProvider scopeAwareComponentProvider) {
+                HierarchicalComponentProvider applicationProvider = scopeAwareComponentProvider.applicationProvider();
+
+                if (applicationProvider instanceof SingletonCacheComponentProvider singletonCacheComponentProvider) {
+                    binder.bind(SingletonCache.class)
+                            .processAfterInitialization(false)
+                            .lazySingleton(singletonCacheComponentProvider::singletonCache);
+                }
+            }
         }
 
         // Application environment
@@ -82,6 +102,9 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
         if (environment instanceof ObservableApplicationEnvironment observableEnvironment) {
             binder.bind(LifecycleObservable.class).singleton(observableEnvironment);
         }
+
+        // Common bindings
+        binder.bind(Binder.class).singleton(binder);
 
         // Custom default bindings. Runs last to allow for modification of default bindings.
         configurer.configure(binder);

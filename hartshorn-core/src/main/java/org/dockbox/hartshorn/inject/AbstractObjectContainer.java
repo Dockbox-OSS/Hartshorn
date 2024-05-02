@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.components;
+package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.inject.Named;
+public abstract class AbstractObjectContainer<T> implements ObjectContainer<T> {
 
-import jakarta.inject.Singleton;
+    private final T instance;
 
-@Service
-public class FieldProviderService {
+    protected AbstractObjectContainer(T instance) {
+        this.instance = instance;
+    }
 
-    @Binds
-    @Named("field")
-    private final ProvidedInterface field = () -> "Field";
+    /**
+     * Returns the object instance. Note that this instance may or may not have been processed.
+     *
+     * @return the object instance
+     */
+    public T instance() {
+        return this.instance;
+    }
 
-    @Singleton
-    @Binds
-    @Named("singletonField")
-    private final ProvidedInterface singletonField = () -> "Field";
+    @Override
+    public String toString() {
+        return "ObjectContainer{" +
+            "instance=" + this.instance +
+            '}';
+    }
 }

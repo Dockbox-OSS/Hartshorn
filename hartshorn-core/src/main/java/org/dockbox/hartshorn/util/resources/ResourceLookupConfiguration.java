@@ -18,11 +18,11 @@ package org.dockbox.hartshorn.util.resources;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.CompositeMember;
+import org.dockbox.hartshorn.component.processing.Prototype;
+import org.dockbox.hartshorn.component.processing.Singleton;
+import org.dockbox.hartshorn.inject.InfrastructurePriority;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
-
-import jakarta.inject.Singleton;
 
 /**
  * Configuration for {@link ResourceLookupStrategy resource lookup strategies} based {@link ResourceLookup}
@@ -38,20 +38,22 @@ import jakarta.inject.Singleton;
 @Configuration
 public class ResourceLookupConfiguration {
 
-    @Singleton
-    @Binds(type = BindingType.COLLECTION)
+    @Prototype
+    @CompositeMember
+    @InfrastructurePriority
     public ResourceLookupStrategy classPathResourceLookupStrategy() {
         return new ClassPathResourceLookupStrategy();
     }
 
-    @Singleton
-    @Binds(type = BindingType.COLLECTION)
+    @Prototype
+    @CompositeMember
+    @InfrastructurePriority
     public ResourceLookupStrategy fileSystemResourceLookupStrategy() {
         return new FileSystemLookupStrategy();
     }
 
     @Singleton
-    @Binds
+    @InfrastructurePriority
     public ResourceLookup resourceLookup(ApplicationContext applicationContext, ComponentCollection<ResourceLookupStrategy> strategies) {
         FallbackResourceLookup resourceLookup = new FallbackResourceLookup(applicationContext, new FileSystemLookupStrategy());
         strategies.forEach(resourceLookup::addLookupStrategy);

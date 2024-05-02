@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
  * <p>Then, you can use this annotation to create and consume multiple bindings for the same type:
  *
  * <pre>{@code
- * @Binds
+ * @Singleton
  * @VersionQualifier(Version.V1)
  * public DataRepository testV1() { ... }
  *

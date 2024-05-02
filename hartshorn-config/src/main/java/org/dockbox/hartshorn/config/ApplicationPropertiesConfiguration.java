@@ -16,26 +16,27 @@
 
 package org.dockbox.hartshorn.config;
 
-import jakarta.inject.Singleton;
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.config.annotations.IncludeResourceConfiguration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.config.properties.StandardPropertyHolder;
 import org.dockbox.hartshorn.config.properties.StandardURIConfigProcessor;
 import org.dockbox.hartshorn.config.properties.URIConfigProcessor;
+import org.dockbox.hartshorn.inject.InfrastructurePriority;
+import org.dockbox.hartshorn.inject.SupportPriority;
 
 @Configuration
 @RequiresActivator(UseConfigurations.class)
 @IncludeResourceConfiguration({"fs:application", "classpath:application"})
 public class ApplicationPropertiesConfiguration {
 
-    @Binds
     @Singleton
+    @InfrastructurePriority
     public PropertyHolder propertyHolder(ApplicationContext applicationContext,
                                          ApplicationPropertyHolder propertyHolder,
                                          ObjectMapper objectMapper,
@@ -43,8 +44,8 @@ public class ApplicationPropertiesConfiguration {
         return new StandardPropertyHolder(applicationContext, propertyHolder, objectMapper, propertyMapper);
     }
 
-    @Binds
     @Singleton
+    @InfrastructurePriority
     public URIConfigProcessor uriConfigProcessor() {
         return new StandardURIConfigProcessor();
     }

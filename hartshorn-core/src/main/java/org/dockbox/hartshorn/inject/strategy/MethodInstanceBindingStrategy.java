@@ -18,16 +18,15 @@ package org.dockbox.hartshorn.inject.strategy;
 
 import java.util.List;
 import java.util.Set;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.DirectScopeKey;
-import org.dockbox.hartshorn.component.InstallTo;
-import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
+import org.dockbox.hartshorn.component.Scoped;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.ComponentMemberType;
+import org.dockbox.hartshorn.component.processing.CompositeMember;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
@@ -42,10 +41,8 @@ import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import jakarta.inject.Singleton;
 
 public class MethodInstanceBindingStrategy implements BindingStrategy {
 
@@ -68,51 +65,36 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         MethodAwareBindingStrategyContext<T> strategyContext = (MethodAwareBindingStrategyContext<T>) context;
         Binds bindingDecorator = strategyContext.method().annotations()
                 .get(Binds.class)
-                .orElseThrow(() -> new IllegalStateException("Method is not annotated with @Binds"));
+                .orElseThrow(() -> new IllegalStateException("Method is not annotated with @Binds (or a compatible meta-annotation)"));
 
         return this.resolveInstanceBinding(strategyContext, strategyContext.method(), bindingDecorator, context.applicationContext());
     }
 
-    @Override
-    public BindingStrategyPriority priority() {
-        return BindingStrategyPriority.LOW;
-    }
-
-    private <T> DependencyContext<T> resolveInstanceBinding(BindingStrategyContext<?> context, MethodView<?, T> bindsMethod, Binds bindingDecorator, ApplicationContext applicationContext) {
-        ComponentKey<T> componentKey = TypeUtils.adjustWildcards(this.environment.componentKeyResolver().resolve(bindsMethod), ComponentKey.class);
+    private <T> DependencyContext<T> resolveInstanceBinding(BindingStrategyContext<?> context, AnnotatedGenericTypeView<T> declaration, Binds bindingDecorator, ApplicationContext applicationContext) {
+        ComponentKey<T> componentKey = TypeUtils.adjustWildcards(this.environment.componentKeyResolver().resolve(declaration), ComponentKey.class);
         Set<ComponentKey<?>> dependencies = this.declarationDependencyResolver.dependencies(context);
-        ScopeKey scope = this.resolveComponentScope(bindsMethod);
-        int priority = this.resolvePriority(bindsMethod);
-
-        boolean lazy = bindingDecorator.lazy();
-        boolean singleton = this.isSingleton(applicationContext, bindsMethod, componentKey);
-        boolean processAfterInitialization = bindingDecorator.processAfterInitialization();
-        BindingType bindingType = bindingDecorator.type();
-
-        DependencyMap dependenciesMap = DependencyMap.create().immediate(dependencies);
-
         ContextAwareComponentSupplier<T> supplier = requestContext -> {
             try {
                 ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
                 contextAdapter.addContext(requestContext);
-                return contextAdapter.load(bindsMethod).orNull();
+                return contextAdapter.load(declaration).orNull();
             }
             catch(Throwable throwable) {
-                throw new ComponentInitializationException("Failed to obtain instance for " + bindsMethod.qualifiedName(), throwable);
+                throw new ComponentInitializationException("Failed to obtain instance for " + declaration.qualifiedName(), throwable);
             }
         };
 
-        return new AutoConfiguringDependencyContext<>(
-                componentKey,
-                dependenciesMap,
-                scope,
-                priority,
-                bindingType,
-                bindsMethod,
-                supplier
-        ).lazy(lazy)
-                .singleton(singleton)
-                .processAfterInitialization(processAfterInitialization);
+        return AutoConfiguringDependencyContext.builder(componentKey)
+            .dependencies(DependencyMap.create().immediate(dependencies))
+            .scope(this.resolveComponentScope(declaration))
+            .priority(this.resolvePriority(declaration))
+            .memberType(this.resolveMemberType(declaration))
+            .view(declaration)
+            .supplier(supplier)
+            .lazy(bindingDecorator.lazy())
+            .lifecycleType(bindingDecorator.lifecycle())
+            .processAfterInitialization(bindingDecorator.processAfterInitialization())
+            .build();
     }
 
     private int resolvePriority(AnnotatedElementView view) {
@@ -121,16 +103,22 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
             .orElse(Priority.DEFAULT_PRIORITY);
     }
 
-    private boolean isSingleton(ApplicationContext applicationContext, AnnotatedElementView view, ComponentKey<?> componentKey) {
-        return view.annotations().has(Singleton.class)
-                || applicationContext.environment().singleton(componentKey.type());
-    }
-
     private ScopeKey resolveComponentScope(AnnotatedElementView view) {
-        Option<InstallTo> installToCandidate = view.annotations().get(InstallTo.class);
+        Option<Scoped> installToCandidate = view.annotations().get(Scoped.class);
         return installToCandidate.present()
                 ? DirectScopeKey.of(installToCandidate.get().value())
-                : Scope.DEFAULT_SCOPE.installableScopeType();
+                : ApplicationContext.APPLICATION_SCOPE;
+    }
+
+    private ComponentMemberType resolveMemberType(AnnotatedElementView bindsMethod) {
+        return bindsMethod.annotations().has(CompositeMember.class)
+            ? ComponentMemberType.COMPOSITE
+            : ComponentMemberType.STANDALONE;
+    }
+
+    @Override
+    public BindingStrategyPriority priority() {
+        return BindingStrategyPriority.LOW;
     }
 
     public static ContextualInitializer<ApplicationContext, BindingStrategy> create(Customizer<Configurer> customizer) {

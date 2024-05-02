@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package test.org.dockbox.hartshorn.conditions;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
 import org.dockbox.hartshorn.component.condition.RequiresProperty;
-import org.dockbox.hartshorn.component.processing.Binds;
+import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.inject.Named;
 
 @Configuration
@@ -29,7 +29,7 @@ public class ConditionalConfiguration {
      * Passes as long as {@code java.lang.String} is on the classpath. As this is
      * part of the standard library, it should always be available.
      */
-    @Binds
+    @Singleton
     @Named("a")
     @RequiresClass("java.lang.String")
     public String a() {
@@ -40,7 +40,7 @@ public class ConditionalConfiguration {
      * Fails when {@code java.gnal.String} is not on the classpath. As this is
      * an intentional typo, it should never be available.
      */
-    @Binds
+    @Singleton
     @Named("b")
     @RequiresClass("java.gnal.String")
     public String b() {
@@ -51,7 +51,7 @@ public class ConditionalConfiguration {
      * Passes as long as {@code property.c} is present as a property, no matter
      * what its value is.
      */
-    @Binds
+    @Singleton
     @Named("c")
     @RequiresProperty(name = "property.c")
     public String c() {
@@ -63,7 +63,7 @@ public class ConditionalConfiguration {
      * value is equal to {@code d}. This is handled by {@link ConditionTests},
      * so the property is <b>present</b>.
      */
-    @Binds
+    @Singleton
     @Named("d")
     @RequiresProperty(name = "property.d", withValue = "d")
     public String d() {
@@ -75,7 +75,7 @@ public class ConditionalConfiguration {
      * value is equal to {@code e}. This is handled by {@link ConditionTests},
      * so the property is <b>absent</b>.
      */
-    @Binds
+    @Singleton
     @Named("e")
     @RequiresProperty(name = "property.e", withValue = "e")
     public String e() {
@@ -86,7 +86,7 @@ public class ConditionalConfiguration {
      * Passes if there is no property named {@code property.l}. This is handled
      * by {@link ConditionTests}, so the property is <b>absent</b>.
      */
-    @Binds
+    @Singleton
     @Named("f")
     @RequiresProperty(name = "property.f", matchIfMissing = true)
     public String f() {

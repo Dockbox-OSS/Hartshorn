@@ -16,9 +16,11 @@
 
 package org.dockbox.hartshorn.component;
 
+import jakarta.annotation.PostConstruct;
 import java.util.Objects;
 import java.util.Set;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.HighestPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.ProviderSelectionStrategy;
@@ -33,7 +35,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
  * A key that can be used to identify a component. This contains required metadata to identify a component, such as
- * its type, name, scope and whether it should be enabled on provisioning.
+ * its type, name, scope and whether post-construction is allowed on provisioning.
  *
  * <p>Component keys contain a {@link ParameterizableType} that describes the type of the component. This type can
  * be parameterized. Therefore, key instances differentiate between e.g. {@code List<String>} and {@code List<Integer>}.
@@ -56,7 +58,7 @@ public final class ComponentKey<T> implements Reportable {
     private final ParameterizableType type;
     private final CompositeQualifier qualifier;
     private final Scope scope;
-    private final boolean enable;
+    private final boolean postConstructionAllowed;
     private final Tristate strict;
 
     private ComponentKey(
@@ -64,14 +66,14 @@ public final class ComponentKey<T> implements Reportable {
             ParameterizableType type,
             CompositeQualifier qualifier,
             Scope scope,
-            boolean enable,
+            boolean postConstructionAllowed,
             Tristate strict
     ) {
         this.strategy = strategy;
         this.type = type;
         this.qualifier = qualifier;
         this.scope = scope;
-        this.enable = enable;
+        this.postConstructionAllowed = postConstructionAllowed;
         this.strict = strict;
     }
 
@@ -181,7 +183,7 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new key builder based on this key. The builder will have the same type, name, scope and enable
+     * Creates a new key builder based on this key. The builder will have the same type, name, scope and post-construction
      * values as this key. The builder can be used to create a new key with different values.
      *
      * @return a new builder
@@ -192,8 +194,8 @@ public final class ComponentKey<T> implements Reportable {
 
     /**
      * Creates a new view of this key. The view will have the same type and name as this key. Views are not attached
-     * to a scope, and do not indicate whether the component should be enabled. This method is useful for comparing
-     * keys, or for use in maps.
+     * to a scope, and do not indicate whether post-construction callbacks are allowed. This method is useful for
+     * comparing keys, or for use in maps.
      *
      * <p>Views always retain the parameterization of the key.
      *
@@ -206,7 +208,7 @@ public final class ComponentKey<T> implements Reportable {
     /**
      * Returns the qualified name of this key. The qualified name is the name of the type, followed by the name of
      * the component, followed by the name of the scope. If the component has no name, the name is omitted. If the
-     * component has no explicit scope, the default scope is {@link Scope#DEFAULT_SCOPE}.
+     * component has no explicit scope, the default scope is the application scope of the component provider.
      *
      * @param qualifyType whether the type should be qualified with its package name
      * @return the qualified name
@@ -214,7 +216,10 @@ public final class ComponentKey<T> implements Reportable {
     public String qualifiedName(boolean qualifyType) {
         String qualifier = StringUtilities.join(", ", this.qualifier.qualifiers(), QualifierKey::toString);
         String qualifierSuffix = StringUtilities.empty(qualifier) ? "" : ":" + qualifier;
-        String scopeName = this.scope.installableScopeType().name();
+        ScopeKey scopeKey = this.scope != null
+            ? this.scope.installableScopeType()
+            : ApplicationContext.APPLICATION_SCOPE;
+        String scopeName = scopeKey.name();
         String typeName = qualifyType ? this.type.toQualifiedString() : this.type.toString();
         return typeName + qualifierSuffix + " @ " + scopeName;
     }
@@ -233,7 +238,7 @@ public final class ComponentKey<T> implements Reportable {
             return false;
         }
         ComponentKey<?> otherComponentKey = (ComponentKey<?>) other;
-        return this.enable == otherComponentKey.enable
+        return this.postConstructionAllowed == otherComponentKey.postConstructionAllowed
                 && this.type.equals(otherComponentKey.type)
                 && Objects.equals(this.qualifier, otherComponentKey.qualifier)
                 && Objects.equals(this.scope, otherComponentKey.scope);
@@ -241,7 +246,7 @@ public final class ComponentKey<T> implements Reportable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.type, this.qualifier, this.scope, this.enable);
+        return Objects.hash(this.type, this.qualifier, this.scope, this.postConstructionAllowed);
     }
 
     /**
@@ -286,7 +291,7 @@ public final class ComponentKey<T> implements Reportable {
 
     /**
      * Returns the scope of the component. If the component has no explicit scope, the default scope is
-     * {@link Scope#DEFAULT_SCOPE}.
+     * the application scope of the component provider.
      *
      * @return the scope of the component
      */
@@ -295,13 +300,13 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Returns whether the component should be enabled on provisioning. If the component has no explicit enable
-     * value, {@code true} is returned.
+     * Returns whether {@link PostConstruct} callbacks of the component should be activated on provisioning. If the key
+     * did not explicitly set this value, {@code true} is returned.
      *
-     * @return whether the component should be enabled on provisioning
+     * @return whether post-construction should be activated on provisioning
      */
-    public boolean enable() {
-        return this.enable;
+    public boolean postConstructionAllowed() {
+        return this.postConstructionAllowed;
     }
 
     /**
@@ -312,7 +317,7 @@ public final class ComponentKey<T> implements Reportable {
      * <p>If strict-mode is not explicitly set, {@link Tristate#UNDEFINED} is returned. In this case it remains
      * up to the component provider to decide whether strict-mode should be applied.
      *
-     * @return whether the component should be enabled on provisioning
+     * @return whether the lookup for this component should be strict
      */
     public Tristate strict() {
         return this.strict;
@@ -330,12 +335,12 @@ public final class ComponentKey<T> implements Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("type").write(this.type);
-        collector.property("qualifier").write(this.qualifier);
+        collector.property("type").writeDelegate(this.type);
+        collector.property("qualifier").writeDelegate(this.qualifier);
         if (scope != null) {
-            collector.property("scope").write(this.scope.installableScopeType());
+            collector.property("scope").writeDelegate(this.scope.installableScopeType());
         }
-        collector.property("enable").write(this.enable);
+        collector.property("postConstructionAllowed").writeBoolean(this.postConstructionAllowed);
     }
 
     /**
@@ -356,15 +361,15 @@ public final class ComponentKey<T> implements Reportable {
         private final ParameterizableType type;
         private final CompositeQualifier qualifier = new CompositeQualifier();
         private ProviderSelectionStrategy strategy = HighestPriorityProviderSelectionStrategy.INSTANCE;
-        private Scope scope = Scope.DEFAULT_SCOPE;
-        private boolean enable = true;
+        private Scope scope = null; // If not provided, defaults to application scope
+        private boolean postConstructionAllowed = true;
         private Tristate strict = Tristate.UNDEFINED;
 
         private Builder(ComponentKey<T> key) {
             this.type = key.type;
             this.qualifier.addAll(key.qualifier);
             this.scope = key.scope;
-            this.enable = key.enable;
+            this.postConstructionAllowed = key.postConstructionAllowed;
         }
 
         private Builder(ParameterizableType type) {
@@ -387,7 +392,7 @@ public final class ComponentKey<T> implements Reportable {
             return builder
                     .qualifiers(this.qualifier.qualifiers())
                     .scope(this.scope)
-                    .enable(this.enable);
+                    .postConstructionAllowed(this.postConstructionAllowed);
         }
 
         public Builder<T> strategy(ProviderSelectionStrategy strategy) {
@@ -419,8 +424,8 @@ public final class ComponentKey<T> implements Reportable {
             return this;
         }
 
-        public Builder<T> enable(boolean enable) {
-            this.enable = enable;
+        public Builder<T> postConstructionAllowed(boolean postConstructionAllowed) {
+            this.postConstructionAllowed = postConstructionAllowed;
             return this;
         }
 
@@ -436,12 +441,12 @@ public final class ComponentKey<T> implements Reportable {
             Builder<?> builder = builder(collectionType)
                     .qualifiers(this.qualifier.qualifiers())
                     .scope(this.scope)
-                    .enable(this.enable);
+                    .postConstructionAllowed(this.postConstructionAllowed);
             return TypeUtils.adjustWildcards(builder, Builder.class);
         }
 
         public ComponentKey<T> build() {
-            return new ComponentKey<>(this.strategy, this.type, this.qualifier, this.scope, this.enable, this.strict);
+            return new ComponentKey<>(this.strategy, this.type, this.qualifier, this.scope, this.postConstructionAllowed, this.strict);
         }
 
         public ComponentKeyView<T> view() {

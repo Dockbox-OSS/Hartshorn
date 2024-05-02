@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Tristate;
+import org.dockbox.hartshorn.util.option.Option;
+
 /**
  * A {@link Provider} that is not aware of the type it provides. This is useful when the type
  * is not known at compile time, but only at runtime (e.g. in suppliers).
@@ -26,6 +31,5 @@ package org.dockbox.hartshorn.inject;
  *
  * @author Guus Lieben
  */
-@FunctionalInterface
 public non-sealed interface NonTypeAwareProvider<T> extends Provider<T> {
 }

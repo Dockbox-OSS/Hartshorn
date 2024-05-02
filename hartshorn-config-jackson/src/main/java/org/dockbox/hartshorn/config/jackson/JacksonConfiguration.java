@@ -20,8 +20,9 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
-import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.processing.CompositeMember;
+import org.dockbox.hartshorn.component.processing.Prototype;
+import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.annotations.UseSerialization;
 import org.dockbox.hartshorn.config.jackson.mapping.JavaPropsDataMapper;
@@ -29,10 +30,9 @@ import org.dockbox.hartshorn.config.jackson.mapping.JsonDataMapper;
 import org.dockbox.hartshorn.config.jackson.mapping.TomlDataMapper;
 import org.dockbox.hartshorn.config.jackson.mapping.XmlDataMapper;
 import org.dockbox.hartshorn.config.jackson.mapping.YamlDataMapper;
+import org.dockbox.hartshorn.inject.SupportPriority;
 import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-
-import jakarta.inject.Singleton;
 
 /**
  * Default bindings for Jackson data mappers, and the {@link ObjectMapper} interface.
@@ -46,7 +46,8 @@ import jakarta.inject.Singleton;
 @RequiresClass("com.fasterxml.jackson.databind.ObjectMapper")
 public class JacksonConfiguration {
 
-    @Binds
+    @Prototype
+    @SupportPriority
     public ObjectMapper objectMapper(
             ApplicationContext applicationContext,
             JacksonDataMapperRegistry dataMapperRegistry,
@@ -55,18 +56,18 @@ public class JacksonConfiguration {
         return new JacksonObjectMapper(applicationContext, dataMapperRegistry, objectMapperConfigurator);
     }
 
-    @Binds
     @Singleton
+    @SupportPriority
     public JacksonDataMapperRegistry dataMapperRegistry(ComponentCollection<JacksonDataMapper> dataMappers) {
-        SimpleJacksonDataMapperRegistry registry = new SimpleJacksonDataMapperRegistry();
+        JacksonDataMapperRegistry registry = new SimpleJacksonDataMapperRegistry();
         for (JacksonDataMapper dataMapper : dataMappers) {
             registry.register(dataMapper);
         }
         return registry;
     }
 
-    @Binds
     @Singleton
+    @SupportPriority
     public JacksonObjectMapperConfigurator mapperConfigurator(Introspector introspector) {
         return new StandardJacksonObjectMapperConfigurator(introspector);
     }
@@ -76,7 +77,8 @@ public class JacksonConfiguration {
     public static class JacksonPropertiesMapperConfiguration {
 
         @Singleton
-        @Binds(type = BindingType.COLLECTION)
+        @CompositeMember
+        @SupportPriority
         public JacksonDataMapper properties() {
             return new JavaPropsDataMapper();
         }
@@ -87,7 +89,8 @@ public class JacksonConfiguration {
     public static class JacksonJsonMapperConfiguration {
 
         @Singleton
-        @Binds(type = BindingType.COLLECTION)
+        @CompositeMember
+        @SupportPriority
         public JacksonDataMapper json() {
             return new JsonDataMapper();
         }
@@ -98,7 +101,8 @@ public class JacksonConfiguration {
     public static class JacksonTomlMapperConfiguration {
 
         @Singleton
-        @Binds(type = BindingType.COLLECTION)
+        @CompositeMember
+        @SupportPriority
         public JacksonDataMapper toml() {
             return new TomlDataMapper();
         }
@@ -109,7 +113,8 @@ public class JacksonConfiguration {
     public static class JacksonXmlMapperConfiguration {
 
         @Singleton
-        @Binds(type = BindingType.COLLECTION)
+        @CompositeMember
+        @SupportPriority
         public JacksonDataMapper xml() {
             return new XmlDataMapper();
         }
@@ -120,7 +125,8 @@ public class JacksonConfiguration {
     public static class JacksonYamlMapperConfiguration {
 
         @Singleton
-        @Binds(type = BindingType.COLLECTION)
+        @CompositeMember
+        @SupportPriority
         public JacksonDataMapper yml() {
             return new YamlDataMapper();
         }

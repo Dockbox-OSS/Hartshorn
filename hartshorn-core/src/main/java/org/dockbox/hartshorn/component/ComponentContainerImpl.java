@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -72,8 +72,8 @@ public class ComponentContainerImpl<T> implements ComponentContainer<T> {
     }
 
     @Override
-    public boolean singleton() {
-        return this.annotation().singleton();
+    public LifecycleType lifecycle() {
+        return this.annotation().lifecycle();
     }
 
     @Override
