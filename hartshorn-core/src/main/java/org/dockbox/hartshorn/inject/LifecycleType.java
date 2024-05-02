@@ -16,7 +16,22 @@
 
 package org.dockbox.hartshorn.inject;
 
+/**
+ * Represents the lifecycle type of a component. This is used to indicate whether a component should be
+ * created as a singleton or prototype.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public enum LifecycleType {
+    /**
+     * Represents a singleton component, meaning the component will be created once and shared across all
+     * consumers.
+     */
     SINGLETON,
+    /**
+     * Represents a prototype component, meaning the component will be created each time it is requested.
+     */
     PROTOTYPE,
 }

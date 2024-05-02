@@ -58,7 +58,26 @@ public sealed interface Provider<T> permits TypeAwareProvider, NonTypeAwareProvi
         return new ComposedProvider<>(this, mappingFunction);
     }
 
+    /**
+     * Indicates the default lifecycle of components provided by this provider. This is used to
+     * determine whether the result of this provider should be cached, and whether this provider
+     * may be called multiple times. Note that it remains up to the container to decide whether
+     * to respect this lifecycle.
+     *
+     * @return The default lifecycle of components provided by this provider.
+     */
     LifecycleType defaultLifecycle();
 
+    /**
+     * Indicates the default laziness of components provided by this provider. This is used to
+     * determine whether the result of this provider should be created eagerly, or lazily. Note
+     * that it remains up to the container to decide whether to respect this laziness.
+     *
+     * <p>If the implementation of this provider does not support laziness, this method should
+     * return {@link Tristate#UNDEFINED}, so the container can decide whether to eagerly or
+     * lazily create components.
+     *
+     * @return The default laziness of components provided by this provider.
+     */
     Tristate defaultLazy();
 }
