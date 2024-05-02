@@ -50,6 +50,12 @@ public interface ObjectContainer<T> {
      */
     void processed(boolean processed);
 
+    /**
+     * Returns the lifecycle type of the object instance. This is used to determine how the object should be
+     * managed by the container.
+     *
+     * @return the lifecycle type of the object instance
+     */
     LifecycleType lifecycleType();
 
     /**
@@ -65,5 +71,13 @@ public interface ObjectContainer<T> {
         return this.lifecycleType() == LifecycleType.SINGLETON;
     }
 
+    /**
+     * Creates a copy of the current container for the given instance, carrying over any configured flags from
+     * this container. This is especially useful when a wrapper instance was created for the object, and the
+     * container needs to be updated to reflect this.
+     *
+     * @param instance the instance to create a copy for
+     * @return a new container for the given instance
+     */
     ObjectContainer<T> copyForObject(T instance);
 }

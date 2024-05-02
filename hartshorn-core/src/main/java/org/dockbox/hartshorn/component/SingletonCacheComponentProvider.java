@@ -16,9 +16,26 @@
 
 package org.dockbox.hartshorn.component;
 
+import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.binding.SingletonCache;
 
+/**
+ * A {@link ComponentProvider} that uses a {@link SingletonCache} to store singleton components. Typically the
+ * provider itself should not determine what is a singleton and what is not, but rather any backing {@link Provider},
+ * {@link ComponentContainer}, or similar component should indicate this.
+ *
+ * @see SingletonCache
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface SingletonCacheComponentProvider extends ComponentProvider {
 
+    /**
+     * Returns the {@link SingletonCache} used by this provider to store singleton components.
+     *
+     * @return the singleton cache
+     */
     SingletonCache singletonCache();
 }

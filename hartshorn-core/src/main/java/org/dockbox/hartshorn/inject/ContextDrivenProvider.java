@@ -54,14 +54,37 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
         this.lifecycleType = lifecycleType;
     }
 
+    /**
+     * Creates a new {@link ContextDrivenProvider} for the given type, with a prototype lifecycle.
+     *
+     * @param type the type of the component to create
+     * @return a new {@link ContextDrivenProvider} for the given type
+     * @param <T> the type of the component to create
+     */
     public static <T> ContextDrivenProvider<T> forPrototype(ComponentKey<? extends T> type) {
         return new ContextDrivenProvider<>(type, LifecycleType.PROTOTYPE);
     }
 
+    /**
+     * Creates a new {@link ContextDrivenProvider} for the given type, with a singleton lifecycle.
+     *
+     * @param type the type of the component to create
+     * @return a new {@link ContextDrivenProvider} for the given type
+     * @param <T> the type of the component to create
+     */
     public static <T> ContextDrivenProvider<T> forSingleton(ComponentKey<? extends T> type) {
         return new ContextDrivenProvider<>(type, LifecycleType.SINGLETON);
     }
 
+    /**
+     * Sets the lazy flag for the provider. If the provider is lazy, the instance will only be created
+     * when it is first requested. If the provider is not lazy, the instance will be created immediately
+     * after the provider is registered. Note that it remains up to the container to respect this flag,
+     * and determine when to create the instance.
+     *
+     * @param lazy whether the provider should be lazy
+     * @return the provider
+     */
     public ContextDrivenProvider<C> lazy(boolean lazy) {
         this.lazy = lazy;
         return this;
