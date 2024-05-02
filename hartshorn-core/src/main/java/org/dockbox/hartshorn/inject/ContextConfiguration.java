@@ -36,8 +36,16 @@ import org.dockbox.hartshorn.context.ContextCarrier;
 @RequiresActivator(UseBootstrap.class)
 public class ContextConfiguration {
 
+    /**
+     * Provides a simple wrapper around the {@link ApplicationContext} to allow for easy access to the context in
+     * components. This carrier should typically not be used directly, but may be used by proxies to delegate the
+     * use of {@link ContextCarrier#applicationContext()} to the actual context.
+     *
+     * @param applicationContext the application context to wrap
+     * @return a {@link ContextCarrier} wrapping the provided context
+     */
     @Singleton
-    @InfrastructurePriority
+    @SupportPriority
     public ContextCarrier contextCarrier(ApplicationContext applicationContext) {
         return new ConcreteContextCarrier(applicationContext);
     }

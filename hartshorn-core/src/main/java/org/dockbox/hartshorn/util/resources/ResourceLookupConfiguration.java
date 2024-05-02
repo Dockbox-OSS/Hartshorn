@@ -38,6 +38,12 @@ import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 @Configuration
 public class ResourceLookupConfiguration {
 
+    /**
+     * Prototype configuration for a classpath-based {@link ResourceLookupStrategy}. This strategy is used to
+     * look up resources on the classpath.
+     *
+     * @return a {@link ClassPathResourceLookupStrategy}.
+     */
     @Prototype
     @CompositeMember
     @InfrastructurePriority
@@ -45,6 +51,12 @@ public class ResourceLookupConfiguration {
         return new ClassPathResourceLookupStrategy();
     }
 
+    /**
+     * Prototype configuration for a file system-based {@link ResourceLookupStrategy}. This strategy is used to
+     * look up resources on the file system.
+     *
+     * @return a {@link FileSystemLookupStrategy}.
+     */
     @Prototype
     @CompositeMember
     @InfrastructurePriority
@@ -52,6 +64,17 @@ public class ResourceLookupConfiguration {
         return new FileSystemLookupStrategy();
     }
 
+    /**
+     * Singleton configuration for a strategy-based {@link ResourceLookup}. This lookup is used to find resources
+     * based on a set of strategies. Strategies may be defined as composite members of {@link ResourceLookupStrategy}.
+     *
+     * <p>By default, this lookup will use a {@link FileSystemLookupStrategy} as a fallback strategy if no other
+     * strategy can find the resource.
+     *
+     * @param applicationContext the application context
+     * @param strategies the strategies to use
+     * @return a {@link ResourceLookup} implementation
+     */
     @Singleton
     @InfrastructurePriority
     public ResourceLookup resourceLookup(ApplicationContext applicationContext, ComponentCollection<ResourceLookupStrategy> strategies) {
