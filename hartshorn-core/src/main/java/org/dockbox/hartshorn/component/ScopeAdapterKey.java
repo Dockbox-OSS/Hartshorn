@@ -62,6 +62,12 @@ public class ScopeAdapterKey implements ScopeKey {
         return new ScopeAdapterKey(TypeUtils.adjustWildcards(adapterType, ParameterizableType.class));
     }
 
+    /**
+     * Creates a new key for the given adaptee type.
+     *
+     * @param type the adaptee type
+     * @return the key
+     */
     public static ScopeAdapterKey of(ParameterizableType type) {
         return new ScopeAdapterKey(type);
     }

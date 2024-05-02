@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,24 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
+/**
+ * Represents a node in a type path, typically a {@link ComponentDiscoveryList}. This node contains a {@link TypeView}
+ * and a {@link ComponentKey} that represents the type and its key in the current container. The origin of the node
+ * represents the view that this node was discovered from.
+ *
+ * @param type the introspectable type view
+ * @param componentKey the component key of this node within the current container
+ * @param origin the origin view that this node was discovered from
+ * @param <T> the type of the introspectable type view
+ */
 public record TypePathNode<T>(TypeView<T> type, ComponentKey<T> componentKey, View origin) {
 
+    /**
+     * Returns the qualified name of the type view. This is typically the fully qualified name of the type,
+     * combined with any qualifiers that are defined on the component key.
+     *
+     * @return the qualified name of the type view
+     */
     public String qualifiedName() {
         return this.componentKey.qualifiedName(true);
     }
