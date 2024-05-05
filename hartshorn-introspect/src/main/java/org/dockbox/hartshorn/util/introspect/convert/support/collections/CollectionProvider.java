@@ -24,9 +24,9 @@ import java.util.Collection;
  *
  * @param <T> The type of the collection
  *
- * @since 0.6.0
- *
  * @see CollectionFactory
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.context;
  * A context is a collection of objects that can be used to share data between different parts of the application. This
  * is the interface for any context which is capable of storing other contexts.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public interface Context extends ContextView {
 

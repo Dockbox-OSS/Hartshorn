@@ -26,9 +26,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 /**
  * A parser for the 'continue' statement, using the {@link ControlTokenType#CONTINUE} token type.
  *
- * @since 0.5.0
- *
  * @see ContinueStatement
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

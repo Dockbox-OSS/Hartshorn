@@ -48,8 +48,9 @@ import org.dockbox.hartshorn.util.StreamableConfigurer;
  *
  * @see ApplicationContextConstructor
  *
- * @author Guus Lieben
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public final class StandardApplicationBuilder implements ApplicationBuilder<ApplicationContext> {
 
@@ -112,10 +113,11 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
      * Validates if the provided class is a valid activator. A valid activator is a class that is not abstract, not an
      * interface, not an array, not a primitive, not a local class, not a member class, and not in a reserved package.
      *
-     * @see #RESERVED_PACKAGES
-     *
      * @param mainClass The class to validate.
+     *
      * @return {@code true} if the provided class is a valid activator, {@code false} otherwise.
+     *
+     * @see #RESERVED_PACKAGES
      */
     private boolean isValidActivator(Class<?> mainClass) {
         boolean isConcrete = !(mainClass.isPrimitive() || Modifier.isAbstract(mainClass.getModifiers()) || mainClass.isInterface()
@@ -194,8 +196,9 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
      *
      * @see #create(Customizer)
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer {
 

@@ -19,13 +19,11 @@ package org.dockbox.hartshorn.application.context;
 import java.util.HashSet;
 import java.util.Set;
 import org.dockbox.hartshorn.application.context.validate.DependencyGraphValidator;
-import org.dockbox.hartshorn.component.processing.Binds;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.LifecycleAwareDependencyContext;
 import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.graph.ContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleContentAwareGraph;
 

@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * builder can be used to create tokens with a specific lexeme, literal, line and column, and can be
  * used to create virtual tokens that do not have a specific position in the source code.
  *
- * @since 0.6.0
- *
  * @see Token
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

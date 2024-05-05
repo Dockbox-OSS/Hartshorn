@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,9 +48,10 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
     /**
      * Creates a new {@link StreamableConfigurer} instance without any initializers.
      *
-     * @return the new instance
      * @param <I> the type of the input
      * @param <T> the type of the output
+     *
+     * @return the new instance
      */
     public static <I, T> StreamableConfigurer<I, T> empty() {
         return new StreamableConfigurer<>();
@@ -62,9 +63,10 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      * input value.
      *
      * @param objects the objects to add
-     * @return the new instance
      * @param <I> the type of the input
      * @param <O> the type of the output
+     *
+     * @return the new instance
      */
     @SafeVarargs
     public static <I, O> StreamableConfigurer<I, O> of(O... objects) {
@@ -78,9 +80,10 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      * input value.
      *
      * @param objects the objects to add
-     * @return the new instance
      * @param <I> the type of the input
      * @param <O> the type of the output
+     *
+     * @return the new instance
      */
     public static <I, O> StreamableConfigurer<I, O> of(Iterable<? extends O> objects) {
         StreamableConfigurer<I, O> configurer = StreamableConfigurer.empty();
@@ -92,9 +95,10 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      * will be added as the only initializer to the configurer.
      *
      * @param initializer the initializer to add
-     * @return the new instance
      * @param <I> the type of the input
      * @param <O> the type of the output
+     *
+     * @return the new instance
      */
     public static <I, O> StreamableConfigurer<I, O> ofInitializer(ContextualInitializer<I, O> initializer) {
         StreamableConfigurer<I, O> configurer = StreamableConfigurer.empty();

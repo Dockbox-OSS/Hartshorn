@@ -44,6 +44,7 @@ public interface Converter<I, O> {
      * value, or {@code null} itself.
      *
      * @param input the input object to convert, which may be {@code null}
+     *
      * @return the converted object, which may be {@code null}
      */
     @Nullable
@@ -55,8 +56,9 @@ public interface Converter<I, O> {
      * it is relayed to the caller of the composed converter.
      *
      * @param after the converter to apply after this converter is applied
-     * @return a composed converter that first applies this converter and then applies the {@code after}
      * @param <T> the type of output of the {@code after} converter, and of the composed converter
+     *
+     * @return a composed converter that first applies this converter and then applies the {@code after}
      */
     default <T> Converter<I, T> andThen(Converter<O, T> after) {
         return (I input) -> {

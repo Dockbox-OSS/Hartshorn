@@ -39,8 +39,9 @@ public class SimpleSingleElementContext<I> extends AbstractSingleElementContext<
      * convenience method to better align with the common use of {@link SingleElementContext}.
      *
      * @param input the input value
-     * @return the new context
      * @param <I> the type of the input
+     * 
+     * @return the new context
      */
     public static <I> SimpleSingleElementContext<I> create(@NonNull I input) {
         return new SimpleSingleElementContext<>(input);

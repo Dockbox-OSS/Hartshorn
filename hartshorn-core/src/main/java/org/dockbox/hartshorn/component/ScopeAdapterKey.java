@@ -53,8 +53,9 @@ public class ScopeAdapterKey implements ScopeKey {
      * Creates a new key for the given adapter. The adaptee type is derived from the adapter.
      *
      * @param adapter the adapter to create a key for
-     * @return the key
      * @param <T> the adaptee type
+     *
+     * @return the key
      */
     public static <T> ScopeAdapterKey of(ScopeAdapter<T> adapter) {
         ParameterizableType adapteeType = adapter.adapteeType();

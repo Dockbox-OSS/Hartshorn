@@ -30,8 +30,10 @@ import org.dockbox.hartshorn.util.option.Option;
  * the instance if it is not available.
  *
  * @param <T> The type instance to provide.
- * @author Guus Lieben
+ *
  * @since 0.4.3
+ *
+ * @author Guus Lieben
  */
 public sealed interface Provider<T> permits TypeAwareProvider, NonTypeAwareProvider, ComposedProvider {
 
@@ -40,8 +42,8 @@ public sealed interface Provider<T> permits TypeAwareProvider, NonTypeAwareProvi
      * to retrieve required dependencies for the instance. The context should not be used to enable
      * the instance, or populate fields of the instance.
      *
-     * @param context        The {@link ApplicationContext} to use.
-     * @param requestContext
+     * @param context The {@link ApplicationContext} to use.
+     * @param requestContext The context describing the component request.
      * @return The instance, if it can be created.
      */
     Option<ObjectContainer<T>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException;

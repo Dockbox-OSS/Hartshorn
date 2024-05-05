@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 /**
  * Converts a {@link String} to a {@link UUID}.
  *
- * @since 0.5.0
- *
  * @see UUID#fromString(String)
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

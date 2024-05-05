@@ -22,9 +22,9 @@ import org.slf4j.Logger;
  * Represents a banner that can be printed to the active logging system. Banners are usually printed
  * when the application starts.
  *
- * @since 0.5.0
- *
  * @see HartshornBanner
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

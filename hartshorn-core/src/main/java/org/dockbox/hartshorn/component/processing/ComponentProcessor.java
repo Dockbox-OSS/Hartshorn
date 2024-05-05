@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * <p>This interface defines the basic contract for a component processor. All processors should
  * have an activator annotation, and a phase at which they are performed.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public sealed interface ComponentProcessor extends OrderedComponentProcessor permits ComponentPostProcessor, ComponentPreProcessor {
 

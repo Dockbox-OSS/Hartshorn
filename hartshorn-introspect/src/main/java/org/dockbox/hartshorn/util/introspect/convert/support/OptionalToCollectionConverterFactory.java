@@ -32,10 +32,10 @@ import org.dockbox.hartshorn.util.option.Option;
  * <p>This converter is implemented as a composition of {@link OptionalToOptionConverter} and
  * {@link OptionToCollectionConverterFactory}.
  *
- * @since 0.5.0
- *
  * @see OptionalToOptionConverter
  * @see OptionToCollectionConverterFactory
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

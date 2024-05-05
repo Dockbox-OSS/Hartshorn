@@ -28,8 +28,9 @@ import org.dockbox.hartshorn.hsl.token.Token;
  * potential enclosing scope. An example of a valid scope is inside any code block, such as an
  * if-statement's body. In this example the enclosing scope is the global scope of the script.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class VariableScope {
 

@@ -38,8 +38,9 @@ public interface ConverterFactory<I, R> {
      * no converter is available.
      *
      * @param targetType the target type to convert to
-     * @return the converter to convert from the source type to the target type, or {@code null}
      * @param <O> the output type
+     *
+     * @return the converter to convert from the source type to the target type, or {@code null}
      */
     default <O extends R> Option<Converter<I, O>> create(GenericType<O> targetType) {
         return targetType.asClass().map(this::create);
@@ -50,8 +51,9 @@ public interface ConverterFactory<I, R> {
      * no converter is available.
      *
      * @param targetType the target type to convert to
-     * @return the converter to convert from the source type to the target type, or {@code null}
      * @param <O> the output type
+     *
+     * @return the converter to convert from the source type to the target type, or {@code null}
      */
     <O extends R> Converter<I, O> create(Class<O> targetType);
 }

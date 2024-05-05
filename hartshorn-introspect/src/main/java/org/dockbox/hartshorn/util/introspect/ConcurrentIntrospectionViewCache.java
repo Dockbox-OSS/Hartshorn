@@ -41,8 +41,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * issue, as the cache is populated with the same effective value. If this is not the case, it is recommended to use a
  * synchronized cache.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ConcurrentIntrospectionViewCache implements IntrospectionViewCache {
 

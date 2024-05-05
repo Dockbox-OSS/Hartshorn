@@ -36,10 +36,12 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <C> The type of the class to create.
  *
- * @author Guus Lieben
  * @see Provider
  * @see SupplierProvider
+ *
  * @since 0.4.3
+ *
+ * @author Guus Lieben
  */
 public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
 
@@ -58,8 +60,9 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
      * Creates a new {@link ContextDrivenProvider} for the given type, with a prototype lifecycle.
      *
      * @param type the type of the component to create
-     * @return a new {@link ContextDrivenProvider} for the given type
      * @param <T> the type of the component to create
+     *
+     * @return a new {@link ContextDrivenProvider} for the given type
      */
     public static <T> ContextDrivenProvider<T> forPrototype(ComponentKey<? extends T> type) {
         return new ContextDrivenProvider<>(type, LifecycleType.PROTOTYPE);
@@ -69,8 +72,9 @@ public class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
      * Creates a new {@link ContextDrivenProvider} for the given type, with a singleton lifecycle.
      *
      * @param type the type of the component to create
-     * @return a new {@link ContextDrivenProvider} for the given type
      * @param <T> the type of the component to create
+     *
+     * @return a new {@link ContextDrivenProvider} for the given type
      */
     public static <T> ContextDrivenProvider<T> forSingleton(ComponentKey<? extends T> type) {
         return new ContextDrivenProvider<>(type, LifecycleType.SINGLETON);

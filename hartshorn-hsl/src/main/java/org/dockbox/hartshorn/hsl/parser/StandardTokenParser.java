@@ -55,9 +55,9 @@ import jakarta.inject.Inject;
  * this parser tracks the state directly, it is not thread-safe. It is expected that a new instance is
  * created for each parsing operation.
  *
- * @since 0.5.0
- *
  * @see ASTNodeParser
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

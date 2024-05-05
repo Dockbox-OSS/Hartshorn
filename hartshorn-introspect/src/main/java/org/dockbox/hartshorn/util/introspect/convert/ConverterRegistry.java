@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,9 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * This is intentional as the registry is intended to be used by a {@link ConversionService} implementation
  * to register converters and not by clients of the {@link ConversionService} to lookup converters.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ConverterRegistry {
 

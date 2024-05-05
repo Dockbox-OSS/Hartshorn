@@ -25,11 +25,12 @@ import org.dockbox.hartshorn.util.option.Option;
  * default behavior of {@link DefaultContext} to use {@link ContextKey}s instead of
  * {@link SimpleContextIdentity simple identities}.
  *
- * @author Guus Lieben
- * @since 0.5.0
- *
  * @see DefaultContext
  * @see ProvisionContext
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public abstract class DefaultProvisionContext extends DefaultContext implements ProvisionContext {
 

@@ -39,12 +39,14 @@ import org.dockbox.hartshorn.util.option.Option;
  * <p>Condition matching can be used for a variety of purposes. For example, it can be used to determine whether
  * a component should be registered, a binding method should be invoked, or an event should be dispatched.
  *
- * @author Guus Lieben
  * @see RequiresCondition
  * @see Condition
  * @see ConditionContext
  * @see ConditionResult
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public final class ConditionMatcher implements ContextCarrier {
 

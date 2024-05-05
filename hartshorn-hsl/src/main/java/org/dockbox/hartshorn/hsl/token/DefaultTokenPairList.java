@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 /**
  * Default implementation of {@link TokenPairList} using {@link PairTokenType} definitions.
  *
- * @since 0.6.0
- *
  * @see PairTokenType
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

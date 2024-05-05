@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.util.Customizer;
  * Application starter for Hartshorn applications. This takes a single type
  * which provides application metadata, and a set of command line arguments.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public final class HartshornApplication {
 

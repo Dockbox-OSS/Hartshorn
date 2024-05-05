@@ -32,9 +32,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  *
  * <p>Tokens will always have a {@link TokenType} and a {@link #lexeme()}. The lexeme
  *
+ * @since 0.4.12
  *
  * @author Guus Lieben
- * @since 0.4.12
  */
 public class Token extends ASTNode {
 

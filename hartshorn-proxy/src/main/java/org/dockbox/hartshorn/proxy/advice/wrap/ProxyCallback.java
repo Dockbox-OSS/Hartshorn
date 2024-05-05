@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@ package org.dockbox.hartshorn.proxy.advice.wrap;
  * a {@link MethodWrapper} for the proxy method.
  *
  * @param <T> the type of the proxy method
- * @author Guus Lieben
+ *
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ProxyCallback<T> {

@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.CommentTokenList;
@@ -44,7 +45,6 @@ import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.graph.ContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.option.Option;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,8 +76,9 @@ import org.slf4j.LoggerFactory;
  * literal or comment). Newlines are used to determine the current line number, which is used to
  * report errors.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class SimpleTokenRegistryLexer implements Lexer {
 
@@ -623,7 +624,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
      * @param text The text to look up.
      * @return The token type that represents the given text as a literal.
      */
-    @NotNull
+    @NonNull
     protected TokenType lookupLiteralToken(String text) {
         Set<TokenType> literals = this.tokenRegistry.literals().literals();
         for(TokenType literal : literals) {

@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * to tokenize a given HSL script. This is also used by the standard {@link TokenType}s to specify their
  * representation.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public enum DefaultTokenCharacter implements SimpleTokenCharacter {
     LEFT_PAREN('('),

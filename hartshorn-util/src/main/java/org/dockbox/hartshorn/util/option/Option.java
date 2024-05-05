@@ -68,8 +68,9 @@ import org.dockbox.hartshorn.util.option.some.Some;
  *
  * @param <T> the type of the (potential) value wrapped by the {@link Option} instance.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public interface Option<T> extends Context, Iterable<T> {
 
@@ -322,6 +323,7 @@ public interface Option<T> extends Context, Iterable<T> {
      * {@link Option} is returned.
      *
      * @param predicate the {@link Predicate} to apply to the value, if present.
+     *
      * @return the current {@link Option} instance if a value is present and the {@link Predicate} returns
      */
     @NonNull
@@ -342,8 +344,9 @@ public interface Option<T> extends Context, Iterable<T> {
      * is created using the provided {@link Function}. If no value is present, an empty {@link Stream} is returned.
      *
      * @param mapper the {@link Function} to use to create the {@link Stream} if a value is present.
-     * @return a {@link Stream} based on the current {@link Option} instance.
      * @param <U> the type of the elements of the new {@link Stream}
+     *
+     * @return a {@link Stream} based on the current {@link Option} instance.
      */
     @NonNull
     default <U> Stream<U> stream(@NonNull Function<@NonNull T, @NonNull Stream<U>> mapper) {
@@ -366,9 +369,10 @@ public interface Option<T> extends Context, Iterable<T> {
      * given type, an empty {@link Option} is returned. If no value is present, an empty {@link Option} is returned.
      *
      * @param type the type to cast the value to
+     * @param <U> the type to cast the value to
+     *
      * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given
      *       type.
-     * @param <U> the type to cast the value to
      */
     default <U> Option<U> ofType(@NonNull Class<U> type) {
         return this.filter(type::isInstance).cast(type);
@@ -379,9 +383,11 @@ public interface Option<T> extends Context, Iterable<T> {
      * given type, a {@link ClassCastException} is thrown. If no value is present, an empty {@link Option} is returned.
      *
      * @param type the type to cast the value to
+     * @param <U> the type to cast the value to
+     *
      * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given
      *        type.
-     * @param <U> the type to cast the value to
+     *
      * @throws ClassCastException if the value is not of the given type
      */
     default <U> Option<U> cast(@NonNull Class<U> type) {
@@ -394,9 +400,10 @@ public interface Option<T> extends Context, Iterable<T> {
      * The wildcards of the given type are adjusted to match the wildcards of the provided type parameter {@link A}.
      *
      * @param type the type to cast the value to
-     * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given type.
      * @param <K> the type to cast the value to
      * @param <A> the type parameter to adjust the wildcards of the given type to
+     *
+     * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given type.
      */
     default <K extends T, A extends K> Option<A> adjust(@NonNull Class<K> type) {
         return this.ofType(type).map(value -> TypeUtils.adjustWildcards(value, type));
@@ -410,6 +417,7 @@ public interface Option<T> extends Context, Iterable<T> {
      * from a {@link Option}, as it does not require explicit unboxing on the caller's end.
      *
      * @param predicate the {@link Predicate} to test the value with.
+     *
      * @return the result of the {@link Predicate} if a value is present, otherwise {@code false}.
      */
     default boolean test(@NonNull Predicate<T> predicate) {
@@ -423,8 +431,9 @@ public interface Option<T> extends Context, Iterable<T> {
      * {@link Stream#collect(Collector)} through {@link #stream()}.
      *
      * @param collector the {@link Collector} describing the reduction operation
-     * @return the result of the reduction
      * @param <E> the type of the result
+     *
+     * @return the result of the reduction
      */
     default <E> E collect(@NonNull Collector<T, ?, E> collector) {
         return this.stream().collect(collector);

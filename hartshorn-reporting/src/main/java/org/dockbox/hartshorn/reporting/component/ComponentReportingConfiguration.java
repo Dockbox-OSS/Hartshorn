@@ -20,9 +20,9 @@ package org.dockbox.hartshorn.reporting.component;
  * General configuration for the {@link ComponentDiagnosticsReporter} that allows for fine-grained control over the
  * information that is reported.
  *
- * @since 0.5.0
- *
  * @see ComponentDiagnosticsReporter
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

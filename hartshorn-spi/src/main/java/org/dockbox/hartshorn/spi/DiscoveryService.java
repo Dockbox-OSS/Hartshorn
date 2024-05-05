@@ -98,6 +98,7 @@ public final class DiscoveryService {
      * indicate whether the implementation is sufficiently available to be loaded.
      *
      * @param type the type to check for
+     *
      * @return {@code true} if an implementation is available, {@code false} otherwise
      */
     public boolean contains(Class<?> type) {
@@ -121,8 +122,10 @@ public final class DiscoveryService {
      * optional dependencies are required, use {@link #contains(Class)} to check for availability.
      *
      * @param type the type to discover an implementation for
-     * @return an implementation of the given type
      * @param <T> the type to discover an implementation for
+     *
+     * @return an implementation of the given type
+     *
      * @throws ServiceDiscoveryException if no implementation is available, or an error occurs during discovery
      */
     @NonNull

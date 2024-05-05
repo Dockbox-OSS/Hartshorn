@@ -32,9 +32,9 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * A parser for block statements which respects the block token pair defined in the token registry.
  *
- * @since 0.5.0
- *
  * @see BlockStatement
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

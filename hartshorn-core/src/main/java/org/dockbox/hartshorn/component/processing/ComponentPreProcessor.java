@@ -37,8 +37,9 @@ import org.dockbox.hartshorn.component.ComponentRegistry;
  * <p>The component pre-processor will be called for each component that is added to the application.
  * It is executed during application construction.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public abstract non-sealed class ComponentPreProcessor implements ComponentProcessor {
 

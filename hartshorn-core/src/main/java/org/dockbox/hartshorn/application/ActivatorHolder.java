@@ -25,10 +25,10 @@ import org.dockbox.hartshorn.util.option.Option;
  * A holder for {@link org.dockbox.hartshorn.component.processing.ServiceActivator} meta-{@link Annotation}s
  * that may be used to activate components, services, or configurations.
  *
- * @since 0.4.11
- *
  * @see org.dockbox.hartshorn.component.processing.ServiceActivator
  * @see org.dockbox.hartshorn.component.condition.RequiresActivator
+ *
+ * @since 0.4.11
  *
  * @author Guus Lieben
  */

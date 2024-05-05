@@ -38,8 +38,10 @@ import java.util.SortedSet;
  * <p>A hierarchy should be used to store the binding priorities for a specific type of type {@code C}.
  *
  * @param <C> The type of type {@code C} that the hierarchy is for.
- * @author Guus Lieben
+ *
  * @since 0.4.3
+ *
+ * @author Guus Lieben
  */
 public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>>>, ContextCarrier {
 

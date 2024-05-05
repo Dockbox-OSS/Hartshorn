@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,11 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * Thrown when a scope is not valid for a given binding. For example, when a singleton scope is installed
  * on a binding that does not allow for singletons.
  *
- * @author Guus Lieben
+ * @see BindingFunction
+ *
  * @since 0.5.0
  *
- * @see BindingFunction
+ * @author Guus Lieben
  */
 public class IllegalScopeException extends ApplicationException {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,9 +51,10 @@ public interface ContextualInitializer<I, T> {
      * provided to a configurer that requires a {@link ContextualInitializer}.
      *
      * @param initializer The initializer to invoke.
-     * @return An initializer that invokes the given initializer, ignoring the input value.
      * @param <I> The type of input to initialize with.
      * @param <T> The type of object to initialize.
+     *
+     * @return An initializer that invokes the given initializer, ignoring the input value.
      */
     static <I, T> ContextualInitializer<I, T> of(Initializer<T> initializer) {
         return (input) -> initializer.initialize();
@@ -65,9 +66,10 @@ public interface ContextualInitializer<I, T> {
      * not require the wrapper context to initialize.
      *
      * @param function The function to invoke.
-     * @return An initializer that invokes the given function, ignoring the wrapper context.
      * @param <I> The type of input to initialize with.
      * @param <T> The type of object to initialize.
+     *
+     * @return An initializer that invokes the given function, ignoring the wrapper context.
      */
     static <I, T> ContextualInitializer<I, T> of(Function<I, T> function) {
         return context -> function.apply(context.input());
@@ -79,9 +81,10 @@ public interface ContextualInitializer<I, T> {
      * require context to initialize.
      *
      * @param object The object to return.
-     * @return An initializer that will always return the given object.
      * @param <I> The type of input to initialize with.
      * @param <T> The type of object to initialize.
+     *
+     * @return An initializer that will always return the given object.
      */
     static <I, T> ContextualInitializer<I, T> of(T object) {
         return (input) -> object;

@@ -55,9 +55,10 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
      *
      * @param targetType the {@link Collection} type
      * @param elementType the element type
-     * @return a new {@link DefaultValueProvider}
      * @param <E> the element type
      * @param <O> the {@link Collection} type
+     *
+     * @return a new {@link DefaultValueProvider}
      */
     public <E, O extends Collection<E>> DefaultValueProvider<O> create(Class<O> targetType, Class<E> elementType) {
         return () -> {
@@ -103,8 +104,9 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
      *
      * @param type the {@link Collection} type
      * @param provider the provider that creates a new instance of the {@link Collection} type
-     * @return the current instance
      * @param <T> the {@link Collection} type
+     *
+     * @return the current instance
      *
      * @see SimpleCollectionFactory#withDefault(Class, Supplier)
      */

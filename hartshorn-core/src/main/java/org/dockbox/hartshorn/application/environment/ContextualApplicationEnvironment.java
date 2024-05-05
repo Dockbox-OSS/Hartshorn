@@ -457,8 +457,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * proxies for application components. The default implementation is provided by {@link DefaultProxyOrchestratorLoader}.
          *
          * @param proxyOrchestrator the {@link ProxyOrchestrator} to use
-         * @see ProxyOrchestrator
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see ProxyOrchestrator
          */
         public Configurer applicationOrchestrator(ProxyOrchestrator proxyOrchestrator) {
             return this.applicationOrchestrator(ContextualInitializer.of(proxyOrchestrator));
@@ -469,8 +471,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * proxies for application components. The default implementation is provided by {@link DefaultProxyOrchestratorLoader}.
          *
          * @param orchestrator the {@link ProxyOrchestrator} to use
-         * @see ProxyOrchestrator
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see ProxyOrchestrator
          */
         public Configurer applicationOrchestrator(ContextualInitializer<Introspector, ? extends ProxyOrchestrator> orchestrator) {
             this.proxyOrchestrator = orchestrator;
@@ -482,8 +486,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * providing the application's file system. The default implementation is {@link PathFileSystemProvider}.
          *
          * @param fileSystemProvider the {@link FileSystemProvider} to use
-         * @see FileSystemProvider
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see FileSystemProvider
          */
         public Configurer applicationFSProvider(FileSystemProvider fileSystemProvider) {
             return this.applicationFSProvider(ContextualInitializer.of(fileSystemProvider));
@@ -494,8 +500,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * providing the application's file system. The default implementation is {@link PathFileSystemProvider}.
          *
          * @param applicationFSProvider the {@link FileSystemProvider} to use
-         * @see FileSystemProvider
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see FileSystemProvider
          */
         public Configurer applicationFSProvider(ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider) {
             this.applicationFSProvider = applicationFSProvider;
@@ -507,8 +515,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * exceptions that occur during the application's lifecycle. The default implementation is {@link LoggingExceptionHandler}.
          *
          * @param exceptionHandler the {@link ExceptionHandler} to use
-         * @see ExceptionHandler
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see ExceptionHandler
          */
         public Configurer exceptionHandler(ExceptionHandler exceptionHandler) {
             return this.exceptionHandler(ContextualInitializer.of(exceptionHandler));
@@ -519,8 +529,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * exceptions that occur during the application's lifecycle. The default implementation is {@link LoggingExceptionHandler}.
          *
          * @param exceptionHandler the {@link ExceptionHandler} to use
-         * @see ExceptionHandler
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see ExceptionHandler
          */
         public Configurer exceptionHandler(ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler) {
             this.exceptionHandler = exceptionHandler;
@@ -532,8 +544,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * parsing arguments passed to the application. The default implementation is {@link StandardApplicationArgumentParser}.
          *
          * @param applicationArgumentParser the {@link ApplicationArgumentParser} to use
-         * @see ApplicationArgumentParser
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see ApplicationArgumentParser
          */
         public Configurer applicationArgumentParser(ApplicationArgumentParser applicationArgumentParser) {
             return this.applicationArgumentParser(ContextualInitializer.of(applicationArgumentParser));
@@ -544,8 +558,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * parsing arguments passed to the application. The default implementation is {@link StandardApplicationArgumentParser}.
          *
          * @param applicationArgumentParser the {@link ApplicationArgumentParser} to use
-         * @see ApplicationArgumentParser
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see ApplicationArgumentParser
          */
         public Configurer applicationArgumentParser(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser) {
             this.applicationArgumentParser = applicationArgumentParser;
@@ -557,8 +573,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * locating resources on the classpath. The default implementation is {@link ClassLoaderClasspathResourceLocator}.
          *
          * @param classpathResourceLocator the {@link ClasspathResourceLocator} to use
-         * @see ClasspathResourceLocator
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see ClasspathResourceLocator
          */
         public Configurer classpathResourceLocator(ClasspathResourceLocator classpathResourceLocator) {
             return this.classpathResourceLocator(ContextualInitializer.of(classpathResourceLocator));
@@ -569,8 +587,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * locating resources on the classpath. The default implementation is {@link ClassLoaderClasspathResourceLocator}.
          *
          * @param classpathResourceLocator the {@link ClasspathResourceLocator} to use
-         * @see ClasspathResourceLocator
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see ClasspathResourceLocator
          */
         public Configurer classpathResourceLocator(ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator) {
             this.classpathResourceLocator = classpathResourceLocator;
@@ -582,8 +602,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * annotations on elements. The default implementation is {@link VirtualHierarchyAnnotationLookup}.
          *
          * @param annotationLookup the {@link AnnotationLookup} to use
-         * @see AnnotationLookup
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see AnnotationLookup
          */
         public Configurer annotationLookup(AnnotationLookup annotationLookup) {
             return this.annotationLookup(ContextualInitializer.of(annotationLookup));
@@ -594,8 +616,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * annotations on elements. The default implementation is {@link VirtualHierarchyAnnotationLookup}.
          *
          * @param annotationLookup the {@link AnnotationLookup} to use
-         * @see AnnotationLookup
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see AnnotationLookup
          */
         public Configurer annotationLookup(ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup) {
             this.annotationLookup = annotationLookup;
@@ -607,8 +631,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * access to components and global application state. The default implementation is {@link SimpleApplicationContext}.
          *
          * @param applicationContext the {@link ApplicationContext} to use
-         * @see ApplicationContext
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see ApplicationContext
          */
         public Configurer applicationContext(ApplicationContext applicationContext) {
             return this.applicationContext(ContextualInitializer.of(applicationContext));
@@ -619,8 +645,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * access to components and global application state. The default implementation is {@link SimpleApplicationContext}.
          *
          * @param applicationContext the {@link ApplicationContext} to use
-         * @see ApplicationContext
+         *
          * @return the current {@link Configurer} instance
+         *
+         * @see ApplicationContext
          */
         public Configurer applicationContext(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext) {
             this.applicationContext = applicationContext;
@@ -633,6 +661,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          * of
          *
          * @param isBuildEnvironment whether the application is running in a build environment
+         *
          * @return the current {@link Configurer} instance
          */
         public Configurer isBuildEnvironment(ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment) {

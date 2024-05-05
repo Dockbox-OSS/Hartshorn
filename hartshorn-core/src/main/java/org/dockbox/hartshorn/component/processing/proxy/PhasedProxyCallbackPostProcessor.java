@@ -36,10 +36,10 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * are generated based on the created {@link ProxyCallback}s, and are then applied to the {@link AdvisorRegistry}
  * of the proxy factory.
  *
- * @since 0.4.9
- *
  * @see ProxyCallback
  * @see ProxyFactory
+ *
+ * @since 0.4.9
  *
  * @author Guus Lieben
  */
@@ -98,8 +98,9 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
      * @param method the method that is being processed
      * @param key the component key of the component that is being processed
      * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
-     * @return {@code true} if the method should be wrapped, {@code false} otherwise
      * @param <T> the type of the component that is being processed
+     *
+     * @return {@code true} if the method should be wrapped, {@code false} otherwise
      */
     public abstract <T> boolean preconditions(ApplicationContext context, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance);
 
@@ -112,8 +113,9 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
      * @param method the method that is being processed
      * @param key the component key of the component that is being processed
      * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
-     * @return the proxy callback that should be called before the method is invoked, or {@code null} if no proxy callback should be called
      * @param <T> the type of the component that is being processed
+     *
+     * @return the proxy callback that should be called before the method is invoked, or {@code null} if no proxy callback should be called
      */
     @Nullable
     public abstract <T> ProxyCallback<T> doBefore(ApplicationContext context, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance);
@@ -127,8 +129,9 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
      * @param method the method that is being processed
      * @param key the component key of the component that is being processed
      * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
-     * @return the proxy callback that should be called after the method is invoked, or {@code null} if no proxy callback should be called
      * @param <T> the type of the component that is being processed
+     *
+     * @return the proxy callback that should be called after the method is invoked, or {@code null} if no proxy callback should be called
      */
     @Nullable
     public abstract <T> ProxyCallback<T> doAfter(ApplicationContext context, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance);
@@ -142,8 +145,9 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
      * @param method the method that is being processed
      * @param key the component key of the component that is being processed
      * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
-     * @return the proxy callback that should be called after the method has thrown an exception, or {@code null} if no proxy callback should be called
      * @param <T> the type of the component that is being processed
+     *
+     * @return the proxy callback that should be called after the method has thrown an exception, or {@code null} if no proxy callback should be called
      */
     @Nullable
     public abstract <T> ProxyCallback<T> doAfterThrowing(ApplicationContext context, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance);

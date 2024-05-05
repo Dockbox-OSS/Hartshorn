@@ -20,9 +20,9 @@ package org.dockbox.hartshorn.hsl.token;
  * Represents the default characters that are used to represent certain tokens in the
  * HSL language.
  *
- * @since 0.6.0
- *
  * @see TokenCharacter
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

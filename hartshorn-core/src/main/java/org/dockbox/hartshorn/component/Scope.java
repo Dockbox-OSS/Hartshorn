@@ -40,9 +40,11 @@ package org.dockbox.hartshorn.component;
  * {@link Object#hashCode()} to ensure that they can be used as keys in a dictionary
  * of scopes.
  *
- * @author Guus Lieben
- * @since 0.5.0
  * @see ComponentKey#scope()
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface Scope {

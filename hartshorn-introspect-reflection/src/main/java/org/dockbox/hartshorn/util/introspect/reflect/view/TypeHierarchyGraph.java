@@ -46,9 +46,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * A B
  * </pre>
  *
- * @since 0.5.0
- *
  * @see TypeView
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

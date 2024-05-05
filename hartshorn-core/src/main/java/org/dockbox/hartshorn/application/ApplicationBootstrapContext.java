@@ -29,8 +29,9 @@ import org.slf4j.Logger;
  * @see ApplicationBuildContext
  * @see StandardApplicationContextConstructor
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ApplicationBootstrapContext extends ApplicationBuildContext {
 

@@ -25,8 +25,9 @@ package org.dockbox.hartshorn.context;
  *
  * @param <T> The type of the context.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ContextIdentity<T extends ContextView> {
 

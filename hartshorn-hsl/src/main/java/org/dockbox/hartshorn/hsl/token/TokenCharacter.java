@@ -22,9 +22,11 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * Represents a single character in a token type definition. This is used to determine the type of
  * character and how it should be handled.
  *
+ * @see TokenType#characters()
+ *
  * @since 0.6.0
  *
- * @see TokenType#characters()
+ * @author Guus Lieben
  */
 public interface TokenCharacter {
 

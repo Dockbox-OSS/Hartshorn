@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,9 @@ package org.dockbox.hartshorn.hsl.objects;
  * <p>Method references are {@link BindableNode}s, and can be bound to an instance. This allows quick
  * access to the method, without having to provide the instance as an argument.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public interface MethodReference extends CallableNode, BindableNode<MethodReference>, Finalizable {
 }

@@ -27,6 +27,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.hsl.token.TokenGraph.TokenNode;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.AssertTokenType;
@@ -48,16 +49,15 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.VariableTokenType;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.graph.GraphNode;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Default {@link TokenRegistry} implementation, supporting all default token types defined in the
  * {@link org.dockbox.hartshorn.hsl.token.type} package. This implementation is mutable, and can be
  * used to add custom token types.
  *
- * @since 0.6.0
- *
  * @see TokenRegistry
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */
@@ -164,7 +164,7 @@ public final class DefaultTokenRegistry implements MutableTokenRegistry {
         return this.characterMapping;
     }
 
-    @NotNull
+    @NonNull
     private Map<Character, TokenCharacter> buildCharacterMapping() {
         Map<Character, TokenCharacter> allCharacters = new HashMap<>();
 

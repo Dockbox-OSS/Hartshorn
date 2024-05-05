@@ -31,8 +31,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * the tokens into a syntax tree. The {@link ComplexExpressionParser} is a recursive descent
  * parser which is able to parse complex expressions.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ComplexExpressionParserAdapter implements ExpressionParser {
 

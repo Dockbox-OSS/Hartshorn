@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.config.properties.StandardPropertyHolder;
 import org.dockbox.hartshorn.config.properties.StandardURIConfigProcessor;
 import org.dockbox.hartshorn.config.properties.URIConfigProcessor;
 import org.dockbox.hartshorn.inject.InfrastructurePriority;
-import org.dockbox.hartshorn.inject.SupportPriority;
 
 @Configuration
 @RequiresActivator(UseConfigurations.class)

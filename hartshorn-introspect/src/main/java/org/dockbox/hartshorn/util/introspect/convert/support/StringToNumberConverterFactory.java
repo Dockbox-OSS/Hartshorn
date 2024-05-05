@@ -26,8 +26,6 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * Converts a {@link String} to a {@link Number}. Supports all primitive type wrappers, but not
  * primitives themselves. Supports both decimal and hexadecimal numbers.
  *
- * @since 0.5.0
- *
  * @see Integer#parseInt(String)
  * @see Integer#decode(String)
  * @see Long#parseLong(String)
@@ -39,6 +37,8 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * @see Byte#parseByte(String)
  * @see Byte#decode(String)
  * @see #isHexNumber(String)
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

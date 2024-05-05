@@ -34,9 +34,9 @@ import org.dockbox.hartshorn.util.option.Option;
  *     <li>Block comments, starting with {@code /*} and ending with <code>&#42;/</code></li>
  * </ul>
  *
- * @since 0.6.0
- *
  * @see CommentTokenList
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

@@ -71,8 +71,6 @@ import org.slf4j.LoggerFactory;
  * {@link ApplicationEnvironment} instances. Additional bindings can be added by providing a
  * {@link DefaultBindingConfigurer} to the {@link DelegatingApplicationContext.Configurer}.
  *
- * @author Guus Lieben
- *
  * @see ApplicationContext
  * @see ComponentRegistry
  * @see ComponentProvider
@@ -81,6 +79,8 @@ import org.slf4j.LoggerFactory;
  * @see ContextualEnvironmentBinderConfiguration
  *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public abstract class DelegatingApplicationContext extends DefaultApplicationAwareContext implements
         ApplicationContext {

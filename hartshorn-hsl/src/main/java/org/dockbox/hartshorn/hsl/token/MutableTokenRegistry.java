@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 /**
  * Represents a registry of tokens that can be mutated.
  *
- * @since 0.6.0
- *
  * @see TokenRegistry
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

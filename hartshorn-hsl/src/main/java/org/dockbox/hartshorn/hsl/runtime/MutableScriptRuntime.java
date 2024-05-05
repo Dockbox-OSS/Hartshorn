@@ -33,9 +33,9 @@ import org.dockbox.hartshorn.util.Customizer;
  * implementation of {@link ConditionContext}, which allows for the customization of the
  * runtime context.
  *
- * @since 0.5.0
- *
  * @see ScriptRuntime
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

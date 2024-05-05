@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * A set of metadata providing extra information about a single {@link TokenType}. Token
  * metadata is immutable, as it is part of the lexical definition of a token.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class TokenMetaData implements DelegateTokenType {
 

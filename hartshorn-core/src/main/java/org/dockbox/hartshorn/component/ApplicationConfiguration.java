@@ -40,8 +40,9 @@ import org.slf4j.LoggerFactory;
  * Configuration for core components that are required by the framework. This includes the {@link Logger} and
  * {@link ConversionService}.
  *
- * @author Guus Lieben
  * @since 0.4.6
+ *
+ * @author Guus Lieben
  */
 @Configuration
 @RequiresActivator(UseBootstrap.class)

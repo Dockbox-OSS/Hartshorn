@@ -33,11 +33,12 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> The type instance to provide.
  *
- * @author Guus Lieben
- * @since 0.5.0
- *
  * @see Provider
  * @see ObjectContainer
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public final class ComposedProvider<T> implements Provider<T> {
 

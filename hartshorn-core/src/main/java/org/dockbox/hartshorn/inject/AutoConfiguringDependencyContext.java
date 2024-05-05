@@ -18,8 +18,6 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.ScopeKey;
-import org.dockbox.hartshorn.component.processing.ComponentMemberType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.IllegalScopeException;
 import org.dockbox.hartshorn.util.ApplicationException;

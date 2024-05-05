@@ -22,8 +22,9 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * used outside the {@link org.dockbox.hartshorn.util.introspect.convert} package, and is thus
  * reserved for internal use only.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public final class Null {
 

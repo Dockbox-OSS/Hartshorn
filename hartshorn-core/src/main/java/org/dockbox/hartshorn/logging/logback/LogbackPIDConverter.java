@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,11 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
  * Logback converter that provides the PID of the current process. This is used by the
  * {@link LogbackEncoder} to offer the PID to the log message.
  *
- * @author Guus Lieben
- * @since 0.4.8
  * @see LogbackEncoder
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public class LogbackPIDConverter extends ClassicConverter {
 

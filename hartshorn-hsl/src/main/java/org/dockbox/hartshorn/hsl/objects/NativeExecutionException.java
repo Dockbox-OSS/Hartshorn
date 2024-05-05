@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * when a native function is called that is not supported by the module, or is not accessible
  * to the active runtime.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class NativeExecutionException extends ApplicationException {
     public NativeExecutionException(String message, Throwable cause) {

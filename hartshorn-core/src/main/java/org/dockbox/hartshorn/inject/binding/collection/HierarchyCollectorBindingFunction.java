@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.inject.binding.collection;
 
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.inject.ComponentObjectContainer;
 import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.LazySingletonProvider;

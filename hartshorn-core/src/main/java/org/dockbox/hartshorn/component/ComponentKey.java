@@ -42,11 +42,11 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * <p>Keys are immutable, to build a new key based on an existing key, use {@link #mutable()}.
  *
+ * @param <T> the type of the component
+ *
  * @see ComponentProvider#get(ComponentKey)
  * @see ComponentProvider#get(ComponentKey, ComponentRequestContext)
  * @see ComponentKey#builder(Class)
- *
- * @param <T> the type of the component
  *
  * @since 0.5.0
  *
@@ -82,8 +82,9 @@ public final class ComponentKey<T> implements Reportable {
      * be for the raw type.
      *
      * @param type the type of the component
-     * @return a new builder
      * @param <T> the type of the component
+     *
+     * @return a new builder
      */
     public static <T> Builder<T> builder(Class<T> type) {
         return new Builder<>(ParameterizableType.create(type));
@@ -94,8 +95,9 @@ public final class ComponentKey<T> implements Reportable {
      * retain its parameterization.
      *
      * @param type the type of the component
-     * @return a new builder
      * @param <T> the type of the component
+     *
+     * @return a new builder
      */
     public static <T> Builder<T> builder(TypeView<T> type) {
         return new Builder<>(ParameterizableType.create(type));
@@ -106,6 +108,7 @@ public final class ComponentKey<T> implements Reportable {
      * retain its parameterization.
      *
      * @param type the type of the component
+     *
      * @return a new builder
      */
     public static Builder<?> builder(ParameterizableType type) {
@@ -117,8 +120,9 @@ public final class ComponentKey<T> implements Reportable {
      * the raw type. The collector key is used to collect all components of the given type.
      *
      * @param type the type of the component
-     * @return a new component key
      * @param <T> the type of the component
+     *
+     * @return a new component key
      */
     public static <T> ComponentKey<ComponentCollection<T>> collect(Class<T> type) {
         return TypeUtils.adjustWildcards(collect(ParameterizableType.create(type)), ComponentKey.class);
@@ -129,6 +133,7 @@ public final class ComponentKey<T> implements Reportable {
      * parameterization. The collector key is used to collect all components of the given type.
      *
      * @param type the type of the component
+     *
      * @return a new component key
      */
     public static ComponentKey<ComponentCollection<?>> collect(ParameterizableType type) {
@@ -142,8 +147,9 @@ public final class ComponentKey<T> implements Reportable {
      * Creates a new component key of the given type. If the type is parameterized, the key will be for the raw type.
      *
      * @param type the type of the component
-     * @return a new component key
      * @param <T> the type of the component
+     *
+     * @return a new component key
      */
     public static <T> ComponentKey<T> of(Class<T> type) {
         return ComponentKey.builder(type).build();
@@ -154,8 +160,9 @@ public final class ComponentKey<T> implements Reportable {
      * parameterization.
      *
      * @param type the type of the component
-     * @return a new component key
      * @param <T> the type of the component
+     *
+     * @return a new component key
      */
     public static <T> ComponentKey<T> of(TypeView<T> type) {
         return ComponentKey.builder(type).build();
@@ -166,6 +173,7 @@ public final class ComponentKey<T> implements Reportable {
      * parameterization.
      *
      * @param type the type of the component
+     *
      * @return a new component key
      */
     public static ComponentKey<?> of(ParameterizableType type) {
@@ -177,8 +185,9 @@ public final class ComponentKey<T> implements Reportable {
      *
      * @param key the type of the component
      * @param name the name of the component
-     * @return a new component key
      * @param <T> the type of the component
+     *
+     * @return a new component key
      */
     public static <T> ComponentKey<T> of(Class<T> key, String name) {
         return ComponentKey.builder(key).name(name).build();
@@ -190,8 +199,9 @@ public final class ComponentKey<T> implements Reportable {
      *
      * @param type the type of the component
      * @param named the name of the component
-     * @return a new component key
      * @param <T> the type of the component
+     *
+     * @return a new component key
      */
     public static <T> ComponentKey<T> of(TypeView<T> type, String named) {
         return ComponentKey.of(type.type(), named);
@@ -226,6 +236,7 @@ public final class ComponentKey<T> implements Reportable {
      * component has no explicit scope, the default scope is the application scope of the component provider.
      *
      * @param qualifyType whether the type should be qualified with its package name
+     *
      * @return the qualified name
      */
     public String qualifiedName(boolean qualifyType) {
@@ -352,7 +363,7 @@ public final class ComponentKey<T> implements Reportable {
     public void report(DiagnosticsPropertyCollector collector) {
         collector.property("type").writeDelegate(this.type);
         collector.property("qualifier").writeDelegate(this.qualifier);
-        if (scope != null) {
+        if (this.scope != null) {
             collector.property("scope").writeDelegate(this.scope.installableScopeType());
         }
         collector.property("postConstructionAllowed").writeBoolean(this.postConstructionAllowed);
@@ -395,32 +406,35 @@ public final class ComponentKey<T> implements Reportable {
          * Sets the type of the component. If the type is parameterized, the key will be for the raw type.
          *
          * @param type the type of the component
-         * @return a new builder
          * @param <U> the type of the component
+         *
+         * @return a new builder
          */
         public <U> Builder<U> type(Class<U> type) {
-            return copyProperties(builder(type));
+            return this.copyProperties(builder(type));
         }
 
         /**
          * Sets the type of the component. If the type is parameterized, the key will retain its parameterization.
          *
          * @param type the type of the component
-         * @return a new builder
          * @param <U> the type of the component
+         *
+         * @return a new builder
          */
         public <U> Builder<U> type(TypeView<U> type) {
-            return copyProperties(builder(type));
+            return this.copyProperties(builder(type));
         }
 
         /**
          * Sets the type of the component. If the type is parameterized, the key will retain its parameterization.
          *
          * @param type the type of the component
+         *
          * @return a new builder
          */
         public Builder<?> type(ParameterizableType type) {
-            return copyProperties(builder(type));
+            return this.copyProperties(builder(type));
         }
 
         private <U> Builder<U> copyProperties(Builder<U> builder) {
@@ -435,6 +449,7 @@ public final class ComponentKey<T> implements Reportable {
          * a provider based on the priority of the key.
          *
          * @param strategy the strategy that should be used to select a provider for this component
+         *
          * @return this builder
          */
         public Builder<T> strategy(ProviderSelectionStrategy strategy) {
@@ -446,6 +461,7 @@ public final class ComponentKey<T> implements Reportable {
          * Sets the name of the component. This is a convenience method for setting a qualifier with the given name.
          *
          * @param name the name of the component
+         *
          * @return this builder
          */
         public Builder<T> name(String name) {
@@ -456,6 +472,7 @@ public final class ComponentKey<T> implements Reportable {
          * Adds a qualifier to the component. Qualifiers are used to differentiate between components of the same type.
          *
          * @param qualifier the qualifier to add
+         *
          * @return this builder
          */
         public Builder<T> qualifier(QualifierKey<?> qualifier) {
@@ -467,6 +484,7 @@ public final class ComponentKey<T> implements Reportable {
          * Adds multiple qualifiers to the component. Qualifiers are used to differentiate between components of the same type.
          *
          * @param qualifiers the qualifiers to add
+         *
          * @return this builder
          */
         public Builder<T> qualifiers(QualifierKey<?>... qualifiers) {
@@ -478,6 +496,7 @@ public final class ComponentKey<T> implements Reportable {
          * Adds multiple qualifiers to the component. Qualifiers are used to differentiate between components of the same type.
          *
          * @param qualifiers the qualifiers to add
+         *
          * @return this builder
          */
         public Builder<T> qualifiers(Set<QualifierKey<?>> qualifiers) {
@@ -489,6 +508,7 @@ public final class ComponentKey<T> implements Reportable {
          * Sets the scope of the component. The scope determines the lifecycle of the component.
          *
          * @param scope the scope of the component
+         *
          * @return this builder
          */
         public Builder<T> scope(Scope scope) {
@@ -500,6 +520,7 @@ public final class ComponentKey<T> implements Reportable {
          * Sets whether {@link PostConstruct} callbacks of the component should be activated on provisioning.
          *
          * @param postConstructionAllowed whether post-construction should be activated on provisioning
+         *
          * @return this builder
          */
         public Builder<T> postConstructionAllowed(boolean postConstructionAllowed) {
@@ -516,6 +537,7 @@ public final class ComponentKey<T> implements Reportable {
          * up to the component provider to decide whether strict-mode should be applied.
          *
          * @param strict whether the lookup for this component should be strict
+         *
          * @return this builder
          */
         public Builder<T> strict(boolean strict) {

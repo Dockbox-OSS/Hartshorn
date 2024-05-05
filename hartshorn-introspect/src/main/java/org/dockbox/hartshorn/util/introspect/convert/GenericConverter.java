@@ -26,8 +26,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * interface can be used either directly, or through a {@link ConversionService}. Implementations
  * should be thread-safe.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface GenericConverter {
 

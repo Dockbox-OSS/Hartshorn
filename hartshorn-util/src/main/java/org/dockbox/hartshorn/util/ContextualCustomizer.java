@@ -23,9 +23,9 @@ import org.dockbox.hartshorn.context.ContextView;
  * {@link Customizer} but allows for {@link ContextView context} to be provided alongside the configuration
  * target.
  *
- * @author Guus Lieben
- *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ContextualCustomizer<T> {
 
@@ -43,6 +43,7 @@ public interface ContextualCustomizer<T> {
      * invoked, the given customizer is invoked first, and then this customizer is invoked.
      *
      * @param before The customizer to invoke first.
+     *
      * @return A customizer that composes this customizer with the given customizer.
      */
     default ContextualCustomizer<T> compose(ContextualCustomizer<T> before) {
@@ -56,8 +57,9 @@ public interface ContextualCustomizer<T> {
      * Returns a customizer that does nothing. This can be used to accept the default configuration without
      * further modification.
      *
-     * @return A customizer that does nothing.
      * @param <T> The type of object to customize.
+     *
+     * @return A customizer that does nothing.
      */
     static <T> ContextualCustomizer<T> useDefaults() {
         return (context, target) -> {};

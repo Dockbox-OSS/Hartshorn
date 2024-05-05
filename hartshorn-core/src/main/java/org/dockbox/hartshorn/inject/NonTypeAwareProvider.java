@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Tristate;
-import org.dockbox.hartshorn.util.option.Option;
-
 /**
  * A {@link Provider} that is not aware of the type it provides. This is useful when the type
  * is not known at compile time, but only at runtime (e.g. in suppliers).

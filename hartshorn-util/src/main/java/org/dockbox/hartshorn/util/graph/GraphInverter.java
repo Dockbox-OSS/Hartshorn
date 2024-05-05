@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,10 @@ public class GraphInverter {
      *
      * @param graph the graph to invert
      * @param root the value of the node to use as the new root node
-     * @return the inverted graph
      * @param <T> the type of the value of the node
+     *
+     * @return the inverted graph
+     *
      * @throws GraphException if the graph could not be inverted
      */
     public <T> Graph<T> invertGraphForValue(Graph<T> graph, T root) throws GraphException {
@@ -51,8 +53,10 @@ public class GraphInverter {
      *
      * @param graph the graph to invert
      * @param rule the rule to match the new root node
-     * @return the inverted graph
      * @param <T> the type of the value of the node
+     *
+     * @return the inverted graph
+     *
      * @throws GraphException if the graph could not be inverted
      */
     public <T> Graph<T> invertGraph(Graph<T> graph, Predicate<T> rule) throws GraphException {

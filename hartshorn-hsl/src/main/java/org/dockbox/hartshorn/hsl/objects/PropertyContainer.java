@@ -25,10 +25,12 @@ import org.dockbox.hartshorn.hsl.token.Token;
  * Represents a class instance which is capable of carrying properties. This instance can
  * be virtual or native, depending on its implementation.
  *
- * @author Guus Lieben
- * @since 0.4.12
  * @see org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance
  * @see org.dockbox.hartshorn.hsl.objects.external.ExternalInstance
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public interface PropertyContainer {
 

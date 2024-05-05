@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import java.util.function.Consumer;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentStoreCallback;

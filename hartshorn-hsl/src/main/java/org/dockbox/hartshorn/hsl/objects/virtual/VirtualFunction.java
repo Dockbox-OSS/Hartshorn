@@ -36,8 +36,9 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
  * parameters. The function can carry a variety of additional information such as the body, and
  * its body.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class VirtualFunction extends AbstractFinalizable implements MethodReference {
 

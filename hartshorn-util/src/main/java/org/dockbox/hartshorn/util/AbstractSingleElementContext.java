@@ -26,8 +26,9 @@ import org.dockbox.hartshorn.context.DefaultContext;
  *
  * @param <I> The type of the input object.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractSingleElementContext<I> extends DefaultContext implements SingleElementContext<I> {
 
@@ -55,8 +56,9 @@ public abstract class AbstractSingleElementContext<I> extends DefaultContext imp
      * current context.
      *
      * @param input The input object to use in the clone.
-     * @return The cloned context.
      * @param <T> The type of the input object.
+     *
+     * @return The cloned context.
      */
     protected abstract <T> SingleElementContext<T> clone(@NonNull T input);
 }

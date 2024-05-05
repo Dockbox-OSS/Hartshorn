@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.inject;
 
-import java.util.function.Supplier;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
