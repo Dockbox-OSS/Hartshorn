@@ -121,7 +121,6 @@
                 <module>hartshorn-config</module>
                 <module>hartshorn-config-jackson</module>
                 <module>hartshorn-i18n</module>
-                <module>hartshorn-commands</module>
                 <module>hartshorn-assembly/pom.assembly.xml</module>
             </modules>
         </profile>

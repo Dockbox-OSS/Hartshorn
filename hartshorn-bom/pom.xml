@@ -95,11 +95,6 @@
                 <artifactId>hartshorn-i18n</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-commands</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
             <!-- Third-party -->
             <dependency>
