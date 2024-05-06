@@ -32,6 +32,8 @@ import java.util.Objects;
  * @param <T> the type of the proxy. This is only a utility type that is used to allow the interceptor to be
  *           generic.
  *
+ * @param <R> the return type of the method call
+ *
  * @since 0.4.10
  *
  * @author Guus Lieben

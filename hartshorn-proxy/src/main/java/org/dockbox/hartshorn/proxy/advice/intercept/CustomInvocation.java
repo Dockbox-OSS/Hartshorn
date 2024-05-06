@@ -25,6 +25,8 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * invocation. When used in conjunction with {@link MethodInterceptorContext}, this allows for fine-grained
  * control over the invocation.
  *
+ * @param <T> the return type of the invocation
+ *
  * @since 0.4.10
  *
  * @author Guus Lieben

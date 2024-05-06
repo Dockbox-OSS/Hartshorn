@@ -21,6 +21,8 @@ package org.dockbox.hartshorn.proxy;
  * is used to provide a common interface for all proxies, as well as provide easy
  * access to the proxy's {@link ProxyManager}.
  *
+ * @param <T> the type of the proxied object
+ *
  * @since 0.4.10
  *
  * @author Guus Lieben

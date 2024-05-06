@@ -23,6 +23,8 @@ import org.dockbox.hartshorn.context.ContextView;
  * {@link Customizer} but allows for {@link ContextView context} to be provided alongside the configuration
  * target.
  *
+ * @param <T> The type of object to customize.
+ *
  * @since 0.5.0
  *
  * @author Guus Lieben

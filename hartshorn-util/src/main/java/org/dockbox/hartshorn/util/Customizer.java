@@ -20,6 +20,8 @@ package org.dockbox.hartshorn.util;
  * A functional interface for customizing objects. This interface is similar to {@link java.util.function.Consumer} but
  * allows for composition of customizers, and is the common interface for all customizers in Hartshorn.
  *
+ * @param <T> The type of object to customize.
+ *
  * @since 0.5.0
  *
  * @author Guus Lieben

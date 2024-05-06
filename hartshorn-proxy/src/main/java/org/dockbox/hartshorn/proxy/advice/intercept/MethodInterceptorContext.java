@@ -26,6 +26,7 @@ import java.util.concurrent.Callable;
  * utility callables to call the underlying method.
  *
  * @param <T> the type of the proxy object
+ * @param <R> the return type of the method
  *
  * @since 0.4.10
  *
