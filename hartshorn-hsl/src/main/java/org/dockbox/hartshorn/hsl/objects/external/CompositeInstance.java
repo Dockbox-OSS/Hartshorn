@@ -39,6 +39,15 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <T>> ...
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class CompositeInstance<T> extends VirtualInstance implements ExternalObjectReference {
 
     private final TypeView<T> firstExternalClass;

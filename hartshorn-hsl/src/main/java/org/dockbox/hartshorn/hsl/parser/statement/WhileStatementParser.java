@@ -27,6 +27,15 @@ import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.hsl.token.type.LoopTokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <WhileStatement>> ...
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class WhileStatementParser extends AbstractBodyStatementParser<WhileStatement> {
 
     @Override

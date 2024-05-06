@@ -34,6 +34,16 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <Void> ...
+ * @param <ClassStatement>> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ClassStatementInterpreter implements ASTNodeInterpreter<Void, ClassStatement> {
 
     @Override

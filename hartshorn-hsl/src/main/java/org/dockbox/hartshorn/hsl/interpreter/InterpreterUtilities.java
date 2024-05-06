@@ -23,6 +23,13 @@ import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public final class InterpreterUtilities {
 
     public static boolean isTruthy(Object object) {

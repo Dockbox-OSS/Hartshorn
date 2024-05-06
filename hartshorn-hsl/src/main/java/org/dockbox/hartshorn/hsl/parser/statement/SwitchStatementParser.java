@@ -38,6 +38,15 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <SwitchStatement>> ...
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
 
     private static final String SWITCH = "switch";

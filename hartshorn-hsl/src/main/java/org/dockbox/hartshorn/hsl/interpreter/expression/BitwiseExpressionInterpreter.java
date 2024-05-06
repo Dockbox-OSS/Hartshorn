@@ -19,6 +19,16 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 import org.dockbox.hartshorn.hsl.ast.expression.BitwiseExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <Object> ...
+ * @param <BitwiseExpression>> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class BitwiseExpressionInterpreter extends BitwiseInterpreter<Object, BitwiseExpression> {
 
     @Override

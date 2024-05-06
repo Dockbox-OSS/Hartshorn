@@ -23,6 +23,16 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <Object> ...
+ * @param <SetExpression>> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SetExpressionInterpreter implements ASTNodeInterpreter<Object, SetExpression> {
 
     @Override

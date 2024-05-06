@@ -24,6 +24,16 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <R> ...
+ * @param <T> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNodeInterpreter<R, T> {
 
     protected Object getBitwiseResult(Token operator, Object left, Object right) {

@@ -22,6 +22,16 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <Void> ...
+ * @param <IfStatement>> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class IfStatementInterpreter implements ASTNodeInterpreter<Void, IfStatement> {
 
     @Override

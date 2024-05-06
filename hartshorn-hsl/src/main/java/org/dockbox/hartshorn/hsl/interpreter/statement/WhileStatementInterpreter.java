@@ -22,6 +22,16 @@ import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <Void> ...
+ * @param <WhileStatement>> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class WhileStatementInterpreter implements ASTNodeInterpreter<Void, WhileStatement> {
 
     @Override

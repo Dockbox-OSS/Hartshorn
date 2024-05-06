@@ -29,6 +29,13 @@ import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public interface ParametricStatementParser {
 
     default List<Parameter> parameters(TokenParser parser, TokenStepValidator validator, String functionName, int expectedNumberOfArguments, TokenType functionType) {

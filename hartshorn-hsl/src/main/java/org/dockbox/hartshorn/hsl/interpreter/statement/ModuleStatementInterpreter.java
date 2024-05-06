@@ -31,6 +31,16 @@ import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <Void> ...
+ * @param <ModuleStatement>> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ModuleStatementInterpreter implements ASTNodeInterpreter<Void, ModuleStatement> {
 
     @Override

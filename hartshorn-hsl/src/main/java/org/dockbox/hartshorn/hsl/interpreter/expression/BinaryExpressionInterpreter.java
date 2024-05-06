@@ -29,6 +29,16 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <Object> ...
+ * @param <BinaryExpression>> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, BinaryExpression> {
 
     @Override

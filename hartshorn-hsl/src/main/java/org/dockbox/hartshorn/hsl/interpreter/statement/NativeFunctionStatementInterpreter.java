@@ -21,6 +21,16 @@ import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <Void> ...
+ * @param <NativeFunctionStatement>> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class NativeFunctionStatementInterpreter implements ASTNodeInterpreter<Void, NativeFunctionStatement> {
 
     @Override

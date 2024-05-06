@@ -26,6 +26,13 @@ import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public interface Interpreter {
 
     Object evaluate(Expression expression);
