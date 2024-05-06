@@ -27,6 +27,15 @@ import org.dockbox.hartshorn.config.annotations.SerializationSource;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1062 Add documentation
+ *
+ * @param <A> ...
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public abstract class AbstractSerializerPostProcessor<A extends Annotation> extends ServiceAnnotatedMethodInterceptorPostProcessor<A> {
 
     @Override

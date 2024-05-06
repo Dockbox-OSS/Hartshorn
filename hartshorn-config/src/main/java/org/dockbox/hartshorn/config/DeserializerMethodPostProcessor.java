@@ -26,6 +26,15 @@ import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1062 Add documentation
+ *
+ * @param <Deserialize>> ...
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class DeserializerMethodPostProcessor extends AbstractSerializerPostProcessor<Deserialize> {
 
     @Override

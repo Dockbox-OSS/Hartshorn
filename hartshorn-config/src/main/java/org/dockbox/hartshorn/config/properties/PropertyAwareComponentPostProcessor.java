@@ -21,6 +21,13 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.config.ConfigurationURIContextList;
 import org.dockbox.hartshorn.config.ObjectMappingException;
 
+/**
+ * TODO: #1062 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public abstract class PropertyAwareComponentPostProcessor extends ComponentPostProcessor {
 
     protected void verifyPropertiesAvailable(ApplicationContext context, PropertyHolder propertyHolder) throws ObjectMappingException {

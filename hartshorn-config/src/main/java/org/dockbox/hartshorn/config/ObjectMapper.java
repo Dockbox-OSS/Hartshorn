@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,13 @@ import java.util.Map;
 import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1062 Add documentation
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
+ */
 public interface ObjectMapper {
 
     <T> Option<T> read(String content, Class<T> type) throws ObjectMappingException;

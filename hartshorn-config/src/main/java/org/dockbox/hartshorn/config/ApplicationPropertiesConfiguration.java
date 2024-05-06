@@ -29,6 +29,13 @@ import org.dockbox.hartshorn.config.properties.StandardURIConfigProcessor;
 import org.dockbox.hartshorn.config.properties.URIConfigProcessor;
 import org.dockbox.hartshorn.inject.InfrastructurePriority;
 
+/**
+ * TODO: #1062 Add documentation
+ *
+ * @since 0.4.10
+ *
+ * @author Guus Lieben
+ */
 @Configuration
 @RequiresActivator(UseConfigurations.class)
 @IncludeResourceConfiguration({"fs:application", "classpath:application"})

@@ -23,6 +23,13 @@ import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.context.ContextKey;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
 
+/**
+ * TODO: #1062 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class ConfigurationURIContextList extends DefaultProvisionContext {
 
     public static final ContextIdentity<ConfigurationURIContextList> CONTEXT_KEY = ContextKey.builder(ConfigurationURIContextList.class)
