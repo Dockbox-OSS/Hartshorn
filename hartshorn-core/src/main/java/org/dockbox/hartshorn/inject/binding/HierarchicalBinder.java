@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.component.ComponentKey;
  * @see BindingHierarchy
  * @see Binder
  *
- * @since 0.5.0
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */

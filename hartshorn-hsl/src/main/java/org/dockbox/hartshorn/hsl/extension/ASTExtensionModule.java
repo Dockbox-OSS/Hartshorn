@@ -45,7 +45,7 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * @param <T> The type of AST node that this module is responsible for.
  * @param <R> The return type of the interpreter for this module.
  *
- * @since 0.5.0
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

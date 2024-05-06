@@ -55,7 +55,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @see ScopedProviderOwner
  * @see HierarchicalComponentProvider
  *
- * @since 0.5.0
+ * @since 0.4.10
  *
  * @author Guus Lieben
  */

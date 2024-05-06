@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @see Hartshorn#VERSION
  *
- * @since 0.5.0
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

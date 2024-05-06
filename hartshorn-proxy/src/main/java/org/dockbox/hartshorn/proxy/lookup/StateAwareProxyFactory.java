@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
  *
  * @param <T> the type of the proxy
  *
- * @since 0.4.10
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

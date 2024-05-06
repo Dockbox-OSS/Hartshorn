@@ -26,7 +26,7 @@ import java.util.Objects;
  * @param <K> The type of the key represented by this tuple
  * @param <V> The type of the value represented by this tuple
  *
- * @since 0.4.0
+ * @since 0.4.1
  *
  * @author Guus Lieben
  */

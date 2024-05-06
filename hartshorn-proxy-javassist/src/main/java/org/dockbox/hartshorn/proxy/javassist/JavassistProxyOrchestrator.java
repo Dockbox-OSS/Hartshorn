@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
  * @see JavassistProxyLookup
  * @see JavassistProxyFactory
  *
- * @since 0.5.0
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.application;
 /**
  * The utility type to grant easy access to project metadata.
  *
- * @since 0.4.0
+ * @since 0.4.1
  *
  * @author Guus Lieben
  */

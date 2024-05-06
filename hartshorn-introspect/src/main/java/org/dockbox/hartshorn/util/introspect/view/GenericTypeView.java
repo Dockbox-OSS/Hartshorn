@@ -23,7 +23,7 @@ package org.dockbox.hartshorn.util.introspect.view;
  *
  * @param <T> the type of the element's generic type
  *
- * @since 0.4.13
+ * @since 0.4.8
  *
  * @author Guus Lieben
  */

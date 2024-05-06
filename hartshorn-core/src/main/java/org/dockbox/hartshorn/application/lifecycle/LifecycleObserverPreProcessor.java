@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.component.processing.ProcessingPriority;
  * @see LifecycleObservable
  * @see Observer
  *
- * @since 0.4.9
+ * @since 0.4.8
  *
  * @author Guus Lieben
  */

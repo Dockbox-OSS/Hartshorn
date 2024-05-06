@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
  * Sensible default configuration for internationalization services. The exposed {@link TranslationBundle}
  * may be used to configure application-level translations.
  *
- * @since 0.4.8
+ * @since 0.4.10
  *
  * @author Guus Lieben
  */

@@ -25,7 +25,7 @@ import jakarta.inject.Inject;
  * Default implementation of {@link TokenStepValidator}, based around the {@link TokenParser#consume(TokenType, String)}
  * method.
  *
- * @since 0.5.0
+ * @since 0.4.13
  *
  * @author Guus Lieben
  */

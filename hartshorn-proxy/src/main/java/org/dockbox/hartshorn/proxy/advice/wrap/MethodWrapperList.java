@@ -27,7 +27,7 @@ import java.util.Collections;
  *
  * @param <T> The type of the proxy instance
  *
- * @since 0.4.10
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

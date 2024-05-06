@@ -76,7 +76,7 @@ import org.slf4j.LoggerFactory;
  * literal or comment). Newlines are used to determine the current line number, which is used to
  * report errors.
  *
- * @since 0.5.0
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

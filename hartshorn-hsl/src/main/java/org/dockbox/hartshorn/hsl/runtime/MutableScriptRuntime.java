@@ -35,7 +35,7 @@ import org.dockbox.hartshorn.util.Customizer;
  *
  * @see ScriptRuntime
  *
- * @since 0.5.0
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

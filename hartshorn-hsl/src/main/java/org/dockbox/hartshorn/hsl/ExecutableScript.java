@@ -41,7 +41,7 @@ import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
  * @see ScriptRuntime
  * @see ScriptContext
  *
- * @since 0.5.0
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */

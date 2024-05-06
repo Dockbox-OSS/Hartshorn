@@ -44,7 +44,7 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
  * @see Binder
  * @see BindingHierarchy
  *
- * @since 0.4.1
+ * @since 0.4.11
  *
  * @author Guus Lieben
  */

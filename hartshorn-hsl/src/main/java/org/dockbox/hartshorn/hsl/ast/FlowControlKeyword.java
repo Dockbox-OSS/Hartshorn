@@ -21,7 +21,7 @@ package org.dockbox.hartshorn.hsl.ast;
  * to the interpreter that a loop or switch statement should be exited, or that the current iteration
  * should be skipped.
  *
- * @since 0.6.0
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */

@@ -39,7 +39,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @see Provider
  * @see SupplierProvider
  *
- * @since 0.4.3
+ * @since 0.4.4
  *
  * @author Guus Lieben
  */

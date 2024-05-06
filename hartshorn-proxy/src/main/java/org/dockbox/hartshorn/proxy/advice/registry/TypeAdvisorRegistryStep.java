@@ -25,7 +25,7 @@ package org.dockbox.hartshorn.proxy.advice.registry;
  *
  * @see AdvisorRegistry
  *
- * @since 0.5.0
+ * @since 0.4.9
  * @author Guus Lieben
  */
 public interface TypeAdvisorRegistryStep<S, T> {

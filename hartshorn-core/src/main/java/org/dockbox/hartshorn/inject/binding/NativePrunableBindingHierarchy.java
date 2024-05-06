@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.inject.Provider;
  *
  * @see BindingHierarchy
  *
- * @since 0.4.3
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

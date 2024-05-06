@@ -24,7 +24,7 @@ package org.dockbox.hartshorn.util.introspect.reflect;
  * @param <T> the type of the field
  * @param <P> the type of the instance
  *
- * @since 0.5.0
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

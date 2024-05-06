@@ -43,7 +43,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
  *
  * @see Property
  *
- * @since 0.4.9
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */

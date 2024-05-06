@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.reporting.component;
 /**
  * The attributes by which components can be grouped.
  *
- * @since 0.5.0
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

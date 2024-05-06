@@ -24,7 +24,7 @@ package org.dockbox.hartshorn.proxy.advice.wrap;
  *
  * @param <T> the type of the proxy method
  *
- * @since 0.4.10
+ * @since 0.4.9
  *
  * @author Guus Lieben
  */

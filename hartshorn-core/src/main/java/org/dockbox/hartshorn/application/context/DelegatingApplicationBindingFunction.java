@@ -37,7 +37,7 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
  * @see ApplicationContext
  * @see BindingFunction
  *
- * @since 0.5.0
+ * @since 0.4.11
  *
  * @author Guus Lieben
  */

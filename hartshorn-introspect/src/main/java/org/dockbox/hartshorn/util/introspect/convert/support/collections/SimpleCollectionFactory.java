@@ -42,7 +42,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * otherwise will attempt to create collections using the default constructor or a constructor with a single
  * int parameter (for capacity).
  *
- * @since 0.6.0
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

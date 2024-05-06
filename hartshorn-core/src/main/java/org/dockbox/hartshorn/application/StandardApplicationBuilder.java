@@ -48,7 +48,7 @@ import org.dockbox.hartshorn.util.StreamableConfigurer;
  *
  * @see ApplicationContextConstructor
  *
- * @since 0.4.8
+ * @since 0.4.13
  *
  * @author Guus Lieben
  */

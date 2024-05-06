@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
  * @see ExecutableScript
  * @see ValidateExpressionRuntime
  *
- * @since 0.5.0
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */

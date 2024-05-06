@@ -22,7 +22,7 @@ import java.nio.file.Path;
 /**
  * Prints a banner from a given resource path. The resource path is expected to be a (plain) text file.
  *
- * @since 0.5.0
+ * @since 0.4.13
  *
  * @author Guus Lieben
  */

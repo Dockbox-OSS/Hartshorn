@@ -44,7 +44,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @see ConditionContext
  * @see ConditionResult
  *
- * @since 0.5.0
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */

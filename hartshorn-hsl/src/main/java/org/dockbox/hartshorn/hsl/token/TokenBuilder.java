@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  *
  * @see Token
  *
- * @since 0.6.0
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

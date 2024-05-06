@@ -57,7 +57,7 @@ import jakarta.inject.Inject;
  *
  * @see ASTNodeParser
  *
- * @since 0.5.0
+ * @since 0.4.13
  *
  * @author Guus Lieben
  */

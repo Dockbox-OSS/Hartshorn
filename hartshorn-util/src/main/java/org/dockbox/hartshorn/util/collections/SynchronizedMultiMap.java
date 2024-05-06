@@ -31,7 +31,7 @@ import java.util.Map;
  * @see MultiMap
  * @see StandardMultiMap
  *
- * @since 0.5.0
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */

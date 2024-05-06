@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
  *
  * @see ComponentKey#view()
  *
- * @since 0.5.0
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

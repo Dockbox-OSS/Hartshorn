@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  * Utility class for functionalities related to types. Within the context of this class, types can either
  * be primitives which require (un)boxing, or {@link Class} instances.
  *
- * @since 0.4.13
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

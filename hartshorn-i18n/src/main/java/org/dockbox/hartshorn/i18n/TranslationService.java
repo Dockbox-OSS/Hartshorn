@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * A service which provides translation functionality. It is used to retrieve {@link Message} instances,
  * which can be used to translate a message to a specific language.
  *
- * @since 0.4.8
+ * @since 0.4.1
  *
  * @author Guus Lieben
  */

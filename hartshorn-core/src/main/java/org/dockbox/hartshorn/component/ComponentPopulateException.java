@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  * populated with values but the values are not compatible with the component's fields, or a value cannot
  * be resolved.
  *
- * @since 0.5.0
+ * @since 0.4.8
  *
  * @author Guus Lieben
  */

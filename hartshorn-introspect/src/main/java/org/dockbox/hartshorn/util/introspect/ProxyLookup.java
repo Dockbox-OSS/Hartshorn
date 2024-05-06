@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * Direct use of an implementation of this interface is not guaranteed to be accurate, and should be used with
  * caution.
  *
- * @since 0.4.10
+ * @since 0.4.9
  *
  * @author Guus Lieben
  */

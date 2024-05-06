@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * <p>Scope implementations remain up to the container to define. The container will typically provide
  * a default application scope, which does not need to be defined explicitly.
  *
- * @since 0.6.0
+ * @since 0.5.0
  *
  * @see org.dockbox.hartshorn.component.Scope
  *

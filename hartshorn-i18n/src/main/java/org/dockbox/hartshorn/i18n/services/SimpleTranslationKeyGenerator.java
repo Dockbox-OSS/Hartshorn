@@ -31,7 +31,7 @@ import jakarta.inject.Inject;
  * method name of the method that is annotated with {@link InjectTranslation}. If the method
  * is in a component, the component ID is prepended to the key.
  *
- * @since 0.4.8
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

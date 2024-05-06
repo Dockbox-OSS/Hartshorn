@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @see org.dockbox.hartshorn.component.processing.ServiceActivator
  * @see org.dockbox.hartshorn.component.condition.RequiresActivator
  *
- * @since 0.4.11
+ * @since 0.4.9
  *
  * @author Guus Lieben
  */

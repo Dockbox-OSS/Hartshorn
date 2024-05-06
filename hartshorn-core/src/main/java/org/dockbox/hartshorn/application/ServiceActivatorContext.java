@@ -45,7 +45,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * @see ServiceActivator
  * @see ActivatorHolder
  *
- * @since 0.4.11
+ * @since 0.4.13
  *
  * @author Guus Lieben
  */

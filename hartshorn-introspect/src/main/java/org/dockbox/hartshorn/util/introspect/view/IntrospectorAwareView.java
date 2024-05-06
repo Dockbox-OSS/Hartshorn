@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 /**
  * Specialized view that is aware of the {@link Introspector} that created it.
  *
- * @since 0.4.13
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

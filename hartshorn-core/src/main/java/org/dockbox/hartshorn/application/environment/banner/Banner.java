@@ -24,7 +24,7 @@ import org.slf4j.Logger;
  *
  * @see HartshornBanner
  *
- * @since 0.5.0
+ * @since 0.4.13
  *
  * @author Guus Lieben
  */

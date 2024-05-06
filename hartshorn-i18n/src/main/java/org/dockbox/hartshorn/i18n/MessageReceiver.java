@@ -25,7 +25,7 @@ import java.util.Locale;
  *
  * @see Message
  *
- * @since 0.4.8
+ * @since 0.4.1
  *
  * @author Guus Lieben
  */

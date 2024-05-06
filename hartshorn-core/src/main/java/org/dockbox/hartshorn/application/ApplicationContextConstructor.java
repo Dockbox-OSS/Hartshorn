@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
  *
  * @see StandardApplicationContextConstructor
  *
- * @since 0.5.0
+ * @since 0.4.9
  *
  * @author Guus Lieben
  */

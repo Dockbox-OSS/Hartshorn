@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.util.introspect.scan;
  * A reference to a {@link Class} that can be used to load the class, or to obtain information about the class.
  * Implementations of this interface are expected to be immutable.
  *
- * @since 0.4.13
+ * @since 0.4.9
  *
  * @author Guus Lieben
  */
