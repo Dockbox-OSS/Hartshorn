@@ -72,6 +72,13 @@ public class JacksonConfiguration {
         return new StandardJacksonObjectMapperConfigurator(introspector);
     }
 
+    /**
+     * TODO: #1063 Add documentation
+     *
+     * @since 0.6.0
+     *
+     * @author Guus Lieben
+     */
     @Configuration
     @RequiresClass("com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper")
     public static class JacksonPropertiesMapperConfiguration {
@@ -84,6 +91,13 @@ public class JacksonConfiguration {
         }
     }
 
+    /**
+     * TODO: #1063 Add documentation
+     *
+     * @since 0.6.0
+     *
+     * @author Guus Lieben
+     */
     @Configuration
     @RequiresClass("com.fasterxml.jackson.databind.json.JsonMapper")
     public static class JacksonJsonMapperConfiguration {
@@ -96,6 +110,13 @@ public class JacksonConfiguration {
         }
     }
 
+    /**
+     * TODO: #1063 Add documentation
+     *
+     * @since 0.6.0
+     *
+     * @author Guus Lieben
+     */
     @Configuration
     @RequiresClass("com.fasterxml.jackson.dataformat.toml.TomlMapper")
     public static class JacksonTomlMapperConfiguration {
@@ -108,6 +129,13 @@ public class JacksonConfiguration {
         }
     }
 
+    /**
+     * TODO: #1063 Add documentation
+     *
+     * @since 0.6.0
+     *
+     * @author Guus Lieben
+     */
     @Configuration
     @RequiresClass("com.fasterxml.jackson.dataformat.xml.XmlMapper")
     public static class JacksonXmlMapperConfiguration {
@@ -120,6 +148,13 @@ public class JacksonConfiguration {
         }
     }
 
+    /**
+     * TODO: #1063 Add documentation
+     *
+     * @since 0.6.0
+     *
+     * @author Guus Lieben
+     */
     @Configuration
     @RequiresClass("com.fasterxml.jackson.dataformat.yaml.YAMLMapper")
     public static class JacksonYamlMapperConfiguration {

@@ -22,6 +22,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1063 Add documentation
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class SimpleJacksonDataMapperRegistry implements JacksonDataMapperRegistry {
 
     private final Map<FileFormat, JacksonDataMapper> dataMappers = new ConcurrentHashMap<>();
