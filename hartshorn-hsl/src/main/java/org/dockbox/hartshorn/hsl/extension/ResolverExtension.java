@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,13 @@ import org.dockbox.hartshorn.hsl.semantic.Resolver;
  * is used during the semantic analysis phase of the compilation process.
  *
  * @param <T> The type of the custom AST node.
+ *
+ * @see Resolver
+ * @see CustomASTNode
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ResolverExtension<T extends ASTNode & CustomASTNode<?, ?>> {

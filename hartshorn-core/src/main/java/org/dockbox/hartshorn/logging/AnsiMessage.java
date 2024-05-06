@@ -33,6 +33,10 @@ package org.dockbox.hartshorn.logging;
  * @param message the message to print
  * @param color the color of the message
  * @param style the style of the message
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public record AnsiMessage(String message, AnsiColor color, AnsiStyle style) {
 

@@ -29,6 +29,12 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  * @param componentKey the component key of this node within the current container
  * @param origin the origin view that this node was discovered from
  * @param <T> the type of the introspectable type view
+ *
+ * @see ComponentDiscoveryList
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public record TypePathNode<T>(TypeView<T> type, ComponentKey<T> componentKey, View origin) {
 

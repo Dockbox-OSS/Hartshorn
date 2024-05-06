@@ -25,6 +25,10 @@ import org.dockbox.hartshorn.context.ContextView;
  * Represents the type of a component, typically represented through {@link Component#type()} or
  * {@link ComponentContainer#componentType()}.
  *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
+ *
  * @deprecated Component stereotypes and metadata should be used instead of this enum.
  */
 @Deprecated(since = "0.6.0", forRemoval = true)
