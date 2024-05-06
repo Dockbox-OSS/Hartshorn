@@ -28,6 +28,15 @@ import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeParamete
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1059 Add documentation
+ *
+ * @param <T>> ...
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ReflectionParameterizedTypeParametersIntrospector<T> extends AbstractReflectionTypeParametersIntrospector {
 
     private final ParameterizedType parameterizedType;

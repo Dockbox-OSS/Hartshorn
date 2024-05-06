@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,13 @@ import java.lang.reflect.TypeVariable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * TODO: #1059 Add documentation
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ReflectionTypeVariablesIntrospector implements TypeVariablesIntrospector {
 
     private final Introspector introspector;

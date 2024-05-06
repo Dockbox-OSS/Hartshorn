@@ -31,6 +31,15 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1059 Add documentation
+ *
+ * @param <T>> ...
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView implements ParameterView<T> {
 
     private final Introspector introspector;
