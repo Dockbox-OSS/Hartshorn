@@ -23,6 +23,15 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <T>> ...
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ModifiableComponentProcessingContext<T> extends ComponentProcessingContext<T> {
 
     private final ComponentStoreCallback componentStoreCallback;

@@ -55,6 +55,13 @@ import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotat
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 public final class ContextualApplicationEnvironment implements ObservableApplicationEnvironment, ModifiableContextCarrier {
 
     private final Set<Observer> observers = ConcurrentHashMap.newKeySet();
@@ -307,6 +314,13 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         return this;
     }
 
+    /**
+     * TODO: #1060 Add documentation
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer {
 
         private ContextualInitializer<Properties, Boolean> enableBanner = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.banner.enabled", "true")));

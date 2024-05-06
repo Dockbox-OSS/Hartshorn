@@ -20,6 +20,15 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <T>> ...
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class ManagedComponentKeyDependencyContext<T> extends ManagedComponentDependencyContext<T> {
 
     private final TypeView<T> type;
@@ -59,6 +68,15 @@ public class ManagedComponentKeyDependencyContext<T> extends ManagedComponentDep
         return this.processAfterInitialization;
     }
 
+    /**
+     * TODO: #1060 Add documentation
+     *
+     * @param <T> ...
+     *
+     * @since 0.6.0
+     *
+     * @author Guus Lieben
+     */
     public static final class ManagedComponentKeyDependencyContextBuilder<T> {
 
         private final TypeView<T> type;

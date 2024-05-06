@@ -22,6 +22,13 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentType;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
+ */
 @Deprecated(since = "0.6.0", forRemoval = true)
 public abstract class FunctionalComponentPostProcessor extends ComponentPostProcessor {
 

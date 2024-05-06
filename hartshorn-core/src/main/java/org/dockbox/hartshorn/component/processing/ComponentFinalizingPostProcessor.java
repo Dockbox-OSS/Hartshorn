@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,13 @@ import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.11
+ *
+ * @author Guus Lieben
+ */
 public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
 
     @SuppressWarnings("rawtypes")
@@ -56,7 +63,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
 
         if (permitsProxying && !(instance instanceof Collection<?>)) {
             T finalizingInstance = instance;
-            
+
             if (processingContext.containsKey(PROXY_FACTORY)) {
                 ProxyFactory<T> factory = processingContext.get(PROXY_FACTORY);
 
@@ -112,6 +119,13 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
         };
     }
 
+    /**
+     * TODO: #1060 Add documentation
+     *
+     * @since 0.6.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer {
 
         private ContextualInitializer<ApplicationContext, ComponentPopulator> componentPopulator = StrategyComponentPopulator.create(Customizer.useDefaults());

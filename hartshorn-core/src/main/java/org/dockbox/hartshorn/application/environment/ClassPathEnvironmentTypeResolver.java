@@ -23,6 +23,13 @@ import java.util.List;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class ClassPathEnvironmentTypeResolver implements EnvironmentTypeResolver {
 
     private final EnvironmentTypeCollector typeCollector;

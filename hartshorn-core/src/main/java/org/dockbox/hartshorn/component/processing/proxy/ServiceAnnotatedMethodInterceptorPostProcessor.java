@@ -22,6 +22,15 @@ import java.util.Collection;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <M> ...
+ *
+ * @since 0.4.10
+ *
+ * @author Guus Lieben
+ */
 public abstract class ServiceAnnotatedMethodInterceptorPostProcessor<M extends Annotation> extends ServiceMethodInterceptorPostProcessor {
 
     @Override

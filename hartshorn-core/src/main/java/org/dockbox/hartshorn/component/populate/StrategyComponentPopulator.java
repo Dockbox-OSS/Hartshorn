@@ -120,6 +120,13 @@ public class StrategyComponentPopulator implements ComponentPopulator, ContextCa
         };
     }
 
+    /**
+     * TODO: #1060 Add documentation
+     *
+     * @since 0.6.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer {
 
         private final LazyStreamableConfigurer<ApplicationContext, ComponentPopulationStrategy> strategies = LazyStreamableConfigurer.of(collection -> {

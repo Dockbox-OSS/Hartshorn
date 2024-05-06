@@ -27,6 +27,13 @@ import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 public abstract class ServiceMethodInterceptorPostProcessor extends ComponentPostProcessor {
 
     @Override

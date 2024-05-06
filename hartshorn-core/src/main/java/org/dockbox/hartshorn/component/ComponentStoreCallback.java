@@ -18,6 +18,13 @@ package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.inject.ObjectContainer;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface ComponentStoreCallback {
 
     <T> void store(ComponentKey<T> key, ObjectContainer<T> container);

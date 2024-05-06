@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.logging.logback;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.pattern.color.ANSIConstants;

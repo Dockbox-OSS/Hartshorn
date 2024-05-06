@@ -19,6 +19,15 @@ package org.dockbox.hartshorn.component.processing.proxy;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.context.ContextCarrier;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <ContextCarrier>> ...
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ContextCarrier> {
 
     @Override

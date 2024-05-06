@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.component;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public interface ScopedProviderOwner extends PostProcessingComponentProvider {
 
     ComponentRegistry componentRegistry();

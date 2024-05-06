@@ -56,6 +56,13 @@ import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScannerType
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.11
+ *
+ * @author Guus Lieben
+ */
 public final class StandardApplicationContextConstructor implements ApplicationContextConstructor {
 
     private final SingleElementContext<? extends ApplicationBuildContext> initializerContext;
@@ -256,6 +263,13 @@ public final class StandardApplicationContextConstructor implements ApplicationC
         };
     }
 
+    /**
+     * TODO: #1060 Add documentation
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer {
 
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, Annotation> activators = LazyStreamableConfigurer.of(

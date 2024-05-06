@@ -27,6 +27,13 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public final class ComponentConstructorResolver {
 
     private final ApplicationContext applicationContext;

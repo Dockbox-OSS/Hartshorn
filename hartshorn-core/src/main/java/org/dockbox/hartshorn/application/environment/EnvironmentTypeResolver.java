@@ -24,6 +24,13 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface EnvironmentTypeResolver {
 
     /**

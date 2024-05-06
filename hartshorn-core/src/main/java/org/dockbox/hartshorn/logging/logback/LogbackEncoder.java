@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.logging.logback;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 

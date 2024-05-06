@@ -23,6 +23,13 @@ import org.dockbox.hartshorn.inject.strategy.IntrospectionDependencyResolver;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ComponentDependencyResolver extends AbstractContainerDependencyResolver {
 
     protected ComponentDependencyResolver(ApplicationContext applicationContext) {

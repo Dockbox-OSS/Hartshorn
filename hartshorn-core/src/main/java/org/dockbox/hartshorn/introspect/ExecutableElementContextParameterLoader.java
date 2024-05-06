@@ -27,6 +27,15 @@ import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <ApplicationBoundParameterLoaderContext>> ...
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public class ExecutableElementContextParameterLoader extends RuleBasedParameterLoader<ApplicationBoundParameterLoaderContext> {
 
     private final ApplicationContext applicationContext;

@@ -25,6 +25,15 @@ import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.util.TypeUtils;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <C> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class ContextConfiguringComponentProcessor<C extends ContextView> extends ComponentPostProcessor {
 
     private final Class<C> contextType;

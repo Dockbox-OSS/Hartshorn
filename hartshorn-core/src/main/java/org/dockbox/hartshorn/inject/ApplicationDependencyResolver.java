@@ -24,6 +24,13 @@ import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ApplicationDependencyResolver extends CompositeDependencyResolver {
 
     public ApplicationDependencyResolver(Set<DependencyResolver> resolvers, ApplicationContext applicationContext) {
@@ -46,6 +53,13 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
         };
     }
 
+    /**
+     * TODO: #1060 Add documentation
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer extends StreamableConfigurer<ApplicationContext, DependencyResolver> {
 
         public Configurer withManagedComponents() {

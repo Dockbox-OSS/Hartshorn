@@ -22,6 +22,15 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Objects;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <T>> ...
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
+ */
 public class ComponentContainerImpl<T> implements ComponentContainer<T> {
 
     private final Component annotation;

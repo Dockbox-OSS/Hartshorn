@@ -31,6 +31,13 @@ import java.util.List;
 
 import jakarta.annotation.PostConstruct;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class ComponentPostConstructorImpl implements ComponentPostConstructor {
 
     private final ApplicationContext applicationContext;
@@ -75,6 +82,13 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
         };
     }
 
+    /**
+     * TODO: #1060 Add documentation
+     *
+     * @since 0.6.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer {
 
         private ContextualInitializer<ApplicationContext, ViewContextAdapter> viewContextAdapter = ContextualInitializer.of(IntrospectionViewContextAdapter::new);

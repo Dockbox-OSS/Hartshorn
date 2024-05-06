@@ -20,6 +20,13 @@ import java.lang.reflect.Method;
 
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
+ */
 public class ProxyMethodBindingException extends RuntimeException {
 
     public ProxyMethodBindingException(MethodProxyContext<?> context) {

@@ -131,6 +131,13 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
         };
     }
 
+    /**
+     * TODO: #1060 Add documentation
+     *
+     * @since 0.6.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer {
 
         private final LazyStreamableConfigurer<ApplicationContext, RequireInjectionPointRule> requiresComponentRules = LazyStreamableConfigurer.of(new AnnotatedInjectionPointRequireRule());

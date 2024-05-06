@@ -34,6 +34,13 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class IntrospectionViewContextAdapter extends DefaultContext implements ViewContextAdapter {
 
     private final ApplicationContext applicationContext;

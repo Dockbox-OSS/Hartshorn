@@ -61,6 +61,13 @@ public final class DefaultProxyOrchestratorLoader {
         };
     }
 
+    /**
+     * A no-op class that may be used to configure the {@link ProxyOrchestrator} loader.
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer {
         // No-op, may be used in the future
     }

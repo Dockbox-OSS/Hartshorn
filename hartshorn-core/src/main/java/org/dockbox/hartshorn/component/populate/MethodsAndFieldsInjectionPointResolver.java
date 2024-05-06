@@ -92,6 +92,13 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
         };
     }
 
+    /**
+     * TODO: #1060 Add documentation
+     *
+     * @since 0.6.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer {
 
         private final LazyStreamableConfigurer<ApplicationEnvironment, Class<? extends Annotation>> annotations = LazyStreamableConfigurer.of(Inject.class);

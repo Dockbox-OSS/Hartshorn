@@ -18,6 +18,13 @@ package org.dockbox.hartshorn.logging.logback;
 
 import java.lang.management.ManagementFactory;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 import ch.qos.logback.classic.pattern.ClassicConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 

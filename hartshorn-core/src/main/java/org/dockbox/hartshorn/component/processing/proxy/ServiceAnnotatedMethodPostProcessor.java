@@ -27,6 +27,15 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <M> ...
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
+ */
 public abstract class ServiceAnnotatedMethodPostProcessor<M extends Annotation> extends ComponentPostProcessor {
 
     public abstract Class<M> annotation();

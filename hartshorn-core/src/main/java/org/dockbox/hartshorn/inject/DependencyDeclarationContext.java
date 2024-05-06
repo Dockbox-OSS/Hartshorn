@@ -19,6 +19,15 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.component.CompositeQualifier;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <T>> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public interface DependencyDeclarationContext<T> {
 
     TypeView<T> type();

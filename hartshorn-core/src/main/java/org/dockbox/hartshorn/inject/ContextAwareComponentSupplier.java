@@ -21,6 +21,15 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <T>> ...
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface ContextAwareComponentSupplier<T> extends NonTypeAwareProvider<T> {
 
     @Override
