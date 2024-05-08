@@ -23,7 +23,6 @@
         <checker.version>3.42.0</checker.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jackson.version>2.16.1</jackson.version>
-        <jakarta.annotations.version>2.1.1</jakarta.annotations.version>
         <javassist.version>3.30.2-GA</javassist.version>
         <junit.version>5.10.1</junit.version>
         <logback.version>1.4.14</logback.version>
@@ -101,11 +100,6 @@
                 <artifactId>groovy-all</artifactId>
                 <version>${groovy.version}</version>
                 <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.annotation</groupId>
-                <artifactId>jakarta.annotation-api</artifactId>
-                <version>${jakarta.annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
