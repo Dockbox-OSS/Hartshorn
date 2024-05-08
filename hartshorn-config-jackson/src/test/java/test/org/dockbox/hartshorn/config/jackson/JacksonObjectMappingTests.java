@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.config.jackson.JacksonDataMapperRegistry;
 import org.dockbox.hartshorn.config.jackson.JacksonObjectMapper;
 import org.dockbox.hartshorn.config.jackson.JacksonObjectMapperConfigurator;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 import test.org.dockbox.hartshorn.config.mapping.ObjectMappingTests;
 
 public class JacksonObjectMappingTests extends ObjectMappingTests {

@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.component.Component;
 import org.dockbox.hartshorn.inject.Named;
 import org.dockbox.hartshorn.inject.Required;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 
 @Component
 public class SetterInjectedComponent {

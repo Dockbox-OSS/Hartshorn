@@ -18,7 +18,7 @@ package test.org.dockbox.hartshorn.components;
 
 import org.dockbox.hartshorn.component.Component;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 import org.dockbox.hartshorn.inject.LifecycleType;
 
 @Component(lifecycle = LifecycleType.SINGLETON)

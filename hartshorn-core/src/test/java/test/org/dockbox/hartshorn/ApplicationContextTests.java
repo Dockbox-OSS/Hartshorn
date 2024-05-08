@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

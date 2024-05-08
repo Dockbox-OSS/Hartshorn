@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 
 /**
  * Acts as a composite between {@link Inject} and {@link Test}. This allows test method parameters to be injected

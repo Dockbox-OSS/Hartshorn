@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
 public class ComponentPopulationTests {

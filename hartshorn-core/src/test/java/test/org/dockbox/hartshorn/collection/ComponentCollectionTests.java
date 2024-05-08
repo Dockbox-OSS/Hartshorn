@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
 public class ComponentCollectionTests {

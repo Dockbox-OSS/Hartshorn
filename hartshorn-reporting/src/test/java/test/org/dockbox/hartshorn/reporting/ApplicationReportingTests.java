@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.util.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 
 @UseReporting
 @HartshornTest(includeBasePackages = false)
