@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 /**
  * TODO: #1060 Add documentation
  *
- * @param <T>> ...
+ * @param <T> ...
  *
  * @since 0.5.0
  *

@@ -23,8 +23,6 @@ import java.net.URI;
 /**
  * TODO: #1062 Add documentation
  *
- * @param <?>> ...
- *
  * @since 0.4.12
  *
  * @author Guus Lieben

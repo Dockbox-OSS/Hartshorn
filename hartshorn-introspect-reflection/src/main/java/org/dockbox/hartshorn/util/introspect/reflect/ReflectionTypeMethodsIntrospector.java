@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 /**
  * TODO: #1059 Add documentation
  *
- * @param <T>> ...
+ * @param <T> ...
  *
  * @since 0.4.13
  *

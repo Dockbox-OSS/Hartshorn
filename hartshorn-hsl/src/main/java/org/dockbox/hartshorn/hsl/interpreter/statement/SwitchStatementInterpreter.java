@@ -25,9 +25,6 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Void> ...
- * @param <SwitchStatement>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

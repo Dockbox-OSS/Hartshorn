@@ -30,8 +30,6 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <IfStatement>> ...
- *
  * @since 0.4.13
  *
  * @author Guus Lieben

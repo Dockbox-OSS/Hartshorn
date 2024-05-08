@@ -29,9 +29,6 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Object> ...
- * @param <SuperExpression>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

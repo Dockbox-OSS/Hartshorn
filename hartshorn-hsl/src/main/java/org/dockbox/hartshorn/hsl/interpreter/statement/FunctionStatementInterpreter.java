@@ -24,9 +24,6 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Void> ...
- * @param <FunctionStatement>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

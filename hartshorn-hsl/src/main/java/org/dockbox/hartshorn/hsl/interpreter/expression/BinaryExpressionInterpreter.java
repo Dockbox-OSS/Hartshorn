@@ -32,9 +32,6 @@ import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Object> ...
- * @param <BinaryExpression>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

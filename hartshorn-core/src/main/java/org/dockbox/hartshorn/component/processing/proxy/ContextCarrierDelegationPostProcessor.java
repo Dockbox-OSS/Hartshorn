@@ -22,8 +22,6 @@ import org.dockbox.hartshorn.context.ContextCarrier;
 /**
  * TODO: #1060 Add documentation
  *
- * @param <ContextCarrier>> ...
- *
  * @since 0.4.9
  *
  * @author Guus Lieben

@@ -33,8 +33,6 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * TODO: #1060 Add documentation
  *
- * @param <ApplicationBoundParameterLoaderContext>> ...
- *
  * @since 0.4.13
  *
  * @author Guus Lieben

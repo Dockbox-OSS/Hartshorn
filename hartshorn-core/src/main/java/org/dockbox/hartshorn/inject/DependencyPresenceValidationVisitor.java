@@ -26,8 +26,6 @@ import java.util.Set;
 /**
  * TODO: #1060 Add documentation
  *
- * @param <DependencyContext<?>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

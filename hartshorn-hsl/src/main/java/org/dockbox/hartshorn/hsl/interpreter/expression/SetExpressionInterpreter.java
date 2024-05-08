@@ -26,9 +26,6 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Object> ...
- * @param <SetExpression>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

@@ -24,9 +24,6 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Object> ...
- * @param <LogicalAssignExpression>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

@@ -24,9 +24,6 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Object> ...
- * @param <ElvisExpression>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

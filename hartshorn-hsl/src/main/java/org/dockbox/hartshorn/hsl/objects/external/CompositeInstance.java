@@ -42,7 +42,7 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <T>> ...
+ * @param <T> ...
  *
  * @since 0.4.12
  *

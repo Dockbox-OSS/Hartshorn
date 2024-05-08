@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.proxy.ProxyFactory;
 /**
  * TODO: #1060 Add documentation
  *
- * @param <P>> ...
+ * @param <P> ...
  *
  * @since 0.4.8
  *

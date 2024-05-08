@@ -22,8 +22,6 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Object>> ...
- *
  * @since 0.6.0
  *
  * @author Guus Lieben

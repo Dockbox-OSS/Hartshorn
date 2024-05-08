@@ -37,7 +37,7 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * TODO: #1059 Add documentation
  *
- * @param <Parent>> ...
+ * @param <Parent> ...
  *
  * @since 0.4.13
  *

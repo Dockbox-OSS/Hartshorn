@@ -24,9 +24,6 @@ import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Void> ...
- * @param <NativeFunctionStatement>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

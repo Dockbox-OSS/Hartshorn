@@ -22,8 +22,6 @@ import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Expression>> ...
- *
  * @since 0.4.13
  *
  * @author Guus Lieben

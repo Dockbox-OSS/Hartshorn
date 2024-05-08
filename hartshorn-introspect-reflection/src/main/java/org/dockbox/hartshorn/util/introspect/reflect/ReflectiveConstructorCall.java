@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * TODO: #1059 Add documentation
  *
- * @param <T>> ...
+ * @param <T> ...
  *
  * @since 0.6.0
  *

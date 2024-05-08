@@ -25,7 +25,7 @@ import java.util.Objects;
 /**
  * TODO: #1060 Add documentation
  *
- * @param <T>> ...
+ * @param <T> ...
  *
  * @since 0.4.1
  *

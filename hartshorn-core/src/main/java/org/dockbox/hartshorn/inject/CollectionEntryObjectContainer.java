@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject;
 /**
  * TODO: #1060 Add documentation
  *
- * @param <T>> ...
+ * @param <T> ...
  *
  * @since 0.6.0
  *

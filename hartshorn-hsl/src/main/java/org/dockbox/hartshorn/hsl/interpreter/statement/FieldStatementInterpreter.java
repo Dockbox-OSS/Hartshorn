@@ -25,9 +25,6 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Void> ...
- * @param <FieldStatement>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

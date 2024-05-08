@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 /**
  * TODO: #1059 Add documentation
  *
- * @param <T>> ...
+ * @param <T> ...
  *
  * @since 0.4.13
  *

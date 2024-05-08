@@ -30,8 +30,6 @@ import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 /**
  * TODO: #1062 Add documentation
  *
- * @param <Serialize>> ...
- *
  * @since 0.4.12
  *
  * @author Guus Lieben

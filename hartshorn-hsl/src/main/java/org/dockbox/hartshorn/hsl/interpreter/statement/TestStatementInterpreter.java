@@ -26,9 +26,6 @@ import org.dockbox.hartshorn.hsl.runtime.Return;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Void> ...
- * @param <TestStatement>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

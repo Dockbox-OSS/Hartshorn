@@ -24,9 +24,6 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Void> ...
- * @param <SwitchCase>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

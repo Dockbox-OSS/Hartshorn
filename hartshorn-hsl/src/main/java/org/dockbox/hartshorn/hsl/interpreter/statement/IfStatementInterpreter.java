@@ -25,9 +25,6 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Void> ...
- * @param <IfStatement>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

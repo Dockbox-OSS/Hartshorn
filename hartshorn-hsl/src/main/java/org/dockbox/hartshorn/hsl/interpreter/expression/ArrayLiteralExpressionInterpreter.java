@@ -27,9 +27,6 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <Object> ...
- * @param <ArrayLiteralExpression>> ...
- *
  * @since 0.5.0
  *
  * @author Guus Lieben

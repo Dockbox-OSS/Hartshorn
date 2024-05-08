@@ -36,8 +36,6 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * TODO: #1061 Add documentation
  *
- * @param <TestStatement>> ...
- *
  * @since 0.4.13
  *
  * @author Guus Lieben

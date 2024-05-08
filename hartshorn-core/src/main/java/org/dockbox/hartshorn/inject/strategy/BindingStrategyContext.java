@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
 /**
  * TODO: #1060 Add documentation
  *
- * @param <T>> ...
+ * @param <T> ...
  *
  * @since 0.5.0
  *
