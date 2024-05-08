@@ -16,9 +16,9 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import jakarta.annotation.PostConstruct;
+import org.dockbox.hartshorn.component.OnInitialized;
 
-public class SimplePostConstructableObject {
+public class SelfInitializationListener {
 
     private int constructionCount;
 
@@ -26,7 +26,7 @@ public class SimplePostConstructableObject {
         return this.constructionCount;
     }
 
-    @PostConstruct
+    @OnInitialized
     public void incrementConstructionCount() {
         this.constructionCount++;
     }

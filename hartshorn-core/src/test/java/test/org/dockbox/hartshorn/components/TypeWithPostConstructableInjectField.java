@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.inject.Enable;
+import org.dockbox.hartshorn.inject.Initialize;
 import org.dockbox.hartshorn.component.Component;
 
 import org.dockbox.hartshorn.inject.Inject;
@@ -25,10 +25,10 @@ import org.dockbox.hartshorn.inject.Inject;
 public class TypeWithPostConstructableInjectField {
 
     @Inject
-    @Enable
-    private SimplePostConstructableObject postConstructableObject;
+    @Initialize(true)
+    private SelfInitializationListener listener;
 
-    public SimplePostConstructableObject postConstructableObject() {
-        return this.postConstructableObject;
+    public SelfInitializationListener postConstructableObject() {
+        return this.listener;
     }
 }

@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import java.util.Set;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -51,6 +52,16 @@ public class WildcardTypeMethodsIntrospector implements TypeMethodsIntrospector<
 
     @Override
     public List<MethodView<Object, ?>> annotatedWith(Class<? extends Annotation> annotation) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<MethodView<Object, ?>> annotatedWithAny(Set<Class<? extends Annotation>> annotations) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<MethodView<Object, ?>> annotatedWithAll(Set<Class<? extends Annotation>> annotations) {
         return Collections.emptyList();
     }
 

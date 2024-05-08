@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  *     <li>The scope of the key is set to the given scope</li>
  *     <li>The qualifiers of the key are set to the meta data of {@link Qualifier meta qualifiers} on the component type</li>
  *     <li>The strictness of the key is set to the value of the {@link Strict} annotation on the component type</li>
- *     <li>The auto-enabling of the key is set to the value of the {@link Enable} annotation on the component type</li>
+ *     <li>The auto-enabling of the key is set to the value of the {@link Initialize} annotation on the component type</li>
  *     <li>The priority of the key is set to the value of the {@link Priority} annotation on the component type,
  *     or configured based on the declaring element if applicable</li>
  *     <li>If the component type is a {@link Collection}, the key is treated as a collector and the element type of the
@@ -162,7 +162,7 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
      * @return the auto-enabling of the key, or {@code true} if it cannot be determined
      */
     protected boolean isAutoEnabled(ElementAnnotationsIntrospector annotations) {
-        return annotations.get(Enable.class).map(Enable::value).orElse(true);
+        return annotations.get(Initialize.class).map(Initialize::value).orElse(true);
     }
 
     /**

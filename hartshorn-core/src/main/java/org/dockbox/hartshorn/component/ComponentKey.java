@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.component;
 
-import jakarta.annotation.PostConstruct;
 import java.util.Objects;
 import java.util.Set;
 
@@ -326,7 +325,7 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Returns whether {@link PostConstruct} callbacks of the component should be activated on provisioning. If the key
+     * Returns whether {@link OnInitialized} callbacks of the component should be activated after initialization. If the key
      * did not explicitly set this value, {@code true} is returned.
      *
      * @return whether post-construction should be activated on provisioning
@@ -517,7 +516,7 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Sets whether {@link PostConstruct} callbacks of the component should be activated on provisioning.
+         * Sets whether {@link OnInitialized} callbacks of the component should be activated after initialization.
          *
          * @param postConstructionAllowed whether post-construction should be activated on provisioning
          *
