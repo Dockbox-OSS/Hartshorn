@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -116,6 +117,32 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
         public Configurer annotations(Customizer<StreamableConfigurer<ApplicationEnvironment, Class<? extends Annotation>>> customizer) {
             this.annotations.customizer(customizer);
             return this;
+        }
+
+        /**
+         * Adds support for {@code javax.inject.Inject} and {@code javax.annotation.Resource} annotations if they are present
+         * on the classpath. Disabled by default, but can be enabled for backwards compatibility.
+         *
+         * @return the current configurer, for chaining
+         */
+        public Configurer withJavaxAnnotations() {
+            return this.annotations(collection -> {
+                TypeUtils.<Annotation>forName("javax.inject.Inject").peek(collection::add);
+                TypeUtils.<Annotation>forName("javax.annotation.Resource").peek(collection::add);
+            });
+        }
+
+        /**
+         * Adds support for {@code jakarta.inject.Inject} and {@code jakarta.annotation.Resource} annotations if they are present
+         * on the classpath. Disabled by default, but can be enabled for backwards compatibility.
+         *
+         * @return the current configurer, for chaining
+         */
+        public Configurer withJakartaAnnotations() {
+            return this.annotations(collection -> {
+                TypeUtils.<Annotation>forName("jakarta.inject.Inject").peek(collection::add);
+                TypeUtils.<Annotation>forName("jakarta.annotation.Resource").peek(collection::add);
+            });
         }
 
     }
