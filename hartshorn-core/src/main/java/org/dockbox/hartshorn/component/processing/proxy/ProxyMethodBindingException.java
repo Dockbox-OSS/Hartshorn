@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,25 @@
 
 package org.dockbox.hartshorn.component.processing.proxy;
 
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-
 import java.lang.reflect.Method;
 
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
+ */
 public class ProxyMethodBindingException extends RuntimeException {
 
-    public ProxyMethodBindingException(MethodProxyContext<?> ctx) {
-        this(ctx.method());
+    public ProxyMethodBindingException(MethodProxyContext<?> context) {
+        this(context.method());
     }
 
-    public ProxyMethodBindingException(MethodView<?, ?> ctx) {
-        super("Could not bind proxy to " + ctx.name() + " because preconditions failed");
+    public ProxyMethodBindingException(MethodView<?, ?> method) {
+        super("Could not bind proxy to " + method.name() + " because preconditions failed");
     }
 
     public ProxyMethodBindingException(Method method) {

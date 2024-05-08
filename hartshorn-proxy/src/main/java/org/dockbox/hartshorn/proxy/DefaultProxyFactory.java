@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,10 @@ import java.util.function.Consumer;
  * know how to create proxies. This is the responsibility of the implementing class.
  *
  * @param <T> The parent type of the proxy.
- * @author Guus Lieben
+ *
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T>, ValidatorProxyFactory<T> {
 

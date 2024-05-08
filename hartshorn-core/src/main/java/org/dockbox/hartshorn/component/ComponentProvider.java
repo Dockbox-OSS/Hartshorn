@@ -36,8 +36,10 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
  * itself, but this is not required.
  *
  * @see ComponentKey
- * @author Guus Lieben
+ *
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public interface ComponentProvider {
 
@@ -121,10 +123,9 @@ public interface ComponentProvider {
      *
      * @param type The type of the component to return.
      * @param requestContext The request context to use for resolving the component.
+     * @param <T> The type of the component to return.
      *
      * @return The component for the given type.
-     *
-     * @param <T> The type of the component to return.
      */
     default <T> T get(Class<T> type, ComponentRequestContext requestContext) {
         ComponentKey<T> key = ComponentKey.of(type);

@@ -27,11 +27,11 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * {@link StringToNumberConverterFactory} for numeric types, and {@link StringToBooleanConverter} and
  * {@link StringToCharacterConverter} for boolean and character types respectively.
  *
- * @since 0.5.0
- *
  * @see StringToNumberConverterFactory
  * @see StringToBooleanConverter
  * @see StringToCharacterConverter
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

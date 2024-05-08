@@ -40,9 +40,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * <p>As this is a parser for a non-standalone statement, it should not be used for dynamic parsing. As such,
  * the {@link #types()} method returns an empty set.
  *
- * @since 0.5.0
- *
  * @see SwitchStatementParser
+ *
+ * @since 0.4.13
  *
  * @author Guus Lieben
  */

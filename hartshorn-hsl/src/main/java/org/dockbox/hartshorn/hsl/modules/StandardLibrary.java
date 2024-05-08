@@ -32,8 +32,9 @@ import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
  * <p>The libraries in this class are sorted alphabetically by name, and should never contain duplicate
  * names.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public enum StandardLibrary {
     MATH("math", context -> new MathLibrary()),

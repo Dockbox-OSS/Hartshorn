@@ -32,8 +32,9 @@ import org.dockbox.hartshorn.reporting.Reportable;
  * @see NodeDiagnosticsReport
  * @see DiagnosticsReportCollector
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class StandardDiagnosticsReportCollector implements DiagnosticsReportCollector {
 

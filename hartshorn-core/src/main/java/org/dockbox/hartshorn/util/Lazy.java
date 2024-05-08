@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,9 @@ public final class Lazy<T> {
      *
      * @param applicationContext the application context to use for resolving the component
      * @param type the type of the component
-     * @return a new lazy wrapper
      * @param <T> the type of the component
+     *
+     * @return a new lazy wrapper
      */
     public static <T> Lazy<T> of(ApplicationContext applicationContext, Class<T> type) {
         return new Lazy<>(applicationContext, ComponentKey.of(type));
@@ -57,8 +58,9 @@ public final class Lazy<T> {
      *
      * @param applicationContext the application context to use for resolving the component
      * @param type the type of the component
-     * @return a new lazy wrapper
      * @param <T> the type of the component
+     *
+     * @return a new lazy wrapper
      */
     public static <T> Lazy<T> of(ApplicationContext applicationContext, ComponentKey<T> type) {
         return new Lazy<>(applicationContext, type);
@@ -70,8 +72,9 @@ public final class Lazy<T> {
      *
      * @param type the type of the component
      * @param instance the component instance
-     * @return a new lazy wrapper
      * @param <T> the type of the component
+     *
+     * @return a new lazy wrapper
      */
     public static <T> Lazy<T> ofInstance(Class<T> type, T instance) {
         Lazy<T> lazy = of(null, type);

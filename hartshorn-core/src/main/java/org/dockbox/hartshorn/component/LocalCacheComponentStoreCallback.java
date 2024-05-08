@@ -20,6 +20,13 @@ import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.binding.SingletonCache;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class LocalCacheComponentStoreCallback implements ComponentStoreCallback {
 
     private final SingletonCache singletonCache;

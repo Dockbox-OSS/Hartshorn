@@ -49,9 +49,9 @@ import org.dockbox.hartshorn.hsl.token.Token;
  * that resolves the appropriate nodes in the AST. The resolver itself is responsible for managing
  * the tracking of resolved items.
  *
- * @since 0.4.12
- *
  * @see ResolverVisitor
+ *
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */

@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * Represents a validator for a step in the token stream. This is used to validate the
  * token stream while parsing, typically when performed through a {@link ASTNodeParser}.
  *
- * @since 0.5.0
+ * @since 0.4.13
  *
  * @author Guus Lieben
  */

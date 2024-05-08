@@ -31,9 +31,9 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * <p>This converter delegates to a {@link ArrayToCollectionConverterFactory} to convert arrays to collections.
  * This converter only creates an array of length 1 and delegates to the helper converter.
  *
- * @since 0.5.0
- *
  * @see ArrayToCollectionConverterFactory
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

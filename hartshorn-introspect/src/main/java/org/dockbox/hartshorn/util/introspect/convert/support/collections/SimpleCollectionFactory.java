@@ -42,7 +42,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * otherwise will attempt to create collections using the default constructor or a constructor with a single
  * int parameter (for capacity).
  *
- * @since 0.6.0
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */
@@ -70,8 +70,9 @@ public class SimpleCollectionFactory implements CollectionFactory {
      *
      * @param type the type of collection to register the provider for
      * @param provider the provider to register
-     * @return the current instance
      * @param <T> the type of collection to register the provider for
+     *
+     * @return the current instance
      */
     public <T extends Collection<?>> SimpleCollectionFactory withDefault(Class<T> type, CollectionProvider<T> provider) {
         this.defaults.put(type, provider);
@@ -88,8 +89,9 @@ public class SimpleCollectionFactory implements CollectionFactory {
      *
      * @param type the type of collection to register the provider for
      * @param supplier the supplier to register
-     * @return the current instance
      * @param <T> the type of collection to register the provider for
+     *
+     * @return the current instance
      */
     public <T extends Collection<?>> SimpleCollectionFactory withDefault(Class<T> type, Supplier<T> supplier) {
         this.defaults.put(type, new SupplierCollectionProvider<>(supplier, capacity -> supplier.get()));
@@ -105,8 +107,9 @@ public class SimpleCollectionFactory implements CollectionFactory {
      * @param type the type of collection to register the provider for
      * @param supplier the supplier to register
      * @param capacityConstructor the capacity constructor to register
-     * @return the current instance
      * @param <T> the type of collection to register the provider for
+     *
+     * @return the current instance
      */
     public <T extends Collection<?>> SimpleCollectionFactory withDefault(Class<T> type, Supplier<T> supplier, IntFunction<T> capacityConstructor) {
         this.defaults.put(type, new SupplierCollectionProvider<>(supplier, capacityConstructor));

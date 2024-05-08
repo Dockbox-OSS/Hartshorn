@@ -27,6 +27,15 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <NativeLibrary>> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public record AmbiguousLibraryFunction(Set<NativeLibrary> libraries) implements CallableNode {
 
     @Override

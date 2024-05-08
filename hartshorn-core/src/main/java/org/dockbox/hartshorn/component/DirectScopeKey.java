@@ -56,8 +56,9 @@ public class DirectScopeKey implements ScopeKey {
      * the creation of a key without having to specify type parameters.
      *
      * @param scopeType the type of the scope
-     * @return a new {@link DirectScopeKey} instance
      * @param <T> the type of the scope
+     *
+     * @return a new {@link DirectScopeKey} instance
      */
     public static <T extends Scope> DirectScopeKey of(Class<T> scopeType) {
         return new DirectScopeKey(ParameterizableType.create(scopeType));
@@ -68,8 +69,9 @@ public class DirectScopeKey implements ScopeKey {
      * the creation of a key from existing type metadata.
      *
      * @param scopeType the type of the scope
-     * @return a new {@link DirectScopeKey} instance
      * @param <T> the type of the scope
+     *
+     * @return a new {@link DirectScopeKey} instance
      */
     public static <T extends Scope> DirectScopeKey of(TypeView<T> scopeType) {
         return new DirectScopeKey(ParameterizableType.create(scopeType));
@@ -80,6 +82,7 @@ public class DirectScopeKey implements ScopeKey {
      * the creation of a key from existing type metadata.
      *
      * @param scopeType the type of the scope
+     *
      * @return a new {@link DirectScopeKey} instance
      */
     public static DirectScopeKey of(ParameterizableType scopeType) {

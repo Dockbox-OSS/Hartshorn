@@ -39,8 +39,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * or {@link ScriptRuntime#global(Map)}, where the instance is made available globally
  * to the runtime.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class ExternalInstance implements ExternalObjectReference {
 

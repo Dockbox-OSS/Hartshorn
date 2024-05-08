@@ -65,9 +65,10 @@ public abstract class AbstractContainerDependencyResolver implements DependencyR
      * @param declarationContext the declaration to resolve
      * @param applicationContext the application context
      *
+     * @param <T> the type of the component that is declared by the declaration
+     *
      * @return a collection of {@link DependencyContext} instances
      *
-     * @param <T> the type of the component that is declared by the declaration
      * @throws DependencyResolutionException when the resolution fails
      */
     protected abstract <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> declarationContext, ApplicationContext applicationContext) throws DependencyResolutionException;

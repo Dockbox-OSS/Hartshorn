@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
  * @see DelegatingApplicationContext
  * @see ProcessableApplicationContext
  *
- * @since 0.5.0
+ * @since 0.4.11
  *
  * @author Guus Lieben
  */

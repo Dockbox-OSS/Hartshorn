@@ -36,8 +36,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * Synchronization wrapper for {@link IntrospectionViewCache}. This implementation is thread-safe, but does not guarantee
  * optimal performance, especially when used in batch mode.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class SynchronizedIntrospectionViewCache implements IntrospectionViewCache {
 

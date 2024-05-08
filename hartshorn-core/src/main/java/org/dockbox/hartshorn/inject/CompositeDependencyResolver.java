@@ -26,9 +26,9 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
  * A composite dependency resolver is a {@link DependencyResolver} that delegates to a collection of other dependency
  * resolvers. The result of the delegation is a collection of all resolved dependencies, as resolved by the delegates.
  *
- * @since 0.5.0
- *
  * @see DependencyResolver
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

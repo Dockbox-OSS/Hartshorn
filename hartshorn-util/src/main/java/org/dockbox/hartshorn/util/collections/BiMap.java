@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,9 +39,10 @@ public interface BiMap<K, V> extends Map<K, V> {
      * Creates a new {@link BiMap} with the given {@link java.util.Map.Entry entries} as initial entries.
      *
      * @param entries the entries to add to the {@link BiMap}
-     * @return a new {@link BiMap} with the given entries
      * @param <K> the type of the keys
      * @param <V> the type of the values
+     *
+     * @return a new {@link BiMap} with the given entries
      */
     @SafeVarargs
     static <K, V> BiMap<K, V> ofEntries(Entry<K, V>... entries) {

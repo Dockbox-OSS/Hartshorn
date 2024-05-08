@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * Converts an {@link Optional} to an {@link Option}.
  *
- * @since 0.5.0
- *
  * @see Option#of(Optional)
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

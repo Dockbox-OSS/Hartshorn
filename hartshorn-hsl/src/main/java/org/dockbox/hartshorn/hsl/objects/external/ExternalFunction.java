@@ -38,8 +38,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * exact method is determined by the arguments that are passed to the method. If no matching
  * method is found, a {@link ScriptEvaluationError} is thrown.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class ExternalFunction extends AbstractFinalizable implements MethodReference {
 

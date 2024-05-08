@@ -49,8 +49,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * <p>All execution calls are performed on the instance provided by {@link #instance()}. If the instance
  * is {@code null}, the method must be static.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractNativeModule implements NativeModule {
 

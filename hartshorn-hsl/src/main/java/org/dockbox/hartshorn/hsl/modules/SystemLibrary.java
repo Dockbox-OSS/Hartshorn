@@ -23,8 +23,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Standard library granting access to environment variables.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class SystemLibrary {
 

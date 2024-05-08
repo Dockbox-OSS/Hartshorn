@@ -28,6 +28,16 @@ import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <Object> ...
+ * @param <UnaryExpression>> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, UnaryExpression> {
 
     @Override

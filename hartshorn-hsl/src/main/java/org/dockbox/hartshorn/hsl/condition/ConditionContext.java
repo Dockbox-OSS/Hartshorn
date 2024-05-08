@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * modules, global variables, imports, customizers and more. It also allows for the configuration of whether the
  * application context should be exposed to the script.
  *
- * @since 0.5.0
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */

@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.component.processing.proxy;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.populate.ComponentMethodInjectionPoint;
 import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
@@ -29,6 +28,15 @@ import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <Provided>> ...
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
+ */
 public class ContextMethodPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Provided> {
 
     @Override

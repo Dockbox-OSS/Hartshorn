@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * Converts a {@link String} to an {@link Enum}. The {@link Enum} constant is matched by name in a case-sensitive
  * manner. If no match is found, {@code null} is returned.
  *
- * @since 0.5.0
- *
  * @see Enum#valueOf(Class, String)
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */
@@ -45,9 +45,9 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
      * @param enumType The type of {@link Enum} to convert to
      * @param <T> The type of {@link Enum} to convert to
      *
-     * @since 0.5.0
-     *
      * @see Enum#valueOf(Class, String)
+     *
+     * @since 0.5.0
      *
      * @author Guus Lieben
      */

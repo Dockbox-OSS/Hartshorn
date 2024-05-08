@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * prevent the creation of multiple instances of the same component, and improve tracking
  * of the components that are currently active.
  *
- * @author Guus Lieben
  * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
 public interface SingletonCache {
 

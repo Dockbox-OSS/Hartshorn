@@ -21,6 +21,13 @@ import java.util.Collection;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
+ */
 public interface ComponentRegistry extends ContextCarrier {
 
     Collection<ComponentContainer<?>> containers();

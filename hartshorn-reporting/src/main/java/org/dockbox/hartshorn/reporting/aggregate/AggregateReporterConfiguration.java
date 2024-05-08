@@ -27,9 +27,9 @@ import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
  * A configuration for an {@link AggregateDiagnosticsReporter}. This configuration is used to register the reporters
  * that are aggregated by the {@link AggregateDiagnosticsReporter}. No ordering is guaranteed.
  *
- * @since 0.5.0
- *
  * @see AggregateDiagnosticsReporter
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

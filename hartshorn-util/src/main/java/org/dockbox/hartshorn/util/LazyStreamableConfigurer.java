@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@ import java.util.List;
  * @param <I> the type of the input
  * @param <O> the type of the output
  *
- * @since 0.5.0
- *
  * @see StreamableConfigurer
  * @see ContextualInitializer
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */
@@ -70,9 +70,10 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
     /**
      * Creates a new {@link LazyStreamableConfigurer} instance with an empty {@link StreamableConfigurer}.
      *
-     * @return the new instance
      * @param <I> the type of the input
      * @param <O> the type of the output
+     *
+     * @return the new instance
      */
     public static <I, O> LazyStreamableConfigurer<I, O> empty() {
         return new LazyStreamableConfigurer<>(StreamableConfigurer.empty());
@@ -84,9 +85,10 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
      * StreamableConfigurer} instance is empty.
      *
      * @param customizer the customizer to apply
-     * @return the new instance
      * @param <I> the type of the input
      * @param <O> the type of the output
+     *
+     * @return the new instance
      */
     public static <I, O> LazyStreamableConfigurer<I, O> of(Customizer<StreamableConfigurer<I, O>> customizer) {
         return new LazyStreamableConfigurer<I, O>(StreamableConfigurer.empty()).customizer(customizer);
@@ -97,9 +99,10 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
      * given {@link ContextualInitializer}.
      *
      * @param initializer the initializer to use
-     * @return the new instance
      * @param <I> the type of the input
      * @param <O> the type of the output
+     *
+     * @return the new instance
      */
     public static <I, O> LazyStreamableConfigurer<I, O> ofInitializer(ContextualInitializer<I, O> initializer) {
         return new LazyStreamableConfigurer<>(StreamableConfigurer.ofInitializer(initializer));
@@ -110,9 +113,10 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
      * given objects.
      *
      * @param objects the objects to use
-     * @return the new instance
      * @param <I> the type of the input
      * @param <O> the type of the output
+     *
+     * @return the new instance
      */
     @SafeVarargs
     public static <I, O> LazyStreamableConfigurer<I, O> of(O... objects) {
@@ -124,9 +128,10 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
      * given objects.
      *
      * @param objects the objects to use
-     * @return the new instance
      * @param <I> the type of the input
      * @param <O> the type of the output
+     *
+     * @return the new instance
      */
     public static <I, O> LazyStreamableConfigurer<I, O> of(Iterable<? extends O> objects) {
         return new LazyStreamableConfigurer<>(StreamableConfigurer.of(objects));

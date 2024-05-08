@@ -41,6 +41,15 @@ import org.dockbox.hartshorn.util.option.Option;
 
 import jakarta.inject.Inject;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <ClassStatement>> ...
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
 
     private final FieldStatementParser fieldParser;

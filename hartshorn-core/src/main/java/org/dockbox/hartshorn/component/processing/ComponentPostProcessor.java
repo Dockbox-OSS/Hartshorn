@@ -41,8 +41,9 @@ import org.dockbox.hartshorn.util.TypeUtils;
  * <p>The component post processor will be called for each component that is created, and will be called
  * in the order of the specified {@link OrderedComponentProcessor#priority()} value.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public abstract non-sealed class ComponentPostProcessor implements ComponentProcessor {
 
@@ -52,8 +53,9 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * additional validation.
      *
      * @param processingContext The context to be processed
-     * @return {@code true} if the context can be processed, {@code false} otherwise
      * @param <T> The type of the component to be processed
+     *
+     * @return {@code true} if the context can be processed, {@code false} otherwise
      */
     public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
         return true;
@@ -94,8 +96,9 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      *
      * @param context the application context
      * @param instance the component instance
-     * @param processingContext the processing context
      * @param <T> the type of the component
+     *
+     * @param processingContext the processing context
      */
     public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ApplicationException {
         // Do nothing by default
@@ -109,8 +112,9 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @param context the application context
      * @param instance the component instance
      * @param processingContext the processing context
-     * @return the initialized component
      * @param <T> the type of the component
+     *
+     * @return the initialized component
      */
     public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ApplicationException {
         // Do nothing by default
@@ -138,8 +142,9 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * @param context the application context
      * @param instance the component instance
      * @param processingContext the processing context
-     * @return the processed component
      * @param <T> the type of the component
+     *
+     * @return the processed component
      *
      * @deprecated use {@link #preConfigureComponent(ApplicationContext, Object, ComponentProcessingContext)},
      *             {@link #initializeComponent(ApplicationContext, Object, ComponentProcessingContext)} and

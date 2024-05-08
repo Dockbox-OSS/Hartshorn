@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * A parser for the tokens of a script. This parser is used to parse the tokens of a script into an
  * abstract syntax tree (AST).
  *
- * @since 0.5.0
+ * @since 0.4.13
  *
  * @author Guus Lieben
  */

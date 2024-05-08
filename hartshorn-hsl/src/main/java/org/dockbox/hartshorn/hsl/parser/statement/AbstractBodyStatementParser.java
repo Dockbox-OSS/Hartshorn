@@ -35,7 +35,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> the type of the AST node that is being parsed
  *
- * @since 0.5.0
+ * @since 0.4.13
  *
  * @author Guus Lieben
  */

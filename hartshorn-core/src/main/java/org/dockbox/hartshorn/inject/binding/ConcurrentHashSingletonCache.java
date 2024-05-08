@@ -28,11 +28,12 @@ import org.dockbox.hartshorn.util.option.Option;
  * A singleton cache implementation that uses a {@link ConcurrentHashMap} to store
  * instances. This implementation is thread-safe.
  *
- * @author Guus Lieben
- * @since 0.4.11
- *
  * @see SingletonCache
  * @see ConcurrentHashMap
+ *
+ * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
 public class ConcurrentHashSingletonCache implements SingletonCache {
 

@@ -32,9 +32,9 @@ import java.util.stream.Stream;
  * Utility class for functionalities related to types. Within the context of this class, types can either
  * be primitives which require (un)boxing, or {@link Class} instances.
  *
- * @author Guus Lieben
+ * @since 0.5.0
  *
- * @since 0.4.13
+ * @author Guus Lieben
  */
 public class TypeUtils {
 
@@ -89,8 +89,10 @@ public class TypeUtils {
      *
      * @param type The type to convert to
      * @param value The value to convert
-     * @return The converted value
      * @param <T> The type to convert to
+     *
+     * @return The converted value
+     *
      * @throws TypeConversionException If the value cannot be converted to the given type
      * @throws NotPrimitiveException If the given type is not a primitive or primitive wrapper
      *
@@ -180,11 +182,11 @@ public class TypeUtils {
      *
      * @param obj The object to adjust
      * @param type The type to adjust to
-     * @return The adjusted object
-     *
      * @param <InstanceType> The type of the object to adjust
      * @param <KeyType> The type to adjust to
      * @param <AdjustedType> The adjusted type
+     *
+     * @return The adjusted object
      */
     public static <InstanceType extends KeyType, KeyType, AdjustedType extends KeyType> AdjustedType adjustWildcards(InstanceType obj, Class<KeyType> type) {
         if (obj == null) {
@@ -203,8 +205,9 @@ public class TypeUtils {
      * all. If this is not the case for the given annotation type, it is recommended to use {@link #annotation(Class, Map)} instead.
      *
      * @param annotationType The annotation type to create an instance of
-     * @return A new instance of the given annotation type
      * @param <A> The annotation type
+     *
+     * @return A new instance of the given annotation type
      *
      * @see MapBackedAnnotationInvocationHandler
      * @see #annotation(Class, Map)
@@ -221,8 +224,9 @@ public class TypeUtils {
      *
      * @param annotationType The annotation type to create an instance of
      * @param values The values to populate the annotation instance with
-     * @return A new instance of the given annotation type
      * @param <A> The annotation type
+     *
+     * @return A new instance of the given annotation type
      *
      * @see MapBackedAnnotationInvocationHandler
      */
@@ -383,8 +387,9 @@ public class TypeUtils {
      * to {@link Object#getClass()}.
      *
      * @param instance The instance to get the class of, or {@code null} if the instance is {@code null}
-     * @return The class of the given instance
      * @param <T> The type of the instance
+     *
+     * @return The class of the given instance
      */
     public static <T> Class<T> getClass(T instance) {
         if (instance == null) {

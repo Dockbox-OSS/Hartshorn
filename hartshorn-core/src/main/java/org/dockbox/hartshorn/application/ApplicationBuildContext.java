@@ -30,8 +30,9 @@ import org.slf4j.LoggerFactory;
  *
  * @see ApplicationBuilder
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ApplicationBuildContext extends DefaultContext {
 

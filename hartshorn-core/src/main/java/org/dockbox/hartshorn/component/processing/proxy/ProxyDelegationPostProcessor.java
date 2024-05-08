@@ -22,6 +22,15 @@ import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <P>> ...
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProcessor {
 
     protected abstract Class<P> parentTarget();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,10 @@ import org.dockbox.hartshorn.util.option.Option;
  * wrapped {@link BindingHierarchy} is updated as well, and directly updated in the bound {@link ApplicationContext}.
  *
  * @param <C> The type of the wrapped {@link BindingHierarchy}.
- * @author Guus Lieben
+ *
  * @since 0.4.3
+ *
+ * @author Guus Lieben
  */
 public class ContextWrappedHierarchy<C> implements PrunableBindingHierarchy<C> {
 

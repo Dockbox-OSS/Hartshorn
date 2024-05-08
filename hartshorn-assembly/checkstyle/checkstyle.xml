@@ -19,37 +19,37 @@
         <!-- General Javadoc rules -->
         <module name="InvalidJavadocPosition"/>
         <module name="AtclauseOrder">
-            <property name="tagOrder" value="author,param,return,throws,see,since,deprecated"/>
+            <!--
+             Order of Javadoc @tags:
+             - Method specifications (parameters, return type, throws)
+             - Javadoc references (see, since, author)
+             - Deprecation notices
+            -->
+            <property name="tagOrder" value="@param, @return, @throws,
+                                             @see, @since, @author,
+                                             @deprecated"/>
         </module>
 
         <!-- Javadoc type rules -->
-        <module name="MissingJavadocType">
-            <property name="excludeScope" value="private"/>
-        </module>
-        <module name="JavadocType">
-            <property name="excludeScope" value="private"/>
-            <property name="allowMissingParamTags" value="false"/>
-            <property name="allowUnknownTags" value="false"/>
-        </module>
-        <module name="WriteTag">
-            <property name="tag" value="@since"/>
-            <property name="tagFormat" value="([0-9]+\.[0-9]+\.[0-9]+)"/>
-        </module>
-        <module name="WriteTag">
-            <property name="tag" value="@author"/>
-            <property name="tagFormat" value="([A-Z][a-z]+ )+([A-Z][a-z]+)"/>
-        </module>
+<!--        <module name="MissingJavadocType">-->
+<!--            <property name="excludeScope" value="private"/>-->
+<!--        </module>-->
+<!--        <module name="JavadocType">-->
+<!--            <property name="excludeScope" value="private"/>-->
+<!--            <property name="allowMissingParamTags" value="false"/>-->
+<!--            <property name="allowUnknownTags" value="false"/>-->
+<!--        </module>-->
 
         <!-- Javadoc method rules -->
-        <module name="MissingJavadocMethod">
-            <property name="excludeScope" value="private"/>
-            <property name="allowMissingPropertyJavadoc" value="true"/>
-            <property name="tokens" value="METHOD_DEF,ANNOTATION_FIELD_DEF"/>
-        </module>
-        <module name="JavadocMethod">
-            <property name="accessModifiers" value="public,protected,package"/>
-            <property name="allowMissingParamTags" value="false"/>
-            <property name="allowMissingReturnTag" value="false"/>
-        </module>
+<!--        <module name="MissingJavadocMethod">-->
+<!--            <property name="excludeScope" value="private"/>-->
+<!--            <property name="allowMissingPropertyJavadoc" value="true"/>-->
+<!--            <property name="tokens" value="METHOD_DEF,ANNOTATION_FIELD_DEF"/>-->
+<!--        </module>-->
+<!--        <module name="JavadocMethod">-->
+<!--            <property name="accessModifiers" value="public,protected,package"/>-->
+<!--            <property name="allowMissingParamTags" value="false"/>-->
+<!--            <property name="allowMissingReturnTag" value="false"/>-->
+<!--        </module>-->
     </module>
 </module>

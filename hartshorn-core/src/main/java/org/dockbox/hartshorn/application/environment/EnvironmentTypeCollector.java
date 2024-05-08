@@ -44,10 +44,10 @@ import org.slf4j.LoggerFactory;
  * {@link org.dockbox.hartshorn.util.introspect.Introspector}. Note that while classes are loaded, it is not ensured they
  * are immediately initialized.
  *
- * @since 0.5.0
- *
  * @see TypeReferenceCollector
  * @see TypeReferenceCollectorContext
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */
@@ -67,8 +67,9 @@ public class EnvironmentTypeCollector {
      * attached to the environment's {@link ApplicationContext}.
      *
      * @param predicate the predicate to match
-     * @return a collection of types that match the given predicate
      * @param <T> the type of the elements in the collection
+     *
+     * @return a collection of types that match the given predicate
      */
     public <T> Collection<TypeView<? extends T>> types(Predicate<TypeView<?>> predicate) {
         Option<TypeReferenceCollectorContext> collectorContext = this.environment.applicationContext().firstContext(TypeReferenceCollectorContext.class);

@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  *
  * @param <T> The type of the custom statement.
  *
- * @since 0.5.0
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

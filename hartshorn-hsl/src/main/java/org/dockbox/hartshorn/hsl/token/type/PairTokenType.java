@@ -151,9 +151,9 @@ public enum PairTokenType implements EnumTokenType {
     /**
      * Represents the position of a pair token. This is either the start or end of a pair of tokens.
      *
-     * @since 0.6.0
-     *
      * @see PairTokenType#position()
+     *
+     * @since 0.6.0
      *
      * @author Guus Lieben
      */

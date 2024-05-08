@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,8 +127,9 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implemen
      * @param index the index of the parameter in the parameter list
      * @param context the context to use when looking up the parameter value
      * @param args the original arguments that are passed to the method that is being invoked
-     * @return the default value for the provided parameter
      * @param <T> the type of the parameter
+     *
+     * @return the default value for the provided parameter
      */
     protected <T> T loadDefault(ParameterView<T> parameter, int index, C context, Object... args) {
         return parameter.type().defaultOrNull();

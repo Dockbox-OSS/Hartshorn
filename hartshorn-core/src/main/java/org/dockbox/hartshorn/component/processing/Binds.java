@@ -28,8 +28,6 @@ import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.inject.Named;
 import org.dockbox.hartshorn.inject.Priority;
 import org.dockbox.hartshorn.inject.Qualifier;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
 
 /**

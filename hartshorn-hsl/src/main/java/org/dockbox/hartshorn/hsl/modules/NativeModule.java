@@ -31,8 +31,9 @@ import org.dockbox.hartshorn.hsl.token.Token;
  * invoked at runtime. The module can optionally be loaded into the interpreter when a
  * {@link NativeFunctionStatement} or {@link ModuleStatement} is encountered.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public interface NativeModule extends ContextCarrier {
 

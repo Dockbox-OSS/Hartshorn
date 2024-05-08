@@ -36,9 +36,9 @@ import org.dockbox.hartshorn.hsl.token.TokenCharacter;
  * @param defaultLexeme the default lexeme of the token type
  * @param characters the characters that the token type can be represented with
  *
- * @since 0.6.0
- *
  * @see TokenType
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */
@@ -87,9 +87,9 @@ public record SimpleTokenType(
     /**
      * A builder for simple token types.
      *
-     * @since 0.6.0
-     *
      * @see SimpleTokenType
+     *
+     * @since 0.6.0
      *
      * @author Guus Lieben
      */

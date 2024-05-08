@@ -114,10 +114,10 @@ public interface ApplicationEnvironment extends ContextCarrier, ExceptionHandler
      * arguments are returned as a {@link Properties} object, where the key is the argument name, and the value is the
      * argument value. The key/value pair is parsed by the active {@link ApplicationArgumentParser}.
      *
+     * @return The raw arguments
+     *
      * @see org.dockbox.hartshorn.application.environment.StandardApplicationArgumentParser
      * @see org.dockbox.hartshorn.application.environment.ApplicationArgumentParser
-     *
-     * @return The raw arguments
      */
     Properties rawArguments();
 

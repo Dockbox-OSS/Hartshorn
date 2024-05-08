@@ -16,6 +16,15 @@
 
 package org.dockbox.hartshorn.inject;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <T>> ...
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface LifecycleAwareDependencyContext<T> extends DependencyContext<T> {
 
     LifecycleType lifecycleType();

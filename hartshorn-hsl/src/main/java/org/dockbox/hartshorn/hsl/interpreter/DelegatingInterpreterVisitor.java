@@ -101,6 +101,13 @@ import org.dockbox.hartshorn.hsl.interpreter.statement.TestStatementInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.statement.VariableStatementInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.statement.WhileStatementInterpreter;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public record DelegatingInterpreterVisitor(Interpreter interpreter) implements InterpreterVisitor {
 
     @Override

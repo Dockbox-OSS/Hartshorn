@@ -29,9 +29,9 @@ import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory
  * Converts a {@link Collection} to another {@link Collection} by adding all elements of the source collection to the
  * target collection. The target collection is created using the {@link DefaultValueProvider} of the target type.
  *
- * @since 0.5.0
- *
  * @see CollectionDefaultValueProviderFactory
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

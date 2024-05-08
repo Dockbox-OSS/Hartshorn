@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,8 +64,9 @@ public class ScopeAdapter<T> implements Scope {
      *
      * @param adaptee the adaptee
      * @param type the parameterized type of the adaptee
-     * @return the new adapter
      * @param <T> the type of the adaptee
+     *
+     * @return the new adapter
      */
     public static <T> ScopeAdapter<T> of(T adaptee, ParameterizableType type) {
         return new ScopeAdapter<>(adaptee, type);
@@ -75,8 +76,9 @@ public class ScopeAdapter<T> implements Scope {
      * Creates a new {@link ScopeAdapter} for the given adaptee.
      *
      * @param adaptee the adaptee
-     * @return the new adapter
      * @param <T> the type of the adaptee
+     *
+     * @return the new adapter
      */
     public static <T> ScopeAdapter<T> of(T adaptee) {
         return new ScopeAdapter<>(adaptee, ParameterizableType.create(adaptee.getClass()));

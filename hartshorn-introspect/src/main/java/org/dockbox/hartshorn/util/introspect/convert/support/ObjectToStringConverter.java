@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 /**
  * Converts any object to a {@link String} by invoking {@link String#valueOf(Object)}.
  *
- * @since 0.5.0
- *
  * @see String#valueOf(Object)
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

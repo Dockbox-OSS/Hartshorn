@@ -35,8 +35,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * the {@link StandardRuntime} to evaluate the script, and customizes the input using the {@link
  * ExpressionCustomizer}.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class ValidateExpressionRuntime extends StandardRuntime {
 

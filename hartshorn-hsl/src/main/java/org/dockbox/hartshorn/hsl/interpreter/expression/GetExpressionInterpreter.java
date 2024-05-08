@@ -26,6 +26,16 @@ import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalFunction;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <Object> ...
+ * @param <GetExpression>> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class GetExpressionInterpreter implements ASTNodeInterpreter<Object, GetExpression> {
 
     @Override

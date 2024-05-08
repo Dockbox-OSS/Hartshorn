@@ -28,8 +28,9 @@ import java.lang.reflect.Field;
  * @param <Parent> The type of the field's declaring class
  * @param <FieldType> The type of the field
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public interface FieldView<Parent, FieldType> extends ModifierCarrierView, AnnotatedGenericTypeView<FieldType> {
 
@@ -47,6 +48,7 @@ public interface FieldView<Parent, FieldType> extends ModifierCarrierView, Annot
      *
      * @param instance the instance on which to set the field's value
      * @param value the value to set
+     *
      * @throws IllegalIntrospectionException if the field is final, the given value does not match the field's type, or
      *        if the field is not accessible. Also thrown if the configured setter method does not exist.
      */
@@ -58,8 +60,10 @@ public interface FieldView<Parent, FieldType> extends ModifierCarrierView, Annot
      * as configured in {@link Property#getter()}, if available.
      *
      * @param instance the instance from which to get the field's value
-     * @throws IllegalIntrospectionException if the field is not accessible, or the configured getter method does not exist
+     *
      * @return the value of the field represented by this view on the given instance
+     *
+     * @throws IllegalIntrospectionException if the field is not accessible, or the configured getter method does not exist
      */
     Option<FieldType> get(Object instance) throws Throwable;
 
@@ -68,9 +72,10 @@ public interface FieldView<Parent, FieldType> extends ModifierCarrierView, Annot
      * {@link Property}, an attempt is made to use the field's getter method as configured in {@link Property#getter()},
      * if available.
      *
+     * @return the value of the field represented by this view
+     *
      * @throws IllegalIntrospectionException if the field is not accessible, not static, or the configured getter method
      *       does not exist
-     * @return the value of the field represented by this view
      */
     Option<FieldType> getStatic() throws Throwable;
 

@@ -31,10 +31,12 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <C> The type to be provided.
  *
- * @author Guus Lieben
  * @see Provider
  * @see ContextDrivenProvider
+ *
  * @since 0.4.3
+ *
+ * @author Guus Lieben
  */
 public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements NonTypeAwareProvider<C> {
 

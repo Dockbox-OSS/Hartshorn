@@ -26,6 +26,13 @@ import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public final class IntrospectionDependencyResolver {
 
     private final ApplicationEnvironment environment;

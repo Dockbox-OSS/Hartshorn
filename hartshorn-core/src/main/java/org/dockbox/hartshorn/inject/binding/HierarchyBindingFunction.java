@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.ScopeModuleContext;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.LazySingletonProvider;
-import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.SingletonProvider;
 import org.dockbox.hartshorn.inject.SupplierProvider;
@@ -42,11 +41,12 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
  *
  * @param <T> The type of the component that is bound.
  *
- * @author Guus Lieben
- * @since 0.4.1
- *
  * @see Binder
  * @see BindingHierarchy
+ *
+ * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
 public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 

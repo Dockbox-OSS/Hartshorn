@@ -56,8 +56,9 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) {
      * require the annotation to be introspected at runtime.
      *
      * @param annotation The annotation to use as a qualifier.
-     * @return The new {@link QualifierKey} instance.
      * @param <T> The type of the annotation.
+     *
+     * @return The new {@link QualifierKey} instance.
      */
     public static <T extends Annotation> QualifierKey<T> of(T annotation) {
         Class<T> annotationType = TypeUtils.adjustWildcards(annotation.annotationType(), Class.class);
@@ -71,8 +72,9 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) {
      *
      * @param type The type of the qualifier.
      * @param meta The meta data of the qualifier.
-     * @return The new {@link QualifierKey} instance.
      * @param <T> The type of the qualifier.
+     *
+     * @return The new {@link QualifierKey} instance.
      */
     public static <T extends Annotation> QualifierKey<T> of(Class<T> type, Map<String, Object> meta) {
         checkValidMetadata(type, meta);
@@ -84,8 +86,9 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) {
      * type does not have any attributes.
      *
      * @param type The type of the qualifier.
-     * @return The new {@link QualifierKey} instance.
      * @param <T> The type of the qualifier.
+     *
+     * @return The new {@link QualifierKey} instance.
      */
     public static <T extends Annotation> QualifierKey<T> of(Class<T> type) {
         return of(type, Map.of());

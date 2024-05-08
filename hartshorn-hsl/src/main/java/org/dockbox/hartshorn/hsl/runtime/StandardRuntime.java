@@ -36,9 +36,11 @@ import org.dockbox.hartshorn.hsl.modules.StandardLibrary;
  * <p>The executor for each phase is obtained from the given {@link ApplicationContext},
  * to allow each executor to be customized through standard DI principles.
  *
- * @author Guus Lieben
- * @since 0.4.12
  * @see ExpressionConditionContext
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class StandardRuntime extends AbstractScriptRuntime {
 

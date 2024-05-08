@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.logging.AnsiStyle;
  * The default banner of Hartshorn. This banner is printed when the application starts if
  * no custom banner is provided.
  *
- * @since 0.5.0
+ * @since 0.4.13
  *
  * @author Guus Lieben
  */

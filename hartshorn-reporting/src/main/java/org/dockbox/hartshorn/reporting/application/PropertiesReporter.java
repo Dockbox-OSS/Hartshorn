@@ -26,9 +26,9 @@ import org.dockbox.hartshorn.reporting.Reportable;
  * A reportable that reports the contents of a {@link Properties} instance. The keys of the properties are used as
  * property names, and the values of the properties are used as property values.
  *
- * @since 0.5.0
- *
  * @see Properties
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

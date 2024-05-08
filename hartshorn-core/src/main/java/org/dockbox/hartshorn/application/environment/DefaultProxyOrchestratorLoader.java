@@ -25,6 +25,15 @@ import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
+/**
+ * Initializer for the default {@link ProxyOrchestrator} implementation provided by the {@link DiscoveryService}. This
+ * is mostly a re-usable support class for any component that requires a {@link ProxyOrchestrator} to be loaded. Note
+ * that this initializer is not cached, and will return a new instance of the {@link ProxyOrchestrator} on each call.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public final class DefaultProxyOrchestratorLoader {
 
     private DefaultProxyOrchestratorLoader() {
@@ -52,6 +61,13 @@ public final class DefaultProxyOrchestratorLoader {
         };
     }
 
+    /**
+     * A no-op class that may be used to configure the {@link ProxyOrchestrator} loader.
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer {
         // No-op, may be used in the future
     }

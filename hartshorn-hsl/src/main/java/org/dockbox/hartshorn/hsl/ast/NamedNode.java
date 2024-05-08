@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
 /**
  * Represents a node in the AST that has a name. This is an optional interface, as not all nodes in the AST have a name.
  *
- * @since 0.5.0
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */

@@ -31,8 +31,9 @@ import java.util.Collection;
  * @param <Parent> the type of the method's parent
  * @param <ReturnType> the type of the method's return type
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Parent>, AnnotatedGenericTypeView<ReturnType> {
 
@@ -73,8 +74,10 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
      * exceptions thrown by the method will be re-thrown.
      *
      * @param arguments the arguments to pass to the method
-     * @throws IllegalIntrospectionException if the method is not static
+     *
      * @return the result of the method invocation
+     *
+     * @throws IllegalIntrospectionException if the method is not static
      */
     default Option<ReturnType> invokeStatic(Object... arguments) throws Throwable {
         return this.invokeStatic(Arrays.asList(arguments));
@@ -86,8 +89,10 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
      * exceptions will be re-thrown.
      *
      * @param arguments the arguments to pass to the method
-     * @throws IllegalIntrospectionException if the method is not static
+     *
      * @return the result of the method invocation
+     *
+     * @throws IllegalIntrospectionException if the method is not static
      */
     Option<ReturnType> invokeStatic(Collection<?> arguments) throws Throwable;
 

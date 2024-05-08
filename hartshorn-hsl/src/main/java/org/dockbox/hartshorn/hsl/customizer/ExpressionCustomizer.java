@@ -38,8 +38,9 @@ import org.dockbox.hartshorn.util.CollectionUtilities;
  * a {@link TestStatement} and inline any required {@link NativeModule}s without the need for a
  * standard library or a module header.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class ExpressionCustomizer extends AbstractCodeCustomizer {
 

@@ -18,8 +18,6 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.ScopeKey;
-import org.dockbox.hartshorn.component.processing.ComponentMemberType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.IllegalScopeException;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -132,6 +130,15 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
      */
     private enum InstanceType { SUPPLIER, SINGLETON, LAZY_SINGLETON }
 
+    /**
+     * A builder for {@link AutoConfiguringDependencyContext} instances.
+     *
+     * @param <T> the type of the component that is auto-configured
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static final class AutoConfiguringDependencyContextBuilder<T> extends AbstractDependencyContextBuilder<T, AutoConfiguringDependencyContextBuilder<T>> {
 
         private ContextAwareComponentSupplier<T> supplier;

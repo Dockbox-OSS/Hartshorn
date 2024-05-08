@@ -32,6 +32,13 @@ import org.dockbox.hartshorn.util.GenericType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * TODO: #1062 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class StandardURIConfigProcessor implements URIConfigProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(StandardURIConfigProcessor.class);

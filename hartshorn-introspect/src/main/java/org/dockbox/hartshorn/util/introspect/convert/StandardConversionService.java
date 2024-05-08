@@ -71,8 +71,9 @@ import org.dockbox.hartshorn.util.option.Option;
  *     <li>{@link #registerDefaultProviders(ConverterRegistry, Introspector)}</li>
  * </ul>
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class StandardConversionService implements ConversionService, ConverterRegistry {
 
@@ -95,13 +96,13 @@ public class StandardConversionService implements ConversionService, ConverterRe
      * Registers all default converters. This includes all converters in the
      * {@link org.dockbox.hartshorn.util.introspect.convert.support} package.
      *
+     * @return this instance
+     *
      * @see #registerCollectionConverters(ConverterRegistry, ConversionService, Introspector)
      * @see #registerNullWrapperConverters(ConverterRegistry, Introspector)
      * @see #registerStringConverters(ConverterRegistry)
      * @see #registerPrimitiveConverters(ConverterRegistry)
      * @see #registerDefaultProviders(ConverterRegistry, Introspector)
-     *
-     * @return this instance
      */
     public StandardConversionService withDefaults() {
         StandardConversionService.registerCollectionConverters(this, this, this.introspector);

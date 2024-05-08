@@ -28,10 +28,10 @@ import org.dockbox.hartshorn.context.DefaultContext;
  * <p>The target of the request context is typically an injection point, but it may also be used to describe
  * the use case of a component in other scenarios through custom context implementations.
  *
- * @since 0.6.0
- *
  * @see InjectionPoint
  * @see ComponentKey
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

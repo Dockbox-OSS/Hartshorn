@@ -20,9 +20,9 @@ package org.dockbox.hartshorn.hsl.token;
  * Represents the default characters that are always available to represent certain tokens in the
  * HSL language. This covers whitespace characters and the null character.
  *
- * @since 0.6.0
- *
  * @see TokenCharacter
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

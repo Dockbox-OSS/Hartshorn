@@ -50,8 +50,9 @@ public final class CollectionUtilities {
      * empty {@link Set} is returned.
      *
      * @param collections The collections to use while constructing a new set
-     * @return The new set
      * @param <T> The type of the elements in the set
+     *
+     * @return The new set
      *
      * @see #mergeList(Collection[])
      */
@@ -69,8 +70,9 @@ public final class CollectionUtilities {
      * empty {@link List} is returned.
      *
      * @param collections The collections to use while constructing a new list
-     * @return The new list
      * @param <T> The type of the elements in the list
+     *
+     * @return The new list
      *
      * @see #merge(Collection[])
      */
@@ -90,8 +92,9 @@ public final class CollectionUtilities {
      *
      * @param arrayOne The first array
      * @param arrayTwo The second array
-     * @return The merged array
      * @param <T> The type of the elements in the arrays
+     *
+     * @return The merged array
      */
     public static <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
         T[] merged = Arrays.copyOf(arrayOne, arrayOne.length + arrayTwo.length);
@@ -106,8 +109,9 @@ public final class CollectionUtilities {
      *
      * @param collectionOne The first collection
      * @param collectionTwo The second collection
-     * @return The difference between the two collections
      * @param <T> The type of the elements in the collections
+     *
+     * @return The difference between the two collections
      */
     public static <T> Set<T> difference(Collection<T> collectionOne, Collection<T> collectionTwo) {
         BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
@@ -129,8 +133,9 @@ public final class CollectionUtilities {
      * collection. Effectively this is a shorthand for {@link Collection#forEach(Consumer)}.
      *
      * @param consumer The consumer to apply to each element
-     * @param collections The collections to iterate over
      * @param <T> The type of the elements in the collections
+     *
+     * @param collections The collections to iterate over
      */
     @SafeVarargs
     public static <T> void forEach(Consumer<T> consumer, Collection<T>... collections) {
@@ -145,8 +150,9 @@ public final class CollectionUtilities {
      * compared to {@link Set#of(Object...)} is that the order of the elements is preserved.
      *
      * @param collection The collection to get the distinct elements from
-     * @return The new list containing all distinct elements
      * @param <T> The type of the elements in the collection
+     *
+     * @return The new list containing all distinct elements
      */
     public static <T> List<T> distinct(Collection<T> collection) {
         return collection.stream().distinct().toList();
@@ -159,8 +165,9 @@ public final class CollectionUtilities {
      * element is returned.
      *
      * @param collection The collection to get the last element from
-     * @return The last element of the collection
      * @param <T> The type of the elements in the collection
+     *
+     * @return The last element of the collection
      */
     @Nullable
     public static <T> T last(Collection<T> collection) {
@@ -188,8 +195,9 @@ public final class CollectionUtilities {
      * is used to get the first element.
      *
      * @param iterable The collection to get the first element from
-     * @return The first element of the collection
      * @param <T> The type of the elements in the collection
+     *
+     * @return The first element of the collection
      */
     @Nullable
     public static <T> T first(Iterable<T> iterable) {
@@ -215,8 +223,9 @@ public final class CollectionUtilities {
      *
      * @param collection The collection to create a string representation of
      * @param valueMapper The function to map each element to a string
-     * @return The aggregated string representation of the collection
      * @param <T> The type of the elements in the collection
+     *
+     * @return The aggregated string representation of the collection
      */
     public static <T> String toString(Collection<T> collection, Function<T, ?> valueMapper) {
         return collection.stream()
@@ -231,8 +240,9 @@ public final class CollectionUtilities {
      * is that the order of the elements is preserved if the given set is a {@link NavigableSet}.
      *
      * @param set The set to copy
-     * @return The new set containing all elements
      * @param <T> The type of the elements in the set
+     *
+     * @return The new set containing all elements
      */
     public static <T> Set<T> copyOf(Set<T> set) {
         if (set instanceof NavigableSet<T> navigableSet) {

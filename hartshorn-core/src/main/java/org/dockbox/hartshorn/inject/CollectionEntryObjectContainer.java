@@ -16,6 +16,15 @@
 
 package org.dockbox.hartshorn.inject;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <T>> ...
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class CollectionEntryObjectContainer<T> extends AbstractObjectContainer<T> {
 
     private final ObjectContainer<T> container;

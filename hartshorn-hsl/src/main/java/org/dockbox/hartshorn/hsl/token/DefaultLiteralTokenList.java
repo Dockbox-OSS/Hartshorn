@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 /**
  * Default implementation of {@link LiteralTokenList} using {@link LiteralTokenType}.
  *
- * @since 0.6.0
- *
  * @see LiteralTokenType
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

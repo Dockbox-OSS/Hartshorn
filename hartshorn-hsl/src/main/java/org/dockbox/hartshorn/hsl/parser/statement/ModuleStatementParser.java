@@ -27,6 +27,15 @@ import org.dockbox.hartshorn.hsl.token.type.ImportTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <ModuleStatement>> ...
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ModuleStatementParser implements ASTNodeParser<ModuleStatement> {
 
     @Override

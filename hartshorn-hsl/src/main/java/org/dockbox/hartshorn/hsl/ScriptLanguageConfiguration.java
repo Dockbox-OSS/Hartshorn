@@ -34,6 +34,13 @@ import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 import org.dockbox.hartshorn.inject.SupportPriority;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 @Configuration
 @RequiresActivator(UseExpressionValidation.class)
 public class ScriptLanguageConfiguration {

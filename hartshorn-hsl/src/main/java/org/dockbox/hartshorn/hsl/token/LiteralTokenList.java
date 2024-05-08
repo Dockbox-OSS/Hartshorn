@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
  * Represents a list of literal tokens that are used in the HSL language. This list is used to define the different types
  * of literal tokens so that they can be recognized by the lexer and parser.
  *
- * @since 0.6.0
- *
  * @see TokenType
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

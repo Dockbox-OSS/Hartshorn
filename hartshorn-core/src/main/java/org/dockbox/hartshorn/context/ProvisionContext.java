@@ -26,8 +26,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * in the retrieval of values, as context keys support fallback functions and access to
  * the {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ProvisionContext extends Context {
 

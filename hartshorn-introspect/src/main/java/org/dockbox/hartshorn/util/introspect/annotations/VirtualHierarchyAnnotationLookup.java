@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,8 +98,9 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
      *
      * @param element The element to find the annotations on
      * @param annotationType The type of the annotations to find
-     * @return All annotations compatible with the given annotation type on the given element
      * @param <A> The type of the annotation
+     *
+     * @return All annotations compatible with the given annotation type on the given element
      */
     protected <A extends Annotation> List<A> annotationsOnElement(AnnotatedElement element, Class<A> annotationType) {
         return Arrays.stream(element.getAnnotations())
@@ -115,8 +116,9 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
      *
      * @param actual The annotation to examine
      * @param targetAnnotationClass The annotation type to find
-     * @return A proxy that implements the given annotation type, or {@code null}
      * @param <A> The type of the annotation
+     *
+     * @return A proxy that implements the given annotation type, or {@code null}
      */
     protected <A extends Annotation> A examineAnnotation(Annotation actual, Class<A> targetAnnotationClass) {
         actual = this.unproxy(actual);

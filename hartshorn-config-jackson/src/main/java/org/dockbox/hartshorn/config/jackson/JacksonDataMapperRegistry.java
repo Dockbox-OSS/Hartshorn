@@ -19,6 +19,13 @@ package org.dockbox.hartshorn.config.jackson;
 import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1063 Add documentation
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface JacksonDataMapperRegistry {
 
     void register(JacksonDataMapper mapper);

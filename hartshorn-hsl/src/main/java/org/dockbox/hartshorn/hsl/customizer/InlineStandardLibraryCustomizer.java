@@ -26,6 +26,13 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class InlineStandardLibraryCustomizer extends AbstractCodeCustomizer {
 
     public InlineStandardLibraryCustomizer() {

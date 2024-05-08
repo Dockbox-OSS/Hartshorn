@@ -19,8 +19,9 @@ package org.dockbox.hartshorn.application;
 /**
  * The exception handler is used to handle exceptions that occur during the application lifecycle.
  *
+ * @since 0.4.9
+ *
  * @author Guus Lieben
- * @since 0.4.8
  */
 public interface ExceptionHandler {
 

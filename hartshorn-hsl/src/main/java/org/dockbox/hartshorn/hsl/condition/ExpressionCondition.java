@@ -47,8 +47,9 @@ import org.slf4j.LoggerFactory;
  * #GLOBAL_APPLICATION_CONTEXT_NAME} alias, unless the instance is the same as the active {@link ApplicationContext}. If a
  * conflict arises a warning is logged, but the runtime will proceed as usual.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class ExpressionCondition implements Condition {
 

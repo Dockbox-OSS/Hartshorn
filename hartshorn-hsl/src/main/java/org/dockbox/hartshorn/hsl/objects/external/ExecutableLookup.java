@@ -30,8 +30,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * Utility class to lookup an executable by name and a list of arguments. The lookup may either use
  * a predefined list of executables, or by matching methods with the given name and argument types.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class ExecutableLookup {
 
@@ -45,8 +46,9 @@ public class ExecutableLookup {
      * @param declaring The declaring type of the method.
      * @param function The name of the method.
      * @param arguments The list of arguments.
-     * @return The found executable.
      * @param <T> The type of the declaring type.
+     *
+     * @return The found executable.
      */
     public static <T> MethodView<T, ?> method(Token at, TypeView<T> declaring, String function, List<Object> arguments) {
         Option<MethodView<T, ?>> zeroParameterMethod = declaring.methods().named(function);
@@ -82,9 +84,10 @@ public class ExecutableLookup {
      *
      * @param executables The list of executables.
      * @param arguments The list of arguments.
-     * @return The found executable.
      * @param <P> The type of the declaring parent of the executable.
      * @param <T> The context type representing the executable.
+     *
+     * @return The found executable.
      */
     public static <P, T extends ExecutableElementView<P>> T executable(List<T> executables, List<Object> arguments) {
         for (T executable : executables) {

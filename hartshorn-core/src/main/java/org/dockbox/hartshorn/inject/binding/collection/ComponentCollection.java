@@ -38,5 +38,10 @@ import org.dockbox.hartshorn.inject.ObjectContainer;
  */
 public interface ComponentCollection<T> extends Collection<T> {
 
+    /**
+     * Returns all containers in the collection. Each container represents a single binding for the type.
+     *
+     * @return all containers in the collection
+     */
     Set<ObjectContainer<T>> containers();
 }

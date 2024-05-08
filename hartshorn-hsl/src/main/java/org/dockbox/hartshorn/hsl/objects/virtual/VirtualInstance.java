@@ -36,8 +36,9 @@ import org.dockbox.hartshorn.hsl.token.Token;
  * identified by its {@link VirtualClass type}. The instance can carry a variety of
  * properties, which are not bound to a specific contract.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class VirtualInstance implements InstanceReference {
 

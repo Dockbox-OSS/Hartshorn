@@ -191,6 +191,19 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
         return this.processAfterInitialization;
     }
 
+    /**
+     * Base class for builders of {@link AbstractDependencyContext} instances.
+     *
+     * @param <T> the type of the component
+     * @param <B> the type of the builder
+     *
+     * @see AbstractDependencyContext
+     * @see DependencyContext
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public abstract static class AbstractDependencyContextBuilder<T, B extends AbstractDependencyContextBuilder<T, B>> {
 
         private final ComponentKey<T> componentKey;

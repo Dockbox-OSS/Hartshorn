@@ -34,6 +34,13 @@ import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class SimpleComponentProviderPostProcessor implements ComponentProviderPostProcessor {
 
     private final ScopedProviderOwner owner;

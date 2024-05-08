@@ -36,8 +36,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @param <T> The type of the value.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public final class ContextKey<T extends ContextView> implements ContextIdentity<T> {
 
@@ -152,8 +153,9 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
      * Creates a new {@link ContextKey key} which is bound to the given type.
      *
      * @param type The type of the context represented by the key.
-     * @return A new {@link ContextKey key} which is bound to the given type.
      * @param <T> The type of the context represented by the key.
+     *
+     * @return A new {@link ContextKey key} which is bound to the given type.
      */
     public static <T extends ContextView> ContextKey<T> of(Class<T> type) {
         return builder(type).build();
@@ -163,8 +165,9 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
      * Creates a new {@link ContextKey key} which is bound to the given type.
      *
      * @param type The type of the context represented by the key.
-     * @return A new {@link ContextKey key} which is bound to the given type.
      * @param <T> The type of the context represented by the key.
+     *
+     * @return A new {@link ContextKey key} which is bound to the given type.
      */
     public static <T extends ContextView> ContextKey<T> of(TypeView<T> type) {
         return builder(type).build();
@@ -174,8 +177,9 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
      * Creates a new {@link Builder key builder} which is bound to the given type and name.
      *
      * @param type The type of the context represented by the key.
-     * @return A new {@link Builder key builder} which is bound to the given type and name.
      * @param <T> The type of the context represented by the key.
+     *
+     * @return A new {@link Builder key builder} which is bound to the given type and name.
      */
     public static <T extends ContextView> Builder<T> builder(Class<T> type) {
         return new Builder<>(type);
@@ -185,8 +189,9 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
      * Creates a new {@link Builder key builder} which is bound to the given type and name.
      *
      * @param type The type of the context represented by the key.
-     * @return A new {@link Builder key builder} which is bound to the given type and name.
      * @param <T> The type of the context represented by the key.
+     *
+     * @return A new {@link Builder key builder} which is bound to the given type and name.
      */
     public static <T extends ContextView> Builder<T> builder(TypeView<T> type) {
         return new Builder<>(type.type());
@@ -222,12 +227,14 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
      * A mutable builder for {@link ContextKey keys}.
      *
      * @param <T> The type of the context represented by the key.
+     *
      * @see ContextKey#mutable()
      * @see ContextKey#builder(Class)
      * @see ContextKey#builder(TypeView)
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class Builder<T extends ContextView> {
 
@@ -264,6 +271,7 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
          * if the context is not named.
          *
          * @param name The name of the context represented by the key.
+         *
          * @return This builder.
          */
         public Builder<T> name(String name) {

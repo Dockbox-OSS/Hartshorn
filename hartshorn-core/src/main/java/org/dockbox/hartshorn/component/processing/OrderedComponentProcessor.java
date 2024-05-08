@@ -18,6 +18,10 @@ package org.dockbox.hartshorn.component.processing;
 
 /**
  * An interface which defines the methods for processing components in an ordered manner.
+ *
+ * @since 0.4.7
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface OrderedComponentProcessor {

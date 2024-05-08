@@ -36,9 +36,9 @@ import org.dockbox.hartshorn.reporting.Reportable;
  * reporter can be configured to group components by their {@link ComponentAttribute attribute}. Individual components are
  * reported using {@link ComponentContainerReporter}s.
  *
- * @since 0.5.0
- *
  * @see ComponentContainerReporter
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

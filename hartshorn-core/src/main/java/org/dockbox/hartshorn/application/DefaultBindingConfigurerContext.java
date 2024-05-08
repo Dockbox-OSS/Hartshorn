@@ -26,8 +26,9 @@ import org.dockbox.hartshorn.context.DefaultContext;
  * @see DefaultBindingConfigurer
  * @see ApplicationInitializerContext#initializeInitial()
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class DefaultBindingConfigurerContext extends DefaultContext {
 

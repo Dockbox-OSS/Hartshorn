@@ -21,9 +21,9 @@ package org.dockbox.hartshorn.hsl.token;
  * follows basic rules for tokenization, such as whether a character is a digit, letter or
  * alphanumeric character.
  *
- * @since 0.6.0
- *
  * @see TokenCharacter
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */

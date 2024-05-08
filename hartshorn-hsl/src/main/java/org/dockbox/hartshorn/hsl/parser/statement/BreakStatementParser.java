@@ -26,9 +26,9 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 /**
  * A parser for the 'break' statement, using the {@link ControlTokenType#BREAK} token type.
  *
- * @since 0.5.0
- *
  * @see BreakStatement
+ *
+ * @since 0.4.13
  *
  * @author Guus Lieben
  */

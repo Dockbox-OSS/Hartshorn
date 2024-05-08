@@ -38,10 +38,10 @@ import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
  * not be configured through this class, and should instead be configured through a {@link
  * org.dockbox.hartshorn.component.Configuration configuration class}.
  *
- * @since 0.5.0
- *
  * @see ScriptRuntime
  * @see ScriptContext
+ *
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */

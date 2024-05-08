@@ -49,8 +49,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * always possible, as some elements may not be accessible to the application. In such cases, the
  * implementation may decide how to proceed.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public interface Introspector extends ReferenceIntrospector {
 
@@ -61,6 +62,7 @@ public interface Introspector extends ReferenceIntrospector {
      *
      * @param type the type to introspect
      * @param <T>  the type of the provided type
+     *
      * @return a view of the provided type
      *
      * @see TypeParameterView for more information on type parameters and type variables
@@ -74,8 +76,9 @@ public interface Introspector extends ReferenceIntrospector {
      * directly with {@link Object#getClass()}.
      *
      * @param instance the instance to introspect
-     * @return a view of the provided instance
      * @param <T> the type of the provided instance
+     *
+     * @return a view of the provided instance
      */
     <T> TypeView<T> introspect(T instance);
 
@@ -85,6 +88,7 @@ public interface Introspector extends ReferenceIntrospector {
      * and output type parameters will be included if applicable.
      *
      * @param type the type to introspect
+     *
      * @return a view of the provided type
      *
      * @see TypeParameterView for more information on type parameters and type variables
@@ -97,6 +101,7 @@ public interface Introspector extends ReferenceIntrospector {
      * Output type parameters will be included if applicable.
      *
      * @param type the type to introspect
+     *
      * @return a view of the provided type
      *
      * @see TypeParameterView for more information on type parameters and type variables
@@ -109,6 +114,7 @@ public interface Introspector extends ReferenceIntrospector {
      * Output type parameters will be included if applicable.
      *
      * @param type the type to introspect
+     *
      * @return a view of the provided type
      *
      * @see TypeParameterView for more information on type parameters and type variables
@@ -121,8 +127,9 @@ public interface Introspector extends ReferenceIntrospector {
      * Output type parameters will be included if applicable.
      *
      * @param type the type to introspect
-     * @return a view of the provided type
      * @param <T> the type of the provided type
+     *
+     * @return a view of the provided type
      */
     <T> TypeView<T> introspect(GenericType<T> type);
 
@@ -131,6 +138,7 @@ public interface Introspector extends ReferenceIntrospector {
      * method's signature, and will include all relevant method metadata.
      *
      * @param method the method to introspect
+     *
      * @return a view of the provided method
      */
     MethodView<?, ?> introspect(Method method);
@@ -140,8 +148,9 @@ public interface Introspector extends ReferenceIntrospector {
      * provided constructor's signature, and will include all relevant constructor metadata.
      *
      * @param method the constructor to introspect
-     * @return a view of the provided constructor
      * @param <T> the type of the provided constructor
+     *
+     * @return a view of the provided constructor
      */
     <T> ConstructorView<T> introspect(Constructor<T> method);
 
@@ -150,6 +159,7 @@ public interface Introspector extends ReferenceIntrospector {
      * field's signature, and will include all relevant field metadata.
      *
      * @param field the field to introspect
+     *
      * @return a view of the provided field
      */
     FieldView<?, ?> introspect(Field field);
@@ -159,6 +169,7 @@ public interface Introspector extends ReferenceIntrospector {
      * provided parameter's signature, and will include all relevant parameter metadata.
      *
      * @param parameter the parameter to introspect
+     *
      * @return a view of the provided parameter
      */
     ParameterView<?> introspect(Parameter parameter);
@@ -168,6 +179,7 @@ public interface Introspector extends ReferenceIntrospector {
      * package's signature, and will include all relevant package metadata.
      *
      * @param pkg the package to introspect
+     *
      * @return a view of the provided package
      */
     PackageView introspect(Package pkg);
@@ -178,6 +190,7 @@ public interface Introspector extends ReferenceIntrospector {
      * element is not supported, a {@link TypeView} of {@link Void} is returned.
      *
      * @param element the element to introspect
+     *
      * @return a view of the provided element
      */
     AnnotatedElementView introspect(AnnotatedElement element);

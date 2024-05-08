@@ -40,8 +40,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * execution, and store its various executors. Everything but the original script can be
  * customized during the script's execution, though some runtimes may not support this.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class ScriptContext extends DefaultApplicationAwareContext implements ResultCollector {
 

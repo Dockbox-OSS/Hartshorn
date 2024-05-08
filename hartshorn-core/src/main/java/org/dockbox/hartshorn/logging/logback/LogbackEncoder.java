@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.logging.logback;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 
@@ -23,9 +30,11 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
  * A custom {@link PatternLayoutEncoder} that allows for the use of the active process ID
  * in the logback configuration, using the syntax {@code %process_id}.
  *
- * @author Guus Lieben
- * @since 0.4.8
  * @see LogbackPIDConverter
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public class LogbackEncoder extends PatternLayoutEncoder {
 

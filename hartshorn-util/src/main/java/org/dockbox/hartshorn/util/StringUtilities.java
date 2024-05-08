@@ -319,8 +319,9 @@ public final class StringUtilities {
      * @param delimiter the delimiter to use
      * @param elements the elements to join
      * @param toStringFunction the function to convert elements to strings
-     * @return the joined string
      * @param <T> the type of elements to join
+     *
+     * @return the joined string
      */
     public static <T> String join(String delimiter, Iterable<T> elements, Function<T, String> toStringFunction) {
         StringBuilder builder = new StringBuilder();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,9 @@ import java.lang.reflect.Proxy;
  * A proxy lookup implementation that is capable of looking up native proxies. Native proxies are
  * proxies that are created through the standard Java API.
  *
+ * @since 0.4.9
+ *
  * @author Guus Lieben
- * @since 0.4.10
  */
 public class NativeProxyLookup implements ProxyLookup {
 

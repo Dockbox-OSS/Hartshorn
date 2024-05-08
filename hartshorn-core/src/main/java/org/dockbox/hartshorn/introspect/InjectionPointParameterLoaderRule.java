@@ -23,6 +23,15 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <ApplicationBoundParameterLoaderContext>> ...
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public class InjectionPointParameterLoaderRule implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {
 
     private final ComponentRequestContext requestContext;

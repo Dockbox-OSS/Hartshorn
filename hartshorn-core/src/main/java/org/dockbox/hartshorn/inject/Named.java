@@ -39,5 +39,12 @@ import java.lang.annotation.Target;
 })
 @Qualifier
 public @interface Named {
+
+    /**
+     * The value of the qualifier. This may be any value, and does not have to follow any specific format (though
+     * it is recommended to use a format that is easily recognizable and consistent across the application).
+     *
+     * @return the value
+     */
     String value();
 }

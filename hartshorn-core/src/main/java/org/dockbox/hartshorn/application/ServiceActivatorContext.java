@@ -45,8 +45,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * @see ServiceActivator
  * @see ActivatorHolder
  *
+ * @since 0.4.13
+ *
  * @author Guus Lieben
- * @since 0.4.11
  */
 public class ServiceActivatorContext extends DefaultProvisionContext implements Reportable {
 
@@ -103,9 +104,10 @@ public class ServiceActivatorContext extends DefaultProvisionContext implements 
      * the given activator is hierarchical through (virtual) inheritance.
      *
      * @param activator The activator to retrieve
+     * @param <A> The type of the activator
+     *
      * @return The {@link ServiceActivator} annotation instance for the given activator type, or {@code null} if the
      *         given activator is not directly available in this context.
-     * @param <A> The type of the activator
      */
     public <A> A activator(Class<A> activator) {
         Annotation annotation = this.activators.get(activator);

@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * A classpath resource locator. This class is used to locate resources in the classpath, and make them available to
  * the application.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public interface ClasspathResourceLocator {
 

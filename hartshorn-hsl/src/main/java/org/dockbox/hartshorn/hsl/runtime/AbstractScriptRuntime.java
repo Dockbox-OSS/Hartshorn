@@ -45,11 +45,11 @@ import org.dockbox.hartshorn.util.Customizer;
  * <p>Implementations of this class should only have to provide the standard libraries and external
  * modules that are used by the runtime. The runtime itself is provided by this class.
  *
- * @since 0.4.12
- *
  * @see ScriptRuntime
  * @see ValidateExpressionRuntime
  * @see StandardRuntime
+ *
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */

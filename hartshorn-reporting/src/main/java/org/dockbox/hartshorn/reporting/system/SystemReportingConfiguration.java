@@ -20,9 +20,9 @@ package org.dockbox.hartshorn.reporting.system;
  * A configuration object for {@link SystemDiagnosticsReporter}s that allows for fine-grained control over the
  * information that is reported.
  *
- * @since 0.5.0
- *
  * @see SystemDiagnosticsReporter
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

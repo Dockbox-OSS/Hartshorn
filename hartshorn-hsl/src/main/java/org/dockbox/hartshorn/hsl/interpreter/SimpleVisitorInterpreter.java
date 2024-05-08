@@ -49,8 +49,9 @@ import org.slf4j.Logger;
  * which have been previously parsed by a {@link org.dockbox.hartshorn.hsl.parser.ASTNodeParser}, and
  * preferably resolved by a {@link org.dockbox.hartshorn.hsl.semantic.Resolver}.
  *
+ * @since 0.6.0
+ *
  * @author Guus Lieben
- * @since 22.4
  */
 public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
 

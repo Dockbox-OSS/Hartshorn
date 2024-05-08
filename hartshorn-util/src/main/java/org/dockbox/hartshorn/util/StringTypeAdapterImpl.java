@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,10 @@ import org.dockbox.hartshorn.util.option.Option;
  * field instead of requiring it to be implemented it in a separate class.
  *
  * @param <T> The type to convert to.
- * @author Guus Lieben
+ *
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public final class StringTypeAdapterImpl<T> implements StringTypeAdapter<T> {
 

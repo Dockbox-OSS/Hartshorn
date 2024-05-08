@@ -36,6 +36,13 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1059 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView implements TypeParameterView {
 
     private final Type type;

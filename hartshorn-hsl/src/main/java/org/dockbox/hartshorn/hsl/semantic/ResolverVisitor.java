@@ -81,9 +81,9 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * in the AST. The visitor itself doesn't track the resolved references, but instead delegates to the {@link Resolver}
  * to do so.
  *
- * @since 0.5.0
- *
  * @see Resolver
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
  */

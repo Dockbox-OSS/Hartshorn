@@ -30,6 +30,15 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <T>> ...
+ *
+ * @since 0.4.10
+ *
+ * @author Guus Lieben
+ */
 public class ComponentProcessingContext<T> extends DefaultApplicationAwareContext {
 
     private final ComponentRequestContext requestContext;

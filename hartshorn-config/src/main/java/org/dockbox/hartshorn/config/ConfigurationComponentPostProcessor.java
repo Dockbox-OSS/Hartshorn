@@ -32,6 +32,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Looks up and populates fields annotated with {@link Value}.
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public class ConfigurationComponentPostProcessor extends PropertyAwareComponentPostProcessor {
 

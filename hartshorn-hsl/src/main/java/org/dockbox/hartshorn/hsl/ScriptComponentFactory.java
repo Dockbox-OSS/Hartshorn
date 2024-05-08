@@ -34,12 +34,12 @@ import org.dockbox.hartshorn.hsl.token.TokenRegistry;
  * create and execute a script, which cannot be directly provided by the IoC container due to
  * them requiring additional context or state.
  *
- * @since 0.5.0
- *
  * @see Lexer
  * @see TokenParser
  * @see Resolver
  * @see Interpreter
+ *
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */
