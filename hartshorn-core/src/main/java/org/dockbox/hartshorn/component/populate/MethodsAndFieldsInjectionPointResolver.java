@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.component.populate;
 
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.inject.Inject;
 import org.dockbox.hartshorn.inject.Populate;
 import org.dockbox.hartshorn.inject.Populate.Type;
 import org.dockbox.hartshorn.util.ContextualInitializer;
@@ -30,8 +31,6 @@ import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import jakarta.inject.Inject;
 
 /**
  * A {@link ComponentInjectionPointsResolver} that resolves the injection points of a component by

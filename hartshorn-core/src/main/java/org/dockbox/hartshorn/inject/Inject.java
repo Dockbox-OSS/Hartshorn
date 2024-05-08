@@ -20,27 +20,26 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
 
 /**
- * Annotation for injecting a {@link org.dockbox.hartshorn.context.ContextView context} into a class. The
- * context is obtained through the responsible {@link ApplicationContext}. If the context does not exist
- * in the active application context, the injected value will be {@code null}.
+ * Marks an element as an injection point. This annotation may be used by any {@link
+ * ComponentInjectionPointsResolver} to determine which elements of a component should be
+ * populated.
+ *
+ * @see ComponentInjectionPointsResolver
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
- * @since 0.4.7
- *
- * @deprecated Context injection is now built-in to default injection strategies. Use {@link Inject} instead.
  */
+@Target({
+    ElementType.FIELD,
+    ElementType.PARAMETER,
+    ElementType.METHOD,
+    ElementType.CONSTRUCTOR,
+    ElementType.ANNOTATION_TYPE,
+})
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.PARAMETER})
-@Deprecated(since = "0.6.0", forRemoval = true)
-public @interface Context {
-
-    /**
-     * The name of the context to inject. If left empty the name will be ignored.
-     * @return The name of the context to inject.
-     */
-    String value() default "";
+public @interface Inject {
 }
