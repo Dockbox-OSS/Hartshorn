@@ -30,8 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import jakarta.inject.Inject;
-
 /**
  * TODO: #1062 Add documentation
  *
@@ -43,7 +41,6 @@ public class PathSerializationSourceConverter implements SerializationSourceConv
 
     private final FileSystemProvider fileSystem;
 
-    @Inject
     public PathSerializationSourceConverter(FileSystemProvider fileSystem) {
         this.fileSystem = fileSystem;
     }

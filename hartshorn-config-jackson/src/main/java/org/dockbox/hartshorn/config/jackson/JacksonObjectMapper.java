@@ -52,8 +52,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
-import jakarta.inject.Inject;
-
 /**
  * Jackson-based implementation of the {@link org.dockbox.hartshorn.config.ObjectMapper} interface. This
  * implementation uses Jackson's {@link ObjectMapper} to read and write objects. The backing {@link ObjectMapper}
@@ -78,7 +76,6 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     private ObjectMapper objectMapper;
     private JsonInclusionRule inclusionRule;
 
-    @Inject
     public JacksonObjectMapper(
             ApplicationContext applicationContext,
             JacksonDataMapperRegistry dataMapperRegistry,

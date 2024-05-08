@@ -22,8 +22,6 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import jakarta.inject.Inject;
-
 /**
  * A type introspector that provides access to the constructors of a type. This is typically provided by a
  * {@link org.dockbox.hartshorn.util.introspect.view.TypeView} implementation.
@@ -54,17 +52,6 @@ public interface TypeConstructorsIntrospector<T> {
      * @return all constructors that are annotated with the provided annotation
      */
     List<ConstructorView<T>> annotatedWith(Class<? extends Annotation> annotation);
-
-    /**
-     * Returns all constructors that are annotated with the {@link Inject} annotation. If no constructors are
-     * annotated with the {@link Inject} annotation, or if the annotation is not retained at whichever
-     * retention policy is in effect, an empty list is returned.
-     *
-     * @return all constructors that are annotated with the {@link Inject} annotation
-     */
-    default List<ConstructorView<T>> injectable() {
-        return this.annotatedWith(Inject.class);
-    }
 
     /**
      * Returns the constructor that has the provided parameters. If no constructor is found, an empty option

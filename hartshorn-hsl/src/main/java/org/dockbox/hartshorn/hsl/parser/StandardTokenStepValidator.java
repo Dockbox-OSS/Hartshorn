@@ -19,8 +19,6 @@ package org.dockbox.hartshorn.hsl.parser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
-import jakarta.inject.Inject;
-
 /**
  * Default implementation of {@link TokenStepValidator}, based around the {@link TokenParser#consume(TokenType, String)}
  * method.
@@ -40,7 +38,6 @@ public class StandardTokenStepValidator implements TokenStepValidator {
 
     private final TokenParser parser;
 
-    @Inject
     public StandardTokenStepValidator(TokenParser parser) {
         this.parser = parser;
     }

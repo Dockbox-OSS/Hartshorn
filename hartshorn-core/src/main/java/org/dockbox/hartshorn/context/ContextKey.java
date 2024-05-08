@@ -82,10 +82,6 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
      * to create the value. If no fallback function is present, a new instance of the context type
      * will be created using the provided application context.
      *
-     * <p>If no fallback function is present, this will create or retrieve an instance of the context
-     * from the application context if the context type is annotated with {@link InstallIfAbsent}. The
-     * intermediate {@link ComponentKey} used for the request will be scoped to the application scope.
-     *
      * @param context The application context to use to create the context value.
      * @return The newly created context value.
      */
@@ -98,11 +94,6 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
      * to create the value. If no fallback function is present, a new instance of the context type
      * will be created using the provided application context.
      *
-     * <p>If no fallback function is present, this will create or retrieve an instance of the context
-     * from the application context if the context type is annotated with {@link InstallIfAbsent}. The
-     * intermediate {@link ComponentKey} used for the request will be scoped to the given
-     * {@link Scope scope}.
-     *
      * @param context The application context to use to create the context value.
      * @param scope The scope to use for the intermediate {@link ComponentKey}.
      * @return The newly created context value.
@@ -111,9 +102,6 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
         T contextInstance;
         if (this.fallback != null) {
             contextInstance = this.fallback.apply(context);
-        }
-        else if (context != null && context.environment().introspector().introspect(this.type).annotations().has(InstallIfAbsent.class)) {
-            contextInstance = context.get(this.componentKey(scope));
         }
         else {
             throw new IllegalStateException("No fallback defined for context " + this.type.getSimpleName());

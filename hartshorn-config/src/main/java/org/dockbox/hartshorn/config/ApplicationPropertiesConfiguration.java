@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.Configuration;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.processing.Singleton;
@@ -43,11 +42,10 @@ public class ApplicationPropertiesConfiguration {
 
     @Singleton
     @InfrastructurePriority
-    public PropertyHolder propertyHolder(ApplicationContext applicationContext,
-                                         ApplicationPropertyHolder propertyHolder,
+    public PropertyHolder propertyHolder(ApplicationPropertyHolder propertyHolder,
                                          ObjectMapper objectMapper,
                                          ObjectMapper propertyMapper) throws ObjectMappingException {
-        return new StandardPropertyHolder(applicationContext, propertyHolder, objectMapper, propertyMapper);
+        return new StandardPropertyHolder(propertyHolder, objectMapper, propertyMapper);
     }
 
     @Singleton

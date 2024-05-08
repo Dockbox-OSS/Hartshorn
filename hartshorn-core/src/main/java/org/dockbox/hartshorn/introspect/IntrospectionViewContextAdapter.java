@@ -32,8 +32,6 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import jakarta.inject.Inject;
-
 /**
  * TODO: #1060 Add documentation
  *
@@ -51,7 +49,6 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
         this.scope = scope;
     }
 
-    @Inject
     public IntrospectionViewContextAdapter(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         this.scope = applicationContext;

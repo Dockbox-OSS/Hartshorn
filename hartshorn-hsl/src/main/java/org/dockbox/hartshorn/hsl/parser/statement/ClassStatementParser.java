@@ -39,8 +39,6 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
 
-import jakarta.inject.Inject;
-
 /**
  * TODO: #1061 Add documentation
  *
@@ -52,7 +50,6 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
 
     private final FieldStatementParser fieldParser;
 
-    @Inject
     public ClassStatementParser(FieldStatementParser fieldParser) {
         this.fieldParser = fieldParser;
     }
