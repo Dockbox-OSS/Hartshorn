@@ -24,8 +24,6 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import jakarta.inject.Inject;
-
 /**
  * A simple implementation of {@link TranslationKeyGenerator} that generates keys based on the
  * method name of the method that is annotated with {@link InjectTranslation}. If the method
@@ -39,7 +37,6 @@ public class SimpleTranslationKeyGenerator implements TranslationKeyGenerator {
 
     private final ComponentRegistry componentRegistry;
 
-    @Inject
     public SimpleTranslationKeyGenerator(ComponentRegistry componentRegistry) {
         this.componentRegistry = componentRegistry;
     }

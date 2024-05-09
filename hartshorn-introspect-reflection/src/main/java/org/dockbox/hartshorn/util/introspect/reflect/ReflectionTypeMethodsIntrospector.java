@@ -138,6 +138,20 @@ public class ReflectionTypeMethodsIntrospector<T> implements TypeMethodsIntrospe
     }
 
     @Override
+    public List<MethodView<T, ?>> annotatedWithAny(Set<Class<? extends Annotation>> annotations) {
+        return this.all().stream()
+                .filter(method -> method.annotations().hasAny(annotations))
+                .toList();
+    }
+
+    @Override
+    public List<MethodView<T, ?>> annotatedWithAll(Set<Class<? extends Annotation>> annotations) {
+        return this.all().stream()
+                .filter(method -> method.annotations().hasAll(annotations))
+                .toList();
+    }
+
+    @Override
     public List<MethodView<T, ?>> bridges() {
         if (this.bridgeMethods == null) {
             this.collect();

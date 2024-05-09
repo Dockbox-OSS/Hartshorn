@@ -18,7 +18,7 @@ package test.org.dockbox.hartshorn.components;
 
 import org.dockbox.hartshorn.inject.Named;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 
 public class ContextInjectedType {
 

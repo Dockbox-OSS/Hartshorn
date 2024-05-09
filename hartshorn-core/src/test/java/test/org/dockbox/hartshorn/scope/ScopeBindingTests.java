@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 import test.org.dockbox.hartshorn.scope.ScopedBindingConfiguration.SampleScope;
 
 @HartshornTest(includeBasePackages = false)

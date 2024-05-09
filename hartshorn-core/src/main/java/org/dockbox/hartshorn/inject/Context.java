@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
  * @author Guus Lieben
  * @since 0.4.7
  *
- * @deprecated Context injection is now built-in to default injection strategies. Use {@link jakarta.inject.Inject} instead.
+ * @deprecated Context injection is now built-in to default injection strategies. Use {@link Inject} instead.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})

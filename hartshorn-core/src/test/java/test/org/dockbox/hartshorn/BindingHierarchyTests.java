@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
 public class BindingHierarchyTests {

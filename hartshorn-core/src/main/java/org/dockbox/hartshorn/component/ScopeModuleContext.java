@@ -16,12 +16,10 @@
 
 package org.dockbox.hartshorn.component;
 
-import jakarta.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -35,12 +33,10 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
  *
  * @author Guus Lieben
  */
-@InstallIfAbsent
 public class ScopeModuleContext extends DefaultApplicationAwareContext {
 
     private final MultiMap<ScopeKey, BindingHierarchy<?>> scopeModules = new ConcurrentSetMultiMap<>();
 
-    @Inject
     public ScopeModuleContext(ApplicationContext applicationContext) {
         super(applicationContext);
     }

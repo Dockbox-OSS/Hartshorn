@@ -15,7 +15,7 @@
  */
 package test.org.dockbox.hartshorn.core.kotlin
 
-import jakarta.inject.Inject
+import org.dockbox.hartshorn.inject.Inject
 import org.dockbox.hartshorn.application.context.ApplicationContext
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment
 import org.dockbox.hartshorn.component.ComponentRegistry

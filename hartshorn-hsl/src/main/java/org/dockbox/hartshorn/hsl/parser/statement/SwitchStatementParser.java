@@ -36,8 +36,6 @@ import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
 
-import jakarta.inject.Inject;
-
 /**
  * TODO: #1061 Add documentation
  *
@@ -51,7 +49,6 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
 
     private final CaseBodyStatementParser caseBodyStatementParser;
 
-    @Inject
     public SwitchStatementParser(CaseBodyStatementParser caseBodyStatementParser) {
         this.caseBodyStatementParser = caseBodyStatementParser;
     }

@@ -14,25 +14,32 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.context;
+package org.dockbox.hartshorn.inject;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
 
 /**
- * Indicates whether a {@link ContextView} type should be automatically created when
- * it is absent while it is looked up through {@link ContextView#firstContext(ContextIdentity)}.
+ * Marks an element as an injection point. This annotation may be used by any {@link
+ * ComponentInjectionPointsResolver} to determine which elements of a component should be
+ * populated.
  *
- * <p>Implementations of {@link ApplicationAwareContext} will use this annotation to
- * determine whether a context should be created when a child context is looked up.
- * Other implementations may choose to ignore this annotation.
+ * @see ComponentInjectionPointsResolver
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
- * @since 0.4.3
  */
+@Target({
+    ElementType.FIELD,
+    ElementType.PARAMETER,
+    ElementType.METHOD,
+    ElementType.CONSTRUCTOR,
+    ElementType.ANNOTATION_TYPE,
+})
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface InstallIfAbsent {
+public @interface Inject {
 }

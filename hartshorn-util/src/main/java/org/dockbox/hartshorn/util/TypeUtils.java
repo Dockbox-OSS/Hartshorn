@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Utility class for functionalities related to types. Within the context of this class, types can either
@@ -397,5 +398,15 @@ public class TypeUtils {
         }
         //noinspection unchecked
         return (Class<T>) instance.getClass();
+    }
+
+    public static <T> Option<Class<T>> forName(String name) {
+        try {
+            //noinspection unchecked
+            return Option.of((Class<T>) Class.forName(name));
+        }
+        catch (ClassNotFoundException e) {
+            return Option.empty();
+        }
     }
 }

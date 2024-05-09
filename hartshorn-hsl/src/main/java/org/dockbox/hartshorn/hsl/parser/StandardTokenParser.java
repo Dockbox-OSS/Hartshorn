@@ -41,8 +41,6 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
-import jakarta.inject.Inject;
-
 /**
  * A parser for the tokens of a script. This parser is used to parse the tokens of a script into an
  * abstract syntax tree (AST). This implementation delegates the parsing of statements and expressions
@@ -72,7 +70,6 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
     private final ExpressionParser expressionParser;
     private final TokenRegistry tokenRegistry;
 
-    @Inject
     public StandardTokenParser(TokenRegistry tokenRegistry) {
         this(tokenRegistry, new ArrayList<>());
     }

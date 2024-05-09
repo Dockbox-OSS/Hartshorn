@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.dockbox.hartshorn.application.ApplicationPropertyHolder;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.ObjectMapper;
 import org.dockbox.hartshorn.config.ObjectMappingException;
@@ -34,8 +33,6 @@ import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
-
-import jakarta.inject.Inject;
 
 /**
  * TODO: #1062 Add documentation
@@ -50,14 +47,10 @@ public class StandardPropertyHolder implements PropertyHolder {
 
     private final ObjectMapper objectMapper;
     private final ObjectMapper propertyMapper;
-    private final ApplicationContext applicationContext;
 
-    @Inject
-    public StandardPropertyHolder(ApplicationContext applicationContext,
-                                  ApplicationPropertyHolder propertyHolder,
+    public StandardPropertyHolder(ApplicationPropertyHolder propertyHolder,
                                   ObjectMapper objectMapper,
                                   ObjectMapper propertyMapper) throws ObjectMappingException {
-        this.applicationContext = applicationContext;
         this.objectMapper = objectMapper.fileType(FileFormats.JSON);
         this.propertyMapper = propertyMapper.fileType(FileFormats.PROPERTIES);
         this.properties = this.createConfigurationMap();

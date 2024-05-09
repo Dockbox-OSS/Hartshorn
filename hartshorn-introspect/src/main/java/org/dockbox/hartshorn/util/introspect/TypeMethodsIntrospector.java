@@ -20,6 +20,7 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 
+import java.util.Set;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -102,6 +103,46 @@ public interface TypeMethodsIntrospector<T> {
      * @return all methods annotated with the provided annotation
      */
     List<MethodView<T, ?>> annotatedWith(Class<? extends Annotation> annotation);
+
+    /**
+     * Returns all methods annotated with any of the provided annotations. If no methods are annotated with any of the
+     * provided annotations, an empty list is returned.
+     *
+     * @param annotations the annotations to filter by
+     * @return all methods annotated with any of the provided annotations
+     */
+    default List<MethodView<T, ?>> annotatedWithAny(Class<? extends Annotation>... annotations) {
+        return this.annotatedWithAny(Set.of(annotations));
+    }
+
+    /**
+     * Returns all methods annotated with any of the provided annotations. If no methods are annotated with any of the
+     * provided annotations, an empty list is returned.
+     *
+     * @param annotations the annotations to filter by
+     * @return all methods annotated with any of the provided annotations
+     */
+    List<MethodView<T, ?>> annotatedWithAny(Set<Class<? extends Annotation>> annotations);
+
+    /**
+     * Returns all methods annotated with all of the provided annotations. If no methods are annotated with all of the
+     * provided annotations, an empty list is returned.
+     *
+     * @param annotations the annotations to filter by
+     * @return all methods annotated with all of the provided annotations
+     */
+    default List<MethodView<T, ?>> annotatedWithAll(Class<? extends Annotation>... annotations) {
+        return this.annotatedWithAll(Set.of(annotations));
+    }
+
+    /**
+     * Returns all methods annotated with all of the provided annotations. If no methods are annotated with all of the
+     * provided annotations, an empty list is returned.
+     *
+     * @param annotations the annotations to filter by
+     * @return all methods annotated with all of the provided annotations
+     */
+    List<MethodView<T, ?>> annotatedWithAll(Set<Class<? extends Annotation>> annotations);
 
     /**
      * Returns all bridge methods for the element. If the element does not declare any bridge methods, an empty list is
