@@ -282,12 +282,13 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
             return this.mainClass(() -> {
                 StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
                 Set<String> skip = Set.of(
-                        StandardApplicationBuilder.class.getName(),
-                        Configurer.class.getName(),
-                        ApplicationBuilder.class.getName(),
-                        HartshornApplication.class.getName(),
-                        Customizer.class.getName(),
-                        Thread.class.getName()
+                    StandardApplicationBuilder.class.getName(),
+                    Configurer.class.getName(),
+                    ApplicationBuilder.class.getName(),
+                    HartshornApplication.class.getName(),
+                    Customizer.class.getName(),
+                    Thread.class.getName(),
+                    HartshornApplicationConfigurer.class.getName()
                 );
 
                 StackTraceElement target = Arrays.stream(stackTrace)

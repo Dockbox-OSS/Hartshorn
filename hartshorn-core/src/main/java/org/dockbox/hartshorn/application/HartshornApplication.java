@@ -77,4 +77,10 @@ public final class HartshornApplication {
         Customizer<Configurer> composedCustomizer = defaultCustomizer.compose(customizer);
         return StandardApplicationBuilder.create(composedCustomizer).create();
     }
+
+    public static ApplicationContext configure(Class<?> mainClass, Customizer<HartshornApplicationConfigurer> customizer) {
+        return HartshornApplicationStandardInitializer.create(customizer.compose(configurer -> {
+            configurer.mainClass(mainClass);
+        })).initialize();
+    }
 }
