@@ -84,7 +84,7 @@ public interface Option<T> extends Context, Iterable<T> {
      * @return a new {@link Option} instance wrapping the given nullable value.
      */
     @NonNull
-    static <T> Option<T> of(T value) {
+    static <T> Option<T> of(@Nullable T value) {
         if (value == null) {
             return new None<>();
         }
@@ -102,7 +102,7 @@ public interface Option<T> extends Context, Iterable<T> {
      * @return a new {@link Option} instance wrapping the (potential) value of the given {@link Optional} instance.
      */
     @NonNull
-    static <T> Option<T> of(Optional<T> optional) {
+    static <T> Option<T> of(@NonNull Optional<@Nullable T> optional) {
         if (optional.isEmpty()) {
             return new None<>();
         }
@@ -121,7 +121,7 @@ public interface Option<T> extends Context, Iterable<T> {
      * @return a new {@link Option} instance wrapping the (potential) value of the given {@link Callable} instance.
      */
     @NonNull
-    static <T> Option<T> of(Callable<T> supplier) {
+    static <T> Option<T> of(@NonNull Callable<@Nullable T> supplier) {
         try {
             T value = supplier.call();
             if (value == null) {

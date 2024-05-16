@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
@@ -91,6 +93,12 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
 
     @Override
     public <T extends Annotation> Option<T> get(Class<T> annotation) {
+        if (!TypeUtils.hasRetentionPolicy(annotation, RetentionPolicy.RUNTIME)) {
+            // Cannot introspect annotations that are not retained at runtime, so don't waste
+            // time looking for them.
+            assert false : "Annotation " + annotation.getName() + " is not retained at runtime";
+            return Option.empty();
+        }
         if (!annotation.isAnnotation()) {
             return Option.empty();
         }
