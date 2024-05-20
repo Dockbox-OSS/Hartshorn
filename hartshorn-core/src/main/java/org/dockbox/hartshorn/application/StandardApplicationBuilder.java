@@ -20,6 +20,7 @@ import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Modifier;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,6 +32,7 @@ import org.dockbox.hartshorn.util.Initializer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A standard implementation of {@link ApplicationBuilder}. This implementation uses a {@link ApplicationContextFactory}
@@ -99,7 +101,7 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
 
         Class<?> mainClass = configurer.mainClass.initialize();
         if(!this.isValidActivator(mainClass)) {
-            throw new InvalidActivationSourceException("Main class must be a valid activator");
+            throw new InvalidActivationSourceException("Main class (%s) must be a valid activator".formatted(mainClass.getName()));
         }
 
         SingleElementContext<? extends Class<?>> initializerContext = new ApplicationInitializerContext<>(mainClass).initializeInitial();
@@ -276,20 +278,15 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
          * and all elements that are part of the JDK. The first element that is not part of the builder, and not part of the JDK is
          * used as the main class. If no such element is found, an {@link IllegalStateException} is thrown.
          *
+         * @param namesToSkip The names of classes that should be skipped when inferring the main class.
+         *
          * @return This {@link Configurer} instance.
          */
-        public Configurer inferMainClass() {
+        public Configurer inferMainClass(String... namesToSkip) {
             return this.mainClass(() -> {
                 StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-                Set<String> skip = Set.of(
-                    StandardApplicationBuilder.class.getName(),
-                    Configurer.class.getName(),
-                    ApplicationBuilder.class.getName(),
-                    HartshornApplication.class.getName(),
-                    Customizer.class.getName(),
-                    Thread.class.getName(),
-                    HartshornApplicationConfigurer.class.getName()
-                );
+                Set<String> skip = new HashSet<>(getClassNamesToSkipForInferring());
+                skip.addAll(Arrays.asList(namesToSkip));
 
                 StackTraceElement target = Arrays.stream(stackTrace)
                         .filter(element -> !skip.contains(element.getClassName()))
@@ -304,6 +301,20 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
                     throw new IllegalStateException("Could not deduce main class", e);
                 }
             });
+        }
+
+        @NotNull
+        private static Set<String> getClassNamesToSkipForInferring() {
+            return Set.of(
+                StandardApplicationBuilder.class.getName(),
+                Configurer.class.getName(),
+                ApplicationBuilder.class.getName(),
+                HartshornApplication.class.getName(),
+                Customizer.class.getName(),
+                Thread.class.getName(),
+                HartshornApplication.ApplicationBootstrap.class.getName(),
+                HartshornApplicationConfigurer.class.getName()
+            );
         }
 
         /**
