@@ -27,15 +27,21 @@ import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentPostConstructorImpl;
+import org.dockbox.hartshorn.component.OnInitialized;
 import org.dockbox.hartshorn.component.ScopeAwareComponentProvider;
+import org.dockbox.hartshorn.component.UseProxying;
+import org.dockbox.hartshorn.component.condition.Condition;
 import org.dockbox.hartshorn.component.populate.MethodsAndFieldsInjectionPointResolver;
+import org.dockbox.hartshorn.component.processing.ComponentFinalizingPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.inject.Inject;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.Initializer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
+
 /**
  * High-level application configurer and initializer for Hartshorn applications. This class provides a high-level
  * configuration for the application startup process. This allows you to configure various components in the application
@@ -63,40 +69,97 @@ public class HartshornApplicationConfigurer {
     private Customizer<MethodsAndFieldsInjectionPointResolver.Configurer> injectionPointResolver = Customizer.useDefaults();
     private Customizer<ComponentPostConstructorImpl.Configurer> componentPostConstructor = Customizer.useDefaults();
 
+    /**
+     * Configures the arguments that are provided to the application that will be created. The provided arguments are expected
+     * to be valid arguments for the main class of the application.
+     *
+     * @param customizer The {@link Customizer} that is used to configure the arguments.
+     * @return This {@link StandardApplicationBuilder.Configurer} instance.
+     */
     public HartshornApplicationConfigurer arguments(Customizer<StreamableConfigurer<Class<?>, String>> customizer) {
         this.applicationBuilder = this.applicationBuilder.compose(configuration -> configuration.arguments(customizer));
         return this;
     }
 
+    /**
+     * Configures the service activators that are used to collect component processors. By default, this includes the
+     * {@link UseBootstrap} and {@link UseProxying} annotations.
+     *
+     * @param customizer The customizer that is used to configure the service activators
+     * @return The current configurator instance
+     */
     public HartshornApplicationConfigurer activators(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Annotation>> customizer) {
         this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.activators(customizer));
         return this;
     }
 
+    /**
+     * Configures the component pre-processors that are used to process components before they are activated. By default, this
+     * contains no pre-processors.
+     *
+     * @param customizer The customizer that is used to configure the component pre-processors
+     * @return The current configurator instance
+     */
     public HartshornApplicationConfigurer componentPreProcessors(Customizer<StreamableConfigurer<ApplicationContext, ComponentPreProcessor>> customizer) {
         this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.componentPreProcessors(customizer));
         return this;
     }
 
+    /**
+     * Configures the component post-processors that are used to process components after they are instantiated by the container. By
+     * default, this contains a {@link ComponentFinalizingPostProcessor} that is used to finalize components.
+     *
+     * @param customizer The customizer that is used to configure the component post-processors
+     * @return The current configurator instance
+     */
     public HartshornApplicationConfigurer componentPostProcessors(Customizer<StreamableConfigurer<ApplicationContext, ComponentPostProcessor>> customizer) {
         this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.componentPostProcessors(customizer));
         return this;
     }
 
+    /**
+     * Configures the standalone components that should be added to the application, but are not scanned by the application by
+     * default. By default, this contains no standalone components.
+     *
+     * <p><b>Note:</b> Standalone components should typically only be needed in test environments, in other cases it is
+     * recommended to use {@link Condition}s to conditionally register components.
+     *
+     * @param customizer The customizer that is used to configure the standalone components
+     * @return The current configurator instance
+     */
     public HartshornApplicationConfigurer standaloneComponents(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Class<?>>> customizer) {
         this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.standaloneComponents(customizer));
         return this;
     }
 
+    /**
+     * Configures the packages that should be scanned by the application. By default, this contains no packages outside the
+     * main class package and the default {@link Hartshorn#PACKAGE_PREFIX Hartshorn package prefix}.
+     *
+     * @param customizer The customizer that is used to configure the packages that should be scanned
+     * @return The current configurator instance
+     */
     public HartshornApplicationConfigurer scanPackages(Customizer<StreamableConfigurer<ApplicationBootstrapContext, String>> customizer) {
         this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.scanPackages(customizer));
         return this;
     }
-
+    /**
+     * Configures whether the base packages of the main class should be included in the scanning process. By default, this is
+     * enabled.
+     *
+     * @param includeBasePackages Whether the base packages of the main class should be included in the scanning process
+     * @return The current configurator instance
+     */
     public HartshornApplicationConfigurer includeBasePackages(boolean includeBasePackages) {
         return this.includeBasePackages(ContextualInitializer.of(includeBasePackages));
     }
-
+    /**
+     * Configures whether the base packages of the main class should be included in the scanning process. By default, this is
+     * enabled.
+     *
+     * @param includeBasePackages Whether the base packages of the main class should be included in the scanning process
+     * @return The current configurator instance
+     */
     public HartshornApplicationConfigurer includeBasePackages(ContextualInitializer<ApplicationBuildContext, Boolean> includeBasePackages) {
         this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.includeBasePackages(includeBasePackages));
         return this;
@@ -288,51 +351,120 @@ public class HartshornApplicationConfigurer {
         return this.defaultBindings(context -> binder -> defaultBindings.accept(context.input(), binder));
     }
 
-
+    /**
+     * Configures the annotations to be used for injection points. By default, this only contains {@link Inject}.
+     *
+     * @param annotations The annotations to use for injection points
+     * @return The current configurer, for chaining
+     */
     @SafeVarargs
     public final HartshornApplicationConfigurer injectMarkerAnnotations(Class<? extends Annotation>... annotations) {
         this.injectMarkerAnnotations(collection -> collection.addAll(annotations));
         return this;
     }
 
+    /**
+     * Configures the annotations to be used for injection points. By default, this only contains {@link Inject}.
+     *
+     * @param annotations The annotations to use for injection points
+     * @return The current configurer, for chaining
+     */
     public HartshornApplicationConfigurer injectMarkerAnnotations(Set<Class<? extends Annotation>> annotations) {
         this.injectMarkerAnnotations(collection -> collection.addAll(annotations));
         return this;
     }
 
+    /**
+     * Configures the annotations to be used for injection points. By default, this only contains {@link Inject}.
+     *
+     * @param customizer The customizer to configure the annotations
+     * @return The current configurer, for chaining
+     */
     public HartshornApplicationConfigurer injectMarkerAnnotations(Customizer<StreamableConfigurer<ApplicationEnvironment, Class<? extends Annotation>>> customizer) {
         this.injectionPointResolver = this.injectionPointResolver.compose(configuration -> configuration.annotations(customizer));
         return this;
     }
 
+    /**
+     * Configures the annotations to be used for component post-construction callbacks. By default, this only contains
+     * {@link OnInitialized}.
+     *
+     * @param annotations The annotations to use for post-construction callbacks
+     * @return The current configurer, for chaining
+     */
     @SafeVarargs
     public final HartshornApplicationConfigurer onInitializedAnnotations(Class<? extends Annotation>... annotations) {
         this.onInitializedAnnotations(collection -> collection.addAll(annotations));
         return this;
     }
 
+    /**
+     * Configures the annotations to be used for component post-construction callbacks. By default, this only contains
+     * {@link OnInitialized}.
+     *
+     * @param annotations The annotations to use for post-construction callbacks
+     * @return The current configurer, for chaining
+     */
     public HartshornApplicationConfigurer onInitializedAnnotations(Set<Class<? extends Annotation>> annotations) {
         this.onInitializedAnnotations(collection -> collection.addAll(annotations));
         return this;
     }
 
+    /**
+     * Configures the annotations to be used for component post-construction callbacks. By default, this only contains
+     * {@link OnInitialized}.
+     *
+     * @param customizer The customizer to configure the annotations
+     * @return The current configurer, for chaining
+     */
     public HartshornApplicationConfigurer onInitializedAnnotations(Customizer<StreamableConfigurer<ApplicationContext, Class<? extends Annotation>>> customizer) {
         this.componentPostConstructor = this.componentPostConstructor.compose(configuration -> configuration.annotations(customizer));
         return this;
     }
 
+    /**
+     * Adds support for various {@code javax.inject} and {@code javax.annotation} annotations if they are present on the
+     * classpath. Disabled by default, but can be enabled for backwards compatibility.
+     *
+     * @return the current configurer, for chaining
+     *
+     * @see ComponentPostConstructorImpl.Configurer#withJavaxAnnotations()
+     * @see MethodsAndFieldsInjectionPointResolver.Configurer#withJavaxAnnotations()
+     */
     public HartshornApplicationConfigurer withJavaxAnnotations() {
         this.componentPostConstructor = this.componentPostConstructor.compose(ComponentPostConstructorImpl.Configurer::withJavaxAnnotations);
         this.injectionPointResolver = this.injectionPointResolver.compose(MethodsAndFieldsInjectionPointResolver.Configurer::withJavaxAnnotations);
         return this;
     }
 
+    /**
+     * Adds support for various {@code jakarta.inject} and {@code jakarta.annotation} annotations if they are present on the
+     * classpath. Disabled by default, but can be enabled for backwards compatibility.
+     *
+     * @return the current configurer, for chaining
+     *
+     * @see ComponentPostConstructorImpl.Configurer#withJakartaAnnotations()
+     * @see MethodsAndFieldsInjectionPointResolver.Configurer#withJakartaAnnotations()
+     */
     public HartshornApplicationConfigurer withJakartaAnnotations() {
         this.componentPostConstructor = this.componentPostConstructor.compose(ComponentPostConstructorImpl.Configurer::withJakartaAnnotations);
         this.injectionPointResolver = this.injectionPointResolver.compose(MethodsAndFieldsInjectionPointResolver.Configurer::withJakartaAnnotations);
         return this;
     }
 
+    /**
+     * Sets up an initializer that will create the application context. This combines the given {@link StandardApplicationBuilder builder
+     * configurer} and {@link HartshornApplicationConfigurer application configurer} into a single initializer that will create the
+     * application context.
+     *
+     * <p>In case of any conflicting configurations, the application configurer will take precedence. Note however that you should
+     * typically be using the {@link HartshornApplication} class to start your application, as it provides appropriate constraints
+     * to avoid conflicts.
+     *
+     * @param builderCustomizer The customizer that is used to configure the application builder
+     * @param applicationCustomizer The customizer that is used to configure the application
+     * @return The initializer that will create the application context
+     */
     public static Initializer<ApplicationContext> createInitializer(
         Customizer<StandardApplicationBuilder.Configurer> builderCustomizer,
         Customizer<HartshornApplicationConfigurer> applicationCustomizer

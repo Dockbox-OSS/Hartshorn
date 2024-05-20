@@ -103,17 +103,35 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
 
         private final LazyStreamableConfigurer<ApplicationEnvironment, Class<? extends Annotation>> annotations = LazyStreamableConfigurer.of(Inject.class);
 
+        /**
+         * Configures the annotations to be used for injection points. By default, this only contains {@link Inject}.
+         *
+         * @param annotations The annotations to use for injection points
+         * @return The current configurer, for chaining
+         */
         @SafeVarargs
         public final Configurer annotations(Class<? extends Annotation>... annotations) {
             this.annotations(collection -> collection.addAll(annotations));
             return this;
         }
 
+        /**
+         * Configures the annotations to be used for injection points. By default, this only contains {@link Inject}.
+         *
+         * @param annotations The annotations to use for injection points
+         * @return The current configurer, for chaining
+         */
         public Configurer annotations(Set<Class<? extends Annotation>> annotations) {
             this.annotations(collection -> collection.addAll(annotations));
             return this;
         }
 
+        /**
+         * Configures the annotations to be used for injection points. By default, this only contains {@link Inject}.
+         *
+         * @param customizer The customizer to configure the annotations
+         * @return The current configurer, for chaining
+         */
         public Configurer annotations(Customizer<StreamableConfigurer<ApplicationEnvironment, Class<? extends Annotation>>> customizer) {
             this.annotations.customizer(customizer);
             return this;

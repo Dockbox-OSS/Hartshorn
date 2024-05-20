@@ -108,28 +108,61 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
             return this;
         }
 
+        /**
+         * Configures the annotations to be used for component post-construction callbacks. By default, this only contains
+         * {@link OnInitialized}.
+         *
+         * @param annotations The annotations to use for post-construction callbacks
+         * @return The current configurer, for chaining
+         */
         @SafeVarargs
         public final Configurer annotations(Class<? extends Annotation>... annotations) {
             this.annotations(collection -> collection.addAll(annotations));
             return this;
         }
 
+        /**
+         * Configures the annotations to be used for component post-construction callbacks. By default, this only contains
+         * {@link OnInitialized}.
+         *
+         * @param annotations The annotations to use for post-construction callbacks
+         * @return The current configurer, for chaining
+         */
         public Configurer annotations(Set<Class<? extends Annotation>> annotations) {
             this.annotations(collection -> collection.addAll(annotations));
             return this;
         }
 
+        /**
+         * Configures the annotations to be used for component post-construction callbacks. By default, this only contains
+         * {@link OnInitialized}.
+         *
+         * @param customizer The customizer to configure the annotations
+         * @return The current configurer, for chaining
+         */
         public Configurer annotations(Customizer<StreamableConfigurer<ApplicationContext, Class<? extends Annotation>>> customizer) {
             this.annotations.customizer(customizer);
             return this;
         }
 
+        /**
+         * Adds support for {@code javax.annotation.PostConstruct} if it is present on the classpath. Disabled by default,
+         * but can be enabled for backwards compatibility.
+         *
+         * @return the current configurer, for chaining
+         */
         public Configurer withJavaxAnnotations() {
             return this.annotations(collection -> {
                 TypeUtils.<Annotation>forName("javax.annotation.PostConstruct").peek(collection::add);
             });
         }
 
+        /**
+         * Adds support for {@code jakarta.annotation.PostConstruct} if it is present on the classpath. Disabled by default,
+         * but can be enabled for backwards compatibility.
+         *
+         * @return the current configurer, for chaining
+         */
         public Configurer withJakartaAnnotations() {
             return this.annotations(collection -> {
                 TypeUtils.<Annotation>forName("jakarta.annotation.PostConstruct").peek(collection::add);
