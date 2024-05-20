@@ -22,7 +22,7 @@ content:
       start_paths:
         - hartshorn-core/src/main/docs
         - hartshorn-util/src/main/docs
-        - hartshorn-discovery/src/main/docs
+        - hartshorn-spi/src/main/docs
         - hartshorn-proxy/src/main/docs
         - hartshorn-proxy-javassist/src/main/docs
         - hartshorn-introspect/src/main/docs
@@ -47,10 +47,9 @@ antora:
   extensions:
     - '@antora/lunr-extension'
 
-# TODO #1049: Create custom UI bundle for documentation
 ui:
   bundle:
-    url: ./hartshorn-assembly/antora/ui-bundle.zip
+    url: https://github.com/Dockbox-OSS/Antora-Dockbox-UI/releases/download/R1-may-05-2024/ui-bundle.zip
     snapshot: true
   supplemental_files:
     - path: css/vendor/tabs.css
