@@ -425,4 +425,12 @@ public class TypeUtils {
     public static boolean hasRetentionPolicy(Set<Class<? extends Annotation>> annotations, RetentionPolicy policy) {
         return annotations.stream().allMatch(annotation -> hasRetentionPolicy(annotation, policy));
     }
+
+    public static Throwable getRootCause(Throwable throwable) {
+        Throwable cause = throwable.getCause();
+        if (cause == null) {
+            return throwable;
+        }
+        return getRootCause(cause);
+    }
 }
