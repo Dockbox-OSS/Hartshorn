@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 
 class JakartaCompatibilityTests {
@@ -38,6 +39,7 @@ class JakartaCompatibilityTests {
     }
 
   @Test
+  @DisplayName("Jakarta annotations are supported for field injection, if enabled")
   fun testJakartaFieldInjectSupportedIfEnabled() {
     val context = this.createApplicationContext(withJakarta = true)
     context.bind<String>().singleton("Hello, World!")
@@ -50,6 +52,7 @@ class JakartaCompatibilityTests {
   }
 
   @Test
+  @DisplayName("Jakarta annotations are not supported for field injection, if disabled")
   fun testJakartaFieldInjectFailsIfDisabled() {
     val context = this.createApplicationContext(withJakarta = false)
     context.bind<String>().singleton("Hello, World!")
@@ -62,6 +65,7 @@ class JakartaCompatibilityTests {
   }
 
   @Test
+  @DisplayName("Jakarta annotations are supported for constructor injection, if enabled")
   fun testJakartaConstructorInjectSupportedIfEnabled() {
     val context = this.createApplicationContext(withJakarta = true)
     context.bind<String>().singleton("Hello, World!")
@@ -73,6 +77,7 @@ class JakartaCompatibilityTests {
   }
 
   @Test
+  @DisplayName("Jakarta annotations are not supported for constructor injection, if disabled")
   fun testJakartaConstructorInjectFailsIfDisabled() {
     val context = this.createApplicationContext(withJakarta = false)
     context.bind<String>().singleton("Hello, World!")
@@ -85,6 +90,7 @@ class JakartaCompatibilityTests {
   }
 
   @Test
+  @DisplayName("Jakarta annotations are supported for method injection, if enabled")
   fun testJakartaMethodInjectSupportedIfEnabled() {
     val context = this.createApplicationContext(withJakarta = true)
     context.bind<String>().singleton("Hello, World!")
@@ -97,6 +103,7 @@ class JakartaCompatibilityTests {
   }
 
   @Test
+  @DisplayName("Jakarta annotations are not supported for method injection, if disabled")
   fun testJakartaMethodInjectFailsIfDisabled() {
     val context = this.createApplicationContext(withJakarta = false)
     context.bind<String>().singleton("Hello, World!")

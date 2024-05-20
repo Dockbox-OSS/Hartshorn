@@ -211,6 +211,26 @@ public class HartshornApplicationConfigurer {
     }
 
     /**
+     * Enables batch mode. Batch mode is typically used for optimizations specific to applications which will
+     * spawn multiple application contexts with shared resources. Batch mode is disabled by default.
+     *
+     * @return the current {@link HartshornApplicationConfigurer} instance
+     */
+    public HartshornApplicationConfigurer enableBatchMode() {
+        return this.enableBatchMode(ContextualInitializer.of(true));
+    }
+
+    /**
+     * Disables batch mode. Batch mode is typically used for optimizations specific to applications which will
+     * spawn multiple application contexts with shared resources. Batch mode is disabled by default.
+     *
+     * @return the current {@link HartshornApplicationConfigurer} instance
+     */
+    public HartshornApplicationConfigurer disableBatchMode() {
+        return this.enableBatchMode(ContextualInitializer.of(false));
+    }
+
+    /**
      * Enables strict mode. Strict mode is typically used to indicate that a lookup should only return a value if
      * it is explicitly bound to the key, and not if it is bound to a sub-type of the key.
      *
@@ -240,26 +260,6 @@ public class HartshornApplicationConfigurer {
     public HartshornApplicationConfigurer enableStrictMode(ContextualInitializer<Properties, Boolean> enableStrictMode) {
         this.environment = this.environment.compose(configuration -> configuration.enableStrictMode(enableStrictMode));
         return this;
-    }
-
-    /**
-     * Enables batch mode. Batch mode is typically used for optimizations specific to applications which will
-     * spawn multiple application contexts with shared resources. Batch mode is disabled by default.
-     *
-     * @return the current {@link HartshornApplicationConfigurer} instance
-     */
-    public HartshornApplicationConfigurer enableBatchMode() {
-        return this.enableBatchMode(ContextualInitializer.of(true));
-    }
-
-    /**
-     * Disables batch mode. Batch mode is typically used for optimizations specific to applications which will
-     * spawn multiple application contexts with shared resources. Batch mode is disabled by default.
-     *
-     * @return the current {@link HartshornApplicationConfigurer} instance
-     */
-    public HartshornApplicationConfigurer disableBatchMode() {
-        return this.enableBatchMode(ContextualInitializer.of(false));
     }
 
     /**

@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 
 class JavaxCompatibilityTests {
@@ -38,6 +39,7 @@ class JavaxCompatibilityTests {
     }
 
   @Test
+  @DisplayName("Javax annotations are supported for field injection, if enabled")
   fun testJavaxFieldInjectSupportedIfEnabled() {
     val context = this.createApplicationContext(withJavax = true)
     context.bind<String>().singleton("Hello, World!")
@@ -50,6 +52,7 @@ class JavaxCompatibilityTests {
   }
 
   @Test
+  @DisplayName("Javax annotations are not supported for field injection, if disabled")
   fun testJavaxFieldInjectFailsIfDisabled() {
     val context = this.createApplicationContext(withJavax = false)
     context.bind<String>().singleton("Hello, World!")
@@ -62,6 +65,7 @@ class JavaxCompatibilityTests {
   }
 
   @Test
+  @DisplayName("Javax annotations are supported for constructor injection, if enabled")
   fun testJavaxConstructorInjectSupportedIfEnabled() {
     val context = this.createApplicationContext(withJavax = true)
     context.bind<String>().singleton("Hello, World!")
@@ -73,6 +77,7 @@ class JavaxCompatibilityTests {
   }
 
   @Test
+  @DisplayName("Javax annotations are not supported for constructor injection, if disabled")
   fun testJavaxConstructorInjectFailsIfDisabled() {
     val context = this.createApplicationContext(withJavax = false)
     context.bind<String>().singleton("Hello, World!")
@@ -85,6 +90,7 @@ class JavaxCompatibilityTests {
   }
 
   @Test
+  @DisplayName("Javax annotations are supported for method injection, if enabled")
   fun testJavaxMethodInjectSupportedIfEnabled() {
     val context = this.createApplicationContext(withJavax = true)
     context.bind<String>().singleton("Hello, World!")
@@ -97,6 +103,7 @@ class JavaxCompatibilityTests {
   }
 
   @Test
+  @DisplayName("Javax annotations are not supported for method injection, if disabled")
   fun testJavaxMethodInjectFailsIfDisabled() {
     val context = this.createApplicationContext(withJavax = false)
     context.bind<String>().singleton("Hello, World!")
