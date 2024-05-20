@@ -57,7 +57,7 @@ import org.dockbox.hartshorn.util.StreamableConfigurer;
 public class HartshornApplicationConfigurer {
 
     private Customizer<StandardApplicationBuilder.Configurer> applicationBuilder = Customizer.useDefaults();
-    private Customizer<StandardApplicationContextConstructor.Configurer> applicationContextConstructor = Customizer.useDefaults();
+    private Customizer<StandardApplicationContextFactory.Configurer> applicationContextFactory = Customizer.useDefaults();
     private Customizer<ContextualApplicationEnvironment.Configurer> environment = Customizer.useDefaults();
     private Customizer<SimpleApplicationContext.Configurer> applicationContext = Customizer.useDefaults();
     private Customizer<MethodsAndFieldsInjectionPointResolver.Configurer> injectionPointResolver = Customizer.useDefaults();
@@ -69,27 +69,27 @@ public class HartshornApplicationConfigurer {
     }
 
     public HartshornApplicationConfigurer activators(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Annotation>> customizer) {
-        this.applicationContextConstructor = this.applicationContextConstructor.compose(configuration -> configuration.activators(customizer));
+        this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.activators(customizer));
         return this;
     }
 
     public HartshornApplicationConfigurer componentPreProcessors(Customizer<StreamableConfigurer<ApplicationContext, ComponentPreProcessor>> customizer) {
-        this.applicationContextConstructor = this.applicationContextConstructor.compose(configuration -> configuration.componentPreProcessors(customizer));
+        this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.componentPreProcessors(customizer));
         return this;
     }
 
     public HartshornApplicationConfigurer componentPostProcessors(Customizer<StreamableConfigurer<ApplicationContext, ComponentPostProcessor>> customizer) {
-        this.applicationContextConstructor = this.applicationContextConstructor.compose(configuration -> configuration.componentPostProcessors(customizer));
+        this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.componentPostProcessors(customizer));
         return this;
     }
 
     public HartshornApplicationConfigurer standaloneComponents(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Class<?>>> customizer) {
-        this.applicationContextConstructor = this.applicationContextConstructor.compose(configuration -> configuration.standaloneComponents(customizer));
+        this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.standaloneComponents(customizer));
         return this;
     }
 
     public HartshornApplicationConfigurer scanPackages(Customizer<StreamableConfigurer<ApplicationBootstrapContext, String>> customizer) {
-        this.applicationContextConstructor = this.applicationContextConstructor.compose(configuration -> configuration.scanPackages(customizer));
+        this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.scanPackages(customizer));
         return this;
     }
 
@@ -98,7 +98,7 @@ public class HartshornApplicationConfigurer {
     }
 
     public HartshornApplicationConfigurer includeBasePackages(ContextualInitializer<ApplicationBuildContext, Boolean> includeBasePackages) {
-        this.applicationContextConstructor = this.applicationContextConstructor.compose(configuration -> configuration.includeBasePackages(includeBasePackages));
+        this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.includeBasePackages(includeBasePackages));
         return this;
     }
 
@@ -348,14 +348,14 @@ public class HartshornApplicationConfigurer {
 
     private void configureApplicationBuilder(StandardApplicationBuilder.Configurer builder) {
         this.applicationBuilder.configure(builder);
-        builder.constructor(this.initializer(
-            StandardApplicationContextConstructor::create,
+        builder.applicationContextFactory(this.initializer(
+            StandardApplicationContextFactory::create,
             this::configureApplicationConstructor
         ));
     }
 
-    private void configureApplicationConstructor(StandardApplicationContextConstructor.Configurer constructor) {
-        this.applicationContextConstructor.configure(constructor);
+    private void configureApplicationConstructor(StandardApplicationContextFactory.Configurer constructor) {
+        this.applicationContextFactory.configure(constructor);
         constructor.environment(this.initializer(
             ContextualApplicationEnvironment::create,
             this::configureApplicationEnvironment

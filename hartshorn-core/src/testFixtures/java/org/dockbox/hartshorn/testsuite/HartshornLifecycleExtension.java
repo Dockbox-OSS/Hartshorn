@@ -30,8 +30,8 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.application.ApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
-import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
-import org.dockbox.hartshorn.application.StandardApplicationContextConstructor.Configurer;
+import org.dockbox.hartshorn.application.StandardApplicationContextFactory;
+import org.dockbox.hartshorn.application.StandardApplicationContextFactory.Configurer;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
@@ -61,8 +61,6 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.mockito.Mockito;
-
-import org.dockbox.hartshorn.inject.Inject;
 
 public class HartshornLifecycleExtension implements
         ParameterResolver,
@@ -215,8 +213,8 @@ public class HartshornLifecycleExtension implements
         builderCustomizer = builderCustomizer.compose(builder -> {
             customizeBuilderWithTestSources(testClass, testComponentSources, builder);
 
-            Customizer<StandardApplicationContextConstructor.Configurer> customizer = new ContextConstructorCustomizer(testClass, testComponentSources);
-            builder.constructor(StandardApplicationContextConstructor.create(customizer.compose(TestCustomizer.CONSTRUCTOR.customizer())));
+            Customizer<StandardApplicationContextFactory.Configurer> customizer = new ContextFactoryCustomizer(testClass, testComponentSources);
+            builder.applicationContextFactory(StandardApplicationContextFactory.create(customizer.compose(TestCustomizer.CONSTRUCTOR.customizer())));
         });
 
         return StandardApplicationBuilder.create(builderCustomizer.compose(TestCustomizer.BUILDER.customizer()));
@@ -254,7 +252,7 @@ public class HartshornLifecycleExtension implements
         }
     }
 
-    private record ContextConstructorCustomizer(
+    private record ContextFactoryCustomizer(
             Class<?> testClass, List<AnnotatedElement> testComponentSources) implements Customizer<Configurer> {
 
         @Override

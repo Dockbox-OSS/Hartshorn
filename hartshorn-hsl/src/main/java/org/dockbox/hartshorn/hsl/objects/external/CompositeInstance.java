@@ -75,7 +75,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         // External class constructor
         ConstructorView<T> constructor = this.firstExternalClass.constructors().defaultConstructor().get();
         try {
-            this.instance = constructor.create().orNull();
+            this.instance = constructor.create();
         }
         catch (ApplicationException e) {
             throw e;

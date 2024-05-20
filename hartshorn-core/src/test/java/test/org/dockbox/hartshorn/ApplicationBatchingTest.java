@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn;
 
 import org.dockbox.hartshorn.application.HartshornApplication;
-import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
+import org.dockbox.hartshorn.application.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
 import org.junit.Ignore;
@@ -39,7 +39,7 @@ public class ApplicationBatchingTest {
     void testApplicationContextBatching() {
         ApplicationContext applicationContext = Assertions.assertDoesNotThrow(() ->
                 HartshornApplication.create(ApplicationBatchingTest.class, builder ->
-                        builder.constructor(StandardApplicationContextConstructor.create(constructor -> {
+                        builder.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
                                     constructor.includeBasePackages(false);
                                     constructor.standaloneComponents(components -> components.add(SimpleComponent.class));
                                     constructor.environment(

@@ -27,7 +27,7 @@ import org.slf4j.Logger;
  * lifecycle.
  *
  * @see ApplicationBuildContext
- * @see StandardApplicationContextConstructor
+ * @see StandardApplicationContextFactory
  *
  * @since 0.5.0
  *

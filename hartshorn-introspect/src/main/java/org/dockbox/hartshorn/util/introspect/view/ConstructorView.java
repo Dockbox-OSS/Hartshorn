@@ -50,7 +50,7 @@ public interface ConstructorView<T> extends ExecutableElementView<T>, AnnotatedG
      * @param arguments the arguments to pass to the constructor
      * @return a new instance of the class that declares the constructor
      */
-    default Option<T> create(Object... arguments) throws Throwable {
+    default T create(Object... arguments) throws Throwable {
         return this.create(Arrays.asList(arguments));
     }
 
@@ -63,7 +63,7 @@ public interface ConstructorView<T> extends ExecutableElementView<T>, AnnotatedG
      * @param arguments the arguments to pass to the constructor
      * @return a new instance of the class that declares the constructor
      */
-    Option<T> create(Collection<?> arguments) throws Throwable;
+    T create(Collection<?> arguments) throws Throwable;
 
     /**
      * Returns the type of the class that declares the constructor represented by this view.

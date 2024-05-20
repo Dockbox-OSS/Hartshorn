@@ -30,5 +30,5 @@ import org.dockbox.hartshorn.util.option.Option;
 @FunctionalInterface
 public interface ReflectiveConstructorCall<T> {
 
-    Option<T> invoke(Object[] args) throws Throwable;
+    T invoke(Object[] args) throws Throwable;
 }

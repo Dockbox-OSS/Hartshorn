@@ -63,7 +63,7 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
         if (this.invoker == null) {
             this.invoker = args -> {
                 try {
-                    return Option.of(this.constructor.newInstance(args));
+                    return this.constructor.newInstance(args);
                 } catch (InvocationTargetException e) {
                     if (e.getCause() instanceof Exception ex) {
                         throw ex;
@@ -81,7 +81,7 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     }
 
     @Override
-    public Option<T> create(Collection<?> arguments) throws Throwable {
+    public T create(Collection<?> arguments) throws Throwable {
         return this.invoker().invoke(arguments.toArray());
     }
 

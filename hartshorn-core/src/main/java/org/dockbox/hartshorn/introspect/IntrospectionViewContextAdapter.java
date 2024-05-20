@@ -72,7 +72,7 @@ public class IntrospectionViewContextAdapter extends DefaultContext implements V
     @Override
     public <T> Option<T> create(ConstructorView<T> constructor) throws Throwable {
         Object[] parameters = this.loadParameters(constructor);
-        return constructor.create(parameters);
+        return Option.of(constructor.create(parameters));
     }
 
     @Override
