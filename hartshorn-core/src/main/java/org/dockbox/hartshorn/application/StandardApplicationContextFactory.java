@@ -186,6 +186,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         Set<Annotation> activators
     ) {
         Set<String> prefixes = new HashSet<>();
+        prefixes.addAll(this.configurer.scanPackages.initialize(this.initializerContext.transform(bootstrapContext)));
 
         // Not optional, required for the application to function. Note that any configuration that is required for the
         // application can be overridden by the application itself.
@@ -206,6 +207,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
             ServiceActivator activator = activatorCandidate.get();
             prefixes.addAll(List.of(activator.scanPackages()));
         }
+
         return prefixes;
     }
 
