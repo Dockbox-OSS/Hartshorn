@@ -154,7 +154,11 @@ public class ApplicationConfigurerTests {
     void testBannerPrintingCustomizer() {
         Logger logger = LoggerFactory.getLogger(ApplicationConfigurerTests.class);
         OutputCaptureAppender appender = OutputCaptureAppender.registerForLogger(logger);
-        createApplication(HartshornApplicationConfigurer::enableBanner);
+        createApplication(applicationConfigurer -> {
+            // Banners are always disabled in CI environments. To avoid false negatives, simulate a non-CI environment
+            applicationConfigurer.isBuildEnvironment(false);
+            applicationConfigurer.enableBanner();
+        });
 
         String expectedMessage = String.join("\n", new HartshornBannerAccessor().lines());
         for (ILoggingEvent event : appender.events()) {
@@ -162,7 +166,7 @@ public class ApplicationConfigurerTests {
                 return;
             }
         }
-        fail("Expected message not found in log output");
+        fail("Expected message was not found in log output");
     }
 
     @Test
@@ -170,7 +174,11 @@ public class ApplicationConfigurerTests {
     void testBannerPrintingDisabledCustomizer() {
         Logger logger = LoggerFactory.getLogger(ApplicationConfigurerTests.class);
         OutputCaptureAppender appender = OutputCaptureAppender.registerForLogger(logger);
-        createApplication(HartshornApplicationConfigurer::disableBanner);
+        createApplication(applicationConfigurer -> {
+            // Banners are always disabled in CI environments. To avoid false positives, simulate a non-CI environment
+            applicationConfigurer.isBuildEnvironment(false);
+            applicationConfigurer.disableBanner();
+        });
 
         String expectedMessage = String.join("\n", new HartshornBannerAccessor().lines());
         for (ILoggingEvent event : appender.events()) {
