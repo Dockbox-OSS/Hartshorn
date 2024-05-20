@@ -140,7 +140,10 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      * @return The set of service activators that are present in the application configuration
      */
     private Set<Annotation> serviceActivators(ApplicationBootstrapContext bootstrapContext) {
-        List<Annotation> configuredActivators = this.configurer.activators.initialize(this.initializerContext.transform(bootstrapContext));
+        SingleElementContext<ApplicationBootstrapContext> bootstrap = this.initializerContext.transform(bootstrapContext);
+        List<Annotation> configuredActivators = this.configurer.activators.initialize(bootstrap).stream()
+            .flatMap(activator -> this.activatorCollector.collectServiceActivatorsRecursively(activator).stream())
+            .toList();
         Set<Annotation> additionalActivators = this.activatorCollector.serviceActivators(bootstrapContext.mainClass());
         return CollectionUtilities.merge(configuredActivators, additionalActivators);
     }

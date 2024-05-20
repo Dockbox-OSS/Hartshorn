@@ -40,7 +40,7 @@ public class ServiceActivatorCollector {
             .collect(Collectors.toSet());
     }
 
-    protected Set<Annotation> collectServiceActivatorsRecursively(Annotation annotation) {
+    public Set<Annotation> collectServiceActivatorsRecursively(Annotation annotation) {
         Set<Annotation> serviceActivatorsOnAnnotation = this.collectServiceActivatorsOnType(annotation.annotationType());
         Set<Annotation> activators = new HashSet<>(serviceActivatorsOnAnnotation);
         activators.add(annotation);
