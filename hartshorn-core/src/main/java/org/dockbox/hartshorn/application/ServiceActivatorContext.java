@@ -33,14 +33,14 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * {@link ServiceActivator} annotations that are found in the application. This context is used
  * to determine which activators are available, and to retrieve the actual annotation instance.
  *
- * <p>Depending on the {@link ApplicationContextConstructor} that is used to create the
+ * <p>Depending on the {@link ApplicationContextFactory} that is used to create the
  * {@link ApplicationContext}, this context may be used to supply the {@link ServiceActivator}
  * annotations.
  *
  * <p>This context should always be attached to the {@link ApplicationContext}, and yield the
  * same result as {@link ApplicationContext#activators()}.
  *
- * @see ApplicationContextConstructor
+ * @see ApplicationContextFactory
  * @see ApplicationContext#activators()
  * @see ServiceActivator
  * @see ActivatorHolder

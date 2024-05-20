@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.application.StandardApplicationBuilder.Configurer;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.Customizer;
 
@@ -37,14 +36,26 @@ public final class HartshornApplication {
      * required environment and starts the application.
      *
      * @param mainClass The main class
-     * @param args The application arguments
+     * @param arguments The application arguments
      * @return The application context
      */
-    public static ApplicationContext create(Class<?> mainClass, String... args) {
-        return StandardApplicationBuilder.create(builder -> {
+    public static ApplicationContext create(Class<?> mainClass, String... arguments) {
+        return createApplication(mainClass, arguments).initialize();
+    }
+
+    /**
+     * Creates a new application bootstrap for the given main class, arguments, and modifiers. This initializes the
+     * required environment and starts the application.
+     *
+     * @param mainClass The main class
+     * @param arguments The application arguments
+     * @return The application context
+     */
+    public static ApplicationBootstrap createApplication(Class<?> mainClass, String... arguments) {
+        return customizer -> HartshornApplicationConfigurer.createInitializer(builder -> {
             builder.mainClass(mainClass);
-            builder.arguments(args);
-        }).create();
+            builder.arguments(arguments);
+        }, customizer).initialize();
     }
 
     /**
@@ -53,14 +64,27 @@ public final class HartshornApplication {
      * This is useful for when you want to start an application from a main method, but don't want to
      * hard-code the main class.
      *
-     * @param args The application arguments
+     * @param arguments The application arguments
      * @return The application context
      */
-    public static ApplicationContext create(String... args) {
-        return StandardApplicationBuilder.create(builder -> {
+    public static ApplicationContext create(String... arguments) {
+        return createApplication(arguments).initialize();
+    }
+
+    /**
+     * Creates a new application bootstrap for the given arguments, and modifiers. This initializes the
+     * required environment and starts the application. The main class will be inferred from the stack trace.
+     * This is useful for when you want to start an application from a main method, but don't want to
+     * hard-code the main class.
+     *
+     * @param arguments The application arguments
+     * @return The application context
+     */
+    public static ApplicationBootstrap createApplication(String... arguments) {
+        return customizer -> HartshornApplicationConfigurer.createInitializer(builder -> {
             builder.inferMainClass();
-            builder.arguments(args);
-        }).create();
+            builder.arguments(arguments);
+        }, customizer).initialize();
     }
 
     /**
@@ -73,8 +97,52 @@ public final class HartshornApplication {
      * @return The application context
      */
     public static ApplicationContext create(Class<?> mainClass, Customizer<StandardApplicationBuilder.Configurer> customizer) {
-        Customizer<Configurer> defaultCustomizer = builder -> builder.mainClass(mainClass);
-        Customizer<Configurer> composedCustomizer = defaultCustomizer.compose(customizer);
-        return StandardApplicationBuilder.create(composedCustomizer).create();
+        Customizer<StandardApplicationBuilder.Configurer> defaultCustomizer = builder -> builder.mainClass(mainClass);
+        return create(defaultCustomizer.compose(customizer));
+    }
+
+    /**
+     * Creates a new application context for the given main class, and allows for customizing the application
+     * builder. This allows complete control over the application context creation process. This initializes the
+     * required environment and starts the application. The main class will be inferred from the stack trace.
+     *
+     * @param customizer The application builder customizer
+     * @return The application context
+     */
+    public static ApplicationContext create(Customizer<StandardApplicationBuilder.Configurer> customizer) {
+        Customizer<StandardApplicationBuilder.Configurer> defaultCustomizer = StandardApplicationBuilder.Configurer::inferMainClass;
+        return HartshornApplicationConfigurer.createInitializer(
+            defaultCustomizer.compose(customizer),
+            Customizer.useDefaults()
+        ).initialize();
+    }
+
+    /**
+     * Deferred application bootstrap. This allows for customizing the application through a high-level {@link
+     * HartshornApplicationConfigurer}, rather than the low-level {@link StandardApplicationBuilder.Configurer}.
+     *
+     * @since 0.6.0
+     *
+     * @author Guus Lieben
+     */
+    public interface ApplicationBootstrap {
+
+        /**
+         * Initializes the application context, using the default configuration.
+         *
+         * @return The application context
+         */
+        default ApplicationContext initialize() {
+            return this.initialize(Customizer.useDefaults());
+        }
+
+        /**
+         * Initializes the application context, applying the provided configuration customizer before starting the
+         * application.
+         *
+         * @param customizer The customizer to apply
+         * @return The application context
+         */
+        ApplicationContext initialize(Customizer<HartshornApplicationConfigurer> customizer);
     }
 }

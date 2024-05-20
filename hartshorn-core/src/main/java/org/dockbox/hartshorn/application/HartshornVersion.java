@@ -39,34 +39,35 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public enum HartshornVersion implements Reportable {
 
-    // Release 0.4.x 'Antelope' series
+    // Release 0.x 'Antelope' series
+    // Release 0.4.x series
     V0_4_0("Antelope", 0, 4, 0, ReleaseStatus.RELEASED),
-    V0_4_1(V0_4_0.alias(), 0, 4, 1, ReleaseStatus.RELEASED),
-    V0_4_2(V0_4_0.alias(), 0, 4, 2, ReleaseStatus.RELEASED),
-    V0_4_3(V0_4_0.alias(), 0, 4, 3, ReleaseStatus.RELEASED),
-    V0_4_4(V0_4_0.alias(), 0, 4, 4, ReleaseStatus.RELEASED),
-    V0_4_5(V0_4_0.alias(), 0, 4, 5, ReleaseStatus.RELEASED),
-    V0_4_6(V0_4_0.alias(), 0, 4, 6, ReleaseStatus.RELEASED),
-    V0_4_7(V0_4_0.alias(), 0, 4, 7, ReleaseStatus.RELEASED),
-    V0_4_8(V0_4_0.alias(), 0, 4, 8, ReleaseStatus.RELEASED),
-    V0_4_9(V0_4_0.alias(), 0, 4, 9, ReleaseStatus.RELEASED),
-    V0_4_10(V0_4_0.alias(), 0, 4, 10, ReleaseStatus.RELEASED),
-    V0_4_11(V0_4_0.alias(), 0, 4, 11, ReleaseStatus.RELEASED),
-    V0_4_12(V0_4_0.alias(), 0, 4, 12, ReleaseStatus.RELEASED),
-    V0_4_13(V0_4_0.alias(), 0, 4, 13, ReleaseStatus.RELEASED),
+    V0_4_1(V0_4_0, 4, 1, ReleaseStatus.RELEASED),
+    V0_4_2(V0_4_1, 4, 2, ReleaseStatus.RELEASED),
+    V0_4_3(V0_4_2, 4, 3, ReleaseStatus.RELEASED),
+    V0_4_4(V0_4_3, 4, 4, ReleaseStatus.RELEASED),
+    V0_4_5(V0_4_4, 4, 5, ReleaseStatus.RELEASED),
+    V0_4_6(V0_4_5, 4, 6, ReleaseStatus.RELEASED),
+    V0_4_7(V0_4_6, 4, 7, ReleaseStatus.RELEASED),
+    V0_4_8(V0_4_7, 4, 8, ReleaseStatus.RELEASED),
+    V0_4_9(V0_4_8, 4, 9, ReleaseStatus.RELEASED),
+    V0_4_10(V0_4_9, 4, 10, ReleaseStatus.RELEASED),
+    V0_4_11(V0_4_10, 4, 11, ReleaseStatus.RELEASED),
+    V0_4_12(V0_4_11, 4, 12, ReleaseStatus.RELEASED),
+    V0_4_13(V0_4_12, 4, 13, ReleaseStatus.RELEASED),
 
-    // Release 0.5.x 'Bambi' series
-    V0_5_0("Bambi", 0, 5, 0, ReleaseStatus.RELEASED),
-    V0_5_1(V0_5_0.alias(), 0, 5, 1, ReleaseStatus.DEVELOPMENT),
+    // Release 0.5.x series
+    V0_5_0(V0_4_13, 5, 0, ReleaseStatus.RELEASED),
+    V0_5_1(V0_5_0, 5, 1, ReleaseStatus.DEVELOPMENT),
 
-    // Release 0.6.x 'Caribou' series
-    V0_6_0("Caribou", 0, 6, 0, ReleaseStatus.DEVELOPMENT),
+    // Release 0.6.x series
+    V0_6_0(V0_5_1, 6, 0, ReleaseStatus.DEVELOPMENT),
 
-    // Release 0.7.x 'Doe' series
-    V0_7_0("Doe", 0, 7, 0, ReleaseStatus.PLANNED),
+    // Release 0.7.x series
+    V0_7_0(V0_6_0, 7, 0, ReleaseStatus.PLANNED),
 
-    // Release 0.8.x 'Elk' series
-    V0_8_0("Elk", 0, 8, 0, ReleaseStatus.PLANNED),
+    // Release 0.8.x series
+    V0_8_0(V0_7_0, 8, 0, ReleaseStatus.PLANNED),
 
     ;
 
@@ -76,6 +77,14 @@ public enum HartshornVersion implements Reportable {
     private final int patch;
 
     private final ReleaseStatus releaseStatus;
+
+    HartshornVersion(HartshornVersion previous, int minor, int patch, ReleaseStatus releaseStatus) {
+        this.alias = previous.alias();
+        this.major = previous.major();
+        this.minor = minor;
+        this.patch = patch;
+        this.releaseStatus = releaseStatus;
+    }
 
     HartshornVersion(String alias, int major, int minor, int patch, ReleaseStatus releaseStatus) {
         this.alias = alias;

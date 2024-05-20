@@ -15,11 +15,11 @@
  */
 package test.org.dockbox.hartshorn.core.application
 
-import org.dockbox.hartshorn.application.ApplicationContextConstructor
+import org.dockbox.hartshorn.application.ApplicationContextFactory
 import org.dockbox.hartshorn.application.DefaultBindingConfigurer
 import org.dockbox.hartshorn.application.ExceptionHandler
 import org.dockbox.hartshorn.application.StandardApplicationBuilder
-import org.dockbox.hartshorn.application.StandardApplicationContextConstructor
+import org.dockbox.hartshorn.application.StandardApplicationContextFactory
 import org.dockbox.hartshorn.application.context.ApplicationContext
 import org.dockbox.hartshorn.application.context.DelegatingApplicationContext
 import org.dockbox.hartshorn.application.context.DependencyGraphInitializer
@@ -59,9 +59,9 @@ class BootstrapConfigurationContractTests {
     fun testApplicationBuilderContract() {
         val instance = StandardApplicationBuilder.Configurer()
 
-        assertDeferred(instance) { configurer, deferred: ApplicationContextConstructor? -> configurer.constructor(deferred) }
-        assertInitializer(instance) { configurer, initializer -> configurer.constructor(initializer) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.constructor(initializer) }
+        assertDeferred(instance) { configurer, deferred: ApplicationContextFactory? -> configurer.applicationContextFactory(deferred) }
+        assertInitializer(instance) { configurer, initializer -> configurer.applicationContextFactory(initializer) }
+        assertContextInitializer(instance) { configurer, initializer -> configurer.applicationContextFactory(initializer) }
 
         assertCustom(instance) { configurer -> configurer.inferMainClass() }
         assertDeferred(instance) { configurer, deferred: Class<*>? -> configurer.mainClass(deferred) }
@@ -74,7 +74,7 @@ class BootstrapConfigurationContractTests {
 
     @Test
     fun testApplicationConstructorContract() {
-        val instance = StandardApplicationContextConstructor.Configurer()
+        val instance = StandardApplicationContextFactory.Configurer()
 
         assertCustomizer(instance) { configurer, customizer -> configurer.activators(customizer) }
         assertCustomizer(instance) { configurer, customizer -> configurer.componentPreProcessors(customizer) }

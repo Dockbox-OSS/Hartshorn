@@ -23,14 +23,14 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
  * implementations to create the {@link ApplicationContext} instance. Implementations may decide whether to always return
  * the same instance, or create a new instance on each invocation.
  *
- * @see StandardApplicationContextConstructor
+ * @see StandardApplicationContextFactory
  *
  * @since 0.4.9
  *
  * @author Guus Lieben
  */
 @FunctionalInterface
-public interface ApplicationContextConstructor {
+public interface ApplicationContextFactory {
 
     /**
      * Returns a {@link ApplicationContext} instance. Depending on the implementation of this method, this may be a new

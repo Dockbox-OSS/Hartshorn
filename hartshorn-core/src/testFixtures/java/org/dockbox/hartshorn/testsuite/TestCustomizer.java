@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
-import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
+import org.dockbox.hartshorn.application.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
 import org.dockbox.hartshorn.util.Customizer;
@@ -26,7 +26,7 @@ public final class TestCustomizer<T> {
 
     public static final TestCustomizer<StandardApplicationBuilder.Configurer> BUILDER = new TestCustomizer<>();
     public static final TestCustomizer<ContextualApplicationEnvironment.Configurer> ENVIRONMENT = new TestCustomizer<>();
-    public static final TestCustomizer<StandardApplicationContextConstructor.Configurer> CONSTRUCTOR = new TestCustomizer<>();
+    public static final TestCustomizer<StandardApplicationContextFactory.Configurer> CONSTRUCTOR = new TestCustomizer<>();
     public static final TestCustomizer<SimpleApplicationContext.Configurer> APPLICATION_CONTEXT = new TestCustomizer<>();
 
     private Customizer<T> customizer = Customizer.useDefaults();

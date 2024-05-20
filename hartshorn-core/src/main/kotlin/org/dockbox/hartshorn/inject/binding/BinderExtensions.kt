@@ -13,22 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.dockbox.hartshorn.inject.binding
 
-package org.dockbox.hartshorn.util.introspect.reflect;
+import kotlin.reflect.KClass
 
-import org.dockbox.hartshorn.util.option.Option;
+fun <T : Any> Binder.bind(type: KClass<T>): BindingFunction<T> = this.bind(type.java)
 
-/**
- * TODO: #1059 Add documentation
- *
- * @param <T> ...
- *
- * @since 0.6.0
- *
- * @author Guus Lieben
- */
-@FunctionalInterface
-public interface ReflectiveConstructorCall<T> {
-
-    T invoke(Object[] args) throws Throwable;
-}
+inline fun <reified T : Any> Binder.bind(): BindingFunction<T> = this.bind(T::class.java)

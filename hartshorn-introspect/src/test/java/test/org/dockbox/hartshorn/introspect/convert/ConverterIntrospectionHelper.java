@@ -63,7 +63,7 @@ public class ConverterIntrospectionHelper {
             ConstructorView<T> constructorView = Mockito.mock(ConstructorView.class);
             Mockito.when(constructorView.constructor()).thenReturn(Option.of(defaultConstructor));
             try {
-                Mockito.when(constructorView.create()).thenAnswer(invocation -> Option.of(supplier.get()));
+                Mockito.when(constructorView.create()).thenAnswer(invocation -> supplier.get());
             }
             catch (Throwable throwable) {
                 Assertions.fail("On-going stub yielded an unexpected exception", throwable);
@@ -84,7 +84,7 @@ public class ConverterIntrospectionHelper {
             ConstructorView<T> constructorView = Mockito.mock(ConstructorView.class);
             Mockito.when(constructorView.constructor()).thenReturn(Option.of(capacityConstructor));
             try {
-                Mockito.when(constructorView.create(Mockito.anyInt())).thenAnswer(invocation -> Option.of(supplier.apply((int) invocation.getArguments()[0])));
+                Mockito.when(constructorView.create(Mockito.anyInt())).thenAnswer(invocation -> supplier.apply((int) invocation.getArguments()[0]));
             }
             catch (Throwable throwable) {
                 Assertions.fail("On-going stub yielded an unexpected exception", throwable);

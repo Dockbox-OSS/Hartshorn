@@ -20,6 +20,7 @@ import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Modifier;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,11 +32,12 @@ import org.dockbox.hartshorn.util.Initializer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * A standard implementation of {@link ApplicationBuilder}. This implementation uses a {@link ApplicationContextConstructor}
- * to create a new {@link ApplicationContext}. The constructor is responsible for the creation-, initialization- and
- * configuration of the context. The builder will provide the required build context to the constructor.
+ * A standard implementation of {@link ApplicationBuilder}. This implementation uses a {@link ApplicationContextFactory}
+ * to create a new {@link ApplicationContext}. The factory is responsible for the creation-, initialization- and
+ * configuration of the context. The builder will provide the required build context to the factory.
  *
  * <p>The creation of new applications is thread-safe through synchronization of the {@link #create()} method. That is,
  * multiple threads may call {@link #create()} concurrently, but only one thread will be able to create a new application
@@ -46,7 +48,7 @@ import org.dockbox.hartshorn.util.StreamableConfigurer;
  * if the instances are configured to create different types of applications. If multiple instances are used to create the
  * same type of application, it is recommended to re-use a single builder instance.
  *
- * @see ApplicationContextConstructor
+ * @see ApplicationContextFactory
  *
  * @since 0.4.13
  *
@@ -88,7 +90,7 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
     );
 
     private final ApplicationBuildContext buildContext;
-    private final ApplicationContextConstructor applicationContextConstructor;
+    private final ApplicationContextFactory applicationContextFactory;
 
     private volatile FactoryState state = FactoryState.WAITING;
 
@@ -99,14 +101,14 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
 
         Class<?> mainClass = configurer.mainClass.initialize();
         if(!this.isValidActivator(mainClass)) {
-            throw new InvalidActivationSourceException("Main class must be a valid activator");
+            throw new InvalidActivationSourceException("Main class (%s) must be a valid activator".formatted(mainClass.getName()));
         }
 
         SingleElementContext<? extends Class<?>> initializerContext = new ApplicationInitializerContext<>(mainClass).initializeInitial();
         this.buildContext = new ApplicationBuildContext(mainClass, configurer.arguments.initialize(initializerContext));
 
         SingleElementContext<ApplicationBuildContext> buildInitializerContext = initializerContext.transform(this.buildContext);
-        this.applicationContextConstructor = configurer.constructor.initialize(buildInitializerContext);
+        this.applicationContextFactory = configurer.applicationContextFactory.initialize(buildInitializerContext);
     }
 
     /**
@@ -150,7 +152,7 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         ApplicationStartupLogger logger = new ApplicationStartupLogger(this.buildContext);
         logger.logStartup();
         long applicationStartTimestamp = System.currentTimeMillis();
-        ApplicationContext applicationContext = this.applicationContextConstructor.createContext();
+        ApplicationContext applicationContext = this.applicationContextFactory.createContext();
         long applicationStartedTimestamp = System.currentTimeMillis();
 
         final Duration startupTime = Duration.ofMillis(applicationStartedTimestamp - applicationStartTimestamp);
@@ -202,55 +204,55 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
      */
     public static class Configurer {
 
-        private ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextConstructor> constructor = StandardApplicationContextConstructor.create(
+        private ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextFactory> applicationContextFactory = StandardApplicationContextFactory.create(
                 Customizer.useDefaults());
         private final LazyStreamableConfigurer<Class<?>, String> arguments = LazyStreamableConfigurer.empty();
         private Initializer<Class<?>> mainClass;
 
         /**
-         * Sets the constructor that is used to create the {@link ApplicationContext}. The provided constructor is expected
+         * Sets the factory that is used to create the {@link ApplicationContext}. The provided factory is expected
          * to be capable of creating a new {@link ApplicationContext} instance, and to initialize it without additional context.
          *
-         * <p>Note that the provided constructor does not receive any context. If the constructor requires context, use
-         * {@link #constructor(ContextualInitializer)} instead.
+         * <p>Note that the provided factory does not receive any context. If the factory requires context, use
+         * {@link #applicationContextFactory(ContextualInitializer)} instead.
          *
-         * @param constructor The constructor that is used to create the {@link ApplicationContext}.
+         * @param factory The factory that is used to create the {@link ApplicationContext}.
          * @return This {@link Configurer} instance.
          */
-        public Configurer constructor(ApplicationContextConstructor constructor) {
-            return this.constructor(Initializer.of(constructor));
+        public Configurer applicationContextFactory(ApplicationContextFactory factory) {
+            return this.applicationContextFactory(Initializer.of(factory));
         }
 
         /**
-         * Sets the constructor that is used to create the {@link ApplicationContext}. The provided constructor is expected
+         * Sets the factory that is used to create the {@link ApplicationContext}. The provided factory is expected
          * to be capable of creating a new {@link ApplicationContext} instance, and to initialize it without additional context.
          *
-         * <p>Note that the provided constructor does not receive any context. If the constructor requires context, use
-         * {@link #constructor(ContextualInitializer)} instead.
+         * <p>Note that the provided factory does not receive any context. If the factory requires context, use
+         * {@link #applicationContextFactory(ContextualInitializer)} instead.
          *
-         * <p>The provided constructor will be initialized immediately when the builder is created.
+         * <p>The provided factory will be initialized immediately when the builder is created.
          *
-         * @param constructor The constructor that is used to create the {@link ApplicationContext}.
+         * @param applicationContextFactory The factory that is used to create the {@link ApplicationContext}.
          * @return This {@link Configurer} instance.
          */
-        public Configurer constructor(Initializer<ApplicationContextConstructor> constructor) {
-            return this.constructor(ContextualInitializer.of(constructor));
+        public Configurer applicationContextFactory(Initializer<ApplicationContextFactory> applicationContextFactory) {
+            return this.applicationContextFactory(ContextualInitializer.of(applicationContextFactory));
         }
 
         /**
-         * Sets the constructor that is used to create the {@link ApplicationContext}. The provided constructor is expected
+         * Sets the factory that is used to create the {@link ApplicationContext}. The provided factory is expected
          * to be capable of creating a new {@link ApplicationContext} instance, and to initialize it with the provided {@link ApplicationBuildContext}.
          *
          * <p>The {@link ApplicationBuildContext} will contain basic information about the application that is being created. This
          * includes the main class, and the arguments that were provided to the application.
          *
-         * @param constructor The constructor that is used to create the {@link ApplicationContext}.
+         * @param applicationContextFactory The factory that is used to create the {@link ApplicationContext}.
          * @return This {@link Configurer} instance.
          *
          * @see ApplicationBuildContext
          */
-        public Configurer constructor(ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextConstructor> constructor) {
-            this.constructor = constructor;
+        public Configurer applicationContextFactory(ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextFactory> applicationContextFactory) {
+            this.applicationContextFactory = applicationContextFactory;
             return this;
         }
 
@@ -276,19 +278,15 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
          * and all elements that are part of the JDK. The first element that is not part of the builder, and not part of the JDK is
          * used as the main class. If no such element is found, an {@link IllegalStateException} is thrown.
          *
+         * @param namesToSkip The names of classes that should be skipped when inferring the main class.
+         *
          * @return This {@link Configurer} instance.
          */
-        public Configurer inferMainClass() {
+        public Configurer inferMainClass(String... namesToSkip) {
             return this.mainClass(() -> {
                 StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-                Set<String> skip = Set.of(
-                        StandardApplicationBuilder.class.getName(),
-                        Configurer.class.getName(),
-                        ApplicationBuilder.class.getName(),
-                        HartshornApplication.class.getName(),
-                        Customizer.class.getName(),
-                        Thread.class.getName()
-                );
+                Set<String> skip = new HashSet<>(getClassNamesToSkipForInferring());
+                skip.addAll(Arrays.asList(namesToSkip));
 
                 StackTraceElement target = Arrays.stream(stackTrace)
                         .filter(element -> !skip.contains(element.getClassName()))
@@ -303,6 +301,20 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
                     throw new IllegalStateException("Could not deduce main class", e);
                 }
             });
+        }
+
+        @NotNull
+        private static Set<String> getClassNamesToSkipForInferring() {
+            return Set.of(
+                StandardApplicationBuilder.class.getName(),
+                Configurer.class.getName(),
+                ApplicationBuilder.class.getName(),
+                HartshornApplication.class.getName(),
+                Customizer.class.getName(),
+                Thread.class.getName(),
+                HartshornApplication.ApplicationBootstrap.class.getName(),
+                HartshornApplicationConfigurer.class.getName()
+            );
         }
 
         /**

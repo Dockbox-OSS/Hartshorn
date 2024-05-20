@@ -17,6 +17,8 @@
 package org.dockbox.hartshorn.util;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -24,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -408,5 +411,26 @@ public class TypeUtils {
         catch (ClassNotFoundException e) {
             return Option.empty();
         }
+    }
+
+    public static Option<RetentionPolicy> retention(Class<? extends Annotation> annotation) {
+        return Option.of(annotation.getAnnotation(Retention.class))
+            .map(Retention::value);
+    }
+
+    public static boolean hasRetentionPolicy(Class<? extends Annotation> annotation, RetentionPolicy policy) {
+        return retention(annotation).test(policy::equals);
+    }
+
+    public static boolean hasRetentionPolicy(Set<Class<? extends Annotation>> annotations, RetentionPolicy policy) {
+        return annotations.stream().allMatch(annotation -> hasRetentionPolicy(annotation, policy));
+    }
+
+    public static Throwable getRootCause(Throwable throwable) {
+        Throwable cause = throwable.getCause();
+        if (cause == null) {
+            return throwable;
+        }
+        return getRootCause(cause);
     }
 }

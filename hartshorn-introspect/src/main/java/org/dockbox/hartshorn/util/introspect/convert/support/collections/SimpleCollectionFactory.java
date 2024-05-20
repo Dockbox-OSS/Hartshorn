@@ -169,7 +169,7 @@ public class SimpleCollectionFactory implements CollectionFactory {
         Option<ConstructorView<O>> defaultCapacityConstructor = constructors.withParameters(int.class);
         if (defaultCapacityConstructor.present()) {
             try {
-                return defaultCapacityConstructor.get().create(length).orNull();
+                return defaultCapacityConstructor.get().create(length);
             }
             catch (Throwable e) {
                 throw new IllegalArgumentException("Failed to create collection of type " + targetType.getName(), e);
@@ -183,7 +183,7 @@ public class SimpleCollectionFactory implements CollectionFactory {
         Option<ConstructorView<O>> defaultConstructor = constructors.defaultConstructor();
         if (defaultConstructor.present()) {
             try {
-                return defaultConstructor.get().create().orNull();
+                return defaultConstructor.get().create();
             }
             catch (Throwable e) {
                 throw new IllegalArgumentException("Failed to create collection of type " + targetType.getName(), e);

@@ -59,7 +59,7 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
         ConstructorView<T> executable = ExecutableLookup.executable(this.type.constructors().all(), arguments);
         if (executable != null) {
             try {
-                T objectInstance = executable.create(arguments.toArray()).orNull();
+                T objectInstance = executable.create(arguments.toArray());
                 return new ExternalInstance(objectInstance,
                         interpreter.applicationContext().environment().introspector().introspect(objectInstance));
             }
