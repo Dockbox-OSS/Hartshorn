@@ -16,6 +16,146 @@
     <artifactId>hartshorn-parent</artifactId>
     <packaging>pom</packaging>
 
+    <properties>
+        <argLine.errorprone>
+            -Xplugin:ErrorProne \
+
+            <!-- # Disabled checks -->
+            <!--
+            Indicates a functional interfaces extends another functional interface, while implementing the original
+            with a default function. This risks the wrong method being called. Disabled as this is expected to be an
+            intentional use of default methods.
+            -->
+            -Xep:FunctionalInterfaceMethodChanged:OFF \
+            <!--
+            Indicates #equals is implemented by comparing #getClass instead of using instanceof. This is a common
+            pattern and is not a problem.
+            -->
+            -Xep:EqualsGetClass:OFF \
+            <!--
+            Indicates that an Optional is used as a potentially nullable type. While this would indicate issues in most
+            codebases, in our case this is allowed for compatibility of converters and Option wrapping.
+            -->
+            -Xep:NullableOptional:OFF \
+            <!--
+            Indicates that an obsolete JDK class is used. This is disabled as it's overly sensitive and doesn't provide
+            much value in our case.
+            -->
+            -Xep:JdkObsolete:OFF \
+            <!--
+            Indicates that a deprecated method looks inlineable. This is disabled as we prefer not to use ErrorProne
+            annotations inside the codebase (beyond to suppress warnings).
+            -->
+            -Xep:InlineMeSuggester:OFF \
+            <!--
+            Indicates that a @see tag is missing in Javadoc. This is disabled as it's overly sensitive and doesn't
+            provide much value in our case.
+            -->
+            -Xep:MissingSummary:OFF \
+            <!--
+            Indicates that a field of an enum is not entirely immutable. This is disabled as we use enums for complex
+            definitions, which may require mutable fields (even if they are effectively immutable).
+            -->
+            -Xep:ImmutableEnumChecker:OFF \
+            <!--
+            Indicates that the use of Enum#ordinal is discouraged. This is as it's overly sensitive and doesn't provide
+            much value in our case.
+            -->
+            -Xep:EnumOrdinal:OFF \
+            <!--
+            Indicates that String#split may have unexpected behavior. This is disabled as we use this method in a
+            controlled manner.
+            -->
+            -Xep:StringSplitter:OFF \
+
+
+            <!-- # Promoted checks (to ERROR) -->
+            <!--
+            Indicates that a non-API type is used in a public API (e.g. ArrayList instead of List). This is promoted to ERROR
+            as it's a common mistake that can lead to API instability.
+            -->
+            -Xep:NonApiType:ERROR \
+            <!--
+            Indicates that a method is missing an @Override annotation. This is promoted to ERROR as it's a common mistake
+            that can reduce code readability.
+            -->
+            -Xep:MissingOverride:ERROR \
+            <!--
+            Indicates that an imported nested class or static method/field has a commonly-used name (e.g. Builder instead of
+            ComponentKey.Builder). This is promoted to ERROR as it's a common mistake that can lead to confusion.
+            -->
+            -Xep:BadImport:ERROR \
+            <!--
+            Indicates that a method is opened with /** but isn't a Javadoc comment. This is promoted to ERROR to prevent dangling
+            Javadoc comments.
+            -->
+            -Xep:NotJavadoc:ERROR \
+            <!--
+            Indicates that an exception was caught and only used to print the stack trace. This is promoted to ERROR as it's
+            a common mistake that can lead to silent failures.
+            -->
+            -Xep:CatchAndPrintStackTrace:ERROR \
+            <!--
+            Indicates that an empty catch block is used. This is promoted to ERROR as it's a common mistake that can lead to
+            silent failures.
+            -->
+            -Xep:EmptyCatch:ERROR \
+            <!--
+            Indicates that a class initialization deadlock is possible. This is promoted to ERROR as this issue can have severe
+            consequences.
+            -->
+            -Xep:ClassInitializationDeadlock:ERROR \
+            <!--
+            Indicates that a class is placed in the default package. This is promoted to ERROR as classes should always be in
+            a named package.
+            -->
+            -Xep:DefaultPackage:ERROR \
+            <!--
+            Indicates that #equals is implemented using #hashCode. This is promoted to ERROR as this can be unreliable, and we'd
+            rather have a consistent implementation.
+            -->
+            -Xep:EqualsUsingHashCode:ERROR \
+            <!--
+            Indicates that #finalize is implemented. This is promoted to ERROR as this method is deprecated and should not be used.
+            -->
+            -Xep:Finalize:ERROR \
+            <!--
+            Indicates that not all enum cases are handled in a switch statement. This is promoted to ERROR as it's a common mistake
+            as enum constants may be added over time.
+            -->
+            -Xep:MissingCasesInEnumSwitch:ERROR \
+            <!--
+            Indicates that a type name shadows another type name. This is promoted to ERROR as this can be confusing and lead to
+            unintended behavior.
+            -->
+            -Xep:SameNameButDifferent:ERROR \
+            <!--
+            Indicates that #toString returns null. This is promoted to ERROR as this can lead to NPEs.
+            -->
+            -Xep:ToStringReturnsNull:ERROR \
+            <!--
+            Indicates that a type is not guaranteed to implement a useful #equals method (e.g. for collections). This is promoted
+            to ERROR as this can lead to unexpected behavior.
+            -->
+            -Xep:UndefinedEquals:ERROR \
+            <!--
+            Indicates that a lambda is returned from a helper method, or stored in a field. This is promoted to ERROR as such cases
+            should always be either inlined or converted to a method reference.
+            -->
+            -Xep:UnnecessaryLambda:ERROR \
+            <!--
+            Indicates that a method reference is used where the variable itself could be used (e.g. filter(predicate::test) instead of
+            filter(predicate)). This is promoted to ERROR as it's a common mistake that can lead to confusion.
+            -->
+            -Xep:UnnecessaryMethodReference:ERROR \
+            <!--
+            Indicates that a type parameter is unused. This is promoted to ERROR as it's a common mistake that can lead to confusion
+            and overly complex code.
+            -->
+            -Xep:UnusedTypeParameter:ERROR \
+        </argLine.errorprone>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -37,6 +177,10 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.errorprone</groupId>
+            <artifactId>error_prone_annotation</artifactId>
         </dependency>
 
         <!--
@@ -106,7 +250,17 @@
                     <encoding>UTF-8</encoding>
                     <compilerArgs>
                         <arg>-parameters</arg>
+                        <arg>-XDcompilePolicy=simple</arg>
+                        <arg>${argLine.errorprone}</arg>
                     </compilerArgs>
+                    <annotationProcessorPaths>
+                        <!-- Code quality -->
+                        <path>
+                            <groupId>com.google.errorprone</groupId>
+                            <artifactId>error_prone_core</artifactId>
+                            <version>${plugin.errorprone.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
