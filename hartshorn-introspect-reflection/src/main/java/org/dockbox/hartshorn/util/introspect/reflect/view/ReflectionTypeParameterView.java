@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.util.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
@@ -272,11 +273,11 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView 
 
     @Override
     public String toString() {
-        String declaredBy = this.declaredBy().name();
-        String consumedBy = this.consumedBy().name();
-        String name = this.name();
-
-        return "TypeParameter(name=" + name + ", declaredBy=" + declaredBy + ", consumedBy=" + consumedBy + ")";
+        return ObjectDescriber.of(this)
+                .field("name", this.name())
+                .field("declaredBy", this.declaredBy())
+                .field("consumedBy", this.consumedBy())
+                .describe();
     }
 
     @Override

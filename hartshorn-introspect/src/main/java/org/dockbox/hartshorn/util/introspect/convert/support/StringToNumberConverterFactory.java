@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Locale;
 import java.util.function.Function;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -116,6 +117,7 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
      */
     public static boolean isHexNumber(String value) {
         int index = value.startsWith("-") ? 1 : 0;
-        return value.toLowerCase().startsWith("0x", index) || value.startsWith("#", index);
+        return value.toLowerCase(Locale.ROOT).startsWith("0x", index)
+                || value.startsWith("#", index);
     }
 }

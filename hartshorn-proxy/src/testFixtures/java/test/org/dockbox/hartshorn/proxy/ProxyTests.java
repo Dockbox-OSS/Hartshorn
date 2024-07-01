@@ -211,7 +211,7 @@ public abstract class ProxyTests {
     @ParameterizedTest
     @MethodSource("proxyTypes")
     void testErrorWrapperInterceptionIsCorrect(Class<? extends InterfaceProxy> proxyType) throws NoSuchMethodException, ApplicationException {
-        ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.orchestratorLoader().create(this.introspector()).factory((proxyType));
+        ProxyFactory<InterfaceProxy> factory = (ProxyFactory<InterfaceProxy>) this.orchestratorLoader().create(this.introspector()).factory(proxyType);
         AtomicInteger count = new AtomicInteger();
         factory.advisors().method(proxyType.getMethod("name")).intercept(context -> {
             throw new IllegalStateException("not done");
@@ -416,6 +416,11 @@ public abstract class ProxyTests {
             }
             DemoServiceD service = (DemoServiceD) other;
             return this.name.equals(service.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return this.name.hashCode();
         }
     }
 

@@ -183,7 +183,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     @NonNull
     private static Reportable[] childReporters(AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference, ContextView context) {
         return context.contexts().stream()
-                .map(childContext -> (Reportable) (contextsController -> reporterReference.get().accept(contextsController, childContext)))
+                .map(childContext -> (Reportable) contextsController -> reporterReference.get().accept(contextsController, childContext))
                 .toArray(Reportable[]::new);
     }
 

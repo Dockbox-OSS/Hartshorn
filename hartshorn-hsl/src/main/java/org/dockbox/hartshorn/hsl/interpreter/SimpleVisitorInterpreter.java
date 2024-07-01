@@ -120,7 +120,7 @@ public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
     @Override
     public void interpret(List<Statement> statements) {
         if (this.isRunning) {
-            throw new IllegalAccessException("Cannot reuse the same interpreter instance for multiple executions");
+            throw new ConcurrentInterpreterExecutionException("Cannot reuse the same interpreter instance for multiple executions");
         }
         this.isRunning = true;
         try {

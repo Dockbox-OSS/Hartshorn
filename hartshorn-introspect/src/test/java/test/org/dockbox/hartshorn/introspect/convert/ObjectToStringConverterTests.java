@@ -64,9 +64,10 @@ public class ObjectToStringConverterTests {
     }
 
     private record TestClass(String test) {
+
         @Override
-            public String toString() {
-                return "{toStringResult:" + this.test + "}";
-            }
+        public String toString() {
+            return "{toStringResult:" + this.test + "}";
         }
+    }
 }
