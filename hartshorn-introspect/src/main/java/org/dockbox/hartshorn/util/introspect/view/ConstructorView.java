@@ -70,6 +70,7 @@ public interface ConstructorView<T> extends ExecutableElementView<T>, AnnotatedG
      *
      * @return the type of the class that declares the constructor
      */
+    @Override
     TypeView<T> type();
 
     @Override

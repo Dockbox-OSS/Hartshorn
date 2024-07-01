@@ -52,6 +52,7 @@ public class OptionalToCollectionConverterFactoryTests {
         Assertions.assertEquals("test", CollectionUtilities.first(converted));
     }
 
+    @SuppressWarnings("NonApiType")
     private static Converter<Optional<?>, ArrayList> createConverter() {
         Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
         ConverterFactory<Optional<?>, Collection<?>> factory = new OptionalToCollectionConverterFactory(introspector);

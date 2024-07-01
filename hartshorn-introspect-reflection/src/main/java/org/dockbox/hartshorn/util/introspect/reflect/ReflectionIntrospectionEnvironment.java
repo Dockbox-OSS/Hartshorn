@@ -52,6 +52,7 @@ public class ReflectionIntrospectionEnvironment implements IntrospectionEnvironm
         return this.parameterNamesAvailable.booleanValue();
     }
 
+    @SuppressWarnings("unused")
     private void $__hartshorn$__ignore(Object parameterCheck) {
         throw new UnsupportedOperationException("This method is a placeholder used to discover whether parameter names are available. It should never be called.");
     }

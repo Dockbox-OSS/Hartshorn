@@ -34,6 +34,7 @@ import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.ObjectDescriber;
 
 /**
  * Represents a class definition inside a script. The class is identified by its name, and
@@ -176,7 +177,9 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
 
     @Override
     public String toString() {
-        return this.name;
+        return ObjectDescriber.of(this)
+                .field("name", this.name)
+                .describe();
     }
 
     @Override

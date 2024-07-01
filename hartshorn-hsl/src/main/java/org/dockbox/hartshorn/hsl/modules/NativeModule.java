@@ -57,7 +57,7 @@ public interface NativeModule extends ContextCarrier {
      * implementation, though it is typically expected that these methods are public.
      *
      * @param moduleName  The name of the module. This is used to identify the module.
-     * @param interpreter
+     * @param interpreter The interpreter in which the module is loaded. This can be used to obtain additional context.
      * @return The supported functions of this module.
      */
     List<NativeFunctionStatement> supportedFunctions(Token moduleName, Interpreter interpreter);

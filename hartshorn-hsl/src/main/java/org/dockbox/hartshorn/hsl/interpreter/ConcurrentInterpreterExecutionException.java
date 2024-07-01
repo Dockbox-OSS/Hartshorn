@@ -25,8 +25,8 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  *
  * @author Guus Lieben
  */
-public class IllegalAccessException extends ApplicationRuntimeException {
-    public IllegalAccessException(String message) {
+public class ConcurrentInterpreterExecutionException extends ApplicationRuntimeException {
+    public ConcurrentInterpreterExecutionException(String message) {
         super(message);
     }
 }
