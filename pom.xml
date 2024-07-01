@@ -88,6 +88,7 @@
         <plugin.scala.version>4.9.2</plugin.scala.version>
         <plugin.source.version>3.3.1</plugin.source.version>
         <plugin.staging.version>1.7.0</plugin.staging.version>
+        <plugin.errorprone.version>2.28.0</plugin.errorprone.version>
     </properties>
 
     <modules>
@@ -433,7 +434,7 @@
                     Exclude Kotlin plugin version from being updated, as this should always reference the kotlin.version property
                     instead of being directly updated by the versions plugin.
                     -->
-                    <excludeProperties>plugin.kotlin.version</excludeProperties>
+                    <excludeProperties>plugin.kotlin.version,errorprone.version</excludeProperties>
                 </configuration>
             </plugin>
         </plugins>
