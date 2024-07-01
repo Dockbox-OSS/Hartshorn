@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.component.processing.Prototype;
 import org.dockbox.hartshorn.component.processing.Singleton;
 import org.dockbox.hartshorn.inject.Strict;
 import org.dockbox.hartshorn.inject.SupportPriority;
-import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
+import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateReporterConfiguration;
 import org.dockbox.hartshorn.reporting.application.ApplicationDiagnosticsReporter;

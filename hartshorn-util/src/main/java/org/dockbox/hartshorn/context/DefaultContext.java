@@ -105,9 +105,6 @@ public abstract class DefaultContext implements Context {
     public <C extends ContextView> Option<C> firstContext(ContextIdentity<C> key) {
         return Option.of(this.stream(key).findFirst())
                 .orCompute(() -> {
-                    if (key.requiresApplicationContext()) {
-                        return null;
-                    }
                     C context = key.create();
                     this.addContext(context);
                     return context;

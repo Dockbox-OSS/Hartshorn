@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-core</artifactId>
+            <artifactId>hartshorn-inject</artifactId>
         </dependency>
 
         <dependency>
@@ -31,7 +31,7 @@
 
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-core</artifactId>
+            <artifactId>hartshorn-inject</artifactId>
             <version>${revision}</version>
             <type>test-jar</type>
             <scope>test</scope>
