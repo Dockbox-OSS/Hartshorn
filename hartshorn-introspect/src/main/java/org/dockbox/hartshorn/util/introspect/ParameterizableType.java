@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 /**
  * A wrapper for parameterized types that allows for the retrieval of the type and its parameters. This is a
  * simple representation of a {@link ParameterizedType} that allows for easy comparison, which is especially
- * useful for keys such as the {@code org.dockbox.hartshorn.component.ComponentKey}.
+ * useful for keys such as the {@code org.dockbox.hartshorn.inject.ComponentKey}.
  *
  * <p>{@link ParameterizableType}s can be introspected with {@link Introspector introspectors}, retaining
  * complete type information.

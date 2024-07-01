@@ -51,11 +51,6 @@ public class SimpleContextIdentity<T extends ContextView> implements ContextIden
     }
 
     @Override
-    public boolean requiresApplicationContext() {
-        return false;
-    }
-
-    @Override
     public T create() {
         throw new IllegalStateException("No fallback defined for context " + this.type.getSimpleName());
     }
