@@ -128,6 +128,7 @@ public final class ClassPathScanner {
      */
     public synchronized ClassPathScanner addUrlForScanning(URL url) {
         return this.addClassLoaderForScanning(new URLClassLoader(new URL[] { url }) {
+            @Override
             public String toString() {
                 return super.toString() + " [url=" + url.toExternalForm() + "]";
             }
@@ -188,7 +189,7 @@ public final class ClassPathScanner {
                         this.processDirectoryResource(handler, classLoader, file);
                     }
                     else if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".jar")) {
-                        this.processJarFileResource(handler, classLoader, url, file);
+                        this.processJarFileResource(handler, classLoader, file);
                     }
                 }
                 else {
@@ -204,10 +205,9 @@ public final class ClassPathScanner {
      *
      * @param handler The handler that will consume the file if it is compatible
      * @param classLoader The classloader to use for loading classes from the jar file
-     * @param url The URL that represents the jar file
      * @param jarFile The jar file
      */
-    private void processJarFileResource(ResourceHandler handler, URLClassLoader classLoader, URL url, File jarFile) {
+    private void processJarFileResource(ResourceHandler handler, URLClassLoader classLoader, File jarFile) {
         try(JarFile file = new JarFile(jarFile)) {
             Enumeration<JarEntry> entries = file.entries();
             while(entries.hasMoreElements()) {

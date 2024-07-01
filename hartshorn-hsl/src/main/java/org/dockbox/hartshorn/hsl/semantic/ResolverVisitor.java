@@ -204,6 +204,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     }
 
     @Override
+    @SuppressWarnings("ReferenceEquality")
     public Void visit(VariableExpression expression) {
         if (this.resolver.hasDefinedScopes() && this.resolver.peekScope().get(expression.name().lexeme()) == Boolean.FALSE) {
             throw new ScriptEvaluationError("Cannot read local variable in its own initializer.", Phase.RESOLVING, expression.name());

@@ -20,6 +20,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.util.ObjectDescriber;
 
 /**
  * Represents a single token which exists within an HSL script. A token is always of
@@ -117,6 +118,12 @@ public class Token extends ASTNode {
 
     @Override
     public String toString() {
-        return "Token[%s @ %d:%d = %s / %s]".formatted(this.type, this.line(), this.column(), this.lexeme, this.literal);
+        return ObjectDescriber.of(this)
+                .field("type", this.type)
+                .field("lexeme", this.lexeme)
+                .field("literal", this.literal)
+                .field("line", this.line())
+                .field("column", this.column())
+                .describe();
     }
 }

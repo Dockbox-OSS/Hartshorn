@@ -27,6 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.SequencedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -122,7 +123,7 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
      */
     protected <A extends Annotation> A examineAnnotation(Annotation actual, Class<A> targetAnnotationClass) {
         actual = this.unproxy(actual);
-        LinkedHashSet<Class<? extends Annotation>> hierarchy = this.annotationHierarchy(actual.annotationType());
+        SequencedSet<Class<? extends Annotation>> hierarchy = this.annotationHierarchy(actual.annotationType());
 
         if (!hierarchy.contains(targetAnnotationClass)) {
             return null;
@@ -147,9 +148,9 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
     }
 
     @Override
-    public LinkedHashSet<Class<? extends Annotation>> annotationHierarchy(Class<? extends Annotation> type) {
+    public SequencedSet<Class<? extends Annotation>> annotationHierarchy(Class<? extends Annotation> type) {
         Class<? extends Annotation> currentClass = type;
-        LinkedHashSet<Class<? extends Annotation>> hierarchy = new LinkedHashSet<>();
+        SequencedSet<Class<? extends Annotation>> hierarchy = new LinkedHashSet<>();
         while (currentClass != null) {
             if (!hierarchy.add(currentClass)) {
                 throw new CircularHierarchyException(currentClass);

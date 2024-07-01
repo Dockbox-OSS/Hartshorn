@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.reporting.collect;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -47,7 +48,8 @@ public class StandardDiagnosticsReportCollector implements DiagnosticsReportColl
 
     @Override
     public DiagnosticsReport report(Reportable reportable) {
-        this.property("timestamp").writeString(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+        String timestamp = LocalDateTime.now(Clock.systemDefaultZone()).format(DateTimeFormatter.ISO_DATE_TIME);
+        this.property("timestamp").writeString(timestamp);
 
         reportable.report(this);
         return this.report;

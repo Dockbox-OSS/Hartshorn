@@ -56,6 +56,7 @@ public class ScriptRuntimeTests {
     @Inject
     private ApplicationContext applicationContext;
 
+    @SuppressWarnings("StreamResourceLeak")
     public static Stream<Arguments> scripts() throws IOException {
         Path resources = Paths.get("src", "test", "resources");
         BiPredicate<Path, BasicFileAttributes> filter = (path, attributes) -> attributes.isRegularFile() && path.getFileName().toString().endsWith(".hsl");

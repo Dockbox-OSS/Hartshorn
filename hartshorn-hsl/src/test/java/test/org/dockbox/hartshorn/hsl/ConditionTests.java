@@ -101,6 +101,4 @@ public class ConditionTests {
 
         return elementView;
     }
-
-    private void mockTarget() {}
 }
