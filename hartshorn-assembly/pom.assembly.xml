@@ -37,15 +37,15 @@
     <dependencies>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-config</artifactId>
+            <artifactId>hartshorn-inject</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-config-jackson</artifactId>
+            <artifactId>hartshorn-inject-configurations</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-core</artifactId>
+            <artifactId>hartshorn-launchpad</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
@@ -54,10 +54,6 @@
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
             <artifactId>hartshorn-hsl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-i18n</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
