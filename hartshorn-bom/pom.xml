@@ -21,6 +21,7 @@
         <!-- Versions in alphabetical order -->
         <compile-testing.version>0.21.0</compile-testing.version>
         <checker.version>3.42.0</checker.version>
+        <errorprone.version>${plugin.errorprone.version}</errorprone.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jackson.version>2.16.1</jackson.version>
         <jakarta.annotations.version>2.1.1</jakarta.annotations.version>
@@ -99,6 +100,11 @@
             </dependency>
 
             <!-- Third-party -->
+            <dependency>
+                <groupId>com.google.errorprone</groupId>
+                <artifactId>error_prone_annotation</artifactId>
+                <version>${errorprone.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.groovy</groupId>
                 <artifactId>groovy-all</artifactId>

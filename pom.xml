@@ -87,6 +87,7 @@
         <plugin.scala.version>4.8.1</plugin.scala.version>
         <plugin.source.version>3.3.0</plugin.source.version>
         <plugin.staging.version>1.6.13</plugin.staging.version>
+        <plugin.errorprone.version>2.28.0</plugin.errorprone.version>
     </properties>
 
     <licenses>
