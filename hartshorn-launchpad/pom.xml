@@ -10,22 +10,18 @@
         <relativePath>../hartshorn-assembly/parent/pom.parent.xml</relativePath>
     </parent>
 
-    <name>Hartshorn Core</name>
-    <artifactId>hartshorn-core</artifactId>
+    <name>Hartshorn Launchpad</name>
+    <artifactId>hartshorn-launchpad</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-introspect</artifactId>
+            <artifactId>hartshorn-inject</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-proxy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-spi</artifactId>
+            <artifactId>hartshorn-inject-configurations</artifactId>
         </dependency>
 
         <dependency>
@@ -65,17 +61,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <!-- TODO @Guus Lieben, #1060 Remove after documentation finished -->
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

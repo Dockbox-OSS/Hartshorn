@@ -116,12 +116,11 @@
                 <module>hartshorn-proxy-javassist</module>
                 <module>hartshorn-introspect</module>
                 <module>hartshorn-introspect-reflection</module>
-                <module>hartshorn-core</module>
+                <module>hartshorn-inject</module>
+                <module>hartshorn-inject-configurations</module>
+                <module>hartshorn-launchpad</module>
                 <module>hartshorn-reporting</module>
                 <module>hartshorn-hsl</module>
-                <module>hartshorn-config</module>
-                <module>hartshorn-config-jackson</module>
-                <module>hartshorn-i18n</module>
                 <module>hartshorn-assembly/pom.assembly.xml</module>
             </modules>
         </profile>
