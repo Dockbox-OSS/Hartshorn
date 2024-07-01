@@ -20,7 +20,7 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.component.condition.RequiresCondition;
 import org.dockbox.hartshorn.component.populate.ComponentInjectionPoint;
 import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
