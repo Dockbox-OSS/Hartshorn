@@ -16,9 +16,7 @@
 
 package org.dockbox.hartshorn.inject.annotations;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.component.processing.proxy.ContextMethodPostProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,8 +26,8 @@ import java.lang.annotation.Target;
 /**
  * Annotation used to indicate a method will return a provided object. The underlying method should not be
  * called, but the provided object should be returned instead. The provided object is obtained from the active
- * {@link ApplicationContext}. The return type of the method is used to determine the {@link ComponentKey} of
- * the provided object.
+ * {@link org.dockbox.hartshorn.inject.provider.ComponentProvider}. The return type of the method is used to
+ * determine the {@link ComponentKey} of the provided object.
  *
  * <p>Example:
  * <pre>{@code
@@ -39,7 +37,7 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
- * @see ContextMethodPostProcessor
+ * @see org.dockbox.hartshorn.inject.processors.ContextMethodPostProcessor
  * @author Guus Lieben
  * @since 0.4.1
  */
