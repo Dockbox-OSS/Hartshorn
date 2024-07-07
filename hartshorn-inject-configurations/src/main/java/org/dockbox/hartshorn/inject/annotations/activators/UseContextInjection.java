@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.annotations;
+package org.dockbox.hartshorn.inject.annotations.activators;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.inject.annotations.configuration.Priority;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 /**
- * Support specialization of {@link Priority}, used as a shorthand for {@code @Priority(Priority.SUPPORT_PRIORITY)}.
- *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.4.1
+ *
+ * @deprecated Context injection is now built-in to default injection strategies.
  */
-@Target({ ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Extends(Priority.class)
-@Priority(Priority.SUPPORT_PRIORITY)
-public @interface SupportPriority {
+@Target(ElementType.TYPE)
+@Deprecated(since = "0.6.0", forRemoval = true)
+public @interface UseContextInjection {
 }
