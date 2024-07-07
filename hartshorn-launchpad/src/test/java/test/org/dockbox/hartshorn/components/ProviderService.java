@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.inject.annotations.Service;
 import org.dockbox.hartshorn.inject.annotations.Provided;
 
 @Service

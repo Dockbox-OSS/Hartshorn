@@ -17,7 +17,8 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
+import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
 import java.util.Set;
@@ -29,7 +30,7 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public interface PostProcessingComponentProvider extends ComponentProvider, ContextCarrier {
+public interface PostProcessingComponentProvider extends ComponentProvider, ApplicationContextCarrier {
 
     ComponentPostConstructor postConstructor();
 

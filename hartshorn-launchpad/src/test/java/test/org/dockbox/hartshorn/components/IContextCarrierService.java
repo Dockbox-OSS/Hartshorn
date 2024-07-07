@@ -16,9 +16,9 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.inject.annotations.Service;
+import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 
 @Service
-public interface IContextCarrierService extends ContextCarrier {
+public interface IContextCarrierService extends ApplicationContextCarrier {
 }

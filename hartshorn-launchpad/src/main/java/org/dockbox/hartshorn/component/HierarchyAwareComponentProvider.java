@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.processing.CompositeComponentPostProcessor;
 import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.inject.ContextKey;
-import org.dockbox.hartshorn.context.DefaultProvisionContext;
+import org.dockbox.hartshorn.inject.DefaultProvisionContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.ComponentObjectContainer;
@@ -121,7 +121,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext
         BindingHierarchy<C> hierarchy = this.hierarchy(key);
 
         ContextIdentity<ScopeModuleContext> scopeModuleContextKey = ContextKey.builder(ScopeModuleContext.class)
-                .fallback(() -> new ScopeModuleContext(this.applicationContext()))
+                .fallback(ScopeModuleContext::new)
                 .build();
         Option<ScopeModuleContext> scopeModuleContext = this.applicationContext().firstContext(scopeModuleContextKey);
 

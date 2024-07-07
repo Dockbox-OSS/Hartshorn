@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.Provider;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;

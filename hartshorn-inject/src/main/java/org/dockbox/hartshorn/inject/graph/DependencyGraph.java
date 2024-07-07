@@ -19,10 +19,9 @@ package org.dockbox.hartshorn.inject.graph;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.dockbox.hartshorn.inject.DependencyContext;
-import org.dockbox.hartshorn.inject.LifecycleAwareDependencyContext;
-import org.dockbox.hartshorn.inject.LifecycleType;
-import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
+import org.dockbox.hartshorn.inject.graph.declaration.LifecycleAwareDependencyContext;
+import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleContentAwareGraph;

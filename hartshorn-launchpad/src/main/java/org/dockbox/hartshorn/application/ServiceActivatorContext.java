@@ -21,9 +21,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.context.DefaultProvisionContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.activation.ServiceActivator;
+import org.dockbox.hartshorn.inject.DefaultProvisionContext;
+import org.dockbox.hartshorn.inject.activation.ActivatorHolder;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;

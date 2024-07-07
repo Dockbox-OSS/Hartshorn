@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentKeyView;
 import org.dockbox.hartshorn.inject.binding.AbstractBindingHierarchy;

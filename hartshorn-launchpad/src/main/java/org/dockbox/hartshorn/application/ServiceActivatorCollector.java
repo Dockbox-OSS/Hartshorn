@@ -20,7 +20,7 @@ import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.inject.activation.ServiceActivator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
 public class ServiceActivatorCollector {

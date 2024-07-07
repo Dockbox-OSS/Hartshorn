@@ -20,6 +20,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
+import org.dockbox.hartshorn.inject.graph.DependencyResolutionException;
+import org.dockbox.hartshorn.inject.graph.DependencyResolver;
+
 /**
  * A composite dependency resolver is a {@link DependencyResolver} that delegates to a collection of other dependency
  * resolvers. The result of the delegation is a collection of all resolved dependencies, as resolved by the delegates.
@@ -48,7 +53,8 @@ public class CompositeDependencyResolver implements DependencyResolver {
     }
 
     @Override
-    public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> declarationContexts) throws DependencyResolutionException {
+    public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> declarationContexts) throws
+            DependencyResolutionException {
         Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
         for (DependencyResolver resolver : this.resolvers()) {
             Set<DependencyContext<?>> resolvedDependencies = resolver.resolve(declarationContexts);

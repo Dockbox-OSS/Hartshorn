@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.slf4j.Logger;
 

@@ -18,8 +18,7 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
-import org.dockbox.hartshorn.inject.resolve.ComponentInjectionPointsResolver;
-import org.dockbox.hartshorn.inject.resolve.ComponentKeyResolver;
+import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 

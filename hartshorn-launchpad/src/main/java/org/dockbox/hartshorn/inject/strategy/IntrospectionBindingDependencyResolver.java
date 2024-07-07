@@ -18,8 +18,9 @@ package org.dockbox.hartshorn.inject.strategy;
 
 import java.util.Set;
 
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
+import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 
 /**
  * Resolves dependencies for a binding declaration using a {@link IntrospectionDependencyResolver} to
@@ -35,8 +36,11 @@ public class IntrospectionBindingDependencyResolver implements BindingDeclaratio
 
     private final IntrospectionDependencyResolver introspectionDependencyResolver;
 
-    public IntrospectionBindingDependencyResolver(ApplicationEnvironment environment) {
-        this.introspectionDependencyResolver = new IntrospectionDependencyResolver(environment);
+    public IntrospectionBindingDependencyResolver(
+            ComponentInjectionPointsResolver injectionPointsResolver,
+            ComponentKeyResolver componentKeyResolver
+    ) {
+        this.introspectionDependencyResolver = new IntrospectionDependencyResolver(injectionPointsResolver, componentKeyResolver);
     }
 
     @Override

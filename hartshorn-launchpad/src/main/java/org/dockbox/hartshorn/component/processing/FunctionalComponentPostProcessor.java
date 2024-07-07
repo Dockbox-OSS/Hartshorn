@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.component.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentContainer;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.component.ComponentType;
+import org.dockbox.hartshorn.inject.component.ComponentType;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 

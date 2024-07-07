@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.boot;
 
 import org.dockbox.hartshorn.application.HartshornApplication;
-import org.dockbox.hartshorn.application.context.InvalidActivationSourceException;
+import org.dockbox.hartshorn.launchpad.InvalidActivationSourceException;
 import test.org.dockbox.hartshorn.boot.activators.AbstractActivator;
 import test.org.dockbox.hartshorn.boot.activators.InterfaceActivator;
 import test.org.dockbox.hartshorn.boot.activators.ValidActivator;

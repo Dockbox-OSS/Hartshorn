@@ -16,8 +16,12 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.inject.graph.declaration.AbstractDependencyContext;
+import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
+import org.dockbox.hartshorn.inject.graph.declaration.LifecycleAwareDependencyContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.View;

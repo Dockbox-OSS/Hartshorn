@@ -16,8 +16,8 @@
 
 package test.org.dockbox.hartshorn.lifecycle;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 
 public class NonRegisteredObserver implements LifecycleObserver {
 

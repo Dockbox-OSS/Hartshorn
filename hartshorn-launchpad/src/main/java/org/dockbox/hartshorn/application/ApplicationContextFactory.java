@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 
 /**
  * A functional provider for {@link ApplicationContext} instances. This interface is often used by {@link ApplicationBuilder}

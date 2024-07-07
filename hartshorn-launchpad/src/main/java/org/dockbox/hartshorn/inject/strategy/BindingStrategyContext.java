@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.inject.strategy;
 
-import org.dockbox.hartshorn.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
 
 /**
  * TODO: #1060 Add documentation

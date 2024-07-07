@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
+import org.dockbox.hartshorn.inject.graph.DependencyMap;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;

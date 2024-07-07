@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.inject.resolve.InjectionPoint;
+import org.dockbox.hartshorn.inject.targets.InjectionPoint;
 
 /**
  * A context that is used to provide information about the current component request. This gives additional

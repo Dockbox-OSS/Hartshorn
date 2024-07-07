@@ -16,8 +16,8 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.inject.annotations.Prototype;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
 import org.dockbox.hartshorn.inject.annotations.Named;
 
 @Configuration

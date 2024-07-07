@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.component;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 

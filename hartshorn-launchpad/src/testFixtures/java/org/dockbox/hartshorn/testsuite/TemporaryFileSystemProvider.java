@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.dockbox.hartshorn.application.environment.FileSystemProvider;
+import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider;
 
 /**
  * A {@link FileSystemProvider} that uses a temporary directory for the application's files.

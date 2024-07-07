@@ -15,7 +15,7 @@
  */
 package test.org.dockbox.hartshorn.core.compat
 
-import org.dockbox.hartshorn.application.context.ApplicationContext
+import org.dockbox.hartshorn.launchpad.ApplicationContext
 import org.dockbox.hartshorn.application.createApplication
 import org.dockbox.hartshorn.inject.ComponentInitializationException
 import org.dockbox.hartshorn.inject.MissingInjectConstructorException

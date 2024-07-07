@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.inject.populate;
 
 import org.dockbox.hartshorn.component.ComponentPopulateException;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
-import org.dockbox.hartshorn.inject.resolve.ComponentInjectionPoint;
-import org.dockbox.hartshorn.inject.resolve.ComponentInjectionPointsResolver;
+import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
+import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.ApplicationException;

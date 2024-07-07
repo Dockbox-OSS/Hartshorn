@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.provider.ComponentObjectContainer;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.inject.provider.NonTypeAwareProvider;

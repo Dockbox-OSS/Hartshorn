@@ -18,23 +18,24 @@ package org.dockbox.hartshorn.inject.strategy;
 
 import java.util.List;
 import java.util.Set;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
+
+import org.dockbox.hartshorn.inject.scope.ScopeKey;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.scope.DirectScopeKey;
-import org.dockbox.hartshorn.component.ScopeKey;
-import org.dockbox.hartshorn.component.Scoped;
-import org.dockbox.hartshorn.inject.annotations.Binds;
-import org.dockbox.hartshorn.component.processing.ComponentMemberType;
+import org.dockbox.hartshorn.inject.annotations.configuration.Scoped;
+import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
+import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
 import org.dockbox.hartshorn.component.processing.CompositeMember;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
-import org.dockbox.hartshorn.inject.DependencyContext;
-import org.dockbox.hartshorn.inject.DependencyMap;
-import org.dockbox.hartshorn.inject.annotations.Priority;
-import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
-import org.dockbox.hartshorn.introspect.ViewContextAdapter;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
+import org.dockbox.hartshorn.inject.graph.DependencyMap;
+import org.dockbox.hartshorn.inject.annotations.configuration.Priority;
+import org.dockbox.hartshorn.inject.introspect.InjectorApplicationViewAdapter;
+import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
@@ -82,7 +83,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         Set<ComponentKey<?>> dependencies = this.declarationDependencyResolver.dependencies(context);
         ContextAwareComponentSupplier<T> supplier = requestContext -> {
             try {
-                ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
+                ViewContextAdapter contextAdapter = new InjectorApplicationViewAdapter(applicationContext);
                 contextAdapter.addContext(requestContext);
                 return contextAdapter.load(declaration).orNull();
             }

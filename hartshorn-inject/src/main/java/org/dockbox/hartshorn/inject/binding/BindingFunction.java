@@ -17,9 +17,14 @@
 package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.IllegalScopeException;
+import org.dockbox.hartshorn.inject.collection.CollectorBindingFunction;
+import org.dockbox.hartshorn.inject.collection.ComponentCollection;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.Provider;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
+import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 /**
@@ -56,7 +61,7 @@ public interface BindingFunction<T> {
     /**
      * Sets whether the result of the binding should be processed after initialization. This
      * will determine whether the result of the binding should be enhanced by
-     * {@link org.dockbox.hartshorn.component.processing.ComponentProcessor}s.
+     * {@link ComponentProcessor}s.
      *
      * @param processAfterInitialization Whether to process after initialization
      * @return The binding function

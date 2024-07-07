@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObserverPreProcessor;
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserverPreProcessor;
+import org.dockbox.hartshorn.inject.activation.ServiceActivator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

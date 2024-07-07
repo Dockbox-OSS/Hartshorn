@@ -20,9 +20,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.component.populate.ComponentInjectionPoint;
-import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.context.ContextView;
+import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
+import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;

@@ -16,9 +16,9 @@
 package test.org.dockbox.hartshorn.core.kotlin
 
 import org.dockbox.hartshorn.inject.Inject
-import org.dockbox.hartshorn.application.context.ApplicationContext
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment
-import org.dockbox.hartshorn.component.ComponentRegistry
+import org.dockbox.hartshorn.launchpad.ApplicationContext
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment
+import org.dockbox.hartshorn.inject.component.ComponentRegistry
 import org.dockbox.hartshorn.testsuite.HartshornTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest

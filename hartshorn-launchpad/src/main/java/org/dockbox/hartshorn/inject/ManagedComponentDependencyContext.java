@@ -17,11 +17,16 @@
 package org.dockbox.hartshorn.inject;
 
 import java.util.Set;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentRegistry;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.ScopeKey;
-import org.dockbox.hartshorn.component.processing.ComponentMemberType;
+import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
+import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
+import org.dockbox.hartshorn.inject.graph.DependencyMap;
+import org.dockbox.hartshorn.inject.graph.DependencyResolutionType;
+import org.dockbox.hartshorn.inject.graph.declaration.LifecycleAwareDependencyContext;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;

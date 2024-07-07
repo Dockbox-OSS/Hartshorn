@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.scan;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClasspathTypeReferenceCollector;

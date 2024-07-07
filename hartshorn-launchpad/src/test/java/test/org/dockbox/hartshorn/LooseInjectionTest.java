@@ -18,10 +18,10 @@ package test.org.dockbox.hartshorn;
 
 import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.StandardApplicationContextFactory;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
-import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment.Configurer;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment.Configurer;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
