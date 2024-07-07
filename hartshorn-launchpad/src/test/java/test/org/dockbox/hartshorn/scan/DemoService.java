@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.scan;
 
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.inject.annotations.Service;
 
 @Service
 public interface DemoService {

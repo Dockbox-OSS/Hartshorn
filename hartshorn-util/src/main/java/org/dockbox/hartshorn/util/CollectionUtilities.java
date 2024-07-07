@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.NavigableSet;
 import java.util.SequencedCollection;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -174,8 +175,8 @@ public final class CollectionUtilities {
         if (collection == null || collection.isEmpty()) {
             return null;
         }
-        else if (collection instanceof NavigableSet<T> navigableSet) {
-            return navigableSet.last();
+        else if (collection instanceof SortedSet<T> sortedSet) {
+            return sortedSet.last();
         }
         else if (collection instanceof SequencedCollection<T> sequencedCollection) {
             return sequencedCollection.getLast();
@@ -204,8 +205,8 @@ public final class CollectionUtilities {
         if (iterable == null || (iterable instanceof Collection<T> collection && collection.isEmpty())) {
             return null;
         }
-        else if (iterable instanceof NavigableSet<T> navigableSet) {
-            return navigableSet.first();
+        else if (iterable instanceof SortedSet<T> sortedSet) {
+            return sortedSet.first();
         }
         else if (iterable instanceof SequencedCollection<T> sequencedCollection) {
             return sequencedCollection.getFirst();

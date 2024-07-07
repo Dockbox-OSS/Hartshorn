@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.inject.resolve.ComponentInjectionPointsResolver;
+import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 
 import com.google.errorprone.annotations.Keep;
 

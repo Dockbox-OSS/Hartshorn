@@ -17,10 +17,10 @@
 package org.dockbox.hartshorn.application;
 
 import java.util.function.Predicate;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
-import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentRegistry;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

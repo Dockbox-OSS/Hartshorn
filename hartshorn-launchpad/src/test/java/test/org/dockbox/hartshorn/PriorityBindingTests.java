@@ -17,10 +17,10 @@
 package test.org.dockbox.hartshorn;
 
 import org.dockbox.hartshorn.inject.Inject;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.inject.annotations.Prototype;
-import org.dockbox.hartshorn.inject.annotations.Priority;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
+import org.dockbox.hartshorn.inject.annotations.configuration.Priority;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;

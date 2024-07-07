@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.component;
 
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.Provider;
 import org.dockbox.hartshorn.inject.provider.SingletonCache;

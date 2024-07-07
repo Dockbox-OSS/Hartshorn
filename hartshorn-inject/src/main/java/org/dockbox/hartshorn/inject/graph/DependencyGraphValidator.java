@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.graph.GraphNode;

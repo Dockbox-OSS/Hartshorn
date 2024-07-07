@@ -17,9 +17,10 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.component.processing.proxy.ContextCarrierDelegationPostProcessor;
-import org.dockbox.hartshorn.component.processing.proxy.ContextMethodPostProcessor;
+import org.dockbox.hartshorn.inject.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.processing.ContextCarrierDelegationPostProcessor;
+import org.dockbox.hartshorn.inject.processors.ContextMethodPostProcessor;
+import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.inject.annotations.Provided;
 
 import java.lang.annotation.ElementType;

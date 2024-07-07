@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.Set;
 
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.resources.Resources;
+import org.dockbox.hartshorn.launchpad.resources.Resources;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

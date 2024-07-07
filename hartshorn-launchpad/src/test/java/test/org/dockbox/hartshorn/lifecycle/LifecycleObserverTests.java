@@ -17,10 +17,10 @@
 package test.org.dockbox.hartshorn.lifecycle;
 
 import org.dockbox.hartshorn.application.HartshornApplication;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
-import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObservable;
+import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

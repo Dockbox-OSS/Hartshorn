@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn;
 
-import org.dockbox.hartshorn.application.environment.FileSystemProvider;
+import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;

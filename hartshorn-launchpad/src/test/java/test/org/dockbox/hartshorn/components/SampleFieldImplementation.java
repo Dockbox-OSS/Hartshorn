@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.inject.annotations.Component;
 
 @Component
 public class SampleFieldImplementation implements SampleField {

@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.provider.ComponentObjectContainer;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.inject.provider.Provider;
 import org.dockbox.hartshorn.inject.provider.SupplierProvider;
 import org.dockbox.hartshorn.inject.provider.TypeAwareProvider;
-import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
-import org.dockbox.hartshorn.introspect.ViewContextAdapter;
+import org.dockbox.hartshorn.inject.introspect.InjectorApplicationViewAdapter;
+import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
@@ -52,15 +51,15 @@ public final class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
 
     private final ComponentKey<? extends C> componentKey;
     private final LifecycleType lifecycleType;
-    private final ApplicationContext applicationContext;
+    private final InjectionCapableApplication application;
 
     private ConstructorView<? extends C> optimalConstructor;
     private boolean lazy = true;
 
-    private ContextDrivenProvider(ComponentKey<? extends C> type, LifecycleType lifecycleType, ApplicationContext applicationContext) {
+    private ContextDrivenProvider(ComponentKey<? extends C> type, LifecycleType lifecycleType, InjectionCapableApplication application) {
         this.componentKey = type;
         this.lifecycleType = lifecycleType;
-        this.applicationContext = applicationContext;
+        this.application = application;
     }
 
     /**
@@ -105,12 +104,12 @@ public final class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
 
     @Override
     public Option<ObjectContainer<C>> provide(ComponentRequestContext requestContext) throws ApplicationException {
-        Option<? extends ConstructorView<? extends C>> constructor = this.optimalConstructor(this.applicationContext);
+        Option<? extends ConstructorView<? extends C>> constructor = this.optimalConstructor(this.application);
         if (constructor.absent()) {
             return Option.empty();
         }
         try {
-            ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(this.applicationContext);
+            ViewContextAdapter contextAdapter = new InjectorApplicationViewAdapter(this.application);
             contextAdapter.addContext(requestContext);
             return contextAdapter.scope(this.componentKey.scope())
                     .create(constructor.get())
@@ -132,11 +131,11 @@ public final class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
         return Tristate.valueOf(this.lazy);
     }
 
-    private Option<? extends ConstructorView<? extends C>> optimalConstructor(ApplicationContext applicationContext) throws ApplicationException {
-        TypeView<? extends C> typeView = applicationContext.environment().introspector().introspect(this.type());
+    private Option<? extends ConstructorView<? extends C>> optimalConstructor(InjectionCapableApplication application) throws ApplicationException {
+        TypeView<? extends C> typeView = application.environment().introspector().introspect(this.type());
         if (this.optimalConstructor == null) {
             try {
-                this.optimalConstructor = ComponentConstructorResolver.create(applicationContext).findConstructor(typeView).orNull();
+                this.optimalConstructor = ComponentConstructorResolver.create(application.environment(), application.defaultBinder()).findConstructor(typeView).orNull();
             }
             catch(Throwable throwable) {
                 throw new ApplicationException(throwable);

@@ -16,23 +16,26 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
+import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
+import org.dockbox.hartshorn.inject.graph.DependencyGraph;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
-import org.dockbox.hartshorn.inject2.graph.DependencyGraph;
 import org.dockbox.hartshorn.util.graph.GraphIterator;
 
 /**
- * A visitor that visits all {@link DependencyContext}s in a {@link DependencyGraph}
- * and registers them with the {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
+ * A visitor that visits all {@link DependencyContext}s in a {@link DependencyGraph}, allowing them to be
+ * configured or registered in the owning context.
  *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public interface ConfigurationDependencyVisitor extends GraphIterator<DependencyContext<?>>, ContextCarrier {
+public interface ConfigurationDependencyVisitor extends GraphIterator<DependencyContext<?>>, ApplicationContextCarrier {
 
     /**
-     * Registers the given {@link DependencyContext} with the {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
+     * Registers the given {@link DependencyContext} with the {@link ApplicationContext}.
      *
      * @param dependencyContext the context to register
      * @param <T> the type of the component that is registered
@@ -41,9 +44,9 @@ public interface ConfigurationDependencyVisitor extends GraphIterator<Dependency
     <T> void registerProvider(DependencyContext<T> dependencyContext) throws ComponentConfigurationException;
 
     /**
-     * Invoked after a {@link DependencyContext} has been registered with the {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
+     * Invoked after a {@link DependencyContext} has been registered with the {@link ApplicationContext}.
      * This may be used to perform additional actions, such as registering a {@link ComponentProcessor}
-     * with the {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
+     * with the {@link ApplicationContext}.
      *
      * @param dependencyContext the context that was registered
      */

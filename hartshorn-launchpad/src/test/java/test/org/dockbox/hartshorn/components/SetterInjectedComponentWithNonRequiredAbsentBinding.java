@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.inject.annotations.Component;
 
 import org.dockbox.hartshorn.inject.Inject;
 

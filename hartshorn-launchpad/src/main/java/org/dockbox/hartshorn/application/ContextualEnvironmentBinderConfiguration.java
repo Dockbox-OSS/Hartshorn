@@ -16,21 +16,22 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.DelegatingApplicationContext;
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
-import org.dockbox.hartshorn.application.environment.FileSystemProvider;
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
-import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
-import org.dockbox.hartshorn.component.ComponentRegistry;
-import org.dockbox.hartshorn.component.ComponentProvider;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.DelegatingApplicationContext;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ClasspathResourceLocator;
+import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider;
+import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObservable;
+import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
+import org.dockbox.hartshorn.inject.ApplicationPropertyHolder;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
-import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeAwareComponentProvider;
 import org.dockbox.hartshorn.component.SingletonCacheComponentProvider;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.provider.SingletonCache;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;

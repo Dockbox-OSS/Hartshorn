@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.context.DefaultProvisionContext;
+import org.dockbox.hartshorn.inject.DefaultProvisionContext;
 
 public class SampleContext extends DefaultProvisionContext {
 

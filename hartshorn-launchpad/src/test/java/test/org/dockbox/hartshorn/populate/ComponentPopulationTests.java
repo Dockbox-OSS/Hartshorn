@@ -19,8 +19,8 @@ package test.org.dockbox.hartshorn.populate;
 import java.util.List;
 import java.util.function.Function;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.resolve.ComponentFieldInjectionPoint;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.targets.ComponentFieldInjectionPoint;
 import org.dockbox.hartshorn.component.populate.ComponentInjectionPoint;
 import org.dockbox.hartshorn.component.populate.ComponentMethodInjectionPoint;
 import org.dockbox.hartshorn.component.populate.ComponentPopulationStrategy;

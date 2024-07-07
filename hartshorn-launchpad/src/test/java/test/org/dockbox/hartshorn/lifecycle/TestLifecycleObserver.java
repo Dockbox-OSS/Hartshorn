@@ -16,9 +16,9 @@
 
 package test.org.dockbox.hartshorn.lifecycle;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.inject.annotations.Service;
 
 @Service
 public class TestLifecycleObserver implements LifecycleObserver {

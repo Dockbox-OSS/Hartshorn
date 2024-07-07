@@ -16,12 +16,12 @@
 
 package test.org.dockbox.hartshorn.scope;
 
-import org.dockbox.hartshorn.component.Configuration;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.scope.DirectScopeKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
-import org.dockbox.hartshorn.component.Scoped;
-import org.dockbox.hartshorn.inject.annotations.Singleton;
+import org.dockbox.hartshorn.inject.annotations.configuration.Scoped;
+import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 
 @Configuration
 public class ScopedBindingConfiguration {

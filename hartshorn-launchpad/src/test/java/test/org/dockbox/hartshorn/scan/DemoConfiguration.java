@@ -16,9 +16,9 @@
 
 package test.org.dockbox.hartshorn.scan;
 
-import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.inject.annotations.Singleton;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.condition.support.RequiresActivator;
+import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 
 @Configuration
 @RequiresActivator(UseDemo.class)

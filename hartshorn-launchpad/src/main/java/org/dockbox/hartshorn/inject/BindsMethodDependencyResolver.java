@@ -22,11 +22,15 @@ import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentRegistry;
-import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.component.condition.ConditionMatcher;
-import org.dockbox.hartshorn.inject.annotations.Binds;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
+import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
+import org.dockbox.hartshorn.inject.graph.AbstractContainerDependencyResolver;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
+import org.dockbox.hartshorn.inject.graph.DependencyResolver;
 import org.dockbox.hartshorn.inject.strategy.BindingStrategy;
 import org.dockbox.hartshorn.inject.strategy.BindingStrategyContext;
 import org.dockbox.hartshorn.inject.strategy.BindingStrategyRegistry;
@@ -52,17 +56,19 @@ import org.dockbox.hartshorn.util.option.Option;
 public class BindsMethodDependencyResolver extends AbstractContainerDependencyResolver {
 
     private final ConditionMatcher conditionMatcher;
+    private final InjectionCapableApplication application;
     private final BindingStrategyRegistry registry;
     private final ComponentRegistry componentRegistry;
 
-    public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher) {
-        this(conditionMatcher, new SimpleBindingStrategyRegistry());
+    public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher, InjectionCapableApplication application) {
+        this(conditionMatcher, application, new SimpleBindingStrategyRegistry());
     }
 
-    public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher, BindingStrategyRegistry registry) {
+    public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher, InjectionCapableApplication application, BindingStrategyRegistry registry) {
         this.conditionMatcher = conditionMatcher;
+        this.application = application;
         this.registry = registry;
-        this.componentRegistry = conditionMatcher.applicationContext().get(ComponentRegistry.class);
+        this.componentRegistry = application.defaultProvider().get(ComponentRegistry.class);
     }
 
     public BindingStrategyRegistry registry() {

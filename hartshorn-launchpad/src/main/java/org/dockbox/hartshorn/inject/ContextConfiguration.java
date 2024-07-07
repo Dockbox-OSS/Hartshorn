@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.application.UseBootstrap;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.inject.annotations.Singleton;
-import org.dockbox.hartshorn.context.ConcreteContextCarrier;
-import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.condition.support.RequiresActivator;
+import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
+import org.dockbox.hartshorn.launchpad.context.ConcreteApplicationContextCarrier;
 import org.dockbox.hartshorn.inject.annotations.SupportPriority;
 
 /**
@@ -40,14 +40,14 @@ public class ContextConfiguration {
     /**
      * Provides a simple wrapper around the {@link ApplicationContext} to allow for easy access to the context in
      * components. This carrier should typically not be used directly, but may be used by proxies to delegate the
-     * use of {@link ContextCarrier#applicationContext()} to the actual context.
+     * use of {@link ApplicationContextCarrier#applicationContext()} to the actual context.
      *
      * @param applicationContext the application context to wrap
-     * @return a {@link ContextCarrier} wrapping the provided context
+     * @return a {@link ApplicationContextCarrier} wrapping the provided context
      */
     @Singleton
     @SupportPriority
-    public ContextCarrier contextCarrier(ApplicationContext applicationContext) {
-        return new ConcreteContextCarrier(applicationContext);
+    public ApplicationContextCarrier contextCarrier(ApplicationContext applicationContext) {
+        return new ConcreteApplicationContextCarrier(applicationContext);
     }
 }

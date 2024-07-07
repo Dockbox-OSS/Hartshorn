@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
-import org.dockbox.hartshorn.component.Configuration;
+import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.Named;
-import org.dockbox.hartshorn.inject.annotations.Singleton;
+import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 
 /**
  * Registers lifecycle observers to the application context. This configuration is intentionally

@@ -17,13 +17,16 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.UseBootstrap;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
+import org.dockbox.hartshorn.inject.condition.support.RequiresActivator;
 import org.dockbox.hartshorn.component.populate.inject.InjectionPoint;
-import org.dockbox.hartshorn.inject.annotations.Prototype;
-import org.dockbox.hartshorn.inject.annotations.Singleton;
-import org.dockbox.hartshorn.inject.annotations.InfrastructurePriority;
-import org.dockbox.hartshorn.inject.annotations.Strict;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
+import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
+import org.dockbox.hartshorn.inject.annotations.configuration.InfrastructurePriority;
+import org.dockbox.hartshorn.inject.annotations.configuration.Strict;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
