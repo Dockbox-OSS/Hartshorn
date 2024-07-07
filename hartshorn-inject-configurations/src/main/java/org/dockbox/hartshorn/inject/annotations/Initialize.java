@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.inject.annotations;
 
-import org.dockbox.hartshorn.component.ComponentPostConstructor;
-import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 
 /**
  * Indicates that the value of a field or method should be processed by the specific

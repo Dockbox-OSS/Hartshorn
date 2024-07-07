@@ -14,26 +14,31 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.annotations;
+package org.dockbox.hartshorn.inject.annotations.configuration;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.inject.annotations.configuration.Priority;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
+import org.dockbox.hartshorn.inject.scope.Scope;
 
 /**
- * Support specialization of {@link Priority}, used as a shorthand for {@code @Priority(Priority.SUPPORT_PRIORITY)}.
+ * Defines in which scope a component should be created. When defined, all scopes that are an instance
+ * of the provided type will contain the component declaration. This is useful for components that
+ * should be created in a specific scope, such as a request or session scope.
  *
- * @since 0.6.0
+ * <p>Scope implementations remain up to the container to define. The container will typically provide
+ * a default application scope, which does not need to be defined explicitly.
+ *
+ * @since 0.5.0
+ *
+ * @see Scope
  *
  * @author Guus Lieben
  */
-@Target({ ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Extends(Priority.class)
-@Priority(Priority.SUPPORT_PRIORITY)
-public @interface SupportPriority {
+@Target({ ElementType.METHOD, ElementType.FIELD })
+public @interface Scoped {
+    Class<? extends Scope> value();
 }
