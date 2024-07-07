@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
 import org.dockbox.hartshorn.application.StandardApplicationContextFactory;
-import org.dockbox.hartshorn.application.context.SimpleApplicationContext;
-import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
+import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
 import org.dockbox.hartshorn.util.Customizer;
 
 public final class TestCustomizer<T> {

@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject.strategy;
 
 import org.dockbox.hartshorn.context.DefaultContext;
-import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 /**

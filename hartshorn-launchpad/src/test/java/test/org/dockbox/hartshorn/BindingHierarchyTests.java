@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.component.QualifierKey;
 import org.dockbox.hartshorn.inject.provider.ComposedProvider;

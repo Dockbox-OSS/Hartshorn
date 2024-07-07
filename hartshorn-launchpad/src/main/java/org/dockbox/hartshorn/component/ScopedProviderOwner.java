@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.component;
 
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
 
 /**

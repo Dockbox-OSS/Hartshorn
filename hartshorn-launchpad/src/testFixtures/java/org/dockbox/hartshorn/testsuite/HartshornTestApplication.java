@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.StandardApplicationContextFactory;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
 import test.org.dockbox.hartshorn.ApplicationBatchingTest;
 
 public class HartshornTestApplication {

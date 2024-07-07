@@ -22,9 +22,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.dockbox.hartshorn.application.StandardApplicationContextFactory;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.inject.activation.ServiceActivator;
 import org.dockbox.hartshorn.inject.annotations.Populate;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;

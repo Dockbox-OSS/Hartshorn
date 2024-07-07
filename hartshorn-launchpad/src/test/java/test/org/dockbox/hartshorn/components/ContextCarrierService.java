@@ -16,14 +16,14 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
+import org.dockbox.hartshorn.inject.annotations.Service;
 
 import org.dockbox.hartshorn.inject.Inject;
 
 @Service
-public class ContextCarrierService implements ContextCarrier {
+public class ContextCarrierService implements ApplicationContextCarrier {
 
     @Inject
     private ApplicationContext applicationContext;

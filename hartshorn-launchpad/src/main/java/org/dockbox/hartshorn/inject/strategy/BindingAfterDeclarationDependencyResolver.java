@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.annotations.Binds;
+import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
 
 /**
  * A {@link BindingDeclarationDependencyResolver} that resolves dependencies based on explicit non-direct

@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.inject.graph.DependencyResolver;
 import org.dockbox.hartshorn.inject2.environment.InjectorEnvironment;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;

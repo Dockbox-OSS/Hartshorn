@@ -18,7 +18,9 @@ package org.dockbox.hartshorn.component;
 
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.annotations.Component;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentStoreCallback;
 import org.dockbox.hartshorn.inject.processing.ModifiableComponentProcessingContext;

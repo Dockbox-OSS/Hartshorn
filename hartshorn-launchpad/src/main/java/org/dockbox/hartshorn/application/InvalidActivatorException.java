@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.application;
 
+import org.dockbox.hartshorn.inject.activation.ServiceActivator;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
  * Thrown when an attempt is made to register a type as service activator, but the type does not
  * meet the requirements of a service activator.
  *
- * @see org.dockbox.hartshorn.component.processing.ServiceActivator
+ * @see ServiceActivator
  *
  * @since 0.4.12
  *

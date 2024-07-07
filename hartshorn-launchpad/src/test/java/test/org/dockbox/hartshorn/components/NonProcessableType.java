@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.inject.annotations.Component;
 
 @Component(permitProcessing = false, permitProxying = false)
 public class NonProcessableType {

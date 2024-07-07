@@ -18,7 +18,7 @@ package test.org.dockbox.hartshorn.collection;
 
 import java.util.Set;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.testsuite.HartshornTest;

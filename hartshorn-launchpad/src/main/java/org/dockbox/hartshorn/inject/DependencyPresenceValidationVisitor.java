@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.util.graph.BreadthFirstGraphVisitor;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;

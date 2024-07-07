@@ -16,9 +16,9 @@
 package test.org.dockbox.hartshorn.core.kotlin
 
 import org.dockbox.hartshorn.inject.Inject
-import org.dockbox.hartshorn.application.context.ApplicationContext
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment
-import org.dockbox.hartshorn.component.Component
+import org.dockbox.hartshorn.launchpad.ApplicationContext
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment
+import org.dockbox.hartshorn.inject.annotations.Component
 
 @Component
 open class KotlinClassComponent @Inject constructor(private val environment: ApplicationEnvironment) {

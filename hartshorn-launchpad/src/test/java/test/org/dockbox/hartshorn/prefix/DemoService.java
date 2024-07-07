@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.prefix;
 
-import org.dockbox.hartshorn.component.Service;
+import org.dockbox.hartshorn.inject.annotations.Service;
 
 // Use service to also ensure prefixes are configured to build annotation hierarchy early on
 @Service

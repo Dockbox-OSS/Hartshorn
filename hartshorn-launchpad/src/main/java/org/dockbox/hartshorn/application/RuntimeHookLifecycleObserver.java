@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.application;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import org.dockbox.hartshorn.inject.annotations.Strict;
+import org.dockbox.hartshorn.inject.annotations.configuration.Strict;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 
 import java.lang.annotation.ElementType;

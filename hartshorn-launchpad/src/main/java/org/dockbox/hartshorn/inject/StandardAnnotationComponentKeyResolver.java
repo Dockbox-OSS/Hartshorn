@@ -22,14 +22,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.component.ComponentPopulateException;
-import org.dockbox.hartshorn.inject.annotations.Binds;
+import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
 import org.dockbox.hartshorn.inject.annotations.Initialize;
-import org.dockbox.hartshorn.inject.annotations.Priority;
+import org.dockbox.hartshorn.inject.annotations.configuration.Priority;
 import org.dockbox.hartshorn.inject.annotations.Qualifier;
-import org.dockbox.hartshorn.inject.annotations.Strict;
+import org.dockbox.hartshorn.inject.annotations.configuration.Strict;
 import org.dockbox.hartshorn.inject.provider.selection.ExactPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.MaximumPriorityProviderSelectionStrategy;
-import org.dockbox.hartshorn.inject.resolve.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;

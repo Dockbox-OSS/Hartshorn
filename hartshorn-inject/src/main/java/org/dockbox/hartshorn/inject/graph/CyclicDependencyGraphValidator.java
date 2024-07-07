@@ -25,6 +25,8 @@ import org.dockbox.hartshorn.inject.ComponentDiscoveryList;
 import org.dockbox.hartshorn.inject.CyclicComponentException;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.TypePathNode;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
+import org.dockbox.hartshorn.inject.graph.declaration.ImplementationDependencyContext;
 import org.dockbox.hartshorn.inject.processing.ImplementationDependencyContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.graph.ContainableGraphNode;

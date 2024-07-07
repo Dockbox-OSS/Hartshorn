@@ -18,7 +18,12 @@ package org.dockbox.hartshorn.inject;
 
 import java.util.Set;
 
-import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.graph.AbstractContainerDependencyResolver;
+import org.dockbox.hartshorn.inject.graph.declaration.ComponentKeyDependencyDeclarationContext;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
+import org.dockbox.hartshorn.inject.graph.DependencyMap;
+import org.dockbox.hartshorn.inject.graph.DependencyResolutionException;
 import org.dockbox.hartshorn.inject.provider.Provider;
 import org.dockbox.hartshorn.inject.strategy.IntrospectionDependencyResolver;
 import org.dockbox.hartshorn.inject2.environment.InjectorEnvironment;

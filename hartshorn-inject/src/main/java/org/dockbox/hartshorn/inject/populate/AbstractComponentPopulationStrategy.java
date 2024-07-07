@@ -22,9 +22,9 @@ import java.util.SequencedCollection;
 import java.util.Set;
 
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
-import org.dockbox.hartshorn.inject.resolve.RequireInjectionPointRule;
-import org.dockbox.hartshorn.inject.resolve.ComponentInjectionPoint;
-import org.dockbox.hartshorn.inject.resolve.InjectionPoint;
+import org.dockbox.hartshorn.inject.targets.RequireInjectionPointRule;
+import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
+import org.dockbox.hartshorn.inject.targets.InjectionPoint;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
