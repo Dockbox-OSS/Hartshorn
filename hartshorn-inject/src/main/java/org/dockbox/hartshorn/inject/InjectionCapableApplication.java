@@ -17,8 +17,16 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
+import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 
-public interface InjectorContext extends Context {
+public interface InjectionCapableApplication extends Context {
 
     InjectorEnvironment environment();
+
+    ComponentProvider defaultProvider();
+
+    HierarchicalBinder defaultBinder();
+
+    ApplicationPropertyHolder properties();
 }

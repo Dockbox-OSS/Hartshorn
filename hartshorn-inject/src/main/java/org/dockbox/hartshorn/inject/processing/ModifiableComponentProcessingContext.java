@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.InjectorContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 
@@ -37,14 +37,14 @@ public class ModifiableComponentProcessingContext<T> extends ComponentProcessing
     private boolean requestInstanceLock = false;
 
     public ModifiableComponentProcessingContext(
-        InjectorContext injectorContext,
+        InjectionCapableApplication application,
         ComponentKey<T> key,
         ComponentRequestContext requestContext,
         ObjectContainer<T> container,
         boolean permitsProxying,
         ComponentStoreCallback componentStoreCallback
     ) {
-        super(injectorContext, requestContext, key, container, permitsProxying);
+        super(application, requestContext, key, container, permitsProxying);
         this.componentStoreCallback = componentStoreCallback;
     }
 

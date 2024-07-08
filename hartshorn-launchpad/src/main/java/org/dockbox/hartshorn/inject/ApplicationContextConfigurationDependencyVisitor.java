@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.dockbox.hartshorn.inject.graph.ConfigurationDependencyVisitor;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;

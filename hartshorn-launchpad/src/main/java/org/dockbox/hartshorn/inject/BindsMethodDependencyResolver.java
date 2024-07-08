@@ -56,7 +56,6 @@ import org.dockbox.hartshorn.util.option.Option;
 public class BindsMethodDependencyResolver extends AbstractContainerDependencyResolver {
 
     private final ConditionMatcher conditionMatcher;
-    private final InjectionCapableApplication application;
     private final BindingStrategyRegistry registry;
     private final ComponentRegistry componentRegistry;
 
@@ -141,7 +140,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<InjectorEnvironment, BindingStrategy> bindingStrategies = LazyStreamableConfigurer.ofInitializer(
+        private final LazyStreamableConfigurer<InjectionCapableApplication, BindingStrategy> bindingStrategies = LazyStreamableConfigurer.ofInitializer(
             MethodInstanceBindingStrategy.create(Customizer.useDefaults())
         );
         private ContextualInitializer<ApplicationContext, ConditionMatcher> conditionMatcher = context -> new ConditionMatcher(context.input());

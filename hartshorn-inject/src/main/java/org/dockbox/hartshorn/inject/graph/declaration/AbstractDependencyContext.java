@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.inject.scope.ScopeKey;
 /**
  * A simple implementation of {@link DependencyContext} that is used for components that are not managed by the container,
  * and rely on metadata that is provided by the declaration of the dependency. This context is typically used for
- * components that are created by the container, but are not automatically registered as a component, e.g. {@link Binds} declarations.
+ * components that are created by the container, but are not automatically registered as a component.
  *
  * @param <T> the type of the component
  *

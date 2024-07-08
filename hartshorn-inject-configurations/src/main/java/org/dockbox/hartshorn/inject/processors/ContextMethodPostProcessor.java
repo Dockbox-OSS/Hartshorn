@@ -18,14 +18,14 @@ package org.dockbox.hartshorn.inject.processors;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.InjectorContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.annotations.Provided;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 import org.dockbox.hartshorn.inject.processors.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.inject.processors.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
-import org.dockbox.hartshorn.inject.annotations.Provided;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -40,8 +40,8 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 public class ContextMethodPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Provided> {
 
     @Override
-    public <T, R> MethodInterceptor<T, R> process(InjectorContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
-        ConversionService conversionService = context.environment().defaultComponentProvider().get(ConversionService.class);
+    public <T, R> MethodInterceptor<T, R> process(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
+        ConversionService conversionService = application.defaultProvider().get(ConversionService.class);
         Provided annotation = methodContext.annotation(Provided.class);
         String name = annotation.value();
 
@@ -59,13 +59,13 @@ public class ContextMethodPostProcessor extends ServiceAnnotatedMethodIntercepto
 
         ComponentKey<?> finalKey = key;
         return interceptorContext -> {
-            Object result = context.environment().defaultComponentProvider().get(finalKey, requestContext);
+            Object result = application.defaultProvider().get(finalKey, requestContext);
             return conversionService.convert(result, type.type());
         };
     }
 
     @Override
-    public <T> boolean preconditions(InjectorContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
+    public <T> boolean preconditions(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
         return !methodContext.method().returnType().isVoid();
     }
 

@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
-import org.dockbox.hartshorn.inject2.environment.InjectorEnvironment;
 
 /**
  * A simple implementation of {@link DependencyResolver} that delegates bulk resolution to a single

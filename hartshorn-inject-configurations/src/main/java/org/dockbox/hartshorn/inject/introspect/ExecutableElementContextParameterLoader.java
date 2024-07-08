@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.inject.introspect;
 
-import org.dockbox.hartshorn.inject.InjectorContext;
-import org.dockbox.hartshorn.inject.populate.ComponentRequiredException;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.Required;
+import org.dockbox.hartshorn.inject.populate.ComponentRequiredException;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
 import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
@@ -35,17 +35,17 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
  */
 public class ExecutableElementContextParameterLoader extends RuleBasedParameterLoader<ApplicationBoundParameterLoaderContext> {
 
-    private final InjectorContext injectorContext;
+    private final InjectionCapableApplication application;
 
-    public ExecutableElementContextParameterLoader(InjectorContext injectorContext) {
+    public ExecutableElementContextParameterLoader(InjectionCapableApplication application) {
         super(ApplicationBoundParameterLoaderContext.class);
-        this.injectorContext = injectorContext;
-        this.add(new ContextParameterLoaderRule(injectorContext));
+        this.application = application;
+        this.add(new ContextParameterLoaderRule(application));
     }
 
     @Override
     protected <T> T loadDefault(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
-        ComponentKey<?> componentKey = this.injectorContext.environment().componentKeyResolver().resolve(parameter);
+        ComponentKey<?> componentKey = this.application.environment().componentKeyResolver().resolve(parameter);
 
         ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(new InjectionPoint(parameter));
         Object out = context.provider().get(componentKey, requestContext);

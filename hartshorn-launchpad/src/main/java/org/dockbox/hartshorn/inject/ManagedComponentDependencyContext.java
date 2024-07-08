@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject;
 import java.util.Set;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
-import org.dockbox.hartshorn.component.ScopeKey;
+import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
 import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;

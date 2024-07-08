@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.graph;
+package org.dockbox.hartshorn.inject.graph.support;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.ComponentDiscoveryList;
-import org.dockbox.hartshorn.inject.CyclicComponentException;
-import org.dockbox.hartshorn.inject.DependencyContext;
-import org.dockbox.hartshorn.inject.TypePathNode;
+import org.dockbox.hartshorn.inject.graph.DependencyGraph;
+import org.dockbox.hartshorn.inject.graph.DependencyGraphValidator;
+import org.dockbox.hartshorn.inject.graph.TypePathNode;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.ImplementationDependencyContext;
-import org.dockbox.hartshorn.inject.processing.ImplementationDependencyContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.graph.ContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.GraphNode;
@@ -70,7 +68,7 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
             }
             List<GraphNode<DependencyContext<?>>> graphNodes = this.checkNodeNotCyclicRecursive(node, new ArrayList<>());
             if (!graphNodes.isEmpty()) {
-                ComponentDiscoveryList discoveryList = this.createDiscoveryList(graphNodes, applicationContext);
+                ComponentDiscoveryList discoveryList = this.createDiscoveryList(graphNodes, introspector);
                 throw new CyclicComponentException(discoveryList, node.value().origin());
             }
         }

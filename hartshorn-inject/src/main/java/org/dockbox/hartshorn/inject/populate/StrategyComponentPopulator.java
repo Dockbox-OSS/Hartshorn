@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject.populate;
 
 import org.dockbox.hartshorn.component.ComponentPopulateException;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
@@ -103,12 +104,13 @@ public class StrategyComponentPopulator implements ComponentPopulator {
         }
     }
 
-    public static ContextualInitializer<InjectorEnvironment, ComponentPopulator> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<InjectionCapableApplication, ComponentPopulator> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
             List<ComponentPopulationStrategy> populationStrategies = configurer.strategies.initialize(context);
-            InjectorEnvironment environment = context.input();
+            InjectionCapableApplication application = context.input();
+            InjectorEnvironment environment = application.environment();
             return new StrategyComponentPopulator(
                     environment.proxyOrchestrator(),
                     environment.injectionPointsResolver(),
@@ -126,7 +128,7 @@ public class StrategyComponentPopulator implements ComponentPopulator {
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<InjectorEnvironment, ComponentPopulationStrategy> strategies = LazyStreamableConfigurer.of(collection -> {
+        private final LazyStreamableConfigurer<InjectionCapableApplication, ComponentPopulationStrategy> strategies = LazyStreamableConfigurer.of(collection -> {
             collection.add(InjectPopulationStrategy.create(Customizer.useDefaults()));
         });
 
@@ -145,7 +147,7 @@ public class StrategyComponentPopulator implements ComponentPopulator {
             return this;
         }
 
-        public Configurer strategies(Customizer<StreamableConfigurer<InjectorEnvironment, ComponentPopulationStrategy>> customizer) {
+        public Configurer strategies(Customizer<StreamableConfigurer<InjectionCapableApplication, ComponentPopulationStrategy>> customizer) {
             this.strategies.customizer(customizer);
             return this;
         }

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
-import org.dockbox.hartshorn.inject.InjectorContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 
 /**
  * A component pre-processor is responsible for pre-processing a component. This can be used to
@@ -34,7 +34,7 @@ public abstract non-sealed class ComponentPreProcessor implements ComponentProce
 
     @Override
     public <T> T process(ComponentProcessingContext<T> processingContext) {
-        this.process(processingContext.injectorContext(), processingContext);
+        this.process(processingContext.application(), processingContext);
         return processingContext.instance();
     }
 
@@ -42,10 +42,10 @@ public abstract non-sealed class ComponentPreProcessor implements ComponentProce
      * Processes a given component. As component instances will not exist yet, this method does not expect
      * the {@code instance} to be specified.
      *
-     * @param context The injector context.
+     * @param application The application in which the component is being processed.
      * @param processingContext The type context of the component.
      * @param <T> The type of the component.
      * @see ComponentProcessor#process(ComponentProcessingContext)
      */
-    public abstract <T> void process(InjectorContext context, ComponentProcessingContext<T> processingContext);
+    public abstract <T> void process(InjectionCapableApplication application, ComponentProcessingContext<T> processingContext);
 }

@@ -34,7 +34,7 @@ import org.dockbox.hartshorn.inject.component.ComponentRegistry
 import org.dockbox.hartshorn.component.ScopeAwareComponentProvider
 import org.dockbox.hartshorn.inject.condition.ConditionMatcher
 import org.dockbox.hartshorn.inject.BindsMethodDependencyResolver
-import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor
+import org.dockbox.hartshorn.inject.graph.ConfigurationDependencyVisitor
 import org.dockbox.hartshorn.inject.graph.DependencyResolver
 import org.dockbox.hartshorn.inject.binding.Binder
 import org.dockbox.hartshorn.inject.graph.DependencyGraphBuilder

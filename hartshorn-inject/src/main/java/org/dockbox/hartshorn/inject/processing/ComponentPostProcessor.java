@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.inject.InjectorContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -57,10 +57,10 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
             return instance;
         }
 
-        this.preConfigureComponent(processingContext.injectorContext(), processingContext.instance(), processingContext);
+        this.preConfigureComponent(processingContext.application(), processingContext.instance(), processingContext);
         checkForModification(processingContext, this, instance, processingContext.instance());
 
-        T updatedInstance = this.initializeComponent(processingContext.injectorContext(), processingContext.instance(), processingContext);
+        T updatedInstance = this.initializeComponent(processingContext.application(), processingContext.instance(), processingContext);
         if (processingContext instanceof ModifiableComponentProcessingContext<T> modifiableComponentProcessingContext) {
             if (!modifiableComponentProcessingContext.isInstanceLocked()) {
                 modifiableComponentProcessingContext.instance(updatedInstance);
@@ -70,7 +70,7 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
             }
         }
 
-        this.postConfigureComponent(processingContext.injectorContext(), processingContext.instance(), processingContext);
+        this.postConfigureComponent(processingContext.application(), processingContext.instance(), processingContext);
         checkForModification(processingContext, this, updatedInstance, processingContext.instance());
 
         return updatedInstance;
@@ -82,13 +82,13 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * initialized. Early configuration can be used to configure context that is required for the
      * initialization of the component, but is not available in the component itself.
      *
-     * @param context the injector context
+     * @param application the application in which the component is processed
      * @param instance the component instance
      * @param <T> the type of the component
      *
      * @param processingContext the processing context
      */
-    public <T> void preConfigureComponent(InjectorContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ApplicationException {
+    public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ApplicationException {
         // Do nothing by default
     }
 
@@ -97,14 +97,14 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * provided instance is the component instance that was created by the application. The returned
      * instance is the component instance that will be used by the application.
      *
-     * @param context the injector context
+     * @param application the application in which the component is processed
      * @param instance the component instance
      * @param processingContext the processing context
      * @param <T> the type of the component
      *
      * @return the initialized component
      */
-    public <T> T initializeComponent(InjectorContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ApplicationException {
+    public <T> T initializeComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ApplicationException {
         // Do nothing by default
         return instance;
     }
@@ -115,32 +115,32 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      * itself. For example, this method can be used to configure a component that implements
      * specific interfaces or to populate properties.
      *
-     * @param context the injector context
+     * @param application the application in which the component is processed
      * @param instance the component instance
      * @param processingContext the processing context
      * @param <T> the type of the component
      */
-    public <T> void postConfigureComponent(InjectorContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ApplicationException {
+    public <T> void postConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ApplicationException {
         // Do nothing by default
     }
 
     /**
      * Processes the specified component. The component is guaranteed to be known to the application.
      *
-     * @param context the injector context
+     * @param application the application in which the component is processed
      * @param instance the component instance
      * @param processingContext the processing context
      * @param <T> the type of the component
      *
      * @return the processed component
      *
-     * @deprecated use {@link #preConfigureComponent(InjectorContext, Object, ComponentProcessingContext)},
-     *             {@link #initializeComponent(InjectorContext, Object, ComponentProcessingContext)} and
-     *             {@link #postConfigureComponent(InjectorContext, Object, ComponentProcessingContext)} instead
+     * @deprecated use {@link #preConfigureComponent(InjectionCapableApplication, Object, ComponentProcessingContext)},
+     *             {@link #initializeComponent(InjectionCapableApplication, Object, ComponentProcessingContext)} and
+     *             {@link #postConfigureComponent(InjectionCapableApplication, Object, ComponentProcessingContext)} instead
      *             of this method
      */
     @Deprecated(forRemoval = true, since = "0.5.0")
-    public <T> T process(InjectorContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> T process(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         throw new UnsupportedOperationException("This method is deprecated, use preConfigureComponent, initializeComponent and postConfigureComponent instead");
     }
 

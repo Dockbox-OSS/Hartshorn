@@ -17,8 +17,6 @@
 package org.dockbox.hartshorn.inject.component;
 
 import java.util.Collection;
-
-import org.dockbox.hartshorn.inject.InjectorAware;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -28,7 +26,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public interface ComponentRegistry extends InjectorAware {
+public interface ComponentRegistry {
 
     Collection<ComponentContainer<?>> containers();
 

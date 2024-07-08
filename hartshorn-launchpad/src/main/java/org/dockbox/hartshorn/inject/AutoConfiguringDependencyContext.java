@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.inject.provider.PrototypeProvider;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.graph.declaration.AbstractDependencyContext;
@@ -45,7 +46,7 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  */
 public class AutoConfiguringDependencyContext<T> extends AbstractDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
 
-    private final ContextAwareComponentSupplier<T> supplier;
+    private final PrototypeProvider<T> supplier;
     private final View view;
 
     private AutoConfiguringDependencyContext(AutoConfiguringDependencyContextBuilder<T> builder) {
@@ -143,7 +144,7 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
      */
     public static final class AutoConfiguringDependencyContextBuilder<T> extends AbstractDependencyContextBuilder<T, AutoConfiguringDependencyContextBuilder<T>> {
 
-        private ContextAwareComponentSupplier<T> supplier;
+        private PrototypeProvider<T> supplier;
         private View view;
 
         private AutoConfiguringDependencyContextBuilder(ComponentKey<T> componentKey) {
@@ -155,7 +156,7 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
             return this;
         }
 
-        public AutoConfiguringDependencyContextBuilder<T> supplier(ContextAwareComponentSupplier<T> supplier) {
+        public AutoConfiguringDependencyContextBuilder<T> supplier(PrototypeProvider<T> supplier) {
             this.supplier = supplier;
             return this;
         }

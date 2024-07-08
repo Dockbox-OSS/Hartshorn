@@ -17,10 +17,8 @@
 package org.dockbox.hartshorn.inject.processors.proxy;
 
 import java.util.Collection;
-
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.InjectorContext;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
@@ -43,7 +41,7 @@ public abstract class ServiceMethodInterceptorPostProcessor extends ComponentPos
     }
 
     @Override
-    public <T> void preConfigureComponent(InjectorContext injectorContext, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext);
 
         ProxyFactory<T> factory = processingContext.get(ProxyFactory.class);
@@ -51,15 +49,11 @@ public abstract class ServiceMethodInterceptorPostProcessor extends ComponentPos
             return;
         }
 
-        if (!(injectorContext instanceof InjectionCapableApplication application)) {
-            throw new IllegalStateException("Cannot process method interceptor post processor without an application context");
-        }
-
         for (MethodView<T, ?> method : methods) {
             MethodProxyContext<T> context = new MethodProxyContextImpl<>(application, processingContext.type(), method);
 
-            if (this.preconditions(injectorContext, context, processingContext)) {
-                MethodInterceptor<T, ?> function = this.process(injectorContext, context, processingContext);
+            if (this.preconditions(application, context, processingContext)) {
+                MethodInterceptor<T, ?> function = this.process(application, context, processingContext);
                 if (function != null) {
                     factory.advisors().method(method).intercept(TypeUtils.adjustWildcards(function, MethodInterceptor.class));
                 }
@@ -74,9 +68,9 @@ public abstract class ServiceMethodInterceptorPostProcessor extends ComponentPos
 
     protected abstract <T> Collection<MethodView<T, ?>> modifiableMethods(ComponentProcessingContext<T> processingContext);
 
-    public abstract <T> boolean preconditions(InjectorContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext);
+    public abstract <T> boolean preconditions(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext);
 
-    public abstract <T, R> MethodInterceptor<T, R> process(InjectorContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext);
+    public abstract <T, R> MethodInterceptor<T, R> process(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext);
 
     public boolean failOnPrecondition() {
         return true;

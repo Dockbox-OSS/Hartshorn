@@ -18,18 +18,19 @@ package org.dockbox.hartshorn.component;
 
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.ComponentResolutionException;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.Component;
+import org.dockbox.hartshorn.inject.collection.ComponentCollection;
+import org.dockbox.hartshorn.inject.collection.ContainerAwareComponentCollection;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
+import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentStoreCallback;
 import org.dockbox.hartshorn.inject.processing.ModifiableComponentProcessingContext;
-import org.dockbox.hartshorn.inject.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
-import org.dockbox.hartshorn.inject.collection.ComponentCollection;
-import org.dockbox.hartshorn.inject.collection.ContainerAwareComponentCollection;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -49,18 +50,18 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
 
     private final ScopedProviderOwner owner;
     private final ComponentPostProcessor processor;
-    private final ApplicationContext applicationContext;
+    private final InjectionCapableApplication application;
     private final ComponentStoreCallback componentStoreCallback;
 
     public SimpleComponentProviderPostProcessor(
             ScopedProviderOwner owner,
             ComponentPostProcessor processor,
-            ApplicationContext applicationContext,
+            InjectionCapableApplication application,
             ComponentStoreCallback componentStoreCallback
     ) {
         this.owner = owner;
         this.processor = processor;
-        this.applicationContext = applicationContext;
+        this.application = application;
         this.componentStoreCallback = componentStoreCallback;
     }
 
@@ -110,7 +111,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
 
     private <T> T processUnmanagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, Class<? extends T> type, ComponentRequestContext requestContext)
             throws ApplicationException {
-        TypeView<? extends T> typeView = this.applicationContext.environment().introspector().introspect(type);
+        TypeView<? extends T> typeView = this.application.environment().introspector().introspect(type);
         if (typeView.annotations().has(Component.class)) {
             throw new ApplicationRuntimeException("Component " + typeView.name() + " is not registered");
         }
@@ -182,14 +183,14 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
 
     protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, ObjectContainer<T> objectContainer, @Nullable ComponentContainer<?> componentContainer, ComponentRequestContext requestContext) {
         ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(
-                this.applicationContext, key, requestContext, objectContainer,
+                this.application, key, requestContext, objectContainer,
                 componentContainer == null || componentContainer.permitsProxying(),
                 this.componentStoreCallback);
 
         if (componentContainer != null) {
             processingContext.put(ComponentKey.of(ComponentContainer.class), componentContainer);
             if (componentContainer.permitsProxying()) {
-                StateAwareProxyFactory<T> factory = this.applicationContext.environment().proxyOrchestrator().factory(key.type());
+                StateAwareProxyFactory<T> factory = this.application.environment().proxyOrchestrator().factory(key.type());
 
                 if (objectContainer.instance() != null) {
                     factory.trackState(false);
