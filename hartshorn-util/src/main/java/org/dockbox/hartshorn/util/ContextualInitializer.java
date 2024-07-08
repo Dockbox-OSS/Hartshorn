@@ -91,6 +91,22 @@ public interface ContextualInitializer<I, T> {
     }
 
     /**
+     * Returns an initializer that delegates to the given initializer. This is useful for wrapping
+     * initializers that are weakly typed, and should receive a more specific input type (e.g. an
+     * {@code ApplicationContext} instead of a {@code InjectionCapableApplication}).
+     *
+     * @param initializer The initializer to delegate to.
+     * @param <I1> The (weak) input type of the given initializer.
+     * @param <I2> The (strong) input type of the returned initializer.
+     * @param <T> The type of object to initialize.
+     *
+     * @return An initializer that delegates to the given initializer.
+     */
+    static <I1, I2 extends I1, T> ContextualInitializer<I2, T> delegate(ContextualInitializer<I1, T> initializer) {
+        return initializer::initialize;
+    }
+
+    /**
      * Returns an initializer that caches the result of this initializer. When the returned initializer is invoked,
      * the result of this initializer is cached and returned on subsequent invocations with the same input value.
      * This is useful for expensive initializers, or for easy initialization of singletons.

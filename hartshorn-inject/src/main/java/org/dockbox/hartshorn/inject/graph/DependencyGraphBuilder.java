@@ -26,16 +26,9 @@ import org.dockbox.hartshorn.inject.graph.declaration.ComponentKeyDependencyDecl
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.graph.declaration.ImplementationDependencyContext;
-import org.dockbox.hartshorn.inject2.graph.DependencyGraph;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
-import org.dockbox.hartshorn.component.processing.ComponentMemberType;
-import org.dockbox.hartshorn.inject.ComponentKeyDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.provider.ComposedProvider;
-import org.dockbox.hartshorn.inject.DependencyContext;
-import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.DependencyResolutionException;
-import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.provider.Provider;
 import org.dockbox.hartshorn.inject.provider.TypeAwareProvider;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;

@@ -21,24 +21,23 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.inject.component.ComponentContainer;
-import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.component.PostProcessingComponentProvider;
+import org.dockbox.hartshorn.inject.ComponentContainerDependencyDeclarationContext;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.PostProcessorDependencyDeclarationContext;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
+import org.dockbox.hartshorn.inject.graph.DependencyGraphInitializer;
+import org.dockbox.hartshorn.inject.graph.DependencyResolutionException;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
+import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.processing.ExitingComponentProcessor;
-import org.dockbox.hartshorn.inject.ComponentContainerDependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.provider.ComponentObjectContainer;
-import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.graph.DependencyResolutionException;
-import org.dockbox.hartshorn.inject.PostProcessorDependencyDeclarationContext;
-import org.dockbox.hartshorn.inject2.graph.DependencyGraphInitializer;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
@@ -227,7 +226,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
      */
     public static class Configurer extends DelegatingApplicationContext.Configurer {
 
-        private ContextualInitializer<ApplicationContext, ? extends DependencyGraphInitializer> dependencyGraphInitializer = DependencyGraphInitializer.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationContext, ? extends DependencyGraphInitializer> dependencyGraphInitializer = ContextualInitializer.delegate(DependencyGraphInitializer.create(Customizer.useDefaults()));
 
         /**
          * Configures the dependency graph initializer to use the given {@link DependencyGraphInitializer}.

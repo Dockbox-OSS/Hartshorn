@@ -24,6 +24,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
+import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
@@ -212,13 +213,13 @@ public class ScopeAwareComponentProvider extends DefaultProvisionContext impleme
      */
     public static class Configurer {
 
-        private ContextualInitializer<ApplicationContext, ComponentPostConstructor> componentPostConstructor = ComponentPostConstructorImpl.create(Customizer.useDefaults());
+        private ContextualInitializer<InjectorEnvironment, ComponentPostConstructor> componentPostConstructor = ComponentPostConstructorImpl.create(Customizer.useDefaults());
 
         public Configurer componentPostConstructor(ComponentPostConstructor componentPostConstructor) {
             return this.componentPostConstructor(ContextualInitializer.of(componentPostConstructor));
         }
 
-        public Configurer componentPostConstructor(ContextualInitializer<ApplicationContext, ComponentPostConstructor> componentPostConstructor) {
+        public Configurer componentPostConstructor(ContextualInitializer<InjectorEnvironment, ComponentPostConstructor> componentPostConstructor) {
             this.componentPostConstructor = componentPostConstructor;
             return this;
         }

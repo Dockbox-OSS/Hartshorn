@@ -23,15 +23,14 @@ import java.util.SortedSet;
 import java.util.function.Consumer;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.Provider;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link ContextWrappedHierarchy} is a {@link BindingHierarchy} that wraps another {@link BindingHierarchy}
- * and binds to an active {@link ApplicationContext}. If the wrapped {@link BindingHierarchy} is updated, the
- * wrapped {@link BindingHierarchy} is updated as well, and directly updated in the bound {@link ApplicationContext}.
+ * A {@link SubscribableBindingHierarchy} is a {@link BindingHierarchy} that can be subscribed to. If the delegate
+ * {@link BindingHierarchy} is updated, the given subscriber will be notified. This allows for external components to
+ * react to changes in the hierarchy, without having to poll the hierarchy for changes.
  *
  * @param <C> The type of the wrapped {@link BindingHierarchy}.
  *
@@ -39,13 +38,13 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class ContextWrappedHierarchy<C> implements PrunableBindingHierarchy<C> {
+public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy<C> {
 
     private final Consumer<BindingHierarchy<C>> onUpdate;
 
     private BindingHierarchy<C> real;
 
-    public ContextWrappedHierarchy(BindingHierarchy<C> real, Consumer<BindingHierarchy<C>> onUpdate) {
+    public SubscribableBindingHierarchy(BindingHierarchy<C> real, Consumer<BindingHierarchy<C>> onUpdate) {
         this.real = real;
         this.onUpdate = onUpdate;
     }

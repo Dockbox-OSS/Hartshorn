@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.graph.support;
 
-import org.dockbox.hartshorn.inject.ComponentDiscoveryList.DiscoveredComponent;
+import org.dockbox.hartshorn.inject.graph.support.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.View;
 

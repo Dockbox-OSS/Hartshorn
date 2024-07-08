@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
-import org.dockbox.hartshorn.inject.InjectorContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 
 /**
  * TODO: #1060 Add documentation
@@ -26,5 +26,5 @@ import org.dockbox.hartshorn.inject.InjectorContext;
  * @author Guus Lieben
  */
 public interface ExitingComponentProcessor {
-    void exit(InjectorContext context);
+    void exit(InjectionCapableApplication application);
 }

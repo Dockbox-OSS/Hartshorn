@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.inject.graph.declaration;
 
-import org.dockbox.hartshorn.component.CompositeQualifier;
 import org.dockbox.hartshorn.inject.CompositeQualifier;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 

@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.provider;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.inject.provider.ComponentObjectContainer;
-import org.dockbox.hartshorn.inject.provider.LifecycleType;
-import org.dockbox.hartshorn.inject.provider.NonTypeAwareProvider;
-import org.dockbox.hartshorn.inject.provider.ObjectContainer;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
@@ -34,10 +30,10 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public interface ContextAwareComponentSupplier<T> extends NonTypeAwareProvider<T> {
+public interface PrototypeProvider<T> extends NonTypeAwareProvider<T> {
 
     @Override
-    default Option<ObjectContainer<T>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
+    default Option<ObjectContainer<T>> provide(ComponentRequestContext requestContext) throws ApplicationException {
         return Option.of(ComponentObjectContainer.ofPrototype(this.get(requestContext)));
     }
 
@@ -53,7 +49,7 @@ public interface ContextAwareComponentSupplier<T> extends NonTypeAwareProvider<T
         return Tristate.TRUE;
     }
 
-    static <T> ContextAwareComponentSupplier<T> empty() {
+    static <T> PrototypeProvider<T> empty() {
         return context -> null;
     }
 }

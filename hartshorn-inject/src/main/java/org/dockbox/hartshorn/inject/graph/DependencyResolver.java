@@ -18,8 +18,6 @@ package org.dockbox.hartshorn.inject.graph;
 
 import java.util.Collection;
 import java.util.Set;
-
-import org.dockbox.hartshorn.inject.InjectorAware;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
 
@@ -38,7 +36,7 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
  *
  * @author Guus Lieben
  */
-public interface DependencyResolver extends InjectorAware {
+public interface DependencyResolver {
 
     /**
      * Resolves a collection of {@link DependencyDeclarationContext} instances into a collection of {@link

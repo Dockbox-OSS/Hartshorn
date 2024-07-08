@@ -21,26 +21,26 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.LoggingExceptionHandler;
+import org.dockbox.hartshorn.inject.ComponentKeyResolver;
+import org.dockbox.hartshorn.inject.InjectorEnvironment;
+import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
 import org.dockbox.hartshorn.inject.environment.DefaultProxyOrchestratorLoader;
+import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
+import org.dockbox.hartshorn.inject.targets.MethodsAndFieldsInjectionPointResolver;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
 import org.dockbox.hartshorn.launchpad.banner.Banner;
 import org.dockbox.hartshorn.launchpad.banner.HartshornBanner;
 import org.dockbox.hartshorn.launchpad.banner.ResourcePathBanner;
+import org.dockbox.hartshorn.launchpad.context.ModifiableApplicationContextCarrier;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.Observer;
-import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
-import org.dockbox.hartshorn.inject.targets.MethodsAndFieldsInjectionPointResolver;
-import org.dockbox.hartshorn.launchpad.context.ModifiableApplicationContextCarrier;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.spi.DiscoveryService;
 import org.dockbox.hartshorn.spi.ServiceDiscoveryException;
-import org.dockbox.hartshorn.inject.ComponentKeyResolver;
-import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
-import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
@@ -700,7 +700,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
             return this.injectionPointsResolver(ContextualInitializer.of(() -> injectionPointsResolver));
         }
 
-        public Configurer injectionPointsResolver(ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver) {
+        public Configurer injectionPointsResolver(ContextualInitializer<InjectorEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver) {
             this.injectionPointsResolver = injectionPointsResolver;
             return this;
         }
@@ -713,7 +713,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
             return this.componentKeyResolver(ContextualInitializer.of(componentKeyResolver));
         }
 
-        public Configurer componentKeyResolver(ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver) {
+        public Configurer componentKeyResolver(ContextualInitializer<InjectorEnvironment, ComponentKeyResolver> componentKeyResolver) {
             this.componentKeyResolver = componentKeyResolver;
             return this;
         }

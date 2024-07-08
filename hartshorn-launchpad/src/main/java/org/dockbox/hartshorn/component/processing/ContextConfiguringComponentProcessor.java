@@ -17,11 +17,11 @@
 package org.dockbox.hartshorn.component.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.context.ContextView;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ContextKey;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
@@ -45,13 +45,13 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
     }
 
     @Override
-    public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         if (this.supports(processingContext)) {
             C componentContext = processingContext.firstContext(ContextKey.of(this.contextType))
-                    .orCompute(() -> this.createContext(context, processingContext)).orNull();
+                    .orCompute(() -> this.createContext(application, processingContext)).orNull();
 
             if (componentContext != null) {
-                this.configure(context, componentContext, processingContext);
+                this.configure(application, componentContext, processingContext);
             }
 
             if (instance instanceof Context contextInstance) {
@@ -68,17 +68,17 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
     }
 
     protected abstract boolean supports(
-            ComponentProcessingContext<?> processingContext
+        ComponentProcessingContext<?> processingContext
     );
 
     protected abstract <T> void configure(
-            ApplicationContext context,
-            C componentContext,
-            ComponentProcessingContext<T> processingContext
+        InjectionCapableApplication application,
+        C componentContext,
+        ComponentProcessingContext<T> processingContext
     );
 
     protected abstract C createContext(
-            ApplicationContext context,
-            ComponentProcessingContext<?> processingContext
+        InjectionCapableApplication application,
+        ComponentProcessingContext<?> processingContext
     );
 }

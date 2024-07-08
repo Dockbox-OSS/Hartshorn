@@ -17,9 +17,8 @@
 package org.dockbox.hartshorn.inject.processing;
 
 import java.util.function.Supplier;
-
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.inject.InjectorContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.function.CheckedConsumer;
@@ -60,11 +59,11 @@ import org.dockbox.hartshorn.util.function.CheckedFunction;
  *     <li>{@code B.postConfigureComponent()} will be called</li>
  * </ol>
  *
- * <p>If no processors are provided, the {@link #preConfigureComponent(InjectorContext, Object, ComponentProcessingContext)}
- * and {@link #postConfigureComponent(InjectorContext, Object, ComponentProcessingContext)} methods are effectively
- * no-ops, and the {@link #initializeComponent(InjectorContext, Object, ComponentProcessingContext)} method will
- * simply return the provided instance. This is to ensure that the composite processor can be used in place of a
- * {@link ComponentPostProcessor} without any unexpected side effects.
+ * <p>If no processors are provided, the {@link #preConfigureComponent(InjectionCapableApplication, Object, ComponentProcessingContext)}
+ * and {@link #postConfigureComponent(InjectionCapableApplication, Object, ComponentProcessingContext)} methods are effectively no-ops,
+ * and the {@link #initializeComponent(InjectionCapableApplication, Object, ComponentProcessingContext)} method will simply return the
+ * provided instance. This is to ensure that the composite processor can be used in place of a {@link ComponentPostProcessor} without any
+ * unexpected side effects.
  *
  * @see ComponentPostProcessor
  *
@@ -82,18 +81,18 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> void preConfigureComponent(
-        InjectorContext context,
+        InjectionCapableApplication application,
         @Nullable T instance,
         ComponentProcessingContext<T> processingContext
     ) throws ApplicationException {
         this.withProcessors(processor -> {
-            processor.preConfigureComponent(context, instance, processingContext);
+            processor.preConfigureComponent(application, instance, processingContext);
         });
     }
 
     @Override
     public <T> T initializeComponent(
-        InjectorContext context,
+        InjectionCapableApplication application,
         @Nullable T instance,
         ComponentProcessingContext<T> processingContext
     ) throws ApplicationException {
@@ -101,17 +100,17 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
         if (processors.isEmpty()) {
             return instance;
         }
-        return this.withProcessors(processors, processor -> processor.initializeComponent(context, instance, processingContext));
+        return this.withProcessors(processors, processor -> processor.initializeComponent(application, instance, processingContext));
     }
 
     @Override
     public <T> void postConfigureComponent(
-        InjectorContext context,
+        InjectionCapableApplication application,
         @Nullable T instance,
         ComponentProcessingContext<T> processingContext
     ) throws ApplicationException {
         this.withProcessors(processor -> {
-            processor.postConfigureComponent(context, instance, processingContext);
+            processor.postConfigureComponent(application, instance, processingContext);
         });
     }
 

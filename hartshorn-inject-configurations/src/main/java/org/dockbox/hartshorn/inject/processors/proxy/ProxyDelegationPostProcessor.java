@@ -17,8 +17,7 @@
 package org.dockbox.hartshorn.inject.processors.proxy;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.inject.InjectorContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
@@ -42,7 +41,7 @@ public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProce
     }
 
     @Override
-    public <T> void preConfigureComponent(InjectorContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         if (!processingContext.type().isChildOf(this.parentTarget())) {
             return;
         }
@@ -52,7 +51,7 @@ public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProce
             return;
         }
 
-        P concreteDelegator = this.concreteDelegator(context, factory, this.parentTarget());
+        P concreteDelegator = this.concreteDelegator(application, factory, this.parentTarget());
 
         if (this.skipConcreteMethods()) {
             // Ensure we keep the original instance as delegate if possible, to avoid losing context. This rule is defined by the finalizing process.
@@ -66,8 +65,8 @@ public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProce
         }
     }
 
-    protected P concreteDelegator(InjectorContext context, ProxyFactory<P> handler, Class<? extends P> parent) {
-        return context.environment().defaultComponentProvider().get(this.parentTarget());
+    protected P concreteDelegator(InjectionCapableApplication application, ProxyFactory<P> handler, Class<? extends P> parent) {
+        return application.defaultProvider().get(this.parentTarget());
     }
 
     protected boolean skipConcreteMethods() {

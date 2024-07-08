@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject.populate;
 import java.util.Set;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
@@ -130,15 +131,16 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
         return this.conversionService;
     }
 
-    public static ContextualInitializer<InjectorEnvironment, ComponentPopulationStrategy> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<InjectionCapableApplication, ComponentPopulationStrategy> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
-            InjectorEnvironment environment = context.input();
+            InjectionCapableApplication application = context.input();
+            InjectorEnvironment environment = application.environment();
             return new InjectPopulationStrategy(
                     environment.componentKeyResolver(),
                     environment.injectionPointsResolver(),
-                    environment.defaultComponentProvider(),
+                    application.defaultProvider(),
                     Set.copyOf(configurer.requiresComponentRules.initialize(context)),
                     Set.copyOf(configurer.parameterResolvers.initialize(context))
             );
@@ -154,8 +156,8 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<InjectorEnvironment, RequireInjectionPointRule> requiresComponentRules = LazyStreamableConfigurer.of(new AnnotatedInjectionPointRequireRule());
-        private final LazyStreamableConfigurer<InjectorEnvironment, InjectParameterResolver> parameterResolvers = LazyStreamableConfigurer.ofInitializer(context -> new InjectContextParameterResolver(context.input().injectorContext()));
+        private final LazyStreamableConfigurer<InjectionCapableApplication, RequireInjectionPointRule> requiresComponentRules = LazyStreamableConfigurer.of(new AnnotatedInjectionPointRequireRule());
+        private final LazyStreamableConfigurer<InjectionCapableApplication, InjectParameterResolver> parameterResolvers = LazyStreamableConfigurer.ofInitializer(context -> new InjectContextParameterResolver(context.input()));
 
         public Configurer requiresComponentRules(RequireInjectionPointRule... requiresComponentRules) {
             this.requiresComponentRules.customizer(collection -> collection.addAll(requiresComponentRules));
@@ -167,7 +169,7 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
             return this;
         }
 
-        public Configurer requiresComponentRules(Customizer<StreamableConfigurer<InjectorEnvironment, RequireInjectionPointRule>> customizer) {
+        public Configurer requiresComponentRules(Customizer<StreamableConfigurer<InjectionCapableApplication, RequireInjectionPointRule>> customizer) {
             this.requiresComponentRules.customizer(customizer);
             return this;
         }
@@ -182,7 +184,7 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
             return this;
         }
 
-        public Configurer parameterResolvers(Customizer<StreamableConfigurer<InjectorEnvironment, InjectParameterResolver>> customizer) {
+        public Configurer parameterResolvers(Customizer<StreamableConfigurer<InjectionCapableApplication, InjectParameterResolver>> customizer) {
             this.parameterResolvers.customizer(customizer);
             return this;
         }

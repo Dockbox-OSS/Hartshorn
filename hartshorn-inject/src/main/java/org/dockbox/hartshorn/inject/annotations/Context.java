@@ -21,11 +21,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-
 /**
- * Annotation for injecting a {@link org.dockbox.hartshorn.context.ContextView context} into a class. The
- * context is obtained through the responsible {@link org.dockbox.hartshorn.inject.InjectorContext}. If the
+ * Annotation for injecting a {@link org.dockbox.hartshorn.context.ContextView context} into a class. The context
+ * is obtained through the responsible {@link org.dockbox.hartshorn.inject.InjectionCapableApplication}. If the
  * context does not exist in the active injector context, the injected value will be {@code null}.
  *
  * @author Guus Lieben

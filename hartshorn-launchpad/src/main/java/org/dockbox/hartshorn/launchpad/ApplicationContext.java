@@ -16,20 +16,20 @@
 
 package org.dockbox.hartshorn.launchpad;
 
-import org.dockbox.hartshorn.inject.activation.ActivatorHolder;
 import org.dockbox.hartshorn.application.ApplicationBuilder;
-import org.dockbox.hartshorn.inject.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.inject.scope.DirectScopeKey;
-import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.activation.ActivatorHolder;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
+import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
+import org.dockbox.hartshorn.inject.scope.DirectScopeKey;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.launchpad.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
@@ -50,8 +50,8 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * @author Guus Lieben
  */
 public interface ApplicationContext extends
+        InjectionCapableApplication,
         HierarchicalComponentProvider,
-        ApplicationPropertyHolder,
         ApplicationAwareContext,
         ExceptionHandler,
         ActivatorHolder,

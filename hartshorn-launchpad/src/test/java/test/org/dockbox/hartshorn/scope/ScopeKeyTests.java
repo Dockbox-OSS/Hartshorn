@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeAdapter;
 import org.dockbox.hartshorn.component.ScopeAdapterKey;
 import org.dockbox.hartshorn.inject.scope.DirectScopeKey;
-import org.dockbox.hartshorn.component.ScopeKey;
+import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

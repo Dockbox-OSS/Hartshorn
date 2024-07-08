@@ -18,10 +18,9 @@ package org.dockbox.hartshorn.inject.processors.proxy;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
-
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.InjectorContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -41,7 +40,7 @@ public abstract class ServiceAnnotatedMethodPostProcessor<M extends Annotation> 
     public abstract Class<M> annotation();
 
     @Override
-    public <T> void preConfigureComponent(InjectorContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().methods().annotatedWith(this.annotation()).isEmpty()) {
             return;
         }
@@ -49,11 +48,11 @@ public abstract class ServiceAnnotatedMethodPostProcessor<M extends Annotation> 
         Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext.type());
 
         for (MethodView<T, ?> method : methods) {
-            this.process(context, processingContext.key(), instance, method);
+            this.process(application, processingContext.key(), instance, method);
         }
     }
 
-    protected abstract <T> void process(InjectorContext context, ComponentKey<T> key, @Nullable T instance, MethodView<T, ?> method);
+    protected abstract <T> void process(InjectionCapableApplication application, ComponentKey<T> key, @Nullable T instance, MethodView<T, ?> method);
 
     protected <T> Collection<MethodView<T, ?>> modifiableMethods(TypeView<T> type) {
         return type.methods().annotatedWith(this.annotation());

@@ -17,9 +17,8 @@
 package org.dockbox.hartshorn.inject.collection;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
-import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.provider.LazySingletonProvider;
+import org.dockbox.hartshorn.inject.provider.PrototypeProvider;
 import org.dockbox.hartshorn.inject.provider.Provider;
 import org.dockbox.hartshorn.inject.provider.SingletonProvider;
 import org.dockbox.hartshorn.inject.provider.SupplierProvider;
@@ -62,7 +61,7 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
     }
 
     @Override
-    public Binder supplier(ContextAwareComponentSupplier<T> supplier) {
+    public Binder supplier(PrototypeProvider<T> supplier) {
         return this.provider(supplier);
     }
 

@@ -16,8 +16,9 @@
 
 package org.dockbox.hartshorn.inject;
 
-public interface InjectorAware {
+import org.dockbox.hartshorn.inject.activation.ActivatorHolder;
 
-    InjectorContext injectorContext();
+public interface ConfigurableInjectionCapableApplication extends InjectionCapableApplication {
 
+    ActivatorHolder activators();
 }

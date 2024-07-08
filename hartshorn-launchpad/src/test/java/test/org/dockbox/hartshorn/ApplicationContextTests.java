@@ -35,15 +35,15 @@ import org.dockbox.hartshorn.inject.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
 import org.dockbox.hartshorn.inject.ApplicationDependencyResolver;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
-import org.dockbox.hartshorn.inject.ComponentDiscoveryList;
-import org.dockbox.hartshorn.inject.ComponentDiscoveryList.DiscoveredComponent;
-import org.dockbox.hartshorn.inject.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
+import org.dockbox.hartshorn.inject.graph.support.ComponentDiscoveryList;
+import org.dockbox.hartshorn.inject.graph.support.ComponentDiscoveryList.DiscoveredComponent;
+import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.provider.PrototypeProvider;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.DependencyMap;
 import org.dockbox.hartshorn.inject.graph.DependencyResolutionType;
 import org.dockbox.hartshorn.inject.graph.DependencyResolver;
-import org.dockbox.hartshorn.inject.TypePathNode;
+import org.dockbox.hartshorn.inject.graph.TypePathNode;
 import org.dockbox.hartshorn.inject.graph.DependencyGraphBuilder;
 import org.dockbox.hartshorn.inject.strategy.IntrospectionDependencyResolver;
 import org.dockbox.hartshorn.proxy.Proxy;
@@ -498,7 +498,7 @@ public class ApplicationContextTests {
                 .priority(-1)
                 .memberType(ComponentMemberType.STANDALONE)
                 .view(origin)
-                .supplier(ContextAwareComponentSupplier.empty())
+                .supplier(PrototypeProvider.empty())
                 .build();
             dependencyContexts.add(dependencyContext);
         }

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.launchpad.lifecycle;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
@@ -35,8 +35,8 @@ import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 public class LifecycleObserverPreProcessor extends ComponentPreProcessor {
 
     @Override
-    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
-        if (context.environment() instanceof ObservableApplicationEnvironment observableEnvironment) {
+    public <T> void process(InjectionCapableApplication application, ComponentProcessingContext<T> processingContext) {
+        if (application.environment() instanceof ObservableApplicationEnvironment observableEnvironment) {
             if (processingContext.type().isChildOf(Observer.class)) {
                 observableEnvironment.register((Class<? extends Observer>) processingContext.type().type());
             }
