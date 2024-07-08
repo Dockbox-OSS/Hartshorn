@@ -17,7 +17,7 @@ package test.org.dockbox.hartshorn.core.compat
 
 import org.dockbox.hartshorn.launchpad.ApplicationContext
 import org.dockbox.hartshorn.application.createApplication
-import org.dockbox.hartshorn.inject.ComponentInitializationException
+import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException
 import org.dockbox.hartshorn.inject.MissingInjectConstructorException
 import org.dockbox.hartshorn.inject.binding.bind
 import org.dockbox.hartshorn.util.TypeUtils

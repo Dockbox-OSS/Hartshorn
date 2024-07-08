@@ -27,6 +27,8 @@ import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.application.EnvironmentBinderConfiguration;
 import org.dockbox.hartshorn.application.ExceptionHandler;
 import org.dockbox.hartshorn.application.ServiceActivatorContext;
+import org.dockbox.hartshorn.inject.ApplicationPropertyHolder;
+import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
@@ -139,13 +141,28 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public Properties properties() {
-        return this.environmentValues;
+    public ApplicationPropertyHolder properties() {
+        return new ApplicationPropertyHolder() {
+            @Override
+            public Properties properties() {
+                return DelegatingApplicationContext.this.environmentValues;
+            }
+
+            @Override
+            public Option<String> property(String key) {
+                return Option.of(DelegatingApplicationContext.this.environmentValues.getProperty(key));
+            }
+        };
     }
 
     @Override
-    public Option<String> property(String key) {
-        return Option.of(this.environmentValues.get(key)).map(String::valueOf);
+    public ComponentProvider defaultProvider() {
+        return this;
+    }
+
+    @Override
+    public HierarchicalBinder defaultBinder() {
+        return this;
     }
 
     @Override

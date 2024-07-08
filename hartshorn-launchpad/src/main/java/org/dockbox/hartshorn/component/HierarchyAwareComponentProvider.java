@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.component;
 
+import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.processing.CompositeComponentPostProcessor;
 import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.DefaultProvisionContext;
-import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.ComponentObjectContainer;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
@@ -34,7 +35,7 @@ import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.singleton.ConcurrentHashSingletonCache;
-import org.dockbox.hartshorn.inject.binding.ContextWrappedHierarchy;
+import org.dockbox.hartshorn.inject.binding.SubscribableBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchyBindingFunction;
 import org.dockbox.hartshorn.inject.provider.SingletonCache;
 import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
@@ -112,9 +113,10 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext
     public <C> BindingFunction<C> bind(ComponentKey<C> key) {
         Scope componentScope = key.scope();
         if (componentScope == null) {
-            componentScope = this.applicationContext();
+            componentScope = this.owner.applicationContext();
         }
-        if (componentScope != this.scope && componentScope != this.applicationContext()) {
+
+        if (componentScope != this.scope && componentScope != this.owner.applicationProvider().scope()) {
             throw new IllegalArgumentException("Cannot bind to a different scope. Expected " + this.scope + ", got " + componentScope
                 + " for key " + key);
         }
@@ -123,7 +125,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext
         ContextIdentity<ScopeModuleContext> scopeModuleContextKey = ContextKey.builder(ScopeModuleContext.class)
                 .fallback(ScopeModuleContext::new)
                 .build();
-        Option<ScopeModuleContext> scopeModuleContext = this.applicationContext().firstContext(scopeModuleContextKey);
+        Option<ScopeModuleContext> scopeModuleContext = this.owner.applicationContext().firstContext(scopeModuleContextKey);
 
         if (scopeModuleContext.absent() && !(this.scope instanceof ApplicationContext)) {
             throw new IllegalModificationException("Cannot add binding to non-application hierarchy without a module context");
@@ -150,13 +152,14 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext
     }
 
     protected <T> Option<ObjectContainer<T>> createContextualInstanceContainer(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
-        return ContextDrivenProvider.forPrototype(key).provide(this.applicationContext(), requestContext);
+        return ContextDrivenProvider.forPrototype(key).provide(requestContext);
     }
 
     @Override
     public <T> T get(ComponentKey<T> componentKey, ComponentRequestContext requestContext) {
+        // TODO: Support InjectionCapableApplication as a standard key type
         if (componentKey.type() == ApplicationContext.class && componentKey.qualifier().isEmpty()) {
-            return TypeUtils.adjustWildcards(this.applicationContext(), Object.class);
+            return TypeUtils.adjustWildcards(this.owner.applicationContext(), Object.class);
         }
 
         if (this.singletonCache.contains(componentKey)) {
@@ -203,7 +206,7 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext
         // If the scope is default, it means that the binding is not explicitly scoped, so it can be
         // installed in any scope. If our active scope is the active application context, it means
         // the requested scope is not installed, so we can fall back to the application scope.
-        if (key.scope() != this.scope && this.scope != this.applicationContext()) {
+        if (key.scope() != this.scope && this.scope != this.owner.applicationProvider().scope()) {
             throw new IllegalArgumentException("Cannot create a binding hierarchy for a component key with a different scope");
         }
 
@@ -211,11 +214,11 @@ public class HierarchyAwareComponentProvider extends DefaultProvisionContext
         BindingHierarchy<?> hierarchy = cache.getOrComputeHierarchy(key, permitFallbackResolution);
         BindingHierarchy<T> adjustedHierarchy = TypeUtils.adjustWildcards(hierarchy, BindingHierarchy.class);
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
-        if (adjustedHierarchy instanceof ContextWrappedHierarchy || adjustedHierarchy instanceof CollectionBindingHierarchy<?>) {
+        if (adjustedHierarchy instanceof SubscribableBindingHierarchy || adjustedHierarchy instanceof CollectionBindingHierarchy<?>) {
             return adjustedHierarchy;
         }
         else {
-            return new ContextWrappedHierarchy<>(adjustedHierarchy, updated -> cache.put(key.view(), updated));
+            return new SubscribableBindingHierarchy<>(adjustedHierarchy, updated -> cache.put(key.view(), updated));
         }
     }
 }

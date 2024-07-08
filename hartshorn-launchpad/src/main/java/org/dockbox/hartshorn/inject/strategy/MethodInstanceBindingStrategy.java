@@ -19,6 +19,8 @@ package org.dockbox.hartshorn.inject.strategy;
 import java.util.List;
 import java.util.Set;
 
+import org.dockbox.hartshorn.inject.ComponentKeyResolver;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
@@ -29,8 +31,8 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
 import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
 import org.dockbox.hartshorn.component.processing.CompositeMember;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
-import org.dockbox.hartshorn.inject.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
+import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.provider.PrototypeProvider;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.DependencyMap;
 import org.dockbox.hartshorn.inject.annotations.configuration.Priority;
@@ -75,15 +77,15 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
                 .get(Binds.class)
                 .orElseThrow(() -> new IllegalStateException("Method is not annotated with @Binds (or a compatible meta-annotation)"));
 
-        return this.resolveInstanceBinding(strategyContext, strategyContext.method(), bindingDecorator, context.applicationContext());
+        return this.resolveInstanceBinding(strategyContext, strategyContext.method(), bindingDecorator, this.environment.applicationContext());
     }
 
-    private <T> DependencyContext<T> resolveInstanceBinding(BindingStrategyContext<?> context, AnnotatedGenericTypeView<T> declaration, Binds bindingDecorator, ApplicationContext applicationContext) {
+    private <T> DependencyContext<T> resolveInstanceBinding(BindingStrategyContext<?> context, AnnotatedGenericTypeView<T> declaration, Binds bindingDecorator, InjectionCapableApplication application) {
         ComponentKey<T> componentKey = TypeUtils.adjustWildcards(this.environment.componentKeyResolver().resolve(declaration), ComponentKey.class);
         Set<ComponentKey<?>> dependencies = this.declarationDependencyResolver.dependencies(context);
-        ContextAwareComponentSupplier<T> supplier = requestContext -> {
+        PrototypeProvider<T> supplier = requestContext -> {
             try {
-                ViewContextAdapter contextAdapter = new InjectorApplicationViewAdapter(applicationContext);
+                ViewContextAdapter contextAdapter = new InjectorApplicationViewAdapter(application);
                 contextAdapter.addContext(requestContext);
                 return contextAdapter.load(declaration).orNull();
             }
@@ -129,7 +131,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         return BindingStrategyPriority.LOW;
     }
 
-    public static ContextualInitializer<ApplicationContext, BindingStrategy> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<InjectionCapableApplication, BindingStrategy> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);

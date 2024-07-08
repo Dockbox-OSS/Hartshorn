@@ -17,16 +17,11 @@
 package org.dockbox.hartshorn.launchpad.environment;
 
 import java.util.Properties;
-
 import org.dockbox.hartshorn.application.ExceptionHandler;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
-import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
-import org.dockbox.hartshorn.inject.ComponentKeyResolver;
-import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
-import org.dockbox.hartshorn.util.introspect.Introspector;
 
 /**
  * The environment of an active application. The environment can only be responsible for one {@link ApplicationContext},
@@ -36,17 +31,7 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
  *
  * @author Guus Lieben
  */
-public interface ApplicationEnvironment extends ApplicationContextCarrier, ExceptionHandler {
-
-    /**
-     * Gets the {@link ProxyOrchestrator} for the current environment. The orchestrator is responsible for all proxy
-     * operations within the environment. Proxies may be created outside of the orchestrator, and depending on the
-     * supported {@link org.dockbox.hartshorn.util.introspect.ProxyLookup proxy lookups} the orchestrator may or may not
-     * support these external proxies.
-     *
-     * @return The proxy orchestrator
-     */
-    ProxyOrchestrator proxyOrchestrator();
+public interface ApplicationEnvironment extends ApplicationContextCarrier, ExceptionHandler, InjectorEnvironment {
 
     /**
      * Gets the {@link FileSystemProvider file system provider} for the current environment. The provider is
@@ -65,15 +50,6 @@ public interface ApplicationEnvironment extends ApplicationContextCarrier, Excep
      * @return The classpath resource locator
      */
     ClasspathResourceLocator classpath();
-
-    /**
-     * Gets the primary {@link Introspector} for this {@link ApplicationEnvironment}. The introspector is responsible
-     * for all introspection operations within the environment. This may or may not be the same as the binding for
-     * {@link Introspector}, but is typically the same.
-     *
-     * @return The primary {@link Introspector}
-     */
-    Introspector introspector();
 
     /**
      * Gets the {@link EnvironmentTypeResolver} for the current environment. The resolver is responsible for resolving
@@ -121,21 +97,4 @@ public interface ApplicationEnvironment extends ApplicationContextCarrier, Excep
      * @see ApplicationArgumentParser
      */
     Properties rawArguments();
-
-    /**
-     * Gets the {@link ComponentKeyResolver} for the current environment. The resolver is responsible for resolving
-     * {@link ComponentKey}s for a given element. This is typically used for resolving {@link ComponentKey}s for binding
-     * declarations and injection points.
-     *
-     * @return The component key resolver
-     */
-    ComponentKeyResolver componentKeyResolver();
-
-    /**
-     * Gets the {@link ComponentInjectionPointsResolver} for the current environment. The resolver is responsible for
-     * resolving {@link ComponentInjectionPoint}s for a given type.
-     *
-     * @return The component injection points resolver
-     */
-    ComponentInjectionPointsResolver injectionPointsResolver();
 }

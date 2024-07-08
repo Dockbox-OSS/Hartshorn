@@ -17,19 +17,18 @@
 package org.dockbox.hartshorn.component.processing;
 
 import java.util.Collection;
-
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.inject.component.ComponentContainer;
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.component.ComponentPopulator;
-import org.dockbox.hartshorn.inject.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.inject.ComponentConstructorResolver;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
+import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
+import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
+import org.dockbox.hartshorn.inject.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.processing.ModifiableComponentProcessingContext;
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
-import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -60,7 +59,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
     }
 
     @Override
-    public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> T initializeComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
 
         boolean permitsProxying = !processingContext.containsKey(COMPONENT_CONTAINER)
                 || processingContext.get(COMPONENT_CONTAINER).permitsProxying();
@@ -77,7 +76,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
                 boolean noConcreteInstancePossible = instance == null && processingContext.type().modifiers().isAbstract();
                 try {
                     if (stateModified || noConcreteInstancePossible) {
-                        finalizingInstance = this.createProxyInstance(context, factory, instance);
+                        finalizingInstance = this.createProxyInstance(application, factory, instance);
                     }
                 }
                 catch (ApplicationException e) {
@@ -95,14 +94,14 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
         return instance;
     }
 
-    protected <T> T createProxyInstance(ApplicationContext context, ProxyFactory<T> factory, @Nullable T instance) throws ApplicationException {
-        TypeView<T> factoryType = context.environment().introspector().introspect(factory.type());
+    protected <T> T createProxyInstance(InjectionCapableApplication application, ProxyFactory<T> factory, @Nullable T instance) throws ApplicationException {
+        TypeView<T> factoryType = application.environment().introspector().introspect(factory.type());
         // Ensure we use a non-default constructor if there is no default constructor to use
         if (!factoryType.isInterface() && factoryType.constructors().defaultConstructor().absent()) {
-            ConstructorView<? extends T> constructor = ComponentConstructorResolver.create(context).findConstructor(factoryType)
+            ConstructorView<? extends T> constructor = ComponentConstructorResolver.create(application.environment(), application.defaultBinder()).findConstructor(factoryType)
                     .orElseThrow(() -> new ApplicationException("No default or injectable constructor found for proxy factory " + factoryType.name()));
 
-            ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
+            ViewContextAdapter adapter = application.defaultProvider().get(ViewContextAdapter.class);
             Object[] arguments = adapter.loadParameters(constructor);
             return factory.proxy(constructor, arguments).orElse(instance);
         }
@@ -115,7 +114,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
         return ProcessingPriority.LOWEST_PRECEDENCE - 128;
     }
 
-    public static ContextualInitializer<ApplicationContext, ComponentPostProcessor> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<InjectionCapableApplication, ComponentPostProcessor> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -132,13 +131,13 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
      */
     public static class Configurer {
 
-        private ContextualInitializer<ApplicationContext, ComponentPopulator> componentPopulator = StrategyComponentPopulator.create(Customizer.useDefaults());
+        private ContextualInitializer<InjectionCapableApplication, ComponentPopulator> componentPopulator = StrategyComponentPopulator.create(Customizer.useDefaults());
 
         public Configurer componentPopulator(ComponentPopulator componentPopulator) {
             return this.componentPopulator(ContextualInitializer.of(componentPopulator));
         }
 
-        public Configurer componentPopulator(ContextualInitializer<ApplicationContext, ComponentPopulator> componentPopulator) {
+        public Configurer componentPopulator(ContextualInitializer<InjectionCapableApplication, ComponentPopulator> componentPopulator) {
             this.componentPopulator = componentPopulator;
             return this;
         }

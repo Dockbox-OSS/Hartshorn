@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.inject.graph.TypePathNode;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.NoSuchProviderException.ProviderType;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;

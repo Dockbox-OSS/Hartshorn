@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.launchpad;
 
-import org.dockbox.hartshorn.component.ScopeKey;
+import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 import org.dockbox.hartshorn.inject.provider.Provider;
 import org.dockbox.hartshorn.inject.binding.Binder;

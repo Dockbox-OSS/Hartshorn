@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.graph.support;
 
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 

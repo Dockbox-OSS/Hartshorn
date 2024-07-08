@@ -16,9 +16,9 @@
 
 package test.org.dockbox.hartshorn.processing;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ContextConfiguringComponentProcessor;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 
 public class SimpleContextConfiguringComponentProcessor extends ContextConfiguringComponentProcessor<SimpleContext> {
@@ -34,17 +34,17 @@ public class SimpleContextConfiguringComponentProcessor extends ContextConfiguri
 
     @Override
     protected <T> void configure(
-            ApplicationContext context,
-            SimpleContext componentContext,
-            ComponentProcessingContext<T> processingContext
+        InjectionCapableApplication application,
+        SimpleContext componentContext,
+        ComponentProcessingContext<T> processingContext
     ) {
         componentContext.value("Foo");
     }
 
     @Override
     protected SimpleContext createContext(
-            ApplicationContext context,
-            ComponentProcessingContext<?> processingContext
+        InjectionCapableApplication application,
+        ComponentProcessingContext<?> processingContext
     ) {
         return new SimpleContext();
     }

@@ -22,11 +22,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.InjectorContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -41,7 +40,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  */
 public class ComponentProcessingContext<T> extends DefaultContext {
 
-    private final InjectorContext injectorContext;
+    private final InjectionCapableApplication application;
     private final ComponentRequestContext requestContext;
     private final Map<ComponentKey<?>, Object> data;
     private final boolean permitsProxying;
@@ -50,13 +49,13 @@ public class ComponentProcessingContext<T> extends DefaultContext {
     protected ObjectContainer<T> container;
 
     public ComponentProcessingContext(
-        InjectorContext injectorContext,
+        InjectionCapableApplication application,
         ComponentRequestContext requestContext,
         ComponentKey<T> key,
         ObjectContainer<T> container,
         boolean permitsProxying
     ) {
-        this.injectorContext = injectorContext;
+        this.application = application;
         this.requestContext = requestContext;
         this.key = key;
         this.container = container;
@@ -64,8 +63,8 @@ public class ComponentProcessingContext<T> extends DefaultContext {
         this.permitsProxying = permitsProxying;
     }
 
-    public InjectorContext injectorContext() {
-        return this.injectorContext;
+    public InjectionCapableApplication application() {
+        return this.application;
     }
 
     public ComponentRequestContext requestContext() {
@@ -92,10 +91,10 @@ public class ComponentProcessingContext<T> extends DefaultContext {
         if(this.container != null) {
             T instance = this.container.instance();
             if (instance != null) {
-                return this.injectorContext.environment().introspector().introspect(instance);
+                return this.application.environment().introspector().introspect(instance);
             }
         }
-        return this.injectorContext.environment().introspector().introspect(this.key.type());
+        return this.application.environment().introspector().introspect(this.key.type());
     }
 
     public int size() {

@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.graph;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
-import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
-import org.dockbox.hartshorn.inject.graph.DependencyGraph;
-import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.util.graph.GraphIterator;
 
 /**
@@ -32,10 +27,10 @@ import org.dockbox.hartshorn.util.graph.GraphIterator;
  *
  * @author Guus Lieben
  */
-public interface ConfigurationDependencyVisitor extends GraphIterator<DependencyContext<?>>, ApplicationContextCarrier {
+public interface ConfigurationDependencyVisitor extends GraphIterator<DependencyContext<?>> {
 
     /**
-     * Registers the given {@link DependencyContext} with the {@link ApplicationContext}.
+     * Registers the given {@link DependencyContext} with the owning container.
      *
      * @param dependencyContext the context to register
      * @param <T> the type of the component that is registered
@@ -44,9 +39,7 @@ public interface ConfigurationDependencyVisitor extends GraphIterator<Dependency
     <T> void registerProvider(DependencyContext<T> dependencyContext) throws ComponentConfigurationException;
 
     /**
-     * Invoked after a {@link DependencyContext} has been registered with the {@link ApplicationContext}.
-     * This may be used to perform additional actions, such as registering a {@link ComponentProcessor}
-     * with the {@link ApplicationContext}.
+     * Invoked after a {@link DependencyContext} has been registered with the owning container.
      *
      * @param dependencyContext the context that was registered
      */
