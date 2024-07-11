@@ -16,7 +16,8 @@
 
 package test.org.dockbox.hartshorn.reporting;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
@@ -30,8 +31,6 @@ import org.dockbox.hartshorn.util.GroupNode;
 import org.dockbox.hartshorn.util.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import org.dockbox.hartshorn.inject.Inject;
 
 @UseReporting
 @HartshornTest(includeBasePackages = false)

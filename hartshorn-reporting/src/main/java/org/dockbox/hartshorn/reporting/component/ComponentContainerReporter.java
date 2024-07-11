@@ -18,13 +18,13 @@ package org.dockbox.hartshorn.reporting.component;
 
 import java.util.Set;
 
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.component.condition.RequiresCondition;
-import org.dockbox.hartshorn.component.populate.ComponentInjectionPoint;
-import org.dockbox.hartshorn.component.populate.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
+import org.dockbox.hartshorn.inject.condition.RequiresCondition;
+import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
+import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 
