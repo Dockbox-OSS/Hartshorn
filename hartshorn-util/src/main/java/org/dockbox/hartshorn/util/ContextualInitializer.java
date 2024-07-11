@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * A functional interface for initializing objects. This interface is similar to {@link Initializer} but
@@ -91,9 +92,8 @@ public interface ContextualInitializer<I, T> {
     }
 
     /**
-     * Returns an initializer that delegates to the given initializer. This is useful for wrapping
-     * initializers that are weakly typed, and should receive a more specific input type (e.g. an
-     * {@code ApplicationContext} instead of a {@code InjectionCapableApplication}).
+     * Returns an initializer that defers to the given initializer. This is useful for creating initializers
+     * that require context to initialize, but do not require the context to be known at the time of creation.
      *
      * @param initializer The initializer to delegate to.
      * @param <I1> The (weak) input type of the given initializer.
@@ -102,8 +102,8 @@ public interface ContextualInitializer<I, T> {
      *
      * @return An initializer that delegates to the given initializer.
      */
-    static <I1, I2 extends I1, T> ContextualInitializer<I2, T> delegate(ContextualInitializer<I1, T> initializer) {
-        return initializer::initialize;
+    static <I1, I2 extends I1, T> ContextualInitializer<I2, T> defer(Supplier<ContextualInitializer<I1, T>> initializer) {
+        return input -> initializer.get().initialize(input);
     }
 
     /**

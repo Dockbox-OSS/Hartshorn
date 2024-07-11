@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.proxy.advice.intercept;
 
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 import java.util.concurrent.Callable;
@@ -32,7 +33,7 @@ import java.util.concurrent.Callable;
  *
  * @author Guus Lieben
  */
-public class MethodInterceptorContext<T, R> {
+public final class MethodInterceptorContext<T, R> extends DefaultContext {
 
     private final MethodView<T, R> method;
     private final Object[] args;
@@ -41,7 +42,7 @@ public class MethodInterceptorContext<T, R> {
     private final CustomInvocation<R> customInvocation;
     private final R result;
 
-    public MethodInterceptorContext(MethodView<T, R> method, Object[] args, T instance, Callable<R> callable, CustomInvocation<R> customInvocation, R result) {
+    private MethodInterceptorContext(MethodView<T, R> method, Object[] args, T instance, Callable<R> callable, CustomInvocation<R> customInvocation, R result) {
         this.method = method;
         this.args = args;
         this.instance = instance;
@@ -50,12 +51,28 @@ public class MethodInterceptorContext<T, R> {
         this.result = result;
     }
 
-    public MethodInterceptorContext(MethodInterceptorContext<T, R> context, R result) {
-        this(context.method, context.args, context.instance, context.callable, context.customInvocation, result);
+    public static <T, R> MethodInterceptorContext<T, R> of(MethodView<T, R> method, Object[] args, T instance, CustomInvocation<R> customInvocation) {
+        return new MethodInterceptorContext<>(
+                method,
+                args,
+                instance,
+                customInvocation.toCallable(args),
+                customInvocation,
+                method.returnType().defaultOrNull()
+        );
     }
 
-    public MethodInterceptorContext(MethodView<T, R> method, Object[] args, T instance, CustomInvocation<R> customInvocation) {
-        this(method, args, instance, customInvocation.toCallable(args), customInvocation, method.returnType().defaultOrNull());
+    public static <T, R> MethodInterceptorContext<T, R> copyWithResult(MethodInterceptorContext<T, R> context, R result) {
+        var copiedContext = new MethodInterceptorContext<>(
+                context.method,
+                context.args,
+                context.instance,
+                context.callable,
+                context.customInvocation,
+                result
+        );
+        context.copyToContext(copiedContext);
+        return copiedContext;
     }
 
     /**

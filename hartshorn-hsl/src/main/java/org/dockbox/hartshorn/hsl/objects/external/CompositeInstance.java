@@ -62,7 +62,7 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         if (superClass == null) {
             throw new IllegalArgumentException("No external class found in " + virtualClass.name());
         }
-        this.firstExternalClass = TypeUtils.adjustWildcards(((ExternalClass<?>) superClass).type(), TypeView.class);
+        this.firstExternalClass = TypeUtils.unchecked(((ExternalClass<?>) superClass).type(), TypeView.class);
         if (this.firstExternalClass.constructors().defaultConstructor().absent()) {
             throw new IllegalArgumentException("No empty or default constructor found in " + this.firstExternalClass.name() + ", composite instances cannot carry complex constructors.");
         }

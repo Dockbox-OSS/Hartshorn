@@ -98,7 +98,7 @@ public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T> implements Sta
 
     private void addDelegateAdvice(S delegateInstance, Method declaredMethod) {
         MethodAdvisorRegistryStep<T, ?> method = this.registry.method(declaredMethod);
-        method.delegate(TypeUtils.adjustWildcards(delegateInstance, Object.class));
+        method.delegate(TypeUtils.unchecked(delegateInstance, Object.class));
         this.registry.state().modify();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
     @Override
     public <T> Option<ProxyManager<T>> manager(T instance) {
         if (instance instanceof Proxy<?> proxyInstance) {
-            Proxy<T> proxy = TypeUtils.adjustWildcards(proxyInstance, Proxy.class);
+            Proxy<T> proxy = TypeUtils.unchecked(proxyInstance, Proxy.class);
             return Option.of(proxy.manager());
         }
         return Option.empty();

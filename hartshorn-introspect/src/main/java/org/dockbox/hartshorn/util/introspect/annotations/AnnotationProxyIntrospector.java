@@ -43,13 +43,13 @@ public class AnnotationProxyIntrospector<T extends Annotation> implements ProxyI
 
     @Override
     public Class<T> targetClass() {
-        return TypeUtils.adjustWildcards(this.annotation.annotationType(), Class.class);
+        return TypeUtils.unchecked(this.annotation.annotationType(), Class.class);
     }
 
     @Override
     @SuppressWarnings("GetClassOnAnnotation")
     public Class<T> proxyClass() {
-        return TypeUtils.adjustWildcards(this.annotation.getClass(), Class.class);
+        return TypeUtils.unchecked(this.annotation.getClass(), Class.class);
     }
 
     @Override
