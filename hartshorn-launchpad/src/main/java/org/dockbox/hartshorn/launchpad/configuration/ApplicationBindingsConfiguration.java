@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.launchpad.configuration;
 
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.inject.binding.Binder;
@@ -39,14 +41,14 @@ import org.dockbox.hartshorn.inject.binding.Binder;
  * @author Guus Lieben
  */
 @FunctionalInterface
-public interface EnvironmentBinderConfiguration {
+public interface ApplicationBindingsConfiguration {
 
     /**
      * Configures the default bindings of the application.
      *
-     * @param environment The environment to configure.
+     * @param application The environment to configure.
      * @param configurer The configurer to use for additional bindings.
      * @param binder The binder to use for additional bindings.
      */
-    void configureBindings(ApplicationEnvironment environment, DefaultBindingConfigurer configurer, Binder binder);
+    void configureBindings(InjectionCapableApplication application, DefaultBindingConfigurer configurer, Binder binder);
 }

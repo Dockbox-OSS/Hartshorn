@@ -21,12 +21,15 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import org.dockbox.hartshorn.application.ContextualEnvironmentBinderConfiguration;
-import org.dockbox.hartshorn.application.DefaultBindingConfigurer;
-import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
-import org.dockbox.hartshorn.application.EnvironmentBinderConfiguration;
-import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.application.ServiceActivatorContext;
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
+import org.dockbox.hartshorn.inject.provider.DelegatingScopeAwareComponentProvider;
+import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
+import org.dockbox.hartshorn.launchpad.configuration.ContextualApplicationBindingsConfiguration;
+import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer;
+import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
+import org.dockbox.hartshorn.launchpad.configuration.ApplicationBindingsConfiguration;
+import org.dockbox.hartshorn.inject.ExceptionHandler;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivatorContext;
 import org.dockbox.hartshorn.inject.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
@@ -36,9 +39,7 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
-import org.dockbox.hartshorn.component.ScopeAwareComponentProvider;
-import org.dockbox.hartshorn.component.TypeReferenceLookupComponentRegistry;
-import org.dockbox.hartshorn.launchpad.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.launchpad.component.TypeReferenceLookupComponentRegistry;
 import org.dockbox.hartshorn.launchpad.context.ModifiableApplicationContextCarrier;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.binding.Binder;
@@ -68,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * {@link LifecycleObserver#onExit(ApplicationContext)}. This allows for the {@link ApplicationContext} to be closed
  * in a predictable manner.
  *
- * <p>Bindings are configured using a {@link ContextualEnvironmentBinderConfiguration}. This configuration is used to
+ * <p>Bindings are configured using a {@link ContextualApplicationBindingsConfiguration}. This configuration is used to
  * bind all components that are provided by- and delegated to the {@link ApplicationContext}- and
  * {@link ApplicationEnvironment} instances. Additional bindings can be added by providing a
  * {@link DefaultBindingConfigurer} to the {@link DelegatingApplicationContext.Configurer}.
@@ -78,19 +79,20 @@ import org.slf4j.LoggerFactory;
  * @see ComponentProvider
  * @see ApplicationEnvironment
  * @see DelegatingApplicationContext.Configurer
- * @see ContextualEnvironmentBinderConfiguration
+ * @see ContextualApplicationBindingsConfiguration
  *
  * @since 0.4.11
  *
  * @author Guus Lieben
  */
-public abstract class DelegatingApplicationContext extends DefaultApplicationAwareContext implements
-        ApplicationContext {
+public abstract class DelegatingApplicationContext
+        extends DefaultFallbackCompatibleContext
+        implements ProcessableApplicationContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(DelegatingApplicationContext.class);
 
     private final transient Properties environmentValues;
-    private final transient ComponentProvider componentProvider;
+    private final transient PostProcessingComponentProvider componentProvider;
     private final transient ComponentRegistry componentRegistry;
     private final transient ApplicationEnvironment environment;
 
@@ -98,7 +100,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     protected boolean isRunning = false;
 
     protected DelegatingApplicationContext(SingleElementContext<? extends ApplicationEnvironment> initializerContext, Configurer configurer) {
-        super(null);
         this.environment = initializerContext.input();
 
         if (this.environment instanceof ModifiableApplicationContextCarrier modifiableApplicationContextCarrier) {
@@ -113,13 +114,13 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.componentRegistry = configurer.componentRegistry.initialize(applicationInitializerContext);
         this.componentProvider = configurer.componentProvider.initialize(initializerContext.transform(this.componentRegistry));
 
-        EnvironmentBinderConfiguration configuration = new ContextualEnvironmentBinderConfiguration();
+        ApplicationBindingsConfiguration configuration = new ContextualApplicationBindingsConfiguration();
 
         DefaultBindingConfigurer bindingConfigurer = configurer.defaultBindings.initialize(applicationInitializerContext);
         for (DefaultBindingConfigurerContext configurerContext : initializerContext.contexts(DefaultBindingConfigurerContext.class)) {
             bindingConfigurer = bindingConfigurer.compose(configurerContext.configurer());
         }
-        configuration.configureBindings(this.environment, bindingConfigurer, this);
+        configuration.configureBindings(this, bindingConfigurer, this);
     }
 
     /**
@@ -156,8 +157,13 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public ComponentProvider defaultProvider() {
-        return this;
+    public Scope scope() {
+        return this.defaultProvider().scope();
+    }
+
+    @Override
+    public PostProcessingComponentProvider defaultProvider() {
+        return this.componentProvider;
     }
 
     @Override
@@ -285,11 +291,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         return this.componentProvider;
     }
 
-    @Override
-    public ApplicationContext applicationContext() {
-        return this;
-    }
-
     /**
      * Configuration for the {@link DelegatingApplicationContext}. This configuration is used to configure the
      * various components required by the {@link DelegatingApplicationContext} to function.
@@ -301,7 +302,7 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     public static class Configurer {
 
         private ContextualInitializer<ApplicationContext, ? extends ComponentRegistry> componentRegistry = ContextualInitializer.of(context -> new TypeReferenceLookupComponentRegistry(context.environment()));
-        private ContextualInitializer<ComponentRegistry, ? extends ComponentProvider> componentProvider = ScopeAwareComponentProvider.create(Customizer.useDefaults());
+        private ContextualInitializer<ComponentRegistry, ? extends PostProcessingComponentProvider> componentProvider = DelegatingScopeAwareComponentProvider.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings = ContextualInitializer.of(DefaultBindingConfigurer::empty);
 
         /**
@@ -328,13 +329,13 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         }
 
         /**
-         * Configures the {@link ComponentProvider} that is used by the {@link DelegatingApplicationContext} to provide
-         * component instances.
+         * Configures the {@link PostProcessingComponentProvider} that is used by the {@link DelegatingApplicationContext} to
+         * provide component instances.
          *
-         * @param componentProvider the {@link ComponentProvider} to use
+         * @param componentProvider the {@link PostProcessingComponentProvider} to use
          * @return the current instance
          */
-        public Configurer componentProvider(ComponentProvider componentProvider) {
+        public Configurer componentProvider(PostProcessingComponentProvider componentProvider) {
             return this.componentProvider(ContextualInitializer.of(componentProvider));
         }
 
@@ -342,10 +343,10 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
          * Configures the {@link ComponentProvider} that is used by the {@link DelegatingApplicationContext} to provide
          * component instances.
          *
-         * @param componentProvider the {@link ComponentProvider} to use
+         * @param componentProvider the {@link PostProcessingComponentProvider} to use
          * @return the current instance
          */
-        public Configurer componentProvider(ContextualInitializer<ComponentRegistry, ? extends ComponentProvider> componentProvider) {
+        public Configurer componentProvider(ContextualInitializer<ComponentRegistry, ? extends PostProcessingComponentProvider> componentProvider) {
             this.componentProvider = componentProvider;
             return this;
         }

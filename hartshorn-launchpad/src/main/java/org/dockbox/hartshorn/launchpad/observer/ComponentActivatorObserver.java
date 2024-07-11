@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.launchpad.observer;
 
 import java.util.function.Predicate;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;

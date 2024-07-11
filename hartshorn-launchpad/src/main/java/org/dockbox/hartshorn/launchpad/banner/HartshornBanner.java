@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.launchpad.banner;
 
 import java.util.List;
 
-import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.launchpad.Hartshorn;
 import org.dockbox.hartshorn.launchpad.logging.AnsiColor;
 import org.dockbox.hartshorn.launchpad.logging.AnsiMessage;
 import org.dockbox.hartshorn.launchpad.logging.AnsiStyle;

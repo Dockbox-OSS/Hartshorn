@@ -17,10 +17,11 @@
 package org.dockbox.hartshorn.launchpad.environment;
 
 import java.util.Properties;
-import org.dockbox.hartshorn.application.ExceptionHandler;
+import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.HartshornApplication;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 
 /**
@@ -87,7 +88,7 @@ public interface ApplicationEnvironment extends ApplicationContextCarrier, Excep
 
     /**
      * Gets the raw arguments passed to the application. This is typically the arguments passed to the main method, or
-     * indirectly set in {@link org.dockbox.hartshorn.application.HartshornApplication#create(String...)}. The
+     * indirectly set in {@link HartshornApplication#create(String...)}. The
      * arguments are returned as a {@link Properties} object, where the key is the argument name, and the value is the
      * argument value. The key/value pair is parsed by the active {@link ApplicationArgumentParser}.
      *

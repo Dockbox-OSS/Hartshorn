@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.condition.support;
+package org.dockbox.hartshorn.launchpad.condition;
 
 import java.lang.annotation.Annotation;
 
-import org.dockbox.hartshorn.inject.activation.ActivatorHolder;
 import org.dockbox.hartshorn.inject.condition.Condition;
 import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ConfigurableInjectionCapableApplication;
+import org.dockbox.hartshorn.launchpad.activation.ActivatorHolder;
 
 /**
  * A condition that matches when an activator is present.
@@ -35,11 +37,15 @@ import org.dockbox.hartshorn.inject.condition.ConditionResult;
  */
 public class ActivatorCondition implements Condition {
 
+
     @Override
     public ConditionResult matches(ConditionContext context) {
+        if (!(context.application() instanceof ConfigurableInjectionCapableApplication configurableInjectionCapableApplication)) {
+            return ConditionResult.notMatched("Application is not compatible with activators");
+        }
         return context.annotatedElement().annotations().get(RequiresActivator.class).map(condition -> {
             for (Class<? extends Annotation> activator : condition.value()) {
-                if (!context.application().activators().hasActivator(activator)) {
+                if (!configurableInjectionCapableApplication.activators().hasActivator(activator)) {
                     return ConditionResult.notFound("Activator", activator.getName());
                 }
             }

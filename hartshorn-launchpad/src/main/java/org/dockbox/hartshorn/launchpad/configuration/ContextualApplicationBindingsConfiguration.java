@@ -14,8 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.launchpad.configuration;
 
+import org.dockbox.hartshorn.inject.provider.DelegatingScopeAwareComponentProvider;
+import org.dockbox.hartshorn.inject.ExceptionHandler;
+import org.dockbox.hartshorn.inject.provider.SingletonCacheComponentProvider;
+import org.dockbox.hartshorn.inject.ApplicationPropertyHolder;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.InjectorEnvironment;
+import org.dockbox.hartshorn.inject.binding.Binder;
+import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.inject.provider.ComponentProvider;
+import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
+import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.DelegatingApplicationContext;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
@@ -23,22 +36,13 @@ import org.dockbox.hartshorn.launchpad.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
-import org.dockbox.hartshorn.inject.ApplicationPropertyHolder;
-import org.dockbox.hartshorn.inject.component.ComponentRegistry;
-import org.dockbox.hartshorn.inject.provider.ComponentProvider;
-import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
-import org.dockbox.hartshorn.component.ScopeAwareComponentProvider;
-import org.dockbox.hartshorn.component.SingletonCacheComponentProvider;
-import org.dockbox.hartshorn.inject.binding.Binder;
-import org.dockbox.hartshorn.inject.provider.SingletonCache;
-import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 
 /**
- * The default {@link EnvironmentBinderConfiguration} used by the {@link DelegatingApplicationContext}. This configuration
+ * The default {@link ApplicationBindingsConfiguration} used by the {@link DelegatingApplicationContext}. This configuration
  * binds all components that are provided by- and delegated to the {@link ApplicationContext}- and {@link ApplicationEnvironment}
  * instances.
  *
@@ -61,17 +65,20 @@ import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
  *
  * @author Guus Lieben
  */
-public class ContextualEnvironmentBinderConfiguration implements EnvironmentBinderConfiguration {
+public class ContextualApplicationBindingsConfiguration implements ApplicationBindingsConfiguration {
 
     @Override
-    public void configureBindings(ApplicationEnvironment environment, DefaultBindingConfigurer configurer, Binder binder) {
+    public void configureBindings(InjectionCapableApplication application, DefaultBindingConfigurer configurer, Binder binder) {
         // Application context
-        binder.bind(ComponentProvider.class).singleton(environment.applicationContext());
-        binder.bind(ExceptionHandler.class).singleton(environment.applicationContext());
-        binder.bind(ApplicationContext.class).singleton(environment.applicationContext());
-        binder.bind(ApplicationPropertyHolder.class).singleton(environment.applicationContext());
+        binder.bind(InjectionCapableApplication.class).singleton(application);
+        if (application instanceof ApplicationContext applicationContext) {
+            binder.bind(ApplicationContext.class).singleton(applicationContext);
+            binder.bind(ExceptionHandler.class).singleton(applicationContext);
+        }
+        binder.bind(ComponentProvider.class).singleton(application.defaultProvider());
+        binder.bind(ApplicationPropertyHolder.class).singleton(application.properties());
 
-        if (environment.applicationContext() instanceof DelegatingApplicationContext delegatingApplicationContext) {
+        if (application instanceof DelegatingApplicationContext delegatingApplicationContext) {
             binder.bind(ComponentRegistry.class)
                     .processAfterInitialization(false)
                     .singleton(delegatingApplicationContext.componentRegistry());
@@ -81,7 +88,7 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
                     .processAfterInitialization(false)
                     .singleton(componentProvider.scope());
 
-            if (componentProvider instanceof ScopeAwareComponentProvider scopeAwareComponentProvider) {
+            if (componentProvider instanceof DelegatingScopeAwareComponentProvider scopeAwareComponentProvider) {
                 HierarchicalComponentProvider applicationProvider = scopeAwareComponentProvider.applicationProvider();
 
                 if (applicationProvider instanceof SingletonCacheComponentProvider singletonCacheComponentProvider) {
@@ -93,15 +100,18 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
         }
 
         // Application environment
-        binder.bind(Introspector.class).singleton(environment.introspector());
-        binder.bind(ApplicationEnvironment.class).singleton(environment);
-        binder.bind(ProxyLookup.class).singleton(environment.proxyOrchestrator());
-        binder.bind(ProxyOrchestrator.class).singleton(environment.proxyOrchestrator());
-        binder.bind(FileSystemProvider.class).singleton(environment.fileSystem());
-        binder.bind(AnnotationLookup.class).singleton(environment.introspector().annotations());
-        binder.bind(ClasspathResourceLocator.class).singleton(environment.classpath());
+        binder.bind(InjectorEnvironment.class).singleton(application.environment());
+        if (application.environment() instanceof ApplicationEnvironment applicationEnvironment) {
+            binder.bind(ApplicationEnvironment.class).singleton(applicationEnvironment);
+            binder.bind(FileSystemProvider.class).singleton(applicationEnvironment.fileSystem());
+            binder.bind(ClasspathResourceLocator.class).singleton(applicationEnvironment.classpath());
+        }
+        binder.bind(Introspector.class).singleton(application.environment().introspector());
+        binder.bind(AnnotationLookup.class).singleton(application.environment().introspector().annotations());
+        binder.bind(ProxyLookup.class).singleton(application.environment().proxyOrchestrator());
+        binder.bind(ProxyOrchestrator.class).singleton(application.environment().proxyOrchestrator());
 
-        if (environment instanceof ObservableApplicationEnvironment observableEnvironment) {
+        if (application instanceof ObservableApplicationEnvironment observableEnvironment) {
             binder.bind(LifecycleObservable.class).singleton(observableEnvironment);
         }
 

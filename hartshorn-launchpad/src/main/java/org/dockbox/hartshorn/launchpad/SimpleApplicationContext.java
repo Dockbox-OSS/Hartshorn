@@ -21,11 +21,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.dockbox.hartshorn.component.PostProcessingComponentProvider;
-import org.dockbox.hartshorn.inject.ComponentContainerDependencyDeclarationContext;
+
+import org.dockbox.hartshorn.inject.graph.SkipConfigurationDependencyVisitor;
+import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
+import org.dockbox.hartshorn.inject.graph.ComponentContainerDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.PostProcessorDependencyDeclarationContext;
+import org.dockbox.hartshorn.launchpad.graph.DelegatingConfigurationDependencyVisitor;
+import org.dockbox.hartshorn.launchpad.graph.PostProcessorDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.graph.DependencyGraphInitializer;
 import org.dockbox.hartshorn.inject.graph.DependencyResolutionException;
@@ -34,8 +37,8 @@ import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationExcepti
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.processing.ExitingComponentProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
 import org.dockbox.hartshorn.inject.provider.ComponentObjectContainer;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -67,7 +70,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Guus Lieben
  */
-public class SimpleApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
+public class SimpleApplicationContext extends DelegatingApplicationContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleApplicationContext.class);
 
@@ -85,40 +88,6 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     }
 
     @Override
-    public void add(ComponentProcessor processor) {
-        this.checkRunning();
-
-        Integer order = processor.priority();
-        String name = processor.getClass().getSimpleName();
-
-        if (processor instanceof ComponentPostProcessor postProcessor && this.componentProvider() instanceof PostProcessingComponentProvider provider) {
-            // Singleton binding is decided by the component provider, to allow for further optimization
-            provider.postProcessor(postProcessor);
-            LOG.debug("Added %s for component post-processing with order %d".formatted(name, order));
-        }
-        else if (processor instanceof ComponentPreProcessor preProcessor) {
-            this.preProcessors.put(preProcessor.priority(), preProcessor);
-            this.bind((Class<ComponentPreProcessor>) preProcessor.getClass()).singleton(preProcessor);
-            LOG.debug("Added %s for component pre-processing with order %d".formatted(name, order));
-        }
-        else {
-            LOG.warn("Unsupported component processor type [" + name + "]");
-        }
-    }
-
-    @Override
-    public void add(Class<? extends ComponentPostProcessor> processor) {
-        this.checkRunning();
-
-        if (this.componentProvider() instanceof PostProcessingComponentProvider provider) {
-            provider.postProcessor(processor);
-        }
-        else {
-            LOG.warn("Lazy initialization of component processors is not supported by this component provider [for " + processor.getSimpleName() + "]");
-        }
-    }
-
-    @Override
     public synchronized void loadContext() {
         this.checkRunning();
 
@@ -129,7 +98,9 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
             Collection<DependencyDeclarationContext<?>> declarationContexts = new ArrayList<>();
 
             if (this.componentProvider() instanceof PostProcessingComponentProvider postProcessingComponentProvider) {
-                Set<? extends DependencyDeclarationContext<?>> uninitializedPostProcessorContexts = postProcessingComponentProvider.uninitializedPostProcessors().stream()
+                Set<? extends DependencyDeclarationContext<?>> uninitializedPostProcessorContexts = postProcessingComponentProvider
+                        .processorRegistry()
+                        .uninitializedPostProcessors().stream()
                         .map(this.environment().introspector()::introspect)
                         .map(PostProcessorDependencyDeclarationContext::new)
                         .collect(Collectors.toSet());
@@ -160,9 +131,10 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
 
     private void initializePostProcessors() {
         if (this.componentProvider() instanceof PostProcessingComponentProvider provider) {
-            for (Class<? extends ComponentPostProcessor> uninitializedPostProcessor : provider.uninitializedPostProcessors()) {
+            ComponentProcessorRegistry registry = provider.processorRegistry();
+            for (Class<? extends ComponentPostProcessor> uninitializedPostProcessor : registry.uninitializedPostProcessors()) {
                 ComponentPostProcessor processor = this.componentProvider().get(uninitializedPostProcessor);
-                provider.postProcessor(processor);
+                registry.register(processor);
             }
         }
     }
@@ -226,7 +198,20 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
      */
     public static class Configurer extends DelegatingApplicationContext.Configurer {
 
-        private ContextualInitializer<ApplicationContext, ? extends DependencyGraphInitializer> dependencyGraphInitializer = ContextualInitializer.delegate(DependencyGraphInitializer.create(Customizer.useDefaults()));
+        private ContextualInitializer<ApplicationContext, ? extends DependencyGraphInitializer> dependencyGraphInitializer = ContextualInitializer.defer(() -> {
+            return DependencyGraphInitializer.create(graph -> {
+                graph.dependencyVisitor(ContextualInitializer.of(context -> {
+                    if (context instanceof ProcessableApplicationContext processableApplicationContext) {
+                        return new DelegatingConfigurationDependencyVisitor(
+                                context.defaultBinder(),
+                                context.defaultProvider(),
+                                processableApplicationContext.defaultProvider().processorRegistry()
+                        );
+                    }
+                    return new SkipConfigurationDependencyVisitor(context.defaultBinder(), context.defaultProvider());
+                }));
+            });
+        });
 
         /**
          * Configures the dependency graph initializer to use the given {@link DependencyGraphInitializer}.

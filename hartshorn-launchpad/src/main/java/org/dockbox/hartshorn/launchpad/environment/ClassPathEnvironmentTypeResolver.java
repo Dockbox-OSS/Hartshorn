@@ -17,9 +17,8 @@
 package org.dockbox.hartshorn.launchpad.environment;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -45,24 +44,4 @@ public class ClassPathEnvironmentTypeResolver implements EnvironmentTypeResolver
         return this.typeCollector.types(type -> type.annotations().has(annotation));
     }
 
-    @Override
-    public <T> Collection<TypeView<? extends T>> children(Class<T> parent) {
-        return this.typeCollector.types(type -> type.isChildOf(parent) && !type.is(parent));
-    }
-
-    @Override
-    public List<Annotation> annotationsWith(TypeView<?> type, Class<? extends Annotation> annotation) {
-        Collection<Annotation> annotations = new ArrayList<>();
-        for (Annotation typeAnnotation : type.annotations().all()) {
-            if (this.introspector.introspect(typeAnnotation.annotationType()).annotations().has(annotation)) {
-                annotations.add(typeAnnotation);
-            }
-        }
-        return List.copyOf(annotations);
-    }
-
-    @Override
-    public List<Annotation> annotationsWith(Class<?> type, Class<? extends Annotation> annotation) {
-        return this.annotationsWith(this.introspector.introspect(type), annotation);
-    }
 }

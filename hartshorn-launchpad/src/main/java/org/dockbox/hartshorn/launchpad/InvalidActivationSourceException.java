@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.launchpad;
 
+import org.dockbox.hartshorn.launchpad.launch.ApplicationBuilder;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
@@ -32,7 +33,7 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  *     <li>in a reserved package</li>
  * </ul>
  *
- * <p>Note that specific {@link org.dockbox.hartshorn.application.ApplicationBuilder} implementations
+ * <p>Note that specific {@link ApplicationBuilder} implementations
  * may have additional requirements for valid activator classes.
  *
  * @since 0.4.12
