@@ -111,8 +111,12 @@ public abstract class DelegatingApplicationContext
         this.environmentValues = this.environment.rawArguments();
 
         SingleElementContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this);
+        // Expose current context to allow initializers to resolve the application, even if the content of the element context
+        // is not the application itself
+        applicationInitializerContext.addContext(this);
+
         this.componentRegistry = configurer.componentRegistry.initialize(applicationInitializerContext);
-        this.componentProvider = configurer.componentProvider.initialize(initializerContext.transform(this.componentRegistry));
+        this.componentProvider = configurer.componentProvider.initialize(applicationInitializerContext.transform(this.componentRegistry));
 
         ApplicationBindingsConfiguration configuration = new ContextualApplicationBindingsConfiguration();
 

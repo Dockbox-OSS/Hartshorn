@@ -93,7 +93,7 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
         TypeView<T> factoryType = application.environment().introspector().introspect(factory.type());
         // Ensure we use a non-default constructor if there is no default constructor to use
         if (!factoryType.isInterface() && factoryType.constructors().defaultConstructor().absent()) {
-            ConstructorView<? extends T> constructor = ComponentConstructorResolver.create(application.environment(), application.defaultBinder()).findConstructor(factoryType)
+            ConstructorView<? extends T> constructor = ComponentConstructorResolver.create(application).findConstructor(factoryType)
                     .orElseThrow(() -> new ApplicationException("No default or injectable constructor found for proxy factory " + factoryType.name()));
 
             ViewContextAdapter adapter = application.defaultProvider().get(ViewContextAdapter.class);

@@ -20,8 +20,10 @@ import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
@@ -50,7 +52,7 @@ public class InjectorApplicationViewAdapter extends DefaultContext implements Vi
 
     public InjectorApplicationViewAdapter(InjectionCapableApplication applicationContext) {
         this.application = applicationContext;
-        this.scope = applicationContext.defaultProvider().scope();
+        this.scope = null; // default scope
     }
 
     private ComponentRequestContext componentRequestContext() {
@@ -72,13 +74,13 @@ public class InjectorApplicationViewAdapter extends DefaultContext implements Vi
     @Override
     public Object[] loadParameters(ExecutableElementView<?> element) {
         ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader(
-                this.application
+            this.application
         );
 
-        InjectionPointParameterLoaderRule rule = new InjectionPointParameterLoaderRule(this.componentRequestContext());
+        ParameterLoaderRule<ApplicationBoundParameterLoaderContext> rule = new InjectionPointParameterLoaderRule(this.componentRequestContext());
         parameterLoader.add(rule);
 
-        ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.application, this.scope);
+        ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.application, this.scope());
         this.copyToContext(loaderContext);
         return parameterLoader.loadArguments(loaderContext).toArray();
     }
@@ -132,6 +134,10 @@ public class InjectorApplicationViewAdapter extends DefaultContext implements Vi
     }
 
     private <T> ComponentKey<T> key(Class<T> type) {
-        return ComponentKey.builder(type).scope(this.scope).build();
+        return ComponentKey.builder(type).scope(this.scope()).build();
+    }
+
+    private Scope scope() {
+        return this.scope != null ? this.scope : this.application.defaultProvider().scope();
     }
 }

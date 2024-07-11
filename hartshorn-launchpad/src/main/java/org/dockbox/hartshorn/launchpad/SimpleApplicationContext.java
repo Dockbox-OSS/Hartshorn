@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.inject.graph.SkipConfigurationDependencyVisitor;
+import org.dockbox.hartshorn.inject.graph.resolve.ApplicationDependencyResolver;
 import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.inject.graph.ComponentContainerDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
@@ -200,6 +201,10 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
 
         private ContextualInitializer<ApplicationContext, ? extends DependencyGraphInitializer> dependencyGraphInitializer = ContextualInitializer.defer(() -> {
             return DependencyGraphInitializer.create(graph -> {
+                // Support @Binds methods
+                graph.dependencyResolver(ApplicationDependencyResolver.create(Customizer.useDefaults()));
+
+                // If context is processable, ensure processors are registered as components
                 graph.dependencyVisitor(ContextualInitializer.of(context -> {
                     if (context instanceof ProcessableApplicationContext processableApplicationContext) {
                         return new DelegatingConfigurationDependencyVisitor(
