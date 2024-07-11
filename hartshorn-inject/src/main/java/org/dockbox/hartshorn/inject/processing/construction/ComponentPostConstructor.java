@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.processing.construction;
 
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
@@ -26,5 +27,5 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * @author Guus Lieben
  */
 public interface ComponentPostConstructor {
-    <T> T doPostConstruct(T instance) throws ApplicationException;
+    <T> T doPostConstruct(T instance, Scope scope) throws ApplicationException;
 }
