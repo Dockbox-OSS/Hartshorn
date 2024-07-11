@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.inject;
 
 /**
  * The exception handler is used to handle exceptions that occur during the application lifecycle.

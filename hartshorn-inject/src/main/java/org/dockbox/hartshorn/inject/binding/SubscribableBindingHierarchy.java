@@ -64,25 +64,25 @@ public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy
     @Override
     public BindingHierarchy<C> add(Provider<C> provider) {
         this.real = this.real().add(provider);
-        return this.update();
+        return this.hierarchyUpdated();
     }
 
     @Override
     public BindingHierarchy<C> add(int priority, Provider<C> provider) {
         this.real = this.real().add(priority, provider);
-        return this.update();
+        return this.hierarchyUpdated();
     }
 
     @Override
     public BindingHierarchy<C> addNext(Provider<C> provider) {
         this.real = this.real().addNext(provider);
-        return this.update();
+        return this.hierarchyUpdated();
     }
 
     @Override
     public BindingHierarchy<C> merge(BindingHierarchy<C> hierarchy) {
         this.real = this.real().merge(hierarchy);
-        return this.update();
+        return this.hierarchyUpdated();
     }
 
     @Override
@@ -111,12 +111,11 @@ public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy
     }
 
     /**
-     * Updates the wrapped {@link BindingHierarchy} in the bound {@link ApplicationContext}. This behavior
-     * may differ if the {@link #onUpdate} function was provided by an external source.
+     * Notifies the subscriber of a change in the hierarchy.
      *
      * @return Itself, for chaining.
      */
-    private BindingHierarchy<C> update() {
+    private BindingHierarchy<C> hierarchyUpdated() {
         this.onUpdate.accept(this.real());
         return this;
     }

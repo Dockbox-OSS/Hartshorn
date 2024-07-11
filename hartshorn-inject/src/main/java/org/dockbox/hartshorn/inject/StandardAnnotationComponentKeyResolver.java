@@ -21,12 +21,11 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.dockbox.hartshorn.component.ComponentPopulateException;
-import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
 import org.dockbox.hartshorn.inject.annotations.Initialize;
-import org.dockbox.hartshorn.inject.annotations.configuration.Priority;
+import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.annotations.Qualifier;
-import org.dockbox.hartshorn.inject.annotations.configuration.Strict;
+import org.dockbox.hartshorn.inject.annotations.Strict;
+import org.dockbox.hartshorn.inject.populate.ComponentPopulateException;
 import org.dockbox.hartshorn.inject.provider.selection.ExactPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.MaximumPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.scope.Scope;
@@ -188,8 +187,8 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
 
     /**
      * Configures the priority of the given {@link ComponentKey.Builder} based on provided {@link ParameterView}. If
-     * the parameter is declared by a {@link Binds binding} method which declares a binding of the same type as the
-     * parameter, the priority of the key is set to be at most the priority of the binding (exclusive).
+     * the parameter is declared by a method which declares a binding of the same type as the parameter, the priority
+     * of the key is set to be at most the priority of the binding (exclusive).
      *
      * @param builder the builder to configure
      * @param scope the scope of the key

@@ -18,30 +18,32 @@ package org.dockbox.hartshorn.inject;
 
 import java.util.List;
 
-import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextView;
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.context.SimpleContextIdentity;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link Context} which uses {@link ContextKey}s to store and retrieve values instead
- * of {@link SimpleContextIdentity simple identities}. This allows for more flexibility
- * in the retrieval of values, as context keys support fallback functions and access to
- * the {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
+ * A default implementation of {@link FallbackCompatibleContext}. This implementation overrides the
+ * default behavior of {@link DefaultContext} to use {@link ContextKey}s instead of
+ * {@link SimpleContextIdentity simple identities}.
  *
- * @since 0.5.0
+ * @see DefaultContext
+ * @see FallbackCompatibleContext
+ *
+ * @since 0.4.9
  *
  * @author Guus Lieben
  */
-public interface ProvisionContext extends Context {
+public abstract class DefaultFallbackCompatibleContext extends DefaultContext implements FallbackCompatibleContext {
 
     @Override
-    default <C extends ContextView> Option<C> firstContext(Class<C> context) {
-        return this.firstContext(ContextKey.of(context));
+    public <C extends ContextView> Option<C> firstContext(Class<C> context) {
+        return FallbackCompatibleContext.super.firstContext(context);
     }
 
     @Override
-    default <C extends ContextView> List<C> contexts(Class<C> context) {
-        return this.contexts(ContextKey.of(context));
+    public <C extends ContextView> List<C> contexts(Class<C> context) {
+        return FallbackCompatibleContext.super.contexts(context);
     }
 }

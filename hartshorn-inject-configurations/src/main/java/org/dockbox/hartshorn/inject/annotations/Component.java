@@ -23,10 +23,11 @@ import java.lang.annotation.Target;
 
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
-import org.dockbox.hartshorn.inject.component.ComponentType;
-import org.dockbox.hartshorn.inject.component.ComponentUtilities;
+import org.dockbox.hartshorn.inject.component.ComponentDescriber;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
  * An annotation for components. Components are the building blocks of the framework. If a type is annotated with this
@@ -38,13 +39,11 @@ import org.dockbox.hartshorn.inject.provider.LifecycleType;
  * <ul>
  *     <li>{@link #id()} - The unique identifier of the component. This is used to identify the component in the framework.
  *         If not specified, the type of the component is used to generate a valid ID through
- *         {@link ComponentUtilities#id(ComponentRegistry, Class)}</li>
+ *         {@link ComponentDescriber#id(TypeView)}</li>
  *     <li>{@link #name()} - The name of the component. This is used to identify the component in the framework. If not
  *         specified, the name of the class is used.</li>
  *     <li>{@link #lifecycle()} - Indicates the lifecycle of the component. This is used to determine when the component
  *         should be created and destroyed. The default value is {@link LifecycleType#PROTOTYPE 'Prototype'}.</li>
- *     <li>{@link #type()} - The type of the component. This is used to indicate whether the component is a functional
- *         component, and thus modifiable, or if it should only be injected into.</li>
  * </ul>
  *
  * <p>The following example shows how to annotate a class as a component:
@@ -70,7 +69,7 @@ public @interface Component {
     /**
      * The unique identifier of the component. This is used to identify the component in the framework.
      * If not specified, the type of the component is used to generate a valid ID through
-     * {@link ComponentUtilities#id(ComponentRegistry, Class)}
+     * {@link ComponentDescriber#id(TypeView)}.
      *
      * @return The unique identifier of the component
      * @see ComponentContainer#id()
@@ -103,18 +102,6 @@ public @interface Component {
      * @see ComponentContainer#lazy()
      */
     boolean lazy() default false;
-
-    /**
-     * The type of the component. This is used to indicate whether the component is a functional
-     * component, and thus modifiable, or if it should only be injected into.
-     *
-     * @return The type of the component
-     * @see ComponentContainer#type()
-     *
-     * @deprecated See {@link ComponentType}
-     */
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    ComponentType type() default ComponentType.INJECTABLE;
 
     /**
      * Indicates whether the component should be allowed to be proxied. Proxied components may be modified by changing

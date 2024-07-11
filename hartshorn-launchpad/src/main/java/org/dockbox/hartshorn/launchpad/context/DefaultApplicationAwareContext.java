@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.launchpad.context;
 import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.inject.ContextKey;
-import org.dockbox.hartshorn.inject.DefaultProvisionContext;
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -34,17 +34,18 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public abstract class DefaultApplicationAwareContext extends DefaultProvisionContext implements ApplicationAwareContext {
+public abstract class DefaultApplicationAwareContext extends DefaultFallbackCompatibleContext implements ApplicationAwareContext {
 
     private final ApplicationContext applicationContext;
 
     @SuppressWarnings({ "OverridableMethodCallDuringObjectConstruction", "InstanceofThis" })
     protected DefaultApplicationAwareContext(ApplicationContext applicationContext) {
+        if (this instanceof ApplicationContext) {
+            throw new IllegalStateException("The Skynet Funding Bill should not pass! (Application context is not permitted to be self-aware)");
+        }
+
         if (applicationContext != null) {
             this.applicationContext = applicationContext;
-        }
-        else if (this instanceof ApplicationContext self) {
-            this.applicationContext = self;
         }
         else if (!this.permitNullableApplicationContext()) {
             throw new IllegalStateException("No application context available");

@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A key that can be used to identify a component. This contains required metadata to identify a component, such as
@@ -126,7 +127,7 @@ public final class ComponentKey<T> implements Reportable {
      * @return a new component key
      */
     public static <T> ComponentKey<ComponentCollection<T>> collect(Class<T> type) {
-        return TypeUtils.adjustWildcards(collect(ParameterizableType.create(type)), ComponentKey.class);
+        return TypeUtils.unchecked(collect(ParameterizableType.create(type)), ComponentKey.class);
     }
 
     /**
@@ -141,7 +142,7 @@ public final class ComponentKey<T> implements Reportable {
         ParameterizableType collectionType = ParameterizableType.builder(ComponentCollection.class)
             .parameters(type)
             .build();
-        return TypeUtils.adjustWildcards(ComponentKey.of(collectionType), ComponentKey.class);
+        return TypeUtils.unchecked(ComponentKey.of(collectionType), ComponentKey.class);
     }
 
     /**
@@ -243,11 +244,10 @@ public final class ComponentKey<T> implements Reportable {
     public String qualifiedName(boolean qualifyType) {
         String qualifier = StringUtilities.join(", ", this.qualifier.qualifiers(), QualifierKey::toString);
         String qualifierSuffix = StringUtilities.empty(qualifier) ? "" : ":" + qualifier;
-        ScopeKey scopeKey = this.scope != null
-            ? this.scope.installableScopeType()
-                // TODO: Application scope?
-            : ApplicationContext.APPLICATION_SCOPE;
-        String scopeName = scopeKey.name();
+        String scopeName = this.scope()
+                .map(Scope::installableScopeType)
+                .map(ScopeKey::name)
+                .orElse("default");
         String typeName = qualifyType ? this.type.toQualifiedString() : this.type.toString();
         return typeName + qualifierSuffix + " @ " + scopeName;
     }
@@ -283,7 +283,7 @@ public final class ComponentKey<T> implements Reportable {
      * @return the raw type of the component
      */
     public Class<T> type() {
-        return TypeUtils.adjustWildcards(this.type.type(), Class.class);
+        return TypeUtils.unchecked(this.type.type(), Class.class);
     }
 
     /**
@@ -318,13 +318,13 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Returns the scope of the component. If the component has no explicit scope, the default scope is
-     * the application scope of the component provider.
+     * Returns the scope of the component. If the component has no explicit scope, the default scope of
+     * component provider should be used.
      *
      * @return the scope of the component
      */
-    public Scope scope() {
-        return this.scope;
+    public Option<Scope> scope() {
+        return Option.of(this.scope);
     }
 
     /**
@@ -561,7 +561,7 @@ public final class ComponentKey<T> implements Reportable {
                     .qualifiers(this.qualifier.qualifiers())
                     .scope(this.scope)
                     .postConstructionAllowed(this.postConstructionAllowed);
-            return TypeUtils.adjustWildcards(builder, Builder.class);
+            return TypeUtils.unchecked(builder, Builder.class);
         }
 
         /**

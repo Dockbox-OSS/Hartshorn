@@ -14,27 +14,25 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
-
-import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserverPreProcessor;
-import org.dockbox.hartshorn.inject.activation.ServiceActivator;
+package org.dockbox.hartshorn.inject.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
+
 /**
- * Service activator for bootstrap-dependent services. This activator is automatically injected
- * when the application is created through {@link StandardApplicationBuilder}.
+ * Infrastructure specialization of {@link Priority}, used as a shorthand for {@code @Priority(Priority.INFRASTRUCTURE_PRIORITY)}.
+ *
+ * @since 0.6.0
  *
  * @author Guus Lieben
- * @since 0.4.1
  */
+@Target({ ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@ServiceActivator(processors = {
-        LifecycleObserverPreProcessor.class,
-})
-public @interface UseBootstrap {
+@Extends(Priority.class)
+@Priority(Priority.INFRASTRUCTURE_PRIORITY)
+public @interface InfrastructurePriority {
 }

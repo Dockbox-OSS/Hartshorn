@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
- * @see org.dockbox.hartshorn.inject.processors.ContextMethodPostProcessor
+ * @see org.dockbox.hartshorn.inject.processing.ContextMethodPostProcessor
  * @author Guus Lieben
  * @since 0.4.1
  */

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.activation;
+package org.dockbox.hartshorn.launchpad.activation;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
-import org.dockbox.hartshorn.inject.condition.support.RequiresActivator;
+import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**

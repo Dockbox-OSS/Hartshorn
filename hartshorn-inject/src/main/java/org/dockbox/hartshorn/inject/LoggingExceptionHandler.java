@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.util.IllegalModificationException;
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.launchpad.environment.ApplicationManaged;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +28,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author Guus Lieben
  */
-public class LoggingExceptionHandler implements ExceptionHandler, ApplicationManaged {
+public class LoggingExceptionHandler implements ExceptionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoggingExceptionHandler.class);
 
     private boolean printStackTraces;
-    private ApplicationEnvironment environment;
 
     @Override
     public LoggingExceptionHandler printStackTraces(boolean stacktraces) {
@@ -52,21 +48,6 @@ public class LoggingExceptionHandler implements ExceptionHandler, ApplicationMan
      */
     public boolean printStackTraces() {
         return this.printStackTraces;
-    }
-
-    @Override
-    public ApplicationEnvironment environment() {
-        return this.environment;
-    }
-
-    @Override
-    public void environment(ApplicationEnvironment environment) {
-        if (this.environment == null) {
-            this.environment = environment;
-        }
-        else {
-            throw new IllegalModificationException("Application environment has already been configured");
-        }
     }
 
     @Override

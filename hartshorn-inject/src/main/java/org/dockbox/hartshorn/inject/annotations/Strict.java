@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.annotations.configuration;
-
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.collection.ComponentCollection;
-import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
+package org.dockbox.hartshorn.inject.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.collection.ComponentCollection;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 
 /**
  * Indicates that an injection lookup should be strict, meaning that it should only return a value if it is
