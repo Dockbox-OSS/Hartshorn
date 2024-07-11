@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
 
     @Override
     public <R> R invokeInterceptor(T self, MethodView<T, R> source, Object[] args, MethodInterceptor<T, R> interceptor, CustomInvocation<R> customInvocation) throws Throwable {
-        MethodInterceptorContext<T, R> context = new MethodInterceptorContext<>(source, args, self, customInvocation);
+        MethodInterceptorContext<T, R> context = MethodInterceptorContext.of(source, args, self, customInvocation);
         return interceptor.intercept(context);
     }
 
@@ -200,7 +200,7 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
 
         Object result;
         if (target instanceof MethodInvokable methodInvokable) {
-            result = function.invoke(TypeUtils.adjustWildcards(methodInvokable.toIntrospector(), MethodView.class), self, args)
+            result = function.invoke(TypeUtils.unchecked(methodInvokable.toIntrospector(), MethodView.class), self, args)
                     .orElseGet(() -> this.introspector.introspect(target.returnType()).defaultOrNull());
         }
         else {

@@ -449,6 +449,6 @@ public interface Attempt<T, E extends Throwable> extends Option<T> {
 
     @Override
     default <K extends T, A extends K> Attempt<A, E> adjust(@NonNull Class<K> type) {
-        return this.ofType(type).map(value -> TypeUtils.adjustWildcards(value, type));
+        return this.ofType(type).map(value -> TypeUtils.unchecked(value, type));
     }
 }

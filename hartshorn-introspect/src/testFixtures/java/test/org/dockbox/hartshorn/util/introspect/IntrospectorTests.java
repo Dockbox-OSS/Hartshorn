@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -210,9 +210,9 @@ public abstract class IntrospectorTests {
 
     @Test
     void testTypeContextMethodsDoNotIncludeBridgeMethods() {
-        TypeView<BridgeImpl> bridge = this.introspector().introspect(BridgeImpl.class);
-        List<MethodView<BridgeImpl, ?>> methods = bridge.methods().all();
-        for (MethodView<BridgeImpl, ?> method : methods) {
+        TypeView<BridgeElement> bridge = this.introspector().introspect(BridgeElement.class);
+        List<MethodView<BridgeElement, ?>> methods = bridge.methods().all();
+        for (MethodView<BridgeElement, ?> method : methods) {
             Option<Method> nativeMethod = method.method();
             Assertions.assertTrue(nativeMethod.present());
             Assertions.assertFalse(nativeMethod.get().isBridge());
@@ -221,8 +221,8 @@ public abstract class IntrospectorTests {
 
     @Test
     void testTypeContextBridgeMethodsCanBeObtained() {
-        TypeView<BridgeImpl> bridge = this.introspector().introspect(BridgeImpl.class);
-        List<MethodView<BridgeImpl, ?>> methods = bridge.methods().bridges();
+        TypeView<BridgeElement> bridge = this.introspector().introspect(BridgeElement.class);
+        List<MethodView<BridgeElement, ?>> methods = bridge.methods().bridges();
         Assertions.assertEquals(1, methods.size());
         Assertions.assertSame(Object.class, methods.get(0).returnType().type());
         Assertions.assertTrue(methods.get(0).method().present());
@@ -362,7 +362,7 @@ public abstract class IntrospectorTests {
 
     @Test
     void testRedefinedAnnotationsTakePriority() {
-        TypeView<AnnotatedImpl> typeContext = this.introspector().introspect(AnnotatedImpl.class);
+        TypeView<AnnotatedObject> typeContext = this.introspector().introspect(AnnotatedObject.class);
         Option<Base> annotation = typeContext.annotations().get(Base.class);
         Assertions.assertTrue(annotation.present());
         Assertions.assertEquals("impl", annotation.get().value());

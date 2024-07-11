@@ -130,7 +130,7 @@ public class TypeUtils {
             else {
                 try {
                     Function<String, ?> converter = PRIMITIVE_FROM_STRING.get(type);
-                    T result = adjustWildcards(converter.apply(value), Object.class);
+                    T result = unchecked(converter.apply(value), Object.class);
                     if (result == null) {
                         throw new TypeConversionException(type, value);
                     }
@@ -178,11 +178,11 @@ public class TypeUtils {
      * </ul>
      *
      * <p>When invoking this method with an instance of any {@link java.util.List}, the method will return the same instance, as
-     * {@link java.util.List} is assignable to {@link java.util.List}&gt;?&lt;. However, as the instance could be {@code List<Integer>}
+     * {@link java.util.List} is assignable to {@link java.util.List}&lt;?&gt;. However, as the instance could be {@code List<Integer>}
      * just as well as {@code List<String>}, caution should be taken before using this method.
      *
      * <p>Proper usage of this method will result in a type-safe cast. For example, when invoking this method with an instance of
-     * {@code List<String>}, and the {@link AdjustedType} being {@code List<?>}.
+     * {@code List<String>}, and the {@link AdjustedType} being {@code List<CharSequence>}.
      *
      * @param obj The object to adjust
      * @param type The type to adjust to
@@ -192,7 +192,7 @@ public class TypeUtils {
      *
      * @return The adjusted object
      */
-    public static <InstanceType extends KeyType, KeyType, AdjustedType extends KeyType> AdjustedType adjustWildcards(InstanceType obj, Class<KeyType> type) {
+    public static <InstanceType extends KeyType, KeyType, AdjustedType extends KeyType> AdjustedType unchecked(InstanceType obj, Class<KeyType> type) {
         if (obj == null) {
             return null;
         }

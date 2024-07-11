@@ -209,7 +209,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
             List<TypeView<? extends T>> list = new ArrayList<>();
             for(Class<?> permittedSubclass : this.type.getPermittedSubclasses()) {
                 TypeView<?> introspect = this.introspector.introspect(permittedSubclass);
-                TypeView<T> adjustedType = TypeUtils.adjustWildcards(introspect, TypeView.class);
+                TypeView<T> adjustedType = TypeUtils.unchecked(introspect, TypeView.class);
                 list.add(adjustedType);
             }
             this.permittedSubclasses = list;
