@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.processors.proxy;
+package org.dockbox.hartshorn.inject.processing.proxy;
 
 import org.dockbox.hartshorn.inject.DefaultInjectionApplicationAwareContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;

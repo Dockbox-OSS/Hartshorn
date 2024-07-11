@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.processors;
+package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.Provided;
-import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
-import org.dockbox.hartshorn.inject.processors.proxy.MethodProxyContext;
-import org.dockbox.hartshorn.inject.processors.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.inject.processing.proxy.MethodProxyContext;
+import org.dockbox.hartshorn.inject.processing.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;

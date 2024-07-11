@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.inject.processing;
 
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.provider.ObjectContainer;
+import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
- * Indicates that an error occurred while populating a component. This can happen when a component is being
- * populated with values but the values are not compatible with the component's fields, or a value cannot
- * be resolved.
+ * TODO: #1060 Add documentation
  *
- * @since 0.4.8
+ * @since 0.6.0
  *
  * @author Guus Lieben
  */
-public class ComponentPopulateException extends ApplicationRuntimeException {
+public interface ComponentProviderPostProcessor {
 
-    public ComponentPopulateException(String message) {
-        super(message);
-    }
-
-    public ComponentPopulateException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    <T> T processInstance(
+            ComponentKey<T> componentKey,
+            ObjectContainer<T> objectContainer,
+            ComponentRequestContext requestContext
+    ) throws ApplicationException;
 }
