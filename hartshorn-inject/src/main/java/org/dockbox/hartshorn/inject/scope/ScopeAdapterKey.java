@@ -60,7 +60,7 @@ public class ScopeAdapterKey implements ScopeKey {
     public static <T> ScopeAdapterKey of(ScopeAdapter<T> adapter) {
         ParameterizableType adapteeType = adapter.adapteeType();
         ParameterizableType adapterType = ParameterizableType.builder(ScopeAdapter.class).parameters(adapteeType).build();
-        return new ScopeAdapterKey(TypeUtils.adjustWildcards(adapterType, ParameterizableType.class));
+        return new ScopeAdapterKey(TypeUtils.unchecked(adapterType, ParameterizableType.class));
     }
 
     /**

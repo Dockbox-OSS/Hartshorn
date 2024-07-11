@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.inject.scope;
 
+import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
 /**
  * A key that can be used to identify a {@link Scope}. This contains the required metadata to
- * identify a scope, and can be used to manage scoped components in a {@link ScopeAwareComponentProvider}.
+ * identify a scope, and can be used to manage scoped components in a scoped {@link ComponentProvider}.
  *
  * <p>Scope keys contain a {@link ParameterizableType} that describes the type of the scope. This type can
  * be parameterized. Therefore, key instances differentiate between e.g. {@code TypeScope<String>} and
@@ -30,7 +31,7 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
  * <p>Keys are always immutable. Specific implementations may choose to provide utility builders or factories,
  * but should never allow the final {@link ScopeKey} to be mutable.
  *
- * @see ScopeAwareComponentProvider
+ * @see ComponentProvider#scope()
  * @see Scope
  *
  * @since 0.5.0

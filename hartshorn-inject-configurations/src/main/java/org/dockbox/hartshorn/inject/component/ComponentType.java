@@ -23,8 +23,7 @@ import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.context.ContextView;
 
 /**
- * Represents the type of a component, typically represented through {@link Component#type()} or
- * {@link ComponentContainer#componentType()}.
+ * Represents the type of a component, typical
  *
  * @since 0.4.1
  *

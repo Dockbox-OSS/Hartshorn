@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
-import org.dockbox.hartshorn.inject.provider.ComponentProvider;
-import org.dockbox.hartshorn.inject.provider.Provider;
-import org.dockbox.hartshorn.inject.provider.SingletonCache;
+import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
 
 /**
  * A {@link ComponentProvider} that uses a {@link SingletonCache} to store singleton components. Typically the
