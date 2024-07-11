@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.processors.proxy;
+package org.dockbox.hartshorn.inject.processing.proxy;
 
 import java.util.Collection;
 import org.checkerframework.checker.nullness.qual.Nullable;

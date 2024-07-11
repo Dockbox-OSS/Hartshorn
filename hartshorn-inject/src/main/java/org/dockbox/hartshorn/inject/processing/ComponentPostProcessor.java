@@ -161,7 +161,7 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
         if (instance != modified) {
             boolean ok = false;
             if (modified instanceof Proxy<?> modifiedProxy) {
-                Proxy<T> proxy = TypeUtils.adjustWildcards(modifiedProxy, Proxy.class);
+                Proxy<T> proxy = TypeUtils.unchecked(modifiedProxy, Proxy.class);
                 ok = proxy.manager().delegate().orNull() == instance;
             }
             if (!ok) {

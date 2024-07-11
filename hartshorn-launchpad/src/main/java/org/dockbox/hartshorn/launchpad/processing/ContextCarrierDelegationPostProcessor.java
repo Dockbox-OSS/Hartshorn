@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.launchpad.processing;
 
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
-import org.dockbox.hartshorn.inject.processors.proxy.ProxyDelegationPostProcessor;
+import org.dockbox.hartshorn.inject.processing.proxy.ProxyDelegationPostProcessor;
 
 /**
  * TODO: #1060 Add documentation

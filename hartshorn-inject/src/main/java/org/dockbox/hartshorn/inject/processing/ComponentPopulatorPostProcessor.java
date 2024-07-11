@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component.processing;
+package org.dockbox.hartshorn.inject.processing;
 
 import java.util.Collection;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.inject.ComponentConstructorResolver;
+import org.dockbox.hartshorn.inject.provider.ComponentConstructorResolver;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
 import org.dockbox.hartshorn.inject.populate.StrategyComponentPopulator;
-import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.processing.ModifiableComponentProcessingContext;
-import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -45,25 +40,20 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
+public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
 
-    @SuppressWarnings("rawtypes")
-    private static final ComponentKey<ComponentContainer> COMPONENT_CONTAINER = ComponentKey.of(ComponentContainer.class);
     @SuppressWarnings("rawtypes")
     private static final ComponentKey<ProxyFactory> PROXY_FACTORY = ComponentKey.of(ProxyFactory.class);
 
     private final ComponentPopulator componentPopulator;
 
-    public ComponentFinalizingPostProcessor(ComponentPopulator componentPopulator) {
+    public ComponentPopulatorPostProcessor(ComponentPopulator componentPopulator) {
         this.componentPopulator = componentPopulator;
     }
 
     @Override
     public <T> T initializeComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
-
-        boolean permitsProxying = !processingContext.containsKey(COMPONENT_CONTAINER)
-                || processingContext.get(COMPONENT_CONTAINER).permitsProxying();
-
+        boolean permitsProxying = this.permitsProxying(application, instance, processingContext);
         if (permitsProxying && !(instance instanceof Collection<?>)) {
             T finalizingInstance = instance;
 
@@ -94,6 +84,11 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
         return instance;
     }
 
+    protected <T> boolean permitsProxying(InjectionCapableApplication application, @Nullable T instance,
+            ComponentProcessingContext<T> processingContext) {
+        return processingContext.permitsProxying();
+    }
+
     protected <T> T createProxyInstance(InjectionCapableApplication application, ProxyFactory<T> factory, @Nullable T instance) throws ApplicationException {
         TypeView<T> factoryType = application.environment().introspector().introspect(factory.type());
         // Ensure we use a non-default constructor if there is no default constructor to use
@@ -118,7 +113,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
-            return new ComponentFinalizingPostProcessor(configurer.componentPopulator.initialize(context));
+            return new ComponentPopulatorPostProcessor(configurer.componentPopulator.initialize(context));
         };
     }
 
@@ -131,7 +126,7 @@ public class ComponentFinalizingPostProcessor extends ComponentPostProcessor {
      */
     public static class Configurer {
 
-        private ContextualInitializer<InjectionCapableApplication, ComponentPopulator> componentPopulator = StrategyComponentPopulator.create(Customizer.useDefaults());
+        ContextualInitializer<InjectionCapableApplication, ComponentPopulator> componentPopulator = StrategyComponentPopulator.create(Customizer.useDefaults());
 
         public Configurer componentPopulator(ComponentPopulator componentPopulator) {
             return this.componentPopulator(ContextualInitializer.of(componentPopulator));

@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.inject.populate;
 
-import org.dockbox.hartshorn.component.ComponentPopulateException;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;

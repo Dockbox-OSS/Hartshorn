@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.inject.processing.construction;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Set;
-import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.OnInitialized;
-import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
-import org.dockbox.hartshorn.introspect.ViewContextAdapter;
+import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
+import org.dockbox.hartshorn.inject.introspect.InjectorApplicationViewAdapter;
+import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
@@ -42,16 +42,16 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public class ComponentPostConstructorImpl implements ComponentPostConstructor {
+public class AnnotatedMethodComponentPostConstructor implements ComponentPostConstructor {
 
     private final Introspector introspector;
     private final ViewContextAdapter contextAdapter;
     private final Set<Class<? extends Annotation>> annotations;
 
-    protected ComponentPostConstructorImpl(SingleElementContext<? extends ApplicationContext> initializerContext, Configurer configurer) {
-        this.applicationContext = initializerContext.input();
-        this.contextAdapter = configurer.viewContextAdapter.initialize(initializerContext.transform(this.applicationContext));
-        this.annotations = Set.copyOf(configurer.annotations.initialize(initializerContext.transform(this.applicationContext)));
+    protected AnnotatedMethodComponentPostConstructor(SingleElementContext<? extends InjectionCapableApplication> initializerContext, Configurer configurer) {
+        this.introspector = initializerContext.input().environment().introspector();
+        this.contextAdapter = configurer.viewContextAdapter.initialize(initializerContext);
+        this.annotations = Set.copyOf(configurer.annotations.initialize(initializerContext));
     }
 
     @Override
@@ -74,12 +74,12 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
         return instance;
     }
 
-    public static ContextualInitializer<ApplicationContext, ComponentPostConstructor> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
 
-            ComponentPostConstructorImpl postConstructor = new ComponentPostConstructorImpl(context, configurer);
+            AnnotatedMethodComponentPostConstructor postConstructor = new AnnotatedMethodComponentPostConstructor(context, configurer);
             DefaultBindingConfigurerContext.compose(context, binder -> {
                 binder.bind(ComponentPostConstructor.class).singleton(postConstructor);
                 binder.bind(ViewContextAdapter.class).singleton(postConstructor.contextAdapter);
@@ -97,16 +97,17 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<ApplicationContext, Class<? extends Annotation>> annotations = LazyStreamableConfigurer.of(
+        private final LazyStreamableConfigurer<InjectionCapableApplication, Class<? extends Annotation>> annotations = LazyStreamableConfigurer.of(
                 OnInitialized.class);
 
-        private ContextualInitializer<ApplicationContext, ViewContextAdapter> viewContextAdapter = ContextualInitializer.of(IntrospectionViewContextAdapter::new);
+        private ContextualInitializer<InjectionCapableApplication, ViewContextAdapter> viewContextAdapter = ContextualInitializer.of(
+                InjectorApplicationViewAdapter::new);
 
         public Configurer viewContextAdapter(ViewContextAdapter lazyViewContextAdapter) {
             return this.viewContextAdapter(ContextualInitializer.of(lazyViewContextAdapter));
         }
 
-        public Configurer viewContextAdapter(ContextualInitializer<ApplicationContext, ViewContextAdapter> viewContextAdapter) {
+        public Configurer viewContextAdapter(ContextualInitializer<InjectionCapableApplication, ViewContextAdapter> viewContextAdapter) {
             this.viewContextAdapter = viewContextAdapter;
             return this;
         }
@@ -143,7 +144,7 @@ public class ComponentPostConstructorImpl implements ComponentPostConstructor {
          * @param customizer The customizer to configure the annotations
          * @return The current configurer, for chaining
          */
-        public Configurer annotations(Customizer<StreamableConfigurer<ApplicationContext, Class<? extends Annotation>>> customizer) {
+        public Configurer annotations(Customizer<StreamableConfigurer<InjectionCapableApplication, Class<? extends Annotation>>> customizer) {
             this.annotations.customizer(customizer);
             return this;
         }

@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.context.ContextView;
-import org.dockbox.hartshorn.inject.DefaultProvisionContext;
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.ProvisionContext;
+import org.dockbox.hartshorn.inject.FallbackCompatibleContext;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.scope.Scope;
@@ -39,13 +39,13 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class ApplicationBoundParameterLoaderContext extends ParameterLoaderContext implements ProvisionContext {
+public class ApplicationBoundParameterLoaderContext extends ParameterLoaderContext implements FallbackCompatibleContext {
 
     private final InjectionCapableApplication application;
     private final ComponentProvider provider;
     private final Scope scope;
 
-    private final Context context = new DefaultProvisionContext() {};
+    private final Context context = new DefaultFallbackCompatibleContext() {};
 
     public ApplicationBoundParameterLoaderContext(ExecutableElementView<?> executable, Object instance, InjectionCapableApplication application) {
         this(executable, instance, application, application.defaultProvider().scope());
@@ -71,7 +71,7 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
             public <T> T get(ComponentKey<T> key, ComponentRequestContext requestContext) {
                 ApplicationBoundParameterLoaderContext self = ApplicationBoundParameterLoaderContext.this;
                 // Explicit scopes get priority, otherwise use our local scope
-                if (key.scope() == self.application.defaultProvider().scope()) {
+                if (key.scope().contains(self.application.defaultProvider().scope())) {
                     return self.provider.get(key.mutable().scope(self.scope).build(), requestContext);
                 }
                 return self.provider.get(key, requestContext);

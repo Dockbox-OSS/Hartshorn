@@ -112,14 +112,14 @@ public class InjectorApplicationViewAdapter extends DefaultContext implements Vi
     public <T> Option<T> load(GenericTypeView<T> element) throws Throwable {
         return switch(element) {
             case TypeView<?> typeView -> {
-                ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(typeView.type(), Class.class));
+                ComponentKey<T> key = this.key(TypeUtils.unchecked(typeView.type(), Class.class));
                 yield Option.of(this.application.defaultProvider().get(key, this.componentRequestContext()));
             }
-            case FieldView<?, ?> fieldView -> this.load(TypeUtils.adjustWildcards(fieldView, FieldView.class));
-            case MethodView<?, ?> methodView -> this.invoke(TypeUtils.adjustWildcards(methodView, MethodView.class));
-            case ConstructorView<?> constructorView -> this.create(TypeUtils.adjustWildcards(constructorView, ConstructorView.class));
+            case FieldView<?, ?> fieldView -> this.load(TypeUtils.unchecked(fieldView, FieldView.class));
+            case MethodView<?, ?> methodView -> this.invoke(TypeUtils.unchecked(methodView, MethodView.class));
+            case ConstructorView<?> constructorView -> this.create(TypeUtils.unchecked(constructorView, ConstructorView.class));
             case ParameterView<?> parameterView -> {
-                ComponentKey<T> key = this.key(TypeUtils.adjustWildcards(parameterView.type().type(), Class.class));
+                ComponentKey<T> key = this.key(TypeUtils.unchecked(parameterView.type().type(), Class.class));
                 yield Option.of(this.application.defaultProvider().get(key, this.componentRequestContext()));
             }
             default -> throw new IllegalArgumentException("Unsupported element type: " + element.getClass().getName());
