@@ -49,7 +49,7 @@ public class AnnotationAdapterProxyIntrospector<T extends Annotation> implements
     @Override
     @SuppressWarnings("GetClassOnAnnotation")
     public Class<T> proxyClass() {
-        return TypeUtils.adjustWildcards(this.annotation.getClass(), Class.class);
+        return TypeUtils.unchecked(this.annotation.getClass(), Class.class);
     }
 
     @Override

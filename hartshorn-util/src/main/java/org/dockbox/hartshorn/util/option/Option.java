@@ -406,7 +406,7 @@ public interface Option<T> extends Context, Iterable<T> {
      * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given type.
      */
     default <K extends T, A extends K> Option<A> adjust(@NonNull Class<K> type) {
-        return this.ofType(type).map(value -> TypeUtils.adjustWildcards(value, type));
+        return this.ofType(type).map(value -> TypeUtils.unchecked(value, type));
     }
 
     /**

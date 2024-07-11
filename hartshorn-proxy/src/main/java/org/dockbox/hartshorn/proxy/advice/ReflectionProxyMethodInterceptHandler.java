@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,10 +67,10 @@ public class ReflectionProxyMethodInterceptHandler<T> implements ProxyMethodInte
     @Override
     public Object handleInterceptedMethod(MethodInvokable source, T callbackTarget, CustomInvocation<?> customInvocation, Object[] arguments, MethodInterceptor<T, Object> interceptor) throws Throwable {
         return this.methodInvoker.invokeInterceptor(callbackTarget,
-                TypeUtils.adjustWildcards(source.toIntrospector(), MethodView.class),
+                TypeUtils.unchecked(source.toIntrospector(), MethodView.class),
                 arguments,
                 interceptor,
-                TypeUtils.adjustWildcards(customInvocation, CustomInvocation.class)
+                TypeUtils.unchecked(customInvocation, CustomInvocation.class)
         );
     }
 

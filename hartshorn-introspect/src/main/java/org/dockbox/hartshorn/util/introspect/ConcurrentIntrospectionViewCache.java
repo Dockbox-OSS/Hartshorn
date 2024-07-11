@@ -56,7 +56,7 @@ public class ConcurrentIntrospectionViewCache implements IntrospectionViewCache 
 
     @Override
     public <T> TypeView<T> computeIfAbsent(Class<T> type, Supplier<TypeView<T>> viewSupplier) {
-        return TypeUtils.adjustWildcards(this.typeViewCache.computeIfAbsent(type, key0 -> viewSupplier.get()), TypeView.class);
+        return TypeUtils.unchecked(this.typeViewCache.computeIfAbsent(type, key0 -> viewSupplier.get()), TypeView.class);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ConcurrentIntrospectionViewCache implements IntrospectionViewCache 
 
     @Override
     public <T> ConstructorView<T> computeIfAbsent(Constructor<T> constructor, Supplier<ConstructorView<T>> viewSupplier) {
-        return TypeUtils.adjustWildcards(this.constructorViewCache.computeIfAbsent(constructor, key0 -> viewSupplier.get()), ConstructorView.class);
+        return TypeUtils.unchecked(this.constructorViewCache.computeIfAbsent(constructor, key0 -> viewSupplier.get()), ConstructorView.class);
     }
 
     @Override

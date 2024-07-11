@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
     public Object intercept(Object self, MethodInvokable source, Invokable proxy, Object[] args) throws Throwable {
         T instance = this.manager().targetClass().cast(self);
         T callbackTarget = this.manager().delegate().orElse(instance);
-        MethodView<T, ?> methodView = TypeUtils.adjustWildcards(source.toIntrospector(), MethodView.class);
+        MethodView<T, ?> methodView = TypeUtils.unchecked(source.toIntrospector(), MethodView.class);
 
         CustomInvocation<?> customInvocation = this.createDefaultInvocation(source, proxy, callbackTarget);
         Object[] arguments = this.resolveArgs(source, self, args);
@@ -89,7 +89,7 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
                                       MethodView<T, ?> methodView, CustomInvocation<?> customInvocation,
                                       Object[] arguments) throws Throwable {
 
-        ProxyCallbackContext<T> callbackContext = new ProxyCallbackContext<>(callbackTarget, TypeUtils.adjustWildcards(self, Object.class), methodView, arguments);
+        ProxyCallbackContext<T> callbackContext = new ProxyCallbackContext<>(callbackTarget, TypeUtils.unchecked(self, Object.class), methodView, arguments);
         return this.manager().advisor().safeWrapIntercept(callbackContext, () -> {
             Option<MethodInterceptor<T, Object>> interceptor = this.manager()
                     .advisor()
