@@ -14,30 +14,23 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.binding;
+package org.dockbox.hartshorn.launchpad.activation;
 
-import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * A binder that supports hierarchical bindings. This means that bindings are not just one-to-one, but can be
- * one-to-many, with various bindings on different priority levels.
+ * Thrown when an attempt is made to register a type as service activator, but the type does not
+ * meet the requirements of a service activator.
  *
- * @see BindingHierarchy
- * @see Binder
+ * @see ServiceActivator
  *
  * @since 0.4.12
  *
  * @author Guus Lieben
  */
-public interface HierarchicalBinder extends Binder {
+public class InvalidActivatorException extends ApplicationRuntimeException {
 
-    /**
-     * Returns the binding hierarchy for the given key.
-     *
-     * @param key the key to return the hierarchy for
-     * @param <T> the type of the component
-     *
-     * @return the binding hierarchy
-     */
-    <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key);
+    public InvalidActivatorException(String message) {
+        super(message);
+    }
 }

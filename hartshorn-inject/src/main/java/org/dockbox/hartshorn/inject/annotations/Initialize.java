@@ -22,6 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor;
 
 /**
  * Indicates that the value of a field or method should be processed by the specific

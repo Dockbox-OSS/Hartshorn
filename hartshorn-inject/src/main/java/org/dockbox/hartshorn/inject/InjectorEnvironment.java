@@ -41,7 +41,7 @@ public interface InjectorEnvironment {
     ComponentInjectionPointsResolver injectionPointsResolver();
 
     /**
-     * Gets the primary {@link Introspector} for this {@link ApplicationEnvironment}. The introspector is responsible
+     * Gets the primary {@link Introspector} for this {@link InjectorEnvironment}. The introspector is responsible
      * for all introspection operations within the environment. This may or may not be the same as the binding for
      * {@link Introspector}, but is typically the same.
      *
@@ -58,4 +58,8 @@ public interface InjectorEnvironment {
      * @return The proxy orchestrator
      */
     ProxyOrchestrator proxyOrchestrator();
+
+    InjectorConfiguration configuration();
+
+    ExceptionHandler exceptionHandler();
 }

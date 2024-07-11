@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component.processing;
+package org.dockbox.hartshorn.inject.annotations;
 
-import org.dockbox.hartshorn.inject.annotations.configuration.Strict;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 
 import java.lang.annotation.ElementType;

@@ -55,7 +55,7 @@ public class ComponentFieldInjectionPoint<T> implements ComponentInjectionPoint<
                 if (objectToInject instanceof Collection<?> collection) {
                     Option<?> previousValue = this.field.get(instance);
                     if (previousValue.present() && previousValue.get() instanceof Collection<?> existingCollection) {
-                        existingCollection.addAll(TypeUtils.adjustWildcards(collection, Collection.class));
+                        existingCollection.addAll(TypeUtils.unchecked(collection, Collection.class));
                         return;
                     }
                 }

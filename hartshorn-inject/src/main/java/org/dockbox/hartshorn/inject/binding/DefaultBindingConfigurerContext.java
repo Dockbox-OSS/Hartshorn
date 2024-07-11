@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.DefaultContext;
@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.context.DefaultContext;
  * {@link DefaultBindingConfigurer} through the context chain when initializing the application.
  *
  * @see DefaultBindingConfigurer
- * @see ApplicationInitializerContext#initializeInitial()
  *
  * @since 0.5.0
  *

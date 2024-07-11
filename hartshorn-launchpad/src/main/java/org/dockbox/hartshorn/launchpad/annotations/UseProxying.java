@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.launchpad.annotations;
 
-import org.dockbox.hartshorn.application.StandardApplicationBuilder;
-import org.dockbox.hartshorn.inject.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 import org.dockbox.hartshorn.launchpad.processing.ContextCarrierDelegationPostProcessor;
-import org.dockbox.hartshorn.inject.processors.ContextMethodPostProcessor;
+import org.dockbox.hartshorn.inject.processing.ContextMethodPostProcessor;
 import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.inject.annotations.Provided;
 

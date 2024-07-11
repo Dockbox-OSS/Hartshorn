@@ -123,7 +123,7 @@ public class CollectionProvider<T> implements NonTypeAwareProvider<ComponentColl
         }
 
         ContainerAwareComponentCollection<T> collection = new ContainerAwareComponentCollection<>(containers);
-        ObjectContainer<ComponentCollection<T>> container = TypeUtils.adjustWildcards(
+        ObjectContainer<ComponentCollection<T>> container = TypeUtils.unchecked(
                 new CollectionObjectContainer<>(collection),
                 ObjectContainer.class
         );

@@ -19,17 +19,19 @@ package org.dockbox.hartshorn.inject.binding;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.IllegalScopeException;
-import org.dockbox.hartshorn.inject.provider.LazySingletonProvider;
-import org.dockbox.hartshorn.inject.provider.Provider;
-import org.dockbox.hartshorn.inject.provider.SingletonProvider;
-import org.dockbox.hartshorn.inject.provider.SupplierProvider;
 import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.CollectorBindingFunction;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.collection.HierarchyCollectorBindingFunction;
-import org.dockbox.hartshorn.inject.provider.SingletonCache;
+import org.dockbox.hartshorn.inject.provider.ContextDrivenProvider;
+import org.dockbox.hartshorn.inject.provider.LazySingletonProvider;
+import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
+import org.dockbox.hartshorn.inject.provider.SingletonProvider;
+import org.dockbox.hartshorn.inject.provider.SupplierProvider;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
+import org.dockbox.hartshorn.inject.scope.ScopeModuleContext;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
@@ -53,9 +55,10 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     private final HierarchicalBinder binder;
     private final SingletonCache singletonCache;
     private final ScopeModuleContext moduleContext;
-    private Scope scope;
 
-    private ScopeKey scopeModule;
+    private Scope scope;
+    private ScopeKey scopeKey;
+
     private int priority = -1;
     private boolean processAfterInitialization = true;
 
@@ -63,7 +66,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
             BindingHierarchy<T> hierarchy,
             HierarchicalBinder binder,
             SingletonCache singletonCache,
-        Scope scope,
+            Scope scope,
             ScopeModuleContext moduleContext) {
         this.hierarchy = hierarchy;
         this.binder = binder;
@@ -74,8 +77,8 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     protected BindingHierarchy<T> hierarchy() {
-        if (this.scopeModule != null) {
-            return this.moduleContext.hierarchy(this.scopeModule, this.hierarchy.key());
+        if (this.scopeKey != null) {
+            return this.moduleContext.hierarchy(this.scopeKey, this.hierarchy.key());
         }
         else {
             return this.hierarchy;
@@ -91,15 +94,18 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public BindingFunction<T> installTo(ScopeKey scope) throws IllegalScopeException {
-        if (this.scope != null && !(this.scope instanceof ApplicationContext)) {
-            throw new IllegalScopeException("Cannot install binding to scope " + scope.name() + " as the binding is already installed to scope " + this.scope.installableScopeType().name());
+    public BindingFunction<T> installTo(ScopeKey scopeKey) throws IllegalScopeException {
+        boolean expandingApplicationScope = this.moduleContext.isApplicationScope(this.scopeKey)
+                || this.moduleContext.isApplicationScope(this.scope.installableScopeType());
+
+        if (!expandingApplicationScope) {
+            throw new IllegalScopeException("Cannot install binding to child scope " + scopeKey.name() + " as the binding is already installed to child scope " + this.scope.installableScopeType().name());
         }
         // Permitted, as default application scope may be expanded. Defined child scopes can not be expanded, so this is a safe check
-        if (this.scope != null && !ApplicationContext.class.isAssignableFrom(scope.scopeType().type())) {
+        if (!this.moduleContext.isApplicationScope(scopeKey)) {
             this.scope = null;
         }
-        this.scopeModule = scope;
+        this.scopeKey = scopeKey;
         return this;
     }
 

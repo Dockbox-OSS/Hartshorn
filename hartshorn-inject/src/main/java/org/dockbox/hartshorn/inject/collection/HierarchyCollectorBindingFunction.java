@@ -17,13 +17,14 @@
 package org.dockbox.hartshorn.inject.collection;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.binding.Binder;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.provider.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.provider.LazySingletonProvider;
 import org.dockbox.hartshorn.inject.provider.PrototypeProvider;
 import org.dockbox.hartshorn.inject.provider.Provider;
 import org.dockbox.hartshorn.inject.provider.SingletonProvider;
 import org.dockbox.hartshorn.inject.provider.SupplierProvider;
-import org.dockbox.hartshorn.inject.binding.Binder;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 

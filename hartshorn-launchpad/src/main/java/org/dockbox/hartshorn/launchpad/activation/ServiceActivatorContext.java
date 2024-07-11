@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.launchpad.activation;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.dockbox.hartshorn.launchpad.launch.ApplicationContextFactory;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.inject.activation.ServiceActivator;
-import org.dockbox.hartshorn.inject.DefaultProvisionContext;
-import org.dockbox.hartshorn.inject.activation.ActivatorHolder;
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -50,7 +49,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public class ServiceActivatorContext extends DefaultProvisionContext implements Reportable {
+public class ServiceActivatorContext extends DefaultFallbackCompatibleContext implements Reportable {
 
     private final Map<Class<? extends Annotation>, Annotation> activators = new ConcurrentHashMap<>();
     private final ApplicationContext applicationContext;
