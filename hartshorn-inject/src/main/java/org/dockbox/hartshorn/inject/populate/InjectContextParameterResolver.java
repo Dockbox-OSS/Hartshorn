@@ -70,7 +70,7 @@ public class InjectContextParameterResolver implements InjectParameterResolver {
                 .map(Named::value)
                 .orNull();
 
-        TypeView<? extends ContextView> type = TypeUtils.adjustWildcards(injectionPoint.type(), TypeView.class);
+        TypeView<? extends ContextView> type = TypeUtils.unchecked(injectionPoint.type(), TypeView.class);
         ContextKey<? extends ContextView> key = ContextKey.of(type.type());
         if (StringUtilities.notEmpty(name)) {
             key = key.mutable().name(name).build();

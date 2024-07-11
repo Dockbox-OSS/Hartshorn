@@ -48,7 +48,7 @@ public class ContextParameterLoaderRule implements ParameterLoaderRule<Applicati
     private PopulateComponentContext<?> createContext(ApplicationBoundParameterLoaderContext context) {
         Object instance = context.instance();
         TypeView<?> type = context.executable().declaredBy();
-        return new PopulateComponentContext<>(instance, instance, TypeUtils.adjustWildcards(type, TypeView.class));
+        return new PopulateComponentContext<>(instance, instance, TypeUtils.unchecked(type, TypeView.class));
     }
 
     @Override

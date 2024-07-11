@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component.processing;
+package org.dockbox.hartshorn.launchpad.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
@@ -58,7 +58,7 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
                 contextInstance.addContext(componentContext);
             }
             else {
-                ComponentKey<ProxyFactory<T>> factoryKey = TypeUtils.adjustWildcards(ComponentKey.of(ProxyFactory.class), ComponentKey.class);
+                ComponentKey<ProxyFactory<T>> factoryKey = TypeUtils.unchecked(ComponentKey.of(ProxyFactory.class), ComponentKey.class);
                 if (processingContext.containsKey(factoryKey)) {
                     ProxyFactory<T> proxyFactory = processingContext.get(factoryKey);
                     proxyFactory.contextContainer().addContext(componentContext);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.processors.proxy;
+package org.dockbox.hartshorn.inject.processing.proxy;
 
 import java.util.Collection;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -55,7 +55,7 @@ public abstract class ServiceMethodInterceptorPostProcessor extends ComponentPos
             if (this.preconditions(application, context, processingContext)) {
                 MethodInterceptor<T, ?> function = this.process(application, context, processingContext);
                 if (function != null) {
-                    factory.advisors().method(method).intercept(TypeUtils.adjustWildcards(function, MethodInterceptor.class));
+                    factory.advisors().method(method).intercept(TypeUtils.unchecked(function, MethodInterceptor.class));
                 }
             }
             else {

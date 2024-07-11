@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.inject.processing;
 
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -27,10 +27,9 @@ import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.collection.ContainerAwareComponentCollection;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.inject.processing.ComponentStoreCallback;
-import org.dockbox.hartshorn.inject.processing.ModifiableComponentProcessingContext;
+import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
+import org.dockbox.hartshorn.inject.provider.ScopeAwareComponentProvider;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -48,18 +47,21 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class SimpleComponentProviderPostProcessor implements ComponentProviderPostProcessor {
 
-    private final ScopedProviderOwner owner;
+    private final ScopeAwareComponentProvider owner;
+    private final ComponentPostConstructor postConstructor;
     private final ComponentPostProcessor processor;
     private final InjectionCapableApplication application;
     private final ComponentStoreCallback componentStoreCallback;
 
     public SimpleComponentProviderPostProcessor(
-            ScopedProviderOwner owner,
+            ScopeAwareComponentProvider owner,
+            ComponentPostConstructor postConstructor,
             ComponentPostProcessor processor,
             InjectionCapableApplication application,
             ComponentStoreCallback componentStoreCallback
     ) {
         this.owner = owner;
+        this.postConstructor = postConstructor;
         this.processor = processor;
         this.application = application;
         this.componentStoreCallback = componentStoreCallback;
@@ -70,7 +72,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
         Class<? extends T> type = componentKey.type();
         T instance = objectContainer.instance();
         if (instance != null) {
-            type = TypeUtils.adjustWildcards(instance.getClass(), Class.class);
+            type = TypeUtils.unchecked(instance.getClass(), Class.class);
         }
 
         Option<ComponentContainer<?>> container = this.owner.componentRegistry().container(type);
@@ -92,7 +94,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
         // Inject properties if applicable
         if (componentKey.postConstructionAllowed()) {
             try {
-                return this.owner.postConstructor().doPostConstruct(container.instance());
+                return this.postConstructor.doPostConstruct(container.instance());
             } catch (ApplicationException e) {
                 throw new ComponentInitializationException("Failed to perform post-construction on component with key " + componentKey, e);
             }
@@ -120,8 +122,8 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
                 throw new IllegalArgumentException("Component collection key must be of type ComponentCollection, specific implementations are not supported");
             }
             ComponentCollection<Object> collection = this.processComponentCollection(
-                    TypeUtils.adjustWildcards(componentKey, ComponentKey.class),
-                    TypeUtils.adjustWildcards(objectContainer, ObjectContainer.class),
+                    TypeUtils.unchecked(componentKey, ComponentKey.class),
+                    TypeUtils.unchecked(objectContainer, ObjectContainer.class),
                     requestContext
             );
             return componentKey.type().cast(collection);
@@ -136,11 +138,11 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
         }
         else if (objectContainer.instance() instanceof ContainerAwareComponentCollection<?> containerAwareComponentCollection) {
 
-            ContainerAwareComponentCollection<E> collection = TypeUtils.adjustWildcards(
+            ContainerAwareComponentCollection<E> collection = TypeUtils.unchecked(
                     containerAwareComponentCollection,
                     ContainerAwareComponentCollection.class);
 
-            ComponentKey<ContainerAwareComponentCollection<E>> key = TypeUtils.adjustWildcards(
+            ComponentKey<ContainerAwareComponentCollection<E>> key = TypeUtils.unchecked(
                     componentKey,
                     ComponentKey.class);
 
@@ -171,7 +173,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
     }
 
     protected <E, T extends ContainerAwareComponentCollection<E>> T processCollection(ComponentKey<T> key, T collection, ComponentRequestContext requestContext) throws ApplicationException {
-        ComponentKey<E> build = TypeUtils.adjustWildcards(key.mutable()
+        ComponentKey<E> build = TypeUtils.unchecked(key.mutable()
                 .type(key.parameterizedType().parameters().getFirst())
                 .build(), ComponentKey.class);
 
