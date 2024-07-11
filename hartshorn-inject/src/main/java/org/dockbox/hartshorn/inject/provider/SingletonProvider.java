@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.ObjectDescriber;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
@@ -41,7 +42,7 @@ public class SingletonProvider<T> implements NonTypeAwareProvider<T> {
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(ComponentRequestContext requestContext) {
+    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) {
         return Option.of(this.container);
     }
 

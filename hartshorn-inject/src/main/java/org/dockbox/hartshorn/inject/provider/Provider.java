@@ -20,6 +20,7 @@ import java.util.function.Function;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
@@ -42,10 +43,12 @@ public sealed interface Provider<T> permits TypeAwareProvider, NonTypeAwareProvi
      * indicates where the component is requested from, and can be used to determine the correct
      * instance to provide.
      *
+     * @param application The application in which the component is requested.
      * @param requestContext The context describing the component request.
+     *
      * @return The instance, if it can be created.
      */
-    Option<ObjectContainer<T>> provide(ComponentRequestContext requestContext) throws ApplicationException;
+    Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException;
 
     /**
      * Maps the result of this provider using the provided {@link Function}. The result of the
