@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
+import org.dockbox.hartshorn.inject.binding.HierarchyLookup;
 import org.dockbox.hartshorn.inject.graph.TypePathNode;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -41,31 +41,41 @@ public final class ComponentConstructorResolver {
 
     private final ComponentInjectionPointsResolver injectionPointsResolver;
     private final Introspector introspector;
-    private final HierarchicalBinder binder;
+    private final HierarchyLookup hierarchyLookup;
 
     private ComponentConstructorResolver(
-            ComponentInjectionPointsResolver injectionPointsResolver,
-            Introspector introspector,
-            HierarchicalBinder binder
+        ComponentInjectionPointsResolver injectionPointsResolver,
+        Introspector introspector,
+        HierarchyLookup hierarchyLookup
     ) {
         this.injectionPointsResolver = injectionPointsResolver;
         this.introspector = introspector;
-        this.binder = binder;
+        this.hierarchyLookup = hierarchyLookup;
     }
 
-    public static ComponentConstructorResolver create(InjectorEnvironment environment, HierarchicalBinder binder) {
+    public static ComponentConstructorResolver create(InjectorEnvironment environment, HierarchyLookup hierarchyLookup) {
         return new ComponentConstructorResolver(
                 environment.injectionPointsResolver(),
                 environment.introspector(),
-                binder
+                hierarchyLookup
         );
     }
 
     public static ComponentConstructorResolver create(InjectionCapableApplication applicationContext) {
+        HierarchyLookup hierarchyLookup;
+        if (applicationContext.defaultBinder() instanceof HierarchyLookup lookup) {
+            hierarchyLookup = lookup;
+        }
+        else if (applicationContext.defaultProvider() instanceof HierarchyLookup lookup) {
+            hierarchyLookup = lookup;
+        }
+        else {
+            throw new IllegalStateException("No hierarchy lookup found");
+        }
         return new ComponentConstructorResolver(
-                applicationContext.environment().injectionPointsResolver(),
-                applicationContext.environment().introspector(),
-                applicationContext.defaultBinder()
+            applicationContext.environment().injectionPointsResolver(),
+            applicationContext.environment().introspector(),
+            hierarchyLookup
         );
     }
 
@@ -77,7 +87,7 @@ public final class ComponentConstructorResolver {
 
     public <C> Option<ConstructorView<? extends C>> findConstructor(TypePathNode<C> node)
             throws MissingInjectConstructorException, NoSuchProviderException {
-        BindingHierarchy<C> hierarchy = this.binder.hierarchy(node.componentKey());
+        BindingHierarchy<C> hierarchy = this.hierarchyLookup.hierarchy(node.componentKey());
         int highestPriority = hierarchy.highestPriority();
         Option<Provider<C>> providerOption = hierarchy.get(highestPriority);
         return providerOption.absent()

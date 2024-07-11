@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
+import org.dockbox.hartshorn.inject.binding.HierarchyLookup;
 import org.dockbox.hartshorn.inject.graph.AbstractContainerDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.ComponentContainerDependencyContext;
 import org.dockbox.hartshorn.inject.graph.ComponentContainerDependencyDeclarationContext;
@@ -45,13 +46,15 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
 
     private final InjectorEnvironment environment;
     private final IntrospectionDependencyResolver resolver;
+    private final HierarchyLookup hierarchyLookup;
 
-    protected ComponentDependencyResolver(InjectorEnvironment environment) {
+    protected ComponentDependencyResolver(InjectorEnvironment environment, HierarchyLookup hierarchyLookup) {
         this.environment = environment;
         this.resolver = new IntrospectionDependencyResolver(
                 environment.injectionPointsResolver(),
                 environment.componentKeyResolver()
         );
+        this.hierarchyLookup = hierarchyLookup;
     }
 
     @Override
@@ -61,7 +64,7 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
         TypeView<T> type = declarationContext.type();
         ConstructorView<? extends T> constructorView;
         try {
-            constructorView = ComponentConstructorResolver.create(this.environment, null)
+            constructorView = ComponentConstructorResolver.create(this.environment, this.hierarchyLookup)
                     .findConstructor(type)
                     .orNull();
         }
