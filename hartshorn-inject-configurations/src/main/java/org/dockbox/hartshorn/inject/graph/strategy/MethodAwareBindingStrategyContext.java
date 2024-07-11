@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.strategy;
+package org.dockbox.hartshorn.inject.graph.strategy;
 
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 /**
  * TODO: #1060 Add documentation
@@ -28,7 +29,22 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
  *
  * @author Guus Lieben
  */
-public interface BindingStrategyContext<T> extends Context {
+public class MethodAwareBindingStrategyContext<T> extends DefaultContext implements BindingStrategyContext<T> {
 
-    DependencyDeclarationContext<T> declarationContext();
+    private final DependencyDeclarationContext<T> componentContainer;
+    private final MethodView<T, ?> method;
+
+    public MethodAwareBindingStrategyContext(DependencyDeclarationContext<T> componentContainer, MethodView<T, ?> method) {
+        this.componentContainer = componentContainer;
+        this.method = method;
+    }
+
+    @Override
+    public DependencyDeclarationContext<T> declarationContext() {
+        return this.componentContainer;
+    }
+
+    public MethodView<T, ?> method() {
+        return this.method;
+    }
 }

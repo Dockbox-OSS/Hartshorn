@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.inject.graph.DependencyResolutionType;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A simple implementation of {@link DependencyContext} that is used for components that are not managed by the container,
@@ -66,7 +67,7 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
         this(
             dependencyContext.componentKey(),
             dependencyContext.dependencies(),
-            dependencyContext.scope(),
+            dependencyContext.scope().orNull(),
             dependencyContext.priority(),
             dependencyContext.memberType()
         );
@@ -150,8 +151,8 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     }
 
     @Override
-    public ScopeKey scope() {
-        return this.scope;
+    public Option<ScopeKey> scope() {
+        return Option.of(this.scope);
     }
 
     @Override

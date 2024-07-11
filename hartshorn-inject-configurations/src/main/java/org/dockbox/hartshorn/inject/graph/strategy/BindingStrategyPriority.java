@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.strategy;
-
-import org.dockbox.hartshorn.util.Configurer;
-import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.Set;
+package org.dockbox.hartshorn.inject.graph.strategy;
 
 /**
  * TODO: #1060 Add documentation
@@ -28,15 +23,21 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public interface BindingStrategyRegistry extends Configurer {
+public enum BindingStrategyPriority {
+    LOWEST(-256),
+    LOW(-128),
+    MEDIUM(0),
+    HIGH(128),
+    HIGHEST(256),
+    ;
 
-    Set<BindingStrategy> strategies();
+    private final int priority;
 
-    BindingStrategyRegistry register(BindingStrategy strategy);
+    BindingStrategyPriority(int priority) {
+        this.priority = priority;
+    }
 
-    BindingStrategyRegistry unregister(BindingStrategy strategy);
-
-    BindingStrategyRegistry clear();
-
-    Option<BindingStrategy> find(BindingStrategyContext<?> context);
+    public int priority() {
+        return this.priority;
+    }
 }

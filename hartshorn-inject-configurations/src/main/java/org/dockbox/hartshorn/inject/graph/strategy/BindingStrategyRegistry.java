@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.strategy;
+package org.dockbox.hartshorn.inject.graph.strategy;
 
-import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
+import org.dockbox.hartshorn.util.Configurer;
+import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Set;
 
 /**
  * TODO: #1060 Add documentation
@@ -25,11 +28,15 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
  *
  * @author Guus Lieben
  */
-public interface BindingStrategy {
+public interface BindingStrategyRegistry extends Configurer {
 
-    <T> boolean canHandle(BindingStrategyContext<T> context);
+    Set<BindingStrategy> strategies();
 
-    <T> DependencyContext<?> handle(BindingStrategyContext<T> context);
+    BindingStrategyRegistry register(BindingStrategy strategy);
 
-    BindingStrategyPriority priority();
+    BindingStrategyRegistry unregister(BindingStrategy strategy);
+
+    BindingStrategyRegistry clear();
+
+    Option<BindingStrategy> find(BindingStrategyContext<?> context);
 }

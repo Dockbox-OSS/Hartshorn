@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.graph;
 
-import org.dockbox.hartshorn.inject.graph.DependencyMap;
+import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public class ManagedComponentKeyDependencyContext<T> extends ManagedComponentDependencyContext<T> {
+public final class ManagedComponentKeyDependencyContext<T> extends ManagedComponentDependencyContext<T> {
 
     private final TypeView<T> type;
     private final boolean processAfterInitialization;

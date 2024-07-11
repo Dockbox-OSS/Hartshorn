@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.graph;
 
 import java.util.Set;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
+
+import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
-import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
-import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
-import org.dockbox.hartshorn.inject.graph.DependencyMap;
-import org.dockbox.hartshorn.inject.graph.DependencyResolutionType;
 import org.dockbox.hartshorn.inject.graph.declaration.LifecycleAwareDependencyContext;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.View;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A {@link DependencyContext} implementation that is used for managed components. Managed components are components that
@@ -51,7 +50,8 @@ public abstract class ManagedComponentDependencyContext<T> implements LifecycleA
     private final DependencyMap dependencies;
     private final ConstructorView<? extends T> constructorView;
 
-    public ManagedComponentDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies, ConstructorView<? extends T> constructorView) {
+    public ManagedComponentDependencyContext(
+            ComponentKey<T> componentKey, DependencyMap dependencies, ConstructorView<? extends T> constructorView) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.constructorView = constructorView;
@@ -85,8 +85,8 @@ public abstract class ManagedComponentDependencyContext<T> implements LifecycleA
     }
 
     @Override
-    public ScopeKey scope() {
-        return ApplicationContext.APPLICATION_SCOPE;
+    public Option<ScopeKey> scope() {
+        return componentKey.scope().map(Scope::installableScopeType);
     }
 
     @Override

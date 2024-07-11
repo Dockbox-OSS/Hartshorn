@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.graph;
 
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.IllegalScopeException;
 import org.dockbox.hartshorn.inject.provider.PrototypeProvider;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.graph.declaration.AbstractDependencyContext;
-import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.LifecycleAwareDependencyContext;
+import org.dockbox.hartshorn.inject.scope.Scope;
+import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.View;
@@ -44,12 +47,12 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  *
  * @author Guus Lieben
  */
-public class AutoConfiguringDependencyContext<T> extends AbstractDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
+public final class ConfigurableDependencyContext<T> extends AbstractDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
 
     private final PrototypeProvider<T> supplier;
     private final View view;
 
-    private AutoConfiguringDependencyContext(AutoConfiguringDependencyContextBuilder<T> builder) {
+    private ConfigurableDependencyContext(AutoConfiguringDependencyContextBuilder<T> builder) {
         super(builder);
         this.supplier = builder.supplier;
         this.view = builder.view;
@@ -62,13 +65,14 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
     @Override
     public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
         function.priority(this.priority());
-        if (this.scope() != ApplicationContext.APPLICATION_SCOPE) {
-            try {
-                function.installTo(this.scope());
+        try {
+            ScopeKey scope = this.scope().orNull();
+            if (scope != null) {
+                function.installTo(scope);
             }
-            catch (IllegalScopeException e) {
-                throw new ComponentConfigurationException("Could not configure binding for %s".formatted(this.componentKey()), e);
-            }
+        }
+        catch(IllegalScopeException e) {
+            throw new ComponentConfigurationException("Could not configure binding for %s".formatted(this.componentKey()), e);
         }
         function.priority(this.priority());
         function.processAfterInitialization(this.processAfterInitialization());
@@ -134,7 +138,7 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
     private enum InstanceType { SUPPLIER, SINGLETON, LAZY_SINGLETON }
 
     /**
-     * A builder for {@link AutoConfiguringDependencyContext} instances.
+     * A builder for {@link ConfigurableDependencyContext} instances.
      *
      * @param <T> the type of the component that is auto-configured
      *
@@ -169,8 +173,8 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
 
 
         @Override
-        public AutoConfiguringDependencyContext<T> build() {
-            return new AutoConfiguringDependencyContext<>(this);
+        public ConfigurableDependencyContext<T> build() {
+            return new ConfigurableDependencyContext<>(this);
         }
     }
 }

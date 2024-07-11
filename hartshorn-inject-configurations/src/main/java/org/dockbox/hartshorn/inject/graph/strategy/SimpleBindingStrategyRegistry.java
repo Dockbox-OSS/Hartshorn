@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.strategy;
+package org.dockbox.hartshorn.inject.graph.strategy;
 
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.collections.MultiMap;

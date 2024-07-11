@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.strategy;
+package org.dockbox.hartshorn.inject.graph.resolve;
 
 import java.util.Set;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
 
 /**
  * Resolves dependencies for a given binding declaration. This is used to determine the dependencies of a binding

@@ -22,18 +22,20 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.inject.graph.declaration.ComponentKeyDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.graph.declaration.ImplementationDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.inject.provider.ComposedProvider;
 import org.dockbox.hartshorn.inject.provider.Provider;
 import org.dockbox.hartshorn.inject.provider.TypeAwareProvider;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
@@ -53,20 +55,30 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  */
 public class DependencyGraphBuilder {
 
-    private final HierarchicalComponentProvider hierarchicalComponentProvider;
+    private final HierarchicalBinder binder;
     private final DependencyResolver resolver;
+    private final Introspector introspector;
 
-    protected DependencyGraphBuilder(DependencyResolver resolver, HierarchicalComponentProvider hierarchicalComponentProvider) {
+    protected DependencyGraphBuilder(
+            DependencyResolver resolver,
+            HierarchicalBinder binder,
+            Introspector introspector
+    ) {
         this.resolver = resolver;
-        this.hierarchicalComponentProvider = hierarchicalComponentProvider;
+        this.binder = binder;
+        this.introspector = introspector;
     }
 
-    public static DependencyGraphBuilder create(DependencyResolver resolver) {
-        return new DependencyGraphBuilder(resolver, resolver.injectorContext());
+    public static ContextualInitializer<DependencyResolver, DependencyGraphBuilder> create() {
+        return context -> {
+            InjectionCapableApplication application = context.firstContext(InjectionCapableApplication.class)
+                    .orElseThrow(() -> new IllegalStateException("No application context found"));
+            return create(context.input(), application.defaultBinder(), application.environment().introspector());
+        };
     }
 
-    public static DependencyGraphBuilder create(DependencyResolver resolver, HierarchicalComponentProvider hierarchicalComponentProvider) {
-        return new DependencyGraphBuilder(resolver, hierarchicalComponentProvider);
+    public static DependencyGraphBuilder create(DependencyResolver resolver, HierarchicalBinder binder, Introspector introspector) {
+        return new DependencyGraphBuilder(resolver, binder, introspector);
     }
 
     public DependencyGraph buildDependencyGraph(Iterable<DependencyContext<?>> dependencyContexts) throws DependencyResolutionException {
@@ -91,7 +103,7 @@ public class DependencyGraphBuilder {
 
     protected <T> Set<Provider<? extends T>> lookupImplementationProviders(DependencyContext<T> dependencyContext) {
         ComponentKey<T> componentKey = dependencyContext.componentKey();
-        BindingHierarchy<T> hierarchy = this.hierarchicalComponentProvider.hierarchy(componentKey);
+        BindingHierarchy<T> hierarchy = this.binder.hierarchy(componentKey);
         int highestPriority = hierarchy.highestPriority();
         return hierarchy.get(highestPriority)
             .map(provider -> {
@@ -115,7 +127,7 @@ public class DependencyGraphBuilder {
                     Class<?> implementationType = implementationContext.componentKey().type();
                     if (dependencyType.isAssignableFrom(implementationType)) {
                         return new ImplementationDependencyContext<>(implementationContext,
-                            TypeUtils.adjustWildcards(dependencyContext, DependencyContext.class));
+                            TypeUtils.unchecked(dependencyContext, DependencyContext.class));
                     }
                     return null;
                 }).collect(Collectors.toSet());
@@ -127,7 +139,6 @@ public class DependencyGraphBuilder {
     @NonNull
     private <T> Set<DependencyDeclarationContext<?>> getImplementationContexts(DependencyContext<T> dependencyContext) {
         Set<Provider<? extends T>> implementationProviders = this.lookupImplementationProviders(dependencyContext);
-        Introspector introspector = this.resolver.injectorContext().environment().introspector();
         return implementationProviders.stream()
             .filter(provider -> provider instanceof TypeAwareProvider<? extends T>)
             .map(provider -> (TypeAwareProvider<? extends T>) provider)
@@ -136,7 +147,7 @@ public class DependencyGraphBuilder {
                     .mutable()
                     .type(provider.type())
                     .build();
-                return new ComponentKeyDependencyDeclarationContext<>(introspector, implementationKey, TypeUtils.adjustWildcards(provider, Provider.class));
+                return new ComponentKeyDependencyDeclarationContext<>(this.introspector, implementationKey, TypeUtils.unchecked(provider, Provider.class));
             })
             .collect(Collectors.toSet());
     }

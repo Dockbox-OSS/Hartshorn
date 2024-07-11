@@ -41,7 +41,7 @@ public class ComponentKeyDependencyDeclarationContext<T> implements DependencyDe
     public ComponentKeyDependencyDeclarationContext(Introspector introspector, ComponentKey<T> key, Provider<T> provider) {
         this.key = key;
         this.provider = provider;
-        this.type = TypeUtils.adjustWildcards(introspector.introspect(key.parameterizedType()), TypeView.class);
+        this.type = TypeUtils.unchecked(introspector.introspect(key.parameterizedType()), TypeView.class);
     }
 
     public ComponentKey<T> key() {
@@ -62,8 +62,4 @@ public class ComponentKeyDependencyDeclarationContext<T> implements DependencyDe
         return this.key.qualifier();
     }
 
-    @Override
-    public String id() {
-        return this.key.name();
-    }
 }

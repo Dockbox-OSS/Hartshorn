@@ -14,36 +14,29 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.launchpad.graph;
 
-import org.dockbox.hartshorn.inject.component.ComponentContainer;
-import org.dockbox.hartshorn.component.CompositeQualifier;
+import org.dockbox.hartshorn.inject.CompositeQualifier;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
+import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
  * TODO: #1060 Add documentation
  *
  * @param <T> ...
- * @author Guus Lieben
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
-public record ComponentContainerDependencyDeclarationContext<T>(ComponentContainer<T> container)
-        implements DependencyDeclarationContext<T> {
-
-    @Override
-    public TypeView<T> type() {
-        return this.container.type();
-    }
+public record PostProcessorDependencyDeclarationContext<T extends ComponentPostProcessor>(
+        TypeView<T> type
+) implements DependencyDeclarationContext<T> {
 
     @Override
     public CompositeQualifier qualifier() {
+        // Post processors are not qualified in any way, so we can return an empty qualifier here
         return new CompositeQualifier();
-    }
-
-    @Override
-    public String id() {
-        // Components have IDs, but these are not used for dependency resolution, so we can return null here
-        return null;
     }
 }

@@ -36,6 +36,7 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
  *
  * @author Guus Lieben
  */
+@FunctionalInterface
 public interface DependencyResolver {
 
     /**
