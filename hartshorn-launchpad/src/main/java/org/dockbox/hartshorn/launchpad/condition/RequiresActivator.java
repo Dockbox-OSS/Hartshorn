@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.condition.support;
+package org.dockbox.hartshorn.launchpad.condition;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -23,11 +23,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.dockbox.hartshorn.inject.condition.RequiresCondition;
+import org.dockbox.hartshorn.launchpad.activation.ActivatorHolder;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
- * A condition that requires an activator to be present in the {@link org.dockbox.hartshorn.inject.activation.ActivatorHolder}.
+ * A condition that requires an activator to be present in the {@link ActivatorHolder}.
  *
  * @see ActivatorCondition
  *
@@ -43,7 +45,7 @@ public @interface RequiresActivator {
 
     /**
      * The type of the activator that is required to be present. The activator should be an annotation which itself
-     * is annotated with {@link org.dockbox.hartshorn.component.processing.ServiceActivator}.
+     * is annotated with {@link ServiceActivator}.
      *
      * @return the type of the activator that is required to be present
      */

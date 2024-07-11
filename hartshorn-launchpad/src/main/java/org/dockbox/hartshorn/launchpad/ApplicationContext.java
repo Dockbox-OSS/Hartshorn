@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.launchpad;
 
-import org.dockbox.hartshorn.application.ApplicationBuilder;
-import org.dockbox.hartshorn.application.ExceptionHandler;
+import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
+import org.dockbox.hartshorn.launchpad.launch.ApplicationBuilder;
+import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.activation.ActivatorHolder;
-import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
+import org.dockbox.hartshorn.launchpad.activation.ActivatorHolder;
 import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.inject.scope.DirectScopeKey;
 import org.dockbox.hartshorn.inject.scope.Scope;
@@ -52,38 +51,10 @@ import org.dockbox.hartshorn.util.ApplicationException;
 public interface ApplicationContext extends
         InjectionCapableApplication,
         HierarchicalComponentProvider,
-        ApplicationAwareContext,
+        HierarchicalBinder,
         ExceptionHandler,
         ActivatorHolder,
-        Scope,
         AutoCloseable {
-
-    /**
-     * The scope key for the application context. This key is used to register the application context
-     * as a global scope.
-     */
-    ScopeKey APPLICATION_SCOPE = DirectScopeKey.of(ApplicationContext.class);
-
-    /**
-     * Registers a component processor with the application context. The processor will be invoked when
-     * a component is loaded by the application context.
-     *
-     * @param processor The component processor to register.
-     * @see ComponentProcessor
-     * @see ComponentPreProcessor
-     * @see ComponentPostProcessor
-     */
-    void add(ComponentProcessor processor);
-
-    /**
-     * Registers a lazy-loaded component post-processor with the application context. The processor will be instantiated
-     * when it is first used. The processor will be invoked when a component is loaded by the application context.
-     *
-     * @param processor The component processor to register.
-     * @see ComponentProcessor
-     * @see ComponentPostProcessor
-     */
-    void add(Class<? extends ComponentPostProcessor> processor);
 
     /**
      * Gets the active {@link ApplicationEnvironment} for the application.
@@ -91,6 +62,7 @@ public interface ApplicationContext extends
      * @return The active {@link ApplicationEnvironment} for the application.
      * @see ApplicationEnvironment
      */
+    @Override
     ApplicationEnvironment environment();
 
     /**
@@ -101,16 +73,6 @@ public interface ApplicationContext extends
      * @return {@code true} if the context is closed, {@code false} otherwise.
      */
     boolean isClosed();
-
-    @Override
-    default ScopeKey installableScopeType() {
-        return APPLICATION_SCOPE;
-    }
-
-    @Override
-    default Scope scope() {
-        return this;
-    }
 
     @Override
     void close() throws ApplicationException;

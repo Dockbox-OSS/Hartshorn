@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.launchpad.configuration;
 
-import org.dockbox.hartshorn.application.UseBootstrap;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
-import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
-import org.dockbox.hartshorn.inject.condition.support.RequiresActivator;
-import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
-import org.dockbox.hartshorn.launchpad.context.ConcreteApplicationContextCarrier;
+import org.dockbox.hartshorn.launchpad.annotations.UseProxying;
 import org.dockbox.hartshorn.inject.annotations.SupportPriority;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
+import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
+import org.dockbox.hartshorn.launchpad.context.ConcreteApplicationContextCarrier;
 
 /**
  * Provides default bindings for the framework. These bindings are not required for the framework to function, but
@@ -34,8 +34,8 @@ import org.dockbox.hartshorn.inject.annotations.SupportPriority;
  * @author Guus Lieben
  */
 @Configuration
-@RequiresActivator(UseBootstrap.class)
-public class ContextConfiguration {
+@RequiresActivator(UseProxying.class)
+public class ApplicationContextCarrierConfiguration {
 
     /**
      * Provides a simple wrapper around the {@link ApplicationContext} to allow for easy access to the context in

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.launchpad.launch;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;

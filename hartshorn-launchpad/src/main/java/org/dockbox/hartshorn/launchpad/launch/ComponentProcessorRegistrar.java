@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.launchpad.launch;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -23,13 +23,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
-import org.dockbox.hartshorn.inject.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivatorCollector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
 /**
@@ -60,7 +62,7 @@ public class ComponentProcessorRegistrar {
 
     /**
      * Adds additional component processors to the registrar. These processors will be registered to the application
-     * context when {@link #registerComponentProcessors(ApplicationContext, Set)} is called.
+     * context when {@link #registerComponentProcessors(ComponentProcessorRegistry, Introspector, Set)} is called.
      *
      * @param processors the additional processors to add
      */
@@ -73,10 +75,11 @@ public class ComponentProcessorRegistrar {
      * set of annotations, and then collect all processors from the activators. The processors will then be registered
      * to the application context.
      *
-     * @param applicationContext the application context
+     * @param registry the application context
+     * @param introspector the introspector to use for constructor lookup
      * @param activators the set of annotations to collect activators from
      */
-    public void registerComponentProcessors(ApplicationContext applicationContext, Set<Annotation> activators) {
+    public void registerComponentProcessors(ComponentProcessorRegistry registry, Introspector introspector, Set<Annotation> activators) {
         Set<ServiceActivator> serviceActivatorAnnotations = activators.stream()
             .flatMap(activator -> this.activatorCollector.collectDeclarationsOnActivator(activator).stream())
             .collect(Collectors.toSet());
@@ -87,24 +90,25 @@ public class ComponentProcessorRegistrar {
 
         this.buildContext.logger().debug("Registering {} component processors to application context", processorTypes.size());
 
-        this.registerPostProcessors(applicationContext, processorTypes);
-        this.registerPreProcessors(applicationContext, processorTypes);
+        this.registerPostProcessors(registry, processorTypes);
+        this.registerPreProcessors(registry, introspector, processorTypes);
     }
 
     /**
      * Registers pre-processors to the application context. Pre-processors are instantiated before they are used, as they
      * are required to process components before they are registered.
      *
-     * @param applicationContext the application context
+     * @param registry the application context
+     * @param introspector the introspector to use for constructor lookup
      * @param processorTypes the types of pre-processors to register
      *
-     * @see ApplicationContext#add(ComponentProcessor)
+     * @see ComponentProcessorRegistry#register(ComponentProcessor)
      */
-    protected void registerPreProcessors(ApplicationContext applicationContext, Set<Class<? extends ComponentProcessor>> processorTypes) {
+    protected void registerPreProcessors(ComponentProcessorRegistry registry, Introspector introspector, Set<Class<? extends ComponentProcessor>> processorTypes) {
         Set<Class<? extends ComponentPreProcessor>> preProcessorTypes = this.extractProcessors(processorTypes, ComponentPreProcessor.class);
-        Set<ComponentPreProcessor> componentProcessors = this.createPreProcessors(applicationContext, preProcessorTypes);
+        Set<ComponentPreProcessor> componentProcessors = this.createPreProcessors(introspector, preProcessorTypes);
         for (ComponentProcessor componentProcessor : componentProcessors) {
-            applicationContext.add(componentProcessor);
+            registry.register(componentProcessor);
         }
     }
 
@@ -113,22 +117,22 @@ public class ComponentProcessorRegistrar {
      * required to be instantiated before they are used. If additional processors are registered, they will be added to
      * the set of post-processors.
      *
-     * @param applicationContext the application context
+     * @param registry the application context
      * @param processorTypes the types of post-processors to register
      *
-     * @see ApplicationContext#add(Class)
-     * @see ApplicationContext#add(ComponentProcessor)
+     * @see ComponentProcessorRegistry#registryLazy(Class)
+     * @see ComponentProcessorRegistry#register(ComponentProcessor)
      */
-    protected void registerPostProcessors(ApplicationContext applicationContext, Set<Class<? extends ComponentProcessor>> processorTypes) {
+    protected void registerPostProcessors(ComponentProcessorRegistry registry, Set<Class<? extends ComponentProcessor>> processorTypes) {
         Set<Class<? extends ComponentPostProcessor>> postProcessorTypes = this.extractProcessors(processorTypes, ComponentPostProcessor.class);
         for (Class<? extends ComponentPostProcessor> postProcessorType : postProcessorTypes) {
-            applicationContext.add(postProcessorType);
+            registry.registryLazy(postProcessorType);
         }
 
         this.additionalProcessors.stream()
             .filter(ComponentPostProcessor.class::isInstance)
             .map(ComponentPostProcessor.class::cast)
-            .forEach(applicationContext::add);
+            .forEach(registry::register);
     }
 
     protected <T extends ComponentProcessor> Set<Class<? extends T>> extractProcessors(Set<Class<? extends ComponentProcessor>> processorTypes, Class<T> processorClass) {
@@ -143,19 +147,18 @@ public class ComponentProcessorRegistrar {
      * Instantiates required pre-processors so they can be registered for immediate use. If additional processors are
      * registered, they will be added to the set of pre-processors.
      *
-     * @param applicationContext the application context
+     * @param introspector the introspector to use for constructor lookup
      * @param processorTypes the types of pre-processors to instantiate
      * @return a set of pre-processors
      */
     @NonNull
-    protected Set<ComponentPreProcessor> createPreProcessors(ApplicationContext applicationContext, Set<Class<? extends ComponentPreProcessor>> processorTypes) {
+    protected Set<ComponentPreProcessor> createPreProcessors(Introspector introspector, Set<Class<? extends ComponentPreProcessor>> processorTypes) {
         Set<ComponentPreProcessor> componentProcessors = this.additionalProcessors
             .stream()
             .filter(ComponentPreProcessor.class::isInstance)
             .map(ComponentPreProcessor.class::cast)
             .collect(Collectors.toSet());
 
-        Introspector introspector = applicationContext.environment().introspector();
         // Note: pre-processors should never have dependencies, as they are used to process components before they are registered
         // and therefore cannot rely on other components being available
         for (Class<? extends ComponentPreProcessor> processorType : processorTypes) {

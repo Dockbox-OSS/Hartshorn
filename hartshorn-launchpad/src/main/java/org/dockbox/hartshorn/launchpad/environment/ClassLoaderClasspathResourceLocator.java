@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
-import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.launchpad.Hartshorn;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.launchpad.resources.Resources;
 

@@ -14,25 +14,31 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.launchpad.launch;
 
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.inject.processing.ContainerAwareComponentPopulatorPostProcessor;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.Hartshorn;
 import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivatorCollector;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivatorContext;
+import org.dockbox.hartshorn.launchpad.annotations.UseLaunchpad;
+import org.dockbox.hartshorn.launchpad.annotations.UseLifecycleObservers;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
-import org.dockbox.hartshorn.component.UseProxying;
+import org.dockbox.hartshorn.launchpad.annotations.UseProxying;
 import org.dockbox.hartshorn.inject.condition.Condition;
-import org.dockbox.hartshorn.component.processing.ComponentFinalizingPostProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentPopulatorPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.inject.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
@@ -129,7 +135,8 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         SingleElementContext<@Nullable ApplicationContext> context = SimpleSingleElementContext.create(applicationContext);
         this.componentProcessorRegistrar.withAdditionalProcessors(this.configurer.componentPreProcessors.initialize(context));
         this.componentProcessorRegistrar.withAdditionalProcessors(this.configurer.componentPostProcessors.initialize(context));
-        this.componentProcessorRegistrar.registerComponentProcessors(applicationContext, activators);
+        // TODO: Obtain registry
+        this.componentProcessorRegistrar.registerComponentProcessors(null, applicationContext.environment().introspector(), activators);
     }
 
     /**
@@ -269,13 +276,12 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
     public static class Configurer {
 
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, Annotation> activators = LazyStreamableConfigurer.of(
-                TypeUtils.annotation(UseBootstrap.class),
-                TypeUtils.annotation(UseProxying.class)
+                TypeUtils.annotation(UseLaunchpad.class)
         );
 
         private final LazyStreamableConfigurer<ApplicationContext, ComponentPreProcessor> componentPreProcessors = LazyStreamableConfigurer.empty();
         private final LazyStreamableConfigurer<ApplicationContext, ComponentPostProcessor> componentPostProcessors = LazyStreamableConfigurer.of(collection -> {
-            collection.add(ComponentFinalizingPostProcessor.create(Customizer.useDefaults()));
+            collection.add(ContextualInitializer.defer(() -> ContainerAwareComponentPopulatorPostProcessor.create(Customizer.useDefaults())));
         });
 
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, Class<?>> standaloneComponents = LazyStreamableConfigurer.empty();
@@ -286,7 +292,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
 
         /**
          * Configures the service activators that are used to collect component processors. By default, this includes the
-         * {@link UseBootstrap} and {@link UseProxying} annotations.
+         * {@link UseLifecycleObservers} and {@link UseProxying} annotations.
          *
          * @param customizer The customizer that is used to configure the service activators
          * @return The current configurator instance
@@ -310,7 +316,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
 
         /**
          * Configures the component post-processors that are used to process components after they are instantiated by the container. By
-         * default, this contains a {@link ComponentFinalizingPostProcessor} that is used to finalize components.
+         * default, this contains a {@link ComponentPopulatorPostProcessor} that is used to finalize components.
          *
          * @param customizer The customizer that is used to configure the component post-processors
          * @return The current configurator instance

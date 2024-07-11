@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.launchpad.configuration;
 
+import org.dockbox.hartshorn.launchpad.observer.ComponentActivatorObserver;
+import org.dockbox.hartshorn.launchpad.observer.RuntimeHookLifecycleObserver;
+import org.dockbox.hartshorn.launchpad.annotations.UseLifecycleObservers;
+import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.Named;
@@ -34,6 +38,7 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
  * @author Guus Lieben
  */
 @Configuration
+@RequiresActivator(UseLifecycleObservers.class)
 public class LifecycleObserversConfiguration {
 
     @Singleton

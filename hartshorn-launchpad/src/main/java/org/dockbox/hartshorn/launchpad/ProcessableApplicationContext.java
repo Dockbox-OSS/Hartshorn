@@ -17,6 +17,8 @@
 package org.dockbox.hartshorn.launchpad;
 
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.inject.provider.ComponentProvider;
+import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
@@ -36,6 +38,9 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
  * @author Guus Lieben
  */
 public interface ProcessableApplicationContext extends ApplicationContext {
+
+    @Override // Expand type to PostProcessingComponentProvider, ensuring the processor registry is available
+    PostProcessingComponentProvider defaultProvider();
 
     /**
      * Loads the context. This will cause the {@link ApplicationContext} to become active, and may cause
