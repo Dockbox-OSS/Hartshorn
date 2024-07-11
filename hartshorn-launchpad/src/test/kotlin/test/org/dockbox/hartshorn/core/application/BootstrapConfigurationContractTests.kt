@@ -40,6 +40,7 @@ import org.dockbox.hartshorn.inject.binding.Binder
 import org.dockbox.hartshorn.inject.graph.DependencyGraphBuilder
 import org.dockbox.hartshorn.inject.provider.ComponentProvider
 import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter
+import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator
 import org.dockbox.hartshorn.util.ContextualInitializer
 import org.dockbox.hartshorn.util.Customizer
@@ -141,7 +142,7 @@ class BootstrapConfigurationContractTests {
         assertDeferred(instance) { configurer, deferred: ComponentRegistry? -> configurer.componentRegistry(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.componentRegistry(initializer) }
 
-        assertDeferred(instance) { configurer, deferred: ComponentProvider? -> configurer.componentProvider(deferred) }
+        assertDeferred(instance) { configurer, deferred: PostProcessingComponentProvider? -> configurer.componentProvider(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.componentProvider(initializer) }
 
         assertDeferred(instance) { configurer, deferred: DefaultBindingConfigurer? -> configurer.defaultBindings(deferred) }

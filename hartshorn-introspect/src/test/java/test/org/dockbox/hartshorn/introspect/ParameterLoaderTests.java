@@ -74,7 +74,9 @@ public class ParameterLoaderTests {
         Mockito.when(parametersIntrospector.all()).thenReturn(parameters);
         Mockito.when(methodContext.parameters()).thenReturn(parametersIntrospector);
 
-        ParameterLoaderContext loaderContext = new ParameterLoaderContext(methodContext, null);
+        // Object to serve as mock instance, to prevent static method rules from rejecting the context. Alternative would be
+        // to mock MethodView#modifiers#isStatic, but this is more straightforward.
+        ParameterLoaderContext loaderContext = new ParameterLoaderContext(methodContext, new Object());
         List<Object> objects = parameterLoader.loadArguments(loaderContext);
 
         Assertions.assertNotNull(objects);

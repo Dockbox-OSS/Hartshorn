@@ -15,10 +15,10 @@
  */
 package test.org.dockbox.hartshorn.core.kotlin
 
-import org.dockbox.hartshorn.inject.Inject
 import org.dockbox.hartshorn.launchpad.ApplicationContext
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment
 import org.dockbox.hartshorn.inject.annotations.Component
+import org.dockbox.hartshorn.inject.annotations.Inject
 
 @Component
 open class KotlinClassComponent @Inject constructor(private val environment: ApplicationEnvironment) {

@@ -15,7 +15,7 @@
  */
 package test.org.dockbox.hartshorn.core.groovy
 
-import org.dockbox.hartshorn.inject.Inject
+import org.dockbox.hartshorn.inject.annotations.Inject
 import org.dockbox.hartshorn.launchpad.ApplicationContext
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment
 import org.dockbox.hartshorn.inject.annotations.Component
