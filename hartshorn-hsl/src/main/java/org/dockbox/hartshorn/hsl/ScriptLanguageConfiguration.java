@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.Prototype;
-import org.dockbox.hartshorn.component.processing.Singleton;
+import org.dockbox.hartshorn.inject.annotations.SupportPriority;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
+import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.customizer.DefaultScriptStatementsParserCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
-import org.dockbox.hartshorn.inject.SupportPriority;
+import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 
 /**
  * TODO: #1061 Add documentation

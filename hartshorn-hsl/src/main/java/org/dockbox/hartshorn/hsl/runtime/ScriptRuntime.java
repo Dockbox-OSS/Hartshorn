@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
-import org.dockbox.hartshorn.context.ContextCarrier;
-import org.dockbox.hartshorn.hsl.condition.ConditionContext;
+import org.dockbox.hartshorn.hsl.condition.ScriptConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
+import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 
 /**
  * Represents the runtime of a script, which can be used to execute scripts up to certain phases.
@@ -28,13 +28,13 @@ import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
  *
  * @see ScriptContext
  * @see Phase
- * @see ConditionContext
+ * @see ScriptConditionContext
  *
  * @since 0.4.12
  *
  * @author Guus Lieben
  */
-public interface ScriptRuntime extends ConditionContext, ContextCarrier {
+public interface ScriptRuntime extends ScriptConditionContext, ApplicationContextCarrier {
 
     /**
      * Executes the given script in its entirety, and returns the context that was created

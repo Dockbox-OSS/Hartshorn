@@ -17,12 +17,12 @@
     <dependencies>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-inject</artifactId>
+            <artifactId>hartshorn-launchpad</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-inject</artifactId>
+            <artifactId>hartshorn-launchpad</artifactId>
             <version>${revision}</version>
             <type>test-jar</type>
             <scope>test</scope>

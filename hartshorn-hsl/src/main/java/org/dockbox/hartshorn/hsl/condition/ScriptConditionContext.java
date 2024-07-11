@@ -35,7 +35,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public interface ConditionContext extends Context {
+public interface ScriptConditionContext extends Context {
 
     /**
      * Gets whether the application context should be exposed to the script.
@@ -51,7 +51,7 @@ public interface ConditionContext extends Context {
      *
      * @return The current context.
      */
-    ConditionContext includeApplicationContext(boolean includeApplicationContext);
+    ScriptConditionContext includeApplicationContext(boolean includeApplicationContext);
 
     /**
      * Add all given customizers to the context. This will not override any existing customizers.
