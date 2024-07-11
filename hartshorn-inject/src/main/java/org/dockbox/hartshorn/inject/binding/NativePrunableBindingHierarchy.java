@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.inject.binding;
 
 import java.util.Map;
 import java.util.TreeMap;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.Provider;
 

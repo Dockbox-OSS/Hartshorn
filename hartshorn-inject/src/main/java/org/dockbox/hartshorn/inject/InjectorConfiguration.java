@@ -14,24 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.inject.activation.ServiceActivator;
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+public interface InjectorConfiguration {
 
-/**
- * Thrown when an attempt is made to register a type as service activator, but the type does not
- * meet the requirements of a service activator.
- *
- * @see ServiceActivator
- *
- * @since 0.4.12
- *
- * @author Guus Lieben
- */
-public class InvalidActivatorException extends ApplicationRuntimeException {
+    boolean isStrictMode();
 
-    public InvalidActivatorException(String message) {
-        super(message);
-    }
 }

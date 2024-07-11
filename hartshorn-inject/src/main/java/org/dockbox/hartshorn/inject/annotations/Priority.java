@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.annotations.configuration;
+package org.dockbox.hartshorn.inject.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -38,10 +38,10 @@ import org.dockbox.hartshorn.inject.provider.selection.HighestPriorityProviderSe
  * implementation is preferred, or when another priority should be used instead of the default resolved priority for
  * the parameter.
  *
- * <p>For {@link Binds binding methods}, this annotation will cause a {@link ExactPriorityProviderSelectionStrategy}
- * to be used, instead of the default {@link HighestPriorityProviderSelectionStrategy}. A valid declaration
- * of this annotation on a binding method can be seen below. In this scenario, a self-type delegate is selected
- * with a priority of {@code 5}, and the binding method itself is given a priority of {@code 10}.
+ * <p>For binding methods, this annotation may cause a {@link ExactPriorityProviderSelectionStrategy} to be used,
+ * instead of the default {@link HighestPriorityProviderSelectionStrategy}. A valid declaration of this annotation on
+ * a binding method can be seen below. In this scenario, a self-type delegate is selected with a priority of {@code 5},
+ * and the binding method itself is given a priority of {@code 10}.
  *
  * <p><h2>Notes</h2>
  * Note that this annotation indicates an exact priority, and not a priority range. This means that if a

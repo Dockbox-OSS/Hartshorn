@@ -22,6 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.dockbox.hartshorn.inject.annotations.Component;
+import org.dockbox.hartshorn.inject.condition.RequiresCondition;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
@@ -41,8 +42,7 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
  *
  * <p>Configurations should often be conditional, so that they are only loaded when the application
  * meets certain requirements. This can be achieved by annotating the configuration with {@link
- * org.dockbox.hartshorn.component.condition.RequiresCondition} or appropriate meta-annotations. For
- * example:
+ * RequiresCondition} or appropriate meta-annotations. For example:
  *
  * <pre>{@code
  * @RequiresActivator(UseBootstrap.class)

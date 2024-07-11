@@ -61,7 +61,7 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) {
      * @return The new {@link QualifierKey} instance.
      */
     public static <T extends Annotation> QualifierKey<T> of(T annotation) {
-        Class<T> annotationType = TypeUtils.adjustWildcards(annotation.annotationType(), Class.class);
+        Class<T> annotationType = TypeUtils.unchecked(annotation.annotationType(), Class.class);
         Map<String, Object> annotationValues = TypeUtils.getAttributes(annotation);
         return of(annotationType, annotationValues);
     }

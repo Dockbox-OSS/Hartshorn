@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
-
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.inject.binding.Binder;
+package org.dockbox.hartshorn.inject.binding;
 
 /**
- * A functional interface used to configure the default bindings of the {@link ContextualEnvironmentBinderConfiguration}.
- * This interface should be used to configure the default bindings of the application. This interface is typically
- * provided by the bootstrap {@link org.dockbox.hartshorn.util.Customizer} for the {@link ApplicationContext}.
+ * A functional interface used to configure the default bindings of the a {@link Binder}. This interface should
+ * be used to configure the default bindings of the application..
  *
  * @since 0.5.0
  *
