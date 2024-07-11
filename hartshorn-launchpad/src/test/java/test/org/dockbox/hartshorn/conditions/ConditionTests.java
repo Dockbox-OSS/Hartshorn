@@ -21,14 +21,14 @@ import java.util.stream.Stream;
 
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.condition.support.ActivatorCondition;
+import org.dockbox.hartshorn.launchpad.condition.ActivatorCondition;
 import org.dockbox.hartshorn.inject.condition.AnnotationConditionDeclaration;
 import org.dockbox.hartshorn.inject.condition.support.ClassCondition;
 import org.dockbox.hartshorn.inject.condition.Condition;
 import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
-import org.dockbox.hartshorn.inject.condition.support.RequiresActivator;
+import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
 import org.dockbox.hartshorn.inject.condition.RequiresCondition;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
@@ -46,7 +46,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 
 @SuppressWarnings("unused")
 @HartshornTest(includeBasePackages = false)

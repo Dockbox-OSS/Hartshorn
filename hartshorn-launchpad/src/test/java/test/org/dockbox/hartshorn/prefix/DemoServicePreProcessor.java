@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.prefix;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
@@ -34,7 +34,7 @@ public class DemoServicePreProcessor extends ComponentPreProcessor {
     }
 
     @Override
-    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
+    public <T> void process(InjectionCapableApplication application, ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().is(DemoService.class)) {
             LOG.debug("Processing %s".formatted(processingContext));
             this.processed++;

@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 import org.dockbox.hartshorn.inject.annotations.Service;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 
 @Service
 public class ContextCarrierService implements ApplicationContextCarrier {

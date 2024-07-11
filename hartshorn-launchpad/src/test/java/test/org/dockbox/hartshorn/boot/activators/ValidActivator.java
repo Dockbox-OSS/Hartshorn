@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.boot.activators;
 
-import org.dockbox.hartshorn.application.HartshornApplication;
+import org.dockbox.hartshorn.launchpad.HartshornApplication;
 
 public class ValidActivator {
 

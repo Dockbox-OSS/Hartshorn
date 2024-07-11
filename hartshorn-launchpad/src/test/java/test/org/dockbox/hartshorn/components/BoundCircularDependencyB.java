@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 
 public class BoundCircularDependencyB implements InterfaceCircularDependencyB {
 

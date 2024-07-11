@@ -18,7 +18,7 @@ package test.org.dockbox.hartshorn.components;
 
 import org.dockbox.hartshorn.inject.annotations.Component;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 
 @Component
 public class SetterInjectedComponentWithNonRequiredAbsentBinding {

@@ -16,10 +16,10 @@
 
 package test.org.dockbox.hartshorn.scope;
 
-import org.dockbox.hartshorn.component.Scope;
-import org.dockbox.hartshorn.component.ScopeAdapter;
-import org.dockbox.hartshorn.component.ScopeAdapterKey;
 import org.dockbox.hartshorn.inject.scope.DirectScopeKey;
+import org.dockbox.hartshorn.inject.scope.Scope;
+import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
+import org.dockbox.hartshorn.inject.scope.ScopeAdapterKey;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.junit.jupiter.api.Assertions;

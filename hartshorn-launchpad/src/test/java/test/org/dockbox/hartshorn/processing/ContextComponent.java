@@ -17,8 +17,8 @@
 package test.org.dockbox.hartshorn.processing;
 
 import org.dockbox.hartshorn.inject.annotations.Component;
-import org.dockbox.hartshorn.inject.DefaultProvisionContext;
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 
 @Component
-public class ContextComponent extends DefaultProvisionContext {
+public class ContextComponent extends DefaultFallbackCompatibleContext {
 }

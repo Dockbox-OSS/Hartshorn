@@ -16,17 +16,17 @@
 
 package test.org.dockbox.hartshorn.scope;
 
+import org.dockbox.hartshorn.inject.scope.Scope;
+import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.component.Scope;
-import org.dockbox.hartshorn.component.ScopeAdapter;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import test.org.dockbox.hartshorn.scope.ScopedBindingConfiguration.SampleScope;
 
 @HartshornTest(includeBasePackages = false)
@@ -46,9 +46,7 @@ public class ScopeBindingTests {
         String value = this.applicationContext.get(key);
         Assertions.assertEquals("test", value);
 
-        ComponentKey<String> componentKeyNoScope = ComponentKey.builder(String.class)
-                .scope(this.applicationContext)
-                .build();
+        ComponentKey<String> componentKeyNoScope = ComponentKey.of(String.class);
 
         String valueNoScope = this.applicationContext.get(componentKeyNoScope);
         Assertions.assertEquals("", valueNoScope); // Default value for primitives

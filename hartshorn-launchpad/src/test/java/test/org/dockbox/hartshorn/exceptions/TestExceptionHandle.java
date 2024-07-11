@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.exceptions;
 
-import org.dockbox.hartshorn.application.LoggingExceptionHandler;
+import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
 
 public class TestExceptionHandle extends LoggingExceptionHandler {
 

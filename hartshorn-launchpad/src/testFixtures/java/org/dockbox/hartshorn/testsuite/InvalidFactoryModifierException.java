@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.application.ApplicationBuilder;
+import org.dockbox.hartshorn.launchpad.launch.ApplicationBuilder;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 public class InvalidFactoryModifierException extends ApplicationRuntimeException {

@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.launchpad.Hartshorn;
 
 public class SampleImplementation implements SampleInterface {
 

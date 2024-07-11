@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn.components;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Assertions;
 public class NonProcessableTypeProcessor extends ComponentPostProcessor {
 
     @Override
-    public <T> void postConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void postConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         if (instance instanceof NonProcessableType) {
             try {
                 processingContext.type().fields().named("nonNullIfProcessed").get().set(instance, "processed");

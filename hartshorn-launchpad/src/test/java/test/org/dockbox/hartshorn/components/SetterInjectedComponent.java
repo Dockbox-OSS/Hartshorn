@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.inject.annotations.Named;
 import org.dockbox.hartshorn.inject.annotations.Required;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 
 @Component
 public class SetterInjectedComponent {

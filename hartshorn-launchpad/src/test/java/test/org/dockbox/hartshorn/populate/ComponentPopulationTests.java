@@ -19,12 +19,12 @@ package test.org.dockbox.hartshorn.populate;
 import java.util.List;
 import java.util.function.Function;
 
+import org.dockbox.hartshorn.inject.populate.ComponentPopulationStrategy;
+import org.dockbox.hartshorn.inject.populate.PopulateComponentContext;
+import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
+import org.dockbox.hartshorn.inject.targets.ComponentMethodInjectionPoint;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.targets.ComponentFieldInjectionPoint;
-import org.dockbox.hartshorn.component.populate.ComponentInjectionPoint;
-import org.dockbox.hartshorn.component.populate.ComponentMethodInjectionPoint;
-import org.dockbox.hartshorn.component.populate.ComponentPopulationStrategy;
-import org.dockbox.hartshorn.component.populate.PopulateComponentContext;
 import org.dockbox.hartshorn.inject.populate.InjectPopulationStrategy;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 
 @HartshornTest(includeBasePackages = false)
 public class ComponentPopulationTests {
