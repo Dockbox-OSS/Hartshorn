@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.introspect.view.View;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A dependency context represents the definition of a single dependency, along with its
@@ -95,7 +96,7 @@ public interface DependencyContext<T> {
      *
      * @see Scope
      */
-    ScopeKey scope();
+    Option<ScopeKey> scope();
 
     /**
      * Returns the type of the binding. The type determines how the dependency is bound to

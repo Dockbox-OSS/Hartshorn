@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.strategy;
+package org.dockbox.hartshorn.inject.graph.resolve;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
+import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
+import org.dockbox.hartshorn.inject.graph.strategy.MethodAwareBindingStrategyContext;
 
 /**
  * A {@link BindingDeclarationDependencyResolver} that resolves dependencies based on explicit non-direct

@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.graph;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.dockbox.hartshorn.inject.graph.ConfigurationDependencyVisitor;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
+
+import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
-import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
-import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.graph.BreadthFirstGraphVisitor;
@@ -33,20 +31,32 @@ import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 
 /**
- * Simple implementation of {@link ConfigurationDependencyVisitor} that uses the {@link DependencyContext#configure(BindingFunction)
- * dependency context's default configuration method} to register contexts with the {@link ApplicationContext}. Additionally, if the
- * component that is registered is a {@link ComponentProcessor}, it is also registered with the {@link ApplicationContext} for later
- * use.
- *
- * @param applicationContext the application context to register the contexts with
+ * Simple implementation of {@link ConfigurationDependencyVisitor} that provides a default implementation for
+ * walking the graph of dependencies and registering them. Note that the actual registration of dependencies
+ * is delegated to the {@link #registerProvider(DependencyContext)} and {@link #doAfterRegister(DependencyContext)}
+ * methods, which should be implemented by the extending class.
  *
  * @since 0.6.0
  *
  * @author Guus Lieben
  */
-public record ApplicationContextConfigurationDependencyVisitor(
-        ApplicationContext applicationContext
-) implements BreadthFirstGraphVisitor<DependencyContext<?>>, ConfigurationDependencyVisitor {
+public abstract class AbstractConfigurationDependencyVisitor implements BreadthFirstGraphVisitor<DependencyContext<?>>, ConfigurationDependencyVisitor {
+
+    private final Binder binder;
+    private final ComponentProvider componentProvider;
+
+    public AbstractConfigurationDependencyVisitor(Binder binder, ComponentProvider componentProvider) {
+        this.binder = binder;
+        this.componentProvider = componentProvider;
+    }
+
+    public Binder binder() {
+        return binder;
+    }
+
+    public ComponentProvider componentProvider() {
+        return componentProvider;
+    }
 
     @Override
     public Set<GraphNode<DependencyContext<?>>> iterate(Graph<DependencyContext<?>> graph) throws GraphException {
@@ -89,20 +99,6 @@ public record ApplicationContextConfigurationDependencyVisitor(
         }
         catch(ComponentConfigurationException e) {
             throw new GraphException(e);
-        }
-    }
-
-    @Override
-    public <T> void registerProvider(DependencyContext<T> dependencyContext) throws ComponentConfigurationException {
-        BindingFunction<T> function = this.applicationContext.bind(dependencyContext.componentKey());
-        dependencyContext.configure(function);
-    }
-
-    @Override
-    public void doAfterRegister(DependencyContext<?> dependencyContext) {
-        if(ComponentProcessor.class.isAssignableFrom(dependencyContext.componentKey().type())) {
-            ComponentProcessor processor = (ComponentProcessor) this.applicationContext.get(dependencyContext.componentKey());
-            this.applicationContext.add(processor);
         }
     }
 }

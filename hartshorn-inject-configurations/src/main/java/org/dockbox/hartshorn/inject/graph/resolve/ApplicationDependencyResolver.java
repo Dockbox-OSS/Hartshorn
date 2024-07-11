@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.graph.resolve;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.graph.CompositeDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.DependencyResolver;
-import org.dockbox.hartshorn.inject2.environment.InjectorEnvironment;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
@@ -38,7 +39,7 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
         super(resolvers);
     }
 
-    public static ContextualInitializer<InjectorEnvironment, DependencyResolver> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<InjectionCapableApplication, DependencyResolver> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer()
                     .withManagedComponents()
@@ -61,16 +62,18 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
      *
      * @author Guus Lieben
      */
-    public static class Configurer extends StreamableConfigurer<InjectorEnvironment, DependencyResolver> {
+    public static class Configurer extends StreamableConfigurer<InjectionCapableApplication, DependencyResolver> {
 
+        // TODO: Move to Launchpad
         public Configurer withManagedComponents() {
-            ContextualInitializer<InjectorEnvironment, DependencyResolver> methodDependencyResolver = ContextualInitializer.of(ComponentDependencyResolver::new);
+            ContextualInitializer<InjectionCapableApplication, DependencyResolver> methodDependencyResolver = ContextualInitializer.of(application -> new ComponentDependencyResolver(application.environment()));
             this.add(methodDependencyResolver);
             return this;
         }
 
+        // TODO: Move to inject-configurations
         public Configurer withBindsMethods(Customizer<BindsMethodDependencyResolver.Configurer> customizer) {
-            ContextualInitializer<InjectorEnvironment, DependencyResolver> methodDependencyResolver = BindsMethodDependencyResolver.create(customizer);
+            ContextualInitializer<InjectionCapableApplication, DependencyResolver> methodDependencyResolver = BindsMethodDependencyResolver.create(customizer);
             this.add(methodDependencyResolver);
             return this;
         }

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.strategy;
+package org.dockbox.hartshorn.inject.graph.resolve;
 
 import java.util.Set;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
+import org.dockbox.hartshorn.inject.graph.strategy.MethodAwareBindingStrategyContext;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 

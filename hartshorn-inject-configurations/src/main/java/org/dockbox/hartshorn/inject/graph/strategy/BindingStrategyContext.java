@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.graph.strategy;
 
-import org.dockbox.hartshorn.component.CompositeQualifier;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
  * TODO: #1060 Add documentation
@@ -30,19 +28,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public record PostProcessorDependencyDeclarationContext<T extends ComponentPostProcessor>(
-        TypeView<T> type
-) implements DependencyDeclarationContext<T> {
+public interface BindingStrategyContext<T> extends Context {
 
-    @Override
-    public CompositeQualifier qualifier() {
-        // Post processors are not qualified in any way, so we can return an empty qualifier here
-        return new CompositeQualifier();
-    }
-
-    @Override
-    public String id() {
-        // Post processors are not qualified in any way, so we can return null here
-        return null;
-    }
+    DependencyDeclarationContext<T> declarationContext();
 }

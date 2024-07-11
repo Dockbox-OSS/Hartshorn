@@ -14,28 +14,29 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.strategy;
+package org.dockbox.hartshorn.inject.graph.strategy;
 
 import java.util.List;
 import java.util.Set;
 
-import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.graph.ConfigurableDependencyContext;
+import org.dockbox.hartshorn.inject.graph.resolve.BindingAfterDeclarationDependencyResolver;
+import org.dockbox.hartshorn.inject.graph.resolve.BindingDeclarationDependencyResolver;
+import org.dockbox.hartshorn.inject.graph.resolve.CompositeBindingDependencyResolver;
+import org.dockbox.hartshorn.inject.graph.resolve.IntrospectionBindingDependencyResolver;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.scope.DirectScopeKey;
 import org.dockbox.hartshorn.inject.annotations.configuration.Scoped;
 import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
 import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
-import org.dockbox.hartshorn.component.processing.CompositeMember;
-import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
+import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.provider.PrototypeProvider;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.DependencyMap;
-import org.dockbox.hartshorn.inject.annotations.configuration.Priority;
+import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.introspect.InjectorApplicationViewAdapter;
 import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ContextualInitializer;
@@ -56,11 +57,11 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class MethodInstanceBindingStrategy implements BindingStrategy {
 
-    private final ApplicationEnvironment environment;
+    private final InjectionCapableApplication application;
     private final BindingDeclarationDependencyResolver declarationDependencyResolver;
 
-    public MethodInstanceBindingStrategy(ApplicationEnvironment environment, BindingDeclarationDependencyResolver declarationDependencyResolver) {
-        this.environment = environment;
+    public MethodInstanceBindingStrategy(InjectionCapableApplication application, BindingDeclarationDependencyResolver declarationDependencyResolver) {
+        this.application = application;
         this.declarationDependencyResolver = declarationDependencyResolver;
     }
 
@@ -77,11 +78,11 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
                 .get(Binds.class)
                 .orElseThrow(() -> new IllegalStateException("Method is not annotated with @Binds (or a compatible meta-annotation)"));
 
-        return this.resolveInstanceBinding(strategyContext, strategyContext.method(), bindingDecorator, this.environment.applicationContext());
+        return this.resolveInstanceBinding(strategyContext, strategyContext.method(), bindingDecorator, this.application);
     }
 
     private <T> DependencyContext<T> resolveInstanceBinding(BindingStrategyContext<?> context, AnnotatedGenericTypeView<T> declaration, Binds bindingDecorator, InjectionCapableApplication application) {
-        ComponentKey<T> componentKey = TypeUtils.adjustWildcards(this.environment.componentKeyResolver().resolve(declaration), ComponentKey.class);
+        ComponentKey<T> componentKey = TypeUtils.unchecked(this.application.environment().componentKeyResolver().resolve(declaration), ComponentKey.class);
         Set<ComponentKey<?>> dependencies = this.declarationDependencyResolver.dependencies(context);
         PrototypeProvider<T> supplier = requestContext -> {
             try {
@@ -94,7 +95,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
             }
         };
 
-        return AutoConfiguringDependencyContext.builder(componentKey)
+        return ConfigurableDependencyContext.builder(componentKey)
             .dependencies(DependencyMap.create().immediate(dependencies))
             .scope(this.resolveComponentScope(declaration))
             .priority(this.resolvePriority(declaration))
@@ -117,7 +118,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         Option<Scoped> installToCandidate = view.annotations().get(Scoped.class);
         return installToCandidate.present()
                 ? DirectScopeKey.of(installToCandidate.get().value())
-                : ApplicationContext.APPLICATION_SCOPE;
+                : this.application.defaultProvider().scope().installableScopeType();
     }
 
     private ComponentMemberType resolveMemberType(AnnotatedElementView bindsMethod) {
@@ -139,7 +140,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
             List<BindingDeclarationDependencyResolver> dependencyResolvers = configurer.declarationDependencyResolvers.initialize(context);
             BindingDeclarationDependencyResolver resolver = new CompositeBindingDependencyResolver(Set.copyOf(dependencyResolvers));
 
-            return new MethodInstanceBindingStrategy(context.input().environment(), resolver);
+            return new MethodInstanceBindingStrategy(context.input(), resolver);
         };
     }
 
@@ -152,12 +153,15 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<ApplicationContext, BindingDeclarationDependencyResolver> declarationDependencyResolvers = LazyStreamableConfigurer.of(resolvers -> {
-            resolvers.add(ContextualInitializer.of(context -> new IntrospectionBindingDependencyResolver(context.environment())));
+        private final LazyStreamableConfigurer<InjectionCapableApplication, BindingDeclarationDependencyResolver> declarationDependencyResolvers = LazyStreamableConfigurer.of(resolvers -> {
+            resolvers.add(ContextualInitializer.of(context -> new IntrospectionBindingDependencyResolver(
+                    context.environment().injectionPointsResolver(),
+                    context.environment().componentKeyResolver()
+            )));
             resolvers.add(new BindingAfterDeclarationDependencyResolver());
         });
 
-        public Configurer declarationDependencyResolvers(Customizer<StreamableConfigurer<ApplicationContext, BindingDeclarationDependencyResolver>> customizer) {
+        public Configurer declarationDependencyResolvers(Customizer<StreamableConfigurer<InjectionCapableApplication, BindingDeclarationDependencyResolver>> customizer) {
             this.declarationDependencyResolvers.customizer(customizer);
             return this;
         }

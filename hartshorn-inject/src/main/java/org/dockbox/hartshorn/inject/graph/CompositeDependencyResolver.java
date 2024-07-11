@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.graph;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,8 +22,6 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.graph.DependencyResolutionException;
-import org.dockbox.hartshorn.inject.graph.DependencyResolver;
 
 /**
  * A composite dependency resolver is a {@link DependencyResolver} that delegates to a collection of other dependency

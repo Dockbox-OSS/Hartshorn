@@ -14,37 +14,31 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.strategy;
+package org.dockbox.hartshorn.inject.graph;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.inject.CompositeQualifier;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
  * TODO: #1060 Add documentation
  *
  * @param <T> ...
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
-public class MethodAwareBindingStrategyContext<T> extends DefaultContext implements BindingStrategyContext<T> {
+public record ComponentContainerDependencyDeclarationContext<T>(ComponentContainer<T> container)
+        implements DependencyDeclarationContext<T> {
 
-    private final DependencyDeclarationContext<T> componentContainer;
-    private final MethodView<T, ?> method;
-
-    public MethodAwareBindingStrategyContext(DependencyDeclarationContext<T> componentContainer, MethodView<T, ?> method) {
-        this.componentContainer = componentContainer;
-        this.method = method;
+    @Override
+    public TypeView<T> type() {
+        return this.container.type();
     }
 
     @Override
-    public DependencyDeclarationContext<T> declarationContext() {
-        return this.componentContainer;
+    public CompositeQualifier qualifier() {
+        return new CompositeQualifier();
     }
 
-    public MethodView<T, ?> method() {
-        return this.method;
-    }
 }

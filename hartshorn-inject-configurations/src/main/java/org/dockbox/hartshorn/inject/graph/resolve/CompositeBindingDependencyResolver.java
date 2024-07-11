@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.strategy;
+package org.dockbox.hartshorn.inject.graph.resolve;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
 
 /**
  * A composite dependency resolver that combines multiple dependency resolvers into a single resolver.
