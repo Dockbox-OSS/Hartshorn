@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.reporting.component;
 
 import java.util.Collection;
 
-import org.dockbox.hartshorn.component.processing.ComponentProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.collections.MultiMap;

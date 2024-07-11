@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 
 /**
  * A {@link ServiceActivator} annotation that enables the default configurations for reporting
