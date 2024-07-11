@@ -130,7 +130,8 @@ public class ProviderSelectionStrategyTests {
         else {
             Assertions.assertNotNull(provider);
 
-            Option<? extends ObjectContainer<?>> value = Assertions.assertDoesNotThrow(() -> provider.provide(ComponentRequestContext.createForComponent()));
+            // Don't need to provide application, all bindings are contextless singletons
+            Option<? extends ObjectContainer<?>> value = Assertions.assertDoesNotThrow(() -> provider.provide(null, ComponentRequestContext.createForComponent()));
             Assertions.assertTrue(value.present());
 
             ObjectContainer<?> container = value.get();
