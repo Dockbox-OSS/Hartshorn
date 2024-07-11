@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
@@ -34,7 +35,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public interface PrototypeProvider<T> extends NonTypeAwareProvider<T> {
 
     @Override
-    default Option<ObjectContainer<T>> provide(ComponentRequestContext requestContext) throws ApplicationException {
+    default Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
         return Option.of(ComponentObjectContainer.ofPrototype(this.get(requestContext)));
     }
 

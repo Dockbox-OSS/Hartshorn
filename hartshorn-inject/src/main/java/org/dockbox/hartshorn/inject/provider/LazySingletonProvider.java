@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.Tristate;
@@ -44,7 +45,7 @@ public class LazySingletonProvider<T> implements NonTypeAwareProvider<T> {
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(ComponentRequestContext requestContext) throws ApplicationException {
+    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
         T instance = this.supplier.get();
         if (instance == null) {
             throw new IllegalModificationException("Cannot bind null instance");

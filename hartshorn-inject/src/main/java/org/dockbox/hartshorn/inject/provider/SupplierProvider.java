@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject.provider;
 import java.util.function.Supplier;
 
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
@@ -40,7 +41,7 @@ import org.dockbox.hartshorn.util.option.Option;
 public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements NonTypeAwareProvider<C> {
 
     @Override
-    public Option<ObjectContainer<C>> provide(ComponentRequestContext requestContext) throws ApplicationException {
+    public Option<ObjectContainer<C>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
         C instance = this.supplier.get();
         return Option.of(instance).map(ComponentObjectContainer::ofPrototype);
     }

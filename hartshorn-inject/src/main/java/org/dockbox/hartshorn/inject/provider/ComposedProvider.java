@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -72,8 +73,8 @@ public final class ComposedProvider<T> implements Provider<T> {
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(ComponentRequestContext requestContext) throws ApplicationException {
-        return this.provider.provide(requestContext)
+    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
+        return this.provider.provide(application, requestContext)
                 .map(this::transformContainer);
     }
 

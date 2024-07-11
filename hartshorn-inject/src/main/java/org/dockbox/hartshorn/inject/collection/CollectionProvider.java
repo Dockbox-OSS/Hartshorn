@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.provider.collections.CollectionObjectContainer;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
@@ -113,10 +114,10 @@ public class CollectionProvider<T> implements NonTypeAwareProvider<ComponentColl
     }
 
     @Override
-    public Option<ObjectContainer<ComponentCollection<T>>> provide(ComponentRequestContext requestContext) throws ApplicationException {
+    public Option<ObjectContainer<ComponentCollection<T>>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
         Set<ObjectContainer<T>> containers = new HashSet<>();
         for(Provider<T> provider : this.providers) {
-            Option<ObjectContainer<T>> container = provider.provide(requestContext);
+            Option<ObjectContainer<T>> container = provider.provide(application, requestContext);
             if(container.present()) {
                 containers.add(container.get());
             }
