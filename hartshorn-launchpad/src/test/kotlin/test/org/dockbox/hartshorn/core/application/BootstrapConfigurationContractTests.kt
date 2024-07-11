@@ -15,11 +15,11 @@
  */
 package test.org.dockbox.hartshorn.core.application
 
-import org.dockbox.hartshorn.application.ApplicationContextFactory
-import org.dockbox.hartshorn.application.DefaultBindingConfigurer
-import org.dockbox.hartshorn.application.ExceptionHandler
-import org.dockbox.hartshorn.application.StandardApplicationBuilder
-import org.dockbox.hartshorn.application.StandardApplicationContextFactory
+import org.dockbox.hartshorn.launchpad.launch.ApplicationContextFactory
+import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer
+import org.dockbox.hartshorn.inject.ExceptionHandler
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory
 import org.dockbox.hartshorn.launchpad.ApplicationContext
 import org.dockbox.hartshorn.launchpad.DelegatingApplicationContext
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext
@@ -29,11 +29,11 @@ import org.dockbox.hartshorn.launchpad.environment.ClasspathResourceLocator
 import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment
 import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider
 import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor
-import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructorImpl
+import org.dockbox.hartshorn.inject.processing.construction.AnnotatedMethodComponentPostConstructor
 import org.dockbox.hartshorn.inject.component.ComponentRegistry
-import org.dockbox.hartshorn.component.ScopeAwareComponentProvider
+import org.dockbox.hartshorn.inject.provider.DelegatingScopeAwareComponentProvider
 import org.dockbox.hartshorn.inject.condition.ConditionMatcher
-import org.dockbox.hartshorn.inject.BindsMethodDependencyResolver
+import org.dockbox.hartshorn.inject.graph.resolve.BindsMethodDependencyResolver
 import org.dockbox.hartshorn.inject.graph.ConfigurationDependencyVisitor
 import org.dockbox.hartshorn.inject.graph.DependencyResolver
 import org.dockbox.hartshorn.inject.binding.Binder
@@ -153,7 +153,7 @@ class BootstrapConfigurationContractTests {
 
     @Test
     fun testScopeAwareComponentProviderContract() {
-        val instance = ScopeAwareComponentProvider.Configurer()
+        val instance = DelegatingScopeAwareComponentProvider.Configurer()
 
         assertDeferred(instance) { configurer, deferred: ComponentPostConstructor? -> configurer.componentPostConstructor(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.componentPostConstructor(initializer) }
@@ -161,7 +161,7 @@ class BootstrapConfigurationContractTests {
 
     @Test
     fun testComponentPostConstructorImplContract() {
-        val instance = ComponentPostConstructorImpl.Configurer()
+        val instance = AnnotatedMethodComponentPostConstructor.Configurer()
 
         assertDeferred(instance) { configurer, deferred: ViewContextAdapter? -> configurer.viewContextAdapter(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.viewContextAdapter(initializer) }

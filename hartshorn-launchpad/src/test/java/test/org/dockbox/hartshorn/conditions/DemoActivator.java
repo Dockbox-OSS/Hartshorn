@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.conditions;
 
-import org.dockbox.hartshorn.inject.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 
 @ServiceActivator
 public @interface DemoActivator {

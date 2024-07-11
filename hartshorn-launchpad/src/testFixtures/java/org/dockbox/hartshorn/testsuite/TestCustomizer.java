@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.application.StandardApplicationBuilder;
-import org.dockbox.hartshorn.application.StandardApplicationContextFactory;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
 import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
 import org.dockbox.hartshorn.util.Customizer;

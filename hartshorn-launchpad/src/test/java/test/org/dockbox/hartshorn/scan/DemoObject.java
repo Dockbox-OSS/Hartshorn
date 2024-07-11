@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.scan;
 
-public class DemoImpl implements Demo{
+public class DemoObject implements Demo {
     @Override
     public String demo() {
         return "Demo";

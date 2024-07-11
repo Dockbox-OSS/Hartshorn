@@ -16,9 +16,9 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.inject.DefaultProvisionContext;
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 
-public class SampleContext extends DefaultProvisionContext {
+public class SampleContext extends DefaultFallbackCompatibleContext {
 
     private final String name;
 

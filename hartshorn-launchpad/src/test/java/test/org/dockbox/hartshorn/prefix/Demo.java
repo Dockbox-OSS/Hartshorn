@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.prefix;
 
-import org.dockbox.hartshorn.inject.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

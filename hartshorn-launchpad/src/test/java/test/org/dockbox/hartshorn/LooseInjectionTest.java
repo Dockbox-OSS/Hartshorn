@@ -16,8 +16,8 @@
 
 package test.org.dockbox.hartshorn;
 
-import org.dockbox.hartshorn.application.HartshornApplication;
-import org.dockbox.hartshorn.application.StandardApplicationContextFactory;
+import org.dockbox.hartshorn.launchpad.HartshornApplication;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
