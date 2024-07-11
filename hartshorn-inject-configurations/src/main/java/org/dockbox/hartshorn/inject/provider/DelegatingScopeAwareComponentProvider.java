@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
@@ -88,7 +89,8 @@ public class DelegatingScopeAwareComponentProvider
     private HierarchyAwareComponentProvider createComponentProvider(Scope scope) {
         HierarchyAwareComponentProvider provider = new HierarchyAwareComponentProvider(this, this.postConstructor, application, scope);
         if (scope != this.application) {
-            ScopeModuleContext scopeModuleContext = this.application.firstContext(ScopeModuleContext.class).get();
+            ContextKey<ScopeModuleContext> scopeModuleContextKey = ScopeModuleContext.createKey(() -> this.scope().installableScopeType());
+            ScopeModuleContext scopeModuleContext = this.application.firstContext(scopeModuleContextKey).get();
             Collection<BindingHierarchy<?>> hierarchies = scopeModuleContext.hierarchies(scope.installableScopeType());
             for (BindingHierarchy<?> hierarchy : hierarchies) {
                 provider.bind(hierarchy);
@@ -111,7 +113,7 @@ public class DelegatingScopeAwareComponentProvider
     }
 
     public ComponentPostConstructor postConstructor() {
-        return postConstructor;
+        return this.postConstructor;
     }
 
     @Override

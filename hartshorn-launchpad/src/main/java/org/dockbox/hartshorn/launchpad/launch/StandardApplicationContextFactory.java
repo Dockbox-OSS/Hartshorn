@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
 import org.dockbox.hartshorn.inject.processing.ContainerAwareComponentPopulatorPostProcessor;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.Hartshorn;
@@ -135,8 +136,14 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         SingleElementContext<@Nullable ApplicationContext> context = SimpleSingleElementContext.create(applicationContext);
         this.componentProcessorRegistrar.withAdditionalProcessors(this.configurer.componentPreProcessors.initialize(context));
         this.componentProcessorRegistrar.withAdditionalProcessors(this.configurer.componentPostProcessors.initialize(context));
-        // TODO: Obtain registry
-        this.componentProcessorRegistrar.registerComponentProcessors(null, applicationContext.environment().introspector(), activators);
+
+        if (applicationContext instanceof ProcessableApplicationContext processableApplicationContext) {
+            ComponentProcessorRegistry registry = processableApplicationContext.defaultProvider().processorRegistry();
+            this.componentProcessorRegistrar.registerComponentProcessors(registry, applicationContext.environment().introspector(), activators);
+        }
+        else {
+            this.buildContext.logger().warn("Application context is not processable, component processors will not be registered");
+        }
     }
 
     /**

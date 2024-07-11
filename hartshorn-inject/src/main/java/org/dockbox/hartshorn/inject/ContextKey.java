@@ -240,7 +240,7 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
          * @see ContextKey#create()
          */
         public Builder<T> fallback(Supplier<T> fallback) {
-            this.fallback = () -> fallback.get();
+            this.fallback = fallback;
             return this;
         }
 

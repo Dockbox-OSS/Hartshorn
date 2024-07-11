@@ -18,8 +18,10 @@ package org.dockbox.hartshorn.inject.scope;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Supplier;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -41,6 +43,12 @@ public class ScopeModuleContext extends DefaultContext {
 
     public ScopeModuleContext(ScopeKey applicationScope) {
         this.applicationScope = applicationScope;
+    }
+
+    public static ContextKey<ScopeModuleContext> createKey(Supplier<ScopeKey> scope) {
+        return ContextKey.builder(ScopeModuleContext.class)
+            .fallback(() -> new ScopeModuleContext(scope.get()))
+            .build();
     }
 
     public boolean isApplicationScope(ScopeKey scopeKey) {
