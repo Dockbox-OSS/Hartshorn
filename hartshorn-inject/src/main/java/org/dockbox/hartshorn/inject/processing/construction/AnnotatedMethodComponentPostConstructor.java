@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.inject.annotations.OnInitialized;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.inject.introspect.InjectorApplicationViewAdapter;
 import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
@@ -55,12 +56,14 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
     }
 
     @Override
-    public <T> T doPostConstruct(T instance) throws ApplicationException {
+    public <T> T doPostConstruct(T instance, Scope scope) throws ApplicationException {
         TypeView<T> typeView = this.introspector.introspect(instance);
         List<MethodView<T, ?>> postConstructMethods = typeView.methods().annotatedWithAny(this.annotations);
 
         for (MethodView<T, ?> postConstructMethod : postConstructMethods) {
-            Object[] arguments = this.contextAdapter.loadParameters(postConstructMethod);
+            Object[] arguments = this.contextAdapter
+                .scope(scope)
+                .loadParameters(postConstructMethod);
             try {
                 postConstructMethod.invoke(instance, arguments);
             }
@@ -101,7 +104,7 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
                 OnInitialized.class);
 
         private ContextualInitializer<InjectionCapableApplication, ViewContextAdapter> viewContextAdapter = ContextualInitializer.of(
-                InjectorApplicationViewAdapter::new);
+            InjectorApplicationViewAdapter::new);
 
         public Configurer viewContextAdapter(ViewContextAdapter lazyViewContextAdapter) {
             return this.viewContextAdapter(ContextualInitializer.of(lazyViewContextAdapter));

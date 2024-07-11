@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationExcepti
 import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.inject.provider.ScopeAwareComponentProvider;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -94,7 +95,8 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
         // Inject properties if applicable
         if (componentKey.postConstructionAllowed()) {
             try {
-                return this.postConstructor.doPostConstruct(container.instance());
+                Scope scope = componentKey.scope().orElse(owner.scope());
+                return this.postConstructor.doPostConstruct(container.instance(), scope);
             } catch (ApplicationException e) {
                 throw new ComponentInitializationException("Failed to perform post-construction on component with key " + componentKey, e);
             }
