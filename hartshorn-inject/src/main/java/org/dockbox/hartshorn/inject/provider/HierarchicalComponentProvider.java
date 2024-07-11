@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.HierarchyLookup;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
@@ -29,22 +30,6 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
  *
  * @author Guus Lieben
  */
-public interface HierarchicalComponentProvider extends ComponentProvider {
+public interface HierarchicalComponentProvider extends ComponentProvider, HierarchyLookup {
 
-    /**
-     * Returns the binding hierarchy for the given key.
-     *
-     * @param key the key to return the hierarchy for
-     * @param <T> the type of the component
-     *
-     * @return the binding hierarchy
-     */
-    <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key);
-
-    /**
-     * Returns all binding hierarchies in the current provider.
-     *
-     * @return all binding hierarchies
-     */
-    MultiMap<Scope, BindingHierarchy<?>> hierarchies();
 }
