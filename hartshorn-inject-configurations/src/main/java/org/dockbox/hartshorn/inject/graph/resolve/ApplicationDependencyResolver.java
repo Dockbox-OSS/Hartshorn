@@ -66,7 +66,9 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
 
         // TODO: Move to Launchpad
         public Configurer withManagedComponents() {
-            ContextualInitializer<InjectionCapableApplication, DependencyResolver> methodDependencyResolver = ContextualInitializer.of(application -> new ComponentDependencyResolver(application.environment()));
+            ContextualInitializer<InjectionCapableApplication, DependencyResolver> methodDependencyResolver = ContextualInitializer.of(application -> {
+                return new ComponentDependencyResolver(application.environment(), application.defaultBinder());
+            });
             this.add(methodDependencyResolver);
             return this;
         }

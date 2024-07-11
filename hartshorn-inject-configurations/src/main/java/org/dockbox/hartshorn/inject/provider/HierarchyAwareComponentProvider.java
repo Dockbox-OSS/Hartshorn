@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.inject.processing.ComponentProviderPostProcessor;
 import org.dockbox.hartshorn.inject.processing.SimpleComponentProviderPostProcessor;
 import org.dockbox.hartshorn.inject.processing.CompositeComponentPostProcessor;
 import org.dockbox.hartshorn.context.ContextIdentity;
-import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.ComponentKey;
@@ -126,9 +125,9 @@ public class HierarchyAwareComponentProvider extends DefaultFallbackCompatibleCo
         }
         BindingHierarchy<C> hierarchy = this.hierarchy(key);
 
-        ContextIdentity<ScopeModuleContext> scopeModuleContextKey = ContextKey.builder(ScopeModuleContext.class)
-                .fallback(() -> new ScopeModuleContext(this.owner.applicationProvider().scope().installableScopeType()))
-                .build();
+        ContextIdentity<ScopeModuleContext> scopeModuleContextKey = ScopeModuleContext.createKey(() -> {
+            return this.owner.applicationProvider().scope().installableScopeType();
+        });
         Option<ScopeModuleContext> scopeModuleContext = this.application.firstContext(scopeModuleContextKey);
 
         if (scopeModuleContext.absent() && this.scope != this.owner.applicationProvider().scope()) {
@@ -149,14 +148,14 @@ public class HierarchyAwareComponentProvider extends DefaultFallbackCompatibleCo
         if (hierarchy.present()) {
             Provider<T> provider = key.strategy().selectProvider(hierarchy.get());
             if (provider != null) {
-                return provider.provide(requestContext);
+                return provider.provide(this.application, requestContext);
             }
         }
         return Option.empty();
     }
 
     protected <T> Option<ObjectContainer<T>> createContextualInstanceContainer(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
-        return ContextDrivenProvider.forPrototype(key).provide(requestContext);
+        return ContextDrivenProvider.forPrototype(key).provide(this.application, requestContext);
     }
 
     @Override

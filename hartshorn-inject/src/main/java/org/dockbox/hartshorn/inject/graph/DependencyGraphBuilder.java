@@ -172,6 +172,7 @@ public class DependencyGraphBuilder {
                 PriorityComponentKey collectorKey = new PriorityComponentKey(dependencyContext.priority(), collectorComponentKey);
                 nodes.put(collectorKey, node);
             }
+            default -> throw new IllegalStateException("Unexpected value: " + dependencyContext.memberType());
         }
     }
 
