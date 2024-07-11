@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.graph.resolve;
 
 import java.util.Set;
 
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.graph.AbstractContainerDependencyResolver;
+import org.dockbox.hartshorn.inject.graph.ComponentContainerDependencyContext;
+import org.dockbox.hartshorn.inject.graph.ComponentContainerDependencyDeclarationContext;
+import org.dockbox.hartshorn.inject.graph.DependencyMap;
+import org.dockbox.hartshorn.inject.graph.DependencyResolutionException;
+import org.dockbox.hartshorn.inject.graph.ManagedComponentKeyDependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.ComponentKeyDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.graph.DependencyMap;
-import org.dockbox.hartshorn.inject.graph.DependencyResolutionException;
+import org.dockbox.hartshorn.inject.provider.ComponentConstructorResolver;
 import org.dockbox.hartshorn.inject.provider.Provider;
-import org.dockbox.hartshorn.inject.strategy.IntrospectionDependencyResolver;
-import org.dockbox.hartshorn.inject2.environment.InjectorEnvironment;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 

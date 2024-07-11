@@ -14,30 +14,29 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.graph.resolve;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
 import org.dockbox.hartshorn.inject.graph.AbstractContainerDependencyResolver;
+import org.dockbox.hartshorn.inject.graph.DependencyResolver;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.graph.DependencyResolver;
-import org.dockbox.hartshorn.inject.strategy.BindingStrategy;
-import org.dockbox.hartshorn.inject.strategy.BindingStrategyContext;
-import org.dockbox.hartshorn.inject.strategy.BindingStrategyRegistry;
-import org.dockbox.hartshorn.inject.strategy.MethodAwareBindingStrategyContext;
-import org.dockbox.hartshorn.inject.strategy.MethodInstanceBindingStrategy;
-import org.dockbox.hartshorn.inject.strategy.SimpleBindingStrategyRegistry;
-import org.dockbox.hartshorn.inject2.environment.InjectorEnvironment;
+import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategy;
+import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
+import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyRegistry;
+import org.dockbox.hartshorn.inject.graph.strategy.MethodAwareBindingStrategyContext;
+import org.dockbox.hartshorn.inject.graph.strategy.MethodInstanceBindingStrategy;
+import org.dockbox.hartshorn.inject.graph.strategy.SimpleBindingStrategyRegistry;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
@@ -59,15 +58,14 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
     private final BindingStrategyRegistry registry;
     private final ComponentRegistry componentRegistry;
 
-    public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher, InjectionCapableApplication application) {
-        this(conditionMatcher, application, new SimpleBindingStrategyRegistry());
+    public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher, ComponentRegistry componentRegistry) {
+        this(conditionMatcher, componentRegistry, new SimpleBindingStrategyRegistry());
     }
 
-    public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher, InjectionCapableApplication application, BindingStrategyRegistry registry) {
+    public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher, ComponentRegistry componentRegistry, BindingStrategyRegistry registry) {
         this.conditionMatcher = conditionMatcher;
-        this.application = application;
         this.registry = registry;
-        this.componentRegistry = application.defaultProvider().get(ComponentRegistry.class);
+        this.componentRegistry = componentRegistry;
     }
 
     public BindingStrategyRegistry registry() {
@@ -112,7 +110,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
         return this.registry.find(strategyContext).map(strategy -> strategy.handle(strategyContext));
     }
 
-    public static ContextualInitializer<InjectorEnvironment, DependencyResolver> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<InjectionCapableApplication, DependencyResolver> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -121,13 +119,14 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
             BindingStrategyRegistry registry = new SimpleBindingStrategyRegistry();
             strategies.forEach(registry::register);
 
-            InjectorEnvironment environment = context.input();
-            ConditionMatcher conditionMatcher = configurer.conditionMatcher.initialize(context.transform(environment));
+            InjectionCapableApplication application = context.input();
+            ConditionMatcher conditionMatcher = configurer.conditionMatcher.initialize(context.transform(application));
             DefaultBindingConfigurerContext.compose(context, binder -> {
                 binder.bind(ConditionMatcher.class).singleton(conditionMatcher);
             });
 
-            return new BindsMethodDependencyResolver(conditionMatcher, registry);
+            ComponentRegistry componentRegistry = application.defaultProvider().get(ComponentRegistry.class);
+            return new BindsMethodDependencyResolver(conditionMatcher, componentRegistry, registry);
         };
     }
 
@@ -143,18 +142,18 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
         private final LazyStreamableConfigurer<InjectionCapableApplication, BindingStrategy> bindingStrategies = LazyStreamableConfigurer.ofInitializer(
             MethodInstanceBindingStrategy.create(Customizer.useDefaults())
         );
-        private ContextualInitializer<ApplicationContext, ConditionMatcher> conditionMatcher = context -> new ConditionMatcher(context.input());
+        private ContextualInitializer<InjectionCapableApplication, ConditionMatcher> conditionMatcher = context -> new ConditionMatcher(context.input());
 
         public Configurer conditionMatcher(ConditionMatcher conditionMatcher) {
             return this.conditionMatcher(ContextualInitializer.of(conditionMatcher));
         }
 
-        public Configurer conditionMatcher(ContextualInitializer<ApplicationContext, ConditionMatcher> conditionMatcher) {
+        public Configurer conditionMatcher(ContextualInitializer<InjectionCapableApplication, ConditionMatcher> conditionMatcher) {
             this.conditionMatcher = conditionMatcher;
             return this;
         }
 
-        public Configurer bindingStrategies(Customizer<StreamableConfigurer<ApplicationContext, BindingStrategy>> customizer) {
+        public Configurer bindingStrategies(Customizer<StreamableConfigurer<InjectionCapableApplication, BindingStrategy>> customizer) {
             this.bindingStrategies.customizer(customizer);
             return this;
         }

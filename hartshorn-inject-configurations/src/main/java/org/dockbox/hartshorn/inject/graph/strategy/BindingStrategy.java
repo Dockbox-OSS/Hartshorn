@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.strategy;
+package org.dockbox.hartshorn.inject.graph.strategy;
+
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 
 /**
  * TODO: #1060 Add documentation
@@ -23,21 +25,11 @@ package org.dockbox.hartshorn.inject.strategy;
  *
  * @author Guus Lieben
  */
-public enum BindingStrategyPriority {
-    LOWEST(-256),
-    LOW(-128),
-    MEDIUM(0),
-    HIGH(128),
-    HIGHEST(256),
-    ;
+public interface BindingStrategy {
 
-    private final int priority;
+    <T> boolean canHandle(org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext<T> context);
 
-    BindingStrategyPriority(int priority) {
-        this.priority = priority;
-    }
+    <T> DependencyContext<?> handle(BindingStrategyContext<T> context);
 
-    public int priority() {
-        return this.priority;
-    }
+    BindingStrategyPriority priority();
 }

@@ -33,7 +33,4 @@ public interface DependencyDeclarationContext<T> {
     TypeView<T> type();
 
     CompositeQualifier qualifier();
-
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    String id();
 }
