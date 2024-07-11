@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.inject.provider;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
@@ -27,7 +26,7 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  * qualified components are compatible with the lookup key, and that there is no strict binding for
  * the lookup key.
  *
- * @see ApplicationEnvironment#isStrictMode()
+ * @see org.dockbox.hartshorn.inject.InjectorConfiguration#isStrictMode()
  * @see ComponentKey
  *
  * @since 0.5.0

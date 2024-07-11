@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.provider;
 
-import org.dockbox.hartshorn.inject.provider.ComponentObjectContainer;
-import org.dockbox.hartshorn.inject.provider.LifecycleType;
-import org.dockbox.hartshorn.inject.provider.ObjectContainer;
-import org.dockbox.hartshorn.inject.provider.Provider;
-import org.dockbox.hartshorn.inject.provider.SupplierProvider;
-import org.dockbox.hartshorn.inject.provider.TypeAwareProvider;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.introspect.InjectorApplicationViewAdapter;
 import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -111,7 +108,9 @@ public final class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
         try {
             ViewContextAdapter contextAdapter = new InjectorApplicationViewAdapter(this.application);
             contextAdapter.addContext(requestContext);
-            return contextAdapter.scope(this.componentKey.scope())
+            return this.componentKey.scope()
+                    .map(contextAdapter::scope)
+                    .orElse(contextAdapter)
                     .create(constructor.get())
                     .cast(this.type())
                     .map(instance -> ComponentObjectContainer.ofLifecycleType(instance, this.lifecycleType));

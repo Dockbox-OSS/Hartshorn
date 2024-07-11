@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.inject.scope;
 
 import java.util.Collection;
 import java.util.Collections;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
-import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
@@ -39,6 +37,16 @@ public class ScopeModuleContext extends DefaultContext {
 
     private final MultiMap<ScopeKey, BindingHierarchy<?>> scopeModules = new ConcurrentSetMultiMap<>();
 
+    private final ScopeKey applicationScope;
+
+    public ScopeModuleContext(ScopeKey applicationScope) {
+        this.applicationScope = applicationScope;
+    }
+
+    public boolean isApplicationScope(ScopeKey scopeKey) {
+        return this.applicationScope.equals(scopeKey);
+    }
+
     public <T> BindingHierarchy<T> hierarchy(ScopeKey scope, ComponentKey<T> key) {
         BindingHierarchy<?> bindingHierarchy = this.scopeModules.get(scope).stream()
                 .filter(hierarchy -> hierarchy.key().equals(key))
@@ -49,11 +57,11 @@ public class ScopeModuleContext extends DefaultContext {
                     return hierarchy;
                 });
 
-        return TypeUtils.adjustWildcards(bindingHierarchy, BindingHierarchy.class);
+        return TypeUtils.unchecked(bindingHierarchy, BindingHierarchy.class);
     }
 
     public Collection<BindingHierarchy<?>> hierarchies(ScopeKey type) {
-        if (type == ApplicationContext.APPLICATION_SCOPE) {
+        if (type == applicationScope) {
             return Collections.emptyList();
         }
         return this.scopeModules.get(type);

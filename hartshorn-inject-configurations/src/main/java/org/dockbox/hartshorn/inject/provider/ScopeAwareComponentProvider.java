@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.provider;
 
-import org.dockbox.hartshorn.inject.activation.ActivatorHolder;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 
-public interface ConfigurableInjectionCapableApplication extends InjectionCapableApplication {
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+public interface ScopeAwareComponentProvider extends PostProcessingComponentProvider {
 
-    ActivatorHolder activators();
+    ComponentRegistry componentRegistry();
+
+    HierarchicalComponentProvider applicationProvider();
+
 }

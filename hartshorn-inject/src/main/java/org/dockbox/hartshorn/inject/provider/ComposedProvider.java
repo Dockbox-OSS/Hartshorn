@@ -79,7 +79,7 @@ public final class ComposedProvider<T> implements Provider<T> {
 
     private ObjectContainer<T> transformContainer(ObjectContainer<T> container) {
         for (Function<ObjectContainer<T>, ObjectContainer<T>> function : this.functions) {
-            container = function.apply(TypeUtils.adjustWildcards(container, ObjectContainer.class));
+            container = function.apply(TypeUtils.unchecked(container, ObjectContainer.class));
         }
         return container;
     }

@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
+import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
+
 /**
  * A simple container for an object instance. Used to track whether an object has been processed or not.
  *

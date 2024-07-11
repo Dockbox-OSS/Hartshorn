@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.inject.provider;
 
-import org.dockbox.hartshorn.inject.component.ComponentRegistry;
-import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
 
 /**
  * TODO: #1060 Add documentation
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.4.1
  */
-public interface ScopedProviderOwner extends PostProcessingComponentProvider {
+public interface PostProcessingComponentProvider extends ComponentProvider {
 
-    ComponentRegistry componentRegistry();
-
-    HierarchicalComponentProvider applicationProvider();
-
+    ComponentProcessorRegistry processorRegistry();
 }
