@@ -22,11 +22,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
+import org.dockbox.hartshorn.launchpad.context.DefaultApplicationAwareContext;
 
 /**
  * Represents a single executable HSL script. This is a wrapper around the HSL runtime and provides
@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
  * <p>It is recommended to use this class to execute HSL scripts, as it provides a simple and
  * consistent API for executing HSL scripts. The exposed {@link #runtime() script runtime} should
  * not be configured through this class, and should instead be configured through a {@link
- * org.dockbox.hartshorn.component.Configuration configuration class}.
+ * org.dockbox.hartshorn.inject.annotations.configuration.Configuration configuration class}.
  *
  * @see ScriptRuntime
  * @see ScriptContext

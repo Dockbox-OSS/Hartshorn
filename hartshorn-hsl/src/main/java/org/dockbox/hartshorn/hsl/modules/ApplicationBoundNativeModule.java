@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 
 /**
  * Implementation of {@link AbstractNativeModule} which provides the instance of the module

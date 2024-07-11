@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.hsl;
 import java.util.List;
 import java.util.Map;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
@@ -28,6 +27,7 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 
 /**
  * The {@link ScriptComponentFactory} is a service that provides the necessary components to

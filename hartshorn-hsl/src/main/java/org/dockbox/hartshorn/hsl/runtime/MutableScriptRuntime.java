@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.condition.ConditionContext;
+import org.dockbox.hartshorn.hsl.condition.ScriptConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.util.Customizer;
  * customize the runtime.
  *
  * <p>Note that {@link ScriptRuntime} itself is already partially customizable through the
- * implementation of {@link ConditionContext}, which allows for the customization of the
+ * implementation of {@link ScriptConditionContext}, which allows for the customization of the
  * runtime context.
  *
  * @see ScriptRuntime
