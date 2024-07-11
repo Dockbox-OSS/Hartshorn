@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.launchpad;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder.Configurer;
 import org.dockbox.hartshorn.util.Customizer;
 
 /**
@@ -96,8 +97,8 @@ public final class HartshornApplication {
      * @param customizer The application builder customizer
      * @return The application context
      */
-    public static ApplicationContext create(Class<?> mainClass, Customizer<StandardApplicationBuilder.Configurer> customizer) {
-        Customizer<StandardApplicationBuilder.Configurer> defaultCustomizer = builder -> builder.mainClass(mainClass);
+    public static ApplicationContext create(Class<?> mainClass, Customizer<Configurer> customizer) {
+        Customizer<Configurer> defaultCustomizer = builder -> builder.mainClass(mainClass);
         return create(defaultCustomizer.compose(customizer));
     }
 
@@ -109,8 +110,8 @@ public final class HartshornApplication {
      * @param customizer The application builder customizer
      * @return The application context
      */
-    public static ApplicationContext create(Customizer<StandardApplicationBuilder.Configurer> customizer) {
-        Customizer<StandardApplicationBuilder.Configurer> defaultCustomizer = StandardApplicationBuilder.Configurer::inferMainClass;
+    public static ApplicationContext create(Customizer<Configurer> customizer) {
+        Customizer<Configurer> defaultCustomizer = StandardApplicationBuilder.Configurer::inferMainClass;
         return HartshornApplicationConfigurer.createInitializer(
             defaultCustomizer.compose(customizer),
             Customizer.useDefaults()

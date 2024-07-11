@@ -14,28 +14,35 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.application;
+package org.dockbox.hartshorn.launchpad;
 
 import java.lang.annotation.Annotation;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.launchpad.DelegatingApplicationContext;
-import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
+
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.InjectorEnvironment;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.inject.processing.construction.AnnotatedMethodComponentPostConstructor;
+import org.dockbox.hartshorn.launchpad.launch.ApplicationBootstrapContext;
+import org.dockbox.hartshorn.launchpad.launch.ApplicationBuildContext;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder.Configurer;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
+import org.dockbox.hartshorn.launchpad.annotations.UseLifecycleObservers;
+import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
-import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructorImpl;
 import org.dockbox.hartshorn.inject.annotations.OnInitialized;
-import org.dockbox.hartshorn.component.ScopeAwareComponentProvider;
-import org.dockbox.hartshorn.component.UseProxying;
+import org.dockbox.hartshorn.inject.provider.DelegatingScopeAwareComponentProvider;
+import org.dockbox.hartshorn.launchpad.annotations.UseProxying;
 import org.dockbox.hartshorn.inject.condition.Condition;
 import org.dockbox.hartshorn.inject.targets.MethodsAndFieldsInjectionPointResolver;
-import org.dockbox.hartshorn.component.processing.ComponentFinalizingPostProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentPopulatorPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.inject.Inject;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
@@ -62,19 +69,19 @@ import org.dockbox.hartshorn.util.StreamableConfigurer;
  */
 public class HartshornApplicationConfigurer {
 
-    private Customizer<StandardApplicationBuilder.Configurer> applicationBuilder = Customizer.useDefaults();
+    private Customizer<Configurer> applicationBuilder = Customizer.useDefaults();
     private Customizer<StandardApplicationContextFactory.Configurer> applicationContextFactory = Customizer.useDefaults();
     private Customizer<ContextualApplicationEnvironment.Configurer> environment = Customizer.useDefaults();
     private Customizer<SimpleApplicationContext.Configurer> applicationContext = Customizer.useDefaults();
     private Customizer<MethodsAndFieldsInjectionPointResolver.Configurer> injectionPointResolver = Customizer.useDefaults();
-    private Customizer<ComponentPostConstructorImpl.Configurer> componentPostConstructor = Customizer.useDefaults();
+    private Customizer<AnnotatedMethodComponentPostConstructor.Configurer> componentPostConstructor = Customizer.useDefaults();
 
     /**
      * Configures the arguments that are provided to the application that will be created. The provided arguments are expected
      * to be valid arguments for the main class of the application.
      *
      * @param customizer The {@link Customizer} that is used to configure the arguments.
-     * @return This {@link StandardApplicationBuilder.Configurer} instance.
+     * @return This {@link Configurer} instance.
      */
     public HartshornApplicationConfigurer arguments(Customizer<StreamableConfigurer<Class<?>, String>> customizer) {
         this.applicationBuilder = this.applicationBuilder.compose(configuration -> configuration.arguments(customizer));
@@ -83,7 +90,7 @@ public class HartshornApplicationConfigurer {
 
     /**
      * Configures the service activators that are used to collect component processors. By default, this includes the
-     * {@link UseBootstrap} and {@link UseProxying} annotations.
+     * {@link UseLifecycleObservers} and {@link UseProxying} annotations.
      *
      * @param customizer The customizer that is used to configure the service activators
      * @return The current configurator instance
@@ -107,7 +114,7 @@ public class HartshornApplicationConfigurer {
 
     /**
      * Configures the component post-processors that are used to process components after they are instantiated by the container. By
-     * default, this contains a {@link ComponentFinalizingPostProcessor} that is used to finalize components.
+     * default, this contains a {@link ComponentPopulatorPostProcessor} that is used to finalize components.
      *
      * @param customizer The customizer that is used to configure the component post-processors
      * @return The current configurator instance
@@ -380,7 +387,7 @@ public class HartshornApplicationConfigurer {
      * @param customizer The customizer to configure the annotations
      * @return The current configurer, for chaining
      */
-    public HartshornApplicationConfigurer injectMarkerAnnotations(Customizer<StreamableConfigurer<ApplicationEnvironment, Class<? extends Annotation>>> customizer) {
+    public HartshornApplicationConfigurer injectMarkerAnnotations(Customizer<StreamableConfigurer<InjectorEnvironment, Class<? extends Annotation>>> customizer) {
         this.injectionPointResolver = this.injectionPointResolver.compose(configuration -> configuration.annotations(customizer));
         return this;
     }
@@ -417,7 +424,7 @@ public class HartshornApplicationConfigurer {
      * @param customizer The customizer to configure the annotations
      * @return The current configurer, for chaining
      */
-    public HartshornApplicationConfigurer onInitializedAnnotations(Customizer<StreamableConfigurer<ApplicationContext, Class<? extends Annotation>>> customizer) {
+    public HartshornApplicationConfigurer onInitializedAnnotations(Customizer<StreamableConfigurer<InjectionCapableApplication, Class<? extends Annotation>>> customizer) {
         this.componentPostConstructor = this.componentPostConstructor.compose(configuration -> configuration.annotations(customizer));
         return this;
     }
@@ -428,11 +435,11 @@ public class HartshornApplicationConfigurer {
      *
      * @return the current configurer, for chaining
      *
-     * @see ComponentPostConstructorImpl.Configurer#withJavaxAnnotations()
+     * @see AnnotatedMethodComponentPostConstructor.Configurer#withJavaxAnnotations()
      * @see MethodsAndFieldsInjectionPointResolver.Configurer#withJavaxAnnotations()
      */
     public HartshornApplicationConfigurer withJavaxAnnotations() {
-        this.componentPostConstructor = this.componentPostConstructor.compose(ComponentPostConstructorImpl.Configurer::withJavaxAnnotations);
+        this.componentPostConstructor = this.componentPostConstructor.compose(AnnotatedMethodComponentPostConstructor.Configurer::withJavaxAnnotations);
         this.injectionPointResolver = this.injectionPointResolver.compose(MethodsAndFieldsInjectionPointResolver.Configurer::withJavaxAnnotations);
         return this;
     }
@@ -443,11 +450,11 @@ public class HartshornApplicationConfigurer {
      *
      * @return the current configurer, for chaining
      *
-     * @see ComponentPostConstructorImpl.Configurer#withJakartaAnnotations()
+     * @see AnnotatedMethodComponentPostConstructor.Configurer#withJakartaAnnotations()
      * @see MethodsAndFieldsInjectionPointResolver.Configurer#withJakartaAnnotations()
      */
     public HartshornApplicationConfigurer withJakartaAnnotations() {
-        this.componentPostConstructor = this.componentPostConstructor.compose(ComponentPostConstructorImpl.Configurer::withJakartaAnnotations);
+        this.componentPostConstructor = this.componentPostConstructor.compose(AnnotatedMethodComponentPostConstructor.Configurer::withJakartaAnnotations);
         this.injectionPointResolver = this.injectionPointResolver.compose(MethodsAndFieldsInjectionPointResolver.Configurer::withJakartaAnnotations);
         return this;
     }
@@ -500,19 +507,19 @@ public class HartshornApplicationConfigurer {
             SimpleApplicationContext::create,
             this::configureApplicationContext
         ));
-        environment.injectionPointsResolver(MethodsAndFieldsInjectionPointResolver.create(this.injectionPointResolver));
+        environment.injectionPointsResolver(ContextualInitializer.defer(() -> MethodsAndFieldsInjectionPointResolver.create(this.injectionPointResolver)));
     }
 
     private void configureApplicationContext(SimpleApplicationContext.Configurer context) {
         this.applicationContext.configure(context);
         context.componentProvider(this.initializer(
-            ScopeAwareComponentProvider::create,
+            DelegatingScopeAwareComponentProvider::create,
             this::configureComponentProvider
         ));
     }
 
-    private void configureComponentProvider(ScopeAwareComponentProvider.Configurer provider) {
-        provider.componentPostConstructor(ComponentPostConstructorImpl.create(this.componentPostConstructor));
+    private void configureComponentProvider(DelegatingScopeAwareComponentProvider.Configurer provider) {
+        provider.componentPostConstructor(AnnotatedMethodComponentPostConstructor.create(this.componentPostConstructor));
     }
 
     private <T, C, F> ContextualInitializer<C, T> initializer(

@@ -21,9 +21,11 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import org.dockbox.hartshorn.application.ApplicationBootstrapContext;
-import org.dockbox.hartshorn.application.ExceptionHandler;
-import org.dockbox.hartshorn.application.LoggingExceptionHandler;
+
+import org.dockbox.hartshorn.inject.InjectorConfiguration;
+import org.dockbox.hartshorn.launchpad.launch.ApplicationBootstrapContext;
+import org.dockbox.hartshorn.inject.ExceptionHandler;
+import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
@@ -108,7 +110,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         this.isBatchMode = configurer.enableBatchMode.initialize(argumentsInitializerContext);
         this.isStrictMode = configurer.enableStrictMode.initialize(argumentsInitializerContext);
         if (this.introspector() instanceof BatchCapableIntrospector batchCapableIntrospector) {
-            batchCapableIntrospector.enableBatchMode(this.isBatchMode);
+            batchCapableIntrospector.enableBatchMode(this.isBatchMode());
         }
 
         Boolean isBuildEnvironment = configurer.isBuildEnvironment.initialize(environmentInitializerContext);
@@ -164,6 +166,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         return this.fileSystemProvider;
     }
 
+    @Override
     public ExceptionHandler exceptionHandler() {
         return this.exceptionHandler;
     }
@@ -185,6 +188,17 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     @Override
     public ProxyOrchestrator proxyOrchestrator() {
         return this.proxyOrchestrator;
+    }
+
+    @Override
+    public InjectorConfiguration configuration() {
+        return new InjectorConfiguration() {
+
+            @Override
+            public boolean isStrictMode() {
+                return ContextualApplicationEnvironment.this.isStrictMode;
+            }
+        };
     }
 
     @Override
@@ -330,15 +344,14 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         private ContextualInitializer<Properties, Boolean> showStacktraces = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.exceptions.stacktraces", "true")));
 
         private ContextualInitializer<Introspector, ? extends ProxyOrchestrator> proxyOrchestrator = context -> DefaultProxyOrchestratorLoader.create(Customizer.useDefaults()).initialize(context);
-        private ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider = ContextualInitializer.of(
-                PathFileSystemProvider::new);
+        private ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider = ContextualInitializer.of(PathFileSystemProvider::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler = ContextualInitializer.of(LoggingExceptionHandler::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser = ContextualInitializer.of(StandardApplicationArgumentParser::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ContextualInitializer.of(ClassLoaderClasspathResourceLocator::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup = ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext = SimpleApplicationContext.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment = environment -> BuildEnvironmentPredicate.isBuildEnvironment();
-        private ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver = MethodsAndFieldsInjectionPointResolver.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver = ContextualInitializer.defer(() -> MethodsAndFieldsInjectionPointResolver.create(Customizer.useDefaults()));
         private ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver = context -> new StandardAnnotationComponentKeyResolver();
         private ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver = ContextualInitializer.of(environment -> new ClassPathEnvironmentTypeResolver(new EnvironmentTypeCollector(environment), environment.introspector()));
 
@@ -700,7 +713,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
             return this.injectionPointsResolver(ContextualInitializer.of(() -> injectionPointsResolver));
         }
 
-        public Configurer injectionPointsResolver(ContextualInitializer<InjectorEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver) {
+        public Configurer injectionPointsResolver(ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver) {
             this.injectionPointsResolver = injectionPointsResolver;
             return this;
         }
@@ -713,7 +726,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
             return this.componentKeyResolver(ContextualInitializer.of(componentKeyResolver));
         }
 
-        public Configurer componentKeyResolver(ContextualInitializer<InjectorEnvironment, ComponentKeyResolver> componentKeyResolver) {
+        public Configurer componentKeyResolver(ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver) {
             this.componentKeyResolver = componentKeyResolver;
             return this;
         }

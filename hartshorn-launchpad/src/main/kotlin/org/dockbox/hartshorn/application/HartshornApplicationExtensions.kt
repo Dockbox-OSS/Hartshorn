@@ -15,8 +15,10 @@
  */
 package org.dockbox.hartshorn.application
 
-import org.dockbox.hartshorn.application.HartshornApplication.ApplicationBootstrap
+import org.dockbox.hartshorn.launchpad.HartshornApplication.ApplicationBootstrap
 import org.dockbox.hartshorn.launchpad.ApplicationContext
+import org.dockbox.hartshorn.launchpad.HartshornApplication
+import org.dockbox.hartshorn.launchpad.HartshornApplicationConfigurer
 import kotlin.reflect.KClass
 
 fun createApplication(mailClass: KClass<*>, vararg arguments: String): ApplicationBootstrapKt {

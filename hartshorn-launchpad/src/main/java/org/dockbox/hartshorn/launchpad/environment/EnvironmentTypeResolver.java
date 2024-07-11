@@ -17,11 +17,8 @@
 package org.dockbox.hartshorn.launchpad.environment;
 
 import java.lang.annotation.Annotation;
-import java.lang.annotation.Documented;
 import java.util.Collection;
-import java.util.List;
-import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
+
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
@@ -42,67 +39,4 @@ public interface EnvironmentTypeResolver {
      */
     <A extends Annotation> Collection<TypeView<?>> types(Class<A> annotation);
 
-    /**
-     * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist for the given type,
-     * and empty list is returned.
-     *
-     * @param parent The parent type to scan for subclasses
-     * @param <T> The type of the parent
-     * @return The list of sub-types, or an empty list
-     *
-     * @deprecated Should not be used as it is not a common use-case. Instead, you should use a {@link ComponentPostProcessor}
-     * to process managed components to find if they are a sub-type of a given type.
-     */
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    <T> Collection<TypeView<? extends T>> children(Class<T> parent);
-
-    /**
-     * Gets annotations of the given type, which are decorated with the given annotation. For example, given the
-     * annotation and class below, the result of requesting annotations with {@link Documented} for {@code MyClass}
-     * would be a list containing {@code MyAnnotation}, but not {@code AnotherAnnotation}.
-     *
-     * <pre>{@code
-     * @Documented
-     * public @interface MyAnnotation { }
-     *
-     * public @interface AnotherAnnotation { }
-     *
-     * @MyAnnotation
-     * public class MyClass { }
-     * }</pre>
-     *
-     * @param type The type to scan for annotations
-     * @param annotation The annotation expected to be present on zero or more annotations
-     * @return The annotated annotations
-     *
-     * @deprecated Should not be used, refer to {@link #types(Class)} if you need to find types with a specific annotation, or
-     * {@link AnnotationLookup annotation lookups} if you need to find annotations on a specific type.
-     */
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    List<Annotation> annotationsWith(TypeView<?> type, Class<? extends Annotation> annotation);
-
-    /**
-     * Gets annotations of the given type, which are decorated with the given annotation. For example, given the
-     * annotation and class below, the result of requesting annotations with {@link Documented} for {@code MyClass}
-     * would be a list containing {@code MyAnnotation}, but not {@code AnotherAnnotation}.
-     *
-     * <pre>{@code
-     * @Documented
-     * public @interface MyAnnotation { }
-     *
-     * public @interface AnotherAnnotation { }
-     *
-     * @MyAnnotation
-     * public class MyClass { }
-     * }</pre>
-     *
-     * @param type The type to scan for annotations
-     * @param annotation The annotation expected to be present on zero or more annotations
-     * @return The annotated annotations
-     *
-     * @deprecated Should not be used, refer to {@link #types(Class)} if you need to find types with a specific annotation, or
-     * {@link AnnotationLookup annotation lookups} if you need to find annotations on a specific type.
-     */
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    List<Annotation> annotationsWith(Class<?> type, Class<? extends Annotation> annotation);
 }

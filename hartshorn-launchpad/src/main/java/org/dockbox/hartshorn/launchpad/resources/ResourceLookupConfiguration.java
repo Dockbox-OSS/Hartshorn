@@ -18,10 +18,10 @@ package org.dockbox.hartshorn.launchpad.resources;
 
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
-import org.dockbox.hartshorn.component.processing.CompositeMember;
+import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
-import org.dockbox.hartshorn.inject.annotations.configuration.InfrastructurePriority;
+import org.dockbox.hartshorn.inject.annotations.InfrastructurePriority;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 
 /**
