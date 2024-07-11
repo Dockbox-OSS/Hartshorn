@@ -18,8 +18,7 @@ package org.dockbox.hartshorn.hsl.interpreter;
 
 import java.util.List;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.ContextCarrier;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
@@ -28,6 +27,7 @@ import org.dockbox.hartshorn.hsl.extension.CustomASTNode;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 import org.slf4j.Logger;
 
 /**
@@ -53,7 +53,7 @@ import org.slf4j.Logger;
  *
  * @author Guus Lieben
  */
-public class SimpleVisitorInterpreter implements ContextCarrier, Interpreter {
+public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Interpreter {
 
     private final InterpreterVisitor visitor = new DelegatingInterpreterVisitor(this);
 
