@@ -16,8 +16,8 @@
 
 package test.org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.component.CompositeQualifier;
-import org.dockbox.hartshorn.component.QualifierKey;
+import org.dockbox.hartshorn.inject.CompositeQualifier;
+import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.annotations.Named;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

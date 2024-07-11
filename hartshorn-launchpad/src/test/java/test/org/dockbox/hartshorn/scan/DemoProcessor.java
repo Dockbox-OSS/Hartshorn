@@ -16,7 +16,8 @@
 
 package test.org.dockbox.hartshorn.scan;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
@@ -39,7 +40,7 @@ public class DemoProcessor extends ComponentPreProcessor {
     }
 
     @Override
-    public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
+    public <T> void process(InjectionCapableApplication application, ComponentProcessingContext<T> processingContext) {
     }
 
     @Override

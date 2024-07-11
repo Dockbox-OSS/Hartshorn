@@ -16,26 +16,29 @@
 
 package test.org.dockbox.hartshorn.application;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.dockbox.hartshorn.application.HartshornApplication;
-import org.dockbox.hartshorn.application.HartshornApplicationConfigurer;
-import org.dockbox.hartshorn.application.LoggingExceptionHandler;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.launchpad.DelegatingApplicationContext;
-import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
-import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
-import org.dockbox.hartshorn.launchpad.banner.HartshornBanner;
+
+import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
+import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.Component;
-import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
-import org.dockbox.hartshorn.component.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.activation.ServiceActivator;
+import org.dockbox.hartshorn.inject.provider.ComponentProvider;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.DelegatingApplicationContext;
+import org.dockbox.hartshorn.launchpad.HartshornApplication;
+import org.dockbox.hartshorn.launchpad.HartshornApplicationConfigurer;
+import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.banner.HartshornBanner;
+import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.MultiMap;
@@ -46,9 +49,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import test.org.dockbox.hartshorn.testsuite.OutputCaptureAppender;
 
-import static org.junit.jupiter.api.Assertions.*;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import test.org.dockbox.hartshorn.testsuite.OutputCaptureAppender;
 
 public class ApplicationConfigurerTests {
 
@@ -93,7 +96,8 @@ public class ApplicationConfigurerTests {
         });
         ProcessableApplicationContext processableApplicationContext =
             assertInstanceOf(ProcessableApplicationContext.class, applicationContext);
-        MultiMap<Integer, ComponentPreProcessor> processors = processableApplicationContext.processors();
+        MultiMap<Integer, ComponentPreProcessor> processors = processableApplicationContext.defaultProvider()
+                .processorRegistry().preProcessors();
         assertTrue(processors.containsValue(processor));
     }
 
@@ -111,7 +115,7 @@ public class ApplicationConfigurerTests {
         ComponentProvider componentProvider = processableApplicationContext.componentProvider();
         PostProcessingComponentProvider postProcessingComponentProvider =
             assertInstanceOf(PostProcessingComponentProvider.class, componentProvider);
-        MultiMap<Integer, ComponentPostProcessor> processors = postProcessingComponentProvider.postProcessors();
+        MultiMap<Integer, ComponentPostProcessor> processors = postProcessingComponentProvider.processorRegistry().postProcessors();
         assertTrue(processors.containsValue(processor));
     }
 
@@ -273,8 +277,9 @@ public class ApplicationConfigurerTests {
     }
 
     private static class SamplePreProcessor extends ComponentPreProcessor {
+
         @Override
-        public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
+        public <T> void process(InjectionCapableApplication application, ComponentProcessingContext<T> processingContext) {
             // Do nothing
         }
 

@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.exceptions;
 
-import org.dockbox.hartshorn.application.LoggingExceptionHandler;
+import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.ModifyApplication;
@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.testsuite.TestCustomizer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 
 @HartshornTest(includeBasePackages = false)
 public class ExceptTests {

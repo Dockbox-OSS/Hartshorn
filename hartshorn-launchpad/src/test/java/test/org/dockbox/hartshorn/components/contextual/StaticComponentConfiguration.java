@@ -17,10 +17,10 @@
 package test.org.dockbox.hartshorn.components.contextual;
 
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
-import org.dockbox.hartshorn.component.processing.CompositeMember;
+import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.inject.annotations.Named;
-import org.dockbox.hartshorn.inject.annotations.configuration.Priority;
+import org.dockbox.hartshorn.inject.annotations.Priority;
 
 @Configuration
 public class StaticComponentConfiguration {

@@ -52,7 +52,7 @@ public class ActivatorScanningTests {
         Demo demo = applicationContext.get(Demo.class);
         Assertions.assertNotNull(demo);
         Assertions.assertEquals("Demo", demo.demo());
-        Assertions.assertTrue(demo instanceof DemoImpl);
+        Assertions.assertTrue(demo instanceof DemoObject);
     }
 
     @InjectTest

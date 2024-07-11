@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import test.org.dockbox.hartshorn.components.ComponentWithCollectionDependencies;
 
 @HartshornTest(includeBasePackages = false)

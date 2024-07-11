@@ -65,7 +65,7 @@ public class ProviderSelectionStrategyTests {
     @NonNull
     private static BindingHierarchy<String> createEmptyHierarchy() {
         ComponentKey<String> key = ComponentKey.of(String.class);
-        return new NativePrunableBindingHierarchy<>(key, null);
+        return new NativePrunableBindingHierarchy<>(key);
     }
 
     @ParameterizedTest

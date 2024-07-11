@@ -16,7 +16,6 @@
 
 package test.org.dockbox.hartshorn;
 
-import org.dockbox.hartshorn.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,16 +24,22 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.InjectorEnvironment;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.inject.graph.ConfigurableDependencyContext;
+import org.dockbox.hartshorn.inject.graph.DependencyGraph;
+import org.dockbox.hartshorn.inject.graph.resolve.IntrospectionDependencyResolver;
+import org.dockbox.hartshorn.inject.graph.support.CyclicDependencyGraphValidator;
+import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.inject2.graph.DependencyGraph;
-import org.dockbox.hartshorn.inject2.graph.CyclicDependencyGraphValidator;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
-import org.dockbox.hartshorn.inject.ApplicationDependencyResolver;
-import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
+import org.dockbox.hartshorn.inject.graph.resolve.ApplicationDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.support.ComponentDiscoveryList;
 import org.dockbox.hartshorn.inject.graph.support.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
@@ -45,7 +50,7 @@ import org.dockbox.hartshorn.inject.graph.DependencyResolutionType;
 import org.dockbox.hartshorn.inject.graph.DependencyResolver;
 import org.dockbox.hartshorn.inject.graph.TypePathNode;
 import org.dockbox.hartshorn.inject.graph.DependencyGraphBuilder;
-import org.dockbox.hartshorn.inject.strategy.IntrospectionDependencyResolver;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
@@ -424,7 +429,7 @@ public class ApplicationContextTests {
         GraphNode<DependencyContext<?>> firstNode = nodesByType.get(path.get(0));
 
         List<GraphNode<DependencyContext<?>>> recursivePath = validator.checkNodeNotCyclicRecursive(firstNode, new ArrayList<>());
-        ComponentDiscoveryList discoveryList = validator.createDiscoveryList(recursivePath, this.applicationContext);
+        ComponentDiscoveryList discoveryList = validator.createDiscoveryList(recursivePath, this.applicationContext.environment().introspector());
         Assertions.assertNotNull(discoveryList);
 
         List<DiscoveredComponent> discoveredComponents = discoveryList.discoveredComponents();
@@ -459,7 +464,7 @@ public class ApplicationContextTests {
         GraphNode<DependencyContext<?>> firstNode = nodesByType.get(path.get(0));
 
         List<GraphNode<DependencyContext<?>>> recursivePath = validator.checkNodeNotCyclicRecursive(firstNode, new ArrayList<>());
-        ComponentDiscoveryList discoveryList = validator.createDiscoveryList(recursivePath, this.applicationContext);
+        ComponentDiscoveryList discoveryList = validator.createDiscoveryList(recursivePath, this.applicationContext.environment().introspector());
         Assertions.assertNotNull(discoveryList);
 
         List<DiscoveredComponent> discoveredComponents = discoveryList.discoveredComponents();
@@ -468,10 +473,14 @@ public class ApplicationContextTests {
 
     private DependencyGraph buildDependencyGraph(List<Class<?>> components) {
         Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
-        IntrospectionDependencyResolver dependencyResolver = new IntrospectionDependencyResolver(this.applicationContext.environment());
+        ApplicationEnvironment environment = this.applicationContext.environment();
+        IntrospectionDependencyResolver dependencyResolver = new IntrospectionDependencyResolver(
+                environment.injectionPointsResolver(),
+                environment.componentKeyResolver()
+        );
         for(Class<?> component : components) {
             ComponentKey<?> componentKey = ComponentKey.of(component);
-            TypeView<?> typeView = this.applicationContext.environment().introspector().introspect(component);
+            TypeView<?> typeView = environment.introspector().introspect(component);
 
             DependencyMap dependencyMap = DependencyMap.create()
                     // Fields and methods are always delayed
@@ -480,7 +489,7 @@ public class ApplicationContextTests {
             View origin = typeView;
             if (!typeView.isInterface()) {
                 List<? extends ConstructorView<?>> constructorViews = typeView.constructors().all().stream()
-                        .filter(this.applicationContext.environment().injectionPointsResolver()::isInjectable)
+                        .filter(environment.injectionPointsResolver()::isInjectable)
                         .toList();
                 if (!constructorViews.isEmpty()) {
                     Assertions.assertEquals(1, constructorViews.size());
@@ -492,9 +501,8 @@ public class ApplicationContextTests {
                 }
             }
 
-            AutoConfiguringDependencyContext<?> dependencyContext = AutoConfiguringDependencyContext.builder(componentKey)
+            ConfigurableDependencyContext<?> dependencyContext = ConfigurableDependencyContext.builder(componentKey)
                 .dependencies(dependencyMap)
-                .scope(ApplicationContext.APPLICATION_SCOPE)
                 .priority(-1)
                 .memberType(ComponentMemberType.STANDALONE)
                 .view(origin)
@@ -503,9 +511,13 @@ public class ApplicationContextTests {
             dependencyContexts.add(dependencyContext);
         }
 
-        SimpleSingleElementContext<ApplicationContext> context = SimpleSingleElementContext.create(this.applicationContext);
+        SimpleSingleElementContext<InjectionCapableApplication> context = SimpleSingleElementContext.create(applicationContext);
         DependencyResolver resolver = ApplicationDependencyResolver.create(Customizer.useDefaults()).initialize(context);
-        DependencyGraphBuilder dependencyGraphBuilder = DependencyGraphBuilder.create(resolver);
+        DependencyGraphBuilder dependencyGraphBuilder = DependencyGraphBuilder.create(
+                resolver,
+                this.applicationContext.defaultBinder(),
+                this.applicationContext.environment().introspector()
+        );
         return Assertions.assertDoesNotThrow(() -> dependencyGraphBuilder.buildDependencyGraph(dependencyContexts));
     }
 
@@ -531,7 +543,7 @@ public class ApplicationContextTests {
 
         List<GraphNode<DependencyContext<?>>> recursivePath = validator.checkNodeNotCyclicRecursive(firstNode, new ArrayList<>());
 
-        ComponentDiscoveryList discoveryList = validator.createDiscoveryList(recursivePath, this.applicationContext);
+        ComponentDiscoveryList discoveryList = validator.createDiscoveryList(recursivePath, this.applicationContext.environment().introspector());
         List<DiscoveredComponent> discoveredComponentsNonCyclic = discoveryList.discoveredComponents();
         Assertions.assertEquals(2, discoveredComponentsNonCyclic.size());
 

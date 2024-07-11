@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.processing;
 
-import org.dockbox.hartshorn.component.processing.ContextConfiguringComponentProcessor;
+import org.dockbox.hartshorn.launchpad.processing.ContextConfiguringComponentProcessor;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;

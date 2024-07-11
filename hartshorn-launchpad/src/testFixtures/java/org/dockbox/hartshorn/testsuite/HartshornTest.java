@@ -21,16 +21,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.application.StandardApplicationContextFactory;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
-import org.dockbox.hartshorn.inject.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 import org.dockbox.hartshorn.inject.annotations.Populate;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 
 /**
  * Annotation for test classes that should be run with the Hartshorn test suite. This will automatically
@@ -83,7 +84,7 @@ public @interface HartshornTest {
      * class to have relevant {@link ServiceActivator service activators}. Alternative metadata sources may be
      * used, depending on the application environment.
      *
-     * @see org.dockbox.hartshorn.application.StandardApplicationBuilder.Configurer#mainClass(Class)
+     * @see StandardApplicationBuilder.Configurer#mainClass(Class)
      */
     Class<?> mainClass() default Void.class;
 }
