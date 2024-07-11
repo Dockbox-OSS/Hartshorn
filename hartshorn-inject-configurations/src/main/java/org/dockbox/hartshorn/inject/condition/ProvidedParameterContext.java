@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import org.dockbox.hartshorn.inject.DefaultProvisionContext;
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
@@ -34,7 +34,7 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
  *
  * @author Guus Lieben
  */
-public final class ProvidedParameterContext extends DefaultProvisionContext {
+public final class ProvidedParameterContext extends DefaultFallbackCompatibleContext {
 
     private final Map<ParameterView<?>, Object> arguments = new HashMap<>();
 

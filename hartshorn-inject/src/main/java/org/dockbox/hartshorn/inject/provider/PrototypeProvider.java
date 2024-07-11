@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
+@FunctionalInterface
 public interface PrototypeProvider<T> extends NonTypeAwareProvider<T> {
 
     @Override

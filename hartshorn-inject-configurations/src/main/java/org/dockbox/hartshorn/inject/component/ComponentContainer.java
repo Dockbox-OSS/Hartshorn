@@ -40,9 +40,6 @@ public interface ComponentContainer<T> {
 
     boolean lazy();
 
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    ComponentType componentType();
-
     boolean permitsProxying();
 
     boolean permitsProcessing();

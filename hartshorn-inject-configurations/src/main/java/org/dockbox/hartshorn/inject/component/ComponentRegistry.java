@@ -30,8 +30,5 @@ public interface ComponentRegistry {
 
     Collection<ComponentContainer<?>> containers();
 
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    Collection<ComponentContainer<?>> containers(ComponentType functional);
-
     Option<ComponentContainer<?>> container(Class<?> type);
 }

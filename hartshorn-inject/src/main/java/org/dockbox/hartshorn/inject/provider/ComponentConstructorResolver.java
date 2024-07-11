@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject;
+package org.dockbox.hartshorn.inject.provider;
 
-import org.dockbox.hartshorn.inject.graph.TypePathNode;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.inject.NoSuchProviderException.ProviderType;
+import java.util.List;
+
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.provider.ComposedProvider;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
-import org.dockbox.hartshorn.inject.provider.Provider;
-import org.dockbox.hartshorn.inject.provider.TypeAwareProvider;
+import org.dockbox.hartshorn.inject.graph.TypePathNode;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.util.List;
 
 /**
  * TODO: #1060 Add documentation
@@ -63,11 +61,11 @@ public final class ComponentConstructorResolver {
         );
     }
 
-    public static ComponentConstructorResolver create(ApplicationContext applicationContext) {
+    public static ComponentConstructorResolver create(InjectionCapableApplication applicationContext) {
         return new ComponentConstructorResolver(
                 applicationContext.environment().injectionPointsResolver(),
                 applicationContext.environment().introspector(),
-                applicationContext
+                applicationContext.defaultBinder()
         );
     }
 
@@ -98,7 +96,7 @@ public final class ComponentConstructorResolver {
             TypeView<? extends C> typeView = this.introspector.introspect(typeAwareProvider.type());
             return this.findConstructorInImplementation(typeView);
         }
-        throw new NoSuchProviderException(ProviderType.TYPE_AWARE, node.componentKey());
+        throw new NoSuchProviderException(NoSuchProviderException.ProviderType.TYPE_AWARE, node.componentKey());
     }
 
     private <C> Option<ConstructorView<? extends C>> findConstructorInImplementation(TypeView<? extends C> type) throws MissingInjectConstructorException {

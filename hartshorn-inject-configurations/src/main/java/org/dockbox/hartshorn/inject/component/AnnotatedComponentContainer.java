@@ -32,12 +32,12 @@ import java.util.Objects;
  *
  * @author Guus Lieben
  */
-public class ComponentContainerImpl<T> implements ComponentContainer<T> {
+public class AnnotatedComponentContainer<T> implements ComponentContainer<T> {
 
     private final Component annotation;
     private final TypeView<T> component;
 
-    public ComponentContainerImpl(TypeView<T> component) {
+    public AnnotatedComponentContainer(TypeView<T> component) {
         Option<Component> annotated = component.annotations().get(Component.class);
         if (annotated.absent()) {
             throw new InvalidComponentException("Provided component candidate (" + component.qualifiedName() + ") is not annotated with @" + Component.class.getSimpleName());
@@ -61,8 +61,8 @@ public class ComponentContainerImpl<T> implements ComponentContainer<T> {
     @Override
     public String id() {
         String id = this.annotation().id();
-        if (id != null && id.isEmpty()) {
-            return ComponentUtilities.id(this, true);
+        if (id == null || id.isBlank()) {
+            return ComponentDescriber.id(this.type());
         }
         return id;
     }
@@ -70,8 +70,8 @@ public class ComponentContainerImpl<T> implements ComponentContainer<T> {
     @Override
     public String name() {
         String name = this.annotation().name();
-        if (name != null && name.isEmpty()) {
-            return ComponentUtilities.name(this, true);
+        if (name == null || name.isBlank()) {
+            return ComponentDescriber.name(this.type());
         }
         return name;
     }
@@ -92,11 +92,6 @@ public class ComponentContainerImpl<T> implements ComponentContainer<T> {
     }
 
     @Override
-    public ComponentType componentType() {
-        return this.annotation().type();
-    }
-
-    @Override
     public boolean permitsProxying() {
         return this.permitsProcessing() && this.annotation().permitProxying();
     }
@@ -114,7 +109,7 @@ public class ComponentContainerImpl<T> implements ComponentContainer<T> {
         if (other == null || this.getClass() != other.getClass()) {
             return false;
         }
-        ComponentContainerImpl container = (ComponentContainerImpl) other;
+        AnnotatedComponentContainer<?> container = (AnnotatedComponentContainer<?>) other;
         return this.component.equals(container.component);
     }
 

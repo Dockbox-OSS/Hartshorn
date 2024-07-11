@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.singleton;
+package org.dockbox.hartshorn.inject.provider.singleton;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.provider.SingletonCache;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.option.Option;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.component;
+package org.dockbox.hartshorn.inject.provider;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.InjectorConfiguration;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentKeyView;
 import org.dockbox.hartshorn.inject.binding.AbstractBindingHierarchy;
@@ -36,7 +36,6 @@ import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.collection.ImmutableCompositeBindingHierarchy;
-import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -55,15 +54,15 @@ public class HierarchyCache {
 
     private final transient Map<ComponentKeyView<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
 
-    private final ApplicationContext applicationContext;
+    private final InjectorConfiguration configuration;
     private final HierarchicalComponentProvider globalProvider;
     private final HierarchicalComponentProvider owner;
 
     public HierarchyCache(
-            ApplicationContext applicationContext,
+            InjectorConfiguration configuration,
             HierarchicalComponentProvider globalProvider,
             HierarchicalComponentProvider owner) {
-        this.applicationContext = applicationContext;
+        this.configuration = configuration;
         this.globalProvider = globalProvider;
         this.owner = owner;
     }
@@ -120,7 +119,7 @@ public class HierarchyCache {
             hierarchy = this.looseLookupHierarchy(key);
         }
         else if (this.isCollectionComponentKey(key)) {
-            hierarchy = new CollectionBindingHierarchy<>(TypeUtils.adjustWildcards(key, ComponentKey.class));
+            hierarchy = new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
         }
         else {
             hierarchy = null;
@@ -131,7 +130,7 @@ public class HierarchyCache {
     protected boolean isStrict(ComponentKey<?> key) {
         Tristate strict = key.strict();
         if (strict == Tristate.UNDEFINED) {
-            return this.applicationContext.environment().isStrictMode();
+            return this.configuration.isStrictMode();
         }
         else {
             return strict.booleanValue();
@@ -141,7 +140,7 @@ public class HierarchyCache {
     @Nullable
     private <T> AbstractBindingHierarchy<?> createHierarchy(ComponentKey<T> key) {
         if (this.isCollectionComponentKey(key)) {
-            return new CollectionBindingHierarchy<>(TypeUtils.adjustWildcards(key, ComponentKey.class));
+            return new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
         }
         else {
             return null;
@@ -156,7 +155,7 @@ public class HierarchyCache {
                 .collect(Collectors.toSet());
 
         if (this.isCollectionComponentKey(key)) {
-            return this.composeCollectionHierarchy(TypeUtils.adjustWildcards(key, ComponentKey.class), compatibleKeys);
+            return this.composeCollectionHierarchy(TypeUtils.unchecked(key, ComponentKey.class), compatibleKeys);
         }
         else {
             if (compatibleKeys.size() == 1) {
@@ -234,6 +233,6 @@ public class HierarchyCache {
                 throw new IllegalStateException("Found incompatible hierarchy for key " + compatibleKey +". Expected CollectionBindingHierarchy, but found " + hierarchy.getClass().getSimpleName());
             }
         }
-        return new ImmutableCompositeBindingHierarchy<>(key, TypeUtils.adjustWildcards(hierarchies, Collection.class));
+        return new ImmutableCompositeBindingHierarchy<>(key, TypeUtils.unchecked(hierarchies, Collection.class));
     }
 }
