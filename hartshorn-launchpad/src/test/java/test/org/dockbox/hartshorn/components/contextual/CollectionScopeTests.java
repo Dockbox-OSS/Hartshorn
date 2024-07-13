@@ -22,10 +22,10 @@ import java.util.TreeSet;
 
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
-import org.dockbox.hartshorn.inject.collection.CollectionProvider;
+import org.dockbox.hartshorn.inject.collection.CollectionInstantiationStrategy;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
@@ -60,15 +60,15 @@ public class CollectionScopeTests {
         Assertions.assertEquals(1, hierarchy.size());
 
         int highestPriority = hierarchy.highestPriority();
-        Option<Provider<ComponentCollection<String>>> candidateProvider = hierarchy.get(highestPriority);
+        Option<InstantiationStrategy<ComponentCollection<String>>> candidateProvider = hierarchy.get(highestPriority);
         Assertions.assertTrue(candidateProvider.present());
 
-        Provider<ComponentCollection<String>> provider = candidateProvider.get();
-        Assertions.assertTrue(provider instanceof CollectionProvider<String>);
+        InstantiationStrategy<ComponentCollection<String>> strategy = candidateProvider.get();
+        Assertions.assertTrue(strategy instanceof CollectionInstantiationStrategy<String>);
 
-        CollectionProvider<String> collectionProvider = (CollectionProvider<String>) provider;
-        Set<Provider<String>> providers = collectionProvider.providers();
-        Assertions.assertEquals(2, providers.size());
+        CollectionInstantiationStrategy<String> collectionProvider = (CollectionInstantiationStrategy<String>) strategy;
+        Set<InstantiationStrategy<String>> strategies = collectionProvider.providers();
+        Assertions.assertEquals(2, strategies.size());
     }
 
     @Test

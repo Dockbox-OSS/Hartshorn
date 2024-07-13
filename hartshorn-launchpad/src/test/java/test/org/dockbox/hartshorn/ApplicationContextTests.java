@@ -41,7 +41,7 @@ import org.dockbox.hartshorn.inject.graph.resolve.ApplicationDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.support.ComponentDiscoveryList;
 import org.dockbox.hartshorn.inject.graph.support.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.provider.PrototypeProvider;
+import org.dockbox.hartshorn.inject.provider.PrototypeInstantiationStrategy;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.DependencyMap;
 import org.dockbox.hartshorn.inject.graph.DependencyResolutionType;
@@ -504,7 +504,7 @@ public class ApplicationContextTests {
                 .priority(-1)
                 .memberType(ComponentMemberType.STANDALONE)
                 .view(origin)
-                .supplier(PrototypeProvider.empty())
+                .supplier(PrototypeInstantiationStrategy.empty())
                 .build();
             dependencyContexts.add(dependencyContext);
         }

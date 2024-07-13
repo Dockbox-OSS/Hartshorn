@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject.provider.selection;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 
 /**
  * A strategy for selecting a provider from a {@link BindingHierarchy}. Strategies can be
@@ -53,5 +53,5 @@ public interface ProviderSelectionStrategy {
      * @return the selected provider, or {@code null} if no provider could be selected
      * @param <T> the type of the provider
      */
-    <T> Provider<T> selectProvider(BindingHierarchy<T> hierarchy);
+    <T> InstantiationStrategy<T> selectProvider(BindingHierarchy<T> hierarchy);
 }

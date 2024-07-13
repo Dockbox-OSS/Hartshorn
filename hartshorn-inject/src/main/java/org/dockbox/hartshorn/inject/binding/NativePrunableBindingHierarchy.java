@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject.binding;
 import java.util.Map;
 import java.util.TreeMap;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 
 /**
  * The default implementation of the {@link BindingHierarchy} interface. This uses a specified {@link ComponentKey}
@@ -47,7 +47,7 @@ public class NativePrunableBindingHierarchy<C> extends AbstractBindingHierarchy<
     @Override
     public int pruneAbove(int priority) {
         int count = 0;
-        for (Map.Entry<Integer, Provider<C>> entry : this.priorityProviders().entrySet()) {
+        for (Map.Entry<Integer, InstantiationStrategy<C>> entry : this.priorityProviders().entrySet()) {
             if (entry.getKey() > priority && this.prune(entry.getKey())) {
                 count++;
             }
@@ -58,7 +58,7 @@ public class NativePrunableBindingHierarchy<C> extends AbstractBindingHierarchy<
     @Override
     public int pruneBelow(int priority) {
         int count = 0;
-        for (Map.Entry<Integer, Provider<C>> entry : this.priorityProviders().entrySet()) {
+        for (Map.Entry<Integer, InstantiationStrategy<C>> entry : this.priorityProviders().entrySet()) {
             if (entry.getKey() < priority && this.prune(entry.getKey())) {
                 count++;
             }

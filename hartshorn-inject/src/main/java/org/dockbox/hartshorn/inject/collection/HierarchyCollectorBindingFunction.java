@@ -19,12 +19,12 @@ package org.dockbox.hartshorn.inject.collection;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.provider.ContextDrivenProvider;
-import org.dockbox.hartshorn.inject.provider.LazySingletonProvider;
-import org.dockbox.hartshorn.inject.provider.PrototypeProvider;
-import org.dockbox.hartshorn.inject.provider.Provider;
-import org.dockbox.hartshorn.inject.provider.SingletonProvider;
-import org.dockbox.hartshorn.inject.provider.SupplierProvider;
+import org.dockbox.hartshorn.inject.provider.SimpleConstructorViewDrivenProvider;
+import org.dockbox.hartshorn.inject.provider.LazySingletonInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.PrototypeInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.SingletonInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.SupplierInstantiationStrategy;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
@@ -51,35 +51,35 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
     }
 
     @Override
-    public Binder provider(Provider<T> provider) {
-        this.hierarchy.getOrCreateProvider(this.priority).add(provider);
+    public Binder provider(InstantiationStrategy<T> strategy) {
+        this.hierarchy.getOrCreateProvider(this.priority).add(strategy);
         return this.binder;
     }
 
     @Override
     public Binder supplier(CheckedSupplier<T> supplier) {
-        return this.provider(new SupplierProvider<>(supplier));
+        return this.provider(new SupplierInstantiationStrategy<>(supplier));
     }
 
     @Override
-    public Binder supplier(PrototypeProvider<T> supplier) {
+    public Binder supplier(PrototypeInstantiationStrategy<T> supplier) {
         return this.provider(supplier);
     }
 
     @Override
     public Binder singleton(T instance) {
-        return this.provider(new SingletonProvider<>(instance));
+        return this.provider(new SingletonInstantiationStrategy<>(instance));
     }
 
     @Override
     public Binder type(Class<? extends T> type) {
         ComponentKey<? extends T> componentKey = this.hierarchy.key().mutable().type(type).build();
-        return this.provider(ContextDrivenProvider.forPrototype(componentKey));
+        return this.provider(SimpleConstructorViewDrivenProvider.forPrototype(componentKey));
     }
 
     @Override
     public Binder lazySingleton(CheckedSupplier<T> supplier) {
-        return this.provider(new LazySingletonProvider<>(() -> {
+        return this.provider(new LazySingletonInstantiationStrategy<>(() -> {
             T instance = supplier.get();
             if (instance == null) {
                 throw new IllegalModificationException("Cannot bind null instance");

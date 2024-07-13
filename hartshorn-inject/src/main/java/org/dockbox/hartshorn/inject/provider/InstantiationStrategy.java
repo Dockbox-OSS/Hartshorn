@@ -36,7 +36,8 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public sealed interface Provider<T> permits TypeAwareProvider, NonTypeAwareProvider, ComposedProvider {
+public sealed interface InstantiationStrategy<T> permits TypeAwareInstantiationStrategy, NonTypeAwareInstantiationStrategy,
+    CompositeInstantiationStrategy {
 
     /**
      * Provides an instance of the {@link ComponentKey} binding. The given {@code requestContext}
@@ -58,8 +59,8 @@ public sealed interface Provider<T> permits TypeAwareProvider, NonTypeAwareProvi
      * @param mappingFunction The function to apply to the result of this provider.
      * @return A provider that applies the provided function to the result of this provider.
      */
-    default Provider<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
-        return new ComposedProvider<>(this, mappingFunction);
+    default InstantiationStrategy<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
+        return new CompositeInstantiationStrategy<>(this, mappingFunction);
     }
 
     /**

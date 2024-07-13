@@ -29,9 +29,9 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.graph.declaration.ImplementationDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.provider.ComposedProvider;
-import org.dockbox.hartshorn.inject.provider.Provider;
-import org.dockbox.hartshorn.inject.provider.TypeAwareProvider;
+import org.dockbox.hartshorn.inject.provider.CompositeInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.TypeAwareInstantiationStrategy;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.util.CollectionUtilities;
@@ -101,14 +101,14 @@ public class DependencyGraphBuilder {
         }
     }
 
-    protected <T> Set<Provider<? extends T>> lookupImplementationProviders(DependencyContext<T> dependencyContext) {
+    protected <T> Set<InstantiationStrategy<? extends T>> lookupImplementationProviders(DependencyContext<T> dependencyContext) {
         ComponentKey<T> componentKey = dependencyContext.componentKey();
         BindingHierarchy<T> hierarchy = this.binder.hierarchy(componentKey);
         int highestPriority = hierarchy.highestPriority();
         return hierarchy.get(highestPriority)
             .map(provider -> {
-                if (provider instanceof ComposedProvider<T> composedProvider) {
-                    return composedProvider.provider();
+                if (provider instanceof CompositeInstantiationStrategy<T> composite) {
+                    return composite.provider();
                 }
                 return provider;
             })
@@ -138,16 +138,16 @@ public class DependencyGraphBuilder {
 
     @NonNull
     private <T> Set<DependencyDeclarationContext<?>> getImplementationContexts(DependencyContext<T> dependencyContext) {
-        Set<Provider<? extends T>> implementationProviders = this.lookupImplementationProviders(dependencyContext);
-        return implementationProviders.stream()
-            .filter(provider -> provider instanceof TypeAwareProvider<? extends T>)
-            .map(provider -> (TypeAwareProvider<? extends T>) provider)
+        Set<InstantiationStrategy<? extends T>> strategies = this.lookupImplementationProviders(dependencyContext);
+        return strategies.stream()
+            .filter(provider -> provider instanceof TypeAwareInstantiationStrategy<? extends T>)
+            .map(provider -> (TypeAwareInstantiationStrategy<? extends T>) provider)
             .map(provider -> {
                 ComponentKey<? extends T> implementationKey = dependencyContext.componentKey()
                     .mutable()
                     .type(provider.type())
                     .build();
-                return new ComponentKeyDependencyDeclarationContext<>(this.introspector, implementationKey, TypeUtils.unchecked(provider, Provider.class));
+                return new ComponentKeyDependencyDeclarationContext<>(this.introspector, implementationKey, TypeUtils.unchecked(provider, InstantiationStrategy.class));
             })
             .collect(Collectors.toSet());
     }

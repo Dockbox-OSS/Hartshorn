@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.inject.collection;
 
-import org.dockbox.hartshorn.inject.provider.PrototypeProvider;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.PrototypeInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
@@ -38,10 +38,10 @@ public interface CollectorBindingFunction<T> {
      * Binds the given provider, this will call the provider every time it is
      * requested.
      *
-     * @param provider the provider to add
+     * @param strategy the provider to add
      * @return the binder
      */
-    Binder provider(Provider<T> provider);
+    Binder provider(InstantiationStrategy<T> strategy);
 
     /**
      * Binds the given supplier, this will call the supplier every time it is
@@ -52,7 +52,7 @@ public interface CollectorBindingFunction<T> {
      */
     Binder supplier(CheckedSupplier<T> supplier);
 
-    Binder supplier(PrototypeProvider<T> supplier);
+    Binder supplier(PrototypeInstantiationStrategy<T> supplier);
 
     /**
      * Binds to the given instance, this will always return the same instance

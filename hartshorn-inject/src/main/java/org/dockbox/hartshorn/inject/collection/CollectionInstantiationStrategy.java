@@ -26,10 +26,10 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.provider.collections.CollectionObjectContainer;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
-import org.dockbox.hartshorn.inject.provider.NonTypeAwareProvider;
+import org.dockbox.hartshorn.inject.provider.NonTypeAwareInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
-import org.dockbox.hartshorn.inject.provider.Provider;
-import org.dockbox.hartshorn.inject.provider.TypeAwareProvider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.TypeAwareInstantiationStrategy;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ObjectDescriber;
 import org.dockbox.hartshorn.util.Tristate;
@@ -44,7 +44,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * <p>Note that while this type is not type-aware itself, providers that are added to this collection
  * may be. Providers will be accessed every time the collection is provided, and may be removed from
  * the collection at any time. As such, providers can apply rules for prototype or singleton behavior,
- * or any other behavior that is supported by a {@link Provider}.
+ * or any other behavior that is supported by a {@link InstantiationStrategy}.
  *
  * @param <T> the type of the components
  *
@@ -55,69 +55,69 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class CollectionProvider<T> implements NonTypeAwareProvider<ComponentCollection<T>> {
+public class CollectionInstantiationStrategy<T> implements NonTypeAwareInstantiationStrategy<ComponentCollection<T>> {
 
-    private final Set<Provider<T>> providers = ConcurrentHashMap.newKeySet();
+    private final Set<InstantiationStrategy<T>> strategies = ConcurrentHashMap.newKeySet();
 
     /**
      * Returns a copy of the providers that are currently part of this collection.
      *
      * @return a copy of the providers that are currently part of this collection
      */
-    public Set<Provider<T>> providers() {
-        return Set.copyOf(this.providers);
+    public Set<InstantiationStrategy<T>> providers() {
+        return Set.copyOf(this.strategies);
     }
 
     /**
      * Adds a provider to the collection. If the provider is already present, it will not be added
      * again.
      *
-     * @param provider the provider to add
+     * @param strategy the provider to add
      */
-    public void add(Provider<T> provider) {
-        this.providers.add(provider);
+    public void add(InstantiationStrategy<T> strategy) {
+        this.strategies.add(strategy);
     }
 
     /**
      * Adds all providers to the collection. If a provider is already present, it will not be added
      * again.
      *
-     * @param providers the providers to add
+     * @param strategies the providers to add
      */
-    public void addAll(Collection<Provider<T>> providers) {
-        this.providers.addAll(providers);
+    public void addAll(Collection<InstantiationStrategy<T>> strategies) {
+        this.strategies.addAll(strategies);
     }
 
     /**
      * Removes a provider from the collection. If the provider is not present, nothing will happen.
      *
-     * @param provider the provider to remove
+     * @param strategy the provider to remove
      */
-    public void remove(Provider<T> provider) {
-        this.providers.remove(provider);
+    public void remove(InstantiationStrategy<T> strategy) {
+        this.strategies.remove(strategy);
     }
 
     /**
      * Removes all providers from the collection. If a provider is not present, nothing will happen.
      *
-     * @param providers the providers to remove
+     * @param strategies the providers to remove
      */
-    public void removeAll(Collection<Provider<T>> providers) {
-        this.providers.removeAll(providers);
+    public void removeAll(Collection<InstantiationStrategy<T>> strategies) {
+        this.strategies.removeAll(strategies);
     }
 
     /**
      * Clears all providers from the collection.
      */
     public void clear() {
-        this.providers.clear();
+        this.strategies.clear();
     }
 
     @Override
     public Option<ObjectContainer<ComponentCollection<T>>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
         Set<ObjectContainer<T>> containers = new HashSet<>();
-        for(Provider<T> provider : this.providers) {
-            Option<ObjectContainer<T>> container = provider.provide(application, requestContext);
+        for(InstantiationStrategy<T> strategy : this.strategies) {
+            Option<ObjectContainer<T>> container = strategy.provide(application, requestContext);
             if(container.present()) {
                 containers.add(container.get());
             }
@@ -143,8 +143,8 @@ public class CollectionProvider<T> implements NonTypeAwareProvider<ComponentColl
 
     @Override
     public String toString() {
-        String providers = this.providers.stream()
-                .map(provider -> provider instanceof TypeAwareProvider<T> typeAwareProvider
+        String providers = this.strategies.stream()
+                .map(provider -> provider instanceof TypeAwareInstantiationStrategy<T> typeAwareProvider
                         ? typeAwareProvider.type().getSimpleName()
                         : provider.toString()
                 ).collect(Collectors.joining(", "));

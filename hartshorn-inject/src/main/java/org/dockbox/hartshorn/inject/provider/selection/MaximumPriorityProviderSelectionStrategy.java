@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject.provider.selection;
 import java.util.SortedSet;
 
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 
 /**
  * A {@link ProviderSelectionStrategy} which selects the provider with the highest priority, as long
@@ -42,7 +42,7 @@ public class MaximumPriorityProviderSelectionStrategy implements ProviderSelecti
     }
 
     @Override
-    public <T> Provider<T> selectProvider(BindingHierarchy<T> hierarchy) {
+    public <T> InstantiationStrategy<T> selectProvider(BindingHierarchy<T> hierarchy) {
         // In ascending order, so need to iterate backwards until the first provider with a priority
         // lower than the maximum
         SortedSet<Integer> priorities = hierarchy.priorities();

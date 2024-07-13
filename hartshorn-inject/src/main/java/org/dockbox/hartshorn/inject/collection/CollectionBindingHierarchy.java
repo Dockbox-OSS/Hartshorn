@@ -19,14 +19,14 @@ package org.dockbox.hartshorn.inject.collection;
 import java.util.List;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.binding.AbstractBindingHierarchy;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
 /**
  * A specialized {@link AbstractBindingHierarchy} for {@link ComponentCollection} instances. The primary
- * difference being that this hierarchy is constrained to only permit {@link CollectionProvider} instances
- * which can delegate to zero or more other {@link Provider}s.
+ * difference being that this hierarchy is constrained to only permit {@link CollectionInstantiationStrategy} instances
+ * which can delegate to zero or more other {@link InstantiationStrategy}s.
  *
  * @param <T> the type of the elements in the collection
  *
@@ -40,13 +40,13 @@ public class CollectionBindingHierarchy<T> extends AbstractBindingHierarchy<Comp
         super(componentKey);
     }
 
-    public CollectionProvider<T> getOrCreateProvider(int priority) {
-        Provider<ComponentCollection<T>> existingProvider = this.get(priority).orCompute(() -> {
-            Provider<ComponentCollection<T>> collectionProvider = new CollectionProvider<>();
-            this.add(priority, collectionProvider);
-            return collectionProvider;
+    public CollectionInstantiationStrategy<T> getOrCreateProvider(int priority) {
+        InstantiationStrategy<ComponentCollection<T>> existingStrategy = this.get(priority).orCompute(() -> {
+            InstantiationStrategy<ComponentCollection<T>> collectionStrategy = new CollectionInstantiationStrategy<>();
+            this.add(priority, collectionStrategy);
+            return collectionStrategy;
         }).orNull();
-        if (existingProvider instanceof CollectionProvider<T> collectionProvider) {
+        if (existingStrategy instanceof CollectionInstantiationStrategy<T> collectionProvider) {
             return collectionProvider;
         }
         else {

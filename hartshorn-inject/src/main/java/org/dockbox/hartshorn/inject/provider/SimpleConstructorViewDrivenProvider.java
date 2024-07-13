@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link ContextDrivenProvider} is a {@link Provider} that uses a {@link ConstructorView} to
+ * A {@link SimpleConstructorViewDrivenProvider} is a {@link InstantiationStrategy} that uses a {@link ConstructorView} to
  * create a new instance of a class. The constructor is looked up based on its parameters, where the
  * constructor with the most parameters is chosen in order to satisfy as many dependencies as possible.
  *
@@ -37,14 +37,14 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <C> The type of the class to create.
  *
- * @see Provider
- * @see SupplierProvider
+ * @see InstantiationStrategy
+ * @see SupplierInstantiationStrategy
  *
  * @since 0.4.4
  *
  * @author Guus Lieben
  */
-public final class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
+public final class SimpleConstructorViewDrivenProvider<C> implements TypeAwareInstantiationStrategy<C> {
 
     private final ComponentKey<? extends C> componentKey;
     private final LifecycleType lifecycleType;
@@ -52,33 +52,33 @@ public final class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
     private ConstructorView<? extends C> optimalConstructor;
     private boolean lazy = true;
 
-    private ContextDrivenProvider(ComponentKey<? extends C> type, LifecycleType lifecycleType) {
+    private SimpleConstructorViewDrivenProvider(ComponentKey<? extends C> type, LifecycleType lifecycleType) {
         this.componentKey = type;
         this.lifecycleType = lifecycleType;
     }
 
     /**
-     * Creates a new {@link ContextDrivenProvider} for the given type, with a prototype lifecycle.
+     * Creates a new {@link SimpleConstructorViewDrivenProvider} for the given type, with a prototype lifecycle.
      *
      * @param type the type of the component to create
      * @param <T> the type of the component to create
      *
-     * @return a new {@link ContextDrivenProvider} for the given type
+     * @return a new {@link SimpleConstructorViewDrivenProvider} for the given type
      */
-    public static <T> ContextDrivenProvider<T> forPrototype(ComponentKey<? extends T> type) {
-        return new ContextDrivenProvider<>(type, LifecycleType.PROTOTYPE);
+    public static <T> SimpleConstructorViewDrivenProvider<T> forPrototype(ComponentKey<? extends T> type) {
+        return new SimpleConstructorViewDrivenProvider<>(type, LifecycleType.PROTOTYPE);
     }
 
     /**
-     * Creates a new {@link ContextDrivenProvider} for the given type, with a singleton lifecycle.
+     * Creates a new {@link SimpleConstructorViewDrivenProvider} for the given type, with a singleton lifecycle.
      *
      * @param type the type of the component to create
      * @param <T> the type of the component to create
      *
-     * @return a new {@link ContextDrivenProvider} for the given type
+     * @return a new {@link SimpleConstructorViewDrivenProvider} for the given type
      */
-    public static <T> ContextDrivenProvider<T> forSingleton(ComponentKey<? extends T> type) {
-        return new ContextDrivenProvider<>(type, LifecycleType.SINGLETON);
+    public static <T> SimpleConstructorViewDrivenProvider<T> forSingleton(ComponentKey<? extends T> type) {
+        return new SimpleConstructorViewDrivenProvider<>(type, LifecycleType.SINGLETON);
     }
 
     /**
@@ -90,7 +90,7 @@ public final class ContextDrivenProvider<C> implements TypeAwareProvider<C> {
      * @param lazy whether the provider should be lazy
      * @return the provider
      */
-    public ContextDrivenProvider<C> lazy(boolean lazy) {
+    public SimpleConstructorViewDrivenProvider<C> lazy(boolean lazy) {
         this.lazy = lazy;
         return this;
     }

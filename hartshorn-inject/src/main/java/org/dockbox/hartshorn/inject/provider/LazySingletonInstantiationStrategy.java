@@ -18,14 +18,17 @@ package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.util.ObjectDescriber;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.Tristate;
+import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A provider that always returns the same instance. While the instance is available, this
- * provider is not type-aware, as the instance may be {@code null}, or deviate from the
- * binding key.
+ * A provider that always returns the same instance, but does not initialize it until it is
+ * requested. While the instance is available, this provider is not type-aware, as the instance
+ * may be {@code null}, deviate from the binding key, or should not be initialized until it is
+ * actually requested.
  *
  * @param <T> the type of the instance
  *
@@ -33,17 +36,21 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class SingletonProvider<T> implements NonTypeAwareProvider<T> {
+public class LazySingletonInstantiationStrategy<T> implements NonTypeAwareInstantiationStrategy<T> {
 
-    private final ObjectContainer<T> container;
+    private final CheckedSupplier<T> supplier;
 
-    public SingletonProvider(T instance) {
-        this.container = ComponentObjectContainer.ofSingleton(instance);
+    public LazySingletonInstantiationStrategy(CheckedSupplier<T> supplier) {
+        this.supplier = supplier;
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) {
-        return Option.of(this.container);
+    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
+        T instance = this.supplier.get();
+        if (instance == null) {
+            throw new IllegalModificationException("Cannot bind null instance");
+        }
+        return Option.of(ComponentObjectContainer.ofSingleton(instance));
     }
 
     @Override
@@ -53,13 +60,6 @@ public class SingletonProvider<T> implements NonTypeAwareProvider<T> {
 
     @Override
     public Tristate defaultLazy() {
-        return Tristate.FALSE;
-    }
-
-    @Override
-    public String toString() {
-        return ObjectDescriber.of(this)
-                .field("container", this.container)
-                .describe();
+        return Tristate.TRUE;
     }
 }

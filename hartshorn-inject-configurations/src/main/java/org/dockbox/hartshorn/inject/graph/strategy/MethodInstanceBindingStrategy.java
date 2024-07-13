@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
 import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.provider.PrototypeProvider;
+import org.dockbox.hartshorn.inject.provider.PrototypeInstantiationStrategy;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.DependencyMap;
 import org.dockbox.hartshorn.inject.annotations.Priority;
@@ -84,7 +84,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
     private <T> DependencyContext<T> resolveInstanceBinding(BindingStrategyContext<?> context, AnnotatedGenericTypeView<T> declaration, Binds bindingDecorator, InjectionCapableApplication application) {
         ComponentKey<T> componentKey = TypeUtils.unchecked(this.application.environment().componentKeyResolver().resolve(declaration), ComponentKey.class);
         Set<ComponentKey<?>> dependencies = this.declarationDependencyResolver.dependencies(context);
-        PrototypeProvider<T> supplier = requestContext -> {
+        PrototypeInstantiationStrategy<T> supplier = requestContext -> {
             try {
                 ViewContextAdapter contextAdapter = new InjectorApplicationViewAdapter(application);
                 contextAdapter.addContext(requestContext);
