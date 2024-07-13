@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject.graph.declaration;
 
 import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
-import org.dockbox.hartshorn.inject.provider.TypeAwareProvider;
+import org.dockbox.hartshorn.inject.provider.TypeAwareInstantiationStrategy;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.introspect.view.View;
@@ -25,14 +25,14 @@ import org.dockbox.hartshorn.util.introspect.view.View;
 /**
  * A {@link DependencyContext} implementation that is used for implementation components. Implementation components are
  * components that have a known implementation specification for which a {@link DependencyContext} is available. Typically,
- * these are obtained through {@link TypeAwareProvider}s that are registered with the {@link BindingHierarchy} of the
+ * these are obtained through {@link TypeAwareInstantiationStrategy}s that are registered with the {@link BindingHierarchy} of the
  * container.
  *
  * @param <T> the type of the component that is implemented
  * @param <I> the type of the component that is the implementation
  *
  * @see DependencyContext
- * @see TypeAwareProvider
+ * @see TypeAwareInstantiationStrategy
  * @see BindingHierarchy
  *
  * @since 0.5.0

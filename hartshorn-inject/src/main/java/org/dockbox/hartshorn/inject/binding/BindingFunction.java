@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.inject.collection.CollectorBindingFunction;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
@@ -90,10 +90,10 @@ public interface BindingFunction<T> {
      * Binds to the given provider, this will call the provider every time it is
      * requested.
      *
-     * @param provider The provider to bind to
+     * @param strategy The provider to bind to
      * @return The binder
      */
-    Binder to(Provider<T> provider);
+    Binder to(InstantiationStrategy<T> strategy);
 
     /**
      * Binds to the given instance, this will always return the same instance

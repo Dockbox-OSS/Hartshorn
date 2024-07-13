@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.launchpad;
 
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.collection.CollectorBindingFunction;
@@ -79,8 +79,8 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
     }
 
     @Override
-    public Binder to(Provider<T> provider) {
-        return this.delegate.to(provider);
+    public Binder to(InstantiationStrategy<T> strategy) {
+        return this.delegate.to(strategy);
     }
 
     @Override

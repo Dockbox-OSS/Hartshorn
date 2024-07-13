@@ -21,18 +21,18 @@ import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.inject.provider.collections.CollectionEntryObjectContainer;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.util.collections.AbstractDelegatingCollection;
 
 /**
  * A {@link ComponentCollection} that is also aware of the {@link ObjectContainer}s that were used to populate it.
- * This is mostly used for internal purposes, and should not be used directly. {@link Provider}s
+ * This is mostly used for internal purposes, and should not be used directly. {@link InstantiationStrategy}s
  * supporting a {@link CollectionBindingHierarchy} should use this class to create a {@link ComponentCollection} instance.
  *
  * @param <T> the type of the components
  *
  * @see CollectionBindingHierarchy
- * @see CollectionProvider
+ * @see CollectionInstantiationStrategy
  *
  * @since 0.5.0
  *

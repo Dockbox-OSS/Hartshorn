@@ -89,21 +89,21 @@ public final class ComponentConstructorResolver {
             throws MissingInjectConstructorException, NoSuchProviderException {
         BindingHierarchy<C> hierarchy = this.hierarchyLookup.hierarchy(node.componentKey());
         int highestPriority = hierarchy.highestPriority();
-        Option<Provider<C>> providerOption = hierarchy.get(highestPriority);
+        Option<InstantiationStrategy<C>> providerOption = hierarchy.get(highestPriority);
         return providerOption.absent()
             ? this.findConstructorInImplementation(node.type())
             : this.findConstructorInHierarchy(node, providerOption);
     }
 
-    private <C> Option<ConstructorView<? extends C>> findConstructorInHierarchy(TypePathNode<C> node, Option<Provider<C>> providerOption)
+    private <C> Option<ConstructorView<? extends C>> findConstructorInHierarchy(TypePathNode<C> node, Option<InstantiationStrategy<C>> providerOption)
             throws NoSuchProviderException, MissingInjectConstructorException {
-        Provider<C> provider = providerOption.get();
-        if (provider instanceof ComposedProvider<C> composedProvider) {
-            provider = composedProvider.provider();
+        InstantiationStrategy<C> strategy = providerOption.get();
+        if (strategy instanceof CompositeInstantiationStrategy<C> composite) {
+            strategy = composite.provider();
         }
 
-        if (provider instanceof TypeAwareProvider<C> typeAwareProvider) {
-            TypeView<? extends C> typeView = this.introspector.introspect(typeAwareProvider.type());
+        if (strategy instanceof TypeAwareInstantiationStrategy<C> typeAwareInstantiationStrategy) {
+            TypeView<? extends C> typeView = this.introspector.introspect(typeAwareInstantiationStrategy.type());
             return this.findConstructorInImplementation(typeView);
         }
         throw new NoSuchProviderException(NoSuchProviderException.ProviderType.TYPE_AWARE, node.componentKey());

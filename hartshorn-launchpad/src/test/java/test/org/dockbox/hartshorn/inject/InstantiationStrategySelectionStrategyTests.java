@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.inject.provider.selection.HighestPriorityProviderSe
 import org.dockbox.hartshorn.inject.provider.selection.MaximumPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.MinimumPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.ProviderSelectionStrategy;
-import org.dockbox.hartshorn.inject.provider.SingletonProvider;
+import org.dockbox.hartshorn.inject.provider.SingletonInstantiationStrategy;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.util.option.Option;
@@ -37,7 +37,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class ProviderSelectionStrategyTests {
+public class InstantiationStrategySelectionStrategyTests {
 
     private static final String PRIORITY_DEFAULT_VALUE = "default";
     private static final String PRIORITY_ZERO_VALUE = "zero";
@@ -55,10 +55,10 @@ public class ProviderSelectionStrategyTests {
 
     private BindingHierarchy<?> createHierarchy() {
         BindingHierarchy<String> hierarchy = createEmptyHierarchy();
-        hierarchy.add(-1, new SingletonProvider<>(PRIORITY_DEFAULT_VALUE));
-        hierarchy.add(0, new SingletonProvider<>(PRIORITY_ZERO_VALUE));
-        hierarchy.add(1, new SingletonProvider<>(PRIORITY_ONE_VALUE));
-        hierarchy.add(2, new SingletonProvider<>(PRIORITY_TWO_VALUE));
+        hierarchy.add(-1, new SingletonInstantiationStrategy<>(PRIORITY_DEFAULT_VALUE));
+        hierarchy.add(0, new SingletonInstantiationStrategy<>(PRIORITY_ZERO_VALUE));
+        hierarchy.add(1, new SingletonInstantiationStrategy<>(PRIORITY_ONE_VALUE));
+        hierarchy.add(2, new SingletonInstantiationStrategy<>(PRIORITY_TWO_VALUE));
         return hierarchy;
     }
 
@@ -73,7 +73,7 @@ public class ProviderSelectionStrategyTests {
     void testStrategySelectsNullIfEmpty() {
         BindingHierarchy<String> hierarchy = createEmptyHierarchy();
         ProviderSelectionStrategy strategy = new MaximumPriorityProviderSelectionStrategy(0);
-        Provider<?> provider = strategy.selectProvider(hierarchy);
+        InstantiationStrategy<?> provider = strategy.selectProvider(hierarchy);
         Assertions.assertNull(provider);
     }
 
@@ -122,7 +122,7 @@ public class ProviderSelectionStrategyTests {
     protected void assertValueWithStrategy(String expected, ProviderSelectionStrategy strategy) {
         BindingHierarchy<?> hierarchy = this.createHierarchy();
 
-        Provider<?> provider = strategy.selectProvider(hierarchy);
+        InstantiationStrategy<?> provider = strategy.selectProvider(hierarchy);
         if (expected == null) {
             Assertions.assertNull(provider);
             return;

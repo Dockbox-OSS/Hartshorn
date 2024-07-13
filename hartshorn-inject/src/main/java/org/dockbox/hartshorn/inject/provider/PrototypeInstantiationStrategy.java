@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @author Guus Lieben
  */
 @FunctionalInterface
-public interface PrototypeProvider<T> extends NonTypeAwareProvider<T> {
+public interface PrototypeInstantiationStrategy<T> extends NonTypeAwareInstantiationStrategy<T> {
 
     @Override
     default Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
@@ -51,7 +51,7 @@ public interface PrototypeProvider<T> extends NonTypeAwareProvider<T> {
         return Tristate.TRUE;
     }
 
-    static <T> PrototypeProvider<T> empty() {
+    static <T> PrototypeInstantiationStrategy<T> empty() {
         return context -> null;
     }
 }

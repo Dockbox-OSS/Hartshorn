@@ -20,9 +20,9 @@ import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.provider.ComposedProvider;
-import org.dockbox.hartshorn.inject.provider.ContextDrivenProvider;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.CompositeInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.SimpleConstructorViewDrivenProvider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -42,9 +42,9 @@ public class BindingHierarchyTests {
     @Test
     void testToString() {
         BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class));
-        hierarchy.add(0, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
-        hierarchy.add(1, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
-        hierarchy.add(2, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
+        hierarchy.add(0, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
+        hierarchy.add(1, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
+        hierarchy.add(2, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
 
         Assertions.assertEquals("Hierarchy<Contract>: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
     }
@@ -52,9 +52,9 @@ public class BindingHierarchyTests {
     @Test
     void testToStringNamed() {
         BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class, "sample"));
-        hierarchy.add(0, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
-        hierarchy.add(1, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
-        hierarchy.add(2, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
+        hierarchy.add(0, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
+        hierarchy.add(1, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
+        hierarchy.add(2, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
 
         Assertions.assertEquals("Hierarchy<Contract> Named{value=sample}: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
     }
@@ -67,9 +67,9 @@ public class BindingHierarchyTests {
                 .build();
 
         BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(key);
-        hierarchy.add(0, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
-        hierarchy.add(1, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
-        hierarchy.add(2, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
+        hierarchy.add(0, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
+        hierarchy.add(1, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
+        hierarchy.add(2, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
 
         String hierarchyString = hierarchy.toString();
         Assertions.assertTrue(hierarchyString.startsWith("Hierarchy<Contract> "));
@@ -83,12 +83,12 @@ public class BindingHierarchyTests {
     @Test
     void testIteratorIsSorted() {
         BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class));
-        hierarchy.add(0, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
-        hierarchy.add(1, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
-        hierarchy.add(2, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
+        hierarchy.add(0, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
+        hierarchy.add(1, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
+        hierarchy.add(2, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
 
         int next = 2;
-        for (Entry<Integer, Provider<Contract>> entry : hierarchy) {
+        for (Entry<Integer, InstantiationStrategy<Contract>> entry : hierarchy) {
             Integer priority = entry.getKey();
             Assertions.assertEquals(next, priority.intValue());
             next--;
@@ -100,11 +100,11 @@ public class BindingHierarchyTests {
         ComponentKey<Contract> key = ComponentKey.of(Contract.class);
 
         BindingHierarchy<Contract> secondHierarchy = new NativePrunableBindingHierarchy<>(key);
-        secondHierarchy.add(2, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
+        secondHierarchy.add(2, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
 
         this.applicationContext.hierarchy(key)
-                .add(0, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)))
-                .add(1, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)))
+                .add(0, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)))
+                .add(1, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)))
                 .merge(secondHierarchy);
 
         BindingHierarchy<Contract> hierarchy = this.applicationContext.hierarchy(key);
@@ -112,20 +112,20 @@ public class BindingHierarchyTests {
 
         Assertions.assertEquals(3, hierarchy.size());
 
-        Option<Provider<Contract>> priorityZero = hierarchy.get(0);
+        Option<InstantiationStrategy<Contract>> priorityZero = hierarchy.get(0);
         Assertions.assertTrue(priorityZero.present());
-        Assertions.assertTrue(priorityZero.get() instanceof ContextDrivenProvider);
-        Assertions.assertSame(((ContextDrivenProvider<Contract>) priorityZero.get()).type(), ImplementationA.class);
+        Assertions.assertTrue(priorityZero.get() instanceof SimpleConstructorViewDrivenProvider);
+        Assertions.assertSame(((SimpleConstructorViewDrivenProvider<Contract>) priorityZero.get()).type(), ImplementationA.class);
 
-        Option<Provider<Contract>> priorityOne = hierarchy.get(1);
+        Option<InstantiationStrategy<Contract>> priorityOne = hierarchy.get(1);
         Assertions.assertTrue(priorityOne.present());
-        Assertions.assertTrue(priorityOne.get() instanceof ContextDrivenProvider);
-        Assertions.assertSame(((ContextDrivenProvider<Contract>) priorityOne.get()).type(), ImplementationB.class);
+        Assertions.assertTrue(priorityOne.get() instanceof SimpleConstructorViewDrivenProvider);
+        Assertions.assertSame(((SimpleConstructorViewDrivenProvider<Contract>) priorityOne.get()).type(), ImplementationB.class);
 
-        Option<Provider<Contract>> priorityTwo = hierarchy.get(2);
+        Option<InstantiationStrategy<Contract>> priorityTwo = hierarchy.get(2);
         Assertions.assertTrue(priorityTwo.present());
-        Assertions.assertTrue(priorityTwo.get() instanceof ContextDrivenProvider);
-        Assertions.assertSame(((ContextDrivenProvider<Contract>) priorityTwo.get()).type(), ImplementationC.class);
+        Assertions.assertTrue(priorityTwo.get() instanceof SimpleConstructorViewDrivenProvider);
+        Assertions.assertSame(((SimpleConstructorViewDrivenProvider<Contract>) priorityTwo.get()).type(), ImplementationC.class);
     }
 
     @Test
@@ -136,17 +136,17 @@ public class BindingHierarchyTests {
         Assertions.assertNotNull(hierarchy);
         Assertions.assertEquals(1, hierarchy.size());
 
-        Option<Provider<LocalContract>> provider = hierarchy.get(-1);
+        Option<InstantiationStrategy<LocalContract>> provider = hierarchy.get(-1);
         Assertions.assertTrue(provider.present());
 
-        Provider<LocalContract> contractProvider = provider.get();
-        if (contractProvider instanceof ComposedProvider<LocalContract> composedProvider) {
+        InstantiationStrategy<LocalContract> contractStrategy = provider.get();
+        if (contractStrategy instanceof CompositeInstantiationStrategy<LocalContract> composite) {
             // If the provider is composed, we need to get the actual provider from it
-            contractProvider = composedProvider.provider();
+            contractStrategy = composite.provider();
         }
 
-        Assertions.assertTrue(contractProvider instanceof ContextDrivenProvider);
-        Assertions.assertSame(((ContextDrivenProvider<LocalContract>) contractProvider).type(), LocalObject.class);
+        Assertions.assertTrue(contractStrategy instanceof SimpleConstructorViewDrivenProvider);
+        Assertions.assertSame(((SimpleConstructorViewDrivenProvider<LocalContract>) contractStrategy).type(), LocalObject.class);
     }
 
     interface LocalContract {

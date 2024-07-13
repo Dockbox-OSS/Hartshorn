@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -57,25 +57,25 @@ public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy
     }
 
     @Override
-    public List<Provider<C>> providers() {
+    public List<InstantiationStrategy<C>> providers() {
         return this.real().providers();
     }
 
     @Override
-    public BindingHierarchy<C> add(Provider<C> provider) {
-        this.real = this.real().add(provider);
+    public BindingHierarchy<C> add(InstantiationStrategy<C> strategy) {
+        this.real = this.real().add(strategy);
         return this.hierarchyUpdated();
     }
 
     @Override
-    public BindingHierarchy<C> add(int priority, Provider<C> provider) {
-        this.real = this.real().add(priority, provider);
+    public BindingHierarchy<C> add(int priority, InstantiationStrategy<C> strategy) {
+        this.real = this.real().add(priority, strategy);
         return this.hierarchyUpdated();
     }
 
     @Override
-    public BindingHierarchy<C> addNext(Provider<C> provider) {
-        this.real = this.real().addNext(provider);
+    public BindingHierarchy<C> addNext(InstantiationStrategy<C> strategy) {
+        this.real = this.real().addNext(strategy);
         return this.hierarchyUpdated();
     }
 
@@ -91,7 +91,7 @@ public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy
     }
 
     @Override
-    public Option<Provider<C>> get(int priority) {
+    public Option<InstantiationStrategy<C>> get(int priority) {
         return this.real().get(priority);
     }
 
@@ -122,7 +122,7 @@ public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy
 
     @NonNull
     @Override
-    public Iterator<Entry<Integer, Provider<C>>> iterator() {
+    public Iterator<Entry<Integer, InstantiationStrategy<C>>> iterator() {
         return this.real().iterator();
     }
 
