@@ -22,6 +22,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import org.dockbox.hartshorn.util.CollectionUtilities;
+
 public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
 
     private final MultiMap<K, V> map;
@@ -62,12 +64,12 @@ public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public Set<K> keySet() {
-        return Set.copyOf(map.keySet());
+        return CollectionUtilities.copyOf(map.keySet());
     }
 
     @Override
     public Set<Entry<K, Collection<V>>> entrySet() {
-        return Set.copyOf(map.entrySet());
+        return CollectionUtilities.copyOf(map.entrySet());
     }
 
     @Override
