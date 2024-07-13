@@ -26,14 +26,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.graph.ConfigurableDependencyContext;
 import org.dockbox.hartshorn.inject.graph.DependencyGraph;
 import org.dockbox.hartshorn.inject.graph.resolve.IntrospectionDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.support.CyclicDependencyGraphValidator;
 import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
-import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;

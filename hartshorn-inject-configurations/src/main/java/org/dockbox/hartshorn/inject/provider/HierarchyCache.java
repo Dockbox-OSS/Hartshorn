@@ -109,9 +109,7 @@ public class HierarchyCache {
         BindingHierarchy<?> hierarchy;
         if(this.isStrict(key)) {
             hierarchy = this.createHierarchy(key);
-            if (hierarchy != null) {
-                this.hierarchies.put(key.view(), hierarchy);
-            }
+            this.hierarchies.put(key.view(), hierarchy);
         }
         else if (permitFallbackResolution) {
             // Don't bind this hierarchy, as it's a loose match. If the configuration changes, the loose
@@ -137,13 +135,12 @@ public class HierarchyCache {
         }
     }
 
-    @Nullable
     private <T> AbstractBindingHierarchy<?> createHierarchy(ComponentKey<T> key) {
         if (this.isCollectionComponentKey(key)) {
             return new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
         }
         else {
-            return null;
+            return new NativePrunableBindingHierarchy<>(key);
         }
     }
 
