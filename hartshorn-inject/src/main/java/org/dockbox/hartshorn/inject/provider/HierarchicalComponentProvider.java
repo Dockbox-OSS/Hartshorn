@@ -16,11 +16,7 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchyLookup;
-import org.dockbox.hartshorn.inject.scope.Scope;
-import org.dockbox.hartshorn.util.collections.MultiMap;
 
 /**
  * A provider that supports hierarchical bindings. This means that bindings are not just one-to-one, but can be

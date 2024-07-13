@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 /**
  * TODO: #1059 Add documentation
  *
