@@ -106,21 +106,20 @@ public class HierarchyCache {
 
     @Nullable
     private <T> BindingHierarchy<?> tryCreateHierarchy(ComponentKey<T> key, boolean permitFallbackResolution) {
-        BindingHierarchy<?> hierarchy;
-        if(this.isStrict(key)) {
-            hierarchy = this.createHierarchy(key);
-            this.hierarchies.put(key.view(), hierarchy);
+        final BindingHierarchy<?> hierarchy;
+        // Collection components can always be created, as they may contain 0-N elements.
+        if (this.isCollectionComponentKey(key)) {
+            hierarchy = new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
         }
-        else if (permitFallbackResolution) {
+        else if(this.isStrict(key)) {
+            // Strict mode, so don't create a hierarchy if it wasn't defined before. Instead, callers
+            // may opt to use a fallback resolution strategy.
+            hierarchy = null;
+        }
+        else {
             // Don't bind this hierarchy, as it's a loose match. If the configuration changes, the loose
             // match may not be valid anymore, so we don't want to cache it.
             hierarchy = this.looseLookupHierarchy(key);
-        }
-        else if (this.isCollectionComponentKey(key)) {
-            hierarchy = new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
-        }
-        else {
-            hierarchy = null;
         }
         return hierarchy;
     }
@@ -132,15 +131,6 @@ public class HierarchyCache {
         }
         else {
             return strict.booleanValue();
-        }
-    }
-
-    private <T> AbstractBindingHierarchy<?> createHierarchy(ComponentKey<T> key) {
-        if (this.isCollectionComponentKey(key)) {
-            return new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
-        }
-        else {
-            return new NativePrunableBindingHierarchy<>(key);
         }
     }
 
