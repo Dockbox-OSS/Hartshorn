@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject.processing;
 import java.util.Set;
 
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.option.Option;
 
 public interface ComponentProcessorRegistry {
 
@@ -27,6 +28,10 @@ public interface ComponentProcessorRegistry {
     void unregister(ComponentProcessor processor);
 
     void registryLazy(Class<? extends ComponentPostProcessor> componentProcessor);
+
+    boolean isRegistered(Class<? extends ComponentProcessor> componentProcessor);
+
+    <T extends ComponentProcessor> Option<T> lookup(Class<T> componentProcessor);
 
     Set<ComponentProcessor> processors();
 
