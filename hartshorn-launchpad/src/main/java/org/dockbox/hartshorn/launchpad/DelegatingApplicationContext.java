@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.launchpad;
 
-import java.lang.annotation.Annotation;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiConsumer;

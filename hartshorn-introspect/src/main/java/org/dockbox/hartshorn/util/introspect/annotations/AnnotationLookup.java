@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.util.introspect.annotations;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.SequencedSet;
 

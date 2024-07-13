@@ -17,12 +17,13 @@
 package org.dockbox.hartshorn.context;
 
 import org.dockbox.hartshorn.util.ContextualCustomizer;
-import org.dockbox.hartshorn.util.Customizer;
 
 /**
  * A generic context used to store a {@link org.dockbox.hartshorn.util.Customizer}s. This allows any
  * context-driven customizations to be passed along to builders or similar constructs.
  *
+ * @param <T> The type of the object that is being customized
+ *     
  * @since 0.5.0
  *
  * @author Guus Lieben
