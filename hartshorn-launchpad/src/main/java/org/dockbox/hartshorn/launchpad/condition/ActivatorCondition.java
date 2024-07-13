@@ -21,7 +21,6 @@ import java.lang.annotation.Annotation;
 import org.dockbox.hartshorn.inject.condition.Condition;
 import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.ConfigurableInjectionCapableApplication;
 import org.dockbox.hartshorn.launchpad.activation.ActivatorHolder;
 
@@ -36,7 +35,6 @@ import org.dockbox.hartshorn.launchpad.activation.ActivatorHolder;
  * @author Guus Lieben
  */
 public class ActivatorCondition implements Condition {
-
 
     @Override
     public ConditionResult matches(ConditionContext context) {
