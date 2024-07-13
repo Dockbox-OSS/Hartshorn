@@ -83,7 +83,7 @@
         <plugin.javadoc.version>3.6.3</plugin.javadoc.version>
         <plugin.kotlin.version>${kotlin.version}</plugin.kotlin.version>
         <plugin.license.version>4.3</plugin.license.version>
-        <plugin.owasp.version>9.0.9</plugin.owasp.version>
+        <plugin.owasp.version>10.0.2</plugin.owasp.version>
         <plugin.scala.version>4.8.1</plugin.scala.version>
         <plugin.source.version>3.3.0</plugin.source.version>
         <plugin.staging.version>1.6.13</plugin.staging.version>
