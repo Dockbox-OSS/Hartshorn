@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.launchpad.launch.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
-import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
 import org.dockbox.hartshorn.inject.environment.DefaultProxyOrchestratorLoader;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;

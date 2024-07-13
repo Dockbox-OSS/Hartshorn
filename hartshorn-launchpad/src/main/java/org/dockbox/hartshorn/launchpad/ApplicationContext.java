@@ -16,17 +16,10 @@
 
 package org.dockbox.hartshorn.launchpad;
 
-import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.launchpad.launch.ApplicationBuilder;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
-import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.launchpad.activation.ActivatorHolder;
 import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
-import org.dockbox.hartshorn.inject.scope.DirectScopeKey;
-import org.dockbox.hartshorn.inject.scope.Scope;
-import org.dockbox.hartshorn.inject.scope.ScopeKey;
-import org.dockbox.hartshorn.launchpad.context.ApplicationAwareContext;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.util.ApplicationException;
