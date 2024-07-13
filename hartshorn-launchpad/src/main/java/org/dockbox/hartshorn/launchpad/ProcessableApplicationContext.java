@@ -17,10 +17,8 @@
 package org.dockbox.hartshorn.launchpad;
 
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.util.IllegalModificationException;
-import org.dockbox.hartshorn.util.collections.MultiMap;
 
 /**
  * A {@link ProcessableApplicationContext} is an {@link ApplicationContext} that can be lazily loaded. This allows for
@@ -50,15 +48,4 @@ public interface ProcessableApplicationContext extends ApplicationContext {
      */
     void loadContext();
 
-    /**
-     * Returns all {@link ComponentPreProcessor} instances that are registered to this {@link ApplicationContext}.
-     * These processors will be used by the {@link ApplicationContext} to prepare components before the application
-     * state is fully loaded. The processors are executed in the order of their priority, where the lowest priority
-     * is executed first.
-     *
-     * @return all {@link ComponentPreProcessor} instances that are registered to this {@link ApplicationContext}
-     *
-     * @see ComponentPreProcessor
-     */
-    MultiMap<Integer, ComponentPreProcessor> processors();
 }

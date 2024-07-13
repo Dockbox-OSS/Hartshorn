@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.UnmodifiableMultiMap;
+import org.dockbox.hartshorn.util.option.Option;
 
 public class MultiMapComponentProcessorRegistry implements ComponentProcessorRegistry {
 
@@ -34,6 +35,9 @@ public class MultiMapComponentProcessorRegistry implements ComponentProcessorReg
     @Override
     public void register(ComponentProcessor processor) {
         modifyProcessorRegistration(processor, MultiMap::put);
+        if (this.uninitializedPostProcessors.contains(processor.getClass())) {
+            this.uninitializedPostProcessors.remove(processor.getClass());
+        }
     }
 
     @Override
@@ -67,6 +71,24 @@ public class MultiMapComponentProcessorRegistry implements ComponentProcessorReg
         if (!alreadyInitialized) {
             this.uninitializedPostProcessors.add(componentProcessor);
         }
+    }
+
+    @Override
+    public boolean isRegistered(Class<? extends ComponentProcessor> componentProcessor) {
+        if (uninitializedPostProcessors.contains(componentProcessor)) {
+            return true;
+        } else {
+            return this.processors().stream()
+                    .anyMatch(processor -> processor.getClass().equals(componentProcessor));
+        }
+    }
+
+    @Override
+    public <T extends ComponentProcessor> Option<T> lookup(Class<T> componentProcessor) {
+        return Option.of(this.processors().stream()
+                .filter(processor -> processor.getClass().equals(componentProcessor))
+                .map(componentProcessor::cast)
+                .findFirst());
     }
 
     @Override
