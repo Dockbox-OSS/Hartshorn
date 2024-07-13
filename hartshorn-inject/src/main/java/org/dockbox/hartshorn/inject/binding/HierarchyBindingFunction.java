@@ -77,7 +77,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     protected BindingHierarchy<T> hierarchy() {
-        if (this.scopeKey != null) {
+        if (this.scopeKey != null && !moduleContext.isApplicationScope(scopeKey)) {
             return this.moduleContext.hierarchy(this.scopeKey, this.hierarchy.key());
         }
         else {
