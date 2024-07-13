@@ -49,11 +49,10 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * @author Guus Lieben
  */
 public interface ApplicationContext extends
-        InjectionCapableApplication,
+        ConfigurableInjectionCapableApplication,
         HierarchicalComponentProvider,
         HierarchicalBinder,
         ExceptionHandler,
-        ActivatorHolder,
         AutoCloseable {
 
     /**

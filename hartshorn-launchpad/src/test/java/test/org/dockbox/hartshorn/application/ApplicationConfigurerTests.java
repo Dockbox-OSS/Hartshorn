@@ -82,7 +82,7 @@ public class ApplicationConfigurerTests {
                 activators.add(TypeUtils.annotation(UseSampleActivator.class));
             });
         });
-        assertTrue(applicationContext.hasActivator(UseSampleActivator.class));
+        assertTrue(applicationContext.activators().hasActivator(UseSampleActivator.class));
     }
 
     @Test

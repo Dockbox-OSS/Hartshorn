@@ -123,7 +123,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
      * @param collector the collector to write to
      */
     protected void reportServiceActivators(DiagnosticsPropertyCollector collector) {
-        String[] activators = this.applicationContext.activators().stream()
+        String[] activators = this.applicationContext.activators().activators().stream()
                 .map(activator -> activator.annotationType().getCanonicalName())
                 .toArray(String[]::new);
         collector.property("activators").writeStrings(activators);

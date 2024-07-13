@@ -24,6 +24,8 @@ import java.util.function.BiConsumer;
 import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.inject.provider.DelegatingScopeAwareComponentProvider;
 import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
+import org.dockbox.hartshorn.launchpad.activation.ActivatorHolder;
+import org.dockbox.hartshorn.launchpad.activation.ContextActivatorHolder;
 import org.dockbox.hartshorn.launchpad.configuration.ContextualApplicationBindingsConfiguration;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
@@ -176,23 +178,8 @@ public abstract class DelegatingApplicationContext
     }
 
     @Override
-    public Set<Annotation> activators() {
-        return this.firstContext(ServiceActivatorContext.class)
-                .map(ServiceActivatorContext::activators)
-                .orElseGet(Set::of);
-    }
-
-    @Override
-    public <A> Option<A> activator(Class<A> activator) {
-        return this.firstContext(ServiceActivatorContext.class)
-                .map(context -> context.activator(activator));
-    }
-
-    @Override
-    public boolean hasActivator(Class<? extends Annotation> activator) {
-        return this.firstContext(ServiceActivatorContext.class)
-                .map(context -> context.hasActivator(activator))
-                .orElseGet(() -> false);
+    public ActivatorHolder activators() {
+        return ContextActivatorHolder.of(() -> this.firstContext(ServiceActivatorContext.class));
     }
 
     @Override

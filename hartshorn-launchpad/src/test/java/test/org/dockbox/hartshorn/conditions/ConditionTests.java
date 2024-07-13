@@ -107,7 +107,7 @@ public class ConditionTests {
 
     @Test
     void testActivatorConditions() {
-        Assertions.assertTrue(this.applicationContext.hasActivator(DemoActivator.class));
+        Assertions.assertTrue(this.applicationContext.activators().hasActivator(DemoActivator.class));
 
         MethodView<ConditionTests, ?> method = this.applicationContext.environment()
                 .introspector()
