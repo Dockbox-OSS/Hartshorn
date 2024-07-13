@@ -25,8 +25,10 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * TODO: #1060 Add documentation
  *
  * @param <T> ...
- * @author Guus Lieben
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public record ComponentContainerDependencyDeclarationContext<T>(ComponentContainer<T> container)
         implements DependencyDeclarationContext<T> {

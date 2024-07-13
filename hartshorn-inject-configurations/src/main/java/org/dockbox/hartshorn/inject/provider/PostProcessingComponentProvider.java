@@ -21,8 +21,9 @@ import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
 /**
  * TODO: #1060 Add documentation
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public interface PostProcessingComponentProvider extends ComponentProvider {
 
