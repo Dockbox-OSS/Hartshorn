@@ -23,12 +23,12 @@ import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.CollectorBindingFunction;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.collection.HierarchyCollectorBindingFunction;
-import org.dockbox.hartshorn.inject.provider.ContextDrivenProvider;
-import org.dockbox.hartshorn.inject.provider.LazySingletonProvider;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.SimpleConstructorViewDrivenProvider;
+import org.dockbox.hartshorn.inject.provider.LazySingletonInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
-import org.dockbox.hartshorn.inject.provider.SingletonProvider;
-import org.dockbox.hartshorn.inject.provider.SupplierProvider;
+import org.dockbox.hartshorn.inject.provider.SingletonInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.SupplierInstantiationStrategy;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.inject.scope.ScopeModuleContext;
@@ -127,7 +127,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
             throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
         }
         ComponentKey<? extends T> key = this.buildComponentKey(type);
-        return this.add(ContextDrivenProvider.forPrototype(key));
+        return this.add(SimpleConstructorViewDrivenProvider.forPrototype(key));
     }
 
     @NonNull
@@ -140,12 +140,12 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
         if (this.singletonCache.contains(this.hierarchy().key())) {
             throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
         }
-        return this.add(new SupplierProvider<>(supplier));
+        return this.add(new SupplierInstantiationStrategy<>(supplier));
     }
 
     @Override
-    public Binder to(Provider<T> provider) {
-        return this.add(provider);
+    public Binder to(InstantiationStrategy<T> strategy) {
+        return this.add(strategy);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
             throw new IllegalModificationException("Cannot bind null instance");
         }
         if (this.processAfterInitialization) {
-            return this.add(new SingletonProvider<>(instance));
+            return this.add(new SingletonInstantiationStrategy<>(instance));
         }
         else {
             // If no processing should happen, then we can immediately cache the instance
@@ -166,12 +166,12 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     @Override
     public Binder lazySingleton(Class<T> type) {
         ComponentKey<? extends T> key = this.buildComponentKey(type);
-        return this.add(ContextDrivenProvider.forSingleton(key));
+        return this.add(SimpleConstructorViewDrivenProvider.forSingleton(key));
     }
 
     @Override
     public Binder lazySingleton(CheckedSupplier<T> supplier) {
-        return this.add(new LazySingletonProvider<>(supplier));
+        return this.add(new LazySingletonInstantiationStrategy<>(supplier));
     }
 
     @Override
@@ -195,12 +195,12 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
         return this.hierarchy().key().mutable().collector().build();
     }
 
-    protected Binder add(Provider<T> provider) {
-        provider = provider.map(container -> {
+    protected Binder add(InstantiationStrategy<T> strategy) {
+        strategy = strategy.map(container -> {
             container.processed(!this.processAfterInitialization);
             return container;
         });
-        this.hierarchy().add(this.priority, provider);
+        this.hierarchy().add(this.priority, strategy);
         return this.binder();
     }
 }

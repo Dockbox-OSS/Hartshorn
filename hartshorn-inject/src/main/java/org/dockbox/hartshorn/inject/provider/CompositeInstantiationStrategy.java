@@ -28,27 +28,27 @@ import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link Provider} of which the result can be mapped using a list of {@link Function}s. This
+ * A {@link InstantiationStrategy} of which the result can be mapped using a list of {@link Function}s. This
  * can be useful to apply a set of transformations to a {@link ObjectContainer}, without having
  * to create a new provider.
  *
  * @param <T> The type instance to provide.
  *
- * @see Provider
+ * @see InstantiationStrategy
  * @see ObjectContainer
  *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public final class ComposedProvider<T> implements Provider<T> {
+public final class CompositeInstantiationStrategy<T> implements InstantiationStrategy<T> {
 
     private final List<Function<ObjectContainer<T>, ObjectContainer<T>>> functions = new LinkedList<>();
-    private final Provider<T> provider;
+    private final InstantiationStrategy<T> strategy;
 
     @SafeVarargs
-    public ComposedProvider(Provider<T> provider, Function<ObjectContainer<T>, ObjectContainer<T>>... functions) {
-        this.provider = provider;
+    public CompositeInstantiationStrategy(InstantiationStrategy<T> strategy, Function<ObjectContainer<T>, ObjectContainer<T>>... functions) {
+        this.strategy = strategy;
         this.functions.addAll(List.of(functions));
     }
 
@@ -58,8 +58,8 @@ public final class ComposedProvider<T> implements Provider<T> {
      *
      * @return The provider that is used as the source of the instance.
      */
-    public Provider<T> provider() {
-        return this.provider;
+    public InstantiationStrategy<T> provider() {
+        return this.strategy;
     }
 
     /**
@@ -74,7 +74,7 @@ public final class ComposedProvider<T> implements Provider<T> {
 
     @Override
     public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
-        return this.provider.provide(application, requestContext)
+        return this.strategy.provide(application, requestContext)
                 .map(this::transformContainer);
     }
 
@@ -86,18 +86,18 @@ public final class ComposedProvider<T> implements Provider<T> {
     }
 
     @Override
-    public Provider<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
+    public InstantiationStrategy<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
         this.functions.add(mappingFunction);
         return this;
     }
 
     @Override
     public LifecycleType defaultLifecycle() {
-        return this.provider.defaultLifecycle();
+        return this.strategy.defaultLifecycle();
     }
 
     @Override
     public Tristate defaultLazy() {
-        return this.provider.defaultLazy();
+        return this.strategy.defaultLazy();
     }
 }

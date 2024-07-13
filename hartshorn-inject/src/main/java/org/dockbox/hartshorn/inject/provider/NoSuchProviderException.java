@@ -39,19 +39,19 @@ public class NoSuchProviderException extends ApplicationException {
 
         /**
          * A provider that is aware of the type it provides.
-         * @see TypeAwareProvider
+         * @see TypeAwareInstantiationStrategy
          */
         TYPE_AWARE,
 
         /**
          * A provider that is not aware of the type it provides.
-         * @see NonTypeAwareProvider
+         * @see NonTypeAwareInstantiationStrategy
          */
         NON_TYPE_AWARE,
 
         /**
          * Any provider, whether it is aware of the type it provides or not.
-         * @see Provider
+         * @see InstantiationStrategy
          */
         ANY,
     }

@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.inject.graph.declaration;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.CompositeQualifier;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -35,12 +35,12 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 public class ComponentKeyDependencyDeclarationContext<T> implements DependencyDeclarationContext<T> {
 
     private final ComponentKey<T> key;
-    private final Provider<T> provider;
+    private final InstantiationStrategy<T> strategy;
     private final TypeView<T> type;
 
-    public ComponentKeyDependencyDeclarationContext(Introspector introspector, ComponentKey<T> key, Provider<T> provider) {
+    public ComponentKeyDependencyDeclarationContext(Introspector introspector, ComponentKey<T> key, InstantiationStrategy<T> strategy) {
         this.key = key;
-        this.provider = provider;
+        this.strategy = strategy;
         this.type = TypeUtils.unchecked(introspector.introspect(key.parameterizedType()), TypeView.class);
     }
 
@@ -48,8 +48,8 @@ public class ComponentKeyDependencyDeclarationContext<T> implements DependencyDe
         return this.key;
     }
 
-    public Provider<T> provider() {
-        return this.provider;
+    public InstantiationStrategy<T> provider() {
+        return this.strategy;
     }
 
     @Override

@@ -23,15 +23,15 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.provider.collections.CollectionObjectContainer;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
-import org.dockbox.hartshorn.inject.provider.NonTypeAwareProvider;
+import org.dockbox.hartshorn.inject.provider.NonTypeAwareInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link Provider} that composes multiple {@link CollectionProvider} instances into a single {@link ComponentCollection}.
+ * A {@link InstantiationStrategy} that composes multiple {@link CollectionInstantiationStrategy} instances into a single {@link ComponentCollection}.
  * This is useful when using non-strict lookups on a {@link ComponentCollection} that may contain multiple components for the
  * same key.
  *
@@ -41,18 +41,18 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class ComposedCollectionProvider<T> implements NonTypeAwareProvider<ComponentCollection<T>> {
+public class ComposedCollectionInstantiationStrategy<T> implements NonTypeAwareInstantiationStrategy<ComponentCollection<T>> {
 
-    private final Set<CollectionProvider<T>> providers;
+    private final Set<CollectionInstantiationStrategy<T>> providers;
 
-    public ComposedCollectionProvider(Set<CollectionProvider<T>> providers) {
+    public ComposedCollectionInstantiationStrategy(Set<CollectionInstantiationStrategy<T>> providers) {
         this.providers = providers;
     }
 
     @Override
     public Option<ObjectContainer<ComponentCollection<T>>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
         Set<ObjectContainer<T>> components = new HashSet<>();
-        for (CollectionProvider<T> provider : this.providers) {
+        for (CollectionInstantiationStrategy<T> provider : this.providers) {
             Option<ObjectContainer<ComponentCollection<T>>> containers = provider.provide(application, requestContext);
             if (containers.present()) {
                 ComponentCollection<T> componentCollection = containers.get().instance();

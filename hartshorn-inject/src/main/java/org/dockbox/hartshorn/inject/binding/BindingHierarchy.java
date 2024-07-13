@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
@@ -26,9 +26,9 @@ import java.util.SortedSet;
 
 /**
  * A hierarchical representation of type providers. Each entry is represented by a {@link Entry}
- * containing the priority represented by a {@link Integer} as its key, and a {@link Provider} as
- * its value. When the hierarchy is iterated, the {@link Provider} with the highest priority will
- * be at the start of the {@link java.util.Iterator}, and the {@link Provider} with the lowest
+ * containing the priority represented by a {@link Integer} as its key, and a {@link InstantiationStrategy} as
+ * its value. When the hierarchy is iterated, the {@link InstantiationStrategy} with the highest priority will
+ * be at the start of the {@link java.util.Iterator}, and the {@link InstantiationStrategy} with the lowest
  * priority will be at the end of the {@link java.util.Iterator}.
  *
  * <p>This means hierarchies are always in a 'high to low' key order, meaning the highest priority
@@ -42,47 +42,47 @@ import java.util.SortedSet;
  *
  * @author Guus Lieben
  */
-public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>>> {
+public interface BindingHierarchy<C> extends Iterable<Entry<Integer, InstantiationStrategy<C>>> {
 
     /**
      * Gets all providers in the order of their priorities.
      *
      * @return All providers.
      */
-    List<Provider<C>> providers();
+    List<InstantiationStrategy<C>> providers();
 
     /**
-     * Adds the given {@link Provider} with priority {@code -1}. If another provider already exists
+     * Adds the given {@link InstantiationStrategy} with priority {@code -1}. If another provider already exists
      * with this priority, it will be overwritten.
      *
-     * @param provider The provider to add.
+     * @param strategy The provider to add.
      * @return Itself, for chaining.
      */
-    BindingHierarchy<C> add(Provider<C> provider);
+    BindingHierarchy<C> add(InstantiationStrategy<C> strategy);
 
     /**
-     * Adds the given {@link Provider} with the given {@code priority}. If another provider already
+     * Adds the given {@link InstantiationStrategy} with the given {@code priority}. If another provider already
      * exists with this priority, it will be overwritten.
      *
      * @param priority The priority of the provider.
-     * @param provider The provider to add.
+     * @param strategy The provider to add.
      * @return Itself, for chaining.
      */
-    BindingHierarchy<C> add(int priority, Provider<C> provider);
+    BindingHierarchy<C> add(int priority, InstantiationStrategy<C> strategy);
 
     /**
-     * Adds the given {@link Provider} to the end of the hierarchy, using the current highest priority,
+     * Adds the given {@link InstantiationStrategy} to the end of the hierarchy, using the current highest priority,
      * plus one. For example if the hierarchy contains providers with priorities 1, 2, and 3, this will
      * result in the added provider having priority 4.
      *
-     * @param provider The provider to add.
+     * @param strategy The provider to add.
      * @return Itself, for chaining.
      */
-    BindingHierarchy<C> addNext(Provider<C> provider);
+    BindingHierarchy<C> addNext(InstantiationStrategy<C> strategy);
 
     /**
      * Merges the given {@link BindingHierarchy} into the current hierarchy. If both hierarchies contain
-     * {@link Provider providers} with the same priority, the one of the current hierarchy will be
+     * {@link InstantiationStrategy providers} with the same priority, the one of the current hierarchy will be
      * preferred. The returned hierarchy is a new instance, the current hierarchy will not be modified.
      *
      * @param hierarchy The hierarchy to merge with.
@@ -91,19 +91,19 @@ public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>
     BindingHierarchy<C> merge(BindingHierarchy<C> hierarchy);
 
     /**
-     * Gets the current size of the hierarchy, indicating the amount of registered {@link Provider providers}.
+     * Gets the current size of the hierarchy, indicating the amount of registered {@link InstantiationStrategy providers}.
      *
      * @return The amount of registered providers.
      */
     int size();
 
     /**
-     * Gets the {@link Provider} at the given priority, if it exists.
+     * Gets the {@link InstantiationStrategy} at the given priority, if it exists.
      *
      * @param priority The priority of the potential provider.
      * @return The provider if it exists, or {@link Option#empty()}
      */
-    Option<Provider<C>> get(int priority);
+    Option<InstantiationStrategy<C>> get(int priority);
 
     /**
      * Gets the priority of the highest priority provider in the hierarchy.

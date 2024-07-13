@@ -147,16 +147,16 @@ public class HierarchyAwareComponentProvider extends DefaultFallbackCompatibleCo
     protected <T> Option<ObjectContainer<T>> provide(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
         Option<BindingHierarchy<T>> hierarchy = Option.of(this.hierarchy(key, true));
         if (hierarchy.present()) {
-            Provider<T> provider = key.strategy().selectProvider(hierarchy.get());
-            if (provider != null) {
-                return provider.provide(this.application, requestContext);
+            InstantiationStrategy<T> strategy = key.strategy().selectProvider(hierarchy.get());
+            if (strategy != null) {
+                return strategy.provide(this.application, requestContext);
             }
         }
         return Option.empty();
     }
 
     protected <T> Option<ObjectContainer<T>> createContextualInstanceContainer(ComponentKey<T> key, ComponentRequestContext requestContext) throws ApplicationException {
-        return ContextDrivenProvider.forPrototype(key).provide(this.application, requestContext);
+        return SimpleConstructorViewDrivenProvider.forPrototype(key).provide(this.application, requestContext);
     }
 
     @Override

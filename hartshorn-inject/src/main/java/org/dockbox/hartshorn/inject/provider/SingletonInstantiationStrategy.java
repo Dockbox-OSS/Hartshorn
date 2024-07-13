@@ -16,43 +16,50 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
-import java.util.function.Supplier;
-
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.ObjectDescriber;
 import org.dockbox.hartshorn.util.Tristate;
-import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link Supplier} that is able to provide instances using the given {@link Supplier}. If the
- * {@link Supplier} is unable to provide an instance, an empty {@link Option} will be returned
- * without throwing an exception.
+ * A provider that always returns the same instance. While the instance is available, this
+ * provider is not type-aware, as the instance may be {@code null}, or deviate from the
+ * binding key.
  *
- * @param <C> The type to be provided.
+ * @param <T> the type of the instance
  *
- * @see Provider
- *
- * @since 0.4.3
+ * @since 0.4.12
  *
  * @author Guus Lieben
  */
-public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements NonTypeAwareProvider<C> {
+public class SingletonInstantiationStrategy<T> implements NonTypeAwareInstantiationStrategy<T> {
+
+    private final ObjectContainer<T> container;
+
+    public SingletonInstantiationStrategy(T instance) {
+        this.container = ComponentObjectContainer.ofSingleton(instance);
+    }
 
     @Override
-    public Option<ObjectContainer<C>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
-        C instance = this.supplier.get();
-        return Option.of(instance).map(ComponentObjectContainer::ofPrototype);
+    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) {
+        return Option.of(this.container);
     }
 
     @Override
     public LifecycleType defaultLifecycle() {
-        return LifecycleType.PROTOTYPE;
+        return LifecycleType.SINGLETON;
     }
 
     @Override
     public Tristate defaultLazy() {
-        return Tristate.TRUE;
+        return Tristate.FALSE;
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("container", this.container)
+                .describe();
     }
 }

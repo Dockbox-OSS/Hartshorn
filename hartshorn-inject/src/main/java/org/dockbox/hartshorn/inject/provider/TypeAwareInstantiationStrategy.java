@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.inject.provider;
 
 /**
- * A {@link Provider} that is not aware of the type it provides. This is useful when the type
- * is not known at compile time, but only at runtime (e.g. in suppliers).
+ * A {@link InstantiationStrategy} that is aware of the type it provides. This is especially useful
+ * when introspecting the type of the provided instance is required.
  *
  * @param <T> The type instance to provide.
  *
@@ -26,5 +26,12 @@ package org.dockbox.hartshorn.inject.provider;
  *
  * @author Guus Lieben
  */
-public non-sealed interface NonTypeAwareProvider<T> extends Provider<T> {
+public non-sealed interface TypeAwareInstantiationStrategy<T> extends InstantiationStrategy<T> {
+
+    /**
+     * Returns the type of the instance that is provided.
+     *
+     * @return The type of the instance that is provided.
+     */
+    Class<? extends T> type();
 }

@@ -16,46 +16,39 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
+import java.util.function.Supplier;
+
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A provider that always returns the same instance, but does not initialize it until it is
- * requested. While the instance is available, this provider is not type-aware, as the instance
- * may be {@code null}, deviate from the binding key, or should not be initialized until it is
- * actually requested.
+ * A {@link Supplier} that is able to provide instances using the given {@link Supplier}. If the
+ * {@link Supplier} is unable to provide an instance, an empty {@link Option} will be returned
+ * without throwing an exception.
  *
- * @param <T> the type of the instance
+ * @param <C> The type to be provided.
  *
- * @since 0.4.12
+ * @see InstantiationStrategy
+ *
+ * @since 0.4.3
  *
  * @author Guus Lieben
  */
-public class LazySingletonProvider<T> implements NonTypeAwareProvider<T> {
-
-    private final CheckedSupplier<T> supplier;
-
-    public LazySingletonProvider(CheckedSupplier<T> supplier) {
-        this.supplier = supplier;
-    }
+public record SupplierInstantiationStrategy<C>(CheckedSupplier<C> supplier) implements NonTypeAwareInstantiationStrategy<C> {
 
     @Override
-    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
-        T instance = this.supplier.get();
-        if (instance == null) {
-            throw new IllegalModificationException("Cannot bind null instance");
-        }
-        return Option.of(ComponentObjectContainer.ofSingleton(instance));
+    public Option<ObjectContainer<C>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
+        C instance = this.supplier.get();
+        return Option.of(instance).map(ComponentObjectContainer::ofPrototype);
     }
 
     @Override
     public LifecycleType defaultLifecycle() {
-        return LifecycleType.SINGLETON;
+        return LifecycleType.PROTOTYPE;
     }
 
     @Override

@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject.provider.selection;
 
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 
 /**
  * A strategy for selecting a specific provider from a {@link BindingHierarchy}, based on the
@@ -38,7 +38,7 @@ public class ExactPriorityProviderSelectionStrategy implements ProviderSelection
     }
 
     @Override
-    public <T> Provider<T> selectProvider(BindingHierarchy<T> hierarchy) {
+    public <T> InstantiationStrategy<T> selectProvider(BindingHierarchy<T> hierarchy) {
         return hierarchy.get(this.priority).orNull();
     }
 }

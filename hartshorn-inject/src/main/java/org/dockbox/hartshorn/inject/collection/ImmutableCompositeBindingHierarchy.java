@@ -28,7 +28,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
@@ -59,24 +59,24 @@ public class ImmutableCompositeBindingHierarchy<T> implements BindingHierarchy<C
     }
 
     @Override
-    public List<Provider<ComponentCollection<T>>> providers() {
+    public List<InstantiationStrategy<ComponentCollection<T>>> providers() {
         return this.hierarchies.stream()
             .flatMap(hierarchy -> hierarchy.providers().stream())
             .collect(Collectors.toList());
     }
 
     @Override
-    public BindingHierarchy<ComponentCollection<T>> add(Provider<ComponentCollection<T>> provider) {
+    public BindingHierarchy<ComponentCollection<T>> add(InstantiationStrategy<ComponentCollection<T>> strategy) {
         throw new UnsupportedOperationException("Cannot add to an immutable hierarchy");
     }
 
     @Override
-    public BindingHierarchy<ComponentCollection<T>> add(int priority, Provider<ComponentCollection<T>> provider) {
+    public BindingHierarchy<ComponentCollection<T>> add(int priority, InstantiationStrategy<ComponentCollection<T>> strategy) {
         throw new UnsupportedOperationException("Cannot add to an immutable hierarchy");
     }
 
     @Override
-    public BindingHierarchy<ComponentCollection<T>> addNext(Provider<ComponentCollection<T>> provider) {
+    public BindingHierarchy<ComponentCollection<T>> addNext(InstantiationStrategy<ComponentCollection<T>> strategy) {
         throw new UnsupportedOperationException("Cannot add to an immutable hierarchy");
     }
 
@@ -93,11 +93,11 @@ public class ImmutableCompositeBindingHierarchy<T> implements BindingHierarchy<C
     }
 
     @Override
-    public Option<Provider<ComponentCollection<T>>> get(int priority) {
-        Set<CollectionProvider<T>> providers = this.hierarchies.stream()
+    public Option<InstantiationStrategy<ComponentCollection<T>>> get(int priority) {
+        Set<CollectionInstantiationStrategy<T>> providers = this.hierarchies.stream()
             .map(hierarchy -> hierarchy.getOrCreateProvider(priority))
             .collect(Collectors.toSet());
-        return Option.of(new ComposedCollectionProvider<>(providers));
+        return Option.of(new ComposedCollectionInstantiationStrategy<>(providers));
     }
 
     @Override
@@ -122,18 +122,18 @@ public class ImmutableCompositeBindingHierarchy<T> implements BindingHierarchy<C
 
     @NonNull
     @Override
-    public Iterator<Map.Entry<Integer, Provider<ComponentCollection<T>>>> iterator() {
-        MultiMap<Integer, CollectionProvider<T>> providers = new ArrayListMultiMap<>();
+    public Iterator<Map.Entry<Integer, InstantiationStrategy<ComponentCollection<T>>>> iterator() {
+        MultiMap<Integer, CollectionInstantiationStrategy<T>> providers = new ArrayListMultiMap<>();
         for (CollectionBindingHierarchy<T> hierarchy : this.hierarchies) {
-            for (Map.Entry<Integer, Provider<ComponentCollection<T>>> entry : hierarchy) {
-                providers.put(entry.getKey(), (CollectionProvider<T>) entry.getValue());
+            for (Map.Entry<Integer, InstantiationStrategy<ComponentCollection<T>>> entry : hierarchy) {
+                providers.put(entry.getKey(), (CollectionInstantiationStrategy<T>) entry.getValue());
             }
         }
 
-        Map<Integer, Provider<ComponentCollection<T>>> zippedProviders = new TreeMap<>(Collections.reverseOrder());
+        Map<Integer, InstantiationStrategy<ComponentCollection<T>>> zippedProviders = new TreeMap<>(Collections.reverseOrder());
         for (int priority : providers.keySet()) {
-            Collection<CollectionProvider<T>> collection = providers.get(priority);
-            zippedProviders.put(priority, new ComposedCollectionProvider<>(Set.copyOf(collection)));
+            Collection<CollectionInstantiationStrategy<T>> collection = providers.get(priority);
+            zippedProviders.put(priority, new ComposedCollectionInstantiationStrategy<>(Set.copyOf(collection)));
         }
         return zippedProviders.entrySet().iterator();
     }

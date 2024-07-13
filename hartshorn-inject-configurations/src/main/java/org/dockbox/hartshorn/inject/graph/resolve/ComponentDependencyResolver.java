@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.inject.graph.declaration.ComponentKeyDependencyDecl
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.provider.ComponentConstructorResolver;
-import org.dockbox.hartshorn.inject.provider.Provider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -87,12 +87,12 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
             return Set.of(new ComponentContainerDependencyContext<>(containerContext.container(), componentKey, dependencies, constructorView));
         }
         else if (declarationContext instanceof ComponentKeyDependencyDeclarationContext<T> keyContext) {
-            Provider<T> provider = keyContext.provider();
+            InstantiationStrategy<T> strategy = keyContext.provider();
             ManagedComponentKeyDependencyContext<T> dependencyContext = ManagedComponentKeyDependencyContext.builder(keyContext.key(), type)
                 .dependencies(dependencies)
                 .constructorView(constructorView)
-                .lazy(provider.defaultLazy().booleanValue())
-                .lifecycleType(provider.defaultLifecycle())
+                .lazy(strategy.defaultLazy().booleanValue())
+                .lifecycleType(strategy.defaultLifecycle())
                 .build();
             return Set.of(dependencyContext);
         }

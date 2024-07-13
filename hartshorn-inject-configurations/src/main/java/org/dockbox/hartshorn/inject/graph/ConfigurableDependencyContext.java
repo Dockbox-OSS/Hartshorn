@@ -19,12 +19,11 @@ package org.dockbox.hartshorn.inject.graph;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.IllegalScopeException;
-import org.dockbox.hartshorn.inject.provider.PrototypeProvider;
+import org.dockbox.hartshorn.inject.provider.PrototypeInstantiationStrategy;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.graph.declaration.AbstractDependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.LifecycleAwareDependencyContext;
-import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -49,7 +48,7 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  */
 public final class ConfigurableDependencyContext<T> extends AbstractDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
 
-    private final PrototypeProvider<T> supplier;
+    private final PrototypeInstantiationStrategy<T> supplier;
     private final View view;
 
     private ConfigurableDependencyContext(AutoConfiguringDependencyContextBuilder<T> builder) {
@@ -148,7 +147,7 @@ public final class ConfigurableDependencyContext<T> extends AbstractDependencyCo
      */
     public static final class AutoConfiguringDependencyContextBuilder<T> extends AbstractDependencyContextBuilder<T, AutoConfiguringDependencyContextBuilder<T>> {
 
-        private PrototypeProvider<T> supplier;
+        private PrototypeInstantiationStrategy<T> supplier;
         private View view;
 
         private AutoConfiguringDependencyContextBuilder(ComponentKey<T> componentKey) {
@@ -160,7 +159,7 @@ public final class ConfigurableDependencyContext<T> extends AbstractDependencyCo
             return this;
         }
 
-        public AutoConfiguringDependencyContextBuilder<T> supplier(PrototypeProvider<T> supplier) {
+        public AutoConfiguringDependencyContextBuilder<T> supplier(PrototypeInstantiationStrategy<T> supplier) {
             this.supplier = supplier;
             return this;
         }

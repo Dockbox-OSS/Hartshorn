@@ -30,8 +30,8 @@ import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.CompositeQualifier;
-import org.dockbox.hartshorn.inject.provider.Provider;
-import org.dockbox.hartshorn.inject.provider.TypeAwareProvider;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.TypeAwareInstantiationStrategy;
 import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBindingHierarchy.class);
 
-    private final NavigableMap<Integer, Provider<T>> providers = new TreeMap<>(Collections.reverseOrder());
+    private final NavigableMap<Integer, InstantiationStrategy<T>> providers = new TreeMap<>(Collections.reverseOrder());
 
     private final ComponentKey<T> key;
 
@@ -65,7 +65,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
      *
      * @return the map of providers
      */
-    protected NavigableMap<Integer, Provider<T>> priorityProviders() {
+    protected NavigableMap<Integer, InstantiationStrategy<T>> priorityProviders() {
         return this.providers;
     }
 
@@ -75,58 +75,58 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     }
 
     @Override
-    public List<Provider<T>> providers() {
+    public List<InstantiationStrategy<T>> providers() {
         return List.copyOf(this.priorityProviders().values());
     }
 
     @Override
-    public BindingHierarchy<T> add(Provider<T> provider) {
-        return this.add(-1, provider);
+    public BindingHierarchy<T> add(InstantiationStrategy<T> strategy) {
+        return this.add(-1, strategy);
     }
 
     @Override
-    public BindingHierarchy<T> add(int priority, Provider<T> provider) {
+    public BindingHierarchy<T> add(int priority, InstantiationStrategy<T> strategy) {
         // Default providers may be overwritten without further warnings
         if (this.priorityProviders().containsKey(priority) && priority != -1) {
             LOG.warn(("There is already a provider for %s with priority %d. It will be overwritten! " +
                     "To avoid unexpected behavior, ensure the priority is not already present. Current hierarchy: %s").formatted(this.key()
                     .type().getSimpleName(), priority, this));
         }
-        this.priorityProviders().put(priority, provider);
+        this.priorityProviders().put(priority, strategy);
         return this;
     }
 
     @Override
-    public BindingHierarchy<T> addNext(Provider<T> provider) {
+    public BindingHierarchy<T> addNext(InstantiationStrategy<T> strategy) {
         int next = -1;
         if (!this.priorityProviders().isEmpty()) {
             next = this.priorityProviders().lastKey()+1;
         }
-        return this.add(next, provider);
+        return this.add(next, strategy);
     }
 
     @Override
     public BindingHierarchy<T> merge(BindingHierarchy<T> hierarchy) {
         BindingHierarchy<T> merged = new NativePrunableBindingHierarchy<>(this.key());
         // Low priority, other
-        for (Entry<Integer, Provider<T>> entry : hierarchy) {
+        for (Entry<Integer, InstantiationStrategy<T>> entry : hierarchy) {
             merged.add(entry.getKey(), entry.getValue());
         }
         // High priority, self
-        for (Entry<Integer, Provider<T>> entry : this) {
+        for (Entry<Integer, InstantiationStrategy<T>> entry : this) {
             merged.add(entry.getKey(), entry.getValue());
         }
         return merged;
     }
 
     @Override
-    public Option<Provider<T>> get(int priority) {
+    public Option<InstantiationStrategy<T>> get(int priority) {
         return Option.of(this.priorityProviders().getOrDefault(priority, null));
     }
 
     @Override
     public int highestPriority() {
-        NavigableMap<Integer, Provider<T>> providers = this.priorityProviders();
+        NavigableMap<Integer, InstantiationStrategy<T>> providers = this.priorityProviders();
         return providers.isEmpty() ? -1 : providers.firstKey();
     }
 
@@ -144,7 +144,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
 
     @NonNull
     @Override
-    public Iterator<Entry<Integer, Provider<T>>> iterator() {
+    public Iterator<Entry<Integer, InstantiationStrategy<T>>> iterator() {
         return this.priorityProviders().entrySet().iterator();
     }
 
@@ -158,14 +158,14 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
         }
 
         // The priorities are stored high to low, however we want to display them as low-to-high.
-        List<Entry<Integer, Provider<T>>> entries = new ArrayList<>(this.priorityProviders().entrySet());
+        List<Entry<Integer, InstantiationStrategy<T>>> entries = new ArrayList<>(this.priorityProviders().entrySet());
         Collections.reverse(entries);
 
         String hierarchy = entries.stream()
                 .map(entry -> {
-                    Provider<T> value = entry.getValue();
+                    InstantiationStrategy<T> value = entry.getValue();
                     String target = value.toString();
-                    if (value instanceof TypeAwareProvider<?> typeAwareProvider) {
+                    if (value instanceof TypeAwareInstantiationStrategy<?> typeAwareProvider) {
                         target = typeAwareProvider.type().getSimpleName();
                     }
                     return "%s: %s".formatted(String.valueOf(entry.getKey()), target);
