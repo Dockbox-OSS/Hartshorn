@@ -214,7 +214,7 @@ public class HierarchyAwareComponentProvider extends DefaultFallbackCompatibleCo
         // If the scope is default, it means that the binding is not explicitly scoped, so it can be
         // installed in any scope. If our active scope is the active application context, it means
         // the requested scope is not installed, so we can fall back to the application scope.
-        if (!key.scope().equals(this.scope) && this.scope != this.owner.applicationProvider().scope()) {
+        if (!key.scope().contains(this.scope) && this.scope != this.owner.applicationProvider().scope()) {
             throw new IllegalArgumentException("Cannot create a binding hierarchy for a component key with a different scope");
         }
 
