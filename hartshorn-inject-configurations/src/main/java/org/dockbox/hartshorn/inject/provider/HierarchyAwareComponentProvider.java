@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProviderPostProcessor;
 import org.dockbox.hartshorn.inject.processing.SimpleComponentProviderPostProcessor;
 import org.dockbox.hartshorn.inject.processing.CompositeComponentPostProcessor;
@@ -163,6 +164,15 @@ public class HierarchyAwareComponentProvider extends DefaultFallbackCompatibleCo
         if (this.singletonCache.contains(componentKey)) {
             return this.singletonCache.get(componentKey)
                 .orElseThrow(() -> new ComponentResolutionException("No instance found for key " + componentKey + ", but the key was present in the singleton cache"));
+        }
+
+        if (ComponentProcessor.class.isAssignableFrom(componentKey.type())) {
+            Class<? extends ComponentProcessor> processorType = TypeUtils.unchecked(componentKey.type(), Class.class);
+            Option<? extends ComponentProcessor> processor = this.owner.processorRegistry().lookup(processorType);
+            // If absent, the processor may not yet have been initialized, so we'll try to process it instead of exiting early
+            if (processor.present()) {
+                return componentKey.type().cast(processor.get());
+            }
         }
 
         ObjectContainer<T> objectContainer = this.create(componentKey, requestContext)

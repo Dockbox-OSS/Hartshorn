@@ -46,7 +46,6 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.SingleElementContext;
-import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -74,8 +73,6 @@ import org.slf4j.LoggerFactory;
 public class SimpleApplicationContext extends DelegatingApplicationContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleApplicationContext.class);
-
-    protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
     private final DependencyGraphInitializer dependencyGraphInitializer;
 
     public SimpleApplicationContext(SingleElementContext<? extends ApplicationEnvironment> initializerContext, Configurer configurer) {
@@ -85,7 +82,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
 
     @Override
     protected void prepareInitialization() {
-        this.preProcessors = new ConcurrentSetTreeMultiMap<>();
+        // Nothing to do, override if needed
     }
 
     @Override
@@ -140,11 +137,6 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
         }
     }
 
-    @Override
-    public MultiMap<Integer, ComponentPreProcessor> processors() {
-        return this.preProcessors;
-    }
-
     /**
      * Pre-processes all components with the registered {@link ComponentPreProcessor component pre-processors}. This method
      * is called immediately after the dependency graph has been initialized.
@@ -153,13 +145,16 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
      */
     protected void processComponents(Collection<ComponentContainer<?>> containers) {
         this.checkRunning();
-        for (ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
-            LOG.debug("Processing %s components with registered processor %s".formatted(containers.size(), serviceProcessor.getClass().getSimpleName()));
-            for (ComponentContainer<?> container : containers) {
-                this.processStandaloneComponent(container, serviceProcessor);
-            }
-            if (serviceProcessor instanceof ExitingComponentProcessor exiting) {
-                exiting.exit(this);
+        MultiMap<Integer, ComponentPreProcessor> processors = this.componentProvider().processorRegistry().preProcessors();
+        for(int priority : processors.keySet()) {
+            for(ComponentPreProcessor processor : processors.get(priority)) {
+                LOG.debug("Processing %s components with registered processor %s".formatted(containers.size(), processor.getClass().getSimpleName()));
+                for (ComponentContainer<?> container : containers) {
+                    this.processStandaloneComponent(container, processor);
+                }
+                if (processor instanceof ExitingComponentProcessor exiting) {
+                    exiting.exit(this);
+                }
             }
         }
     }
