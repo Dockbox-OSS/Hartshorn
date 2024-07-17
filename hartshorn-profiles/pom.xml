@@ -20,5 +20,25 @@
             <groupId>org.dockbox.hartshorn</groupId>
             <artifactId>hartshorn-properties</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.dockbox.hartshorn</groupId>
+            <artifactId>hartshorn-introspect</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-properties</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
