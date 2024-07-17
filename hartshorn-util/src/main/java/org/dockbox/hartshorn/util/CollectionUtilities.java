@@ -21,11 +21,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -251,6 +254,20 @@ public final class CollectionUtilities {
         }
         else {
             return Set.copyOf(set);
+        }
+    }
+
+    public static <T> void indexed(Iterator<T> iterator, BiConsumer<Integer, T> consumer) {
+        int index = 0;
+        while (iterator.hasNext()) {
+            consumer.accept(index++, iterator.next());
+        }
+    }
+
+    public static <T, U> void iterateEntries(Iterator<Entry<T, U>> iterator, BiConsumer<T, U> consumer) {
+        while (iterator.hasNext()) {
+            Entry<T, U> entry = iterator.next();
+            consumer.accept(entry.getKey(), entry.getValue());
         }
     }
 }

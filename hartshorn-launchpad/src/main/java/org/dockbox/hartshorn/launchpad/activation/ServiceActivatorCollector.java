@@ -20,16 +20,9 @@ import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.dockbox.hartshorn.util.introspect.Introspector;
+import java.util.stream.Stream;
 
 public class ServiceActivatorCollector {
-
-    private final Introspector introspector;
-
-    public ServiceActivatorCollector(Introspector introspector) {
-        this.introspector = introspector;
-    }
 
     public Set<Annotation> serviceActivators(
         Class<?> forClass
@@ -52,15 +45,15 @@ public class ServiceActivatorCollector {
     }
 
     protected Set<Annotation> collectServiceActivatorsOnType(Class<?> type) {
-        return this.introspector
-            .introspect(type)
-            .annotations()
-            .annotedWith(ServiceActivator.class);
+        return Stream.of(type.getAnnotations())
+                .filter(annotation -> annotation.annotationType().isAnnotationPresent(ServiceActivator.class))
+                .collect(Collectors.toSet());
     }
 
     public Set<ServiceActivator> collectDeclarationsOnActivator(Annotation annotation) {
-        return this.introspector.introspect(annotation.annotationType())
-            .annotations()
-            .all(ServiceActivator.class);
+        return Stream.of(annotation.annotationType().getAnnotations())
+                .filter(ann -> ann.annotationType().isAnnotationPresent(ServiceActivator.class))
+                .map(ann -> ann.annotationType().getAnnotation(ServiceActivator.class))
+                .collect(Collectors.toSet());
     }
 }

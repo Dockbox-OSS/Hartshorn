@@ -72,7 +72,7 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
         if (allInHierarchy.size() > 1) {
             throw new DuplicateAnnotationCompositeException(element, allInHierarchy);
         }
-        return allInHierarchy.isEmpty() ? null : allInHierarchy.get(0);
+        return allInHierarchy.isEmpty() ? null : allInHierarchy.getFirst();
     }
 
     @Override

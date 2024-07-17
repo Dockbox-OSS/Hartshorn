@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.launchpad.environment;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 
-import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
@@ -32,16 +31,13 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 public class ClassPathEnvironmentTypeResolver implements EnvironmentTypeResolver {
 
     private final EnvironmentTypeCollector typeCollector;
-    private final Introspector introspector;
 
-    public ClassPathEnvironmentTypeResolver(EnvironmentTypeCollector typeCollector, Introspector introspector) {
+    public ClassPathEnvironmentTypeResolver(EnvironmentTypeCollector typeCollector) {
         this.typeCollector = typeCollector;
-        this.introspector = introspector;
     }
 
     @Override
     public <A extends Annotation> Collection<TypeView<?>> types(Class<A> annotation) {
         return this.typeCollector.types(type -> type.annotations().has(annotation));
     }
-
 }
