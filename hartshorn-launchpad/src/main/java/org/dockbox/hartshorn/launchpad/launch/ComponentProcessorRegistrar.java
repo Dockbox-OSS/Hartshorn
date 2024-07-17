@@ -162,10 +162,11 @@ public class ComponentProcessorRegistrar {
         // Note: pre-processors should never have dependencies, as they are used to process components before they are registered
         // and therefore cannot rely on other components being available
         for (Class<? extends ComponentPreProcessor> processorType : processorTypes) {
-            var constructor = introspector.introspect(processorType).constructors().defaultConstructor();
+            var constructor = introspector.introspect(processorType)
+                    .constructors()
+                    .defaultConstructor();
             if (constructor.absent()) {
-                this.buildContext.logger().error("Component pre-processor {} does not have a default constructor, skipping", processorType);
-                continue;
+                throw new ComponentInitializationException("Component pre-processor %s does not have a default constructor, skipping".formatted(processorType.getSimpleName()));
             }
             try {
                 componentProcessors.add(constructor.get().create());

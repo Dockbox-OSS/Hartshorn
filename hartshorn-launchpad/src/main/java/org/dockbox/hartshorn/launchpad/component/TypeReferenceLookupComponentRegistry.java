@@ -24,7 +24,8 @@ import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.component.AnnotatedComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.EnvironmentTypeResolver;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -37,22 +38,27 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
 
-    private final ApplicationEnvironment environment;
+    private final EnvironmentTypeResolver typeResolver;
     private final Set<ComponentContainer<?>> componentContainers = ConcurrentHashMap.newKeySet();
+    private final Set<ComponentContainer<?>> customContainers = ConcurrentHashMap.newKeySet();
 
-    public TypeReferenceLookupComponentRegistry(ApplicationEnvironment environment) {
-        this.environment = environment;
+    public TypeReferenceLookupComponentRegistry(EnvironmentTypeResolver typeResolver) {
+        this.typeResolver = typeResolver;
+    }
+
+    public void addCustomContainer(ComponentContainer<?> container) {
+        this.customContainers.add(container);
     }
 
     @Override
     public Collection<ComponentContainer<?>> containers() {
         if (this.componentContainers.isEmpty()) {
-            this.environment.typeResolver().types(Component.class).stream()
+            this.typeResolver.types(Component.class).stream()
                 .filter(Predicate.not(TypeView::isAnnotation)) // Ensure stereotypes are not included
                 .map(AnnotatedComponentContainer::new)
                 .forEach(this.componentContainers::add);
         }
-        return this.componentContainers;
+        return CollectionUtilities.merge(this.componentContainers, this.customContainers);
     }
 
     @Override

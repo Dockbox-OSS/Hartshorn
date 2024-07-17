@@ -48,11 +48,9 @@ import org.dockbox.hartshorn.util.SimpleSingleElementContext;
 import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.scan.PredefinedSetTypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScannerTypeReferenceCollector;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * The standard implementation of an {@link ApplicationContextFactory}. This factory is responsible for creating an
@@ -90,9 +88,22 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
 
         SingleElementContext<ApplicationBootstrapContext> bootstrapInitializerContext = this.initializerContext.transform(bootstrapContext);
 
+        this.activatorCollector = new ServiceActivatorCollector();
+        Set<Annotation> activators = this.serviceActivators(bootstrapContext);
+        ServiceActivatorContext serviceActivatorContext = new ServiceActivatorContext(activators);
+        bootstrapContext.addContext(serviceActivatorContext);
+        bootstrapInitializerContext.addContext(serviceActivatorContext);
+
+        TypeReferenceCollectorContext collectorContext = new TypeReferenceCollectorContext();
+        this.enhanceTypeReferenceCollectorContext(bootstrapContext, collectorContext, activators);
+        bootstrapContext.addContext(collectorContext);
+        bootstrapInitializerContext.addContext(collectorContext);
+
         ApplicationEnvironment environment = this.configurer.environment.initialize(bootstrapInitializerContext);
         ApplicationContext applicationContext = environment.applicationContext();
-        this.activatorCollector = new ServiceActivatorCollector(environment.introspector());
+        applicationContext.addContext(serviceActivatorContext);
+        applicationContext.addContext(collectorContext);
+
         this.componentProcessorRegistrar = new ComponentProcessorRegistrar(this.activatorCollector, this.buildContext);
 
         this.configure(applicationContext, bootstrapContext);
@@ -112,17 +123,10 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      * @param bootstrapContext The bootstrap context that is used to create the application context
      */
     private void configure(ApplicationContext applicationContext, ApplicationBootstrapContext bootstrapContext) {
-        ApplicationEnvironment environment = applicationContext.environment();
-
-        Set<Annotation> activators = this.serviceActivators(bootstrapContext);
-        ServiceActivatorContext serviceActivatorContext = new ServiceActivatorContext(applicationContext, activators);
-        applicationContext.addContext(serviceActivatorContext);
-
-        TypeReferenceCollectorContext collectorContext = new TypeReferenceCollectorContext();
-        this.enhanceTypeReferenceCollectorContext(bootstrapContext, environment.introspector(), collectorContext, activators);
-        applicationContext.addContext(collectorContext);
-
-        this.registerComponentProcessors(applicationContext, activators);
+        bootstrapContext.firstContext(ServiceActivatorContext.class)
+                .peek(activatorContext -> {
+                    this.registerComponentProcessors(applicationContext, activatorContext.activators());
+                });
     }
 
     /**
@@ -168,17 +172,15 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      * application, and a collector for all standalone components that are present in the configuration.
      *
      * @param bootstrapContext The bootstrap context that is used to create the application context
-     * @param introspector The introspector to use for introspection
      * @param collectorContext The collector context to enhance
      * @param activators The activators that are present on the main class
      */
     private void enhanceTypeReferenceCollectorContext(
         ApplicationBootstrapContext bootstrapContext,
-        Introspector introspector,
-        TypeReferenceCollectorContext collectorContext,
+            TypeReferenceCollectorContext collectorContext,
         Set<Annotation> activators
     ) {
-        Set<String> prefixes = this.collectPrefixesForRegistering(bootstrapContext, introspector, activators);
+        Set<String> prefixes = this.collectPrefixesForRegistering(bootstrapContext, activators);
         prefixes.stream()
                 .map(ClassPathScannerTypeReferenceCollector::new)
                 .forEach(collectorContext::register);
@@ -193,14 +195,12 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      * Collects the prefixes that should be used to register components in the application context. This collects prefixes
      * from the main class, and from any service activators that are present in the configuration.
      *
-     * @param introspector The introspector to use for introspection
      * @param activators The activators that are present on the main class
      * @return The prefixes that should be used to register components in the application context
      */
     protected Set<String> collectPrefixesForRegistering(
         ApplicationBootstrapContext bootstrapContext,
-        Introspector introspector,
-        Set<Annotation> activators
+            Set<Annotation> activators
     ) {
         Set<String> prefixes = new HashSet<>();
         prefixes.addAll(this.configurer.scanPackages.initialize(this.initializerContext.transform(bootstrapContext)));
@@ -216,12 +216,11 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         }
 
         for (Annotation serviceActivator : activators) {
-            Option<ServiceActivator> activatorCandidate = introspector.introspect(serviceActivator).annotations().get(ServiceActivator.class);
-            if (activatorCandidate.absent()) {
+            if (!serviceActivator.annotationType().isAnnotationPresent(ServiceActivator.class)) {
                 throw new IllegalStateException("Service activator annotation " + serviceActivator + " is not annotated with @ServiceActivator");
             }
 
-            ServiceActivator activator = activatorCandidate.get();
+            ServiceActivator activator = serviceActivator.annotationType().getAnnotation(ServiceActivator.class);
             prefixes.addAll(List.of(activator.scanPackages()));
         }
 

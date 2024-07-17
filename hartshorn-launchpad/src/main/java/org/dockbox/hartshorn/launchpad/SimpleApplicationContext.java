@@ -89,7 +89,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
     public synchronized void loadContext() {
         this.checkRunning();
 
-        Collection<ComponentContainer<?>> containers = this.componentRegistry().containers();
+        Collection<ComponentContainer<?>> containers = this.environment().componentRegistry().containers();
         LOG.debug("Located %d components".formatted(containers.size()));
 
         try {
@@ -177,10 +177,10 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
      * @return the new {@link SimpleApplicationContext}
      */
     public static ContextualInitializer<ApplicationEnvironment, ApplicationContext> create(Customizer<Configurer> customizer) {
-        return context -> {
+        return environment -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
-            return new SimpleApplicationContext(context, configurer);
+            return new SimpleApplicationContext(environment, configurer);
         };
     }
 

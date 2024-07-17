@@ -56,9 +56,11 @@ public class EnvironmentTypeCollector {
     private static final Logger LOG = LoggerFactory.getLogger(EnvironmentTypeCollector.class);
 
     private final ApplicationEnvironment environment;
+    private final TypeReferenceCollectorContext collectorContext;
 
-    public EnvironmentTypeCollector(ApplicationEnvironment environment) {
+    public EnvironmentTypeCollector(ApplicationEnvironment environment, TypeReferenceCollectorContext collectorContext) {
         this.environment = environment;
+        this.collectorContext = collectorContext;
     }
 
     /**
@@ -72,19 +74,8 @@ public class EnvironmentTypeCollector {
      * @return a collection of types that match the given predicate
      */
     public <T> Collection<TypeView<? extends T>> types(Predicate<TypeView<?>> predicate) {
-        Option<TypeReferenceCollectorContext> collectorContext = this.environment.applicationContext().firstContext(TypeReferenceCollectorContext.class);
-        if (collectorContext.absent()) {
-            LOG.warn("TypeReferenceCollectorContext not available, falling back to no-op type lookup");
-            return Collections.emptyList();
-        }
-        return this.collectTypes(predicate, collectorContext);
-    }
-
-    @NonNull
-    private <T> Collection<TypeView<? extends T>> collectTypes(Predicate<TypeView<?>> predicate,
-            Option<TypeReferenceCollectorContext> collectorContext) {
         try {
-            Set<TypeReference> references = collectorContext.get().collector().collect();
+            Set<TypeReference> references = collectorContext.collector().collect();
             Collection<Class<?>> classes = this.loadClasses(references);
             return classes.stream()
                     .map(this.environment.introspector()::introspect)

@@ -235,7 +235,7 @@ public class GenericConverters implements ConverterCache {
             }
         }
         if (matchingConverters.size() == 1) {
-            return matchingConverters.get(0);
+            return matchingConverters.getFirst();
         }
         else if (matchingConverters.size() > 1) {
             throw new AmbiguousConverterException("Ambiguous converters found for source type [" + source.getClass().getName() + "] and target type [" + targetType.getName() + "]: " + matchingConverters);
