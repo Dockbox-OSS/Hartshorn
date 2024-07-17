@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.stream.EntryStream;
 
 public class ConcurrentProfileRegistry implements ProfileRegistry {
 
@@ -35,9 +36,9 @@ public class ConcurrentProfileRegistry implements ProfileRegistry {
 
     @Override
     public List<EnvironmentProfile> profiles() {
-        return this.prioritizedProfiles.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .map(Map.Entry::getValue)
+        return EntryStream.of(this.prioritizedProfiles)
+                .sortedKeys()
+                .values()
                 .toList();
     }
 }
