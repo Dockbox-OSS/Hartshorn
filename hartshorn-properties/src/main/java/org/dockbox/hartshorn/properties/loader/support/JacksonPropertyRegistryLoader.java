@@ -5,17 +5,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dockbox.hartshorn.properties.ConfiguredProperty;
-import org.dockbox.hartshorn.properties.MapPropertyRegistry;
+import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
-import org.dockbox.hartshorn.properties.SingleConfiguredProperty;
+import org.dockbox.hartshorn.properties.value.SimpleValueProperty;
 import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
-import org.dockbox.hartshorn.properties.loader.PropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathFormatter;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathNode;
 import org.dockbox.hartshorn.properties.loader.path.PropertyRootPathNode;
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.option.Option;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,18 +38,18 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
     }
 
     protected PropertyRegistry loadRegistry(PropertyRegistry registry, JsonNode node) {
-        List<ConfiguredProperty> properties = loadProperties(node);
-        for(ConfiguredProperty property : properties) {
+        List<ValueProperty> properties = loadProperties(node);
+        for(ValueProperty property : properties) {
             registry.register(property);
         }
         return registry;
     }
 
-    protected List<ConfiguredProperty> loadProperties(JsonNode node) {
+    protected List<ValueProperty> loadProperties(JsonNode node) {
         return loadProperties(new PropertyRootPathNode(), node);
     }
 
-    protected List<ConfiguredProperty> loadProperties(PropertyPathNode path, JsonNode node) {
+    protected List<ValueProperty> loadProperties(PropertyPathNode path, JsonNode node) {
         return switch(node) {
             case ArrayNode arrayNode -> loadArrayProperties(path, arrayNode);
             case ObjectNode objectNode -> loadObjectProperties(path, objectNode);
@@ -61,13 +58,13 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
         };
     }
 
-    protected ConfiguredProperty loadSingleProperty(PropertyPathNode path, ValueNode valueNode) {
+    protected ValueProperty loadSingleProperty(PropertyPathNode path, ValueNode valueNode) {
         String propertyPath = formatter.formatPath(path);
-        return new SingleConfiguredProperty(propertyPath, valueNode.asText());
+        return new SimpleValueProperty(propertyPath, valueNode.asText());
     }
 
-    protected List<ConfiguredProperty> loadArrayProperties(PropertyPathNode path, ArrayNode arrayNode) {
-        List<ConfiguredProperty> properties = new ArrayList<>();
+    protected List<ValueProperty> loadArrayProperties(PropertyPathNode path, ArrayNode arrayNode) {
+        List<ValueProperty> properties = new ArrayList<>();
         CollectionUtilities.indexed(arrayNode.elements(), (index, element) -> {
             PropertyPathNode nextPath = path.index(index);
             properties.addAll(loadProperties(nextPath, element));
@@ -75,8 +72,8 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
         return properties;
     }
 
-    protected List<ConfiguredProperty> loadObjectProperties(PropertyPathNode path, ObjectNode objectNode) {
-        List<ConfiguredProperty> properties = new ArrayList<>();
+    protected List<ValueProperty> loadObjectProperties(PropertyPathNode path, ObjectNode objectNode) {
+        List<ValueProperty> properties = new ArrayList<>();
         CollectionUtilities.iterateEntries(objectNode.fields(), (name, value) -> {
             PropertyPathNode nextPath = path.property(name);
             properties.addAll(loadProperties(nextPath, value));
