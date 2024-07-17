@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
-import java.util.Properties;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
@@ -65,6 +64,8 @@ public interface ApplicationEnvironment extends ApplicationContextCarrier, Excep
      */
     ComponentRegistry componentRegistry();
 
+    ResourceLookup resourceLookup();
+
     /**
      * Indicates whether the current environment exists within a Continuous Integration environment. If this returns
      * {@code true} this indicates the application is not active in a production environment. For example, the
@@ -91,16 +92,4 @@ public interface ApplicationEnvironment extends ApplicationContextCarrier, Excep
      */
     boolean isStrictMode();
 
-    /**
-     * Gets the raw arguments passed to the application. This is typically the arguments passed to the main method, or
-     * indirectly set in {@link HartshornApplication#create(String...)}. The
-     * arguments are returned as a {@link Properties} object, where the key is the argument name, and the value is the
-     * argument value. The key/value pair is parsed by the active {@link ApplicationArgumentParser}.
-     *
-     * @return The raw arguments
-     *
-     * @see StandardApplicationArgumentParser
-     * @see ApplicationArgumentParser
-     */
-    Properties rawArguments();
 }
