@@ -20,9 +20,10 @@ import java.util.Properties;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.launchpad.HartshornApplication;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
+import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
 
 /**
  * The environment of an active application. The environment can only be responsible for one {@link ApplicationContext},
@@ -59,6 +60,11 @@ public interface ApplicationEnvironment extends ApplicationContextCarrier, Excep
      * @return The environment type resolver
      */
     EnvironmentTypeResolver typeResolver();
+
+    /**
+     * @return the {@link ComponentRegistry} that is used by this {@link ApplicationContext} to locate components
+     */
+    ComponentRegistry componentRegistry();
 
     /**
      * Indicates whether the current environment exists within a Continuous Integration environment. If this returns

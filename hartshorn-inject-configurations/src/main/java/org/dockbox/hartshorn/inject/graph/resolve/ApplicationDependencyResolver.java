@@ -64,7 +64,6 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
      */
     public static class Configurer extends StreamableConfigurer<InjectionCapableApplication, DependencyResolver> {
 
-        // TODO: Move to Launchpad
         public Configurer withManagedComponents() {
             ContextualInitializer<InjectionCapableApplication, DependencyResolver> methodDependencyResolver = ContextualInitializer.of(application -> {
                 return new ComponentDependencyResolver(application.environment(), application.defaultBinder());
@@ -73,7 +72,6 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
             return this;
         }
 
-        // TODO: Move to inject-configurations
         public Configurer withBindsMethods(Customizer<BindsMethodDependencyResolver.Configurer> customizer) {
             ContextualInitializer<InjectionCapableApplication, DependencyResolver> methodDependencyResolver = BindsMethodDependencyResolver.create(customizer);
             this.add(methodDependencyResolver);

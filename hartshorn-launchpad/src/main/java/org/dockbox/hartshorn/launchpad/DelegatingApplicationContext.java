@@ -40,7 +40,6 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
-import org.dockbox.hartshorn.launchpad.component.TypeReferenceLookupComponentRegistry;
 import org.dockbox.hartshorn.launchpad.context.ModifiableApplicationContextCarrier;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.binding.Binder;
@@ -53,14 +52,13 @@ import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.option.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link ApplicationContext} implementation that delegates to a {@link ComponentRegistry} and {@link ComponentProvider}.
- * This implementation is used to allow for custom implementations of these interfaces, while still allowing for the
- * {@link ApplicationContext} to function in a predictable manner.
+ * A {@link ApplicationContext} implementation that delegates to a {@link PostProcessingComponentProvider}. This
+ * implementation is used to allow for custom implementations of provision and binding, while still allowing for
+ * the {@link ApplicationContext} to function in a predictable manner.
  *
  * <p>Details like component processors and context initialization are not handled as they are specific to the
  * {@link ApplicationContext} implementation. This implementation is intended to be used as a base class for
@@ -94,7 +92,6 @@ public abstract class DelegatingApplicationContext
 
     private final transient Properties environmentValues;
     private final transient PostProcessingComponentProvider componentProvider;
-    private final transient ComponentRegistry componentRegistry;
     private final transient ApplicationEnvironment environment;
 
     private boolean isClosed = false;
@@ -116,8 +113,7 @@ public abstract class DelegatingApplicationContext
         // is not the application itself
         applicationInitializerContext.addContext(this);
 
-        this.componentRegistry = configurer.componentRegistry.initialize(applicationInitializerContext);
-        this.componentProvider = configurer.componentProvider.initialize(applicationInitializerContext.transform(this.componentRegistry));
+        this.componentProvider = configurer.componentProvider.initialize(applicationInitializerContext.transform(this.environment().componentRegistry()));
 
         ApplicationBindingsConfiguration configuration = new ContextualApplicationBindingsConfiguration();
 
@@ -268,13 +264,6 @@ public abstract class DelegatingApplicationContext
     }
 
     /**
-     * @return the {@link ComponentRegistry} that is used by this {@link ApplicationContext} to locate components
-     */
-    public ComponentRegistry componentRegistry() {
-        return this.componentRegistry;
-    }
-
-    /**
      * @return the {@link ComponentProvider} that is used by this {@link ApplicationContext} to provide components
      */
     public PostProcessingComponentProvider componentProvider() {
@@ -291,32 +280,8 @@ public abstract class DelegatingApplicationContext
      */
     public static class Configurer {
 
-        private ContextualInitializer<ApplicationContext, ? extends ComponentRegistry> componentRegistry = ContextualInitializer.of(context -> new TypeReferenceLookupComponentRegistry(context.environment()));
         private ContextualInitializer<ComponentRegistry, ? extends PostProcessingComponentProvider> componentProvider = DelegatingScopeAwareComponentProvider.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings = ContextualInitializer.of(DefaultBindingConfigurer::empty);
-
-        /**
-         * Configures the {@link ComponentRegistry} that is used by the {@link DelegatingApplicationContext} to locate
-         * components.
-         *
-         * @param componentRegistry the {@link ComponentRegistry} to use
-         * @return the current instance
-         */
-        public Configurer componentRegistry(ComponentRegistry componentRegistry) {
-            return this.componentRegistry(ContextualInitializer.of(componentRegistry));
-        }
-
-        /**
-         * Configures the {@link ComponentRegistry} that is used by the {@link DelegatingApplicationContext} to locate
-         * components.
-         *
-         * @param componentRegistry the {@link ComponentRegistry} to use
-         * @return the current instance
-         */
-        public Configurer componentRegistry(ContextualInitializer<ApplicationContext, ? extends ComponentRegistry> componentRegistry) {
-            this.componentRegistry = componentRegistry;
-            return this;
-        }
 
         /**
          * Configures the {@link PostProcessingComponentProvider} that is used by the {@link DelegatingApplicationContext} to

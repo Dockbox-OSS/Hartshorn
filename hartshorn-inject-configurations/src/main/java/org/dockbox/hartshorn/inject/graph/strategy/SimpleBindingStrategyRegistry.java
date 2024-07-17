@@ -76,7 +76,7 @@ public class SimpleBindingStrategyRegistry extends DefaultContext implements Bin
                 throw new IllegalStateException("Multiple strategies found for " + context + " at priority " + priority);
             }
             else if (!matchingStrategies.isEmpty()) {
-                return Option.of(matchingStrategies.get(0));
+                return Option.of(matchingStrategies.getFirst());
             }
         }
         return Option.empty();

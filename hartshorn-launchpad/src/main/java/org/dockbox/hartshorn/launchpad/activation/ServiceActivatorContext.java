@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
  * Carrier context for {@link ServiceActivator} annotations. This context is used to store all
@@ -52,14 +51,10 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 public class ServiceActivatorContext extends DefaultFallbackCompatibleContext implements Reportable {
 
     private final Map<Class<? extends Annotation>, Annotation> activators = new ConcurrentHashMap<>();
-    private final ApplicationContext applicationContext;
 
-    public ServiceActivatorContext(ApplicationContext applicationContext,
-                                   Set<Annotation> serviceActivators) {
-        this.applicationContext = applicationContext;
+    public ServiceActivatorContext(Set<Annotation> serviceActivators) {
         for (Annotation serviceActivator : serviceActivators) {
-            if (!applicationContext.environment().introspector().introspect(serviceActivator).annotations()
-                    .has(ServiceActivator.class)) {
+            if (!serviceActivator.annotationType().isAnnotationPresent(ServiceActivator.class)) {
                 throw new IllegalArgumentException("Annotation " + serviceActivator + " is not a valid service activator");
             }
             this.activators.put(serviceActivator.annotationType(), serviceActivator);
@@ -88,13 +83,9 @@ public class ServiceActivatorContext extends DefaultFallbackCompatibleContext im
      * @see org.dockbox.hartshorn.util.introspect.annotations.Extends
      */
     public boolean hasActivator(Class<? extends Annotation> activator) {
-        TypeView<? extends Annotation> activatorView = this.applicationContext.environment()
-                .introspector()
-                .introspect(activator);
-        if (!activatorView.annotations().has(ServiceActivator.class)) {
+        if (!activator.isAnnotationPresent(ServiceActivator.class)) {
             throw new InvalidActivatorException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
         }
-
         return this.activators.containsKey(activator);
     }
 

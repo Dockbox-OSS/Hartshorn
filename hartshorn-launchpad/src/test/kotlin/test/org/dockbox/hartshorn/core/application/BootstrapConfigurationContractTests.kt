@@ -125,6 +125,10 @@ class BootstrapConfigurationContractTests {
 
         assertDeferred(instance) { configurer, deferred: ApplicationContext? -> configurer.applicationContext(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.applicationContext(initializer) }
+
+        assertDeferred(instance) { configurer, deferred: ComponentRegistry? -> configurer.componentRegistry(deferred) }
+        assertContextInitializer(instance) { configurer, initializer -> configurer.componentRegistry(initializer) }
+
     }
 
     @Test
@@ -138,9 +142,6 @@ class BootstrapConfigurationContractTests {
     @Test
     fun testDelegatingApplicationContextContract() {
         val instance = DelegatingApplicationContext.Configurer()
-
-        assertDeferred(instance) { configurer, deferred: ComponentRegistry? -> configurer.componentRegistry(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.componentRegistry(initializer) }
 
         assertDeferred(instance) { configurer, deferred: PostProcessingComponentProvider? -> configurer.componentProvider(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.componentProvider(initializer) }

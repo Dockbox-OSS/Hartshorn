@@ -17,12 +17,20 @@
 package org.dockbox.hartshorn.launchpad.environment;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Properties;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.inject.InjectorConfiguration;
+import org.dockbox.hartshorn.inject.component.ApplicationMainComponentContainer;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.launchpad.DelegatingApplicationContext;
+import org.dockbox.hartshorn.launchpad.component.TypeReferenceLookupComponentRegistry;
 import org.dockbox.hartshorn.launchpad.launch.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
@@ -39,6 +47,7 @@ import org.dockbox.hartshorn.launchpad.banner.ResourcePathBanner;
 import org.dockbox.hartshorn.launchpad.context.ModifiableApplicationContextCarrier;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.Observer;
+import org.dockbox.hartshorn.launchpad.properties.TypeDiscoveryPropertySourceResolver;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.spi.DiscoveryService;
 import org.dockbox.hartshorn.spi.ServiceDiscoveryException;
@@ -54,6 +63,8 @@ import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.SupplierAdapterProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
+import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,11 +84,12 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     private final ProxyOrchestrator proxyOrchestrator;
     private final ExceptionHandler exceptionHandler;
     private final AnnotationLookup annotationLookup;
-    private final ClasspathResourceLocator resourceLocator;
+    private final ClasspathResourceLocator classPathResourceLocator;
 
     private final ComponentInjectionPointsResolver injectionPointsResolver;
     private final ComponentKeyResolver componentKeyResolver;
     private final EnvironmentTypeResolver typeResolver;
+    private final ComponentRegistry componentRegistry;
 
     private final boolean isBuildEnvironment;
     private final boolean isBatchMode;
@@ -91,16 +103,18 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
     private ContextualApplicationEnvironment(SingleElementContext<? extends ApplicationBootstrapContext> context, Configurer configurer) {
         SingleElementContext<ApplicationEnvironment> environmentInitializerContext = context.transform(this);
+        environmentInitializerContext.addContext(context.input());
 
         this.exceptionHandler = this.configure(environmentInitializerContext, configurer.exceptionHandler);
         this.annotationLookup = this.configure(environmentInitializerContext, configurer.annotationLookup);
         this.proxyOrchestrator = this.configure(environmentInitializerContext.transform(this.introspector()), configurer.proxyOrchestrator);
         this.fileSystemProvider = this.configure(environmentInitializerContext, configurer.applicationFSProvider);
         this.argumentParser = this.configure(environmentInitializerContext, configurer.applicationArgumentParser);
-        this.resourceLocator = this.configure(environmentInitializerContext, configurer.classpathResourceLocator);
+        this.classPathResourceLocator = this.configure(environmentInitializerContext, configurer.classpathResourceLocator);
         this.injectionPointsResolver = this.configure(environmentInitializerContext, configurer.injectionPointsResolver);
         this.componentKeyResolver = this.configure(environmentInitializerContext, configurer.componentKeyResolver);
         this.typeResolver = this.configure(environmentInitializerContext, configurer.typeResolver);
+        this.componentRegistry = this.configure(environmentInitializerContext, configurer.componentRegistry);
 
         this.arguments = this.argumentParser.parse(context.input().arguments());
 
@@ -181,7 +195,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
     @Override
     public ClasspathResourceLocator classpath() {
-        return this.resourceLocator;
+        return this.classPathResourceLocator;
     }
 
     @Override
@@ -243,6 +257,10 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     }
 
     @Override
+    public ComponentRegistry componentRegistry() {
+        return this.componentRegistry;
+    }
+    @Override
     public void handle(Throwable throwable) {
         this.exceptionHandler.handle(throwable);
     }
@@ -295,7 +313,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
     private Banner createBanner() {
         try {
-            return this.resourceLocator.resource("banner.txt")
+            return this.classPathResourceLocator.resource("banner.txt")
                     .map(resource -> (Banner) new ResourcePathBanner(resource))
                     .orElseGet(HartshornBanner::new);
         }
@@ -342,17 +360,45 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         private ContextualInitializer<Properties, Boolean> enableStrictMode = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.strict.enabled", "true")));
         private ContextualInitializer<Properties, Boolean> showStacktraces = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.exceptions.stacktraces", "true")));
 
-        private ContextualInitializer<Introspector, ? extends ProxyOrchestrator> proxyOrchestrator = context -> DefaultProxyOrchestratorLoader.create(Customizer.useDefaults()).initialize(context);
+        private final LazyStreamableConfigurer<ApplicationEnvironment, PropertySourceResolver> propertySourceResolvers = LazyStreamableConfigurer.of(resolvers -> {
+            resolvers.add(new PredefinedPropertySourceResolver(Set.of(
+                    "classpath:application.yml",
+                    "classpath:application.yaml",
+                    "fs:application.yml",
+                    "fs:application.yaml",
+                    "classpath:application.properties",
+                    "fs:application.properties"
+            )));
+            resolvers.add(ContextualInitializer.of(TypeDiscoveryPropertySourceResolver::new));
+        });
+
+        private ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver = context -> {
+            TypeReferenceCollectorContext collectorContext = context.firstContext(TypeReferenceCollectorContext.class)
+                    .orElseGet(TypeReferenceCollectorContext::new);
+            return new ClassPathEnvironmentTypeResolver(new EnvironmentTypeCollector(context.input(), collectorContext));
+        };
+
+        private ContextualInitializer<ApplicationEnvironment, ? extends ComponentRegistry> componentRegistry = context -> {
+            ApplicationEnvironment environment = context.input();
+            TypeReferenceLookupComponentRegistry registry = new TypeReferenceLookupComponentRegistry(environment.typeResolver());
+            context.firstContext(ApplicationBootstrapContext.class)
+                    .peek(bootstrap -> {
+                        TypeView<?> mainClass = environment.introspector().introspect(bootstrap.mainClass());
+                        registry.addCustomContainer(new ApplicationMainComponentContainer<>(mainClass));
+                    });
+            return registry;
+        };
+        private ContextualInitializer<Introspector, ? extends ProxyOrchestrator> proxyOrchestrator = DefaultProxyOrchestratorLoader.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider = ContextualInitializer.of(PathFileSystemProvider::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler = ContextualInitializer.of(LoggingExceptionHandler::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationArgumentParser> applicationArgumentParser = ContextualInitializer.of(StandardApplicationArgumentParser::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ContextualInitializer.of(ClassLoaderClasspathResourceLocator::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup = ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext = SimpleApplicationContext.create(Customizer.useDefaults());
-        private ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment = environment -> BuildEnvironmentPredicate.isBuildEnvironment();
+        private ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment = ContextualInitializer.of(environment -> BuildEnvironmentPredicate.isBuildEnvironment(environment.propertyRegistry()));
         private ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver = ContextualInitializer.defer(() -> MethodsAndFieldsInjectionPointResolver.create(Customizer.useDefaults()));
-        private ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver = context -> new StandardAnnotationComponentKeyResolver();
         private ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver = ContextualInitializer.of(environment -> new ClassPathEnvironmentTypeResolver(new EnvironmentTypeCollector(environment), environment.introspector()));
+        private ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver = ContextualInitializer.of(StandardAnnotationComponentKeyResolver::new);
 
         /**
          * Enables or disables the banner. If the banner is enabled, it will be printed to the console when the
@@ -477,6 +523,29 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
          */
         public Configurer hideStacktraces() {
             return this.showStacktraces(ContextualInitializer.of(false));
+        }
+
+        /**
+         * Configures the {@link ComponentRegistry} that is used by the {@link DelegatingApplicationContext} to locate
+         * components.
+         *
+         * @param componentRegistry the {@link ComponentRegistry} to use
+         * @return the current instance
+         */
+        public Configurer componentRegistry(ComponentRegistry componentRegistry) {
+            return this.componentRegistry(ContextualInitializer.of(componentRegistry));
+        }
+
+        /**
+         * Configures the {@link ComponentRegistry} that is used by the {@link DelegatingApplicationContext} to locate
+         * components.
+         *
+         * @param componentRegistry the {@link ComponentRegistry} to use
+         * @return the current instance
+         */
+        public Configurer componentRegistry(ContextualInitializer<ApplicationEnvironment, ? extends ComponentRegistry> componentRegistry) {
+            this.componentRegistry = componentRegistry;
+            return this;
         }
 
         /**
