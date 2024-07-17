@@ -46,9 +46,6 @@ import org.dockbox.hartshorn.launchpad.context.ModifiableApplicationContextCarri
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.Observer;
 import org.dockbox.hartshorn.launchpad.properties.InstantLoadingPropertyRegistryFactory;
-import org.dockbox.hartshorn.launchpad.properties.PredefinedPropertySourceResolver;
-import org.dockbox.hartshorn.launchpad.properties.PropertyRegistryFactory;
-import org.dockbox.hartshorn.launchpad.properties.PropertySourceResolver;
 import org.dockbox.hartshorn.launchpad.properties.TypeDiscoveryPropertySourceResolver;
 import org.dockbox.hartshorn.launchpad.resources.FallbackResourceLookup;
 import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
@@ -57,6 +54,7 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.PropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.support.CompositePredicatePropertyRegistryLoader;
+
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.spi.DiscoveryService;
 import org.dockbox.hartshorn.spi.ServiceDiscoveryException;
