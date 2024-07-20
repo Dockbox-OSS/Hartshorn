@@ -1,3 +1,0 @@
-= Hartshorn Configuration (Jackson)
-
-To be written

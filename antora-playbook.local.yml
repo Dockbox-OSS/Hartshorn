@@ -1,9 +1,6 @@
 #
 # Template Antora playbook configuration for local documentation pre-viewing.
 #
-# This template uses the current local repository as the source for the documentation,
-# targeting the appropriate documentation content for the applicable submodules.
-#
 # This playbook is not intended for use in production, but rather for local development
 # and testing of the documentation. You can generate a static site from this playbook by
 # running `antora antora-playbook.local.yml`. The generated site will be placed in the
@@ -11,7 +8,7 @@
 #
 site:
   title: Hartshorn Framework
-  start_page: core::index.adoc
+  start_page: launchpad::index.adoc
 
 content:
   sources:
@@ -20,7 +17,9 @@ content:
       # Effectively null, no versioning on non-released documentation
       version: ~
       start_paths:
-        - hartshorn-core/src/main/docs
+        - hartshorn-inject/src/main/docs
+        - hartshorn-inject-configurations/src/main/docs
+        - hartshorn-launchpad/src/main/docs
         - hartshorn-util/src/main/docs
         - hartshorn-spi/src/main/docs
         - hartshorn-proxy/src/main/docs
