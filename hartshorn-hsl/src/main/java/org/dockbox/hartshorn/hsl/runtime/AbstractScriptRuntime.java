@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
+import org.dockbox.hartshorn.hsl.customizer.ConsumerCodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
@@ -317,17 +318,6 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
 
     @Override
     public void scriptContextCustomizer(Customizer<ScriptContext> customizer) {
-        this.customizer(new CodeCustomizer() {
-
-            @Override
-            public Phase phase() {
-                return Phase.TOKENIZING;
-            }
-
-            @Override
-            public void call(ScriptContext context) {
-                customizer.configure(context);
-            }
-        });
+        this.customizer(new ConsumerCodeCustomizer(Phase.TOKENIZING, customizer::configure));
     }
 }

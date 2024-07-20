@@ -38,18 +38,7 @@ public interface SimpleTokenCharacter extends TokenCharacter {
      * @return a new instance of {@link SimpleTokenCharacter}
      */
     static SimpleTokenCharacter of(char character, boolean standalone) {
-        return new SimpleTokenCharacter() {
-
-            @Override
-            public char character() {
-                return character;
-            }
-
-            @Override
-            public boolean isStandaloneCharacter() {
-                return standalone;
-            }
-        };
+        return new RecordTokenCharacter(character, standalone);
     }
 
     @Override

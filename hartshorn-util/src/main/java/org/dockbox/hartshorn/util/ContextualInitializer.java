@@ -114,15 +114,7 @@ public interface ContextualInitializer<I, T> {
      * @return An initializer that caches the result of this initializer.
      */
     default ContextualInitializer<I, T> cached() {
-        return new ContextualInitializer<>() {
-
-            private final Map<I, T> values = new ConcurrentHashMap<>();
-
-            @Override
-            public T initialize(SingleElementContext<? extends I> context) {
-                return this.values.computeIfAbsent(context.input(), input -> ContextualInitializer.this.initialize(context));
-            }
-        };
+        return new CachedContextualInitializer<>(this);
     }
 
     /**
