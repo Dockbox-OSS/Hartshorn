@@ -37,7 +37,6 @@ import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
-import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
@@ -80,13 +79,11 @@ public class ContextualApplicationBindingsConfiguration implements ApplicationBi
             binder.bind(ComponentRegistry.class)
                     .processAfterInitialization(false)
                     .singleton(applicationEnvironment.componentRegistry());
-            binder.bind(ResourceLookup.class).singleton(applicationEnvironment.resourceLookup());
         }
         binder.bind(Introspector.class).singleton(application.environment().introspector());
         binder.bind(AnnotationLookup.class).singleton(application.environment().introspector().annotations());
         binder.bind(ProxyLookup.class).singleton(application.environment().proxyOrchestrator());
         binder.bind(ProxyOrchestrator.class).singleton(application.environment().proxyOrchestrator());
-        binder.bind(PropertyRegistry.class).singleton(application.environment().propertyRegistry());
 
         if (application instanceof ObservableApplicationEnvironment observableEnvironment) {
             binder.bind(LifecycleObservable.class).singleton(observableEnvironment);

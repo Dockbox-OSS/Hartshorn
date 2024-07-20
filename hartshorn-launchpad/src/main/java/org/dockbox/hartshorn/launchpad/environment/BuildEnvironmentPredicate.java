@@ -18,9 +18,6 @@ package org.dockbox.hartshorn.launchpad.environment;
 
 import java.util.Set;
 
-import org.dockbox.hartshorn.properties.PropertyRegistry;
-import org.dockbox.hartshorn.properties.parse.StandardPropertyParsers;
-
 /**
  * A predicate that checks if the application is running in a build environment. This is useful
  * to determine if certain features should be enabled or disabled.
@@ -59,14 +56,7 @@ public class BuildEnvironmentPredicate {
      *
      * @return whether the application is running in a build environment
      */
-    public static boolean isBuildEnvironment(PropertyRegistry propertyRegistry) {
-        boolean configuredBuildSetting = propertyRegistry
-                .value("hartshorn.environment.build", StandardPropertyParsers.BOOLEAN)
-                .test(Boolean::booleanValue);
-        if (configuredBuildSetting) {
-            return true;
-        }
-
+    public static boolean isBuildEnvironment() {
         for(String buildEnvironmentVariable : BUILD_ENVIRONMENT_VARIABLES) {
             if(System.getenv().containsKey(buildEnvironmentVariable)) {
                 String value = System.getenv().get(buildEnvironmentVariable);
