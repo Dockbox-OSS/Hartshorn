@@ -17,14 +17,10 @@
 package org.dockbox.hartshorn.launchpad.environment;
 
 import java.io.IOException;
-import java.net.URI;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Properties;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.inject.InjectorConfiguration;
 import org.dockbox.hartshorn.inject.component.ApplicationMainComponentContainer;
@@ -47,7 +43,6 @@ import org.dockbox.hartshorn.launchpad.banner.ResourcePathBanner;
 import org.dockbox.hartshorn.launchpad.context.ModifiableApplicationContextCarrier;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.Observer;
-import org.dockbox.hartshorn.launchpad.properties.TypeDiscoveryPropertySourceResolver;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.spi.DiscoveryService;
 import org.dockbox.hartshorn.spi.ServiceDiscoveryException;
@@ -360,18 +355,6 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         private ContextualInitializer<Properties, Boolean> enableStrictMode = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.strict.enabled", "true")));
         private ContextualInitializer<Properties, Boolean> showStacktraces = ContextualInitializer.of(properties -> Boolean.valueOf(properties.getProperty("hartshorn.exceptions.stacktraces", "true")));
 
-        private final LazyStreamableConfigurer<ApplicationEnvironment, PropertySourceResolver> propertySourceResolvers = LazyStreamableConfigurer.of(resolvers -> {
-            resolvers.add(new PredefinedPropertySourceResolver(Set.of(
-                    "classpath:application.yml",
-                    "classpath:application.yaml",
-                    "fs:application.yml",
-                    "fs:application.yaml",
-                    "classpath:application.properties",
-                    "fs:application.properties"
-            )));
-            resolvers.add(ContextualInitializer.of(TypeDiscoveryPropertySourceResolver::new));
-        });
-
         private ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver = context -> {
             TypeReferenceCollectorContext collectorContext = context.firstContext(TypeReferenceCollectorContext.class)
                     .orElseGet(TypeReferenceCollectorContext::new);
@@ -395,9 +378,8 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
         private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ContextualInitializer.of(ClassLoaderClasspathResourceLocator::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup = ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext = SimpleApplicationContext.create(Customizer.useDefaults());
-        private ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment = ContextualInitializer.of(environment -> BuildEnvironmentPredicate.isBuildEnvironment(environment.propertyRegistry()));
+        private ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment = ContextualInitializer.of(environment -> BuildEnvironmentPredicate.isBuildEnvironment());
         private ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver = ContextualInitializer.defer(() -> MethodsAndFieldsInjectionPointResolver.create(Customizer.useDefaults()));
-        private ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver = ContextualInitializer.of(environment -> new ClassPathEnvironmentTypeResolver(new EnvironmentTypeCollector(environment), environment.introspector()));
         private ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver = ContextualInitializer.of(StandardAnnotationComponentKeyResolver::new);
 
         /**
