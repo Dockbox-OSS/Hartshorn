@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.condition.ExpressionCondition;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.condition.RequiresExpression;
-import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -39,7 +39,7 @@ import org.mockito.Mockito;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
 
-@HartshornTest(includeBasePackages = false)
+@HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
 public class ConditionTests {
 
