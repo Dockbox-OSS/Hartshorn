@@ -1,0 +1,97 @@
+/*
+ * Copyright 2019-2024 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package test.org.dockbox.hartshorn.inject.provider;
+
+import org.dockbox.hartshorn.launchpad.HartshornApplication;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment.Configurer;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentResolutionException;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
+import org.dockbox.hartshorn.util.Tristate;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+@HartshornIntegrationTest(includeBasePackages = false)
+public class LooseInjectionTest {
+
+    @Test
+    void testNonStrictModeMatchesCompatibleBinding(ApplicationContext context) {
+        context.bind(String.class).singleton("Hello World");
+        ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class)
+                .strict(false)
+                .build();
+        CharSequence sequence = context.get(key);
+        Assertions.assertEquals("Hello World", sequence);
+    }
+
+    @Test
+    void testStrictModeOnlyMatchesExactBinding(ApplicationContext context) {
+        context.bind(String.class).singleton("Hello World");
+        ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class)
+                .strict(true)
+                .build();
+        Assertions.assertThrows(ComponentResolutionException.class, () -> context.get(key));
+    }
+
+    @Test
+    void testStrictModeIsUndefinedByDefault() {
+        ComponentKey<CharSequence> componentKey = ComponentKey.of(CharSequence.class);
+        Assertions.assertSame(Tristate.UNDEFINED, componentKey.strict());
+    }
+
+    @Test
+    void testEnvironmentStrictModeIsEnabledByDefault() {
+        ApplicationEnvironment environment = HartshornApplication.create(LooseInjectionTest.class, application -> {
+            application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
+                constructor.includeBasePackages(false);
+            }));
+        }).environment();
+        Assertions.assertTrue(environment.isStrictMode());
+    }
+
+    public static void main(String[] args) {
+        HartshornApplication.create(LooseInjectionTest.class, application -> {
+            application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
+                constructor.includeBasePackages(false);
+            }));
+        });
+    }
+
+
+    @Test
+    void testCustomizingEnvironmentStrictModeAffectsLookup() {
+        ApplicationContext applicationContext = HartshornApplication.create(LooseInjectionTest.class, application -> {
+            application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
+                constructor.includeBasePackages(false);
+                constructor.environment(ContextualApplicationEnvironment.create(Configurer::disableStrictMode));
+            }));
+        });
+        ApplicationEnvironment environment = applicationContext.environment();
+        Assertions.assertFalse(environment.isStrictMode());
+
+        applicationContext.bind(String.class).singleton("Hello World");
+        ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class).build();
+        Assertions.assertSame(Tristate.UNDEFINED, key.strict());
+
+        CharSequence sequence = applicationContext.get(key);
+        Assertions.assertEquals("Hello World", sequence);
+    }
+}

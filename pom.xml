@@ -78,7 +78,7 @@
         <plugin.checkstyle.version>3.3.1</plugin.checkstyle.version>
         <plugin.deploy.version>3.1.1</plugin.deploy.version>
         <plugin.gpg.version>1.6</plugin.gpg.version>
-        <plugin.groovy.version>2.1.1</plugin.groovy.version>
+        <plugin.gmaven.version>3.0.2</plugin.gmaven.version>
         <plugin.jacoco.version>0.8.11</plugin.jacoco.version>
         <plugin.jar.version>3.3.0</plugin.jar.version>
         <plugin.javadoc.version>3.6.3</plugin.javadoc.version>
@@ -118,11 +118,13 @@
                 <module>hartshorn-introspect</module>
                 <module>hartshorn-introspect-reflection</module>
                 <module>hartshorn-inject</module>
+                <module>hartshorn-integration-tests</module>
                 <module>hartshorn-inject-configurations</module>
                 <module>hartshorn-launchpad</module>
                 <module>hartshorn-reporting</module>
                 <module>hartshorn-hsl</module>
                 <module>hartshorn-assembly/pom.assembly.xml</module>
+                <module>hartshorn-testsuite</module>
             </modules>
         </profile>
         <profile>
@@ -196,9 +198,9 @@
                     <version>${plugin.gpg.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.gmaven</groupId>
-                    <artifactId>groovy-maven-plugin</artifactId>
-                    <version>${plugin.groovy.version}</version>
+                    <groupId>org.codehaus.gmavenplus</groupId>
+                    <artifactId>gmavenplus-plugin</artifactId>
+                    <version>${plugin.gmaven.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
