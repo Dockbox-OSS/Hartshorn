@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.launchpad.configuration;
 
-import org.dockbox.hartshorn.inject.provider.DelegatingScopeAwareComponentProvider;
+import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProviderOrchestrator;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.inject.provider.SingletonCacheComponentProvider;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
@@ -101,7 +101,7 @@ public class ContextualApplicationBindingsConfiguration implements ApplicationBi
                     .processAfterInitialization(false)
                     .singleton(componentProvider.scope());
 
-            if (componentProvider instanceof DelegatingScopeAwareComponentProvider scopeAwareComponentProvider) {
+            if (componentProvider instanceof HierarchicalComponentProviderOrchestrator scopeAwareComponentProvider) {
                 HierarchicalComponentProvider applicationProvider = scopeAwareComponentProvider.applicationProvider();
 
                 if (applicationProvider instanceof SingletonCacheComponentProvider singletonCacheComponentProvider) {

@@ -16,19 +16,10 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
-import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 
-/**
- * TODO: #1060 Add documentation
- *
- * @since 0.5.0
- *
- * @author Guus Lieben
- */
-public interface ScopeAwareComponentProvider extends PostProcessingComponentProvider {
+public interface HierarchicalBinderAwareComponentProvider extends BinderAwareComponentProvider, HierarchicalComponentProvider {
 
-    ComponentRegistry componentRegistry();
-
-    HierarchicalComponentProvider applicationProvider();
-
+    @Override
+    HierarchicalBinder binder();
 }

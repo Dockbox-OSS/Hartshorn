@@ -24,7 +24,7 @@ To begin, add the following Maven dependency:
 ```xml
 <dependency>
   <groupId>org.dockbox.hartshorn</groupId>
-  <artifactId>hartshorn-core</artifactId>
+  <artifactId>hartshorn-launchpad</artifactId>
   <version>${version}</version>
 </dependency>
 ```
@@ -32,7 +32,7 @@ To begin, add the following Maven dependency:
 If you are using Gradle, use this implementation:
 
 ```groovy
-implementation "org.dockbox.hartshorn:hartshorn-core:$version"
+implementation "org.dockbox.hartshorn:hartshorn-launchpad:$version"
 ```
 
 ### Starting your first application
