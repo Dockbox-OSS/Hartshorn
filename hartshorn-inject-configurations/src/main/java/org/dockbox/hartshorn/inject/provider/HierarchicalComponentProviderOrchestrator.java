@@ -26,8 +26,11 @@ import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
+import org.dockbox.hartshorn.inject.binding.ScopeAwareHierarchicalBinder;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
 import org.dockbox.hartshorn.inject.processing.MultiMapComponentProcessorRegistry;
+import org.dockbox.hartshorn.inject.provider.singleton.ConcurrentHashSingletonCache;
+import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
 import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
 import org.dockbox.hartshorn.inject.scope.ScopeModuleContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
@@ -53,11 +56,11 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
  *
  * @author Guus Lieben
  */
-public class DelegatingScopeAwareComponentProvider
+public class HierarchicalComponentProviderOrchestrator
         extends DefaultFallbackCompatibleContext
-        implements HierarchicalComponentProvider, ScopeAwareComponentProvider, HierarchicalBinder {
+        implements HierarchicalComponentProvider, ComponentProviderOrchestrator, HierarchicalBinder {
 
-    private final Map<Scope, HierarchyAwareComponentProvider> scopedProviders = Collections.synchronizedMap(new WeakHashMap<>());
+    private final Map<Scope, HierarchicalBinderAwareComponentProvider> scopedProviders = Collections.synchronizedMap(new WeakHashMap<>());
     private final Scope applicationScope;
 
     private final transient InjectionCapableApplication application;
@@ -66,7 +69,7 @@ public class DelegatingScopeAwareComponentProvider
 
     private final ComponentProcessorRegistry componentProcessorRegistry = new MultiMapComponentProcessorRegistry();
 
-    private HierarchyAwareComponentProvider getOrCreateProvider(Scope scope) {
+    private HierarchicalBinderAwareComponentProvider getOrCreateProvider(Scope scope) {
         if (scope == null) {
             scope = this.applicationScope;
         }
@@ -75,7 +78,7 @@ public class DelegatingScopeAwareComponentProvider
         }
     }
 
-    protected DelegatingScopeAwareComponentProvider(InjectionCapableApplication application, ComponentRegistry registry, ComponentPostConstructor postConstructor) {
+    protected HierarchicalComponentProviderOrchestrator(InjectionCapableApplication application, ComponentRegistry registry, ComponentPostConstructor postConstructor) {
         this.registry = registry;
         this.application = application;
         this.postConstructor = postConstructor;
@@ -86,25 +89,28 @@ public class DelegatingScopeAwareComponentProvider
     }
 
     @NonNull
-    private HierarchyAwareComponentProvider createComponentProvider(Scope scope) {
-        HierarchyAwareComponentProvider provider = new HierarchyAwareComponentProvider(this, this.postConstructor, application, scope);
+    private HierarchicalBinderAwareComponentProvider createComponentProvider(Scope scope) {
+        SingletonCache singletonCache = new ConcurrentHashSingletonCache();
+        HierarchicalBinder binder = new ScopeAwareHierarchicalBinder(this.application, singletonCache, scope);
+        HierarchicalBinderAwareComponentProvider provider = new HierarchyAwareComponentProvider(this, this.postConstructor, application, binder, scope, singletonCache);
+
         if (scope != this.application) {
             ContextKey<ScopeModuleContext> scopeModuleContextKey = ScopeModuleContext.createKey(() -> this.scope().installableScopeType());
             ScopeModuleContext scopeModuleContext = this.application.firstContext(scopeModuleContextKey).get();
             Collection<BindingHierarchy<?>> hierarchies = scopeModuleContext.hierarchies(scope.installableScopeType());
             for (BindingHierarchy<?> hierarchy : hierarchies) {
-                provider.bind(hierarchy);
+                provider.binder().bind(hierarchy);
             }
         }
         return provider;
     }
 
-    private HierarchyAwareComponentProvider getOrDefaultProvider(Scope scope) {
+    private HierarchicalComponentProvider getOrDefaultProvider(Scope scope) {
         if (scope == null) {
             scope = this.applicationScope;
         }
         synchronized (this.scopedProviders) {
-            HierarchyAwareComponentProvider provider = this.scopedProviders.get(scope);
+            HierarchicalComponentProvider provider = this.scopedProviders.get(scope);
             if (provider == null) {
                 return this.scopedProviders.get(this.applicationScope);
             }
@@ -129,13 +135,13 @@ public class DelegatingScopeAwareComponentProvider
     @Override
     public <C> BindingFunction<C> bind(ComponentKey<C> key) {
         Scope scope = key.scope().orElse(this.scope());
-        return this.getOrCreateProvider(scope).bind(key);
+        return this.getOrCreateProvider(scope).binder().bind(key);
     }
 
     @Override
     public <C> Binder bind(BindingHierarchy<C> hierarchy) {
         Scope scope = hierarchy.key().scope().orElse(this.scope());
-        return this.getOrCreateProvider(scope).bind(hierarchy);
+        return this.getOrCreateProvider(scope).binder().bind(hierarchy);
     }
 
     @Override
@@ -158,7 +164,7 @@ public class DelegatingScopeAwareComponentProvider
     @Override
     public MultiMap<Scope, BindingHierarchy<?>> hierarchies() {
         MultiMap<Scope, BindingHierarchy<?>> hierarchies = new HashSetMultiMap<>();
-        for (HierarchyAwareComponentProvider componentProvider : this.scopedProviders.values()) {
+        for (HierarchicalComponentProvider componentProvider : this.scopedProviders.values()) {
             MultiMap<Scope, BindingHierarchy<?>> providerHierarchies = componentProvider.hierarchies();
             assert providerHierarchies.keySet().size() == 1 : "Hierarchy collection from scoped provider should only contain one scope";
             hierarchies.putAll(providerHierarchies);
@@ -181,7 +187,7 @@ public class DelegatingScopeAwareComponentProvider
 
             ComponentRegistry registry = context.input();
             ComponentPostConstructor postConstructor = configurer.componentPostConstructor.initialize(SimpleSingleElementContext.create(application));
-            DelegatingScopeAwareComponentProvider componentProvider = new DelegatingScopeAwareComponentProvider(application, registry, postConstructor);
+            HierarchicalComponentProviderOrchestrator componentProvider = new HierarchicalComponentProviderOrchestrator(application, registry, postConstructor);
             DefaultBindingConfigurerContext.compose(context, binder -> {
                 binder.bind(ComponentRegistry.class).singleton(componentProvider.registry);
             });

@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
-import org.dockbox.hartshorn.inject.provider.DelegatingScopeAwareComponentProvider;
+import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProviderOrchestrator;
 import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.launchpad.activation.ActivatorHolder;
 import org.dockbox.hartshorn.launchpad.activation.ContextActivatorHolder;
@@ -281,7 +281,7 @@ public abstract class DelegatingApplicationContext
      */
     public static class Configurer {
 
-        private ContextualInitializer<ComponentRegistry, ? extends PostProcessingComponentProvider> componentProvider = DelegatingScopeAwareComponentProvider.create(Customizer.useDefaults());
+        private ContextualInitializer<ComponentRegistry, ? extends PostProcessingComponentProvider> componentProvider = HierarchicalComponentProviderOrchestrator.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings = ContextualInitializer.of(DefaultBindingConfigurer::empty);
 
         /**
