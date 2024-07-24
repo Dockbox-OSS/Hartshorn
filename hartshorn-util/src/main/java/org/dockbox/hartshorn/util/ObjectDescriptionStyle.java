@@ -16,13 +16,48 @@
 
 package org.dockbox.hartshorn.util;
 
+/**
+ * A style definition for describing objects. This interface is used by {@link ObjectDescriber} to
+ * determine how to describe objects.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public interface ObjectDescriptionStyle {
 
+    /**
+     * Describes the start of the object. This is typically the class name of the object.
+     *
+     * @param builder the builder to append the description to
+     * @param object the object to describe
+     */
     void describeStart(StringBuilder builder, Object object);
 
+    /**
+     * Describes the end of the object. This is typically the closing bracket of the object.
+     *
+     * @param builder the builder to append the description to
+     * @param object the object to describe
+     */
     void describeEnd(StringBuilder builder, Object object);
 
+    /**
+     * Describes a single field of the object. This will be called for each field of the object.
+     *
+     * @param builder the builder to append the description to
+     * @param object the object to describe
+     * @param fieldName the name of the field
+     * @param fieldValue the value of the field
+     */
     void describeField(StringBuilder builder, Object object, String fieldName, Object fieldValue);
 
+    /**
+     * Describes the separator between fields. This will be called for each field separator of the
+     * object.
+     *
+     * @param builder the builder to append the description to
+     * @param object the object to describe
+     */
     void describeFieldSeparator(StringBuilder builder, Object object);
 }

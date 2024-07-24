@@ -257,6 +257,15 @@ public final class CollectionUtilities {
         }
     }
 
+    /**
+     * Iterates over the given iterator and applies the given consumer to each element. A counter
+     * is used to keep track of the index of the element in the iterator. The counter starts at 0
+     * and is incremented for each element in the iterator.
+     *
+     * @param iterator The iterator to iterate over
+     * @param consumer The consumer to apply to each element
+     * @param <T> The type of the elements in the iterator
+     */
     public static <T> void indexed(Iterator<T> iterator, BiConsumer<Integer, T> consumer) {
         int index = 0;
         while (iterator.hasNext()) {
@@ -264,6 +273,16 @@ public final class CollectionUtilities {
         }
     }
 
+    /**
+     * Iterates over the given {@link java.util.Map.Entry entries} and applies the given consumer
+     * to each entry. This is no different from iterating over the entries and applying a consumer
+     * to each entry, except for the fact that this method allows a bi-consumer to be used instead.
+     *
+     * @param iterator The iterator to iterate over
+     * @param consumer The consumer to apply to each entry
+     * @param <T> The type of the keys in the entries
+     * @param <U> The type of the values in the entries
+     */
     public static <T, U> void iterateEntries(Iterator<Entry<T, U>> iterator, BiConsumer<T, U> consumer) {
         while (iterator.hasNext()) {
             Entry<T, U> entry = iterator.next();

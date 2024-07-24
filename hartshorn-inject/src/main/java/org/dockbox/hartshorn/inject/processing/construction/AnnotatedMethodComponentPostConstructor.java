@@ -160,7 +160,7 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
          */
         public Configurer withJavaxAnnotations() {
             return this.annotations(collection -> {
-                TypeUtils.<Annotation>forName("javax.annotation.PostConstruct").peek(collection::add);
+                TypeUtils.forName("javax.annotation.PostConstruct", Annotation.class).peek(collection::add);
             });
         }
 
@@ -172,7 +172,7 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
          */
         public Configurer withJakartaAnnotations() {
             return this.annotations(collection -> {
-                TypeUtils.<Annotation>forName("jakarta.annotation.PostConstruct").peek(collection::add);
+                TypeUtils.<Annotation>forName("jakarta.annotation.PostConstruct", Annotation.class).peek(collection::add);
             });
         }
     }
