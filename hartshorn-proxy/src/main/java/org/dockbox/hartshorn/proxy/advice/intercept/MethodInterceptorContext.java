@@ -51,6 +51,20 @@ public final class MethodInterceptorContext<T, R> extends DefaultContext {
         this.result = result;
     }
 
+    /**
+     * Creates a new {@link MethodInterceptorContext} with the given method, arguments, instance, and custom invocation. The custom
+     * invocation is used to call the underlying method with the given arguments. As there is no result at this point, the default
+     * value of the method's return type is used, or {@code null} if no such default exists.
+     *
+     * @param method The method to be intercepted
+     * @param args The arguments passed to the method
+     * @param instance The instance on which the method is called
+     * @param customInvocation The custom invocation to call the underlying method
+     * @param <T> the type of the proxy object
+     * @param <R> the return type of the method
+     *
+     * @return a new {@link MethodInterceptorContext} with the given method, arguments, instance, and custom invocation
+     */
     public static <T, R> MethodInterceptorContext<T, R> of(MethodView<T, R> method, Object[] args, T instance, CustomInvocation<R> customInvocation) {
         return new MethodInterceptorContext<>(
                 method,
@@ -62,6 +76,17 @@ public final class MethodInterceptorContext<T, R> extends DefaultContext {
         );
     }
 
+    /**
+     * Creates a new {@link MethodInterceptorContext} from the given existing {@link MethodInterceptorContext}, but with
+     * the addition of a result value.
+     *
+     * @param context the existing context to copy
+     * @param result the result to add to the context
+     * @param <T> the type of the proxy object
+     * @param <R> the return type of the method
+     *
+     * @return a new {@link MethodInterceptorContext} with the given result
+     */
     public static <T, R> MethodInterceptorContext<T, R> copyWithResult(MethodInterceptorContext<T, R> context, R result) {
         var copiedContext = new MethodInterceptorContext<>(
                 context.method,

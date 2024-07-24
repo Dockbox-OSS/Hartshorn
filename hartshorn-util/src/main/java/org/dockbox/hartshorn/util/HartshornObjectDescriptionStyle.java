@@ -16,8 +16,20 @@
 
 package org.dockbox.hartshorn.util;
 
+/**
+ * Standard implementation of {@link ObjectDescriptionStyle} that describes objects in a style similar
+ * to standard Java object descriptions.
+ *
+ * @since 0.6.0
+ *
+ * @author Guus Lieben
+ */
 public final class HartshornObjectDescriptionStyle implements ObjectDescriptionStyle {
 
+    /**
+     * The constant instance of this style. The instance is stateless and can be used by multiple
+     * threads.
+     */
     public static final ObjectDescriptionStyle INSTANCE = new HartshornObjectDescriptionStyle();
 
     private HartshornObjectDescriptionStyle() {

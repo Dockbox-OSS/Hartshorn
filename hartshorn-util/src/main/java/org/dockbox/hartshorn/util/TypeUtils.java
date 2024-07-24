@@ -401,31 +401,90 @@ public class TypeUtils {
         }
         //noinspection unchecked
         return (Class<T>) instance.getClass();
+
     }
 
-    public static <T> Option<Class<T>> forName(String name) {
+    /**
+     * Attempts to load the class with the given name. If the class cannot be found, an empty {@link Option}
+     * is returned. If the class is found, the class is returned as a non-empty {@link Option}.
+     *
+     * @param name The fully qualified name of the class to load
+     * @return An {@link Option} containing the class with the given name, or an empty {@link Option}
+     */
+    public static Option<Class<?>> forName(String name) {
         try {
-            //noinspection unchecked
-            return Option.of((Class<T>) Class.forName(name));
+            return Option.of(Class.forName(name));
         }
         catch (ClassNotFoundException e) {
             return Option.empty();
         }
     }
 
+    /**
+     * Attempts to load the class with the given name, and checks if the class is a subclass of the given parent type.
+     * If the class cannot be found, an empty {@link Option} is returned. If the class is found, and is a subclass of
+     * the given parent type, the class is returned as a non-empty {@link Option}. If the class is found, but is not a
+     * subclass of the given parent type, an empty {@link Option} is returned.
+     *
+     * @param name The fully qualified name of the class to load
+     * @param parentType The parent type to check if the loaded class is a subclass of
+     * @param <T> The parent type
+     * @return An {@link Option} containing the class with the given name, or an empty {@link Option}
+     */
+    public static <T> Option<Class<? extends T>> forName(String name, Class<T> parentType) {
+        return forName(name)
+            .map(type -> {
+                if (parentType.isAssignableFrom(type)) {
+                    //noinspection unchecked
+                    return (Class<? extends T>) type;
+                }
+                return null;
+            });
+    }
+
+    /**
+     * Returns the {@link RetentionPolicy retention policy} of the given annotation. If the given annotation does not
+     * have a {@link Retention} annotation, an empty {@link Option} is returned.
+     *
+     * @param annotation The annotation to get the retention policy of
+     * @return The retention policy of the given annotation
+     */
     public static Option<RetentionPolicy> retention(Class<? extends Annotation> annotation) {
         return Option.of(annotation.getAnnotation(Retention.class))
             .map(Retention::value);
     }
 
+    /**
+     * Returns whether the given annotation has the given retention policy. If the given annotation does not have a
+     * {@link Retention} annotation, this method returns {@code false}.
+     *
+     * @param annotation The annotation to check
+     * @param policy The retention policy to check for
+     * @return Whether the given annotation has the given retention policy
+     */
     public static boolean hasRetentionPolicy(Class<? extends Annotation> annotation, RetentionPolicy policy) {
         return retention(annotation).test(policy::equals);
     }
 
+    /**
+     * Returns whether all the given annotations have the given retention policy. If any of the given annotations
+     * do not have a {@link Retention} annotation, this method returns {@code false}.
+     *
+     * @param annotations The annotations to check
+     * @param policy The retention policy to check for
+     * @return Whether the given annotations have the given retention policy
+     */
     public static boolean hasRetentionPolicy(Set<Class<? extends Annotation>> annotations, RetentionPolicy policy) {
         return annotations.stream().allMatch(annotation -> hasRetentionPolicy(annotation, policy));
     }
 
+    /**
+     * Returns the root cause of the given throwable. If the given throwable does not have a cause, the given throwable
+     * is returned.
+     *
+     * @param throwable The throwable to get the root cause of
+     * @return The root cause of the given throwable
+     */
     public static Throwable getRootCause(Throwable throwable) {
         Throwable cause = throwable.getCause();
         if (cause == null) {
