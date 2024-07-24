@@ -145,8 +145,8 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
          */
         public Configurer withJavaxAnnotations() {
             return this.annotations(collection -> {
-                TypeUtils.<Annotation>forName("javax.inject.Inject").peek(collection::add);
-                TypeUtils.<Annotation>forName("javax.annotation.Resource").peek(collection::add);
+                TypeUtils.<Annotation>forName("javax.inject.Inject", Annotation.class).peek(collection::add);
+                TypeUtils.<Annotation>forName("javax.annotation.Resource", Annotation.class).peek(collection::add);
             });
         }
 
@@ -158,8 +158,8 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
          */
         public Configurer withJakartaAnnotations() {
             return this.annotations(collection -> {
-                TypeUtils.<Annotation>forName("jakarta.inject.Inject").peek(collection::add);
-                TypeUtils.<Annotation>forName("jakarta.annotation.Resource").peek(collection::add);
+                TypeUtils.<Annotation>forName("jakarta.inject.Inject", Annotation.class).peek(collection::add);
+                TypeUtils.<Annotation>forName("jakarta.annotation.Resource", Annotation.class).peek(collection::add);
             });
         }
 
