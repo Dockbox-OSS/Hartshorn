@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
 import org.dockbox.hartshorn.inject.annotations.OnInitialized;
-import org.dockbox.hartshorn.inject.provider.DelegatingScopeAwareComponentProvider;
+import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProviderOrchestrator;
 import org.dockbox.hartshorn.launchpad.annotations.UseProxying;
 import org.dockbox.hartshorn.inject.condition.Condition;
 import org.dockbox.hartshorn.inject.targets.MethodsAndFieldsInjectionPointResolver;
@@ -513,12 +513,12 @@ public class HartshornApplicationConfigurer {
     private void configureApplicationContext(SimpleApplicationContext.Configurer context) {
         this.applicationContext.configure(context);
         context.componentProvider(this.initializer(
-            DelegatingScopeAwareComponentProvider::create,
+            HierarchicalComponentProviderOrchestrator::create,
             this::configureComponentProvider
         ));
     }
 
-    private void configureComponentProvider(DelegatingScopeAwareComponentProvider.Configurer provider) {
+    private void configureComponentProvider(HierarchicalComponentProviderOrchestrator.Configurer provider) {
         provider.componentPostConstructor(AnnotatedMethodComponentPostConstructor.create(this.componentPostConstructor));
     }
 

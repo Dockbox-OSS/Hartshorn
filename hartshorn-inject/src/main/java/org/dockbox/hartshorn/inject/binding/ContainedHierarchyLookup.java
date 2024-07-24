@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.inject.stereotype;
+package org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.inject.annotations.Service;
+import org.dockbox.hartshorn.inject.ComponentKey;
 
-@Service
-public class EmptyService {
+public interface ContainedHierarchyLookup extends HierarchyLookup {
 
+    <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key, boolean useGlobalIfAbsent);
 }

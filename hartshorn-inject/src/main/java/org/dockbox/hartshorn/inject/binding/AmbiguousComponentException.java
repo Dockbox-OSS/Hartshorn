@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.provider;
+package org.dockbox.hartshorn.inject.binding;
 
 import java.util.Set;
 import java.util.stream.Collectors;

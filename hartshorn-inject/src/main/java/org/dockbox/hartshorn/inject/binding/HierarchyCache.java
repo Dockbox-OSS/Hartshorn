@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.provider;
+package org.dockbox.hartshorn.inject.binding;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -30,8 +30,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.InjectorConfiguration;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentKeyView;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.collection.ImmutableCompositeBindingHierarchy;
@@ -54,16 +52,16 @@ public class HierarchyCache {
     private final transient Map<ComponentKeyView<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
 
     private final InjectorConfiguration configuration;
-    private final HierarchicalComponentProvider globalProvider;
-    private final HierarchicalComponentProvider owner;
+    private final HierarchicalBinder globalBinder;
+    private final HierarchicalBinder binder;
 
     public HierarchyCache(
             InjectorConfiguration configuration,
-            HierarchicalComponentProvider globalProvider,
-            HierarchicalComponentProvider owner) {
+            HierarchicalBinder globalBinder,
+            HierarchicalBinder binder) {
         this.configuration = configuration;
-        this.globalProvider = globalProvider;
-        this.owner = owner;
+        this.globalBinder = globalBinder;
+        this.binder = binder;
     }
 
     public void put(BindingHierarchy<?> hierarchy) {
@@ -78,26 +76,26 @@ public class HierarchyCache {
         return Set.copyOf(this.hierarchies.values());
     }
 
-    public <T> BindingHierarchy<?> getOrComputeHierarchy(ComponentKey<T> key, boolean permitFallbackResolution) {
+    public <T> BindingHierarchy<?> getOrComputeHierarchy(ComponentKey<T> key, boolean useGlobalIfAbsent) {
         ComponentKeyView<T> view = key.view();
         if (this.hierarchies.containsKey(view)) {
             return this.hierarchies.get(view);
         }
         else {
-            return this.computeHierarchy(key, permitFallbackResolution);
+            return this.computeHierarchy(key, useGlobalIfAbsent);
         }
     }
 
     @NonNull
-    private <T> BindingHierarchy<?> computeHierarchy(ComponentKey<T> key, boolean permitFallbackResolution) {
-        BindingHierarchy<?> hierarchy = this.tryCreateHierarchy(key, permitFallbackResolution);
+    private <T> BindingHierarchy<?> computeHierarchy(ComponentKey<T> key, boolean useGlobalIfAbsent) {
+        BindingHierarchy<?> hierarchy = this.tryCreateHierarchy(key, useGlobalIfAbsent);
 
         return Objects.requireNonNullElseGet(hierarchy, () -> {
             // If we don't have an explicit hierarchy on the key, we can try to use the hierarchy of
             // the application context. This is useful for components that are not explicitly scoped,
             // but are still accessed through a scope.
-            if(permitFallbackResolution && this.globalProvider != this.owner) {
-                return this.globalProvider.hierarchy(key);
+            if(useGlobalIfAbsent && this.globalBinder != this.binder) {
+                return this.globalBinder.hierarchy(key);
             }
             return new NativePrunableBindingHierarchy<>(key);
         });

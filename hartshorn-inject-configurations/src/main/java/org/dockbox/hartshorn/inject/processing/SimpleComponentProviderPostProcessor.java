@@ -26,11 +26,8 @@ import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.collection.ContainerAwareComponentCollection;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
-import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
-import org.dockbox.hartshorn.inject.provider.ScopeAwareComponentProvider;
-import org.dockbox.hartshorn.inject.scope.Scope;
+import org.dockbox.hartshorn.inject.provider.ComponentProviderOrchestrator;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -48,21 +45,18 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class SimpleComponentProviderPostProcessor implements ComponentProviderPostProcessor {
 
-    private final ScopeAwareComponentProvider owner;
-    private final ComponentPostConstructor postConstructor;
+    private final ComponentProviderOrchestrator owner;
     private final ComponentPostProcessor processor;
     private final InjectionCapableApplication application;
     private final ComponentStoreCallback componentStoreCallback;
 
     public SimpleComponentProviderPostProcessor(
-            ScopeAwareComponentProvider owner,
-            ComponentPostConstructor postConstructor,
+            ComponentProviderOrchestrator owner,
             ComponentPostProcessor processor,
             InjectionCapableApplication application,
             ComponentStoreCallback componentStoreCallback
     ) {
         this.owner = owner;
-        this.postConstructor = postConstructor;
         this.processor = processor;
         this.application = application;
         this.componentStoreCallback = componentStoreCallback;
@@ -85,25 +79,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
             throw new ComponentResolutionException("No component found for key " + componentKey);
         }
 
-        return this.finishComponentRequest(componentKey, objectContainer.copyForObject(instance));
-    }
-
-
-    private <T> T finishComponentRequest(ComponentKey<T> componentKey, ObjectContainer<T> container) {
-        this.componentStoreCallback.store(componentKey, container);
-
-        // Inject properties if applicable
-        if (componentKey.postConstructionAllowed()) {
-            try {
-                Scope scope = componentKey.scope().orElse(owner.scope());
-                return this.postConstructor.doPostConstruct(container.instance(), scope);
-            } catch (ApplicationException e) {
-                throw new ComponentInitializationException("Failed to perform post-construction on component with key " + componentKey, e);
-            }
-        }
-        else {
-            return container.instance();
-        }
+        return instance;
     }
 
     private <T> T processManagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer,

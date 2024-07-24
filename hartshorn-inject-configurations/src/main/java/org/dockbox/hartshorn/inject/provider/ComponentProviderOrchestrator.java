@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.inject.stereotype;
+package org.dockbox.hartshorn.inject.provider;
 
-import org.dockbox.hartshorn.inject.annotations.Service;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 
-@Service
-public class EmptyService {
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+public interface ComponentProviderOrchestrator extends PostProcessingComponentProvider {
+
+    ComponentRegistry componentRegistry();
+
+    HierarchicalComponentProvider applicationProvider();
 
 }
