@@ -15,32 +15,27 @@
  */
 package test.org.dockbox.hartshorn.core.application
 
-import org.dockbox.hartshorn.launchpad.launch.ApplicationContextFactory
-import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer
 import org.dockbox.hartshorn.inject.ExceptionHandler
-import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder
-import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory
+import org.dockbox.hartshorn.inject.binding.Binder
+import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer
+import org.dockbox.hartshorn.inject.component.ComponentRegistry
+import org.dockbox.hartshorn.inject.condition.ConditionMatcher
+import org.dockbox.hartshorn.inject.graph.ConfigurationDependencyVisitor
+import org.dockbox.hartshorn.inject.graph.DependencyGraphBuilder
+import org.dockbox.hartshorn.inject.graph.DependencyResolver
+import org.dockbox.hartshorn.inject.graph.resolve.BindsMethodDependencyResolver
+import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter
+import org.dockbox.hartshorn.inject.processing.construction.AnnotatedMethodComponentPostConstructor
+import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor
+import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProviderOrchestrator
+import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider
 import org.dockbox.hartshorn.launchpad.ApplicationContext
 import org.dockbox.hartshorn.launchpad.DelegatingApplicationContext
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext
-import org.dockbox.hartshorn.launchpad.environment.ApplicationArgumentParser
-import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment
-import org.dockbox.hartshorn.launchpad.environment.ClasspathResourceLocator
-import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment
-import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider
-import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor
-import org.dockbox.hartshorn.inject.processing.construction.AnnotatedMethodComponentPostConstructor
-import org.dockbox.hartshorn.inject.component.ComponentRegistry
-import org.dockbox.hartshorn.inject.provider.DelegatingScopeAwareComponentProvider
-import org.dockbox.hartshorn.inject.condition.ConditionMatcher
-import org.dockbox.hartshorn.inject.graph.resolve.BindsMethodDependencyResolver
-import org.dockbox.hartshorn.inject.graph.ConfigurationDependencyVisitor
-import org.dockbox.hartshorn.inject.graph.DependencyResolver
-import org.dockbox.hartshorn.inject.binding.Binder
-import org.dockbox.hartshorn.inject.graph.DependencyGraphBuilder
-import org.dockbox.hartshorn.inject.provider.ComponentProvider
-import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter
-import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider
+import org.dockbox.hartshorn.launchpad.environment.*
+import org.dockbox.hartshorn.launchpad.launch.ApplicationContextFactory
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator
 import org.dockbox.hartshorn.util.ContextualInitializer
 import org.dockbox.hartshorn.util.Customizer
@@ -155,7 +150,7 @@ class BootstrapConfigurationContractTests {
 
     @Test
     fun testScopeAwareComponentProviderContract() {
-        val instance = DelegatingScopeAwareComponentProvider.Configurer()
+        val instance = HierarchicalComponentProviderOrchestrator.Configurer()
 
         assertDeferred(instance) { configurer, deferred: ComponentPostConstructor? -> configurer.componentPostConstructor(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.componentPostConstructor(initializer) }

@@ -29,13 +29,13 @@ import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.extension.RuntimeExtensionCodeCustomizer;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
-import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
 
-@HartshornTest
+@HartshornIntegrationTest
 @UseExpressionValidation
 public class LanguageExtensionTests {
 

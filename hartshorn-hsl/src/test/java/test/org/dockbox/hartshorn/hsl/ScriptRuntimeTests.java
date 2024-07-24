@@ -40,7 +40,7 @@ import org.dockbox.hartshorn.hsl.modules.InstanceNativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
-import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,7 +49,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
 
-@HartshornTest(includeBasePackages = false)
+@HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
 public class ScriptRuntimeTests {
 

@@ -26,14 +26,14 @@ import org.dockbox.hartshorn.reporting.application.ApplicationDiagnosticsReporte
 import org.dockbox.hartshorn.reporting.component.ComponentDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.component.ComponentProcessorDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.system.SystemDiagnosticsReporter;
-import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.GroupNode;
 import org.dockbox.hartshorn.util.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @UseReporting
-@HartshornTest(includeBasePackages = false)
+@HartshornIntegrationTest(includeBasePackages = false)
 public class ApplicationReportingTests {
 
     @Inject
