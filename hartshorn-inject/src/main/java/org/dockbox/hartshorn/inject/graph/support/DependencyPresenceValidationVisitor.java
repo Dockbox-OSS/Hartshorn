@@ -40,6 +40,12 @@ public class DependencyPresenceValidationVisitor implements BreadthFirstGraphVis
         this.visitedDependencies = visitedDependencies;
     }
 
+    /**
+     * Returns the set of missing dependencies that were not visited during the traversal of the graph. If
+     * this set is empty, all dependencies were visited.
+     *
+     * @return the set of missing dependencies
+     */
     public Set<GraphNode<DependencyContext<?>>> missingDependencies() {
         return this.missingDependencies;
     }

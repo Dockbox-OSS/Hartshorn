@@ -23,8 +23,6 @@ import java.lang.annotation.Target;
 
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 
-import com.google.errorprone.annotations.Keep;
-
 /**
  * Marks an element as an injection point. This annotation may be used by any {@link
  * ComponentInjectionPointsResolver} to determine which elements of a component should be
@@ -44,6 +42,5 @@ import com.google.errorprone.annotations.Keep;
     ElementType.ANNOTATION_TYPE,
 })
 @Retention(RetentionPolicy.RUNTIME)
-@Keep
 public @interface Inject {
 }

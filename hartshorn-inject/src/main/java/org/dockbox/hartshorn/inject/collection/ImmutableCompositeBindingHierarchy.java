@@ -95,7 +95,7 @@ public class ImmutableCompositeBindingHierarchy<T> implements BindingHierarchy<C
     @Override
     public Option<InstantiationStrategy<ComponentCollection<T>>> get(int priority) {
         Set<CollectionInstantiationStrategy<T>> providers = this.hierarchies.stream()
-            .map(hierarchy -> hierarchy.getOrCreateProvider(priority))
+            .map(hierarchy -> hierarchy.getOrCreateInstantiationStrategy(priority))
             .collect(Collectors.toSet());
         return Option.of(new ComposedCollectionInstantiationStrategy<>(providers));
     }

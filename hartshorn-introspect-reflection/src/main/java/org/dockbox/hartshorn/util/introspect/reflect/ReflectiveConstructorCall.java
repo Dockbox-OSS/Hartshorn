@@ -28,5 +28,12 @@ package org.dockbox.hartshorn.util.introspect.reflect;
 @FunctionalInterface
 public interface ReflectiveConstructorCall<T> {
 
+    /**
+     * Invokes the constructor with the given arguments.
+     *
+     * @param args the arguments to pass to the constructor
+     * @return the result of the constructor invocation
+     * @throws Throwable if the constructor invocation fails
+     */
     T invoke(Object[] args) throws Throwable;
 }

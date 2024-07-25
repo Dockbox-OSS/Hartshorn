@@ -40,7 +40,14 @@ public class CollectionBindingHierarchy<T> extends AbstractBindingHierarchy<Comp
         super(componentKey);
     }
 
-    public CollectionInstantiationStrategy<T> getOrCreateProvider(int priority) {
+    /**
+     * Retrieves the {@link CollectionInstantiationStrategy} for the given priority, or creates a new one if it does not
+     * exist yet.
+     *
+     * @param priority the priority of the instantiation strategy
+     * @return the instantiation strategy
+     */
+    public CollectionInstantiationStrategy<T> getOrCreateInstantiationStrategy(int priority) {
         InstantiationStrategy<ComponentCollection<T>> existingStrategy = this.get(priority).orCompute(() -> {
             InstantiationStrategy<ComponentCollection<T>> collectionStrategy = new CollectionInstantiationStrategy<>();
             this.add(priority, collectionStrategy);
@@ -59,7 +66,7 @@ public class CollectionBindingHierarchy<T> extends AbstractBindingHierarchy<Comp
         ParameterizableType collectionParameterizableType = this.key().parameterizedType();
         List<ParameterizableType> parameters = collectionParameterizableType.parameters();
         if (parameters.size() == 1) {
-            return parameters.get(0).toString();
+            return parameters.getFirst().toString();
         }
         else {
             throw new IllegalStateException("Component key is not typed correctly");

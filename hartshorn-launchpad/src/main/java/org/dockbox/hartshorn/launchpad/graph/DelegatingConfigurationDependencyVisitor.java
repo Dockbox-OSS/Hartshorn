@@ -40,26 +40,29 @@ import org.dockbox.hartshorn.inject.binding.BindingFunction;
 public class DelegatingConfigurationDependencyVisitor extends AbstractConfigurationDependencyVisitor {
 
     private final ComponentProcessorRegistry processorRegistry;
+    private final ComponentProvider componentProvider;
+    private final Binder binder;
 
     public DelegatingConfigurationDependencyVisitor(
             Binder binder,
             ComponentProvider componentProvider,
             ComponentProcessorRegistry processorRegistry
     ) {
-        super(binder, componentProvider);
+        this.componentProvider = componentProvider;
         this.processorRegistry = processorRegistry;
+        this.binder = binder;
     }
 
     @Override
     public <T> void registerProvider(DependencyContext<T> dependencyContext) throws ComponentConfigurationException {
-        BindingFunction<T> function = this.binder().bind(dependencyContext.componentKey());
+        BindingFunction<T> function = this.binder.bind(dependencyContext.componentKey());
         dependencyContext.configure(function);
     }
 
     @Override
     public void doAfterRegister(DependencyContext<?> dependencyContext) {
         if(ComponentProcessor.class.isAssignableFrom(dependencyContext.componentKey().type())) {
-            ComponentProcessor processor = (ComponentProcessor) this.componentProvider().get(dependencyContext.componentKey());
+            ComponentProcessor processor = (ComponentProcessor) this.componentProvider.get(dependencyContext.componentKey());
             this.processorRegistry.register(processor);
         }
     }

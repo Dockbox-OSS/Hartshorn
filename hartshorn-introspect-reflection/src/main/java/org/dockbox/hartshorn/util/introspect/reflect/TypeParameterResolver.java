@@ -45,11 +45,26 @@ public class TypeParameterResolver {
         this.parameters = new TypeParameterView[lookForParent.typeParameters().allInput().count()];
     }
 
+    /**
+     * Returns the resolved type parameters, if any.
+     *
+     * @return the resolved type parameters
+     */
     public List<TypeParameterView> parameters() {
         // Do not use List.of, as it will throw an exception if the array contains nulls (unresolved parameters)
         return Arrays.asList(this.parameters);
     }
 
+    /**
+     * Attempts to resolve the type parameters from the given graph. If the resolution fails, a
+     * {@link TypeParameterResolutionException} is thrown.
+     *
+     * @param graph the graph to resolve the type parameters from
+     *
+     * @return the resolved type parameters
+     *
+     * @throws TypeParameterResolutionException if the resolution fails
+     */
     public List<TypeParameterView> tryResolveFromGraph(Graph<TypeView<?>> graph) throws TypeParameterResolutionException {
         Set<GraphNode<TypeView<?>>> roots = graph.roots();
         if (roots.size() != 1) {

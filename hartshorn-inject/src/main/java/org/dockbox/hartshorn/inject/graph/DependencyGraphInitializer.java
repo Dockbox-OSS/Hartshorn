@@ -77,6 +77,7 @@ public final class DependencyGraphInitializer {
      * anything other than validation.
      *
      * @param containers the dependency declarations
+     * @return the initialized dependency graph
      * @throws ApplicationException when the graph is invalid, or when the validation fails
      */
     public DependencyGraph initializeDependencyGraph(Collection<DependencyDeclarationContext<?>> containers) throws ApplicationException {
@@ -122,9 +123,7 @@ public final class DependencyGraphInitializer {
         private final LazyStreamableConfigurer<InjectionCapableApplication, DependencyResolver> dependencyResolvers = LazyStreamableConfigurer.empty();
 
         private ContextualInitializer<DependencyResolver, DependencyGraphBuilder> dependencyGraphBuilder = DependencyGraphBuilder.create();
-        private ContextualInitializer<InjectionCapableApplication, ConfigurationDependencyVisitor> dependencyVisitor = ContextualInitializer.of(application -> {
-            return new SkipConfigurationDependencyVisitor(application.defaultBinder(), application.defaultProvider());
-        });
+        private ContextualInitializer<InjectionCapableApplication, ConfigurationDependencyVisitor> dependencyVisitor = ContextualInitializer.of(SkipConfigurationDependencyVisitor::new);
         private final LazyStreamableConfigurer<InjectionCapableApplication, DependencyGraphValidator> graphValidator = LazyStreamableConfigurer.of(Set.of(
             new DependenciesVisitedGraphValidator(),
             new CyclicDependencyGraphValidator()
@@ -150,6 +149,12 @@ public final class DependencyGraphInitializer {
             return this.dependencyResolvers(resolvers -> resolvers.add(dependencyResolver));
         }
 
+        /**
+         * Configures the dependency resolvers to use the given {@link Customizer}.
+         *
+         * @param customizer the customizer
+         * @return the current instance
+         */
         public Configurer dependencyResolvers(Customizer<StreamableConfigurer<InjectionCapableApplication, DependencyResolver>> customizer) {
             this.dependencyResolvers.customizer(customizer);
             return this;

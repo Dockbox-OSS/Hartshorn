@@ -39,7 +39,7 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * A provider which provides a {@link ComponentCollection} of all the provided instances. This provider
  * should be used when backing a {@link CollectionBindingHierarchy}, and should typically be created
- * through {@link CollectionBindingHierarchy#getOrCreateProvider(int)}.
+ * through {@link CollectionBindingHierarchy#getOrCreateInstantiationStrategy(int)}.
  *
  * <p>Note that while this type is not type-aware itself, providers that are added to this collection
  * may be. Providers will be accessed every time the collection is provided, and may be removed from
@@ -49,7 +49,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * @param <T> the type of the components
  *
  * @see CollectionBindingHierarchy
- * @see CollectionBindingHierarchy#getOrCreateProvider(int)
+ * @see CollectionBindingHierarchy#getOrCreateInstantiationStrategy(int)
  *
  * @since 0.5.0
  *

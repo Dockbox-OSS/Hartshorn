@@ -51,6 +51,8 @@ public interface TokenParser extends Context {
      *
      * @param parser the parser to add
      *
+     * @return the current parser, for chaining
+     *
      * @see org.dockbox.hartshorn.hsl.parser.TokenParser#statementParser(ASTNodeParser)
      */
     TokenParser statementParser(ASTNodeParser<? extends Statement> parser);
@@ -60,6 +62,8 @@ public interface TokenParser extends Context {
      * script.
      *
      * @param parser the parser to add
+     *
+     * @return the current parser, for chaining
      *
      * @see org.dockbox.hartshorn.hsl.parser.TokenParser#expressionParser(ASTNodeParser)
      */

@@ -30,7 +30,17 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  */
 public interface DependencyDeclarationContext<T> {
 
+    /**
+     * Returns the class of the dependency, which may be used to introspect the dependency.
+     *
+     * @return the class of the dependency
+     */
     TypeView<T> type();
 
+    /**
+     * Returns the composite qualifier of the dependency, which may be used to identify the dependency.
+     *
+     * @return the composite qualifier of the dependency
+     */
     CompositeQualifier qualifier();
 }

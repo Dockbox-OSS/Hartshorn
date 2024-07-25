@@ -114,18 +114,13 @@ public final class DependencyMap extends StandardMultiMap<DependencyResolutionTy
         return this;
     }
 
-    @Override
-    public String toString() {
-        ObjectDescriber<DependencyMap> describer = ObjectDescriber.of(this);
-        for (DependencyResolutionType resolutionType : DependencyResolutionType.values()) {
-            Collection<ComponentKey<?>> keys = this.get(resolutionType);
-            if (keys != null && !keys.isEmpty()) {
-                describer.field(resolutionType.name(), keys);
-            }
-        }
-        return describer.describe();
-    }
-
+    /**
+     * Returns the resolution type of the given component key. If the key is not present in the
+     * map, an empty option is returned.
+     *
+     * @param componentKey the component key to check
+     * @return the resolution type of the component key
+     */
     public Option<DependencyResolutionType> resolutionType(ComponentKey<?> componentKey) {
         if (!this.containsValue(componentKey)) {
             return Option.empty();
@@ -136,5 +131,17 @@ public final class DependencyMap extends StandardMultiMap<DependencyResolutionTy
             }
         }
         return Option.empty();
+    }
+
+    @Override
+    public String toString() {
+        ObjectDescriber<DependencyMap> describer = ObjectDescriber.of(this);
+        for (DependencyResolutionType resolutionType : DependencyResolutionType.values()) {
+            Collection<ComponentKey<?>> keys = this.get(resolutionType);
+            if (keys != null && !keys.isEmpty()) {
+                describer.field(resolutionType.name(), keys);
+            }
+        }
+        return describer.describe();
     }
 }

@@ -20,6 +20,11 @@ import org.dockbox.hartshorn.context.Context;
 
 public interface InjectionApplicationAwareContext extends Context {
 
+    /**
+     * Returns the application in which this context is contained.
+     *
+     * @return the application in which this context is contained
+     */
     InjectionCapableApplication application();
 
 }

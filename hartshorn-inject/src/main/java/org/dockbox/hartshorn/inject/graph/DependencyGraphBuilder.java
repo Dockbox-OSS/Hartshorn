@@ -69,6 +69,12 @@ public class DependencyGraphBuilder {
         this.introspector = introspector;
     }
 
+    /**
+     * Creates a new {@link ContextualInitializer} that can be used to create a new instance of
+     * {@link DependencyGraphBuilder}.
+     *
+     * @return a new {@link ContextualInitializer} that can be used to create a new {@link DependencyGraphBuilder}.
+     */
     public static ContextualInitializer<DependencyResolver, DependencyGraphBuilder> create() {
         return context -> {
             InjectionCapableApplication application = context.firstContext(InjectionCapableApplication.class)
@@ -77,10 +83,26 @@ public class DependencyGraphBuilder {
         };
     }
 
+    /**
+     * Creates a new instance of {@link DependencyGraphBuilder} with the given {@link DependencyResolver},
+     * {@link HierarchicalBinder} and {@link Introspector}.
+     *
+     * @param resolver the resolver to use
+     * @param binder the binder to use
+     * @param introspector the introspector to use
+     * @return a new instance of {@link DependencyGraphBuilder}
+     */
     public static DependencyGraphBuilder create(DependencyResolver resolver, HierarchicalBinder binder, Introspector introspector) {
         return new DependencyGraphBuilder(resolver, binder, introspector);
     }
 
+    /**
+     * Builds a new {@link DependencyGraph} from the given {@link DependencyContext}s.
+     *
+     * @param dependencyContexts the contexts to build the graph from
+     * @return a new {@link DependencyGraph} from the given {@link DependencyContext}s
+     * @throws DependencyResolutionException if the resolution of the dependencies fails
+     */
     public DependencyGraph buildDependencyGraph(Iterable<DependencyContext<?>> dependencyContexts) throws DependencyResolutionException {
         Set<DependencyContext<?>> contexts = this.inflateDependencyContexts(dependencyContexts);
         MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> nodes = this.computeNodeMap(contexts);

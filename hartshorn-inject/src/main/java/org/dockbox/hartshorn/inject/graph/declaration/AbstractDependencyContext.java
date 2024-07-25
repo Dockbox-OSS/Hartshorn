@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject.graph.declaration;
 import java.util.Set;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
 import org.dockbox.hartshorn.inject.graph.DependencyMap;
 import org.dockbox.hartshorn.inject.graph.DependencyResolutionType;
@@ -107,6 +108,13 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
         return this;
     }
 
+    /**
+     * The lifecycle type of the component. The lifecycle type determines how the component is
+     * managed by the container.
+     *
+     * @param lifecycleType the lifecycle type
+     * @return this context
+     */
     public AbstractDependencyContext<T> lifecycleType(LifecycleType lifecycleType) {
         this.lifecycleType = lifecycleType;
         return this;
@@ -225,36 +233,87 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
             this.componentKey = componentKey;
         }
 
+        /**
+         * Sets the dependencies of the component, which should be satisfied by the container before
+         * this component can be created.
+         *
+         * @param dependencies the dependencies of the component
+         * @return this builder
+         */
         public B dependencies(DependencyMap dependencies) {
             this.dependencies = dependencies;
             return this.self();
         }
 
+        /**
+         * Sets the scope of the component. The scope determines the lifecycle of the component.
+         *
+         * @param scope the scope of the component
+         * @return this builder
+         */
         public B scope(ScopeKey scope) {
             this.scope = scope;
             return this.self();
         }
 
+        /**
+         * Sets the priority of the component. The priority is used to determine which components
+         * are actually created when there are multiple components that satisfy the same dependency.
+         *
+         * @param priority the priority of the component
+         * @return this builder
+         */
         public B priority(int priority) {
             this.priority = priority;
             return this.self();
         }
 
+        /**
+         * Sets the member type of the component. The member type determines whether the component is
+         * capable of existing on its own, or whether it is a member of a composite {@link ComponentCollection}.
+         *
+         * @param memberType the member type of the component
+         * @return this builder
+         */
         public B memberType(ComponentMemberType memberType) {
             this.memberType = memberType;
             return this.self();
         }
 
+        /**
+         * Whether the component should be created lazily. If {@code true}, the component will only be created when it is
+         * requested for the first time. If {@code false}, the component will be created when the container is initialized.
+         *
+         * <p>Only effective when the component's {@link #lifecycleType()} is {@link LifecycleType#SINGLETON 'Singleton'}.
+         *
+         * @param lazy whether the component should be created lazily
+         * @return this builder
+         */
         public B lazy(boolean lazy) {
             this.lazy = lazy;
             return this.self();
         }
 
+        /**
+         * The lifecycle type of the component. The lifecycle type determines how the component is
+         * managed by the container.
+         *
+         * @param lifecycleType the lifecycle type
+         * @return this builder
+         */
         public B lifecycleType(LifecycleType lifecycleType) {
             this.lifecycleType = lifecycleType;
             return this.self();
         }
 
+        /**
+         * Whether the component should be processed using {@link ComponentPostProcessor}s after it has been initialized. If
+         * {@code true}, the component will be processed after it has been initialized. If {@code false}, the component will
+         * not be processed automatically.
+         *
+         * @param processAfterInitialization whether the component should be processed after it has been initialized
+         * @return this builder
+         */
         public B processAfterInitialization(boolean processAfterInitialization) {
             this.processAfterInitialization = processAfterInitialization;
             return this.self();
