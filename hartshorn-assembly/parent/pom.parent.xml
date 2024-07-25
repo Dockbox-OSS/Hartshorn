@@ -67,6 +67,10 @@
             controlled manner.
             -->
             -Xep:StringSplitter:OFF \
+            <!--
+            Indicates that a method is unused. As we often expose methods for third-party use, this is disabled.
+            -->
+            -Xep:UnusedMethod:OFF \
 
 
             <!-- # Promoted checks (to ERROR) -->
@@ -178,10 +182,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.google.errorprone</groupId>
-            <artifactId>error_prone_annotation</artifactId>
-        </dependency>
 
         <!--
         Only require qualifiers to be present, we don't use CF to actually run analysis on the code
@@ -246,6 +246,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <release>${java.version}</release>
+                    <skip>${errorprone.skip}</skip>
                     <fork>false</fork>
                     <encoding>UTF-8</encoding>
                     <compilerArgs>

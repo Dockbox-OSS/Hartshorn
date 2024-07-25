@@ -64,6 +64,7 @@
         <javadoc.skip>false</javadoc.skip>
         <owasp.skip>false</owasp.skip>
         <jacoco.skip>false</jacoco.skip>
+        <errorprone.skip>false</errorprone.skip>
         <coverage.skip>false</coverage.skip>
 
         <!-- Language versions, also inherited by BOM -->
@@ -118,6 +119,7 @@
                 <javadoc.skip>true</javadoc.skip>
                 <owasp.skip>true</owasp.skip>
                 <jacoco.skip>true</jacoco.skip>
+                <errorprone.skip>true</errorprone.skip>
                 <coverage.skip>true</coverage.skip>
             </properties>
         </profile>
