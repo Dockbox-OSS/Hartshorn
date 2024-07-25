@@ -21,6 +21,7 @@ import java.util.List;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.ContainedHierarchyLookup;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
+import org.dockbox.hartshorn.inject.binding.ScopeAwareHierarchicalBinder;
 import org.dockbox.hartshorn.inject.processing.ComponentProviderPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentStoreCallback;
 import org.dockbox.hartshorn.inject.processing.PostConstructingComponentPostProcessor;
@@ -31,14 +32,11 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor;
+import org.dockbox.hartshorn.inject.provider.singleton.ConcurrentHashSingletonCache;
 import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
-import org.dockbox.hartshorn.inject.provider.strategy.ComponentProcessorComponentProviderStrategy;
-import org.dockbox.hartshorn.inject.provider.strategy.InstantiationStrategyComponentProviderStrategy;
-import org.dockbox.hartshorn.inject.provider.strategy.SingletonCacheComponentProviderStrategy;
-import org.dockbox.hartshorn.inject.provider.strategy.StrategyChainComponentProvider;
-import org.dockbox.hartshorn.inject.provider.strategy.UnboundPrototypeComponentProviderStrategy;
+import org.dockbox.hartshorn.inject.provider.strategy.*;
 import org.dockbox.hartshorn.inject.scope.Scope;
-import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.*;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
 /**
@@ -60,7 +58,6 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
 public class HierarchyAwareComponentProvider extends StrategyChainComponentProvider
         implements HierarchicalBinderAwareComponentProvider, SingletonCacheComponentProvider, ContainedHierarchyLookup {
 
-    private final ComponentProviderOrchestrator orchestrator;
     private final ComponentProviderPostProcessor processor;
     private final HierarchicalBinder binder;
     private final Scope scope;
@@ -70,40 +67,52 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
             ComponentProviderOrchestrator orchestrator,
             ComponentPostConstructor postConstructor,
             InjectionCapableApplication application,
-            HierarchicalBinder binder,
-            Scope scope,
-            SingletonCache singletonCache
+            SingletonCache singletonCache,
+            Scope scope
     ) {
-        super(application);
-        this.orchestrator = orchestrator;
-        this.singletonCache = singletonCache;
-        this.processor = createProviderPostProcessor(postConstructor);
-        this.binder = binder;
-        this.scope = scope;
-
-        // TODO: Configurer?
-        setStrategies(List.of(
-                new SingletonCacheComponentProviderStrategy(),
-                new ComponentProcessorComponentProviderStrategy(),
-                new InstantiationStrategyComponentProviderStrategy(),
-                new UnboundPrototypeComponentProviderStrategy()
-        ));
+        this(
+                application,
+                singletonCache,
+                new ScopeAwareHierarchicalBinder(application, singletonCache, scope),
+                createProviderPostProcessor(singletonCache, orchestrator, application, postConstructor),
+                scope
+        );
     }
 
-    private ComponentProviderPostProcessor createProviderPostProcessor(ComponentPostConstructor postConstructor) {
-        CompositeComponentPostProcessor postProcessor = new CompositeComponentPostProcessor(() -> this.orchestrator.processorRegistry().postProcessors());
-        ComponentStoreCallback storeCallback = new LocalCacheComponentStoreCallback(this.singletonCache);
+    public HierarchyAwareComponentProvider(
+            InjectionCapableApplication application,
+            SingletonCache singletonCache,
+            HierarchicalBinder binder,
+            ComponentProviderPostProcessor postProcessor,
+            Scope scope
+    ) {
+        super(application);
+
+        this.singletonCache = singletonCache;
+        this.binder = binder;
+        this.processor = postProcessor;
+        this.scope = scope;
+    }
+
+    protected static ComponentProviderPostProcessor createProviderPostProcessor(
+            SingletonCache singletonCache,
+            ComponentProviderOrchestrator orchestrator,
+            InjectionCapableApplication application,
+            ComponentPostConstructor postConstructor
+    ) {
+        CompositeComponentPostProcessor postProcessor = new CompositeComponentPostProcessor(() -> orchestrator.processorRegistry().postProcessors());
+        ComponentStoreCallback storeCallback = new LocalCacheComponentStoreCallback(singletonCache);
         ComponentProviderPostProcessor standardProcessor = new SimpleComponentProviderPostProcessor(
-                this.orchestrator,
+                orchestrator,
                 postProcessor,
-                this.application(),
-                new LocalCacheComponentStoreCallback(this.singletonCache)
+                application,
+                new LocalCacheComponentStoreCallback(singletonCache)
         );
         return new PostConstructingComponentPostProcessor(
                 postConstructor,
                 standardProcessor,
                 storeCallback,
-                this.orchestrator.scope()
+                orchestrator.scope()
         );
     }
 
@@ -150,4 +159,66 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
         }
         return this.binder.hierarchy(key);
     }
+
+    public static ContextualInitializer<ComponentProviderConstructionContext, HierarchyAwareComponentProvider> create(Customizer<Configurer> customizer) {
+        return context -> {
+            ComponentProviderConstructionContext constructionContext = context.input();
+            Configurer configurer = new Configurer();
+            customizer.configure(configurer);
+            HierarchyAwareComponentProvider provider = new HierarchyAwareComponentProvider(
+                    constructionContext.orchestrator(),
+                    constructionContext.postConstructor(),
+                    constructionContext.application(),
+                    configurer.singletonCache.initialize(context),
+                    constructionContext.scope()
+            );
+            List<ComponentProviderStrategy> strategies = configurer.strategies.initialize(context);
+            provider.strategies(strategies);
+            return provider;
+        };
+    }
+
+    public static class Configurer {
+
+        private final LazyStreamableConfigurer<ComponentProviderConstructionContext, ComponentProviderStrategy> strategies = LazyStreamableConfigurer.of(configurer -> {
+            configurer.add(new SingletonCacheComponentProviderStrategy());
+            configurer.add(new ComponentProcessorComponentProviderStrategy());
+            configurer.add(new InstantiationStrategyComponentProviderStrategy());
+            configurer.add(new UnboundPrototypeComponentProviderStrategy());
+        });
+
+        private ContextualInitializer<ComponentProviderConstructionContext, SingletonCache> singletonCache = ContextualInitializer.of(ConcurrentHashSingletonCache::new);
+
+        public Configurer strategy(ComponentProviderStrategy strategy) {
+            this.strategies.customizer(configurer -> configurer.add(strategy));
+            return this;
+        }
+
+        public Configurer strategies(List<ComponentProviderStrategy> strategies) {
+            this.strategies.customizer(configurer -> strategies.forEach(configurer::add));
+            return this;
+        }
+
+        public Configurer strategies(Customizer<StreamableConfigurer<ComponentProviderConstructionContext, ComponentProviderStrategy>> customizer) {
+            this.strategies.customizer(customizer);
+            return this;
+        }
+
+        public Configurer singletonCache(SingletonCache singletonCache) {
+            this.singletonCache = ContextualInitializer.of(() -> singletonCache);
+            return this;
+        }
+
+        public Configurer singletonCache(ContextualInitializer<ComponentProviderConstructionContext, SingletonCache> singletonCache) {
+            this.singletonCache = singletonCache;
+            return this;
+        }
+    }
+
+    public record ComponentProviderConstructionContext(
+            InjectionCapableApplication application,
+            ComponentProviderOrchestrator orchestrator,
+            ComponentPostConstructor postConstructor,
+            Scope scope
+    ) {}
 }

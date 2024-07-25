@@ -25,7 +25,6 @@ import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
-import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 public abstract class StrategyChainComponentProvider implements ComponentProvider {
@@ -38,7 +37,7 @@ public abstract class StrategyChainComponentProvider implements ComponentProvide
         this.strategies = new LinkedList<>();
     }
 
-    protected void setStrategies(List<ComponentProviderStrategy> strategies) {
+    protected void strategies(List<ComponentProviderStrategy> strategies) {
         this.strategies.clear();
         this.strategies.addAll(strategies);
     }
