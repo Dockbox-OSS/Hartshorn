@@ -125,9 +125,28 @@ public interface DependencyContext<T> {
      */
     View origin();
 
+    /**
+     * Returns whether the dependency is lazy. A lazy dependency is only resolved when it is
+     * first requested. Note that this only applies to dependencies that are singletons, as
+     * prototype dependencies are always resolved on-demand.
+     *
+     * @return whether the dependency is lazy
+     */
     boolean lazy();
 
+    /**
+     * Returns the lifecycle type of the dependency. The lifecycle type determines the lifecycle
+     * of the dependency.
+     *
+     * @return the lifecycle type of the dependency
+     */
     LifecycleType lifecycleType();
 
+    /**
+     * Returns whether the dependency should be processed after initialization. This is used to
+     * determine whether the dependency should be processed after the container has been initialized.
+     *
+     * @return whether the dependency should be processed after initialization
+     */
     boolean processAfterInitialization();
 }

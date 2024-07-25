@@ -52,6 +52,13 @@ public interface CollectorBindingFunction<T> {
      */
     Binder supplier(CheckedSupplier<T> supplier);
 
+    /**
+     * Binds the given supplier, this will call the supplier every time it is
+     * requested.
+     *
+     * @param supplier The supplier to bind to
+     * @return The binder
+     */
     Binder supplier(PrototypeInstantiationStrategy<T> supplier);
 
     /**

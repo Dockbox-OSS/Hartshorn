@@ -44,10 +44,20 @@ public class ComponentKeyDependencyDeclarationContext<T> implements DependencyDe
         this.type = TypeUtils.unchecked(introspector.introspect(key.parameterizedType()), TypeView.class);
     }
 
+    /**
+     * Returns the key of the dependency, which is used to identify the dependency in dependency visitors or graphs.
+     *
+     * @return the key of the dependency
+     */
     public ComponentKey<T> key() {
         return this.key;
     }
 
+    /**
+     * Returns the preferred instantiation strategy for the dependency.
+     *
+     * @return the instantiation strategy for the dependency
+     */
     public InstantiationStrategy<T> provider() {
         return this.strategy;
     }

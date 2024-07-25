@@ -34,6 +34,8 @@ public final class ComponentDescriber {
      * Formats the component type into a kebab-case string. E.g. {@code JsonDataWorker} becomes
      * {@code json-data-worker}.
      *
+     * @param type the type to format
+     *
      * @return the kebab-case formatted string
      */
     public static String id(TypeView<?> type) {
@@ -43,6 +45,8 @@ public final class ComponentDescriber {
     /**
      * Formats the component type into a human-readable string. E.g. {@code JsonDataWorker} becomes
      * {@code Json Data Worker}.
+     *
+     * @param type the type to format
      *
      * @return the human-readable formatted string
      */

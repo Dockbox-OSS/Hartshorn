@@ -58,10 +58,20 @@ public class CyclicComponentException extends ApplicationException {
         this.origin = origin;
     }
 
+    /**
+     * Returns the full path of the cyclic dependency.
+     *
+     * @return the full path of the cyclic dependency
+     */
     public ComponentDiscoveryList componentDiscoveryList() {
         return this.componentDiscoveryList;
     }
 
+    /**
+     * Returns the origin of the cyclic dependency.
+     *
+     * @return the origin of the cyclic dependency
+     */
     public View origin() {
         return this.origin;
     }

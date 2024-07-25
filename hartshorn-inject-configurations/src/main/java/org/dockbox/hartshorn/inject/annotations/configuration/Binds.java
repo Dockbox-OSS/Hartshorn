@@ -30,8 +30,6 @@ import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
 
-import com.google.errorprone.annotations.Keep;
-
 /**
  * Annotation used to indicate that a method will act as a binding provider. The return type of the
  * method, combined with optional {@link Qualifier} annotations form the {@link ComponentKey} of
@@ -56,7 +54,6 @@ import com.google.errorprone.annotations.Keep;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE })
-@Keep
 public @interface Binds {
 
     /**
