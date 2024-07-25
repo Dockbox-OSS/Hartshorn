@@ -208,7 +208,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
                                 processableApplicationContext.defaultProvider().processorRegistry()
                         );
                     }
-                    return new SkipConfigurationDependencyVisitor(context.defaultBinder(), context.defaultProvider());
+                    return new SkipConfigurationDependencyVisitor();
                 }));
             });
         });

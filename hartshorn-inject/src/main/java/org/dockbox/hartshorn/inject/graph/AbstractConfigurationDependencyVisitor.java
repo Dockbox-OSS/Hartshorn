@@ -19,9 +19,7 @@ package org.dockbox.hartshorn.inject.graph;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
-import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.graph.BreadthFirstGraphVisitor;
@@ -41,22 +39,6 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
  * @author Guus Lieben
  */
 public abstract class AbstractConfigurationDependencyVisitor implements BreadthFirstGraphVisitor<DependencyContext<?>>, ConfigurationDependencyVisitor {
-
-    private final Binder binder;
-    private final ComponentProvider componentProvider;
-
-    public AbstractConfigurationDependencyVisitor(Binder binder, ComponentProvider componentProvider) {
-        this.binder = binder;
-        this.componentProvider = componentProvider;
-    }
-
-    public Binder binder() {
-        return binder;
-    }
-
-    public ComponentProvider componentProvider() {
-        return componentProvider;
-    }
 
     @Override
     public Set<GraphNode<DependencyContext<?>>> iterate(Graph<DependencyContext<?>> graph) throws GraphException {

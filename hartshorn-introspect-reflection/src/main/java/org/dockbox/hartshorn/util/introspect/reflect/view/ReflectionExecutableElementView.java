@@ -65,6 +65,11 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
         }
     }
 
+    /**
+     * Returns the underlying {@link Executable} instance.
+     *
+     * @return the underlying {@link Executable} instance
+     */
     public Executable executable() {
         return this.executable;
     }

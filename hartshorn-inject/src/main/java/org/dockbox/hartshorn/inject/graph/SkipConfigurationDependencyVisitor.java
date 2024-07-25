@@ -16,16 +16,9 @@
 
 package org.dockbox.hartshorn.inject.graph;
 
-import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
-import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 
 public class SkipConfigurationDependencyVisitor extends AbstractConfigurationDependencyVisitor {
-
-    public SkipConfigurationDependencyVisitor(Binder binder,
-            ComponentProvider componentProvider) {
-        super(binder, componentProvider);
-    }
 
     @Override
     public <T> void registerProvider(DependencyContext<T> dependencyContext) throws ComponentConfigurationException {

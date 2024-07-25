@@ -25,8 +25,6 @@ import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
-import com.google.errorprone.annotations.Keep;
-
 /**
  * Stereotype of {@link Binds} for bindings that should be registered as prototypes. This annotation is a shorthand
  * for {@code @Binds(lifecycle = LifecycleType.PROTOTYPE)}.
@@ -45,7 +43,6 @@ import com.google.errorprone.annotations.Keep;
 @Target({ ElementType.METHOD, ElementType.FIELD })
 @Extends(Binds.class)
 @Binds(lifecycle = LifecycleType.PROTOTYPE)
-@Keep
 public @interface Prototype {
 
     /**

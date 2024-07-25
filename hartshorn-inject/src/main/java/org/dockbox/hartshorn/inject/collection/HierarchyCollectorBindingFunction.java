@@ -52,7 +52,7 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
 
     @Override
     public Binder provider(InstantiationStrategy<T> strategy) {
-        this.hierarchy.getOrCreateProvider(this.priority).add(strategy);
+        this.hierarchy.getOrCreateInstantiationStrategy(this.priority).add(strategy);
         return this.binder;
     }
 

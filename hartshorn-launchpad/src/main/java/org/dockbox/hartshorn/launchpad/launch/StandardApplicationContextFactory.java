@@ -195,7 +195,9 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      * Collects the prefixes that should be used to register components in the application context. This collects prefixes
      * from the main class, and from any service activators that are present in the configuration.
      *
+     * @param bootstrapContext The bootstrap context that is used to create the application context
      * @param activators The activators that are present on the main class
+     *
      * @return The prefixes that should be used to register components in the application context
      */
     protected Set<String> collectPrefixesForRegistering(
