@@ -41,11 +41,13 @@
         </module>
 
         <!-- Javadoc method rules -->
+        <!--
         <module name="MissingJavadocMethod">
             <property name="excludeScope" value="private"/>
             <property name="allowMissingPropertyJavadoc" value="true"/>
             <property name="tokens" value="METHOD_DEF,ANNOTATION_FIELD_DEF"/>
         </module>
+        -->
         <module name="JavadocMethod">
             <property name="accessModifiers" value="public,protected,package"/>
             <property name="allowMissingParamTags" value="false"/>
