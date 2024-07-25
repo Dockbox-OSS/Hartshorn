@@ -96,11 +96,6 @@
 
             <!-- Third-party -->
             <dependency>
-                <groupId>com.google.errorprone</groupId>
-                <artifactId>error_prone_annotation</artifactId>
-                <version>${errorprone.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.groovy</groupId>
                 <artifactId>groovy-all</artifactId>
                 <version>${groovy.version}</version>
