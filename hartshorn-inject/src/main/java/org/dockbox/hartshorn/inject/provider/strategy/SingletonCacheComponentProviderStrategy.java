@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.inject.provider.ComponentObjectContainer;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.inject.provider.SingletonCacheComponentProvider;
 import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
+import org.dockbox.hartshorn.util.ApplicationException;
 
 public class SingletonCacheComponentProviderStrategy implements ComponentProviderStrategy {
 
@@ -31,7 +32,7 @@ public class SingletonCacheComponentProviderStrategy implements ComponentProvide
             ComponentKey<T> componentKey,
             ComponentRequestContext requestContext,
             ComponentProviderStrategyChain<T> chain
-    ) throws ComponentResolutionException {
+    ) throws ComponentResolutionException, ApplicationException {
         if (chain.componentProvider() instanceof SingletonCacheComponentProvider singletonCacheComponentProvider) {
             SingletonCache singletonCache = singletonCacheComponentProvider.singletonCache();
             if (singletonCache.contains(componentKey)) {
