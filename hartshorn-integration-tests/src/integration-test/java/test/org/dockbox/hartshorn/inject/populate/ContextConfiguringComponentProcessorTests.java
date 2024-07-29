@@ -16,9 +16,11 @@
 
 package test.org.dockbox.hartshorn.inject.populate;
 
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.proxy.Proxy;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.test.TestCustomizer;
 import org.dockbox.hartshorn.test.annotations.CustomizeTests;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
@@ -41,11 +43,9 @@ public class ContextConfiguringComponentProcessorTests {
 
     @Test
     @TestComponents(components = EmptyComponent.class)
-    void testNonContextComponentIsProcessed(ApplicationContext applicationContext) {
-        EmptyComponent emptyComponent = applicationContext.get(EmptyComponent.class);
-
+    void testNonContextComponentIsProcessed(@Inject EmptyComponent emptyComponent, @Inject ProxyOrchestrator proxyOrchestrator) {
         Assertions.assertNotNull(emptyComponent);
-        Assertions.assertTrue(applicationContext.environment().proxyOrchestrator().isProxy(emptyComponent));
+        Assertions.assertTrue(proxyOrchestrator.isProxy(emptyComponent));
 
         Proxy<EmptyComponent> component = (Proxy<EmptyComponent>) emptyComponent;
         Option<SimpleContext> context = component.manager().firstContext(ContextKey.of(SimpleContext.class));
@@ -55,11 +55,9 @@ public class ContextConfiguringComponentProcessorTests {
 
     @Test
     @TestComponents(components = ContextComponent.class)
-    void testContextComponentIsProcessed(ApplicationContext applicationContext) {
-        ContextComponent contextComponent = applicationContext.get(ContextComponent.class);
-
+    void testContextComponentIsProcessed(@Inject ContextComponent contextComponent, @Inject ProxyOrchestrator proxyOrchestrator) {
         Assertions.assertNotNull(contextComponent);
-        Assertions.assertFalse(applicationContext.environment().proxyOrchestrator().isProxy(contextComponent));
+        Assertions.assertFalse(proxyOrchestrator.isProxy(contextComponent));
 
         Option<SimpleContext> context = contextComponent.firstContext(ContextKey.of(SimpleContext.class));
         Assertions.assertTrue(context.present());

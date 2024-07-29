@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.launchpad.launch.scanning;
 
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
@@ -30,13 +31,15 @@ import test.org.dockbox.hartshorn.launchpad.launch.scanning.service.DemoServiceP
  * {@code com.specific} is bound to the same application context.
  */
 @ScanSpecificPackageActivator
-@HartshornIntegrationTest(includeBasePackages = false, scanPackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning")
+@HartshornIntegrationTest(
+        includeBasePackages = false,
+        scanPackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning",
+        processors = { DemoServicePreProcessor.class }
+)
 public class SpecificPackageTests {
 
     @Test
-    public void specificPackageFilterIsApplied(ApplicationContext applicationContext) {
-        Assertions.assertNotNull(applicationContext);
-        DemoServicePreProcessor processor = applicationContext.get(DemoServicePreProcessor.class);
+    public void specificPackageFilterIsApplied(@Inject DemoServicePreProcessor processor) {
         Assertions.assertEquals(1, processor.processed());
     }
 }
