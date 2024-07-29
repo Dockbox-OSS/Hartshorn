@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.proxy.delegate;
 
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 import org.dockbox.hartshorn.proxy.Proxy;
@@ -32,16 +33,14 @@ public class ApplicationContextCarrierDelegationTests {
 
     @Test
     @TestComponents(components = ContextCarrierService.class)
-    void testContextCarrierDelegation(ApplicationContext applicationContext) throws NoSuchMethodException {
-        ContextCarrierService service = applicationContext.get(ContextCarrierService.class);
+    void testContextCarrierDelegation(@Inject ContextCarrierService service) throws NoSuchMethodException {
         this.testDelegateAbsent(service);
         Assertions.assertNotNull(service.applicationContext());
     }
 
     @Test
     @TestComponents(components = IDefaultContextCarrierService.class)
-    void testDefaultCarrierDelegation(ApplicationContext applicationContext) throws NoSuchMethodException {
-        IDefaultContextCarrierService service = applicationContext.get(IDefaultContextCarrierService.class);
+    void testDefaultCarrierDelegation(@Inject IDefaultContextCarrierService service) throws NoSuchMethodException {
         this.testDelegateAbsent(service);
         // Default method, should return null (see IDefaultContextCarrierService)
         Assertions.assertNull(service.applicationContext());
@@ -49,9 +48,7 @@ public class ApplicationContextCarrierDelegationTests {
 
     @Test
     @TestComponents(components = IContextCarrierService.class)
-    void testCarrierDelegation(ApplicationContext applicationContext) throws NoSuchMethodException {
-        IContextCarrierService service = applicationContext.get(IContextCarrierService.class);
-
+    void testCarrierDelegation(@Inject IContextCarrierService service, @Inject ApplicationContext applicationContext) throws NoSuchMethodException {
         Assertions.assertTrue(service instanceof Proxy<?>);
         Method method = ApplicationContextCarrier.class.getMethod("applicationContext");
         Option<?> methodDelegate = ((Proxy<?>) service).manager()

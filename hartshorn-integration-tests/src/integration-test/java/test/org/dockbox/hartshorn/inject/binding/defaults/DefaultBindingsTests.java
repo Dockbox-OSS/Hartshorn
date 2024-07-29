@@ -31,7 +31,7 @@ public class DefaultBindingsTests {
     private Logger loggerField;
 
     @Test
-    void loggerCanBeInjected(Logger loggerParameter) {
+    void loggerCanBeInjected(@Inject Logger loggerParameter) {
         Assertions.assertNotNull(loggerParameter);
         // Name should match the consuming class' name, and not the name of the configuration that uses it
         Assertions.assertEquals(loggerParameter.getName(), ApplicationContextTests.class.getName());

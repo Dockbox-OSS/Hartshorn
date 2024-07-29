@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.inject.processing;
 
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
@@ -30,8 +31,7 @@ public class ComponentProcessorTests {
 
     @Test
     @TestComponents(components = NonProcessableType.class)
-    void testNonProcessableComponent(ApplicationContext applicationContext) {
-        NonProcessableType nonProcessableType = applicationContext.get(NonProcessableType.class);
+    void testNonProcessableComponent(@Inject NonProcessableType nonProcessableType) {
         Assertions.assertNotNull(nonProcessableType);
         Assertions.assertNull(nonProcessableType.nonNullIfProcessed());
     }

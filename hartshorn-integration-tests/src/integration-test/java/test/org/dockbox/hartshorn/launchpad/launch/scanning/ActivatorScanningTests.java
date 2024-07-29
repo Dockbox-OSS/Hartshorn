@@ -16,13 +16,13 @@
 
 package test.org.dockbox.hartshorn.launchpad.launch.scanning;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClasspathTypeReferenceCollector;
-import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -30,32 +30,26 @@ import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ConcreteDis
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.DiscoverableComponentConfiguration;
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.DiscoverableComponent;
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ServiceInterface;
-import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.UseDemo;
+import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.PackageScanningActivator;
 
-@UseDemo
+@PackageScanningActivator
 @HartshornIntegrationTest(includeBasePackages = false)
 public class ActivatorScanningTests {
 
     @Test
-    void testPrefixFromActivatorIsRegistered(ApplicationContext applicationContext) {
-        Option<TypeReferenceCollectorContext> contextCandidate = applicationContext.firstContext(TypeReferenceCollectorContext.class);
-        Assertions.assertTrue(contextCandidate.present());
-
-        TypeReferenceCollectorContext context = contextCandidate.get();
+    void testPrefixFromActivatorIsRegistered(@Inject TypeReferenceCollectorContext context) {
         for (TypeReferenceCollector collector : context.collectors()) {
-            if (collector instanceof ClasspathTypeReferenceCollector referenceCollector) {
-                if ("test.org.dockbox.hartshorn.launchpad.launch.scanning.discover".equals(referenceCollector.packageName())) {
-                    return;
-                }
+            if(collector instanceof ClasspathTypeReferenceCollector referenceCollector
+                    && PackageScanningActivator.PACKAGE.equals(referenceCollector.packageName())) {
+                return;
             }
         }
-        Assertions.fail("No collector found for package test.org.dockbox.hartshorn.launchpad.launch.scanning.discover");
+        Assertions.fail("No collector found for package %s".formatted(PackageScanningActivator.PACKAGE));
     }
 
     @Test
     @TestComponents(components = DiscoverableComponentConfiguration.class)
-    void testBindingsFromActivatorPrefixArePresent(ApplicationContext applicationContext) {
-        DiscoverableComponent component = applicationContext.get(DiscoverableComponent.class);
+    void testBindingsFromActivatorPrefixArePresent(@Inject DiscoverableComponent component) {
         Assertions.assertNotNull(component);
         Assertions.assertEquals("Demo", component.message());
         Assertions.assertTrue(component instanceof ConcreteDiscoverableComponent);
@@ -63,9 +57,8 @@ public class ActivatorScanningTests {
 
     @Test
     @TestComponents(components = ServiceInterface.class)
-    void testServicesFromActivatorPrefixArePresent(ApplicationContext applicationContext) {
-        ServiceInterface service = applicationContext.get(ServiceInterface.class);
+    void testServicesFromActivatorPrefixArePresent(@Inject ServiceInterface service, @Inject ProxyOrchestrator proxyOrchestrator) {
         Assertions.assertNotNull(service);
-        Assertions.assertTrue(applicationContext.environment().proxyOrchestrator().isProxy(service));
+        Assertions.assertTrue(proxyOrchestrator.isProxy(service));
     }
 }

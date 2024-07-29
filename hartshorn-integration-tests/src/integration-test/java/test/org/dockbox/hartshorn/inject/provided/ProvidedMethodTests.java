@@ -16,6 +16,8 @@
 
 package test.org.dockbox.hartshorn.inject.provided;
 
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
@@ -28,8 +30,8 @@ public class ProvidedMethodTests {
 
     @Test
     @TestComponents(components = ProviderService.class)
-    void testProviderService(ProviderService service, ApplicationContext applicationContext) {
-        applicationContext.bind(String.class).singleton("Hello World");
+    void testProviderService(@Inject ProviderService service, @Inject Binder binder) {
+        binder.bind(String.class).singleton("Hello World");
 
         Assertions.assertNotNull(service);
         Assertions.assertInstanceOf(Proxy.class, service);
