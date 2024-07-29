@@ -20,6 +20,7 @@ content:
         - hartshorn-inject/src/main/docs
         - hartshorn-inject-configurations/src/main/docs
         - hartshorn-launchpad/src/main/docs
+        - hartshorn-testsuite/src/main/docs
         - hartshorn-util/src/main/docs
         - hartshorn-spi/src/main/docs
         - hartshorn-proxy/src/main/docs
@@ -28,10 +29,6 @@ content:
         - hartshorn-introspect-reflection/src/main/docs
         - hartshorn-reporting/src/main/docs
         - hartshorn-hsl/src/main/docs
-        - hartshorn-i18n/src/main/docs
-        - hartshorn-config/src/main/docs
-        - hartshorn-config-jackson/src/main/docs
-        - hartshorn-commands/src/main/docs
 
 output:
   dir: hartshorn-assembly/target/docs
