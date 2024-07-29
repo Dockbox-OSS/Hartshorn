@@ -20,6 +20,16 @@
             <artifactId>hartshorn-launchpad</artifactId>
         </dependency>
 
+        <!-- Logical defaults -->
+        <dependency>
+            <groupId>org.dockbox.hartshorn</groupId>
+            <artifactId>hartshorn-introspect-reflection</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dockbox.hartshorn</groupId>
+            <artifactId>hartshorn-proxy-javassist</artifactId>
+        </dependency>
+
         <!-- JUnit -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
