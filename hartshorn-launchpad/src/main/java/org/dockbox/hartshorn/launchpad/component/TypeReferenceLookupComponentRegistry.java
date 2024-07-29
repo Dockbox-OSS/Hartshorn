@@ -19,22 +19,21 @@ package org.dockbox.hartshorn.launchpad.component;
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
+
 import org.dockbox.hartshorn.inject.annotations.Component;
-import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.component.AnnotatedComponentContainer;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.launchpad.environment.EnvironmentTypeResolver;
 import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.introspect.annotations.AnnotationUtilities;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * TODO: #1060 Add documentation
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
 
@@ -54,9 +53,10 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
     public Collection<ComponentContainer<?>> containers() {
         if (this.componentContainers.isEmpty()) {
             this.typeResolver.types(Component.class).stream()
-                .filter(Predicate.not(TypeView::isAnnotation)) // Ensure stereotypes are not included
-                .map(AnnotatedComponentContainer::new)
-                .forEach(this.componentContainers::add);
+                    // Filter out component stereotypes
+                    .filter(type -> !AnnotationUtilities.isStereotypeOf(type.type(), Component.class))
+                    .map(AnnotatedComponentContainer::new)
+                    .forEach(this.componentContainers::add);
         }
         return CollectionUtilities.merge(this.componentContainers, this.customContainers);
     }
