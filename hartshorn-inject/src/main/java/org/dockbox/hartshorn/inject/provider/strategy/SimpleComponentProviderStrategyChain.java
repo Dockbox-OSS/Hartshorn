@@ -55,19 +55,19 @@ public class SimpleComponentProviderStrategyChain<T> implements ComponentProvide
 
     @Override
     public ComponentProvider componentProvider() {
-        return componentProvider;
+        return this.componentProvider;
     }
 
     @Override
     public InjectionCapableApplication application() {
-        return null;
+        return this.application;
     }
 
     @Override
     public ObjectContainer<T> get(ComponentKey<T> componentKey, ComponentRequestContext requestContext)
             throws ComponentInitializationException, ApplicationException {
         if(this.index < this.strategies.size()) {
-            ComponentProviderStrategy strategy = this.strategies.get(index);
+            ComponentProviderStrategy strategy = this.strategies.get(this.index);
             ComponentProviderStrategyChain<T> chain = new SimpleComponentProviderStrategyChain<>(
                     this.componentProvider,
                     this.application,

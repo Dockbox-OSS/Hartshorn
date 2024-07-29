@@ -75,8 +75,8 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
         if (constructorView == null) {
             return Set.of();
         }
-        Set<ComponentKey<?>> constructorDependencies = resolver.resolveDependencies(constructorView);
-        Set<ComponentKey<?>> typeDependencies = resolver.resolveDependencies(type);
+        Set<ComponentKey<?>> constructorDependencies = this.resolver.resolveDependencies(constructorView);
+        Set<ComponentKey<?>> typeDependencies = this.resolver.resolveDependencies(type);
 
         DependencyMap dependencies = DependencyMap.create()
                 .immediate(constructorDependencies)

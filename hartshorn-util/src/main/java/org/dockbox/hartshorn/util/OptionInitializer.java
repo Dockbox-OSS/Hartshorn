@@ -74,7 +74,7 @@ public interface OptionInitializer<I, T> extends ContextualInitializer<I, Option
      * @see Option#orElse(Object)
      */
     default ContextualInitializer<I, T> orElseGet(Supplier<T> supplier) {
-        return transform(option -> option.orElseGet(supplier));
+        return this.transform(option -> option.orElseGet(supplier));
     }
 
     /**

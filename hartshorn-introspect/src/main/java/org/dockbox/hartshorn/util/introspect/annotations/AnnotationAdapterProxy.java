@@ -182,7 +182,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
     @NonNull
     private Option<Object> searchAlias(Annotation actual, Class<? extends Annotation> targetAnnotationClass, Method proxyMethod, String name) {
         for (Method method : actual.annotationType().getMethods()) {
-            Option<Object> result = searchAttributeAlias(actual, targetAnnotationClass, proxyMethod, name, method);
+            Option<Object> result = this.searchAttributeAlias(actual, targetAnnotationClass, proxyMethod, name, method);
 
             if(result.present()) {
                 return result;

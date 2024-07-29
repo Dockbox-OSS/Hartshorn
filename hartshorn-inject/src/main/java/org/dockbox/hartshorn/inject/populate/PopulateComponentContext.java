@@ -49,7 +49,7 @@ public final class PopulateComponentContext<T> extends DefaultContext {
      * @return the instance that is being populated
      */
     public T instance() {
-        return instance;
+        return this.instance;
     }
 
     /**
@@ -59,7 +59,7 @@ public final class PopulateComponentContext<T> extends DefaultContext {
      * @return the original instance if the instance was proxied, the same instance as {@link #instance()} otherwise
      */
     public T originalInstance() {
-        return originalInstance;
+        return this.originalInstance;
     }
 
     /**
@@ -68,6 +68,6 @@ public final class PopulateComponentContext<T> extends DefaultContext {
      * @return the type of the component that is being populated
      */
     public TypeView<T> type() {
-        return type;
+        return this.type;
     }
 }

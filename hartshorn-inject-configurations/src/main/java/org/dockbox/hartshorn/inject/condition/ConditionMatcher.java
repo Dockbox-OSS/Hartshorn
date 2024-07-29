@@ -115,7 +115,7 @@ public final class ConditionMatcher extends DefaultInjectionApplicationAwareCont
                     .map(AnnotationConditionDeclaration::new)
                     .collect(Collectors.toSet());
 
-            if (!match(elementView, declarations, contexts)) {
+            if (!this.match(elementView, declarations, contexts)) {
                 return false;
             }
         }
