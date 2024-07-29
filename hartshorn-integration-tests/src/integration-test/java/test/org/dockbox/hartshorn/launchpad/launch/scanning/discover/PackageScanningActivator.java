@@ -19,11 +19,11 @@ package test.org.dockbox.hartshorn.launchpad.launch.scanning.discover;
 import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-@Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
-@ServiceActivator(
-        scanPackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning.discover",
-        processors = DiscoverableComponentProcessor.class
-)
-public @interface UseDemo {
+@Retention(RetentionPolicy.RUNTIME)
+@ServiceActivator(scanPackages = PackageScanningActivator.PACKAGE)
+public @interface PackageScanningActivator {
+
+    String PACKAGE = "test.org.dockbox.hartshorn.launchpad.launch.scanning.discover";
 }

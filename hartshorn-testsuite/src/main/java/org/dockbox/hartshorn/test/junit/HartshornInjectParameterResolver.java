@@ -16,28 +16,38 @@
 
 package org.dockbox.hartshorn.test.junit;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.introspect.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.inject.introspect.ExecutableElementContextParameterLoader;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
+import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 
 public class HartshornInjectParameterResolver implements ParameterResolver {
+
+    private static final Option<Class<? extends Annotation>> JAVAX_INJECT = TypeUtils.forName("javax.inject.Inject", Annotation.class);
+    private static final Option<Class<? extends Annotation>> JAKARTA_INJECT = TypeUtils.forName("jakarta.inject.Inject", Annotation.class);
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        return extensionContext.getTestMethod()
-                .filter(method -> method.getParameterCount() > 0)
-                .isPresent();
+        return parameterContext.isAnnotated(Inject.class)
+                || JAVAX_INJECT.test(parameterContext::isAnnotated)
+                || JAKARTA_INJECT.test(parameterContext::isAnnotated);
     }
 
     @Override

@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 
 @Configuration
-@RequiresActivator(UseDemo.class)
+@RequiresActivator(PackageScanningActivator.class)
 public class DiscoverableComponentConfiguration {
 
     @Singleton

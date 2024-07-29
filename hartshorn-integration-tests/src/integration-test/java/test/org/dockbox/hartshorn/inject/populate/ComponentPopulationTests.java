@@ -101,7 +101,7 @@ public class ComponentPopulationTests {
 
     @Test
     @TestComponents(bindings = @TestBinding(type = SampleInterface.class, implementation = SampleImplementation.class))
-    public void testTypesCanBePopulated(ComponentPopulator populator) {
+    public void testTypesCanBePopulated(@Inject ComponentPopulator populator) {
         PopulatedType populatedType = new PopulatedType();
         Assertions.assertNull(populatedType.sampleInterface());
 

@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.inject.provider;
 
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -33,7 +34,7 @@ import org.junit.jupiter.api.Test;
 public class LooseInjectionTest {
 
     @Test
-    void testNonStrictModeMatchesCompatibleBinding(ApplicationContext context) {
+    void testNonStrictModeMatchesCompatibleBinding(@Inject ApplicationContext context) {
         context.bind(String.class).singleton("Hello World");
         ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class)
                 .strict(false)
@@ -43,7 +44,7 @@ public class LooseInjectionTest {
     }
 
     @Test
-    void testStrictModeOnlyMatchesExactBinding(ApplicationContext context) {
+    void testStrictModeOnlyMatchesExactBinding(@Inject ApplicationContext context) {
         context.bind(String.class).singleton("Hello World");
         ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class)
                 .strict(true)
