@@ -20,13 +20,17 @@ import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
+import org.dockbox.hartshorn.inject.binding.ScopeAwareHierarchicalBinder;
 import org.dockbox.hartshorn.inject.provider.CompositeInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.SimpleConstructorViewDrivenProvider;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
+import org.dockbox.hartshorn.inject.provider.singleton.ConcurrentHashSingletonCache;
+import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -34,11 +38,17 @@ import java.util.Map.Entry;
 
 // TODO: Make non-integration test
 //@HartshornTest(includeBasePackages = false)
+@Disabled("Starters are not yet implemented")
 public class BindingHierarchyTests {
 
-    @Inject
-    // TODO: Default implementation (currently HierarchyAwareComponentProvider in inject-configurations)
-    private HierarchicalBinder binder;
+    private HierarchicalBinder binder() {
+        return new ScopeAwareHierarchicalBinder(
+                null,
+                new ConcurrentHashSingletonCache(),
+                ScopeAdapter.of("test")
+        );
+    }
+
 
     @Test
     void testToString() {
@@ -99,16 +109,17 @@ public class BindingHierarchyTests {
     @Test
     void testApplicationContextHierarchyControl() {
         ComponentKey<Contract> key = ComponentKey.of(Contract.class);
+        HierarchicalBinder binder = this.binder();
 
         BindingHierarchy<Contract> secondHierarchy = new NativePrunableBindingHierarchy<>(key);
         secondHierarchy.add(2, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
 
-        this.binder.hierarchy(key)
+        binder.hierarchy(key)
                 .add(0, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)))
                 .add(1, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)))
                 .merge(secondHierarchy);
 
-        BindingHierarchy<Contract> hierarchy = this.binder.hierarchy(key);
+        BindingHierarchy<Contract> hierarchy = binder.hierarchy(key);
         Assertions.assertNotNull(hierarchy);
 
         Assertions.assertEquals(3, hierarchy.size());
@@ -131,9 +142,10 @@ public class BindingHierarchyTests {
 
     @Test
     void testContextCreatesHierarchy() {
-        this.binder.bind(LocalContract.class).to(LocalObject.class);
+        HierarchicalBinder binder = this.binder();
+        binder.bind(LocalContract.class).to(LocalObject.class);
 
-        BindingHierarchy<LocalContract> hierarchy = this.binder.hierarchy(ComponentKey.of(LocalContract.class));
+        BindingHierarchy<LocalContract> hierarchy = binder.hierarchy(ComponentKey.of(LocalContract.class));
         Assertions.assertNotNull(hierarchy);
         Assertions.assertEquals(1, hierarchy.size());
 

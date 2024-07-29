@@ -95,7 +95,7 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
 
     @Override
     public boolean batchModeEnabled() {
-        return batchModeEnabled;
+        return this.batchModeEnabled;
     }
 
     @Override
@@ -108,7 +108,7 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     }
 
     private <T> TypeView<T> voidType() {
-        return TypeUtils.unchecked(voidType, TypeView.class);
+        return TypeUtils.unchecked(this.voidType, TypeView.class);
     }
 
     @Override

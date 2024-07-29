@@ -81,7 +81,7 @@ public class ScopeAwareHierarchicalBinder implements HierarchicalBinder, Contain
         });
         Option<ScopeModuleContext> scopeModuleContext = this.application.firstContext(scopeModuleContextKey);
 
-        if (scopeModuleContext.absent() && this.scope() != applicationScope()) {
+        if (scopeModuleContext.absent() && this.scope() != this.applicationScope()) {
             throw new IllegalModificationException("Cannot add binding to non-application hierarchy without a module context");
         }
 

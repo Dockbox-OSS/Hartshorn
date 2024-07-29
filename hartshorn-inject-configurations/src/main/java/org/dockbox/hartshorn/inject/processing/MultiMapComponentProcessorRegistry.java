@@ -34,15 +34,13 @@ public class MultiMapComponentProcessorRegistry implements ComponentProcessorReg
 
     @Override
     public void register(ComponentProcessor processor) {
-        modifyProcessorRegistration(processor, MultiMap::put);
-        if (this.uninitializedPostProcessors.contains(processor.getClass())) {
-            this.uninitializedPostProcessors.remove(processor.getClass());
-        }
+        this.modifyProcessorRegistration(processor, MultiMap::put);
+        this.uninitializedPostProcessors.remove(processor.getClass());
     }
 
     @Override
     public void unregister(ComponentProcessor processor) {
-        modifyProcessorRegistration(processor, MultiMap::remove);
+        this.modifyProcessorRegistration(processor, MultiMap::remove);
     }
 
     private <T extends ComponentProcessor> void modifyProcessorRegistration(T processor, RegistrationCallback callback) {
@@ -75,7 +73,7 @@ public class MultiMapComponentProcessorRegistry implements ComponentProcessorReg
 
     @Override
     public boolean isRegistered(Class<? extends ComponentProcessor> componentProcessor) {
-        if (uninitializedPostProcessors.contains(componentProcessor)) {
+        if (this.uninitializedPostProcessors.contains(componentProcessor)) {
             return true;
         } else {
             return this.processors().stream()

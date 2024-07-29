@@ -34,7 +34,7 @@ public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public Collection<V> allValues() {
-        return map.allValues();
+        return this.map.allValues();
     }
 
     @Override
@@ -59,37 +59,37 @@ public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public Collection<V> get(K key) {
-        return List.copyOf(map.get(key));
+        return List.copyOf(this.map.get(key));
     }
 
     @Override
     public Set<K> keySet() {
-        return CollectionUtilities.copyOf(map.keySet());
+        return CollectionUtilities.copyOf(this.map.keySet());
     }
 
     @Override
     public Set<Entry<K, Collection<V>>> entrySet() {
-        return CollectionUtilities.copyOf(map.entrySet());
+        return CollectionUtilities.copyOf(this.map.entrySet());
     }
 
     @Override
     public Collection<Collection<V>> values() {
-        return List.copyOf(map.values());
+        return List.copyOf(this.map.values());
     }
 
     @Override
     public boolean containsKey(K key) {
-        return map.containsKey(key);
+        return this.map.containsKey(key);
     }
 
     @Override
     public boolean containsValue(V value) {
-        return map.containsValue(value);
+        return this.map.containsValue(value);
     }
 
     @Override
     public boolean containsEntry(K key, V value) {
-        return map.containsEntry(key, value);
+        return this.map.containsEntry(key, value);
     }
 
     @Override
@@ -104,12 +104,12 @@ public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public int size() {
-        return map.size();
+        return this.map.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return map.isEmpty();
+        return this.map.isEmpty();
     }
 
     @Override
@@ -124,6 +124,6 @@ public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public void forEach(BiConsumer<K, V> consumer) {
-        map.forEach(consumer);
+        this.map.forEach(consumer);
     }
 }

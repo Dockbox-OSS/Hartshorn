@@ -32,7 +32,6 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor;
-import org.dockbox.hartshorn.inject.provider.singleton.ConcurrentHashSingletonCache;
 import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
 import org.dockbox.hartshorn.inject.provider.strategy.*;
 import org.dockbox.hartshorn.inject.scope.Scope;
@@ -129,7 +128,7 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
 
     @Override
     public HierarchicalBinder binder() {
-        return binder;
+        return this.binder;
     }
 
     @Override
@@ -160,65 +159,33 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
         return this.binder.hierarchy(key);
     }
 
-    public static ContextualInitializer<ComponentProviderConstructionContext, HierarchyAwareComponentProvider> create(Customizer<Configurer> customizer) {
-        return context -> {
-            ComponentProviderConstructionContext constructionContext = context.input();
-            Configurer configurer = new Configurer();
-            customizer.configure(configurer);
-            HierarchyAwareComponentProvider provider = new HierarchyAwareComponentProvider(
-                    constructionContext.orchestrator(),
-                    constructionContext.postConstructor(),
-                    constructionContext.application(),
-                    configurer.singletonCache.initialize(context),
-                    constructionContext.scope()
-            );
-            List<ComponentProviderStrategy> strategies = configurer.strategies.initialize(context);
-            provider.strategies(strategies);
-            return provider;
-        };
-    }
-
-    public static class Configurer {
-
-        private final LazyStreamableConfigurer<ComponentProviderConstructionContext, ComponentProviderStrategy> strategies = LazyStreamableConfigurer.of(configurer -> {
-            configurer.add(new SingletonCacheComponentProviderStrategy());
-            configurer.add(new ComponentProcessorComponentProviderStrategy());
-            configurer.add(new InstantiationStrategyComponentProviderStrategy());
-            configurer.add(new UnboundPrototypeComponentProviderStrategy());
-        });
-
-        private ContextualInitializer<ComponentProviderConstructionContext, SingletonCache> singletonCache = ContextualInitializer.of(ConcurrentHashSingletonCache::new);
-
-        public Configurer strategy(ComponentProviderStrategy strategy) {
-            this.strategies.customizer(configurer -> configurer.add(strategy));
-            return this;
-        }
-
-        public Configurer strategies(List<ComponentProviderStrategy> strategies) {
-            this.strategies.customizer(configurer -> strategies.forEach(configurer::add));
-            return this;
-        }
-
-        public Configurer strategies(Customizer<StreamableConfigurer<ComponentProviderConstructionContext, ComponentProviderStrategy>> customizer) {
-            this.strategies.customizer(customizer);
-            return this;
-        }
-
-        public Configurer singletonCache(SingletonCache singletonCache) {
-            this.singletonCache = ContextualInitializer.of(() -> singletonCache);
-            return this;
-        }
-
-        public Configurer singletonCache(ContextualInitializer<ComponentProviderConstructionContext, SingletonCache> singletonCache) {
-            this.singletonCache = singletonCache;
-            return this;
-        }
-    }
-
-    public record ComponentProviderConstructionContext(
-            InjectionCapableApplication application,
+    public static HierarchyAwareComponentProvider create(
             ComponentProviderOrchestrator orchestrator,
             ComponentPostConstructor postConstructor,
-            Scope scope
-    ) {}
+            InjectionCapableApplication application,
+            SingletonCache singletonCache,
+            Scope scope,
+            Customizer<StreamableConfigurer<InjectionCapableApplication, ComponentProviderStrategy>> strategyCustomizer
+    ) {
+        LazyStreamableConfigurer<InjectionCapableApplication, ComponentProviderStrategy> strategyConfigurer = LazyStreamableConfigurer.of(
+                configurer -> {
+                    configurer.add(new SingletonCacheComponentProviderStrategy());
+                    configurer.add(new ComponentProcessorComponentProviderStrategy());
+                    configurer.add(new InstantiationStrategyComponentProviderStrategy());
+                    configurer.add(new UnboundPrototypeComponentProviderStrategy());
+                });
+
+        List<ComponentProviderStrategy> strategies = strategyConfigurer.customizer(strategyCustomizer)
+                .initialize(SimpleSingleElementContext.create(application));
+
+        HierarchyAwareComponentProvider provider = new HierarchyAwareComponentProvider(
+                orchestrator,
+                postConstructor,
+                application,
+                singletonCache,
+                scope
+        );
+        provider.strategies(strategies);
+        return provider;
+    }
 }

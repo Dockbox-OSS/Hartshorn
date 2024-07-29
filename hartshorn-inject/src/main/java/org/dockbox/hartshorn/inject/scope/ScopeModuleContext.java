@@ -69,7 +69,7 @@ public class ScopeModuleContext extends DefaultContext {
     }
 
     public Collection<BindingHierarchy<?>> hierarchies(ScopeKey type) {
-        if (type == applicationScope) {
+        if (type == this.applicationScope) {
             return Collections.emptyList();
         }
         return this.scopeModules.get(type);
