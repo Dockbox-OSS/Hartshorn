@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
-import java.util.ServiceLoader.Provider;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -233,8 +232,8 @@ public final class DiscoveryService {
     private <T> T tryLoadFromSPI(Class<T> type) throws NoAvailableImplementationException {
         for(ClassLoader classLoader : this.classLoaders) {
             ServiceLoader<T> serviceLoader = this.getServiceLoader(type, classLoader);
-            Set<? extends Provider<T>> providers = serviceLoader.stream().collect(Collectors.toSet());
-            for(Provider<T> provider : providers) {
+            Set<? extends ServiceLoader.Provider<T>> providers = serviceLoader.stream().collect(Collectors.toSet());
+            for(ServiceLoader.Provider<T> provider : providers) {
                 try {
                     return provider.get();
                 }
@@ -255,11 +254,13 @@ public final class DiscoveryService {
         }
     }
 
+    @SuppressWarnings("ReturnValueIgnored")
     private void verifyRegistration(Class<?> type, Class<?> implementation) {
         if (!type.isAssignableFrom(implementation)) {
             throw new IllegalArgumentException("Implementation " + implementation.getName() + " is not assignable from type " + type.getName());
         }
         try {
+            // Ignore result, as we only want to check if the constructor is available
             implementation.getConstructor();
         }
         catch (NoSuchMethodException e) {

@@ -21,10 +21,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.SequencedCollection;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -174,8 +178,8 @@ public final class CollectionUtilities {
         if (collection == null || collection.isEmpty()) {
             return null;
         }
-        else if (collection instanceof NavigableSet<T> navigableSet) {
-            return navigableSet.last();
+        else if (collection instanceof SortedSet<T> sortedSet) {
+            return sortedSet.last();
         }
         else if (collection instanceof SequencedCollection<T> sequencedCollection) {
             return sequencedCollection.getLast();
@@ -204,8 +208,8 @@ public final class CollectionUtilities {
         if (iterable == null || (iterable instanceof Collection<T> collection && collection.isEmpty())) {
             return null;
         }
-        else if (iterable instanceof NavigableSet<T> navigableSet) {
-            return navigableSet.first();
+        else if (iterable instanceof SortedSet<T> sortedSet) {
+            return sortedSet.first();
         }
         else if (iterable instanceof SequencedCollection<T> sequencedCollection) {
             return sequencedCollection.getFirst();
@@ -250,6 +254,39 @@ public final class CollectionUtilities {
         }
         else {
             return Set.copyOf(set);
+        }
+    }
+
+    /**
+     * Iterates over the given iterator and applies the given consumer to each element. A counter
+     * is used to keep track of the index of the element in the iterator. The counter starts at 0
+     * and is incremented for each element in the iterator.
+     *
+     * @param iterator The iterator to iterate over
+     * @param consumer The consumer to apply to each element
+     * @param <T> The type of the elements in the iterator
+     */
+    public static <T> void indexed(Iterator<T> iterator, BiConsumer<Integer, T> consumer) {
+        int index = 0;
+        while (iterator.hasNext()) {
+            consumer.accept(index++, iterator.next());
+        }
+    }
+
+    /**
+     * Iterates over the given {@link java.util.Map.Entry entries} and applies the given consumer
+     * to each entry. This is no different from iterating over the entries and applying a consumer
+     * to each entry, except for the fact that this method allows a bi-consumer to be used instead.
+     *
+     * @param iterator The iterator to iterate over
+     * @param consumer The consumer to apply to each entry
+     * @param <T> The type of the keys in the entries
+     * @param <U> The type of the values in the entries
+     */
+    public static <T, U> void iterateEntries(Iterator<Entry<T, U>> iterator, BiConsumer<T, U> consumer) {
+        while (iterator.hasNext()) {
+            Entry<T, U> entry = iterator.next();
+            consumer.accept(entry.getKey(), entry.getValue());
         }
     }
 }

@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.hsl.objects.access.StandardPropertyAccessVerifier;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.util.ObjectDescriber;
 
 /**
  * Represents an instance of a {@link VirtualClass} inside a script. The instance is
@@ -93,7 +94,10 @@ public class VirtualInstance implements InstanceReference {
 
     @Override
     public String toString() {
-        return this.virtualClass.name() + " instance";
+        return ObjectDescriber.of(this)
+                .field("type", this.virtualClass)
+                .field("fields", this.fields)
+                .describe();
     }
 
     @NonNull

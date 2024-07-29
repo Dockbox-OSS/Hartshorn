@@ -47,14 +47,6 @@ public interface ContextIdentity<T extends ContextView> {
     String name();
 
     /**
-     * Indicates whether the fallback function of this identity requires an active application to
-     * be present. If there is no explicit fallback function, this will always return true.
-     *
-     * @return {@code true} if the fallback function of this key requires an active application.
-     */
-    boolean requiresApplicationContext();
-
-    /**
      * Creates a new context value for this key. If a fallback function is present, it will be used
      * to create the value.
      *

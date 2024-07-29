@@ -118,7 +118,7 @@ import java.util.function.Consumer;
  * public interface User {
  *     String greeting();
  * }
- * public class UserImpl implements User {
+ * public class SimpleUser implements User {
  *     @Override
  *     public String greeting() {
  *         return "Hello implementation!";
@@ -127,7 +127,7 @@ import java.util.function.Consumer;
  * }</pre>
  * <pre>{@code
  * StateAwareProxyFactory<User, ?> factory = applicationManager.factory(User.class);
- * factory.delegate(new UserImpl());
+ * factory.delegate(new SimpleUser());
  * User user = factory.proxy().get();
  * user.greeting(); // Returns 'Hello implementation!'
  * }</pre>
@@ -141,7 +141,7 @@ import java.util.function.Consumer;
  * public interface User extends ContextCarrier {
  *     String greeting();
  * }
- * public class ContextCarrierImpl implements ContextCarrier {
+ * public class ConcreteContextCarrier implements ContextCarrier {
  *     @Override
  *     public ApplicationContext applicationContext() {
  *         return ...;
@@ -150,7 +150,7 @@ import java.util.function.Consumer;
  * }</pre>
  * <pre>{@code
  * StateAwareProxyFactory<User, ?> factory = applicationManager.factory(User.class);
- * factory.delegate(ContextCarrier.class, new ContextCarrierImpl());
+ * factory.delegate(ContextCarrier.class, new ConcreteContextCarrier());
  * User user = factory.proxy().get();
  * user.applicationContext(); // Returns a valid application context
  * user.greeting(); // Yields an exception as no implementation is assigned and the method is abstract
@@ -166,7 +166,7 @@ import java.util.function.Consumer;
  * public interface User extends Returner {
  *     String greeting();
  * }
- * public class ReturnerImpl implements Returner {
+ * public class SelfReturner implements Returner {
  *     @Override
  *     public Returner self() {
  *         return this;
@@ -175,9 +175,9 @@ import java.util.function.Consumer;
  * }</pre>
  * <pre>{@code
  * StateAwareProxyFactory<User, ?> factory = applicationManager.factory(User.class);
- * factory.delegate(Returner.class, new ReturnerImpl());
+ * factory.delegate(Returner.class, new SelfReturner());
  * User user = factory.proxy().get();
- * user.self(); // Returns the user proxy object instead of the ReturnerImpl instance
+ * user.self(); // Returns the user proxy object instead of the SelfReturner instance
  * }</pre>
  *
  * @param <T> The type of the proxy

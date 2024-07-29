@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.SequencedSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -51,11 +51,11 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
 
     private final Annotation actual;
     private final Class<A> targetAnnotationClass;
-    private final LinkedHashSet<Class<? extends Annotation>> actualAnnotationHierarchy;
+    private final SequencedSet<Class<? extends Annotation>> actualAnnotationHierarchy;
     private final AnnotationLookup owner;
     private final Map<String, Option<Object>> methodsCache = new ConcurrentHashMap<>();
 
-    AnnotationAdapterProxy(Annotation actual, Class<A> targetAnnotationClass, LinkedHashSet<Class<? extends Annotation>> actualAnnotationHierarchy, AnnotationLookup owner) {
+    AnnotationAdapterProxy(Annotation actual, Class<A> targetAnnotationClass, SequencedSet<Class<? extends Annotation>> actualAnnotationHierarchy, AnnotationLookup owner) {
         this.actual = actual;
         this.targetAnnotationClass = targetAnnotationClass;
         this.actualAnnotationHierarchy = actualAnnotationHierarchy;
@@ -104,7 +104,7 @@ public class AnnotationAdapterProxy<A extends Annotation> implements InvocationH
      * Returns the actual annotation hierarchy for this proxy.
      * @return The actual annotation hierarchy
      */
-    public LinkedHashSet<Class<? extends Annotation>> actualAnnotationHierarchy() {
+    public SequencedSet<Class<? extends Annotation>> actualAnnotationHierarchy() {
         return this.actualAnnotationHierarchy;
     }
 

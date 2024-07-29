@@ -51,7 +51,7 @@ public class ObjectToArrayConverter implements GenericConverter {
         return array;
     }
 
-    private <I, O> Object convertPrimitive(Object source, Class<I> sourceType) {
+    private Object convertPrimitive(Object source, Class<?> sourceType) {
         switch (sourceType.getName()) {
             case "boolean" -> {
                 boolean[] booleanArray = new boolean[1];

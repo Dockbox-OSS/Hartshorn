@@ -21,6 +21,7 @@
         <!-- Versions in alphabetical order -->
         <compile-testing.version>0.21.0</compile-testing.version>
         <checker.version>3.42.0</checker.version>
+        <errorprone.version>${plugin.errorprone.version}</errorprone.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jackson.version>2.16.1</jackson.version>
         <jakarta.annotations.version>2.1.1</jakarta.annotations.version>
@@ -69,7 +70,17 @@
             </dependency>
             <dependency>
                 <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-core</artifactId>
+                <artifactId>hartshorn-inject</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dockbox.hartshorn</groupId>
+                <artifactId>hartshorn-inject-configurations</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dockbox.hartshorn</groupId>
+                <artifactId>hartshorn-launchpad</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -80,21 +91,6 @@
             <dependency>
                 <groupId>org.dockbox.hartshorn</groupId>
                 <artifactId>hartshorn-hsl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-config</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-config-jackson</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-i18n</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

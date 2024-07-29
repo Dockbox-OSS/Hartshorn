@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.util.introspect.annotations;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.SequencedSet;
 
 /**
  * Look-up utility to find annotations on a given {@link AnnotatedElement}, and to construct virtual
@@ -86,5 +86,5 @@ public interface AnnotationLookup {
      * @param type The annotation to get the hierarchy of
      * @return The linear hierarchy of the given annotation
      */
-    LinkedHashSet<Class<? extends Annotation>> annotationHierarchy(Class<? extends Annotation> type);
+    SequencedSet<Class<? extends Annotation>> annotationHierarchy(Class<? extends Annotation> type);
 }

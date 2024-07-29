@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class HartshornProxyLookup implements ProxyLookup {
     @Override
     public <T> Option<Class<T>> unproxy(T instance) {
         if (instance instanceof Proxy<?> proxy) {
-            Class<T> unproxied = TypeUtils.adjustWildcards(proxy.manager().targetClass(), Class.class);
+            Class<T> unproxied = TypeUtils.unchecked(proxy.manager().targetClass(), Class.class);
             return Option.of(unproxied);
         }
         return Option.empty();
@@ -58,7 +58,7 @@ public class HartshornProxyLookup implements ProxyLookup {
         if (instance instanceof Proxy<?> proxy) {
             ProxyManager<?> manager = proxy.manager();
             if (manager.proxy() == instance) {
-                ProxyManager<T> adjustedManager = TypeUtils.adjustWildcards(manager, ProxyManager.class);
+                ProxyManager<T> adjustedManager = TypeUtils.unchecked(manager, ProxyManager.class);
                 return Option.of(adjustedManager);
             }
         }

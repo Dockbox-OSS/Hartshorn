@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
+import org.dockbox.hartshorn.inject.annotations.Component;
+import org.dockbox.hartshorn.inject.annotations.Service;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+
 /**
  * The attributes by which components can be grouped.
  *
@@ -25,8 +29,8 @@ package org.dockbox.hartshorn.reporting.component;
  */
 public enum ComponentAttribute {
     /**
-     * Group components by their component stereotype, for example {@link org.dockbox.hartshorn.component.Component},
-     * {@link org.dockbox.hartshorn.component.Configuration}, or {@link org.dockbox.hartshorn.component.Service}.
+     * Group components by their component stereotype, for example {@link Component},
+     * {@link Configuration}, or {@link Service}.
      */
     STEREOTYPE,
     /**

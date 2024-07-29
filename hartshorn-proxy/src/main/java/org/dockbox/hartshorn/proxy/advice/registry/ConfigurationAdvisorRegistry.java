@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistr
                 .map(this::method)
                 .orElseThrow(() -> new IllegalArgumentException("Method view does not contain a method"));
 
-        return TypeUtils.adjustWildcards(advisorStep, StateAwareMethodAdvisorRegistryStep.class);
+        return TypeUtils.unchecked(advisorStep, StateAwareMethodAdvisorRegistryStep.class);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistr
         StateAwareMethodAdvisorRegistryStep<T, ?> registryStep = this.methodAdvisors.computeIfAbsent(method,
                 method0 -> new ConfigurationStateAwareMethodAdvisorRegistryStep<>(this, method));
 
-        return TypeUtils.adjustWildcards(registryStep, StateAwareMethodAdvisorRegistryStep.class);
+        return TypeUtils.unchecked(registryStep, StateAwareMethodAdvisorRegistryStep.class);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistr
             StateAwareTypeAdvisorRegistryStep<?, T> advisorStep = this.typeAdvisors.computeIfAbsent(type,
                     type0 -> new ConfigurationStateAwareTypeAdvisorRegistryStep<>(this, type));
 
-            return TypeUtils.adjustWildcards(advisorStep, StateAwareTypeAdvisorRegistryStep.class);
+            return TypeUtils.unchecked(advisorStep, StateAwareTypeAdvisorRegistryStep.class);
         }
         else {
             throw new IllegalArgumentException(this.advisedType().getName() + " does not " + (type.isInterface() ? "implement " : "extend ") + type);

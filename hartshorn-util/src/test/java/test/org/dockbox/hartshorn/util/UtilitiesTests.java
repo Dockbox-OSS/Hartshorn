@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -276,7 +276,7 @@ public class UtilitiesTests {
     @Test
     void testValidWildcardAdjustment() {
         List<?> list = Arrays.asList("one", "two", "three");
-        List<String> adjusted = Assertions.assertDoesNotThrow(() -> TypeUtils.adjustWildcards(list, List.class));
+        List<String> adjusted = Assertions.assertDoesNotThrow(() -> TypeUtils.unchecked(list, List.class));
         Assertions.assertNotNull(adjusted);
         Assertions.assertSame(list, adjusted);
     }
@@ -284,7 +284,7 @@ public class UtilitiesTests {
     @Test
     void testWildcardAdjustmentDoesAdjustParent() {
         List<?> list = Arrays.asList("one", "two", "three");
-        List<String> adjusted = Assertions.assertDoesNotThrow(() -> TypeUtils.adjustWildcards(list, Collection.class));
+        List<String> adjusted = Assertions.assertDoesNotThrow(() -> TypeUtils.unchecked(list, Collection.class));
         Assertions.assertNotNull(adjusted);
         Assertions.assertSame(list, adjusted);
     }

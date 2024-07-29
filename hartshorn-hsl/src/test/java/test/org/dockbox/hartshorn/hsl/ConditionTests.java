@@ -18,9 +18,9 @@ package test.org.dockbox.hartshorn.hsl;
 
 import java.util.stream.Stream;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.condition.ConditionContext;
-import org.dockbox.hartshorn.component.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.ConditionContext;
+import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.condition.ExpressionCondition;
@@ -37,7 +37,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 
 @HartshornTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -101,6 +101,4 @@ public class ConditionTests {
 
         return elementView;
     }
-
-    private void mockTarget() {}
 }

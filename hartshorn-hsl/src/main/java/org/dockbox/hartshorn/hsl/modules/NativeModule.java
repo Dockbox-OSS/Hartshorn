@@ -18,13 +18,13 @@ package org.dockbox.hartshorn.hsl.modules;
 
 import java.util.List;
 
-import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 
 /**
  * A common library containing multiple {@link NativeFunctionStatement}s which can be
@@ -35,7 +35,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
  *
  * @author Guus Lieben
  */
-public interface NativeModule extends ContextCarrier {
+public interface NativeModule extends ApplicationContextCarrier {
 
     /**
      * Call the native function with the given name and arguments. The arguments are passed as a list of objects,
@@ -57,7 +57,7 @@ public interface NativeModule extends ContextCarrier {
      * implementation, though it is typically expected that these methods are public.
      *
      * @param moduleName  The name of the module. This is used to identify the module.
-     * @param interpreter
+     * @param interpreter The interpreter in which the module is loaded. This can be used to obtain additional context.
      * @return The supported functions of this module.
      */
     List<NativeFunctionStatement> supportedFunctions(Token moduleName, Interpreter interpreter);

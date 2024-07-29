@@ -61,8 +61,8 @@ import org.dockbox.hartshorn.util.option.some.Some;
  *     </li>
  *     <li>
  *         {@link Option} is a {@link Context}, which allows for the storage of additional data. This is useful for example when
- *         a value is present, but the value is not the only thing that is relevant. For example, when a value is absent, and the
- *         reason for the absence is relevant, the reason can be stored in the {@link Context} of the {@link Option} instance.
+ *         a value may be present, but the value is not the only thing that is relevant. For example, when a value is absent, and
+ *         the reason for the absence is relevant, the reason can be stored in the {@link Context} of the {@link Option} instance.
  *     </li>
  * </ol>
  *
@@ -406,7 +406,7 @@ public interface Option<T> extends Context, Iterable<T> {
      * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given type.
      */
     default <K extends T, A extends K> Option<A> adjust(@NonNull Class<K> type) {
-        return this.ofType(type).map(value -> TypeUtils.adjustWildcards(value, type));
+        return this.ofType(type).map(value -> TypeUtils.unchecked(value, type));
     }
 
     /**

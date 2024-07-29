@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
 
-    <!-- Motivation for suppression of CVE-2023-35116 -->
     <!--
-    As stated in https://github.com/FasterXML/jackson-databind/issues/3972 this is a misreported
-    CVE, and can thus be treated as a false positive until the CVE is updated.
+    Suppressed as we're not using (nor exposing) Guava directly, but only through compile-testing package,
+    and thus have no applicable attack surface (either to our code or to our users).
     -->
     <suppress>
-        <notes><![CDATA[file name: jackson-databind-2.15.2.jar]]></notes>
-        <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson\-databind@.*$</packageUrl>
-        <cve>CVE-2023-35116</cve>
+        <notes><![CDATA[file name: guava-31.1-jre.jar]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.guava/guava@.*$</packageUrl>
+        <cve>CVE-2023-2976</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[file name: guava-31.1-jre.jar]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.guava/guava@.*$</packageUrl>
+        <cve>CVE-2020-8908</cve>
     </suppress>
 </suppressions>

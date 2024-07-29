@@ -51,7 +51,7 @@ public class JavassistProxyLookup implements StandardProxyLookup {
             MethodHandler handler = ProxyFactory.getHandler(proxy);
             if (handler instanceof JavassistProxyMethodHandler<?> javassistProxyMethodHandler) {
                 Class<?> targetClass = javassistProxyMethodHandler.interceptor().manager().targetClass();
-                Class<T> adjustedTargetClass = TypeUtils.adjustWildcards(targetClass, Class.class);
+                Class<T> adjustedTargetClass = TypeUtils.unchecked(targetClass, Class.class);
                 return Option.of(adjustedTargetClass);
             }
         }
@@ -70,7 +70,7 @@ public class JavassistProxyLookup implements StandardProxyLookup {
             if (handler instanceof JavassistProxyMethodHandler<?> javassistProxyMethodHandler) {
                 ProxyManager<?> manager = javassistProxyMethodHandler.interceptor().manager();
                 if (manager.proxy() == instance) {
-                    ProxyManager<T> adjustedManager = TypeUtils.adjustWildcards(manager, ProxyManager.class);
+                    ProxyManager<T> adjustedManager = TypeUtils.unchecked(manager, ProxyManager.class);
                     return Option.of(adjustedManager);
                 }
             }

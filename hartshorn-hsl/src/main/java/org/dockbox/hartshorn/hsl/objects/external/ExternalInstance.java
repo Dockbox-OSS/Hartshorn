@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.util.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -128,7 +129,9 @@ public class ExternalInstance implements ExternalObjectReference {
 
     @Override
     public String toString() {
-        return String.valueOf(this.instance);
+        return ObjectDescriber.of(this)
+                .field("instance", this.instance)
+                .describe();
     }
 
     @NonNull

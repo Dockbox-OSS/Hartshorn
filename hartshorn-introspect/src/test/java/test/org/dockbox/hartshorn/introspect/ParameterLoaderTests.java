@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
+import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -34,7 +35,7 @@ public class ParameterLoaderTests {
 
     @Test
     void testRuleBasedParameterLoadersCannotHaveDuplicateRules() {
-        RuleBasedParameterLoaderImpl parameterLoader = new RuleBasedParameterLoaderImpl();
+        RuleBasedParameterLoader<?> parameterLoader = RuleBasedParameterLoader.createDefault();
         ParameterLoaderRule<ParameterLoaderContext> stringRule = new StringParameterRule();
         parameterLoader.add(stringRule);
         parameterLoader.add(stringRule);
@@ -43,7 +44,7 @@ public class ParameterLoaderTests {
 
     @Test
     void testRuleBasedParameterLoaderReturnsCorrectObjectsOrDefault() {
-        RuleBasedParameterLoaderImpl parameterLoader = new RuleBasedParameterLoaderImpl();
+        RuleBasedParameterLoader<?> parameterLoader = RuleBasedParameterLoader.createDefault();
         parameterLoader.add(new StringParameterRule());
 
         TypeView<String> stringTypeView = Mockito.mock(TypeView.class);
@@ -58,10 +59,10 @@ public class ParameterLoaderTests {
 
         MethodView<?, ?> methodContext = Mockito.mock(MethodView.class);
 
-        ParameterView<String> stringParameter = TypeUtils.adjustWildcards(Mockito.mock(ParameterView.class), ParameterView.class);
+        ParameterView<String> stringParameter = TypeUtils.unchecked(Mockito.mock(ParameterView.class), ParameterView.class);
         Mockito.when(stringParameter.type()).thenReturn(stringTypeView);
 
-        ParameterView<Integer> intParameter = TypeUtils.adjustWildcards(Mockito.mock(ParameterView.class), ParameterView.class);
+        ParameterView<Integer> intParameter = TypeUtils.unchecked(Mockito.mock(ParameterView.class), ParameterView.class);
         Mockito.when(intParameter.type()).thenReturn(intTypeView);
 
         ExecutableParametersIntrospector parametersIntrospector = Mockito.mock(ExecutableParametersIntrospector.class);
@@ -73,7 +74,9 @@ public class ParameterLoaderTests {
         Mockito.when(parametersIntrospector.all()).thenReturn(parameters);
         Mockito.when(methodContext.parameters()).thenReturn(parametersIntrospector);
 
-        ParameterLoaderContext loaderContext = new ParameterLoaderContext(methodContext, null);
+        // Object to serve as mock instance, to prevent static method rules from rejecting the context. Alternative would be
+        // to mock MethodView#modifiers#isStatic, but this is more straightforward.
+        ParameterLoaderContext loaderContext = new ParameterLoaderContext(methodContext, new Object());
         List<Object> objects = parameterLoader.loadArguments(loaderContext);
 
         Assertions.assertNotNull(objects);

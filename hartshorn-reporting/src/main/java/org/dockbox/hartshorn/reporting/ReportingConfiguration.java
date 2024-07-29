@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.reporting;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Configuration;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.component.processing.CompositeMember;
-import org.dockbox.hartshorn.component.processing.Prototype;
-import org.dockbox.hartshorn.component.processing.Singleton;
-import org.dockbox.hartshorn.inject.Strict;
-import org.dockbox.hartshorn.inject.SupportPriority;
-import org.dockbox.hartshorn.inject.binding.collection.ComponentCollection;
+import org.dockbox.hartshorn.inject.annotations.CompositeMember;
+import org.dockbox.hartshorn.inject.annotations.Strict;
+import org.dockbox.hartshorn.inject.annotations.SupportPriority;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
+import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
+import org.dockbox.hartshorn.inject.collection.ComponentCollection;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.aggregate.AggregateReporterConfiguration;
 import org.dockbox.hartshorn.reporting.application.ApplicationDiagnosticsReporter;
