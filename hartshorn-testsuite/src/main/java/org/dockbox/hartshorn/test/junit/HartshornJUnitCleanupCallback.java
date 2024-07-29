@@ -48,7 +48,7 @@ public class HartshornJUnitCleanupCallback implements BeforeTestExecutionCallbac
             callback.closeAfterLifecycle(context);
         }
         // Always last, in case the application is used by the callbacks
-        tryCloseApplication(context);
+        this.tryCloseApplication(context);
     }
 
     private void tryCloseApplication(ExtensionContext context) throws Exception {

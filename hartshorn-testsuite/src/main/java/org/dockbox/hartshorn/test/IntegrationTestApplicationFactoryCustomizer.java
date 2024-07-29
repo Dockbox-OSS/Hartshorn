@@ -53,7 +53,7 @@ public record IntegrationTestApplicationFactoryCustomizer(
             environment.applicationFSProvider(new TemporaryFileSystemProvider());
 
             Customizer<SimpleApplicationContext.Configurer> applicationContextCustomizer = applicationContext -> {
-                configureDefaultBindings(applicationContext, testComponentSources);
+                this.configureDefaultBindings(applicationContext, this.testComponentSources);
             };
             environment.applicationContext(
                     SimpleApplicationContext.create(applicationContextCustomizer.compose(TestCustomizer.APPLICATION_CONTEXT.customizer())));

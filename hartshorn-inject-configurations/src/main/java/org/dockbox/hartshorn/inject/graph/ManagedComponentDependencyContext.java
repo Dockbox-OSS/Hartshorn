@@ -86,7 +86,7 @@ public abstract class ManagedComponentDependencyContext<T> implements LifecycleA
 
     @Override
     public Option<ScopeKey> scope() {
-        return componentKey.scope().map(Scope::installableScopeType);
+        return this.componentKey.scope().map(Scope::installableScopeType);
     }
 
     @Override

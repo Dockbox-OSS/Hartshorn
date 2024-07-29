@@ -43,7 +43,7 @@ public abstract class StrategyChainComponentProvider implements ComponentProvide
     }
 
     public InjectionCapableApplication application() {
-        return application;
+        return this.application;
     }
 
     @Override

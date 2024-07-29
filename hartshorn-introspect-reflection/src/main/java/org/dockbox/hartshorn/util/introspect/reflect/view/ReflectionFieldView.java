@@ -84,7 +84,7 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
                 Option<MethodView<Parent, ?>> method = this.declaredBy().methods().named(setter, List.of(this.type().type()));
                 MethodView<Parent, ?> methodView = method.orElseThrow(() -> new IllegalIntrospectionException(this, "Setter for field '" + this.name() + "' (" + setter + ") does not exist!"));
                 this.setter = (object, propertyValue) -> {
-                    methodView.invoke(this.declaredBy().cast(instance), propertyValue).cast(type().type());
+                    methodView.invoke(this.declaredBy().cast(instance), propertyValue).cast(this.type().type());
                 };
             } else {
                 this.setter = (object, propertyValue) -> {

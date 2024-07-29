@@ -251,7 +251,7 @@ public abstract class DelegatingApplicationContext
                     observer.onExit(this);
                 }
                 catch (Throwable e) {
-                    handle("Error notifying " + observer.getClass().getSimpleName() + " of shutdown", e);
+                    this.handle("Error notifying " + observer.getClass().getSimpleName() + " of shutdown", e);
                 }
             }
             this.isClosed = true;

@@ -40,7 +40,7 @@ public class InstantiationStrategyComponentProviderStrategy implements Component
     ) throws ApplicationException {
         BindingHierarchy<T> hierarchy = this.hierarchy(chain.componentProvider(), componentKey, true);
         if(hierarchy != null) {
-            ObjectContainer<T> container = createFromHierarchy(componentKey, requestContext, chain, hierarchy);
+            ObjectContainer<T> container = this.createFromHierarchy(componentKey, requestContext, chain, hierarchy);
             if(container != null) {
                 return container;
             }
@@ -52,7 +52,7 @@ public class InstantiationStrategyComponentProviderStrategy implements Component
             ComponentProviderStrategyChain<T> chain, BindingHierarchy<T> hierarchy) throws ApplicationException {
         InstantiationStrategy<T> strategy = componentKey.strategy().selectProvider(hierarchy);
         if (strategy != null) {
-            return createFromInstantiationStrategy(requestContext, chain, strategy);
+            return this.createFromInstantiationStrategy(requestContext, chain, strategy);
         }
         return null;
     }

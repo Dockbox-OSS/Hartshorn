@@ -90,14 +90,15 @@ public class HierarchicalComponentProviderOrchestrator
 
     @NonNull
     private HierarchicalBinderAwareComponentProvider createComponentProvider(Scope scope) {
-        var context = new HierarchyAwareComponentProvider.ComponentProviderConstructionContext(
-                this.application, this, this.postConstructor, scope
-        );
+        HierarchicalBinderAwareComponentProvider provider = HierarchyAwareComponentProvider.create(
+                this,
+                this.postConstructor,
+                this.application,
+                new ConcurrentHashSingletonCache(),
+                scope,
+                Customizer.useDefaults());
 
-        HierarchicalBinderAwareComponentProvider provider = HierarchyAwareComponentProvider.create(Customizer.useDefaults())
-                .initialize(SimpleSingleElementContext.create(context));
-
-        if (scope != this.application) {
+        if(scope != this.application) {
             ContextKey<ScopeModuleContext> scopeModuleContextKey = ScopeModuleContext.createKey(() -> this.scope().installableScopeType());
             ScopeModuleContext scopeModuleContext = this.application.firstContext(scopeModuleContextKey).get();
             Collection<BindingHierarchy<?>> hierarchies = scopeModuleContext.hierarchies(scope.installableScopeType());
