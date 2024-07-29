@@ -35,6 +35,7 @@ class HartshornJUnitNamespace {
     static Store store(ExtensionContext context) {
         return context.getStore(NAMESPACE);
     }
+
     static InjectionCapableApplication application(ExtensionContext context) {
         InjectionCapableApplication application = store(context).get(APPLICATION, InjectionCapableApplication.class);
         if (application == null) {
