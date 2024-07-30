@@ -9,14 +9,22 @@
     <version>${revision}</version>
 
     <name>Hartshorn Framework</name>
-    <description>Hartshorn is a modern JVM-based full stack Java framework</description>
+    <description>Hartshorn Framework</description>
     <url>https://hartshorn.dockbox.org/</url>
+    <inceptionYear>2019</inceptionYear>
 
     <organization>
         <name>Dockbox OSS</name>
         <url>https://dockbox.org/</url>
     </organization>
-    <inceptionYear>2019</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <scm>
         <url>https://github.com/Dockbox-OSS/Hartshorn</url>
@@ -27,18 +35,10 @@
     <developers>
         <developer>
             <name>Guus Lieben</name>
-            <email>guuslieben@xendox.com</email>
-            <url>https://guuslieben.nl/</url>
+            <email>guuslieben@dockbox.org</email>
+            <url>https://github.com/GuusLieben</url>
             <organization>Dockbox OSS</organization>
             <organizationUrl>https://dockbox.org/</organizationUrl>
-        </developer>
-        <developer>
-            <name>Josh Jeffers</name>
-            <url>https://www.pumbas.net/</url>
-        </developer>
-        <developer>
-            <name>Simon Bolduc</name>
-            <url>https://github.com/simbolduc</url>
         </developer>
     </developers>
 
@@ -88,15 +88,6 @@
         <plugin.source.version>3.3.0</plugin.source.version>
         <plugin.staging.version>1.6.13</plugin.staging.version>
     </properties>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-            <comments>A business-friendly OSS license</comments>
-        </license>
-    </licenses>
 
     <profiles>
         <profile>
