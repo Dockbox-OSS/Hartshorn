@@ -65,6 +65,8 @@ public @interface HartshornIntegrationTest {
      *
      * @see StandardApplicationContextFactory.Configurer#componentPreProcessors(Customizer)
      * @see StandardApplicationContextFactory.Configurer#componentPostProcessors(Customizer)
+     *
+     * @return the additional {@link ComponentProcessor}s to use
      */
     Class<? extends ComponentProcessor>[] processors() default  {};
 
@@ -74,6 +76,8 @@ public @interface HartshornIntegrationTest {
      * test suite, even if they are not known to the chosen {@link #mainClass()}.
      *
      * @see StandardApplicationContextFactory.Configurer#scanPackages(Customizer)
+     *
+     * @return the additional packages to scan
      */
     String[] scanPackages() default {};
 
@@ -82,6 +86,8 @@ public @interface HartshornIntegrationTest {
      * {@link #scanPackages()}. Defaults to {@code true}.
      *
      * @see StandardApplicationContextFactory.Configurer#includeBasePackages(boolean)
+     *
+     * @return whether to include the base package of the main class
      */
     boolean includeBasePackages() default true;
 
@@ -91,6 +97,8 @@ public @interface HartshornIntegrationTest {
      * used, depending on the application environment.
      *
      * @see StandardApplicationBuilder.Configurer#mainClass(Class)
+     *
+     * @return the main class to use, or {@link Void} if not set
      */
     Class<?> mainClass() default Void.class;
 }

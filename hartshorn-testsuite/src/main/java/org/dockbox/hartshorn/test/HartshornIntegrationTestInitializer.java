@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
 import org.dockbox.hartshorn.inject.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
@@ -36,11 +37,10 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.SimpleSingleElementContext;
 import org.dockbox.hartshorn.util.option.Option;
-import org.jetbrains.annotations.NotNull;
 
 public class HartshornIntegrationTestInitializer {
 
-    @NotNull
+    @NonNull
     public ApplicationContext createTestApplicationContext(Class<?> testClass, Object testInstance,
             AnnotatedElement[] testComponentSources) throws ApplicationException {
         if (testClass == null) {

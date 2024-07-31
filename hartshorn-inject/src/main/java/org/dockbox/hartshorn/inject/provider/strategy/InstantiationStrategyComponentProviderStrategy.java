@@ -68,7 +68,8 @@ public class InstantiationStrategyComponentProviderStrategy implements Component
             case HierarchyLookup hierarchyLookup -> {
                 return this.hierarchy(hierarchyLookup, key, useGlobalIfAbsent);
             }
-            case BinderAwareComponentProvider binderAwareProvider when binderAwareProvider.binder() instanceof HierarchicalBinder hierarchicalBinder -> {
+            case BinderAwareComponentProvider binderAwareProvider
+                when binderAwareProvider.binder() instanceof HierarchicalBinder hierarchicalBinder -> {
                 return this.hierarchy(hierarchicalBinder, key, useGlobalIfAbsent);
             }
             default -> {

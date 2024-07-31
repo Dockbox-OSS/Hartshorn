@@ -17,7 +17,6 @@
 package test.org.dockbox.hartshorn.inject.populate;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;

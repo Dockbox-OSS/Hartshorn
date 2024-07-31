@@ -32,8 +32,9 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * TODO: #1060 Add documentation
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
 
