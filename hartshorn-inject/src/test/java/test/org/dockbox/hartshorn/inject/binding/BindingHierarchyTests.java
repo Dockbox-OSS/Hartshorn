@@ -17,7 +17,6 @@
 package test.org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.QualifierKey;
-import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.inject.binding.ScopeAwareHierarchicalBinder;
