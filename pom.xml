@@ -68,25 +68,26 @@
 
         <!-- Language versions, also inherited by BOM -->
         <groovy.version>4.0.18</groovy.version>
-        <kotlin.version>1.9.22</kotlin.version>
+        <kotlin.version>2.0.0</kotlin.version>
         <scala.version>3.3.1</scala.version>
 
         <!-- Maven plugin versions, in alphabetical order -->
-        <plugin.buildhelper.version>3.5.0</plugin.buildhelper.version>
-        <plugin.compiler.version>3.12.1</plugin.compiler.version>
-        <plugin.checkstyle.version>3.3.1</plugin.checkstyle.version>
-        <plugin.deploy.version>3.1.1</plugin.deploy.version>
-        <plugin.gpg.version>1.6</plugin.gpg.version>
+        <plugin.buildhelper.version>3.6.0</plugin.buildhelper.version>
+        <plugin.compiler.version>3.13.0</plugin.compiler.version>
+        <plugin.checkstyle.version>3.4.0</plugin.checkstyle.version>
+        <plugin.deploy.version>3.1.2</plugin.deploy.version>
+        <plugin.gpg.version>3.2.4</plugin.gpg.version>
+        <plugin.versions.version>2.17.1</plugin.versions.version>
         <plugin.groovy.version>2.1.1</plugin.groovy.version>
-        <plugin.jacoco.version>0.8.11</plugin.jacoco.version>
-        <plugin.jar.version>3.3.0</plugin.jar.version>
-        <plugin.javadoc.version>3.6.3</plugin.javadoc.version>
+        <plugin.jacoco.version>0.8.12</plugin.jacoco.version>
+        <plugin.jar.version>3.4.2</plugin.jar.version>
+        <plugin.javadoc.version>3.8.0</plugin.javadoc.version>
         <plugin.kotlin.version>${kotlin.version}</plugin.kotlin.version>
-        <plugin.license.version>4.3</plugin.license.version>
-        <plugin.owasp.version>9.0.9</plugin.owasp.version>
-        <plugin.scala.version>4.8.1</plugin.scala.version>
-        <plugin.source.version>3.3.0</plugin.source.version>
-        <plugin.staging.version>1.6.13</plugin.staging.version>
+        <plugin.license.version>4.5</plugin.license.version>
+        <plugin.owasp.version>10.0.3</plugin.owasp.version>
+        <plugin.scala.version>4.9.2</plugin.scala.version>
+        <plugin.source.version>3.3.1</plugin.source.version>
+        <plugin.staging.version>1.7.0</plugin.staging.version>
     </properties>
 
     <profiles>
@@ -163,6 +164,11 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>${plugin.buildhelper.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>${plugin.versions.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -367,12 +373,29 @@
                 </executions>
             </plugin>
 
+            <!-- Deployment configuration -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <configuration>
                     <!-- Skip root pom, re-enabled in hartshorn-assembly/pom.staging.xml -->
                     <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <!-- Dependency version upgrades -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <configuration>
+                    <ignoredVersions>.*[-_\.](alpha|Alpha|ALPHA|b|beta|Beta|BETA|rc|RC|M|MR|EA)[-_\.]?[0-9]*</ignoredVersions>
+                    <generateBackupPoms>false</generateBackupPoms>
+
+                    <!--
+                    Exclude Kotlin plugin version from being updated, as this should always reference the kotlin.version property
+                    instead of being directly updated by the versions plugin.
+                    -->
+                    <excludeProperties>plugin.kotlin.version</excludeProperties>
                 </configuration>
             </plugin>
         </plugins>
