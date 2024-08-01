@@ -68,7 +68,7 @@
 
         <!-- Language versions, also inherited by BOM -->
         <groovy.version>4.0.18</groovy.version>
-        <kotlin.version>1.9.22</kotlin.version>
+        <kotlin.version>2.0.0</kotlin.version>
         <scala.version>3.3.1</scala.version>
 
         <!-- Maven plugin versions, in alphabetical order -->
