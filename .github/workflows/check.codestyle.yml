@@ -15,4 +15,4 @@ jobs:
           java-version: 21
           distribution: temurin
       - name: Check code style
-        run: mvn clean install -DskipTests -P ci,all -Dcheckstyle.skip=false
+        run: mvn clean install -DskipTests -P ci -Dcheckstyle.skip=false

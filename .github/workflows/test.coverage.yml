@@ -15,7 +15,7 @@ jobs:
           distribution: temurin
       - name: Run tests
         id: test
-        run: "mvn clean verify -P ci,all -Djacoco.haltOnFailure=true"
+        run: "mvn clean verify -P ci -Djacoco.haltOnFailure=true"
   testSourceCompat:
     needs: [coverage]
     strategy:
@@ -32,5 +32,5 @@ jobs:
           java-version: 21
           distribution: temurin
       - name: "Unit testing (OS: ${{ matrix.os }}, source JDK)"
-        run: "mvn clean verify -P ci,all -Djacoco.haltOnFailure=true"
+        run: "mvn clean verify -P ci -Djacoco.haltOnFailure=true"
         shell: bash

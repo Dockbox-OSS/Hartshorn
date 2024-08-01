@@ -15,9 +15,9 @@ jobs:
           java-version: 21
           distribution: temurin
       - name: Prepare for dependency check
-        run: mvn clean install -DskipTests -P ci,all
+        run: mvn clean install -DskipTests -P ci
       - name: Analyze dependencies
-        run: mvn dependency-check:check -Dowasp.skip=false -DnvdApiKey=${{ secrets.NVD_API_KEY }} -P ci,all
+        run: mvn dependency-check:check -Dowasp.skip=false -DnvdApiKey=${{ secrets.NVD_API_KEY }} -P ci
       - name: Archive dependency reports
         uses: actions/upload-artifact@v2
         if: always()

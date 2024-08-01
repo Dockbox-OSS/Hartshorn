@@ -18,4 +18,4 @@ jobs:
           java-version: 21
           distribution: temurin
       - name: Check license headers
-        run: mvn license:check -P ci,all
+        run: mvn license:check -P ci

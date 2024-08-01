@@ -14,4 +14,4 @@ jobs:
           java-version: 21
           distribution: temurin
       - name: "Build (source JDK)"
-        run: mvn clean install -DskipTests -P ci,all
+        run: mvn clean install -DskipTests -P ci
