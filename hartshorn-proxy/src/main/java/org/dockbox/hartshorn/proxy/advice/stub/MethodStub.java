@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ package org.dockbox.hartshorn.proxy.advice.stub;
  *
  * @param <T> The type of the proxy instance as defined by the owning {@link org.dockbox.hartshorn.proxy.ProxyFactory}
  *
- * @since 0.5.0
+ * @since 0.4.9
  * @author Guus Lieben
  */
 @FunctionalInterface

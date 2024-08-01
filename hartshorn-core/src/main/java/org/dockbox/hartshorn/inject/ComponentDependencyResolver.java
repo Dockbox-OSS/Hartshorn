@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,19 @@
 package org.dockbox.hartshorn.inject;
 
 import java.util.Set;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.inject.strategy.DependencyResolverUtils;
+import org.dockbox.hartshorn.inject.strategy.IntrospectionDependencyResolver;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ComponentDependencyResolver extends AbstractContainerDependencyResolver {
 
     protected ComponentDependencyResolver(ApplicationContext applicationContext) {
@@ -31,25 +37,49 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
     }
 
     @Override
-    protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> componentContainer, ApplicationContext applicationContext) throws DependencyResolutionException {
-        TypeView<T> type = componentContainer.type();
-        ConstructorView<? extends T> constructorView = ComponentConstructorResolver.create(applicationContext).findConstructor(type)
-                .mapError(DependencyResolutionException::new)
-                .rethrow()
-                .orNull();
+    protected <T> Set<DependencyContext<?>> resolveSingle(
+        DependencyDeclarationContext<T> declarationContext,
+        ApplicationContext applicationContext
+    ) throws DependencyResolutionException {
+        TypeView<T> type = declarationContext.type();
+        ConstructorView<? extends T> constructorView;
+        try {
+            constructorView = ComponentConstructorResolver.create(applicationContext)
+                    .findConstructor(type)
+                    .orNull();
+        }
+        catch (Throwable throwable) {
+            throw new DependencyResolutionException(throwable);
+        }
 
         if (constructorView == null) {
             return Set.of();
         }
 
-        Set<ComponentKey<?>> constructorDependencies = DependencyResolverUtils.resolveDependencies(constructorView);
-        Set<ComponentKey<?>> typeDependencies = DependencyResolverUtils.resolveDependencies(type);
+        IntrospectionDependencyResolver resolver = new IntrospectionDependencyResolver(this.applicationContext().environment());
+        Set<ComponentKey<?>> constructorDependencies = resolver.resolveDependencies(constructorView);
+        Set<ComponentKey<?>> typeDependencies = resolver.resolveDependencies(type);
 
         DependencyMap dependencies = DependencyMap.create()
                 .immediate(constructorDependencies)
                 .delayed(typeDependencies);
 
-        ComponentKey<T> componentKey = ComponentKey.of(type);
-        return Set.of(new ManagedComponentDependencyContext<>(componentKey, dependencies, constructorView));
+        if (declarationContext instanceof ComponentContainerDependencyDeclarationContext<T> containerContext) {
+            ComponentKey<T> componentKey = ComponentKey.of(type);
+            return Set.of(new ComponentContainerDependencyContext<>(containerContext.container(), componentKey, dependencies, constructorView));
+        }
+        else if (declarationContext instanceof ComponentKeyDependencyDeclarationContext<T> keyContext) {
+            Provider<T> provider = keyContext.provider();
+            ManagedComponentKeyDependencyContext<T> dependencyContext = ManagedComponentKeyDependencyContext.builder(keyContext.key(), type)
+                .dependencies(dependencies)
+                .constructorView(constructorView)
+                .lazy(provider.defaultLazy().booleanValue())
+                .lifecycleType(provider.defaultLifecycle())
+                .build();
+            return Set.of(dependencyContext);
+        }
+        else {
+            return Set.of();
+        }
     }
 }

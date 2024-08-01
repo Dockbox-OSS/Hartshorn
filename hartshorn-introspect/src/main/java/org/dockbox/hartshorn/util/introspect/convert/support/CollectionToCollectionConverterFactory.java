@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,16 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
 
+/**
+ * Converts a {@link Collection} to another {@link Collection} by adding all elements of the source collection to the
+ * target collection. The target collection is created using the {@link DefaultValueProvider} of the target type.
+ *
+ * @see CollectionDefaultValueProviderFactory
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class CollectionToCollectionConverterFactory implements ConverterFactory<Collection<?>, Collection<?>> {
 
     private final DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory;
@@ -42,6 +52,16 @@ public class CollectionToCollectionConverterFactory implements ConverterFactory<
         return new CollectionToCollectionConverter<>(this.defaultValueProviderFactory.create(targetType), targetType);
     }
 
+    /**
+     * Converts a {@link Collection} to another {@link Collection} by adding all elements of the source collection to the
+     * target collection. The target collection is created using the given {@link DefaultValueProvider} for the target type.
+     *
+     * @param <O> the target type
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static class CollectionToCollectionConverter<O extends Collection<?>> implements Converter<Collection<?>, O> {
 
         private final DefaultValueProvider<O> defaultValueProvider;

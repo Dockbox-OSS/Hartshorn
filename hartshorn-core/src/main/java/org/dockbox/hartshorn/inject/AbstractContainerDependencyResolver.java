@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,14 +62,15 @@ public abstract class AbstractContainerDependencyResolver implements DependencyR
      * of this method may contain zero or more {@link DependencyContext} instances, each representing a dependency that was declared
      * by the {@link DependencyDeclarationContext} that was passed to this method.
      *
-     * @param componentContainer the declaration to resolve
+     * @param declarationContext the declaration to resolve
      * @param applicationContext the application context
+     *
+     * @param <T> the type of the component that is declared by the declaration
      *
      * @return a collection of {@link DependencyContext} instances
      *
-     * @param <T> the type of the component that is declared by the declaration
      * @throws DependencyResolutionException when the resolution fails
      */
-    protected abstract <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> componentContainer, ApplicationContext applicationContext) throws DependencyResolutionException;
+    protected abstract <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> declarationContext, ApplicationContext applicationContext) throws DependencyResolutionException;
 
 }

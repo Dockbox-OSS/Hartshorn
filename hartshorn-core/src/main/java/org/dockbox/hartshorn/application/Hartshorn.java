@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,9 @@ package org.dockbox.hartshorn.application;
 /**
  * The utility type to grant easy access to project metadata.
  *
+ * @since 0.4.1
+ *
  * @author Guus Lieben
- * @since 0.4.0
  */
 public final class Hartshorn {
 
@@ -40,9 +41,9 @@ public final class Hartshorn {
     public static final String PROJECT_ID = "hartshorn";
 
     /**
-     * The semantic version of the current/latest release of Hartshorn
+     * The semantic version of the current release of Hartshorn
      */
-    public static final String VERSION = "0.5.0";
+    public static final HartshornVersion VERSION = HartshornVersion.V0_6_0;
 
     private Hartshorn() {}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,30 @@ package org.dockbox.hartshorn.inject;
  *
  * @author Guus Lieben
  */
-public class ComponentObjectContainer<T> extends ObjectContainer<T> {
+public class ComponentObjectContainer<T> extends AbstractObjectContainer<T> {
 
+    private final LifecycleType lifecycleType;
     private boolean processed = false;
 
-    public ComponentObjectContainer(T instance) {
+    private ComponentObjectContainer(T instance, LifecycleType lifecycleType) {
         super(instance);
+        this.lifecycleType = lifecycleType;
+    }
+
+    public static <T> ComponentObjectContainer<T> empty() {
+        return ofLifecycleType(null, LifecycleType.PROTOTYPE);
+    }
+
+    public static <T> ComponentObjectContainer<T> ofPrototype(T instance) {
+        return ofLifecycleType(instance, LifecycleType.PROTOTYPE);
+    }
+
+    public static <T> ComponentObjectContainer<T> ofSingleton(T instance) {
+        return ofLifecycleType(instance, LifecycleType.SINGLETON);
+    }
+
+    public static <T> ComponentObjectContainer<T> ofLifecycleType(T instance, LifecycleType lifecycleType) {
+        return new ComponentObjectContainer<>(instance, lifecycleType);
     }
 
     /**
@@ -39,6 +57,7 @@ public class ComponentObjectContainer<T> extends ObjectContainer<T> {
      *
      * @return {@code true} if the object instance has been processed, {@code false} otherwise
      */
+    @Override
     public boolean processed() {
         return this.processed;
     }
@@ -49,7 +68,23 @@ public class ComponentObjectContainer<T> extends ObjectContainer<T> {
      *
      * @param processed whether the object instance has been processed or not
      */
+    @Override
     public void processed(boolean processed) {
         this.processed = processed;
+    }
+
+    @Override
+    public LifecycleType lifecycleType() {
+        return this.lifecycleType;
+    }
+
+    @Override
+    public ObjectContainer<T> copyForObject(T instance) {
+        if (instance == this.instance()) {
+            return this;
+        }
+        ComponentObjectContainer<T> container = ofLifecycleType(instance, this.lifecycleType);
+        container.processed(this.processed);
+        return container;
     }
 }

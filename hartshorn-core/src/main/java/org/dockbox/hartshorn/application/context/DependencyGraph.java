@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,15 @@
 
 package org.dockbox.hartshorn.application.context;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.dockbox.hartshorn.application.context.validate.DependencyGraphValidator;
 import org.dockbox.hartshorn.inject.DependencyContext;
+import org.dockbox.hartshorn.inject.LifecycleAwareDependencyContext;
+import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleContentAwareGraph;
 
 /**
@@ -39,4 +45,29 @@ import org.dockbox.hartshorn.util.graph.SimpleContentAwareGraph;
  * @author Guus Lieben
  */
 public class DependencyGraph extends SimpleContentAwareGraph<DependencyContext<?>> {
+
+    @Override
+    public Set<GraphNode<DependencyContext<?>>> roots() {
+        Set<GraphNode<DependencyContext<?>>> defaultRoots = new HashSet<>(super.roots());
+        Set<GraphNode<DependencyContext<?>>> nodes = this.nodes();
+        Set<GraphNode<DependencyContext<?>>> danglingNodes = CollectionUtilities.difference(defaultRoots, nodes);
+        for (GraphNode<DependencyContext<?>> danglingNode : danglingNodes) {
+            if (isSingletonNode(danglingNode)) {
+                defaultRoots.add(danglingNode);
+            }
+        }
+        return defaultRoots;
+    }
+
+    /**
+     * Determines if the given node is a singleton node. A singleton node is a node that is a singleton
+     * in the context of the application lifecycle.
+     *
+     * @param node the node to check
+     * @return {@code true} if the node is a singleton node, {@code false} otherwise
+     */
+    public static boolean isSingletonNode(GraphNode<DependencyContext<?>> node) {
+        return node.value() instanceof LifecycleAwareDependencyContext<?> lifecycleAware
+            && lifecycleAware.lifecycleType() == LifecycleType.SINGLETON;
+    }
 }

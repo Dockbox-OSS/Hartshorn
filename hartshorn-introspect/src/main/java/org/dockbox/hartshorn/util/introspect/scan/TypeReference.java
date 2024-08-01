@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,45 @@
 
 package org.dockbox.hartshorn.util.introspect.scan;
 
+/**
+ * A reference to a {@link Class} that can be used to load the class, or to obtain information about the class.
+ * Implementations of this interface are expected to be immutable.
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public interface TypeReference {
-    Class<?> getOrLoad() throws ClassReferenceLoadException;
 
+    /**
+     * Loads the class that is referenced by this instance. Where possible, this should not initialize
+     * the class.
+     *
+     * @param classLoader The class loader to use to load the class.
+     *
+     * @return The class that is referenced by this instance.
+     * @throws ClassReferenceLoadException When the class cannot be loaded.
+     */
+    Class<?> getOrLoad(ClassLoader classLoader) throws ClassReferenceLoadException;
+
+    /**
+     * Returns the fully qualified name of the class that is referenced by this instance.
+     *
+     * @return The fully qualified name of the class that is referenced by this instance.
+     */
     String qualifiedName();
 
+    /**
+     * Returns the simple name of the class that is referenced by this instance.
+     *
+     * @return The simple name of the class that is referenced by this instance.
+     */
     String simpleName();
 
+    /**
+     * Returns the name of the package that contains the class that is referenced by this instance.
+     *
+     * @return The name of the package that contains the class that is referenced by this instance.
+     */
     String packageName();
 }

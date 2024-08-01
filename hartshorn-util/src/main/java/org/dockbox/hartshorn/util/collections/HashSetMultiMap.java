@@ -19,6 +19,16 @@ package org.dockbox.hartshorn.util.collections;
 import java.util.Collection;
 import java.util.HashSet;
 
+/**
+ * A {@link HashMultiMap} implementation that uses {@link HashSet} as its backing collection.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class HashSetMultiMap<K, V> extends HashMultiMap<K, V> {
 
     public HashSetMultiMap() {

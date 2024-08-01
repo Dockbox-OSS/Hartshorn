@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
-
-import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
-import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
-import org.dockbox.hartshorn.util.option.Attempt;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents a view of a {@link Method} instance. This view provides access various properties of
@@ -33,10 +31,11 @@ import org.dockbox.hartshorn.util.option.Option;
  * @param <Parent> the type of the method's parent
  * @param <ReturnType> the type of the method's return type
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
-public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Parent>, GenericTypeView<ReturnType> {
+public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Parent>, AnnotatedGenericTypeView<ReturnType> {
 
     /**
      * Returns the {@link Method} instance represented by this view, if it exists.
@@ -48,50 +47,54 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
     /**
      * Invokes the method represented by this view on the given instance with the given arguments. If
      * the method is static, the instance may be {@code null}. Any exceptions thrown by the method
-     * will be caught and returned as a failed {@link Attempt}.
+     * will be re-thrown.
      *
      * @param instance the instance to invoke the method on
      * @param arguments the arguments to pass to the method
      * @return the result of the method invocation
      */
-    default Attempt<ReturnType, Throwable> invoke(Parent instance, Object... arguments) {
+    default Option<ReturnType> invoke(Object instance, Object... arguments) throws Throwable {
         return this.invoke(instance, Arrays.asList(arguments));
     }
 
     /**
      * Invokes the method represented by this view on the given instance with the given arguments. If
      * the method is static, the instance may be {@code null}. Any exceptions thrown by the method
-     * will be caught and returned as a failed {@link Attempt}.
+     * will be re-thrown.
      *
      * @param instance the instance to invoke the method on
      * @param arguments the arguments to pass to the method
      * @return the result of the method invocation
      */
-    Attempt<ReturnType, Throwable> invoke(Parent instance, Collection<?> arguments);
+    Option<ReturnType> invoke(Object instance, Collection<?> arguments) throws Throwable;
 
     /**
      * Invokes the method represented by this view as a static method call with the given arguments.
      * If the method is not static, a {@link IllegalIntrospectionException} will be thrown. Any
-     * exceptions thrown by the method will be caught and returned as a failed {@link Attempt}.
+     * exceptions thrown by the method will be re-thrown.
      *
      * @param arguments the arguments to pass to the method
-     * @throws IllegalIntrospectionException if the method is not static
+     *
      * @return the result of the method invocation
+     *
+     * @throws IllegalIntrospectionException if the method is not static
      */
-    default Attempt<ReturnType, Throwable> invokeStatic(Object... arguments) {
+    default Option<ReturnType> invokeStatic(Object... arguments) throws Throwable {
         return this.invokeStatic(Arrays.asList(arguments));
     }
 
     /**
      * Invokes the method represented by this view as a static method call with the given arguments.
      * If the method is not static, a {@link IllegalIntrospectionException} will be thrown. Any
-     * exceptions thrown by the method will be caught and returned as a failed {@link Attempt}.
+     * exceptions will be re-thrown.
      *
      * @param arguments the arguments to pass to the method
-     * @throws IllegalIntrospectionException if the method is not static
+     *
      * @return the result of the method invocation
+     *
+     * @throws IllegalIntrospectionException if the method is not static
      */
-    Attempt<ReturnType, Throwable> invokeStatic(Collection<?> arguments);
+    Option<ReturnType> invokeStatic(Collection<?> arguments) throws Throwable;
 
     /**
      * Returns a {@link TypeView} representing the non-generic return type of the method.
@@ -109,34 +112,6 @@ public interface MethodView<Parent, ReturnType> extends ExecutableElementView<Pa
      * @see #genericType()
      */
     TypeView<ReturnType> genericReturnType();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isStatic()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isStatic();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isFinal()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isFinal();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isAbstract()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isAbstract();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isDefault()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isDefault();
 
     @Override
     default TypeView<?> resultType() {

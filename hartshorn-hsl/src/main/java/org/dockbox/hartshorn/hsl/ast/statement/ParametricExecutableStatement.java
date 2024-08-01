@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,13 @@ import org.dockbox.hartshorn.hsl.token.Token;
 
 import java.util.List;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public abstract class ParametricExecutableStatement extends Function {
 
     private final List<Parameter> params;
@@ -43,6 +50,15 @@ public abstract class ParametricExecutableStatement extends Function {
         return this.body;
     }
 
+    /**
+     * Simple record to represent a parameter in a function declaration.
+     *
+     * @param name the name of the parameter
+     *
+     * @since 0.4.12
+     *
+     * @author Guus Lieben
+     */
     public record Parameter(Token name) {
     }
 }

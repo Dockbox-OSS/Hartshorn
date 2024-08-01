@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * Collector to optionally save return values/results which have been calculated inside
  * an expression or script.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public interface ResultCollector extends ContextCarrier {
 
@@ -46,8 +47,11 @@ public interface ResultCollector extends ContextCarrier {
     /**
      * Gets the global result from the stack. If no global result exists {@link Option#empty()}
      * is returned.
-     * @return The result value, or {@link Option#empty()}.
+     *
+     * @param type The type of the result.
      * @param <T> The type of the result.
+     *
+     * @return The result value, or {@link Option#empty()}.
      */
     <T> Option<T> result(Class<T> type);
 
@@ -56,8 +60,12 @@ public interface ResultCollector extends ContextCarrier {
     /**
      * Gets a result with the given ID. If no result with the given ID exists
      * {@link Option#empty()} is returned.
+     *
      * @param id The ID of the result.
+     * @param type The type of the result.
+     *
      * @return The result value, or {@link Option#empty()}.
+     *
      * @param <T> The type of the result.
      */
     <T> Option<T> result(String id, Class<T> type);

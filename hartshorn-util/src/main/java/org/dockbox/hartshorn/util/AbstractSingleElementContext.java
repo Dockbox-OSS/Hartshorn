@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,26 +26,27 @@ import org.dockbox.hartshorn.context.DefaultContext;
  *
  * @param <I> The type of the input object.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractSingleElementContext<I> extends DefaultContext implements SingleElementContext<I> {
 
     private final I input;
 
-    protected AbstractSingleElementContext(I input) {
+    protected AbstractSingleElementContext(@NonNull I input) {
         this.input = input;
     }
 
     @Override
-    public @Nullable I input() {
+    public @NonNull I input() {
         return this.input;
     }
 
     @Override
-    public <T> @NonNull SingleElementContext<@Nullable T> transform(@Nullable T input) {
+    public <T> @NonNull SingleElementContext<@Nullable T> transform(@NonNull T input) {
         SingleElementContext<T> clonedContext = this.clone(input);
-        this.copyTo(clonedContext);
+        this.copyToContext(clonedContext);
         return clonedContext;
     }
 
@@ -55,8 +56,9 @@ public abstract class AbstractSingleElementContext<I> extends DefaultContext imp
      * current context.
      *
      * @param input The input object to use in the clone.
-     * @return The cloned context.
      * @param <T> The type of the input object.
+     *
+     * @return The cloned context.
      */
-    protected abstract <T> SingleElementContext<T> clone(T input);
+    protected abstract <T> SingleElementContext<T> clone(@NonNull T input);
 }

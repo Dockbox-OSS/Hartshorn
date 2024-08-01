@@ -20,6 +20,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A {@link MultiMap} implementation that uses {@link HashMap} as its backing map.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class HashMultiMap<K, V> extends StandardMultiMap<K, V> {
 
     protected HashMultiMap() {

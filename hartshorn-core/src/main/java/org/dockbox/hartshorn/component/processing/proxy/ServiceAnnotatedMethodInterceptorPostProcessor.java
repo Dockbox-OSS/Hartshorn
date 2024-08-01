@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,26 @@
 
 package org.dockbox.hartshorn.component.processing.proxy;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <M> ...
+ *
+ * @since 0.4.10
+ *
+ * @author Guus Lieben
+ */
 public abstract class ServiceAnnotatedMethodInterceptorPostProcessor<M extends Annotation> extends ServiceMethodInterceptorPostProcessor {
 
     @Override
-    public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
-        if (processingContext.type().methods().annotatedWith(this.annotation()).isEmpty()) {
-            return;
-        }
-        super.preConfigureComponent(context, instance, processingContext);
+    public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
+        return !processingContext.type().methods().annotatedWith(this.annotation()).isEmpty();
     }
 
     public abstract Class<M> annotation();

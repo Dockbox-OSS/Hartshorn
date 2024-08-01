@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,21 @@
 
 package org.dockbox.hartshorn.reporting.aggregate;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 
-import java.util.Set;
-
+/**
+ * A diagnostics reporter that aggregates multiple other reporters, which can be used to report all diagnostics at
+ * once. Delegate reporters are expected to be {@link CategorizedDiagnosticsReporter categorized}, so that they can
+ * be grouped by category.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class AggregateDiagnosticsReporter implements ConfigurableDiagnosticsReporter<AggregateReporterConfiguration> {
 
     private final AggregateReporterConfiguration configuration = new AggregateReporterConfiguration();
@@ -30,14 +39,14 @@ public class AggregateDiagnosticsReporter implements ConfigurableDiagnosticsRepo
     public void report(DiagnosticsPropertyCollector collector) {
         Set<CategorizedDiagnosticsReporter> reporters = this.configuration().reporters();
 
-        collector.property("reporters").write(reporterCollector -> {
+        collector.property("reporters").writeDelegate(reporterCollector -> {
             for (CategorizedDiagnosticsReporter reporter : reporters) {
-                reporterCollector.property(reporter.category()).write(reporter.getClass().getCanonicalName());
+                reporterCollector.property(reporter.category()).writeStrings(reporter.getClass().getCanonicalName());
             }
         });
 
         for (CategorizedDiagnosticsReporter reporter : reporters) {
-            collector.property(reporter.category()).write(reporter);
+            collector.property(reporter.category()).writeDelegate(reporter);
         }
     }
 

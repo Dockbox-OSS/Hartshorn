@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package test.org.dockbox.hartshorn.core.application
 
-import org.dockbox.hartshorn.application.*
+import org.dockbox.hartshorn.application.ApplicationContextFactory
+import org.dockbox.hartshorn.application.DefaultBindingConfigurer
+import org.dockbox.hartshorn.application.ExceptionHandler
+import org.dockbox.hartshorn.application.StandardApplicationBuilder
+import org.dockbox.hartshorn.application.StandardApplicationContextFactory
 import org.dockbox.hartshorn.application.context.ApplicationContext
 import org.dockbox.hartshorn.application.context.DelegatingApplicationContext
 import org.dockbox.hartshorn.application.context.DependencyGraphInitializer
 import org.dockbox.hartshorn.application.context.SimpleApplicationContext
-import org.dockbox.hartshorn.application.environment.*
-import org.dockbox.hartshorn.component.*
+import org.dockbox.hartshorn.application.environment.ApplicationArgumentParser
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment
+import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator
+import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment
+import org.dockbox.hartshorn.application.environment.FileSystemProvider
+import org.dockbox.hartshorn.component.ComponentPostConstructor
+import org.dockbox.hartshorn.component.ComponentPostConstructorImpl
+import org.dockbox.hartshorn.component.ComponentProvider
+import org.dockbox.hartshorn.component.ComponentRegistry
+import org.dockbox.hartshorn.component.ScopeAwareComponentProvider
 import org.dockbox.hartshorn.component.condition.ConditionMatcher
-import org.dockbox.hartshorn.inject.ApplicationDependencyResolver
+import org.dockbox.hartshorn.inject.BindsMethodDependencyResolver
 import org.dockbox.hartshorn.inject.ConfigurationDependencyVisitor
 import org.dockbox.hartshorn.inject.DependencyResolver
 import org.dockbox.hartshorn.inject.binding.Binder
-import org.dockbox.hartshorn.inject.binding.ComponentInstanceFactory
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder
 import org.dockbox.hartshorn.introspect.ViewContextAdapter
-import org.dockbox.hartshorn.logging.ApplicationLogger
-import org.dockbox.hartshorn.logging.AutoSwitchingApplicationLogger
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator
 import org.dockbox.hartshorn.util.ContextualInitializer
 import org.dockbox.hartshorn.util.Customizer
@@ -51,9 +59,9 @@ class BootstrapConfigurationContractTests {
     fun testApplicationBuilderContract() {
         val instance = StandardApplicationBuilder.Configurer()
 
-        assertDeferred(instance) { configurer, deferred: ApplicationContextConstructor? -> configurer.constructor(deferred) }
-        assertInitializer(instance) { configurer, initializer -> configurer.constructor(initializer) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.constructor(initializer) }
+        assertDeferred(instance) { configurer, deferred: ApplicationContextFactory? -> configurer.applicationContextFactory(deferred) }
+        assertInitializer(instance) { configurer, initializer -> configurer.applicationContextFactory(initializer) }
+        assertContextInitializer(instance) { configurer, initializer -> configurer.applicationContextFactory(initializer) }
 
         assertCustom(instance) { configurer -> configurer.inferMainClass() }
         assertDeferred(instance) { configurer, deferred: Class<*>? -> configurer.mainClass(deferred) }
@@ -66,7 +74,7 @@ class BootstrapConfigurationContractTests {
 
     @Test
     fun testApplicationConstructorContract() {
-        val instance = StandardApplicationContextConstructor.Configurer()
+        val instance = StandardApplicationContextFactory.Configurer()
 
         assertCustomizer(instance) { configurer, customizer -> configurer.activators(customizer) }
         assertCustomizer(instance) { configurer, customizer -> configurer.componentPreProcessors(customizer) }
@@ -109,9 +117,6 @@ class BootstrapConfigurationContractTests {
         assertDeferred(instance) { configurer, deferred: ApplicationArgumentParser? -> configurer.applicationArgumentParser(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.applicationArgumentParser(initializer) }
 
-        assertDeferred(instance) { configurer, deferred: ApplicationLogger? -> configurer.applicationLogger(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.applicationLogger(initializer) }
-
         assertDeferred(instance) { configurer, deferred: ClasspathResourceLocator? -> configurer.classpathResourceLocator(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.classpathResourceLocator(initializer) }
 
@@ -120,14 +125,6 @@ class BootstrapConfigurationContractTests {
 
         assertDeferred(instance) { configurer, deferred: ApplicationContext? -> configurer.applicationContext(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.applicationContext(initializer) }
-    }
-
-    @Test
-    fun testAutoSwitchingApplicationLoggerContract() {
-        val instance = AutoSwitchingApplicationLogger.Configurer()
-
-        assertDeferred(instance) { configurer, deferred: ApplicationLogger? -> configurer.defaultFallback(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.defaultFallback(initializer) }
     }
 
     @Test
@@ -142,8 +139,8 @@ class BootstrapConfigurationContractTests {
     fun testDelegatingApplicationContextContract() {
         val instance = DelegatingApplicationContext.Configurer()
 
-        assertDeferred(instance) { configurer, deferred: ComponentLocator? -> configurer.componentLocator(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.componentLocator(initializer) }
+        assertDeferred(instance) { configurer, deferred: ComponentRegistry? -> configurer.componentRegistry(deferred) }
+        assertContextInitializer(instance) { configurer, initializer -> configurer.componentRegistry(initializer) }
 
         assertDeferred(instance) { configurer, deferred: ComponentProvider? -> configurer.componentProvider(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.componentProvider(initializer) }
@@ -161,9 +158,6 @@ class BootstrapConfigurationContractTests {
 
         assertDeferred(instance) { configurer, deferred: ComponentPostConstructor? -> configurer.componentPostConstructor(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.componentPostConstructor(initializer) }
-
-        assertDeferred(instance) { configurer, deferred: ComponentInstanceFactory? -> configurer.componentInstanceFactory(deferred) }
-        assertContextInitializer(instance) { configurer, initializer -> configurer.componentInstanceFactory(initializer) }
     }
 
     @Test
@@ -190,7 +184,7 @@ class BootstrapConfigurationContractTests {
 
     @Test
     fun testApplicationDependencyResolverContract() {
-        val instance = ApplicationDependencyResolver.Configurer()
+        val instance = BindsMethodDependencyResolver.Configurer()
 
         assertDeferred(instance) { configurer, deferred: ConditionMatcher? -> configurer.conditionMatcher(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.conditionMatcher(initializer) }

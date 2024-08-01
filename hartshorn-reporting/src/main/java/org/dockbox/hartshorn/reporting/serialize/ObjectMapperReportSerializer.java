@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,9 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
  * @see ReportSerializer
  * @see ObjectMapper
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public abstract class ObjectMapperReportSerializer implements ReportSerializer<String> {
 
@@ -65,8 +66,9 @@ public abstract class ObjectMapperReportSerializer implements ReportSerializer<S
      * @see ReportSerializer
      * @see ObjectMapper
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class XMLReportSerializer extends ObjectMapperReportSerializer {
 
@@ -84,8 +86,9 @@ public abstract class ObjectMapperReportSerializer implements ReportSerializer<S
      * @see ReportSerializer
      * @see ObjectMapper
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class JsonReportSerializer extends ObjectMapperReportSerializer {
 

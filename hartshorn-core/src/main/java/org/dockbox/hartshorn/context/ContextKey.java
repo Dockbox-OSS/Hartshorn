@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.context;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
@@ -27,8 +26,8 @@ import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * A {@link ContextKey} is a key which can be used to retrieve a context value from a {@link Context}
- * instance. The key is used to identify the value, and can be used to create a new value if none
+ * A {@link ContextKey} is a key which can be used to retrieve a context value from a {@link ContextView
+ * context} instance. The key is used to identify the value, and can be used to create a new value if none
  * exists.
  *
  * <p>Context keys do not have to be unique, but it is recommended to re-use the same unique key to
@@ -37,10 +36,11 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @param <T> The type of the value.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
-public final class ContextKey<T extends Context> implements ContextIdentity<T> {
+public final class ContextKey<T extends ContextView> implements ContextIdentity<T> {
 
     private final Class<T> type;
     private final String name;
@@ -82,27 +82,17 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * to create the value. If no fallback function is present, a new instance of the context type
      * will be created using the provided application context.
      *
-     * <p>If no fallback function is present, this will create or retrieve an instance of the context
-     * from the application context if the context type is annotated with {@link InstallIfAbsent}. The
-     * intermediate {@link ComponentKey} used for the request will be scoped to the
-     * {@link Scope#DEFAULT_SCOPE default scope}.
-     *
      * @param context The application context to use to create the context value.
      * @return The newly created context value.
      */
     public T create(ApplicationContext context) {
-        return this.create(context, Scope.DEFAULT_SCOPE);
+        return this.create(context, context);
     }
 
     /**
      * Creates a new context value for this key. If a fallback function is present, it will be used
      * to create the value. If no fallback function is present, a new instance of the context type
      * will be created using the provided application context.
-     *
-     * <p>If no fallback function is present, this will create or retrieve an instance of the context
-     * from the application context if the context type is annotated with {@link InstallIfAbsent}. The
-     * intermediate {@link ComponentKey} used for the request will be scoped to the given
-     * {@link Scope scope}.
      *
      * @param context The application context to use to create the context value.
      * @param scope The scope to use for the intermediate {@link ComponentKey}.
@@ -112,9 +102,6 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
         T contextInstance;
         if (this.fallback != null) {
             contextInstance = this.fallback.apply(context);
-        }
-        else if (context != null && context.environment().introspector().introspect(this.type).annotations().has(InstallIfAbsent.class)) {
-            contextInstance = context.get(this.componentKey(scope));
         }
         else {
             throw new IllegalStateException("No fallback defined for context " + this.type.getSimpleName());
@@ -154,10 +141,11 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * Creates a new {@link ContextKey key} which is bound to the given type.
      *
      * @param type The type of the context represented by the key.
-     * @return A new {@link ContextKey key} which is bound to the given type.
      * @param <T> The type of the context represented by the key.
+     *
+     * @return A new {@link ContextKey key} which is bound to the given type.
      */
-    public static <T extends Context> ContextKey<T> of(Class<T> type) {
+    public static <T extends ContextView> ContextKey<T> of(Class<T> type) {
         return builder(type).build();
     }
 
@@ -165,10 +153,11 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * Creates a new {@link ContextKey key} which is bound to the given type.
      *
      * @param type The type of the context represented by the key.
-     * @return A new {@link ContextKey key} which is bound to the given type.
      * @param <T> The type of the context represented by the key.
+     *
+     * @return A new {@link ContextKey key} which is bound to the given type.
      */
-    public static <T extends Context> ContextKey<T> of(TypeView<T> type) {
+    public static <T extends ContextView> ContextKey<T> of(TypeView<T> type) {
         return builder(type).build();
     }
 
@@ -176,10 +165,11 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * Creates a new {@link Builder key builder} which is bound to the given type and name.
      *
      * @param type The type of the context represented by the key.
-     * @return A new {@link Builder key builder} which is bound to the given type and name.
      * @param <T> The type of the context represented by the key.
+     *
+     * @return A new {@link Builder key builder} which is bound to the given type and name.
      */
-    public static <T extends Context> Builder<T> builder(Class<T> type) {
+    public static <T extends ContextView> Builder<T> builder(Class<T> type) {
         return new Builder<>(type);
     }
 
@@ -187,10 +177,11 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * Creates a new {@link Builder key builder} which is bound to the given type and name.
      *
      * @param type The type of the context represented by the key.
-     * @return A new {@link Builder key builder} which is bound to the given type and name.
      * @param <T> The type of the context represented by the key.
+     *
+     * @return A new {@link Builder key builder} which is bound to the given type and name.
      */
-    public static <T extends Context> Builder<T> builder(TypeView<T> type) {
+    public static <T extends ContextView> Builder<T> builder(TypeView<T> type) {
         return new Builder<>(type.type());
     }
 
@@ -224,14 +215,16 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
      * A mutable builder for {@link ContextKey keys}.
      *
      * @param <T> The type of the context represented by the key.
+     *
      * @see ContextKey#mutable()
      * @see ContextKey#builder(Class)
      * @see ContextKey#builder(TypeView)
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
-    public static class Builder<T extends Context> {
+    public static class Builder<T extends ContextView> {
 
         private final Class<T> type;
         private String name;
@@ -266,6 +259,7 @@ public final class ContextKey<T extends Context> implements ContextIdentity<T> {
          * if the context is not named.
          *
          * @param name The name of the context represented by the key.
+         *
          * @return This builder.
          */
         public Builder<T> name(String name) {

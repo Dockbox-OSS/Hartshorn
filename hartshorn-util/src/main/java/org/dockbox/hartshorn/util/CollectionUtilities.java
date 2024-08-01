@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,17 @@ package org.dockbox.hartshorn.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
+
+import java.util.function.Predicate;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -45,48 +46,20 @@ public final class CollectionUtilities {
     }
 
     /**
-     * Constructs a new unique map from a given set of {@link Entry entries}. If no entries are
-     * provided an empty {@link Map} is returned. The constructed map is not concurrent.
-     * Entries can easily be created using {@link Tuple#of(Object, Object)}
-     *
-     * @param <K> The (super)type of all keys in the entry set
-     * @param <V> The (super)type of all values in the entry set
-     * @param entries The entries to use while constructing a new map
-     *
-     * @return The new non-concurrent map
-     * @throws NullPointerException If an entry is null
-     * @see Tuple#of(Object, Object)
-     * @deprecated Use {@link Map#ofEntries(Entry...)} instead
-     */
-    @SafeVarargs
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    public static <K, V> Map<K, V> ofEntries(Entry<? extends K, ? extends V>... entries) {
-        if (0 == entries.length) { // implicit null check of entries array
-            return new HashMap<>();
-        }
-        else {
-            Map<K, V> map = new HashMap<>();
-            for (Entry<? extends K, ? extends V> entry : entries) {
-                map.put(entry.getKey(), entry.getValue());
-            }
-            return map;
-        }
-    }
-
-    /**
      * Constructs a new unique set from the given collections. If no collections are provided an
      * empty {@link Set} is returned.
      *
      * @param collections The collections to use while constructing a new set
-     * @return The new set
      * @param <T> The type of the elements in the set
+     *
+     * @return The new set
      *
      * @see #mergeList(Collection[])
      */
     @SafeVarargs
-    public static <T> Set<T> merge(Collection<T>... collections) {
+    public static <T> Set<T> merge(Collection<? extends T>... collections) {
         Set<T> merged = new HashSet<>();
-        for (Collection<T> collection : collections) {
+        for (Collection<? extends T> collection : collections) {
             merged.addAll(collection);
         }
         return merged;
@@ -97,8 +70,9 @@ public final class CollectionUtilities {
      * empty {@link List} is returned.
      *
      * @param collections The collections to use while constructing a new list
-     * @return The new list
      * @param <T> The type of the elements in the list
+     *
+     * @return The new list
      *
      * @see #merge(Collection[])
      */
@@ -118,8 +92,9 @@ public final class CollectionUtilities {
      *
      * @param arrayOne The first array
      * @param arrayTwo The second array
-     * @return The merged array
      * @param <T> The type of the elements in the arrays
+     *
+     * @return The merged array
      */
     public static <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
         T[] merged = Arrays.copyOf(arrayOne, arrayOne.length + arrayTwo.length);
@@ -134,12 +109,13 @@ public final class CollectionUtilities {
      *
      * @param collectionOne The first collection
      * @param collectionTwo The second collection
-     * @return The difference between the two collections
      * @param <T> The type of the elements in the collections
+     *
+     * @return The difference between the two collections
      */
     public static <T> Set<T> difference(Collection<T> collectionOne, Collection<T> collectionTwo) {
         BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
-                .filter(element -> !c2.contains(element))
+                .filter(Predicate.not(c2::contains))
                 .toList();
 
         List<T> differenceInOne = filter.apply(collectionOne, collectionTwo);
@@ -157,8 +133,9 @@ public final class CollectionUtilities {
      * collection. Effectively this is a shorthand for {@link Collection#forEach(Consumer)}.
      *
      * @param consumer The consumer to apply to each element
-     * @param collections The collections to iterate over
      * @param <T> The type of the elements in the collections
+     *
+     * @param collections The collections to iterate over
      */
     @SafeVarargs
     public static <T> void forEach(Consumer<T> consumer, Collection<T>... collections) {
@@ -173,8 +150,9 @@ public final class CollectionUtilities {
      * compared to {@link Set#of(Object...)} is that the order of the elements is preserved.
      *
      * @param collection The collection to get the distinct elements from
-     * @return The new list containing all distinct elements
      * @param <T> The type of the elements in the collection
+     *
+     * @return The new list containing all distinct elements
      */
     public static <T> List<T> distinct(Collection<T> collection) {
         return collection.stream().distinct().toList();
@@ -187,8 +165,9 @@ public final class CollectionUtilities {
      * element is returned.
      *
      * @param collection The collection to get the last element from
-     * @return The last element of the collection
      * @param <T> The type of the elements in the collection
+     *
+     * @return The last element of the collection
      */
     @Nullable
     public static <T> T last(Collection<T> collection) {
@@ -216,8 +195,9 @@ public final class CollectionUtilities {
      * is used to get the first element.
      *
      * @param iterable The collection to get the first element from
-     * @return The first element of the collection
      * @param <T> The type of the elements in the collection
+     *
+     * @return The first element of the collection
      */
     @Nullable
     public static <T> T first(Iterable<T> iterable) {
@@ -232,6 +212,44 @@ public final class CollectionUtilities {
         }
         else {
             return iterable.iterator().next();
+        }
+    }
+
+    /**
+     * Returns an aggregated string representation of the given collection. The string representation
+     * is created by mapping each element of the collection to a string using the given value mapper
+     * and then joining the strings using a comma and a space. If the collection is empty an empty
+     * string is returned.
+     *
+     * @param collection The collection to create a string representation of
+     * @param valueMapper The function to map each element to a string
+     * @param <T> The type of the elements in the collection
+     *
+     * @return The aggregated string representation of the collection
+     */
+    public static <T> String toString(Collection<T> collection, Function<T, ?> valueMapper) {
+        return collection.stream()
+                .map(valueMapper)
+                .map(Object::toString)
+                .reduce("", (a, b) -> a + ", " + b);
+    }
+
+    /**
+     * Returns a new set containing all elements of the given set. The returned set is a new set
+     * and does not modify the original set. The advantage of this compared to {@link Set#copyOf(Collection)}
+     * is that the order of the elements is preserved if the given set is a {@link NavigableSet}.
+     *
+     * @param set The set to copy
+     * @param <T> The type of the elements in the set
+     *
+     * @return The new set containing all elements
+     */
+    public static <T> Set<T> copyOf(Set<T> set) {
+        if (set instanceof NavigableSet<T> navigableSet) {
+            return Collections.unmodifiableNavigableSet(navigableSet);
+        }
+        else {
+            return Set.copyOf(set);
         }
     }
 }

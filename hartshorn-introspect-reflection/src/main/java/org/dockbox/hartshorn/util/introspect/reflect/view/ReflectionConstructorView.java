@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +16,42 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeVariablesIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
-import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeVariablesIntrospector;
+import org.dockbox.hartshorn.util.introspect.reflect.ReflectiveConstructorCall;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T> implements ConstructorView<T>, ReflectionModifierCarrierView {
+/**
+ * TODO: #1059 Add documentation
+ *
+ * @param <T> ...
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
+public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T> implements ConstructorView<T> {
 
     private final Constructor<T> constructor;
     private final Introspector introspector;
 
     private TypeVariablesIntrospector typeParametersIntrospector;
-    private Function<Object[], Attempt<T, Throwable>> invoker;
+    private ReflectiveConstructorCall<T> invoker;
     private String qualifiedName;
+    private TypeView<T> type;
 
     public ReflectionConstructorView(ReflectionIntrospector introspector, Constructor<T> constructor) {
         super(introspector, constructor);
@@ -51,9 +59,9 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
         this.introspector = introspector;
     }
 
-    protected Function<Object[], Attempt<T, Throwable>> invoker() {
+    protected ReflectiveConstructorCall<T> invoker() {
         if (this.invoker == null) {
-            this.invoker = args -> Attempt.of(() -> {
+            this.invoker = args -> {
                 try {
                     return this.constructor.newInstance(args);
                 } catch (InvocationTargetException e) {
@@ -62,7 +70,7 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
                     }
                     throw e;
                 }
-            }, Throwable.class);
+            };
         }
         return this.invoker;
     }
@@ -73,13 +81,21 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     }
 
     @Override
-    public Attempt<T, Throwable> create(Collection<?> arguments) {
-        return this.invoker().apply(arguments.toArray());
+    public T create(Collection<?> arguments) throws Throwable {
+        return this.invoker().invoke(arguments.toArray());
     }
 
     @Override
     public TypeView<T> type() {
-        return this.introspector.introspect(this.constructor.getDeclaringClass());
+        if (this.type == null) {
+            this.type = this.introspector.introspect(this.constructor.getDeclaringClass());
+        }
+        return this.type;
+    }
+
+    @Override
+    public TypeView<T> genericType() {
+        return this.type();
     }
 
     @Override
@@ -110,8 +126,8 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("type").write(this.type());
-        collector.property("elementType").write("constructor");
-        collector.property("parameters").write(this.parameters().all().toArray(Reportable[]::new));
+        collector.property("type").writeDelegate(this.type());
+        collector.property("elementType").writeString("constructor");
+        collector.property("parameters").writeDelegates(this.parameters().all().toArray(Reportable[]::new));
     }
 }

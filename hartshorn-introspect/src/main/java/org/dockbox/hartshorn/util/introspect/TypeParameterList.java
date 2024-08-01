@@ -23,14 +23,45 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Represents a list of type parameters. This is used to represent the type parameters of a type, or a method.
+ *
+ * @see TypeParameterView
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public interface TypeParameterList extends Iterable<TypeParameterView> {
 
+    /**
+     * Returns the type parameter at the provided index. If the index is out of bounds, an empty {@link Option} is
+     * returned.
+     *
+     * @param index the index of the type parameter
+     * @return the type parameter at the provided index
+     */
     Option<TypeParameterView> atIndex(int index);
 
+    /**
+     * Returns the amount of type parameters in this list.
+     *
+     * @return the amount of type parameters in this list
+     */
     int count();
 
+    /**
+     * Returns whether this list is empty.
+     *
+     * @return {@code true} if this list is empty, {@code false} otherwise
+     */
     boolean isEmpty();
 
+    /**
+     * Transforms this list to a {@link List} of {@link TypeParameterView}s. The returned list is immutable.
+     *
+     * @return a {@link List} of {@link TypeParameterView}s
+     */
     List<TypeParameterView> asList();
 
     /**
@@ -50,6 +81,10 @@ public interface TypeParameterList extends Iterable<TypeParameterView> {
      */
     BiMultiMap<TypeParameterView, TypeParameterView> asMap();
 
+    /**
+     * Transforms this list to a {@link Stream} of {@link TypeParameterView}s.
+     *
+     * @return a {@link Stream} of {@link TypeParameterView}s
+     */
     Stream<TypeParameterView> stream();
-
 }

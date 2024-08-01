@@ -17,11 +17,11 @@
 package test.org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.component.Component;
-import org.dockbox.hartshorn.config.annotations.Configuration;
+import org.dockbox.hartshorn.config.annotations.IncludeResourceConfiguration;
 import org.dockbox.hartshorn.config.annotations.Value;
 
 @Component
-@Configuration("junit.yml")
+@IncludeResourceConfiguration("junit.yml")
 public class DemoFSConfiguration {
 
     @Value("junit.fs")

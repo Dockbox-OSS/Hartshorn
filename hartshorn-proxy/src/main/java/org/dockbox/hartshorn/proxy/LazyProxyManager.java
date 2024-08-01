@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import java.lang.reflect.Method;
-
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.proxy.advice.ProxyAdvisor;
 import org.dockbox.hartshorn.proxy.advice.RegistryProxyAdvisor;
 import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.Method;
 
 /**
  * A lazy-loading proxy manager. This implementation tracks the proxy's delegates and interceptors, and allows
@@ -35,8 +35,10 @@ import org.dockbox.hartshorn.util.option.Option;
  * than once. This is to prevent the proxy from being set multiple times, which can cause unexpected behavior.
  *
  * @param <T> the type of the proxy
- * @author Guus Lieben
+ *
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public class LazyProxyManager<T> extends DefaultContext implements ModifiableProxyManager<T> {
 
@@ -80,7 +82,13 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
         this.advisor = new RegistryProxyAdvisor<>(advisors);
     }
 
-    public void proxy(T proxy) {
+    /**
+     * Sets the proxy instance. This method can only be called once, and will throw an exception if called more than
+     * once. This method should only be called by a {@link ProxyFactory} when the proxy is created.
+     *
+     * @param proxy the proxy instance
+     */
+    void proxy(T proxy) {
         if (this.proxy != null) {
             throw new IllegalModificationException("Proxy instance already set.");
         }

@@ -16,19 +16,20 @@
 
 package test.org.dockbox.hartshorn.config.mapping;
 
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
 
 import test.org.dockbox.hartshorn.config.Element;
 import test.org.dockbox.hartshorn.config.EntityElement;
@@ -73,29 +74,25 @@ public abstract class ObjectMappingTests {
 
     @ParameterizedTest
     @MethodSource("serializationElements")
-    void testObjectSerialization(FileFormat fileFormat, Element content, String expected) {
+    void testObjectSerialization(FileFormat fileFormat, Element content, String expected) throws ObjectMappingException {
         ObjectMapper mapper = this.objectMapper();
         mapper.fileType(fileFormat);
 
         content.name("sample");
-        Option<String> result = mapper.write(content);
+        String result = mapper.write(content);
 
-        Assertions.assertTrue(result.present());
-        Assertions.assertEquals(expected.replaceAll("[ \n]+", ""), result.get().replaceAll("[ \n\r]+", ""));
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(StringUtilities.strip(expected), StringUtilities.strip(result));
     }
 
     @ParameterizedTest
     @MethodSource("serializationElements")
-    void testObjectDeserialization(FileFormat fileFormat, Element expected, String content) {
+    void testObjectDeserialization(FileFormat fileFormat, Element expected, String content) throws ObjectMappingException {
         ObjectMapper mapper = this.objectMapper();
         mapper.fileType(fileFormat);
         expected.name("sample");
 
-        Attempt<? extends Element, ?> result = mapper.read(content, expected.getClass());
-
-        if (result.absent()) {
-            Assertions.fail(result.error().getMessage());
-        }
+        Option<? extends Element> result = mapper.read(content, expected.getClass());
 
         Assertions.assertTrue(result.present());
         Assertions.assertSame(expected.getClass(), result.get().getClass());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,30 @@
 
 package test.org.dockbox.hartshorn.reporting;
 
-import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.ReportSerializationException;
 import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.reporting.UseReporting;
 import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer.JsonReportSerializer;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.util.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import org.dockbox.hartshorn.inject.Inject;
+
+@UseReporting
+@HartshornTest(includeBasePackages = false)
 public class ReportingTests {
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     @Test
     void testSystemReporterCreatesNonNullReport() {
         // Given
-        ApplicationContext applicationContext = HartshornApplication.create(ReportingTests.class);
         Reportable configurable = applicationContext.get(Reportable.class);
         DiagnosticsReportCollector collector = applicationContext.get(DiagnosticsReportCollector.class);
 
@@ -47,7 +54,6 @@ public class ReportingTests {
     @Test
     void testSystemReporterCreatesNonNullReportWithCustomReportable() throws ReportSerializationException {
         // Given
-        ApplicationContext applicationContext = HartshornApplication.create(ReportingTests.class);
         Reportable configurable = applicationContext.get(Reportable.class);
         DiagnosticsReportCollector collector = applicationContext.get(DiagnosticsReportCollector.class);
 

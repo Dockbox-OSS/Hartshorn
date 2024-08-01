@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,8 @@ import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.ScopeModuleContext;
-import org.dockbox.hartshorn.inject.ComponentObjectContainer;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.LazySingletonProvider;
-import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.SingletonProvider;
 import org.dockbox.hartshorn.inject.SupplierProvider;
@@ -36,7 +34,6 @@ import org.dockbox.hartshorn.inject.binding.collection.HierarchyCollectorBinding
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A {@link BindingFunction} that configures a {@link BindingHierarchy} for a specific key. The hierarchy is
@@ -44,18 +41,18 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> The type of the component that is bound.
  *
- * @author Guus Lieben
- * @since 0.4.1
- *
  * @see Binder
  * @see BindingHierarchy
+ *
+ * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
 public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     private final BindingHierarchy<T> hierarchy;
     private final HierarchicalBinder binder;
     private final SingletonCache singletonCache;
-    private final ComponentInstanceFactory instanceFactory;
     private final ScopeModuleContext moduleContext;
     private Scope scope;
 
@@ -67,14 +64,12 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
             BindingHierarchy<T> hierarchy,
             HierarchicalBinder binder,
             SingletonCache singletonCache,
-            ComponentInstanceFactory instanceFactory,
-            Scope scope,
+        Scope scope,
             ScopeModuleContext moduleContext) {
         this.hierarchy = hierarchy;
         this.binder = binder;
         this.singletonCache = singletonCache;
 
-        this.instanceFactory = instanceFactory;
         this.scope = scope;
         this.moduleContext = moduleContext;
     }
@@ -96,17 +91,13 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
         return this.singletonCache;
     }
 
-    protected ComponentInstanceFactory instanceFactory() {
-        return this.instanceFactory;
-    }
-
     @Override
     public BindingFunction<T> installTo(ScopeKey scope) throws IllegalScopeException {
-        if (this.scope != null && this.scope != Scope.DEFAULT_SCOPE && (!(this.scope instanceof ApplicationContext))) {
+        if (this.scope != null && !(this.scope instanceof ApplicationContext)) {
             throw new IllegalScopeException("Cannot install binding to scope " + scope.name() + " as the binding is already installed to scope " + this.scope.installableScopeType().name());
         }
         // Permitted, as default application scope may be expanded. Defined child scopes can not be expanded, so this is a safe check
-        if (this.scope instanceof ApplicationContext && !ApplicationContext.class.isAssignableFrom(scope.scopeType().type())) {
+        if (this.scope != null && !ApplicationContext.class.isAssignableFrom(scope.scopeType().type())) {
             this.scope = null;
         }
         this.scopeModule = scope;
@@ -131,7 +122,7 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
             throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
         }
         ComponentKey<? extends T> key = this.buildComponentKey(type);
-        return this.add(new ContextDrivenProvider<>(key));
+        return this.add(ContextDrivenProvider.forPrototype(key));
     }
 
     @NonNull
@@ -169,22 +160,13 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     @Override
     public Binder lazySingleton(Class<T> type) {
-        return this.lazyContainerSingleton(() -> {
-            ComponentKey<T> key = ComponentKey.builder(type).scope(this.scope).build();
-            Option<ObjectContainer<T>> object = this.instanceFactory().instantiate(key);
-            return object.orNull();
-        });
+        ComponentKey<? extends T> key = this.buildComponentKey(type);
+        return this.add(ContextDrivenProvider.forSingleton(key));
     }
 
     @Override
     public Binder lazySingleton(CheckedSupplier<T> supplier) {
-        return this.lazyContainerSingleton(() -> {
-            T instance = supplier.get();
-            if (instance == null) {
-                throw new IllegalModificationException("Cannot bind null instance");
-            }
-            return new ComponentObjectContainer<>(instance);
-        });
+        return this.add(new LazySingletonProvider<>(supplier));
     }
 
     @Override
@@ -206,10 +188,6 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
 
     private ComponentKey<ComponentCollection<T>> createCollectionComponentKey() {
         return this.hierarchy().key().mutable().collector().build();
-    }
-
-    protected Binder lazyContainerSingleton(CheckedSupplier<ObjectContainer<T>> supplier) {
-        return this.add(new LazySingletonProvider<>(supplier));
     }
 
     protected Binder add(Provider<T> provider) {

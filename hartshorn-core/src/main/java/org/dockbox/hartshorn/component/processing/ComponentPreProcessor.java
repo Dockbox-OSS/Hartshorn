@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.component.processing;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 
 /**
  * A component pre-processor is responsible for pre-processing a component. This can be used to
@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.component.ComponentLocator;
  * information to the component before it is created.
  *
  * <p>The component post processor will only process a component if it is known to the application, which
- * is validated through the active {@link ComponentLocator}. If no {@link ComponentContainer} exists for
+ * is validated through the active {@link ComponentRegistry}. If no {@link ComponentContainer} exists for
  * the component, the component post processor will not be called.
  *
  * <p>To specify when a component post processor should be active, and when the application should ignore
@@ -37,8 +37,9 @@ import org.dockbox.hartshorn.component.ComponentLocator;
  * <p>The component pre-processor will be called for each component that is added to the application.
  * It is executed during application construction.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public abstract non-sealed class ComponentPreProcessor implements ComponentProcessor {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package org.dockbox.hartshorn.component;
 
-import java.util.Objects;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.Objects;
 
 /**
  * Simple implementation of a {@link ScopeKey}, to be used for direct implementations of
@@ -54,8 +56,9 @@ public class DirectScopeKey implements ScopeKey {
      * the creation of a key without having to specify type parameters.
      *
      * @param scopeType the type of the scope
-     * @return a new {@link DirectScopeKey} instance
      * @param <T> the type of the scope
+     *
+     * @return a new {@link DirectScopeKey} instance
      */
     public static <T extends Scope> DirectScopeKey of(Class<T> scopeType) {
         return new DirectScopeKey(ParameterizableType.create(scopeType));
@@ -66,8 +69,9 @@ public class DirectScopeKey implements ScopeKey {
      * the creation of a key from existing type metadata.
      *
      * @param scopeType the type of the scope
-     * @return a new {@link DirectScopeKey} instance
      * @param <T> the type of the scope
+     *
+     * @return a new {@link DirectScopeKey} instance
      */
     public static <T extends Scope> DirectScopeKey of(TypeView<T> scopeType) {
         return new DirectScopeKey(ParameterizableType.create(scopeType));
@@ -78,6 +82,7 @@ public class DirectScopeKey implements ScopeKey {
      * the creation of a key from existing type metadata.
      *
      * @param scopeType the type of the scope
+     *
      * @return a new {@link DirectScopeKey} instance
      */
     public static DirectScopeKey of(ParameterizableType scopeType) {
@@ -99,5 +104,17 @@ public class DirectScopeKey implements ScopeKey {
     @Override
     public int hashCode() {
         return Objects.hash(this.scopeType);
+    }
+
+    @Override
+    public void report(DiagnosticsPropertyCollector collector) {
+        collector.property("type").writeDelegate(this.scopeType);
+    }
+
+    @Override
+    public String toString() {
+        return "DirectScopeKey{" +
+            "scopeType=" + this.scopeType +
+            '}';
     }
 }

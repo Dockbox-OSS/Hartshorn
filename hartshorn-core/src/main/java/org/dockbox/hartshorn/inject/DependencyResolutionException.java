@@ -18,6 +18,14 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.util.ApplicationException;
 
+/**
+ * Thrown by a {@link DependencyResolver} when a dependency cannot be resolved. This is usually
+ * caused by a missing injectable constructor, or an invalid dependency declaration.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class DependencyResolutionException extends ApplicationException {
 
     public DependencyResolutionException(String message) {

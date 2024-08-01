@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,9 @@ import java.util.Set;
  * A cache of converters which can be used to find a converter for a given source and target type.
  * This is useful to serve as middle layer between a {@link ConversionService} and a {@link ConverterRegistry}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ConverterCache {
 

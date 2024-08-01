@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.component;
 
 import org.dockbox.hartshorn.application.StandardApplicationBuilder;
-import org.dockbox.hartshorn.component.processing.ComponentFinalizingPostProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
 import org.dockbox.hartshorn.component.processing.proxy.ContextCarrierDelegationPostProcessor;
 import org.dockbox.hartshorn.component.processing.proxy.ContextMethodPostProcessor;
@@ -39,7 +38,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ServiceActivator(processors = {
-        ComponentFinalizingPostProcessor.class,
         ContextCarrierDelegationPostProcessor.class,
         ContextMethodPostProcessor.class,
 })

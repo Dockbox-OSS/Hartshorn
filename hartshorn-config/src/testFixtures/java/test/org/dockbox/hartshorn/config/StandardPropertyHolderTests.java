@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package test.org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -25,7 +26,7 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
 @UseConfigurations
@@ -37,7 +38,7 @@ public abstract class StandardPropertyHolderTests {
     protected abstract PropertyHolder propertyHolder(ApplicationContext applicationContext);
 
     @Test
-    void testPropertyHolder() {
+    void testPropertyHolder() throws ObjectMappingException {
         PropertyHolder propertyHolder = this.propertyHolder(this.applicationContext);
 
         propertyHolder.set("user.name", "John Doe");
@@ -65,7 +66,7 @@ public abstract class StandardPropertyHolderTests {
 
     @Test
     @TestComponents(components = ComponentWithUserValue.class)
-    void testValueComponents() {
+    void testValueComponents() throws ObjectMappingException {
         PropertyHolder propertyHolder = this.propertyHolder(this.applicationContext);
         propertyHolder.set("user.name", "John Doe");
         propertyHolder.set("user.address.city", "Darwin City");

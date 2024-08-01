@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -35,20 +37,31 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
+import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionClassTypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
-import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionParameterizedTypeParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeMethodsIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implements ReflectionModifierCarrierView, TypeView<T> {
+/**
+ * A reflection-based implementation of {@link TypeView}. This implementation is used by the {@link
+ * ReflectionIntrospector}, and supports both {@link Class} and {@link ParameterizedType} instances.
+ *
+ * @param <T> the type of the reflected type
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
+public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implements TypeView<T> {
 
     private static final BiMap<Class<?>, Class<?>> WRAPPERS = BiMap.ofEntries(
             Map.entry(Boolean.class, boolean.class),
@@ -149,19 +162,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
         return this.type.isRecord();
     }
 
-    @Override
-    public boolean isAbstract() {
-        return this.isInterface() || this.modifiers().isAbstract();
-    }
-
-    @Override
-    public boolean isFinal() {
+    private boolean isFinal() {
         return this.modifiers().isFinal();
-    }
-
-    @Override
-    public boolean isStatic() {
-        return this.modifiers().isStatic();
     }
 
     @Override
@@ -313,6 +315,37 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     }
 
     @Override
+    public boolean isEnclosed() {
+        return this.type.isMemberClass();
+    }
+
+    @Override
+    public Option<EnclosableView> enclosingView() {
+        EnclosableView enclosingView = null;
+
+        Method enclosingMethod = this.type.getEnclosingMethod();
+        if (enclosingMethod != null) {
+            enclosingView = this.introspector().introspect(enclosingMethod);
+        }
+
+        if (enclosingView == null) {
+            Constructor<?> enclosingConstructor = this.type.getEnclosingConstructor();
+            if (enclosingConstructor != null) {
+                enclosingView = this.introspector().introspect(enclosingConstructor);
+            }
+        }
+
+        if (enclosingView == null) {
+            Class<?> enclosingClass = this.type.getEnclosingClass();
+            if (enclosingClass != null) {
+                enclosingView = this.introspector().introspect(enclosingClass);
+            }
+        }
+
+        return Option.of(enclosingView);
+    }
+
+    @Override
     public boolean isParentOf(Class<?> type) {
         return this.compareHierarchy(this.type, type);
     }
@@ -365,13 +398,13 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     }
 
     @Override
-    public Option<TypeView<?>> elementType() throws IllegalArgumentException {
+    public Option<TypeView<?>> elementType() {
         if (this.elementType == null) {
             if (this.isArray()) {
                 this.elementType = Option.of(this.introspector.introspect(this.type().getComponentType()));
             }
             else {
-                throw new IllegalArgumentException("The introspected type must be an array to look up its element type");
+                this.elementType = Option.empty();
             }
         }
         return this.elementType;
@@ -416,8 +449,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
         }
         // Do not use .cast here, getOrDefault causes boxing so we get e.g. Integer instead of int. Explicit cast
         // unboxes it correctly, but .cast will yield a ClassCastException.
-        if (this.isInstance(object)) //noinspection unchecked
-        {
+        if (this.isInstance(object)) {
+            //noinspection unchecked
             return (T) object;
         }
         else {
@@ -429,7 +462,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
 
     @Override
     public PackageView packageInfo() {
-        return new ReflectionPackageView(this.introspector, this.type.getPackage());
+        return this.introspector.introspect(this.type.getPackage());
     }
 
     @Override
@@ -444,13 +477,21 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("name").write(this.name());
-        collector.property("package").write(this.packageInfo().name());
+        collector.property("name").writeString(this.name());
+        collector.property("package").writeString(this.packageInfo().name());
 
         TypeParametersIntrospector typeParameters = this.typeParameters();
-        if (typeParameters.count() > 0) {
-            collector.property("typeParameters").write(typeParameters.all().asList().toArray(Reportable[]::new));
-        }
+        collector.property("typeParameters").writeDelegate(reporter -> {
+            TypeParameterList inputParameters = typeParameters.allInput();
+            if (!inputParameters.isEmpty()) {
+                reporter.property("input").writeDelegates(inputParameters.asList().toArray(Reportable[]::new));
+            }
+
+            TypeParameterList outputParameters = typeParameters.allOutput();
+            if (!outputParameters.isEmpty()) {
+                reporter.property("output").writeDelegates(outputParameters.asList().toArray(Reportable[]::new));
+            }
+        });
     }
 
     @Override

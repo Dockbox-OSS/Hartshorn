@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,13 @@ package test.org.dockbox.hartshorn.prefix;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import jakarta.inject.Singleton;
-
-@Singleton
 public class DemoServicePreProcessor extends ComponentPreProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DemoServicePreProcessor.class);
 
     private int processed = 0;
 
@@ -34,8 +36,13 @@ public class DemoServicePreProcessor extends ComponentPreProcessor {
     @Override
     public <T> void process(ApplicationContext context, ComponentProcessingContext<T> processingContext) {
         if (processingContext.type().is(DemoService.class)) {
-            context.log().debug("Processing %s".formatted(processingContext));
+            LOG.debug("Processing %s".formatted(processingContext));
             this.processed++;
         }
+    }
+
+    @Override
+    public int priority() {
+        return ProcessingPriority.NORMAL_PRECEDENCE;
     }
 }

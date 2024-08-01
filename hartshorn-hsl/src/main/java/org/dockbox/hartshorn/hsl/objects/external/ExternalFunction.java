@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,14 @@ package org.dockbox.hartshorn.hsl.objects.external;
 
 import java.util.List;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -35,10 +36,11 @@ import org.dockbox.hartshorn.util.option.Option;
  * Represents one or more Java methods that can be called from an HSL runtime. The methods
  * are identified by their name, but without the return type or the parameter types. The
  * exact method is determined by the arguments that are passed to the method. If no matching
- * method is found, a {@link RuntimeError} is thrown.
+ * method is found, a {@link ScriptEvaluationError} is thrown.
+ *
+ * @since 0.4.12
  *
  * @author Guus Lieben
- * @since 0.4.12
  */
 public class ExternalFunction extends AbstractFinalizable implements MethodReference {
 
@@ -83,7 +85,10 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
                 .filter(method -> method.parameters().count() == arguments.size())
                 .toList();
         if (methods.isEmpty()) {
-            throw new RuntimeError(at, "Method '" + this.methodName + "' with " + arguments.size() + " parameters does not exist on external instance of type " + this.type.name());
+            throw new ScriptEvaluationError(
+                    "Method '" + this.methodName + "' with " + arguments.size() + " parameters does not exist on external instance of type " + this.type.name(),
+                    Phase.INTERPRETING, at
+            );
         }
 
         MethodView<Object, ?> executable = ExecutableLookup.executable(methods, arguments);
@@ -91,27 +96,40 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
             return executable;
         }
 
-        throw new RuntimeError(at, "Method '" + this.methodName + "' with parameters accepting " + arguments + " does not exist on external instance of type " + this.type.name());
+        throw new ScriptEvaluationError(
+                "Method '" + this.methodName + "' with parameters accepting " + arguments + " does not exist on external instance of type " + this.type.name(),
+                Phase.INTERPRETING, at
+        );
     }
 
     @Override
     public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
         if (this.instance != null && instance != this.instance) {
-            throw new RuntimeError(at, "Function reference was bound to " + this.instance + ", but was invoked with a different object " + instance);
+            throw new ScriptEvaluationError(
+                    "Function reference was bound to " + this.instance + ", but was invoked with a different object " + instance,
+                    Phase.INTERPRETING, at
+            );
         }
         if (!(instance instanceof ExternalObjectReference externalObjectReference)) {
-            throw new RuntimeError(at, "Cannot call method '" + this.methodName + "' on non-external instance");
+            throw new ScriptEvaluationError(
+                    "Cannot call method '" + this.methodName + "' on non-external instance",
+                    Phase.INTERPRETING, at
+            );
         }
         MethodView<Object, ?> method = this.method(at, arguments);
 
-        return method.invoke(externalObjectReference.externalObject(), arguments)
-                .mapError(error -> {
-                    if (error instanceof ApplicationException ae) {
-                        return ae;
-                    }
-                    return new ApplicationException(error);
-                }).map(object -> new ExternalInstance(object, interpreter.applicationContext().environment().introspector().introspect(object)))
-                .orNull();
+        try {
+            return method.invoke(externalObjectReference.externalObject(), arguments)
+                    .map(object -> new ExternalInstance(object,
+                            interpreter.applicationContext().environment().introspector().introspect(object)))
+                    .orNull();
+        }
+        catch (ApplicationException e) {
+            throw e;
+        }
+        catch (Throwable throwable) {
+            throw new ApplicationException(throwable);
+        }
     }
 
     @Override
@@ -135,7 +153,10 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         while(classReference != null);
 
         if (externalClass == null) {
-            throw new RuntimeError(null, "Cannot bind external function to virtual instance of type " + virtualClass.name());
+            throw new ScriptEvaluationError(
+                    "Cannot bind external function to virtual instance of type " + virtualClass.name(),
+                    Phase.INTERPRETING, -1, -1
+                    );
         }
 
         return new ExternalFunction(externalClass.type(), this.methodName, instance);

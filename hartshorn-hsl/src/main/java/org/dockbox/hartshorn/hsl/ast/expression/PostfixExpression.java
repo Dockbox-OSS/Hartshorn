@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,22 @@ package org.dockbox.hartshorn.hsl.ast.expression;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class PostfixExpression extends Expression {
 
     private final Token operator;
-    private final Expression leftExpr;
+    private final Expression leftExpression;
 
-    public PostfixExpression(Token operator, Expression leftExpr) {
+    public PostfixExpression(Token operator, Expression leftExpression) {
         super(operator);
         this.operator = operator;
-        this.leftExpr = leftExpr;
+        this.leftExpression = leftExpression;
     }
 
     public Token operator() {
@@ -35,7 +42,7 @@ public class PostfixExpression extends Expression {
     }
 
     public Expression leftExpression() {
-        return this.leftExpr;
+        return this.leftExpression;
     }
 
     @Override

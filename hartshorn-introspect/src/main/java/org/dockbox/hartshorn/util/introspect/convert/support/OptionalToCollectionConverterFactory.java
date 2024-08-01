@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,29 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Collection;
+import java.util.Optional;
+
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.Collection;
-import java.util.Optional;
-
+/**
+ * Converts an {@link Optional} to a {@link Collection}. If the {@link Optional} is empty, the
+ * resulting {@link Collection} will be empty. If the {@link Optional} contains a value, the
+ * resulting {@link Collection} will contain that value.
+ *
+ * <p>This converter is implemented as a composition of {@link OptionalToOptionConverter} and
+ * {@link OptionToCollectionConverterFactory}.
+ *
+ * @see OptionalToOptionConverter
+ * @see OptionToCollectionConverterFactory
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class OptionalToCollectionConverterFactory implements ConverterFactory<Optional<?>, Collection<?>> {
 
     private final Converter<Optional<?>, Option<?>> helperOptionalToOptionConverter;

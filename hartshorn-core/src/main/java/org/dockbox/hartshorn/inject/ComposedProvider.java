@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import java.util.function.Function;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Tristate;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -31,11 +33,12 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> The type instance to provide.
  *
- * @author Guus Lieben
- * @since 0.5.0
- *
  * @see Provider
  * @see ObjectContainer
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public final class ComposedProvider<T> implements Provider<T> {
 
@@ -69,14 +72,14 @@ public final class ComposedProvider<T> implements Provider<T> {
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(ApplicationContext context) throws ApplicationException {
-        return this.provider.provide(context)
-                .map(this::doMapContainer);
+    public Option<ObjectContainer<T>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
+        return this.provider.provide(context, requestContext)
+                .map(this::transformContainer);
     }
 
-    private ObjectContainer<T> doMapContainer(ObjectContainer<T> container) {
+    private ObjectContainer<T> transformContainer(ObjectContainer<T> container) {
         for (Function<ObjectContainer<T>, ObjectContainer<T>> function : this.functions) {
-            container = function.apply(container);
+            container = function.apply(TypeUtils.adjustWildcards(container, ObjectContainer.class));
         }
         return container;
     }
@@ -85,5 +88,15 @@ public final class ComposedProvider<T> implements Provider<T> {
     public Provider<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
         this.functions.add(mappingFunction);
         return this;
+    }
+
+    @Override
+    public LifecycleType defaultLifecycle() {
+        return this.provider.defaultLifecycle();
+    }
+
+    @Override
+    public Tristate defaultLazy() {
+        return this.provider.defaultLazy();
     }
 }

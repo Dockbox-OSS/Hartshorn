@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,12 @@ package org.dockbox.hartshorn.component.processing;
 
 /**
  * An interface which defines the methods for processing components in an ordered manner.
+ *
+ * @since 0.4.7
+ *
+ * @author Guus Lieben
  */
+@FunctionalInterface
 public interface OrderedComponentProcessor {
 
     /**
@@ -26,7 +31,5 @@ public interface OrderedComponentProcessor {
      *
      * @return The phase of when the component should be processed.
      */
-    default int priority() {
-        return ProcessingPriority.NORMAL_PRECEDENCE;
-    }
+    int priority();
 }

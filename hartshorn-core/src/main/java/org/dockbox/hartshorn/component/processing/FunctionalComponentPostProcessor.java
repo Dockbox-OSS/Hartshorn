@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,14 @@ import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentType;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
+ */
+@Deprecated(since = "0.6.0", forRemoval = true)
 public abstract class FunctionalComponentPostProcessor extends ComponentPostProcessor {
 
     @Override
@@ -31,6 +39,16 @@ public abstract class FunctionalComponentPostProcessor extends ComponentPostProc
     }
 
     /**
+     * @param <T> The type of the component
+     * @param context The application context
+     * @param instance The component instance
+     * @param container The component container
+     * @param processingContext The processing context
+     *
+     * @return Nothing, this method is deprecated and will be removed in a future release
+     *
+     * @throws UnsupportedOperationException This method is deprecated and will be removed in a future release
+     *
      * @deprecated This method is deprecated and will be removed in a future release. Instead use
      * {@link #preConfigureComponent(ApplicationContext, Object, ComponentProcessingContext)},
      * {@link #postConfigureComponent(ApplicationContext, Object, ComponentProcessingContext)} or

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ import java.lang.annotation.Target;
  * used through {@link #fileType()}.
  *
  * @author Guus Lieben
- * @since 0.4.0
+ * @since 0.4.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -64,6 +64,8 @@ public @interface Deserialize {
 
     /**
      * The file format to use when deserializing.
+     *
+     * @return The file format to use when deserializing.
      */
     FileFormats fileType() default FileFormats.JSON;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,37 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Objects;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <T> ...
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
+ */
 public class ComponentContainerImpl<T> implements ComponentContainer<T> {
 
     private final Component annotation;
-    private final Class<?> component;
-    private final TypeView<T> introspectedComponent;
-    private final ApplicationContext context;
+    private final TypeView<T> component;
 
-    public ComponentContainerImpl(ApplicationContext context, Class<T> component) {
-        this.introspectedComponent = context.environment().introspector().introspect(component);
-        Option<Component> annotated = this.introspectedComponent.annotations().get(Component.class);
+    public ComponentContainerImpl(TypeView<T> component) {
+        Option<Component> annotated = component.annotations().get(Component.class);
         if (annotated.absent()) {
-            throw new InvalidComponentException("Provided component candidate (" + component.getCanonicalName() + ") is not annotated with @" + Component.class.getSimpleName());
+            throw new InvalidComponentException("Provided component candidate (" + component.qualifiedName() + ") is not annotated with @" + Component.class.getSimpleName());
+        }
+        if (component.isAnnotation()) {
+            throw new InvalidComponentException("Provided component candidate (" + component.qualifiedName() + ") is an annotation and cannot be used as a component, is it a component stereotype?");
         }
 
         this.component = component;
         this.annotation = annotated.get();
-        this.context = context;
     }
 
     public Component annotation() {
@@ -46,18 +54,14 @@ public class ComponentContainerImpl<T> implements ComponentContainer<T> {
     }
 
     public Class<?> component() {
-        return this.component;
-    }
-
-    public ApplicationContext context() {
-        return this.context;
+        return this.component.type();
     }
 
     @Override
     public String id() {
         String id = this.annotation().id();
         if (id != null && id.isEmpty()) {
-            return ComponentUtilities.id(this.context, this.component, true);
+            return ComponentUtilities.id(this, true);
         }
         return id;
     }
@@ -66,19 +70,19 @@ public class ComponentContainerImpl<T> implements ComponentContainer<T> {
     public String name() {
         String name = this.annotation().name();
         if (name != null && name.isEmpty()) {
-            return ComponentUtilities.name(this.context, this.component, true);
+            return ComponentUtilities.name(this, true);
         }
         return name;
     }
 
     @Override
     public TypeView<T> type() {
-        return this.introspectedComponent;
+        return this.component;
     }
 
     @Override
-    public boolean singleton() {
-        return this.annotation().singleton();
+    public LifecycleType lifecycle() {
+        return this.annotation().lifecycle();
     }
 
     @Override

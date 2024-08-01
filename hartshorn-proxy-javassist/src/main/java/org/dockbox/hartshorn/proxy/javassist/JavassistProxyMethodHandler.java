@@ -16,13 +16,25 @@
 
 package org.dockbox.hartshorn.proxy.javassist;
 
-import javassist.util.proxy.MethodHandler;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
 import java.lang.reflect.Method;
 
+import javassist.util.proxy.MethodHandler;
+
+/**
+ * A Javassist {@link MethodHandler} that delegates to a {@link ProxyMethodInterceptor}.
+ *
+ * @param interceptor the interceptor to delegate to
+ * @param introspector the introspector to use
+ * @param <T> the type of the proxy
+ *
+ * @since 0.4.10
+ *
+ * @author Guus Lieben
+ */
 public record JavassistProxyMethodHandler<T>(ProxyMethodInterceptor<T> interceptor, Introspector introspector) implements MethodHandler {
 
     @Override

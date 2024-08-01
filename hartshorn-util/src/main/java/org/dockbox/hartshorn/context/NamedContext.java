@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,20 @@
 
 package org.dockbox.hartshorn.context;
 
+/**
+ * A context that has a name, which can be used for identification purposes. The name is not
+ * necessarily unique, but is encouraged to be.
+ *
+ * @since 0.4.3
+ *
+ * @author Guus Lieben
+ */
 public interface NamedContext extends Context {
+
+    /**
+     * Returns the name of this context. The name is not necessarily unique, but is encouraged to be.
+     *
+     * @return The name of this context.
+     */
     String name();
 }

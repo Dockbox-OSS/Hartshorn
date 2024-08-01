@@ -116,7 +116,7 @@ public abstract class IntrospectorTests {
 
     @ParameterizedTest
     @MethodSource("fields")
-    void testFieldValueReturnsValue(String field) {
+    void testFieldValueReturnsValue(String field) throws Throwable {
         ReflectTestType instance = new ReflectTestType();
         TypeView<ReflectTestType> type = this.introspector().introspect(instance);
         Option<?> value = type.fields().named(field).get().get(instance);
@@ -126,7 +126,7 @@ public abstract class IntrospectorTests {
 
     @ParameterizedTest
     @MethodSource("methods")
-    void testRunMethodReturnsValue(String method) {
+    void testRunMethodReturnsValue(String method) throws Throwable {
         ReflectTestType instance = new ReflectTestType();
         TypeView<ReflectTestType> type = this.introspector().introspect(instance);
         Option<?> value = type.methods().named(method, List.of(String.class)).get().invoke(instance, "value");
@@ -313,7 +313,7 @@ public abstract class IntrospectorTests {
     }
 
     @Test
-    void testSetFieldUpdatesAccessorField() throws NoSuchFieldException {
+    void testSetFieldUpdatesAccessorField() throws Throwable {
         Field fieldRef = ReflectTestType.class.getDeclaredField("accessorField");
         FieldView<?, ?> field = this.introspector().introspect(fieldRef);
         ReflectTestType instance = new ReflectTestType();
@@ -323,7 +323,7 @@ public abstract class IntrospectorTests {
     }
 
     @Test
-    void testSetFieldUpdatesNormalField() throws NoSuchFieldException {
+    void testSetFieldUpdatesNormalField() throws Throwable {
         Field fieldRef = ReflectTestType.class.getDeclaredField("publicField");
         FieldView<?, ?> field = this.introspector().introspect(fieldRef);
         ReflectTestType instance = new ReflectTestType();

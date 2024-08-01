@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,18 @@
 
 package org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextView;
 
 /**
  * A functional interface for customizing objects with additional context. This interface is similar to
- * {@link Customizer} but allows for {@link Context} to be provided alongside the configuration target.
+ * {@link Customizer} but allows for {@link ContextView context} to be provided alongside the configuration
+ * target.
+ *
+ * @param <T> The type of object to customize.
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
- * @since 0.5.0
  */
 public interface ContextualCustomizer<T> {
 
@@ -31,15 +35,17 @@ public interface ContextualCustomizer<T> {
      * Configures the given target object. Implementations of this method may access the target object directly, and
      * configure it as necessary.
      *
+     * @param context The context to use for configuration.
      * @param target The object to configure.
      */
-    void configure(Context context, T target);
+    void configure(ContextView context, T target);
 
     /**
      * Returns a customizer that composes this customizer with the given customizer. When the returned customizer is
      * invoked, the given customizer is invoked first, and then this customizer is invoked.
      *
      * @param before The customizer to invoke first.
+     *
      * @return A customizer that composes this customizer with the given customizer.
      */
     default ContextualCustomizer<T> compose(ContextualCustomizer<T> before) {
@@ -53,8 +59,9 @@ public interface ContextualCustomizer<T> {
      * Returns a customizer that does nothing. This can be used to accept the default configuration without
      * further modification.
      *
-     * @return A customizer that does nothing.
      * @param <T> The type of object to customize.
+     *
+     * @return A customizer that does nothing.
      */
     static <T> ContextualCustomizer<T> useDefaults() {
         return (context, target) -> {};

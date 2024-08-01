@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.condition.ConditionContext;
 import org.dockbox.hartshorn.component.condition.ConditionResult;
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.condition.ExpressionCondition;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
@@ -35,9 +37,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
-import java.util.stream.Stream;
-
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -72,23 +72,18 @@ public class ConditionTests {
     }
 
     @Test
-    void testApplicationContextIsNotAvailableDefault() {
+    void testApplicationContextIsAvailableDefault() {
         String expression = "null != applicationContext";
         ConditionResult result = this.match(expression);
-        Assertions.assertFalse(result.matches());
-
-        String message = result.message();
-        String withoutMarker = message.substring(0, message.indexOf('.'));
-        // Ensure the failure is due to the absence of the application context, not due to it being null
-        Assertions.assertEquals("Undefined variable 'applicationContext'", withoutMarker);
+        Assertions.assertTrue(result.matches());
     }
 
-    ConditionResult match(String expression, Context... contexts) {
+    ConditionResult match(String expression, ContextView... contexts) {
         ExpressionCondition condition = this.applicationContext.get(ExpressionCondition.class);
         AnnotatedElementView element = this.createAnnotatedElement(expression);
         ConditionContext context = new ConditionContext(this.applicationContext, element, null);
-        for (Context child : contexts) {
-            context.add(child);
+        for (ContextView child : contexts) {
+            context.addContext(child);
         }
         return condition.matches(context);
     }

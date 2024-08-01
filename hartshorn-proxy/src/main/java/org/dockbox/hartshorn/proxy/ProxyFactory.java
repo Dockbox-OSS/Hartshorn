@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import java.lang.reflect.Constructor;
-import java.util.Set;
-import java.util.function.Consumer;
-
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptorContext;
 import org.dockbox.hartshorn.proxy.advice.registry.AdvisorRegistry;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.Constructor;
+import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * The entrypoint for creating proxy objects. This class is responsible for creating proxy objects for
@@ -181,8 +181,10 @@ import org.dockbox.hartshorn.util.option.Attempt;
  * }</pre>
  *
  * @param <T> The type of the proxy
- * @author Guus Lieben
+ *
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public interface ProxyFactory<T> {
 
@@ -221,14 +223,12 @@ public interface ProxyFactory<T> {
      * as well as a new {@link ProxyManager} responsible for managing the proxy. The proxy will be created
      * with all currently known behaviors.
      *
-     * <p>If the proxy could not be created, {@link Attempt#empty()} will be returned. If the proxy is
-     * absent, an exception will not always be thrown. It is up to the implementation to decide whether to
-     * throw an {@link ApplicationException}, or use {@link Attempt#error()}.
+     * <p>If the proxy could not be created, {@link Option#empty()} will be returned.
      *
      * @return A proxy instance
      * @throws ApplicationException If the proxy could not be created
      */
-    Attempt<T, Throwable> proxy() throws ApplicationException;
+    Option<T> proxy() throws ApplicationException;
 
     /**
      * Creates a proxy instance of the given {@code type} and returns it. This will create a new proxy and
@@ -236,18 +236,27 @@ public interface ProxyFactory<T> {
      * {@link ProxyManager} responsible for managing the proxy. The proxy will be created with all currently
      * known behaviors.
      *
-     * <p>If the proxy could not be created, {@link Attempt#empty()} will be returned. If the proxy is
-     * absent, an exception will not always be thrown. It is up to the implementation to decide whether to
-     * throw an {@link ApplicationException}, or use {@link Attempt#error()}.
+     * <p>If the proxy could not be created, {@link Option#empty()} will be returned.
      *
      * @param constructor The constructor to use
      * @param args The arguments to pass to the constructor
      * @return A proxy instance
      * @throws ApplicationException If the proxy could not be created
      */
-    Attempt<T, Throwable> proxy(ConstructorView<? extends T> constructor, Object[] args) throws ApplicationException;
+    Option<T> proxy(ConstructorView<? extends T> constructor, Object[] args) throws ApplicationException;
 
-    Attempt<T, Throwable> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException;
+    /**
+     * Creates a proxy instance of the given {@code type} and returns it. This will create a new proxy and
+     * invokes the given {@link Constructor} to create the proxy instance. This also creates a new
+     * {@link ProxyManager} responsible for managing the proxy. The proxy will be created with all currently
+     * known behaviors.
+     *
+     * @param constructor The constructor to use
+     * @param args The arguments to pass to the constructor
+     * @return A proxy instance
+     * @throws ApplicationException If the proxy could not be created
+     */
+    Option<T> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException;
 
     /**
      * Gets the type of the proxy. This will return the original type, and not a proxy type.

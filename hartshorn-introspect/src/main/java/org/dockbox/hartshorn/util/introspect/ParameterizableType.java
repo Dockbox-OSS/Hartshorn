@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,17 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
+import java.util.function.Predicate;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A wrapper for parameterized types that allows for the retrieval of the type and its parameters. This is a
@@ -41,7 +45,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public final class ParameterizableType {
+public final class ParameterizableType implements Reportable {
 
     private final Class<?> type;
     private final List<ParameterizableType> parameters;
@@ -51,25 +55,53 @@ public final class ParameterizableType {
         this.parameters = parameters;
     }
 
+    /**
+     * Creates a new {@link ParameterizableType} for the given type. The type must not be {@code null}.
+     *
+     * @param type the type to create a {@link ParameterizableType} for
+     * @return a new {@link ParameterizableType} for the given type
+     */
     public static ParameterizableType create(Class<?> type) {
         return builder(type).build();
     }
 
+    /**
+     * Creates a new {@link ParameterizableType} for the given type. The type must not be {@code null}. If the
+     * type represents a {@link ParameterizedType}, the parameters of the type are used to create the parameters
+     * of the {@link ParameterizableType}.
+     *
+     * @param type the type to create a {@link ParameterizableType} for
+     * @return a new {@link ParameterizableType} for the given type
+     */
     public static ParameterizableType create(TypeView<?> type) {
         return builder(type).build();
     }
 
+    /**
+     * Creates a new {@link Builder} for the given type. The type must not be {@code null}.
+     *
+     * @param type the type to create a {@link Builder} for
+     * @return a new {@link Builder} for the given type
+     */
     public static Builder builder(Class<?> type) {
         return new Builder(type);
     }
 
+    /**
+     * Creates a new {@link Builder} for the given type. The type must not be {@code null}. If the
+     * type represents a {@link ParameterizedType}, the parameters of the type are used to pre-configure
+     * the parameters of the {@link Builder}.
+     *
+     * @param type the type to create a {@link Builder} for
+     * @return a new {@link Builder} for the given type
+     */
     public static Builder builder(TypeView<?> type) {
         List<ParameterizableType> parameters = type.typeParameters()
             .allInput()
             .asList()
             .stream()
             .flatMap(parameter -> parameter.resolvedType()
-                .filter(typeView -> !typeView.isWildcard())
+                .filter(Predicate.not(TypeView::isWildcard))
                 .orComputeFlat(() -> {
                     Set<TypeView<?>> bounds = parameter.upperBounds();
                     if (bounds.size() == 1) {
@@ -131,6 +163,12 @@ public final class ParameterizableType {
         return Objects.hash(this.type, this.parameters);
     }
 
+    /**
+     * Returns a fully qualified string representation of this type. This includes the package name of the
+     * type, and the fully qualified names of all parameters.
+     *
+     * @return a fully qualified string representation of this type
+     */
     public String toQualifiedString() {
         String parameters = this.parameters.stream()
                 .map(ParameterizableType::toQualifiedString)
@@ -146,6 +184,20 @@ public final class ParameterizableType {
         return this.type.getSimpleName() + (parameters.isEmpty() ? "" : "<" + parameters + ">");
     }
 
+    @Override
+    public void report(DiagnosticsPropertyCollector collector) {
+        collector.property("type").writeString(this.type.getName());
+        collector.property("parameters").writeDelegates(this.parameters.toArray(Reportable[]::new));
+    }
+
+    /**
+     * A builder for {@link ParameterizableType}s. This builder allows for the creation of {@link ParameterizableType}s
+     * with parameters.
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static class Builder {
 
         private final Class<?> type;
@@ -162,6 +214,8 @@ public final class ParameterizableType {
          *
          * @param parameters the new parameters
          *
+         * @return Self, for chaining
+         *
          * @throws IllegalArgumentException if the number of parameters does not match the number of type parameters
          */
         public Builder parameters(List<ParameterizableType> parameters) {
@@ -173,10 +227,24 @@ public final class ParameterizableType {
             return this;
         }
 
+        /**
+         * Sets the parameters of this type, overriding all existing parameters. The number of parameters must
+         * match the number of type parameters of the type. If the type has no type parameters, the given
+         * parameters must be empty.
+         *
+         * @param parameters the new parameters
+         * @return Self, for chaining
+         * @throws IllegalArgumentException if the number of parameters does not match the number of type parameters
+         */
         public Builder parameters(ParameterizableType... parameters) {
             return this.parameters(List.of(parameters));
         }
 
+        /**
+         * Builds a new {@link ParameterizableType} from the configured values.
+         *
+         * @return a new {@link ParameterizableType} from the configured values
+         */
         public ParameterizableType build() {
             return new ParameterizableType(this.type, this.parameters);
         }

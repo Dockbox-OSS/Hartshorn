@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,25 @@ import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptorContext;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 
+/**
+ * Interceptor for the {@link InjectTranslation} annotation. This interceptor is used to
+ * collect the {@link Message} from the {@link TranslationService} and convert it to the
+ * return type of the method. Any arguments provided to the method will be used to format
+ * the message.
+ *
+ * @param <T> The type of the component
+ * @param <R> The return type of the method
+ *
+ * @see InjectTranslation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class TranslationInjectMethodInterceptor<T, R> implements MethodInterceptor<T, R> {
+
+    public static final Object[] EMPTY_ARGS = new Object[0];
+
     private final ApplicationContext context;
     private final String key;
     private final InjectTranslation annotation;
@@ -46,8 +64,8 @@ public class TranslationInjectMethodInterceptor<T, R> implements MethodIntercept
     public R intercept(MethodInterceptorContext<T, R> interceptorContext) {
         // Prevents NPE when formatting cached resources without arguments
         Object[] args = interceptorContext.args();
-        Object[] objects = null == args ? TranslationInjectPostProcessor.EMPTY_ARGS : args;
-        Message message = this.context.get(TranslationService.class).getOrCreate(this.key, this.annotation.value()).format(objects);
+        Object[] objects = null == args ? EMPTY_ARGS : args;
+        Message message = this.context.get(TranslationService.class).getOrCreate(this.key, this.annotation.defaultValue()).format(objects);
 
         //noinspection unchecked
         return (R) this.conversionService.convert(message, this.methodContext.method().returnType().type());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,27 @@ import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.CompositeQualifier;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.TypeAwareProvider;
 import org.dockbox.hartshorn.util.option.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * A base implementation of a {@link BindingHierarchy}. This implementation tracks providers by priority, and allows
+ * for the addition of providers with a priority. The priority is used to determine the order in which providers are
+ * evaluated. The higher the priority, the earlier the provider is evaluated.
+ *
+ * @param <T> the type of the component
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractBindingHierarchy.class);
 
     private final NavigableMap<Integer, Provider<T>> providers = new TreeMap<>(Collections.reverseOrder());
 
@@ -46,6 +62,12 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * Returns the map of providers, where the key is the priority, and the value is the provider. The map is sorted
+     * in descending order, meaning the highest priority is the first entry.
+     *
+     * @return the map of providers
+     */
     protected NavigableMap<Integer, Provider<T>> priorityProviders() {
         return this.providers;
     }
@@ -74,7 +96,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     public BindingHierarchy<T> add(int priority, Provider<T> provider) {
         // Default providers may be overwritten without further warnings
         if (this.priorityProviders().containsKey(priority) && priority != -1) {
-            this.applicationContext().log().warn(("There is already a provider for %s with priority %d. It will be overwritten! " +
+            LOG.warn(("There is already a provider for %s with priority %d. It will be overwritten! " +
                     "To avoid unexpected behavior, ensure the priority is not already present. Current hierarchy: %s").formatted(this.key()
                     .type().getSimpleName(), priority, this));
         }
@@ -83,7 +105,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     }
 
     @Override
-    public BindingHierarchy<T> addNext(final Provider<T> provider) {
+    public BindingHierarchy<T> addNext(Provider<T> provider) {
         int next = -1;
         if (!this.priorityProviders().isEmpty()) {
             next = this.priorityProviders().lastKey()+1;
@@ -92,21 +114,21 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     }
 
     @Override
-    public BindingHierarchy<T> merge(final BindingHierarchy<T> hierarchy) {
+    public BindingHierarchy<T> merge(BindingHierarchy<T> hierarchy) {
         BindingHierarchy<T> merged = new NativePrunableBindingHierarchy<>(this.key(), this.applicationContext());
         // Low priority, other
-        for (final Entry<Integer, Provider<T>> entry : hierarchy) {
+        for (Entry<Integer, Provider<T>> entry : hierarchy) {
             merged.add(entry.getKey(), entry.getValue());
         }
         // High priority, self
-        for (final Entry<Integer, Provider<T>> entry : this) {
+        for (Entry<Integer, Provider<T>> entry : this) {
             merged.add(entry.getKey(), entry.getValue());
         }
         return merged;
     }
 
     @Override
-    public Option<Provider<T>> get(final int priority) {
+    public Option<Provider<T>> get(int priority) {
         return Option.of(this.priorityProviders().getOrDefault(priority, null));
     }
 
@@ -137,10 +159,10 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     @Override
     public String toString() {
         String contract = this.contractTypeToString();
-        String keyName = this.key().name();
-        String name = "";
-        if (keyName != null) {
-            name = "::" + keyName;
+        CompositeQualifier qualifier = this.key().qualifier();
+        String qualifiers = "";
+        if (qualifier != null && !qualifier.qualifiers().isEmpty()) {
+            qualifiers = " " + qualifier;
         }
 
         // The priorities are stored high to low, however we want to display them as low-to-high.
@@ -158,9 +180,14 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
                 })
                 .collect(Collectors.joining(" -> "));
 
-        return "Hierarchy[%s%s]: %s".formatted(contract, name, hierarchy);
+        return "Hierarchy<%s>%s: %s".formatted(contract, qualifiers, hierarchy);
     }
 
+    /**
+     * Returns a string representation of the contract type of this hierarchy.
+     *
+     * @return a string representation of the contract type of this hierarchy
+     */
     protected String contractTypeToString() {
         return this.key().parameterizedType().toString();
     }

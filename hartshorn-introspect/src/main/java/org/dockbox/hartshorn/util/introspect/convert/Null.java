@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,22 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * used outside the {@link org.dockbox.hartshorn.util.introspect.convert} package, and is thus
  * reserved for internal use only.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public final class Null {
 
+    /**
+     * The type of the {@link Null} instance.
+     */
     public static final Class<Null> TYPE = Null.class;
+
+    /**
+     * The singleton instance of {@link Null}. Should not be used directly through public APIs,
+     * as the conversion service itself should only expect {@code null} and translate that to
+     * {@link Null} internally.
+     */
     static final Null INSTANCE = new Null();
 
     private Null() {

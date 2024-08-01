@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.application.context;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentContainer;
 import org.dockbox.hartshorn.component.ComponentKey;
@@ -27,6 +33,8 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.inject.ComponentContainerDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.ComponentObjectContainer;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.DependencyResolutionException;
 import org.dockbox.hartshorn.inject.PostProcessorDependencyDeclarationContext;
@@ -38,14 +46,30 @@ import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+/**
+ * Simple implementation of the {@link ApplicationContext} interface. This implementation primarily delegates to individual
+ * components, such as the {@link DependencyGraphInitializer} and {@link PostProcessingComponentProvider}. It also supports
+ * pre-processing of components, which is performed immediately when {@link #loadContext() the context is loaded}.
+ *
+ * <p>This context is limited to only being initialized once, and is not refreshable (unless its individual components support
+ * this).
+ *
+ * @see DependencyGraphInitializer
+ * @see PostProcessingComponentProvider
+ * @see ComponentPreProcessor
+ * @see DelegatingApplicationContext
+ * @see ProcessableApplicationContext
+ *
+ * @since 0.4.11
+ *
+ * @author Guus Lieben
+ */
 public class SimpleApplicationContext extends DelegatingApplicationContext implements ProcessableApplicationContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleApplicationContext.class);
 
     protected transient MultiMap<Integer, ComponentPreProcessor> preProcessors;
     private final DependencyGraphInitializer dependencyGraphInitializer;
@@ -70,15 +94,15 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         if (processor instanceof ComponentPostProcessor postProcessor && this.componentProvider() instanceof PostProcessingComponentProvider provider) {
             // Singleton binding is decided by the component provider, to allow for further optimization
             provider.postProcessor(postProcessor);
-            this.log().debug("Added %s for component post-processing with order %d".formatted(name, order));
+            LOG.debug("Added %s for component post-processing with order %d".formatted(name, order));
         }
         else if (processor instanceof ComponentPreProcessor preProcessor) {
             this.preProcessors.put(preProcessor.priority(), preProcessor);
             this.bind((Class<ComponentPreProcessor>) preProcessor.getClass()).singleton(preProcessor);
-            this.log().debug("Added %s for component pre-processing with order %d".formatted(name, order));
+            LOG.debug("Added %s for component pre-processing with order %d".formatted(name, order));
         }
         else {
-            this.log().warn("Unsupported component processor type [" + name + "]");
+            LOG.warn("Unsupported component processor type [" + name + "]");
         }
     }
 
@@ -90,16 +114,16 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
             provider.postProcessor(processor);
         }
         else {
-            this.log().warn("Lazy initialization of component processors is not supported by this component provider [for " + processor.getSimpleName() + "]");
+            LOG.warn("Lazy initialization of component processors is not supported by this component provider [for " + processor.getSimpleName() + "]");
         }
     }
 
     @Override
-    public void loadContext() {
+    public synchronized void loadContext() {
         this.checkRunning();
 
-        Collection<ComponentContainer<?>> containers = this.locator().containers();
-        this.log().debug("Located %d components".formatted(containers.size()));
+        Collection<ComponentContainer<?>> containers = this.componentRegistry().containers();
+        LOG.debug("Located %d components".formatted(containers.size()));
 
         try {
             Collection<DependencyDeclarationContext<?>> declarationContexts = new ArrayList<>();
@@ -148,10 +172,16 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         return this.preProcessors;
     }
 
+    /**
+     * Pre-processes all components with the registered {@link ComponentPreProcessor component pre-processors}. This method
+     * is called immediately after the dependency graph has been initialized.
+     *
+     * @param containers the components to process
+     */
     protected void processComponents(Collection<ComponentContainer<?>> containers) {
         this.checkRunning();
         for (ComponentPreProcessor serviceProcessor : this.preProcessors.allValues()) {
-            this.log().debug("Processing %s components with registered processor %s".formatted(containers.size(), serviceProcessor.getClass().getSimpleName()));
+            LOG.debug("Processing %s components with registered processor %s".formatted(containers.size(), serviceProcessor.getClass().getSimpleName()));
             for (ComponentContainer<?> container : containers) {
                 this.processStandaloneComponent(container, serviceProcessor);
             }
@@ -164,11 +194,20 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
     private void processStandaloneComponent(ComponentContainer<?> container, ComponentPreProcessor serviceProcessor) {
         TypeView<?> service = container.type();
         ComponentKey<?> key = ComponentKey.of(service.type());
-        ComponentProcessingContext<?> context = new ComponentProcessingContext<>(this, key, null);
-        this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
+        LOG.debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
+        ComponentProcessingContext<?> context = new ComponentProcessingContext<>(
+                this, ComponentRequestContext.createForComponent(),
+                key, ComponentObjectContainer.empty(), container.permitsProxying()
+        );
         serviceProcessor.process(context);
     }
 
+    /**
+     * Creates a new {@link SimpleApplicationContext} which may be customized using the given {@link Customizer}.
+     *
+     * @param customizer the customizer
+     * @return the new {@link SimpleApplicationContext}
+     */
     public static ContextualInitializer<ApplicationEnvironment, ApplicationContext> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
@@ -177,18 +216,37 @@ public class SimpleApplicationContext extends DelegatingApplicationContext imple
         };
     }
 
+    /**
+     * Configuration class for the {@link SimpleApplicationContext}. This class is used to configure the {@link SimpleApplicationContext}
+     * before it is created.
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer extends DelegatingApplicationContext.Configurer {
 
         private ContextualInitializer<ApplicationContext, ? extends DependencyGraphInitializer> dependencyGraphInitializer = DependencyGraphInitializer.create(Customizer.useDefaults());
 
+        /**
+         * Configures the dependency graph initializer to use the given {@link DependencyGraphInitializer}.
+         *
+         * @param dependencyGraphInitializer the dependency graph initializer
+         * @return the current instance
+         */
         public Configurer dependencyGraphInitializer(DependencyGraphInitializer dependencyGraphInitializer) {
             return this.dependencyGraphInitializer(ContextualInitializer.of(dependencyGraphInitializer));
         }
 
+        /**
+         * Configures the dependency graph initializer to use the given {@link ContextualInitializer} to create a {@link DependencyGraphInitializer}.
+         *
+         * @param dependencyGraphInitializer the initializer of the dependency graph initializer
+         * @return the current instance
+         */
         public Configurer dependencyGraphInitializer(ContextualInitializer<ApplicationContext, DependencyGraphInitializer> dependencyGraphInitializer) {
             this.dependencyGraphInitializer = dependencyGraphInitializer;
             return this;
         }
-
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,23 @@ package org.dockbox.hartshorn.util.collections;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A {@link MultiMap} implementation that uses {@link ConcurrentHashMap} as its backing map, and
+ * {@link ConcurrentHashMap#newKeySet()} as the factory for new collections. This implementation
+ * is thread-safe.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @see ConcurrentHashMap
+ * @see MultiMap
+ * @see StandardMultiMap
+ * @see ConcurrentMultiMap
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ConcurrentSetMultiMap<K, V> extends ConcurrentMultiMap<K, V> {
 
     public ConcurrentSetMultiMap() {

@@ -19,11 +19,40 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.ApplicationException;
 
+/**
+ * Thrown when a provider cannot be found for a given component key.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class NoSuchProviderException extends ApplicationException {
 
+    /**
+     * The type of provider that was requested.
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public enum ProviderType {
+
+        /**
+         * A provider that is aware of the type it provides.
+         * @see TypeAwareProvider
+         */
         TYPE_AWARE,
+
+        /**
+         * A provider that is not aware of the type it provides.
+         * @see NonTypeAwareProvider
+         */
         NON_TYPE_AWARE,
+
+        /**
+         * Any provider, whether it is aware of the type it provides or not.
+         * @see Provider
+         */
         ANY,
     }
 

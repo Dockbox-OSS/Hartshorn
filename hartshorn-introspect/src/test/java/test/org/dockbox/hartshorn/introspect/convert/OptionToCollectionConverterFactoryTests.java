@@ -25,7 +25,6 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionToCollectionConverterFactory;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -52,50 +51,6 @@ public class OptionToCollectionConverterFactoryTests {
         Assertions.assertFalse(converted.isEmpty());
         Assertions.assertEquals(1, converted.size());
         Assertions.assertEquals("test", CollectionUtilities.first(converted));
-    }
-
-    @Test
-    void testSuccessSomeConvertsToCollectionWithElement() {
-        Converter<Option<?>, ArrayList<String>> converter = createConverter();
-        Option<String> option = Attempt.of("test");
-
-        Collection<?> converted = converter.convert(option);
-        Assertions.assertNotNull(converted);
-        Assertions.assertFalse(converted.isEmpty());
-        Assertions.assertEquals(1, converted.size());
-        Assertions.assertEquals("test", CollectionUtilities.first(converted));
-    }
-
-    @Test
-    void testFailureSomeConvertsToCollectionWithElement() {
-        Converter<Option<?>, ArrayList<String>> converter = createConverter();
-        Option<String> option = Attempt.of("test", new Exception());
-
-        Collection<?> converted = converter.convert(option);
-        Assertions.assertNotNull(converted);
-        Assertions.assertFalse(converted.isEmpty());
-        Assertions.assertEquals(1, converted.size());
-        Assertions.assertEquals("test", CollectionUtilities.first(converted));
-    }
-
-    @Test
-    void testFailureNoneConvertsToEmptyCollection() {
-        Converter<Option<?>, ArrayList<String>> converter = createConverter();
-        Option<String> option = Attempt.of(new Exception());
-
-        Collection<?> converted = converter.convert(option);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted.isEmpty());
-    }
-
-    @Test
-    void testSuccessNoneConvertsToEmptyCollection() {
-        Converter<Option<?>, ArrayList<String>> converter = createConverter();
-        Option<String> option = Attempt.empty();
-
-        Collection<?> converted = converter.convert(option);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted.isEmpty());
     }
 
     private static Converter<Option<?>, ArrayList<String>> createConverter() {

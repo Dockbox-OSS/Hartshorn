@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.i18n.annotations;
 
+import org.dockbox.hartshorn.i18n.services.TranslationKeyGenerator;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.dockbox.hartshorn.i18n.services.TranslationKeyGenerator;
 
 /**
  * Method decorator to indicate the method should return the current translation
@@ -35,11 +35,28 @@ import org.dockbox.hartshorn.i18n.services.TranslationKeyGenerator;
  *
  * @see TranslationKeyGenerator
  * @see org.dockbox.hartshorn.i18n.Message
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface InjectTranslation {
-    String value();
 
+    /**
+     * The default value of the message. This is used as the default value of the message
+     * if no translation is found for the current language.
+     *
+     * @return the default value of the message
+     */
+    String defaultValue();
+
+    /**
+     * The key of the message. If no key is provided, the method name will be used to
+     * generate a key using the active {@link TranslationKeyGenerator}.
+     *
+     * @return the key of the message
+     */
     String key() default "";
 }

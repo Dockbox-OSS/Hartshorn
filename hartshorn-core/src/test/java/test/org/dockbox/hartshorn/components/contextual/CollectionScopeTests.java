@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 import test.org.dockbox.hartshorn.components.ComponentWithCollectionDependencies;
 
 @HartshornTest(includeBasePackages = false)
@@ -129,7 +129,7 @@ public class CollectionScopeTests {
 
     @InjectTest
     @DisplayName("Collection components can be obtained with a collection component key")
-    @TestComponents(components = StaticComponentService.class)
+    @TestComponents(components = StaticComponentConfiguration.class)
     void testCollectionsAreCollected() {
         ComponentKey<ComponentCollection<StaticComponent>> componentKey = ComponentKey.collect(StaticComponent.class);
         ComponentCollection<StaticComponent> collection = this.applicationContext.get(componentKey);
@@ -138,9 +138,9 @@ public class CollectionScopeTests {
         Assertions.assertEquals(0, collection.size());
 
         String[] names = {
-                StaticComponentService.USER,
-                StaticComponentService.ADMIN,
-                StaticComponentService.GUEST
+                StaticComponentConfiguration.USER,
+                StaticComponentConfiguration.ADMIN,
+                StaticComponentConfiguration.GUEST
         };
         for(String name : names) {
             componentKey = componentKey.mutable().name(name).build();

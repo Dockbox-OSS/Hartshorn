@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,30 @@
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class AssignExpressionInterpreter implements ASTNodeInterpreter<Object, AssignExpression> {
 
     @Override
-    public Object interpret(AssignExpression node, InterpreterAdapter adapter) {
+    public Object interpret(AssignExpression node, Interpreter interpreter) {
         Token name = node.name();
-        Object value = adapter.evaluate(node.value());
+        Object value = interpreter.evaluate(node.value());
 
-        Integer distance = adapter.distance(node);
+        Integer distance = interpreter.distance(node);
         if (distance != null) {
-            adapter.visitingScope().assignAt(distance, name, value);
+            interpreter.visitingScope().assignAt(distance, name, value);
         }
         else {
-            adapter.global().assign(name, value);
+            interpreter.global().assign(name, value);
         }
         return value;
     }

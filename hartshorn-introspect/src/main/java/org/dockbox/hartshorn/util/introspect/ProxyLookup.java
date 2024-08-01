@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * Direct use of an implementation of this interface is not guaranteed to be accurate, and should be used with
  * caution.
  *
+ * @since 0.4.9
+ *
  * @author Guus Lieben
- * @since 0.4.10
  */
 public interface ProxyLookup {
 
@@ -54,6 +55,14 @@ public interface ProxyLookup {
      */
     boolean isProxy(Class<?> candidate);
 
+    /**
+     * Returns a proxy introspector for the given instance. If the given instance is not a proxy, or is not
+     * supported by this lookup implementation, an empty {@link Option} is returned.
+     *
+     * @param instance the instance to introspect
+     * @return a proxy introspector for the given instance
+     * @param <T> the type of the instance
+     */
     <T> Option<ProxyIntrospector<T>> introspector(T instance);
 
 }

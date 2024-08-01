@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.function.Function;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -29,8 +30,10 @@ import org.dockbox.hartshorn.util.option.Option;
  * the instance if it is not available.
  *
  * @param <T> The type instance to provide.
- * @author Guus Lieben
+ *
  * @since 0.4.3
+ *
+ * @author Guus Lieben
  */
 public sealed interface Provider<T> permits TypeAwareProvider, NonTypeAwareProvider, ComposedProvider {
 
@@ -40,9 +43,10 @@ public sealed interface Provider<T> permits TypeAwareProvider, NonTypeAwareProvi
      * the instance, or populate fields of the instance.
      *
      * @param context The {@link ApplicationContext} to use.
+     * @param requestContext The context describing the component request.
      * @return The instance, if it can be created.
      */
-    Option<ObjectContainer<T>> provide(ApplicationContext context) throws ApplicationException;
+    Option<ObjectContainer<T>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException;
 
     /**
      * Maps the result of this provider using the provided {@link Function}. The result of the
@@ -55,4 +59,27 @@ public sealed interface Provider<T> permits TypeAwareProvider, NonTypeAwareProvi
     default Provider<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
         return new ComposedProvider<>(this, mappingFunction);
     }
+
+    /**
+     * Indicates the default lifecycle of components provided by this provider. This is used to
+     * determine whether the result of this provider should be cached, and whether this provider
+     * may be called multiple times. Note that it remains up to the container to decide whether
+     * to respect this lifecycle.
+     *
+     * @return The default lifecycle of components provided by this provider.
+     */
+    LifecycleType defaultLifecycle();
+
+    /**
+     * Indicates the default laziness of components provided by this provider. This is used to
+     * determine whether the result of this provider should be created eagerly, or lazily. Note
+     * that it remains up to the container to decide whether to respect this laziness.
+     *
+     * <p>If the implementation of this provider does not support laziness, this method should
+     * return {@link Tristate#UNDEFINED}, so the container can decide whether to eagerly or
+     * lazily create components.
+     *
+     * @return The default laziness of components provided by this provider.
+     */
+    Tristate defaultLazy();
 }

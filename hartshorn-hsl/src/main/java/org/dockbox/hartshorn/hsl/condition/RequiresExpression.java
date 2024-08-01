@@ -45,6 +45,8 @@ public @interface RequiresExpression {
     /**
      * The expression to evaluate. Context of the expression depends on the {@link ExpressionCondition}
      * and any additional provided context.
+     *
+     * @return The expression to evaluate.
      */
     String value();
 }

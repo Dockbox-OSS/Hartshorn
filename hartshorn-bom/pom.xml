@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-staging</artifactId>
-        <version>0.5.0</version>
+        <version>${revision}</version>
         <relativePath>../hartshorn-assembly/pom.staging.xml</relativePath>
     </parent>
 
@@ -15,28 +15,23 @@
 
     <artifactId>hartshorn-bom</artifactId>
     <packaging>pom</packaging>
-    <version>0.5.0</version>
+    <version>${revision}</version>
 
     <properties>
-        <!-- Language support, keep in sync with module parent -->
-        <groovy.version>4.0.15</groovy.version>
-        <kotlin.version>1.9.10</kotlin.version>
-        <slf4j.version>2.0.9</slf4j.version>
-
         <!-- Versions in alphabetical order -->
-        <auto-service.version>1.1.1</auto-service.version>
         <compile-testing.version>0.21.0</compile-testing.version>
-        <cglib.version>3.3.0</cglib.version>
-        <checker.version>3.39.0</checker.version>
-        <hamcrest.version>2.2</hamcrest.version>
-        <jackson.version>2.15.3</jackson.version>
-        <jakarta.annotations.version>2.1.1</jakarta.annotations.version>
+        <checker.version>3.45.0</checker.version>
+        <hamcrest.version>3.0</hamcrest.version>
+        <jackson.version>2.17.2</jackson.version>
+        <jakarta.annotations.version>3.0.0</jakarta.annotations.version>
         <jakarta.inject.version>2.0.1</jakarta.inject.version>
-        <javassist.version>3.29.2-GA</javassist.version>
-        <junit.version>5.10.0</junit.version>
-        <logback.version>1.4.11</logback.version>
-        <mockito.version>5.6.0</mockito.version>
-        <scala.version>3.3.1</scala.version>
+        <javassist.version>3.30.2-GA</javassist.version>
+        <javax.inject.version>1</javax.inject.version>
+        <javax.annotations.version>1.3.2</javax.annotations.version>
+        <junit.version>5.10.3</junit.version>
+        <logback.version>1.5.6</logback.version>
+        <mockito.version>5.12.0</mockito.version>
+        <slf4j.version>2.0.13</slf4j.version>
     </properties>
 
     <dependencyManagement>
@@ -49,17 +44,12 @@
             </dependency>
             <dependency>
                 <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-discovery</artifactId>
+                <artifactId>hartshorn-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.dockbox.hartshorn</groupId>
                 <artifactId>hartshorn-proxy</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-proxy-cglib</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -107,11 +97,6 @@
                 <artifactId>hartshorn-i18n</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-commands</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
             <!-- Third-party -->
             <dependency>
@@ -129,6 +114,16 @@
                 <groupId>jakarta.inject</groupId>
                 <artifactId>jakarta.inject-api</artifactId>
                 <version>${jakarta.inject.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${javax.inject.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>${javax.annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -186,19 +181,9 @@
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.google.auto.service</groupId>
-                <artifactId>auto-service</artifactId>
-                <version>${auto-service.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.google.testing.compile</groupId>
                 <artifactId>compile-testing</artifactId>
                 <version>${compile-testing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib</artifactId>
-                <version>${cglib.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.javassist</groupId>

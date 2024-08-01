@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,11 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.Scope;
-import org.dockbox.hartshorn.component.ScopeKey;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.IllegalScopeException;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
@@ -44,23 +41,25 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  *
  * @author Guus Lieben
  */
-public class AutoConfiguringDependencyContext<T> extends AbstractDependencyContext<T> {
+public class AutoConfiguringDependencyContext<T> extends AbstractDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
 
-    private final CheckedSupplier<T> supplier;
+    private final ContextAwareComponentSupplier<T> supplier;
     private final View view;
 
-    public AutoConfiguringDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies,
-                                            ScopeKey scope, int priority, BindingType bindingType,
-                                            View view, CheckedSupplier<T> supplier) {
-        super(componentKey, dependencies, scope, priority, bindingType);
-        this.supplier = supplier;
-        this.view = view;
+    private AutoConfiguringDependencyContext(AutoConfiguringDependencyContextBuilder<T> builder) {
+        super(builder);
+        this.supplier = builder.supplier;
+        this.view = builder.view;
+    }
+
+    public static <T> AutoConfiguringDependencyContextBuilder<T> builder(ComponentKey<T> componentKey) {
+        return new AutoConfiguringDependencyContextBuilder<>(componentKey);
     }
 
     @Override
     public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
         function.priority(this.priority());
-        if (this.scope() != Scope.DEFAULT_SCOPE.installableScopeType()) {
+        if (this.scope() != ApplicationContext.APPLICATION_SCOPE) {
             try {
                 function.installTo(this.scope());
             }
@@ -71,9 +70,9 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
         function.priority(this.priority());
         function.processAfterInitialization(this.processAfterInitialization());
 
-        switch(this.type()) {
-            case COMPONENT -> this.configureComponent(function);
-            case COLLECTION -> this.configureCollection(function);
+        switch(this.memberType()) {
+            case STANDALONE -> this.configureComponent(function);
+            case COMPOSITE -> this.configureCollection(function);
         }
     }
 
@@ -83,8 +82,8 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
             try {
                 switch(instanceType) {
                 case SUPPLIER -> collector.supplier(this.supplier);
-                case SINGLETON -> collector.singleton(this.supplier.get());
-                case LAZY_SINGLETON -> collector.lazySingleton(this.supplier);
+                case SINGLETON -> collector.singleton(this.supplier.get(ComponentRequestContext.createForComponent()));
+                case LAZY_SINGLETON -> collector.lazySingleton(() -> this.supplier.get(ComponentRequestContext.createForComponent()));
                 }
             }
             catch(ApplicationException e) {
@@ -98,8 +97,8 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
         try {
             switch (instanceType) {
                 case SUPPLIER -> function.to(this.supplier);
-                case SINGLETON -> function.singleton(this.supplier.get());
-                case LAZY_SINGLETON -> function.lazySingleton(this.supplier);
+                case SINGLETON -> function.singleton(this.supplier.get(ComponentRequestContext.createForComponent()));
+                case LAZY_SINGLETON -> function.lazySingleton(() -> this.supplier.get(ComponentRequestContext.createForComponent()));
             }
         }
         catch (ApplicationException e) {
@@ -113,19 +112,62 @@ public class AutoConfiguringDependencyContext<T> extends AbstractDependencyConte
     }
 
     private InstanceType instanceType() {
-        if (this.singleton() && this.lazy()) {
-            return InstanceType.LAZY_SINGLETON;
-        }
-        else if (this.singleton()) {
-            return InstanceType.SINGLETON;
-        }
-        else {
-            return InstanceType.SUPPLIER;
-        }
+        return switch (this.lifecycleType()) {
+            case PROTOTYPE -> InstanceType.SUPPLIER;
+            case SINGLETON -> {
+                if (this.lazy()) {
+                    yield InstanceType.LAZY_SINGLETON;
+                }
+                else {
+                    yield InstanceType.SINGLETON;
+                }
+            }
+        };
     }
 
     /**
-     * The type of instance that is created by the container. This is either a supplier, a singleton or a lazy singleton.
+     * The type of instance that is created by the container.
      */
-    enum InstanceType { SUPPLIER, SINGLETON, LAZY_SINGLETON }
+    private enum InstanceType { SUPPLIER, SINGLETON, LAZY_SINGLETON }
+
+    /**
+     * A builder for {@link AutoConfiguringDependencyContext} instances.
+     *
+     * @param <T> the type of the component that is auto-configured
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
+    public static final class AutoConfiguringDependencyContextBuilder<T> extends AbstractDependencyContextBuilder<T, AutoConfiguringDependencyContextBuilder<T>> {
+
+        private ContextAwareComponentSupplier<T> supplier;
+        private View view;
+
+        private AutoConfiguringDependencyContextBuilder(ComponentKey<T> componentKey) {
+            super(componentKey);
+        }
+
+        @Override
+        protected AutoConfiguringDependencyContextBuilder<T> self() {
+            return this;
+        }
+
+        public AutoConfiguringDependencyContextBuilder<T> supplier(ContextAwareComponentSupplier<T> supplier) {
+            this.supplier = supplier;
+            return this;
+        }
+
+        public AutoConfiguringDependencyContextBuilder<T> view(View view) {
+            this.view = view;
+            return this;
+        }
+
+
+
+        @Override
+        public AutoConfiguringDependencyContext<T> build() {
+            return new AutoConfiguringDependencyContext<>(this);
+        }
+    }
 }

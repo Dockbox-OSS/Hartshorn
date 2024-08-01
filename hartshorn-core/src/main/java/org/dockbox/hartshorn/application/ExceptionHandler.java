@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,9 @@ package org.dockbox.hartshorn.application;
 /**
  * The exception handler is used to handle exceptions that occur during the application lifecycle.
  *
+ * @since 0.4.9
+ *
  * @author Guus Lieben
- * @since 0.4.8
  */
 public interface ExceptionHandler {
 
@@ -47,23 +48,5 @@ public interface ExceptionHandler {
      * @param stacktraces Whether to use stacktraces.
      * @return Itself, for chaining.
      */
-    ExceptionHandler printStacktraces(boolean stacktraces);
-
-    /**
-     * Throw the provided {@link Throwable} as if it were unchecked. This treats the exception as if it were unchecked,
-     * and will not require it to be handled by javac. This is possible because of a side effect of type erasure, see
-     * the link below for more details. The return result is only used to mimic a return value when it is needed, as the
-     * {@code throws} cause is not enough to make the compiler know that the method will throw an exception.
-     *
-     * @param throwable The exception to throw.
-     * @param <T> The type of the exception.
-     * @throws T The exception to throw.
-     * @see <a href="https://blog.jooq.org/throw-checked-exceptions-like-runtime-exceptions-in-java/">Throw checked exceptions like runtime exceptions in Java</a>
-     *
-     * @deprecated Re-throwing checked exceptions as unchecked exceptions is not recommended. This method will be removed in a future release.
-     */
-    @Deprecated(since = "0.5.0", forRemoval = true)
-    static <T extends Throwable, R> R unchecked(Throwable throwable) throws T {
-        throw (T) throwable;
-    }
+    ExceptionHandler printStackTraces(boolean stacktraces);
 }

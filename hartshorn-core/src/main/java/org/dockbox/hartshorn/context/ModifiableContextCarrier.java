@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,11 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
  * A context carrier is a class that can be used to transport an active {@link ApplicationContext},
  * and allows for the attached {@link ApplicationContext} to be changed.
  *
- * @author Guus Lieben
+ * @see ContextCarrier
+ *
  * @since 0.4.9
  *
- * @see ContextCarrier
+ * @author Guus Lieben
  */
 public interface ModifiableContextCarrier extends ContextCarrier {
 

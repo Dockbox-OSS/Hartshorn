@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ package test.org.dockbox.hartshorn.config.jackson;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.config.jackson.JacksonDataMapperRegistry;
 import org.dockbox.hartshorn.config.jackson.JacksonObjectMapper;
+import org.dockbox.hartshorn.config.jackson.JacksonObjectMapperConfigurator;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 import test.org.dockbox.hartshorn.config.mapping.ObjectMappingTests;
 
 public class JacksonObjectMappingTests extends ObjectMappingTests {
@@ -28,8 +30,14 @@ public class JacksonObjectMappingTests extends ObjectMappingTests {
     @Inject
     private ApplicationContext applicationContext;
 
+    @Inject
+    private JacksonDataMapperRegistry dataMapperRegistry;
+
+    @Inject
+    private JacksonObjectMapperConfigurator objectMapperConfigurator;
+
     @Override
     protected ObjectMapper objectMapper() {
-        return new JacksonObjectMapper(this.applicationContext);
+        return new JacksonObjectMapper(this.applicationContext, this.dataMapperRegistry, this.objectMapperConfigurator);
     }
 }

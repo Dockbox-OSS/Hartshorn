@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.application;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+
 /**
  * Basic context for the application bootstrap process. This context is used to determine the main class and arguments
  * passed to the application, as well as whether or not to include the base packages of the main class. The amount of
@@ -25,17 +27,18 @@ import java.util.List;
  * lifecycle.
  *
  * @see ApplicationBuildContext
- * @see StandardApplicationContextConstructor
+ * @see StandardApplicationContextFactory
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
- * @since 0.5.0
  */
 public class ApplicationBootstrapContext extends ApplicationBuildContext {
 
     private final boolean includeBasePackages;
 
-    public ApplicationBootstrapContext(Class<?> mainClass, List<String> arguments, boolean includeBasePackages) {
-        super(mainClass, arguments);
+    public ApplicationBootstrapContext(Class<?> mainClass, List<String> arguments, Logger logger, boolean includeBasePackages) {
+        super(mainClass, arguments, logger);
         this.includeBasePackages = includeBasePackages;
     }
 

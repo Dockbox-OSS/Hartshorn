@@ -18,6 +18,17 @@ package org.dockbox.hartshorn.util.introspect;
 
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A proxy introspector is used to introspect a proxy instance. It provides access to the original type of
+ * the proxy, the proxied type of the proxy, the proxy instance itself and the original instance delegate
+ * of the proxy if it is present and accessible.
+ *
+ * @param <T> the type of the proxy
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public interface ProxyIntrospector<T> {
 
     /**

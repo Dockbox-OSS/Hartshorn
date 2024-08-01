@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,27 @@
 
 package org.dockbox.hartshorn.component.processing.proxy;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 
-public abstract class ServiceAnnotatedMethodPostProcessor<M extends Annotation> extends FunctionalComponentPostProcessor {
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <M> ...
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
+ */
+public abstract class ServiceAnnotatedMethodPostProcessor<M extends Annotation> extends ComponentPostProcessor {
 
     public abstract Class<M> annotation();
 

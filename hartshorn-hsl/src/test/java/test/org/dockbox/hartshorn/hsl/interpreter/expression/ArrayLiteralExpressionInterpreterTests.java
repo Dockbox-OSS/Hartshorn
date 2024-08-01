@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,17 @@
 
 package test.org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.expression.ArrayLiteralExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.jetbrains.annotations.NotNull;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
 
@@ -47,7 +46,7 @@ public class ArrayLiteralExpressionInterpreterTests {
 
     @Test
     void testArrayLiteralYieldsArrayObject() {
-        Token value = Token.of(TokenType.STRING).literal("test").build();
+        Token value = Token.of(LiteralTokenType.STRING).literal("test").build();
         LiteralExpression literalExpression = new LiteralExpression(value, value.literal());
         ArrayLiteralExpression expression = createExpression(List.of(literalExpression));
 
@@ -60,10 +59,9 @@ public class ArrayLiteralExpressionInterpreterTests {
         Assertions.assertEquals("test", array.value(0));
     }
 
-    @NotNull
     private static ArrayLiteralExpression createExpression(List<Expression> expressions) {
-        Token open = Token.of(TokenType.ARRAY_OPEN).lexeme("[").build();
-        Token close = Token.of(TokenType.ARRAY_CLOSE).lexeme("]").build();
+        Token open = Token.of(InterpreterTestHelper.defaultTokenPairs().array().open()).build();
+        Token close = Token.of(InterpreterTestHelper.defaultTokenPairs().array().close()).build();
         return new ArrayLiteralExpression(open, close, expressions);
     }
 }

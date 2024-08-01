@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
 
 package test.org.dockbox.hartshorn.i18n;
 
+import java.util.Objects;
+import java.util.function.Predicate;
 import org.dockbox.hartshorn.application.HartshornApplication;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentContainer;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.i18n.services.TranslationKeyGenerator;
 import org.dockbox.hartshorn.util.CollectionUtilities;
@@ -173,8 +175,8 @@ public final class TranslationBatchGenerator {
     private static List<File> existingFiles() {
         File batch = TranslationBatchGenerator.existingBatch();
         if (batch.exists() && batch.isDirectory()) {
-            return Stream.of(batch.listFiles())
-                    .filter(file -> !file.isDirectory())
+            return Stream.of(Objects.requireNonNull(batch.listFiles()))
+                    .filter(Predicate.not(File::isDirectory))
                     .toList();
         }
         else {
@@ -185,13 +187,13 @@ public final class TranslationBatchGenerator {
     public static Map<String, String> collect(ApplicationContext context) {
         Map<String, String> batch = new HashMap<>();
         TranslationKeyGenerator keyGenerator = context.get(TranslationKeyGenerator.class);
-        for (ComponentContainer<?> container : context.get(ComponentLocator.class).containers()) {
+        for (ComponentContainer<?> container : context.get(ComponentRegistry.class).containers()) {
             TypeView<?> type = container.type();
             List<? extends MethodView<?, ?>> methods = type.methods().annotatedWith(InjectTranslation.class);
             for (MethodView<?, ?> method : methods) {
                 InjectTranslation annotation = method.annotations().get(InjectTranslation.class).get();
                 String key = keyGenerator.key(type, method);
-                batch.put(key, annotation.value());
+                batch.put(key, annotation.defaultValue());
             }
         }
         return batch;

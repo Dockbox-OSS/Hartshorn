@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import javax.xml.transform.Result;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.none.None;
 import org.dockbox.hartshorn.util.option.some.Some;
@@ -52,12 +53,26 @@ import org.dockbox.hartshorn.util.option.some.Some;
  * such as {@link #orElse(Object)} (return a default value if value not present) and {@link #peek(Consumer)} (execute a
  * block of code if the value is present).
  *
+ * <p>When comparing {@link Option} to {@link Optional}, there are two major differences between the two:
+ * <ol>
+ *     <li>
+ *         {@link Option} is an interface, with specific implementations to match certain scenarios (present or absent values).
+ *         This allows for pattern matching, and for the creation of custom implementations if desired.
+ *     </li>
+ *     <li>
+ *         {@link Option} is a {@link Context}, which allows for the storage of additional data. This is useful for example when
+ *         a value is present, but the value is not the only thing that is relevant. For example, when a value is absent, and the
+ *         reason for the absence is relevant, the reason can be stored in the {@link Context} of the {@link Option} instance.
+ *     </li>
+ * </ol>
+ *
  * @param <T> the type of the (potential) value wrapped by the {@link Option} instance.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
-public interface Option<T> extends Iterable<T> {
+public interface Option<T> extends Context, Iterable<T> {
 
     /**
      * Creates a new {@link Option} instance wrapping the given nullable value. If the value is {@code null}, an
@@ -69,7 +84,7 @@ public interface Option<T> extends Iterable<T> {
      * @return a new {@link Option} instance wrapping the given nullable value.
      */
     @NonNull
-    static <T> Option<T> of(T value) {
+    static <T> Option<T> of(@Nullable T value) {
         if (value == null) {
             return new None<>();
         }
@@ -87,7 +102,7 @@ public interface Option<T> extends Iterable<T> {
      * @return a new {@link Option} instance wrapping the (potential) value of the given {@link Optional} instance.
      */
     @NonNull
-    static <T> Option<T> of(Optional<T> optional) {
+    static <T> Option<T> of(@NonNull Optional<@Nullable T> optional) {
         if (optional.isEmpty()) {
             return new None<>();
         }
@@ -106,7 +121,7 @@ public interface Option<T> extends Iterable<T> {
      * @return a new {@link Option} instance wrapping the (potential) value of the given {@link Callable} instance.
      */
     @NonNull
-    static <T> Option<T> of(Callable<T> supplier) {
+    static <T> Option<T> of(@NonNull Callable<@Nullable T> supplier) {
         try {
             T value = supplier.call();
             if (value == null) {
@@ -140,7 +155,11 @@ public interface Option<T> extends Iterable<T> {
      * @param <E> the type of the error to wrap in the {@link Attempt} instance.
      *
      * @return a {@link Attempt} instance based on the current {@link Option} instance.
+     *
+     * @deprecated since 0.6.0 for removal in 0.7.0. Consider handling exceptions immediately, or rethrowing them
+     *             in a checked manner.
      */
+    @Deprecated(since = "0.6.0", forRemoval = true)
     <E extends Throwable> Attempt<T, E> attempt(Class<E> errorType);
 
     /**
@@ -304,6 +323,7 @@ public interface Option<T> extends Iterable<T> {
      * {@link Option} is returned.
      *
      * @param predicate the {@link Predicate} to apply to the value, if present.
+     *
      * @return the current {@link Option} instance if a value is present and the {@link Predicate} returns
      */
     @NonNull
@@ -324,8 +344,9 @@ public interface Option<T> extends Iterable<T> {
      * is created using the provided {@link Function}. If no value is present, an empty {@link Stream} is returned.
      *
      * @param mapper the {@link Function} to use to create the {@link Stream} if a value is present.
-     * @return a {@link Stream} based on the current {@link Option} instance.
      * @param <U> the type of the elements of the new {@link Stream}
+     *
+     * @return a {@link Stream} based on the current {@link Option} instance.
      */
     @NonNull
     default <U> Stream<U> stream(@NonNull Function<@NonNull T, @NonNull Stream<U>> mapper) {
@@ -348,9 +369,10 @@ public interface Option<T> extends Iterable<T> {
      * given type, an empty {@link Option} is returned. If no value is present, an empty {@link Option} is returned.
      *
      * @param type the type to cast the value to
+     * @param <U> the type to cast the value to
+     *
      * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given
      *       type.
-     * @param <U> the type to cast the value to
      */
     default <U> Option<U> ofType(@NonNull Class<U> type) {
         return this.filter(type::isInstance).cast(type);
@@ -361,9 +383,11 @@ public interface Option<T> extends Iterable<T> {
      * given type, a {@link ClassCastException} is thrown. If no value is present, an empty {@link Option} is returned.
      *
      * @param type the type to cast the value to
+     * @param <U> the type to cast the value to
+     *
      * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given
      *        type.
-     * @param <U> the type to cast the value to
+     *
      * @throws ClassCastException if the value is not of the given type
      */
     default <U> Option<U> cast(@NonNull Class<U> type) {
@@ -376,12 +400,28 @@ public interface Option<T> extends Iterable<T> {
      * The wildcards of the given type are adjusted to match the wildcards of the provided type parameter {@link A}.
      *
      * @param type the type to cast the value to
-     * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given type.
      * @param <K> the type to cast the value to
      * @param <A> the type parameter to adjust the wildcards of the given type to
+     *
+     * @return an {@link Option} containing the value wrapped by the current {@link Option} instance, cast to the given type.
      */
     default <K extends T, A extends K> Option<A> adjust(@NonNull Class<K> type) {
         return this.ofType(type).map(value -> TypeUtils.adjustWildcards(value, type));
+    }
+
+    /**
+     * Tests the value wrapped by the current {@link Option} instance using the given {@link Predicate}. If a value is
+     * present, the result of the {@link Predicate} is returned. If no value is present, {@code false} is returned.
+     *
+     * <p>This is particularly useful as a convenience method when returning primitive {@code boolean} values directly
+     * from a {@link Option}, as it does not require explicit unboxing on the caller's end.
+     *
+     * @param predicate the {@link Predicate} to test the value with.
+     *
+     * @return the result of the {@link Predicate} if a value is present, otherwise {@code false}.
+     */
+    default boolean test(@NonNull Predicate<T> predicate) {
+        return Boolean.TRUE.equals(this.map(predicate::test).orElse(false));
     }
 
     /**
@@ -391,8 +431,9 @@ public interface Option<T> extends Iterable<T> {
      * {@link Stream#collect(Collector)} through {@link #stream()}.
      *
      * @param collector the {@link Collector} describing the reduction operation
-     * @return the result of the reduction
      * @param <E> the type of the result
+     *
+     * @return the result of the reduction
      */
     default <E> E collect(@NonNull Collector<T, ?, E> collector) {
         return this.stream().collect(collector);

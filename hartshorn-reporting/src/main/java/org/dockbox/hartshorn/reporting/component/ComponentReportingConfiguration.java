@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,69 +16,79 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
-import java.util.EnumMap;
-import java.util.Map;
-
+/**
+ * General configuration for the {@link ComponentDiagnosticsReporter} that allows for fine-grained control over the
+ * information that is reported.
+ *
+ * @see ComponentDiagnosticsReporter
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ComponentReportingConfiguration {
 
     private ComponentAttribute groupBy = ComponentAttribute.STEREOTYPE;
     private boolean includeDependencies = true;
     private boolean includeRequiredConditions = true;
-    private final Map<ComponentAttribute, Boolean> attributes = new EnumMap<>(ComponentAttribute.class);
 
-    public ComponentReportingConfiguration() {
-        // Package is included by type definition, so we don't need to include it by default
-        this.attributes.put(ComponentAttribute.STEREOTYPE, true);
-    }
-
+    /**
+     * The attribute by which components should be grouped. Defaults to {@link ComponentAttribute#STEREOTYPE}.
+     *
+     * @return the attribute by which components should be grouped
+     */
     public ComponentAttribute groupBy() {
         return this.groupBy;
     }
 
-    public ComponentReportingConfiguration groupBy(
-            ComponentAttribute groupBy) {
+    /**
+     * Sets the attribute by which components should be grouped.
+     *
+     * @param groupBy the attribute by which components should be grouped
+     * @return this configuration object
+     */
+    public ComponentReportingConfiguration groupBy(ComponentAttribute groupBy) {
         this.groupBy = groupBy;
         return this;
     }
 
+    /**
+     * Whether dependencies should be included in the report.
+     *
+     * @return {@code true} if dependencies should be included in the report, {@code false} otherwise
+     */
     public boolean includeDependencies() {
         return this.includeDependencies;
     }
 
+    /**
+     * Sets whether dependencies should be included in the report.
+     *
+     * @param includeDependencies {@code true} if dependencies should be included in the report, {@code false} otherwise
+     * @return this configuration object
+     */
     public ComponentReportingConfiguration includeDependencies(boolean includeDependencies) {
         this.includeDependencies = includeDependencies;
         return this;
     }
 
+    /**
+     * Whether required conditions should be included in the report.
+     *
+     * @return {@code true} if required conditions should be included in the report, {@code false} otherwise
+     */
     public boolean includeRequiredConditions() {
         return this.includeRequiredConditions;
     }
 
+    /**
+     * Sets whether required conditions should be included in the report.
+     *
+     * @param includeRequiredConditions {@code true} if required conditions should be included in the report, {@code false} otherwise
+     * @return this configuration object
+     */
     public ComponentReportingConfiguration includeRequiredConditions(boolean includeRequiredConditions) {
         this.includeRequiredConditions = includeRequiredConditions;
         return this;
-    }
-
-    public Map<ComponentAttribute, Boolean> attributes() {
-        return this.attributes;
-    }
-
-    public ComponentReportingConfiguration attribute(ComponentAttribute attribute, boolean enabled) {
-        this.attributes.put(attribute, enabled);
-        return this;
-    }
-
-    public ComponentReportingConfiguration enable(ComponentAttribute attribute) {
-        return this.attribute(attribute, true);
-    }
-
-    public ComponentReportingConfiguration disable(ComponentAttribute attribute) {
-        return this.attribute(attribute, false);
-    }
-
-    public enum ComponentAttribute {
-        STEREOTYPE,
-        PACKAGE,
-        NONE,
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,20 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextKey;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.util.TypeUtils;
 
-public abstract class ContextConfiguringComponentProcessor<C extends Context> extends ComponentPostProcessor {
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <C> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+public abstract class ContextConfiguringComponentProcessor<C extends ContextView> extends ComponentPostProcessor {
 
     private final Class<C> contextType;
 
@@ -35,7 +45,7 @@ public abstract class ContextConfiguringComponentProcessor<C extends Context> ex
     @Override
     public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         if (this.supports(processingContext)) {
-            C componentContext = processingContext.first(ContextKey.of(this.contextType))
+            C componentContext = processingContext.firstContext(ContextKey.of(this.contextType))
                     .orCompute(() -> this.createContext(context, processingContext)).orNull();
 
             if (componentContext != null) {
@@ -43,23 +53,30 @@ public abstract class ContextConfiguringComponentProcessor<C extends Context> ex
             }
 
             if (instance instanceof Context contextInstance) {
-                contextInstance.add(componentContext);
+                contextInstance.addContext(componentContext);
             }
             else {
                 ComponentKey<ProxyFactory<T>> factoryKey = TypeUtils.adjustWildcards(ComponentKey.of(ProxyFactory.class), ComponentKey.class);
                 if (processingContext.containsKey(factoryKey)) {
                     ProxyFactory<T> proxyFactory = processingContext.get(factoryKey);
-                    proxyFactory.contextContainer().add(componentContext);
+                    proxyFactory.contextContainer().addContext(componentContext);
                 }
             }
         }
     }
 
-    protected abstract boolean supports(ComponentProcessingContext<?> processingContext);
+    protected abstract boolean supports(
+            ComponentProcessingContext<?> processingContext
+    );
 
-    protected abstract <T> void configure(ApplicationContext context, C componentContext,
-                                          ComponentProcessingContext<T> processingContext);
+    protected abstract <T> void configure(
+            ApplicationContext context,
+            C componentContext,
+            ComponentProcessingContext<T> processingContext
+    );
 
-    protected abstract C createContext(ApplicationContext context,
-                                       ComponentProcessingContext<?> processingContext);
+    protected abstract C createContext(
+            ApplicationContext context,
+            ComponentProcessingContext<?> processingContext
+    );
 }

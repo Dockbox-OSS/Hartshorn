@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,56 +45,225 @@ import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
  * Visitor interface for all supported {@link org.dockbox.hartshorn.hsl.ast.expression.Expression}s.
  * @param <R> The return type for the visitor.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public interface ExpressionVisitor<R> {
 
-    R visit(BinaryExpression expr);
+    /**
+     * Visits the given {@link BinaryExpression binary expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(BinaryExpression expression);
 
-    R visit(RangeExpression expr);
+    /**
+     * Visits the given {@link RangeExpression range expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(RangeExpression expression);
 
-    R visit(GroupingExpression expr);
+    /**
+     * Visits the given {@link GroupingExpression grouping expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(GroupingExpression expression);
 
-    R visit(LiteralExpression expr);
+    /**
+     * Visits the given {@link LiteralExpression literal expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(LiteralExpression expression);
 
-    R visit(AssignExpression expr);
+    /**
+     * Visits the given {@link AssignExpression assign expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(AssignExpression expression);
 
-    R visit(LogicalAssignExpression expr);
+    /**
+     * Visits the given {@link LogicalAssignExpression logical assign expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(LogicalAssignExpression expression);
 
-    R visit(UnaryExpression expr);
+    /**
+     * Visits the given {@link UnaryExpression unary expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(UnaryExpression expression);
 
-    R visit(PostfixExpression expr);
+    /**
+     * Visits the given {@link PostfixExpression postfix expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(PostfixExpression expression);
 
-    R visit(LogicalExpression expr);
+    /**
+     * Visits the given {@link LogicalExpression logical expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(LogicalExpression expression);
 
-    R visit(BitwiseExpression expr);
+    /**
+     * Visits the given {@link BitwiseExpression bitwise expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(BitwiseExpression expression);
 
-    R visit(FunctionCallExpression expr);
+    /**
+     * Visits the given {@link FunctionCallExpression function call expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(FunctionCallExpression expression);
 
-    R visit(GetExpression expr);
+    /**
+     * Visits the given {@link GetExpression get expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(GetExpression expression);
 
-    R visit(SetExpression expr);
+    /**
+     * Visits the given {@link SetExpression set expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(SetExpression expression);
 
-    R visit(ThisExpression expr);
+    /**
+     * Visits the given {@link ThisExpression 'this' expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(ThisExpression expression);
 
-    R visit(SuperExpression expr);
+    /**
+     * Visits the given {@link SuperExpression 'super' expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(SuperExpression expression);
 
-    R visit(VariableExpression expr);
+    /**
+     * Visits the given {@link VariableExpression variable expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(VariableExpression expression);
 
-    R visit(ElvisExpression expr);
+    /**
+     * Visits the given {@link ElvisExpression elvis expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(ElvisExpression expression);
 
-    R visit(TernaryExpression expr);
+    /**
+     * Visits the given {@link TernaryExpression ternary expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(TernaryExpression expression);
 
-    R visit(ArraySetExpression expr);
+    /**
+     * Visits the given {@link ArraySetExpression array set expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(ArraySetExpression expression);
 
-    R visit(ArrayGetExpression expr);
+    /**
+     * Visits the given {@link ArrayGetExpression array get expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(ArrayGetExpression expression);
 
-    R visit(ArrayLiteralExpression expr);
+    /**
+     * Visits the given {@link ArrayLiteralExpression array literal expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(ArrayLiteralExpression expression);
 
-    R visit(ArrayComprehensionExpression expr);
+    /**
+     * Visits the given {@link ArrayComprehensionExpression array comprehension expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(ArrayComprehensionExpression expression);
 
-    R visit(PrefixExpression expr);
+    /**
+     * Visits the given {@link PrefixExpression prefix expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(PrefixExpression expression);
 
-    R visit(InfixExpression expr);
+    /**
+     * Visits the given {@link InfixExpression infix expression}.
+     *
+     * @param expression The expression to visit
+     *
+     * @return The result of the visit
+     */
+    R visit(InfixExpression expression);
 }

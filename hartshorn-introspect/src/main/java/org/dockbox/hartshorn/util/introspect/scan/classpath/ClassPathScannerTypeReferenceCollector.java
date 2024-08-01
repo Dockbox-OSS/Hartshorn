@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,15 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * A {@link ClasspathTypeReferenceCollector} that collects {@link TypeReference}s from a classpath using a
+ * {@link ClassPathScanner}. This automatically includes the default classpath, and filters on the configured
+ * package name. Scanning does not include any non-class resources.
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferenceCollector {
 
     public ClassPathScannerTypeReferenceCollector(String packageName) {
@@ -53,6 +62,6 @@ public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferen
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("package").write(this.packageName());
+        collector.property("package").writeString(this.packageName());
     }
 }

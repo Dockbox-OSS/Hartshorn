@@ -16,22 +16,19 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Service activator for {@link ComponentContextInjectionPreProcessor}.
- *
- * @see ComponentContextInjectionPreProcessor
  * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @deprecated Context injection is now built-in to default injection strategies.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ServiceActivator(processors = ComponentContextInjectionPreProcessor.class)
+@Deprecated(since = "0.6.0", forRemoval = true)
 public @interface UseContextInjection {
 }

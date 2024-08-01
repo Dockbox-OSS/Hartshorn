@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,25 +26,14 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
-import test.org.dockbox.hartshorn.scope.ScopedBindingProvider.SampleScope;
+import org.dockbox.hartshorn.inject.Inject;
+import test.org.dockbox.hartshorn.scope.ScopedBindingConfiguration.SampleScope;
 
 @HartshornTest(includeBasePackages = false)
 public class ScopeBindingTests {
 
     @Inject
     private ApplicationContext applicationContext;
-
-    @Test
-    void testDefaultScopeBindingIsApplicationContext() {
-        ComponentKey<String> key = ComponentKey.builder(String.class)
-                .scope(Scope.DEFAULT_SCOPE)
-                .build();
-
-        this.applicationContext.bind(key).singleton("test");
-        String value = this.applicationContext.get(String.class);
-        Assertions.assertEquals("test", value);
-    }
 
     @Test
     void testScopeBindingIsNotAccessibleFromApplication() {
@@ -58,7 +47,7 @@ public class ScopeBindingTests {
         Assertions.assertEquals("test", value);
 
         ComponentKey<String> componentKeyNoScope = ComponentKey.builder(String.class)
-                .scope(Scope.DEFAULT_SCOPE)
+                .scope(this.applicationContext)
                 .build();
 
         String valueNoScope = this.applicationContext.get(componentKeyNoScope);
@@ -79,7 +68,7 @@ public class ScopeBindingTests {
     }
 
     @Test
-    @TestComponents(components = ScopedBindingProvider.class)
+    @TestComponents(components = ScopedBindingConfiguration.class)
     void name() {
         String applicationScope = this.applicationContext.get(String.class);
         String scopedValue = this.applicationContext.get(ComponentKey.builder(String.class).scope(new SampleScope()).build());

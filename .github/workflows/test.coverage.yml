@@ -1,0 +1,36 @@
+name: Tests
+
+on: [pull_request, workflow_dispatch]
+
+jobs:
+  coverage:
+    name: Code coverage (JDK 21, Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up source JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 21
+          distribution: temurin
+      - name: Run tests
+        id: test
+        run: "mvn clean verify -P ci,all -Djacoco.haltOnFailure=true"
+  testSourceCompat:
+    needs: [coverage]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-13]
+    name: Unit tests (Compatibility, JDK 21, ${{ matrix.os }})
+    runs-on: "${{ matrix.os }}"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up source JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 21
+          distribution: temurin
+      - name: "Unit testing (OS: ${{ matrix.os }}, source JDK)"
+        run: "mvn clean verify -P ci,all -Djacoco.haltOnFailure=true"
+        shell: bash

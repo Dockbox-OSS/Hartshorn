@@ -19,6 +19,16 @@ package org.dockbox.hartshorn.i18n;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * Default implementation of {@link TranslationService}. By default, this uses the
+ * provided {@link TranslationBundle} as its source. Any additional bundles that are
+ * {@link #add(TranslationBundle) added} are merged according to the rules of the
+ * {@link TranslationBundle#merge(TranslationBundle)} method.
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 public class BundledTranslationService implements TranslationService {
 
     private final ApplicationContext applicationContext;
@@ -60,6 +70,13 @@ public class BundledTranslationService implements TranslationService {
         this.bundle.register(message);
     }
 
+    /**
+     * Sanitizes the provided key, by replacing all occurrences of {@code /}, {@code \},
+     * {@code _} and {@code -} with {@code .}.
+     *
+     * @param key the key to sanitize
+     * @return the sanitized key
+     */
     private String clean(String key) {
         return key.replaceAll("[/\\\\_-]", ".");
     }

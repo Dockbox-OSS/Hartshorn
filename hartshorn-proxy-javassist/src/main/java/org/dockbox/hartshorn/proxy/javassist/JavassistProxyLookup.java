@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,23 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
 
+/**
+ * A proxy lookup implementation that uses Javassist to determine whether a given instance is a proxy, and to retrieve
+ * the target class of a proxy.
+ *
+ * <p>Proxies are detected by checking whether the given instance is an instance of {@link Proxy}, or if {@link Proxy}
+ * is assignable from the class. For unproxying, it is assumed that the proxy is managed by a {@link
+ * JavassistProxyMethodHandler}.
+ *
+ * @see ProxyFactory#isProxyClass(Class)
+ * @see ProxyFactory#getHandler(Proxy)
+ * @see Proxy
+ * @see JavassistProxyMethodHandler
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public class JavassistProxyLookup implements StandardProxyLookup {
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
 import org.dockbox.hartshorn.util.introspect.annotations.Property;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.Field;
@@ -30,10 +28,11 @@ import java.lang.reflect.Field;
  * @param <Parent> The type of the field's declaring class
  * @param <FieldType> The type of the field
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
-public interface FieldView<Parent, FieldType> extends AnnotatedElementView, ModifierCarrierView, GenericTypeView<FieldType> {
+public interface FieldView<Parent, FieldType> extends ModifierCarrierView, AnnotatedGenericTypeView<FieldType> {
 
     /**
      * Returns the {@link Field} represented by this view, if available.
@@ -49,10 +48,11 @@ public interface FieldView<Parent, FieldType> extends AnnotatedElementView, Modi
      *
      * @param instance the instance on which to set the field's value
      * @param value the value to set
+     *
      * @throws IllegalIntrospectionException if the field is final, the given value does not match the field's type, or
      *        if the field is not accessible. Also thrown if the configured setter method does not exist.
      */
-    void set(Object instance, Object value);
+    void set(Object instance, Object value) throws Throwable;
 
     /**
      * Gets the value of the field represented by this view on the given instance. If the field is static, the instance
@@ -60,21 +60,24 @@ public interface FieldView<Parent, FieldType> extends AnnotatedElementView, Modi
      * as configured in {@link Property#getter()}, if available.
      *
      * @param instance the instance from which to get the field's value
-     * @throws IllegalIntrospectionException if the field is not accessible, or the configured getter method does not exist
+     *
      * @return the value of the field represented by this view on the given instance
+     *
+     * @throws IllegalIntrospectionException if the field is not accessible, or the configured getter method does not exist
      */
-    Attempt<FieldType, Throwable> get(Parent instance);
+    Option<FieldType> get(Object instance) throws Throwable;
 
     /**
      * Gets the value of the field represented by this view, as a static field. If the field is annotated with
      * {@link Property}, an attempt is made to use the field's getter method as configured in {@link Property#getter()},
      * if available.
      *
+     * @return the value of the field represented by this view
+     *
      * @throws IllegalIntrospectionException if the field is not accessible, not static, or the configured getter method
      *       does not exist
-     * @return the value of the field represented by this view
      */
-    Attempt<FieldType, Throwable> getStatic();
+    Option<FieldType> getStatic() throws Throwable;
 
     /**
      * Returns the element's declaring type.
@@ -82,26 +85,4 @@ public interface FieldView<Parent, FieldType> extends AnnotatedElementView, Modi
      * @return the element's declaring type
      */
     TypeView<Parent> declaredBy();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isStatic()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isStatic();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isFinal()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isFinal();
-
-    /**
-     * @deprecated use {@link #modifiers()} and {@link ElementModifiersIntrospector#isTransient()} instead
-     * @return true if the modifier is present
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    boolean isTransient();
-
 }

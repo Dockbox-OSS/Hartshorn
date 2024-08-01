@@ -18,6 +18,18 @@ package org.dockbox.hartshorn.component.condition;
 
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * A condition that checks if a property is present in the application context. If the property is present and an expected
+ * value is configured, the condition will check if the value matches the configured value. If the property is not present,
+ * the condition will check if the {@link RequiresProperty#matchIfMissing()} is set to {@code true}.
+ *
+ * @see RequiresProperty
+ * @see Condition
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class PropertyCondition implements Condition {
 
     @Override

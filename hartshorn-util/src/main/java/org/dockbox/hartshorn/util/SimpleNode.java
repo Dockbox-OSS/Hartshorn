@@ -16,6 +16,15 @@
 
 package org.dockbox.hartshorn.util;
 
+/**
+ * Simple implementation of a {@link Node}. This implementation is immutable.
+ *
+ * @param <T> the type of the node's value
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SimpleNode<T> implements Node<T> {
 
     private final String name;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,27 @@
 
 package org.dockbox.hartshorn.component;
 
-import jakarta.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.context.InstallIfAbsent;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
-@InstallIfAbsent
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ScopeModuleContext extends DefaultApplicationAwareContext {
 
     private final MultiMap<ScopeKey, BindingHierarchy<?>> scopeModules = new ConcurrentSetMultiMap<>();
 
-    @Inject
     public ScopeModuleContext(ApplicationContext applicationContext) {
         super(applicationContext);
     }
@@ -52,7 +55,7 @@ public class ScopeModuleContext extends DefaultApplicationAwareContext {
     }
 
     public Collection<BindingHierarchy<?>> hierarchies(ScopeKey type) {
-        if (type == Scope.DEFAULT_SCOPE_KEY) {
+        if (type == ApplicationContext.APPLICATION_SCOPE) {
             return Collections.emptyList();
         }
         return this.scopeModules.get(type);

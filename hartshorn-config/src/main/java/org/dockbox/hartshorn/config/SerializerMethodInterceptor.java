@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,23 @@
 
 package org.dockbox.hartshorn.config;
 
+import java.io.OutputStream;
+
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptorContext;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.Option;
 
-import java.io.OutputStream;
-
+/**
+ * TODO: #1062 Add documentation
+ *
+ * @param <T> ...
+ * @param <R> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SerializerMethodInterceptor<T, R> implements MethodInterceptor<T, R> {
     private final SerializationSourceConverter converter;
     private final MethodView<T, R> method;
@@ -46,7 +55,7 @@ public class SerializerMethodInterceptor<T, R> implements MethodInterceptor<T, R
         Object[] arguments = interceptorContext.args();
 
         try (OutputStream outputStream = this.converter.outputStream(this.method, arguments)) {
-            Option<?> result;
+            Object result;
 
             if (outputStream == null && this.returnsStringOrWrapper) {
                 result = this.mapper.write(arguments[0]);

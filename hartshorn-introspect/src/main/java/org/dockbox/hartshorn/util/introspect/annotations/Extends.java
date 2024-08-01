@@ -41,5 +41,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface Extends {
+
+    /**
+     * The annotation that is extended by the annotated annotation.
+     *
+     * @return the annotation that is extended by the annotated annotation
+     */
     Class<? extends Annotation> value();
 }

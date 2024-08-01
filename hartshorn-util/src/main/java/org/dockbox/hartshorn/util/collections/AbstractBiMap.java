@@ -21,6 +21,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
+/**
+ * A {@link BiMap} implementation that uses two {@link Map} instances to store the forward and backward mappings.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class AbstractBiMap<K, V> implements BiMap<K, V> {
 
     protected Map<K, V> forward;

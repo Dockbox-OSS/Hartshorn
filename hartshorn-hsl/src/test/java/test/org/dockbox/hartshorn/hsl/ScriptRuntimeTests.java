@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,6 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.hsl.ExpressionScript;
-import org.dockbox.hartshorn.hsl.ExecutableScript;
-import org.dockbox.hartshorn.hsl.UseExpressionValidation;
-import org.dockbox.hartshorn.hsl.customizer.AbstractCodeCustomizer;
-import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
-import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
-import org.dockbox.hartshorn.hsl.lexer.Comment;
-import org.dockbox.hartshorn.hsl.modules.InstanceNativeModule;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
-import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.testsuite.HartshornTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,7 +28,26 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.hsl.ExecutableScript;
+import org.dockbox.hartshorn.hsl.ExpressionScript;
+import org.dockbox.hartshorn.hsl.UseExpressionValidation;
+import org.dockbox.hartshorn.hsl.customizer.AbstractCodeCustomizer;
+import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
+import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
+import org.dockbox.hartshorn.hsl.lexer.Comment;
+import org.dockbox.hartshorn.hsl.modules.InstanceNativeModule;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import org.dockbox.hartshorn.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -67,12 +68,12 @@ public class ScriptRuntimeTests {
 
     public static Stream<Arguments> bitwise() {
         return Stream.of(
-                Arguments.of(TokenType.BITWISE_OR, 5, 7, 5 | 7),
-                Arguments.of(TokenType.BITWISE_AND, 5, 7, 5 & 7),
-                Arguments.of(TokenType.XOR, 5, 7, 5 ^ 7),
-                Arguments.of(TokenType.SHIFT_LEFT, 5, 7, 5 << 7),
-                Arguments.of(TokenType.SHIFT_RIGHT, 5, 7, 5 >> 7),
-                Arguments.of(TokenType.LOGICAL_SHIFT_RIGHT, 5, 7, 5 >>> 7)
+                Arguments.of(BitwiseTokenType.BITWISE_OR, 5, 7, 5 | 7),
+                Arguments.of(BitwiseTokenType.BITWISE_AND, 5, 7, 5 & 7),
+                Arguments.of(BitwiseTokenType.XOR, 5, 7, 5 ^ 7),
+                Arguments.of(BitwiseTokenType.SHIFT_LEFT, 5, 7, 5 << 7),
+                Arguments.of(BitwiseTokenType.SHIFT_RIGHT, 5, 7, 5 >> 7),
+                Arguments.of(BitwiseTokenType.LOGICAL_SHIFT_RIGHT, 5, 7, 5 >>> 7)
         );
     }
 
@@ -109,7 +110,7 @@ public class ScriptRuntimeTests {
 
     @Test
     void testExpressionWithGlobalFunctionAccess() {
-        String expression = "context != null && context.log() != null";
+        String expression = "context != null && context.environment() != null";
         ExpressionScript script = ExpressionScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
         this.assertValid(script);
@@ -117,7 +118,7 @@ public class ScriptRuntimeTests {
 
     @Test
     void testScriptWithGlobalFunctionAccess() {
-        String expression = "context.log().info(\"Hello world!\")";
+        String expression = "context.environment().isBatchMode()";
         ExecutableScript script = ExecutableScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
         this.assertNoErrorsReported(script);
@@ -125,7 +126,7 @@ public class ScriptRuntimeTests {
 
     @Test
     void testExpressionWithNativeAccess() {
-        ExpressionScript expression = ExpressionScript.of(this.applicationContext, "log() != null");
+        ExpressionScript expression = ExpressionScript.of(this.applicationContext, "isClosed() == false");
         expression.runtime().module("application", new InstanceNativeModule(this.applicationContext, this.applicationContext));
         this.assertValid(expression);
     }
@@ -152,9 +153,17 @@ public class ScriptRuntimeTests {
         Assertions.assertEquals(3, comments.size());
 
         // Comments are not trimmed, so we need to include spaces in the expected result
-        Assertions.assertEquals(" This is a comment", comments.get(0).text());
-        Assertions.assertEquals(" This is also a comment, print(\"Hello world 3!\");", comments.get(1).text());
-        Assertions.assertEquals(" This is a multi-line comment\nsee?!\n", comments.get(2).text());
+        Comment commentOne = comments.getFirst();
+        Assertions.assertEquals(" This is a comment", commentOne.text());
+        Assertions.assertEquals(3, commentOne.line());
+
+        Comment commentTwo = comments.get(1);
+        Assertions.assertEquals(" This is also a comment, print(\"Hello world 3!\");", commentTwo.text());
+        Assertions.assertEquals(6, commentTwo.line());
+
+        Comment commentThree = comments.get(2);
+        Assertions.assertEquals(" This is a multi-line comment\nsee?!\n", commentThree.text());
+        Assertions.assertEquals(9, commentThree.line());
     }
 
     @Test
@@ -232,7 +241,7 @@ public class ScriptRuntimeTests {
 
     ScriptContext assertValid(ExpressionScript expression) {
         ScriptContext context = Assertions.assertDoesNotThrow(expression::evaluate);
-        Assertions.assertTrue(expression.valid(context));
+        Assertions.assertTrue(ExpressionScript.valid(context));
         return context;
     }
 

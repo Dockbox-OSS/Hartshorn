@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,20 +33,21 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * {@link ServiceActivator} annotations that are found in the application. This context is used
  * to determine which activators are available, and to retrieve the actual annotation instance.
  *
- * <p>Depending on the {@link ApplicationContextConstructor} that is used to create the
+ * <p>Depending on the {@link ApplicationContextFactory} that is used to create the
  * {@link ApplicationContext}, this context may be used to supply the {@link ServiceActivator}
  * annotations.
  *
  * <p>This context should always be attached to the {@link ApplicationContext}, and yield the
  * same result as {@link ApplicationContext#activators()}.
  *
- * @see ApplicationContextConstructor
+ * @see ApplicationContextFactory
  * @see ApplicationContext#activators()
  * @see ServiceActivator
  * @see ActivatorHolder
  *
+ * @since 0.4.13
+ *
  * @author Guus Lieben
- * @since 0.4.11
  */
 public class ServiceActivatorContext extends DefaultProvisionContext implements Reportable {
 
@@ -103,9 +104,10 @@ public class ServiceActivatorContext extends DefaultProvisionContext implements 
      * the given activator is hierarchical through (virtual) inheritance.
      *
      * @param activator The activator to retrieve
+     * @param <A> The type of the activator
+     *
      * @return The {@link ServiceActivator} annotation instance for the given activator type, or {@code null} if the
      *         given activator is not directly available in this context.
-     * @param <A> The type of the activator
      */
     public <A> A activator(Class<A> activator) {
         Annotation annotation = this.activators.get(activator);
@@ -120,6 +122,6 @@ public class ServiceActivatorContext extends DefaultProvisionContext implements 
         String[] activators = this.activators().stream()
                 .map(activator -> activator.annotationType().getCanonicalName())
                 .toArray(String[]::new);
-        collector.property("activators").write(activators);
+        collector.property("activators").writeStrings(activators);
     }
 }

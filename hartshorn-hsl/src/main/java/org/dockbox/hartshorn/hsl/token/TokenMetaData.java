@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,31 +16,25 @@
 
 package org.dockbox.hartshorn.hsl.token;
 
+import org.dockbox.hartshorn.hsl.token.type.DelegateTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+
 /**
  * A set of metadata providing extra information about a single {@link TokenType}. Token
  * metadata is immutable, as it is part of the lexical definition of a token.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
-public class TokenMetaData {
+public class TokenMetaData implements DelegateTokenType {
 
     private final TokenType type;
-    private final String representation;
-    private final boolean keyword;
-    private final boolean standaloneStatement;
-    private final boolean reserved;
-    private final TokenType assignsWith;
+    private final TokenType metadata;
 
-    TokenMetaData(TokenType type, String representation,
-                  boolean keyword, boolean standaloneStatement, 
-                  boolean reserved, TokenType assignsWith) {
+    TokenMetaData(TokenType type, TokenType metadata) {
         this.type = type;
-        this.representation = representation;
-        this.keyword = keyword;
-        this.standaloneStatement = standaloneStatement;
-        this.reserved = reserved;
-        this.assignsWith = assignsWith;
+        this.metadata = metadata;
     }
 
     /**
@@ -51,48 +45,14 @@ public class TokenMetaData {
         return this.type;
     }
 
-    /**
-     * Gets the standard representation of the {@link TokenType}.
-     * @return The representation of the token.
-     */
-    public String representation() {
-        return this.representation;
+    @Override
+    public String tokenName() {
+        return this.type.tokenName();
     }
 
-    /**
-     * Gets whether the {@link TokenType} represents a keyword.
-     * @return {@code true} if the token represents a keyword, or {@code false}.
-     */
-    public boolean keyword() {
-        return this.keyword;
-    }
-
-    /**
-     * Gets whether the {@link TokenType} can be used as a standalone statement. This
-     * is typically used to indicate a token is not part of an expression statement,
-     * but can optionally accept expressions when parsed.
-     * @return {@code true} if the token can be used as a standalone statement.
-     */
-    public boolean standaloneStatement() {
-        return this.standaloneStatement;
-    }
-
-    /**
-     * Gets whether the use of this {@link TokenType} is reserved. This is typically used
-     * to indicate a token that is not yet supported, but is reserved for future use.
-     * @return {@code true} if the token is reserved.
-     */
-    public boolean reserved() {
-        return this.reserved;
-    }
-
-    /**
-     * Gets the {@link TokenType} which this {@link TokenType} assigns with. This is
-     * typically used to indicate a token that can be used as an assignment operator.
-     * @return The {@link TokenType} which this {@link TokenType} assigns with.
-     */
-    public TokenType assignsWith() {
-        return this.assignsWith;
+    @Override
+    public TokenType delegate() {
+        return this.metadata;
     }
 
     /**

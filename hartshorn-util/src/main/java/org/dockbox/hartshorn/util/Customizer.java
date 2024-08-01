@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,11 @@ package org.dockbox.hartshorn.util;
  * A functional interface for customizing objects. This interface is similar to {@link java.util.function.Consumer} but
  * allows for composition of customizers, and is the common interface for all customizers in Hartshorn.
  *
- * @author Guus Lieben
+ * @param <T> The type of object to customize.
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface Customizer<T> {
 
@@ -51,8 +54,9 @@ public interface Customizer<T> {
      * Returns a customizer that does nothing. This can be used to accept the default configuration without
      * further modification.
      *
-     * @return A customizer that does nothing.
      * @param <T> The type of object to customize.
+     *
+     * @return A customizer that does nothing.
      */
     static <T> Customizer<T> useDefaults() {
         return target -> {};

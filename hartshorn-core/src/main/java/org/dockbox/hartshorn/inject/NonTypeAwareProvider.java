@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,10 @@ package org.dockbox.hartshorn.inject;
  * is not known at compile time, but only at runtime (e.g. in suppliers).
  *
  * @param <T> The type instance to provide.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
-@FunctionalInterface
 public non-sealed interface NonTypeAwareProvider<T> extends Provider<T> {
 }

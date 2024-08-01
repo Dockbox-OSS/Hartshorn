@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,22 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
 
+/**
+ * A builder for {@link MultiMap} instances. This builder allows for the configuration of the
+ * {@link Map} and {@link Collection} implementations that are used by the {@link MultiMap} that is
+ * built.
+ *
+ * <p>Additionally, this builder allows for the configuration of the concurrency and synchronization
+ * capabilities of the {@link MultiMap} that is built. This expects the backing {@link Map} to be
+ * compatible with the concurrency and synchronization capabilities that are configured.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class MultiMapBuilder<K, V> {
 
     private Supplier<Map<K, Collection<V>>> mapSupplier;
@@ -28,26 +44,66 @@ public class MultiMapBuilder<K, V> {
     private boolean makeSynchronized = false;
     private boolean makeConcurrent = false;
 
+    /**
+     * Configures the {@link Map} implementation that is used by the {@link MultiMap} that is built. If
+     * the created {@link MultiMap} is first accessed, this supplier is invoked to create a new {@link
+     * Map} instance. This supplier is expected to return a new, empty {@link Map} instance on each
+     * invocation.
+     *
+     * @param mapSupplier the supplier of the {@link Map} implementation
+     * @return this builder
+     */
     public MultiMapBuilder<K, V> mapSupplier(Supplier<Map<K, Collection<V>>> mapSupplier) {
         this.mapSupplier = mapSupplier;
         return this;
     }
 
+    /**
+     * Configures the {@link Collection} implementation that is used by the {@link MultiMap} that is
+     * built. When a key is first added or resolved, this supplier is invoked to create a new {@link
+     * Collection} instance. This supplier is expected to return a new, empty {@link Collection}
+     * instance on each invocation.
+     *
+     * @param collectionSupplier the supplier of the {@link Collection} implementation
+     * @return this builder
+     */
     public MultiMapBuilder<K, V> collectionSupplier(Supplier<Collection<V>> collectionSupplier) {
         this.collectionSupplier = collectionSupplier;
         return this;
     }
 
+    /**
+     * Configures the {@link MultiMap} that is built to be synchronized. This means that all access to
+     * the {@link MultiMap} is synchronized. This is useful when the {@link MultiMap} is accessed
+     * concurrently by multiple threads, and it is not possible to synchronize the access externally.
+     *
+     * <p>Note that the backing {@link Map} is expected to be compatible with synchronization.
+     *
+     * @param makeSynchronized {@code true} to make the {@link MultiMap} synchronized, else {@code false}
+     * @return this builder
+     */
     public MultiMapBuilder<K, V> makeSynchronized(boolean makeSynchronized) {
         this.makeSynchronized = makeSynchronized;
         return this;
     }
 
+    /**
+     * Indicates that the {@link MultiMap} that is built should be concurrent. This means that the backing
+     * {@link Map} is expected to be a {@link ConcurrentMap}.
+     *
+     * @param makeConcurrent {@code true} to make the {@link MultiMap} concurrent, else {@code false}
+     * @return this builder
+     */
     public MultiMapBuilder<K, V> makeConcurrent(boolean makeConcurrent) {
         this.makeConcurrent = makeConcurrent;
         return this;
     }
 
+    /**
+     * Builds a new {@link MultiMap} instance based on the configuration of this builder.
+     *
+     * @return the new {@link MultiMap} instance
+     */
     public MultiMap<K, V> build() {
         if (this.mapSupplier == null) {
             throw new IllegalArgumentException("Cannot build new MultiMap without configuring Map<K, V> supplier.");

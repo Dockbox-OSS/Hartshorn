@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,17 @@
 
 package org.dockbox.hartshorn.application.environment.banner;
 
-import org.slf4j.Logger;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class ResourcePathBanner implements Banner {
+/**
+ * Prints a banner from a given resource path. The resource path is expected to be a (plain) text file.
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
+public class ResourcePathBanner extends AbstractConsoleBanner {
 
     private final Path resourcePath;
 
@@ -30,14 +35,12 @@ public class ResourcePathBanner implements Banner {
     }
 
     @Override
-    public void print(Logger logger) {
+    protected Iterable<String> lines() {
         try {
-            for (String line : Files.readAllLines(this.resourcePath)) {
-                logger.info(line);
-            }
-            logger.info("");
-        } catch (Exception e) {
-            logger.error("Failed to print banner", e);
+            return Files.readAllLines(this.resourcePath);
+        }
+        catch (Exception e) {
+            throw new IllegalStateException("Failed to read banner resource %s".formatted(this.resourcePath.getFileName()), e);
         }
     }
 }

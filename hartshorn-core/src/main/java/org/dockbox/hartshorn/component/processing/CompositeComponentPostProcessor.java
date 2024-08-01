@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,14 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.function.CheckedConsumer;
+import org.dockbox.hartshorn.util.function.CheckedFunction;
 
 /**
  * A {@link ComponentPostProcessor} which delegates to a collection of other post processors. The post processors are
@@ -83,7 +85,7 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
         ApplicationContext context,
         @Nullable T instance,
         ComponentProcessingContext<T> processingContext
-    ) {
+    ) throws ApplicationException {
         this.withProcessors(processor -> {
             processor.preConfigureComponent(context, instance, processingContext);
         });
@@ -94,7 +96,7 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
         ApplicationContext context,
         @Nullable T instance,
         ComponentProcessingContext<T> processingContext
-    ) {
+    ) throws ApplicationException {
         MultiMap<Integer, ComponentPostProcessor> processors = this.postProcessors.get();
         if (processors.isEmpty()) {
             return instance;
@@ -107,20 +109,20 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
         ApplicationContext context,
         @Nullable T instance,
         ComponentProcessingContext<T> processingContext
-    ) {
+    ) throws ApplicationException {
         this.withProcessors(processor -> {
             processor.postConfigureComponent(context, instance, processingContext);
         });
     }
 
-    private void withProcessors(Consumer<ComponentPostProcessor> consumer) {
+    private void withProcessors(CheckedConsumer<ComponentPostProcessor> consumer) throws ApplicationException {
         this.withProcessors(this.postProcessors.get(), processor -> {
             consumer.accept(processor);
             return null;
         });
     }
 
-    private <T> T withProcessors(MultiMap<Integer, ComponentPostProcessor> processors, Function<ComponentPostProcessor, T> processor) {
+    private <T> T withProcessors(MultiMap<Integer, ComponentPostProcessor> processors, CheckedFunction<ComponentPostProcessor, T> processor) throws ApplicationException {
         T result = null;
         for (Integer priority : processors.keySet()) {
             for (ComponentPostProcessor postProcessor : processors.get(priority)) {
@@ -128,5 +130,10 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
             }
         }
         return result;
+    }
+
+    @Override
+    public int priority() {
+        return ProcessingPriority.NORMAL_PRECEDENCE;
     }
 }

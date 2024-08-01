@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.config.annotations.Deserialize;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
@@ -25,6 +26,13 @@ import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1062 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class DeserializerMethodPostProcessor extends AbstractSerializerPostProcessor<Deserialize> {
 
     @Override
@@ -43,5 +51,10 @@ public class DeserializerMethodPostProcessor extends AbstractSerializerPostProce
         ConversionService conversionService = context.get(ConversionService.class);
 
         return new DeserializerMethodInterceptor<>(converter, method, mapper, returnType, conversionService);
+    }
+
+    @Override
+    public int priority() {
+        return ProcessingPriority.NORMAL_PRECEDENCE;
     }
 }

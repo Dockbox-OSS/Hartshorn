@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
@@ -29,6 +30,7 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -37,6 +39,15 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <T> ...
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class CompositeInstance<T> extends VirtualInstance implements ExternalObjectReference {
 
     private final TypeView<T> firstExternalClass;
@@ -63,10 +74,16 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         }
         // External class constructor
         ConstructorView<T> constructor = this.firstExternalClass.constructors().defaultConstructor().get();
-        this.instance = constructor.create()
-                .mapError(ApplicationException::new)
-                .rethrow()
-                .orNull();
+        try {
+            this.instance = constructor.create();
+        }
+        catch (ApplicationException e) {
+            throw e;
+        }
+        catch (Throwable throwable) {
+            throw new ApplicationException(throwable);
+        }
+
         // Virtual class constructor
         if (virtualConstructor != null) {
             virtualConstructor.call(at, interpreter, this, arguments);
@@ -83,7 +100,15 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         else {
             Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
-                field.get().set(this.instance, value);
+                try {
+                    field.get().set(this.instance, value);
+                }
+                catch (Throwable throwable) {
+                    throw new ScriptEvaluationError(
+                            throwable, "Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()),
+                            Phase.INTERPRETING, name
+                    );
+                }
             }
             else {
                 throw new IllegalArgumentException("Field " + name.lexeme() + " not found in " + this.firstExternalClass.name());
@@ -101,7 +126,15 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         else {
             Option<FieldView<T, ?>> field = this.firstExternalClass.fields().named(name.lexeme());
             if (field.present()) {
-                return field.get().get(this.instance);
+                try {
+                    return field.get().get(this.instance);
+                }
+                catch (Throwable throwable) {
+                    throw new ScriptEvaluationError(
+                            throwable, "Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()),
+                            Phase.INTERPRETING, name
+                    );
+                }
             }
             else {
                 throw new IllegalArgumentException("Field " + name.lexeme() + " not found in " + this.firstExternalClass.name());

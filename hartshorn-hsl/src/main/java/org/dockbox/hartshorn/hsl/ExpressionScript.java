@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,30 +26,74 @@ import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 
+/**
+ * Specialization of {@link ExecutableScript} for {@link ValidateExpressionRuntime expression validation runtimes}.
+ *
+ * @see ExecutableScript
+ * @see ValidateExpressionRuntime
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class ExpressionScript extends ExecutableScript {
 
     protected ExpressionScript(ApplicationContext context, String source) {
         super(context, source);
     }
 
+    /**
+     * Creates a new {@link ExpressionScript} from the given source and {@link ApplicationContext}.
+     *
+     * @param context the application context
+     * @param source the source of the script
+     * @return the created script
+     */
     public static ExpressionScript of(ApplicationContext context, String source) {
         return new ExpressionScript(context, source);
     }
 
+    /**
+     * Creates a new {@link ExpressionScript} from the given source and {@link ApplicationContext}.
+     *
+     * @param context the application context
+     * @param path the path to the source of the script
+     * @return the created script
+     * @throws IOException if the source cannot be read
+     */
     public static ExpressionScript of(ApplicationContext context, Path path) throws IOException {
         return of(context, sourceFromPath(path));
     }
 
+    /**
+     * Creates a new {@link ExpressionScript} from the given source and {@link ApplicationContext}.
+     *
+     * @param context the application context
+     * @param file the file containing the source of the script
+     * @return the created script
+     * @throws IOException if the source cannot be read
+     */
     public static ExpressionScript of(ApplicationContext context, File file) throws IOException {
         return of(context, file.toPath());
     }
 
+    /**
+     * Evaluates the script and returns whether the result is valid.
+     *
+     * @return whether the result is valid
+     */
     public boolean valid() {
         ScriptContext context = this.evaluate();
-        return this.valid(context);
+        return valid(context);
     }
 
-    public boolean valid(ResultCollector collector) {
+    /**
+     * Returns whether the result of the given {@link ScriptContext} is valid.
+     *
+     * @param collector the result collector
+     * @return whether the result is valid
+     */
+    public static boolean valid(ResultCollector collector) {
         return ValidateExpressionRuntime.valid(collector);
     }
 

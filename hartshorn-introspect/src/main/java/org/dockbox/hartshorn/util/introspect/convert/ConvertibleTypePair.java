@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * @param targetType the target type
  *
  * @see GenericConverter#convertibleTypes()
- * @author Guus Lieben
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public record ConvertibleTypePair(Class<?> sourceType, Class<?> targetType) {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package test.org.dockbox.hartshorn.introspect;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.dockbox.hartshorn.util.introspect.scan.AggregateTypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.CachedTypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
@@ -26,9 +29,6 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScannerTypeReferenceCollector;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import test.org.dockbox.hartshorn.introspect.types.ScanAnnotation;
 import test.org.dockbox.hartshorn.introspect.types.ScanClass;
@@ -47,9 +47,10 @@ public class TypeCollectorTests {
 
         Assertions.assertEquals(7, typeReferences.size());
 
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Set<? extends Class<?>> types = typeReferences.stream().map(typeReference -> {
             try {
-                return typeReference.getOrLoad();
+                return typeReference.getOrLoad(classLoader);
             }
             catch (ClassReferenceLoadException e) {
                 return Assertions.fail(e);
@@ -87,9 +88,10 @@ public class TypeCollectorTests {
 
         Assertions.assertEquals(3, typeReferences.size());
 
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Set<? extends Class<?>> types = typeReferences.stream().map(typeReference -> {
             try {
-                return typeReference.getOrLoad();
+                return typeReference.getOrLoad(classLoader);
             }
             catch (ClassReferenceLoadException e) {
                 return Assertions.fail(e);

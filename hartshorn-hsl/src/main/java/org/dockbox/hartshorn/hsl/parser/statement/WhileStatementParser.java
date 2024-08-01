@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,34 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
+import org.dockbox.hartshorn.hsl.token.type.LoopTokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.Set;
-
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class WhileStatementParser extends AbstractBodyStatementParser<WhileStatement> {
 
     @Override
-    public Option<WhileStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(TokenType.WHILE)) {
-            validator.expectAfter(TokenType.LEFT_PAREN, TokenType.WHILE);
+    public Option<? extends WhileStatement> parse(TokenParser parser, TokenStepValidator validator) {
+        if (parser.match(LoopTokenType.WHILE)) {
+
+            TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
+            validator.expectAfter(parameters.open(), LoopTokenType.WHILE);
             Expression condition = parser.expression();
-            validator.expectAfter(TokenType.RIGHT_PAREN, "while condition");
+            validator.expectAfter(parameters.close(), "while condition");
             BlockStatement loopBody = this.blockStatement("while", condition, parser, validator);
             return Option.of(new WhileStatement(condition, loopBody));
         }

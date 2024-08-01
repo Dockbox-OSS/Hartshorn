@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +16,148 @@
 
 package org.dockbox.hartshorn.reporting;
 
+/**
+ * A writer for {@link DiagnosticsPropertyCollector} instances. Each writer is responsible for writing a specific
+ * property, configured by {@link DiagnosticsPropertyCollector#property(String)}.
+ *
+ * @see DiagnosticsPropertyCollector
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public interface DiagnosticsPropertyWriter {
 
-    DiagnosticsReportCollector write(String value);
+    /**
+     * Writes the given value to the collector.
+     *
+     * @param value the value to write
+     * @return the collector that was used to collect the value
+     */
+    DiagnosticsReportCollector writeString(String value);
 
-    DiagnosticsReportCollector write(int value);
+    /**
+     * Writes the given value to the collector.
+     *
+     * @param value the value to write
+     * @return the collector that was used to collect the value
+     */
+    DiagnosticsReportCollector writeInt(int value);
 
-    DiagnosticsReportCollector write(long value);
+    /**
+     * Writes the given value to the collector.
+     *
+     * @param value the value to write
+     * @return the collector that was used to collect the value
+     */
+    DiagnosticsReportCollector writeLong(long value);
 
-    DiagnosticsReportCollector write(float value);
+    /**
+     * Writes the given value to the collector.
+     *
+     * @param value the value to write
+     * @return the collector that was used to collect the value
+     */
+    DiagnosticsReportCollector writeFloat(float value);
 
-    DiagnosticsReportCollector write(double value);
+    /**
+     * Writes the given value to the collector.
+     *
+     * @param value the value to write
+     * @return the collector that was used to collect the value
+     */
+    DiagnosticsReportCollector writeDouble(double value);
 
-    DiagnosticsReportCollector write(boolean value);
+    /**
+     * Writes the given value to the collector.
+     *
+     * @param value the value to write
+     * @return the collector that was used to collect the value
+     */
+    DiagnosticsReportCollector writeBoolean(boolean value);
 
-    DiagnosticsReportCollector write(Reportable reportable);
+    /**
+     * Writes the given value to the collector.
+     *
+     * @param value the value to write
+     * @param <E>   the type of the enum
+     * @return the collector that was used to collect the value
+     */
+    <E extends Enum<E>> DiagnosticsReportCollector writeEnum(E value);
 
-    DiagnosticsReportCollector write(String... values);
+    /**
+     * Creates a new group node in the collector, and delegates the writing of
+     * properties to the given {@link Reportable}.
+     *
+     * @param reportable the reportable to write
+     * @return the collector that was used to collect the value
+     */
+    DiagnosticsReportCollector writeDelegate(Reportable reportable);
 
-    DiagnosticsReportCollector write(int... values);
+    /**
+     * Writes the given values to the collector.
+     *
+     * @param values the values to write
+     * @return the collector that was used to collect the values
+     */
+    DiagnosticsReportCollector writeStrings(String... values);
 
-    DiagnosticsReportCollector write(long... values);
+    /**
+     * Writes the given values to the collector.
+     *
+     * @param values the values to write
+     * @return the collector that was used to collect the values
+     */
+    DiagnosticsReportCollector writeInts(int... values);
 
-    DiagnosticsReportCollector write(float... values);
+    /**
+     * Writes the given values to the collector.
+     *
+     * @param values the values to write
+     * @return the collector that was used to collect the values
+     */
+    DiagnosticsReportCollector writeLongs(long... values);
 
-    DiagnosticsReportCollector write(double... values);
+    /**
+     * Writes the given values to the collector.
+     *
+     * @param values the values to write
+     * @return the collector that was used to collect the values
+     */
+    DiagnosticsReportCollector writeFloats(float... values);
 
-    DiagnosticsReportCollector write(boolean... values);
+    /**
+     * Writes the given values to the collector.
+     *
+     * @param values the values to write
+     * @return the collector that was used to collect the values
+     */
+    DiagnosticsReportCollector writeDoubles(double... values);
 
-    DiagnosticsReportCollector write(Reportable... reportables);
+    /**
+     * Writes the given values to the collector.
+     *
+     * @param values the values to write
+     * @return the collector that was used to collect the values
+     */
+    DiagnosticsReportCollector writeBooleans(boolean... values);
+
+    /**
+     * Writes the given values to the collector.
+     *
+     * @param values the values to write
+     * @param <E>    the type of the enum
+     * @return the collector that was used to collect the values
+     */
+    <E extends Enum<E>> DiagnosticsReportCollector writeEnums(E... values);
+
+    /**
+     * Creates a new array node in the collector, and delegates the writing of
+     * properties to the given {@link Reportable}s.
+     *
+     * @param reportables the reportables to write
+     * @return the collector that was used to collect the values
+     */
+    DiagnosticsReportCollector writeDelegates(Reportable... reportables);
 
 }

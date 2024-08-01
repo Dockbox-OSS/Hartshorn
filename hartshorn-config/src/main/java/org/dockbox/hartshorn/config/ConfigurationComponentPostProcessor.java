@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,31 @@ package org.dockbox.hartshorn.config;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.config.properties.PropertyAwareComponentPostProcessor;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.NotPrimitiveException;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Looks up and populates fields annotated with {@link Value}.
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public class ConfigurationComponentPostProcessor extends PropertyAwareComponentPostProcessor {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationComponentPostProcessor.class);
+
     @Override
-    public <T> void postConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void postConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext)
+            throws ApplicationException {
         if (processingContext.type().fields().annotatedWith(Value.class).isEmpty()) {
             return;
         }
@@ -48,17 +59,25 @@ public class ConfigurationComponentPostProcessor extends PropertyAwareComponentP
                 Option<?> property = propertyHolder.get(valueKey, field.genericType().type());
 
                 if (property.absent()) {
-                    context.log().debug("Property {} for field {} is empty, but field has a default value, using default value (note this may be null)", valueKey, field.name());
+                    LOG.debug("Property {} for field {} is empty, but field has a default value, using default value (note this may be null)", valueKey, field.name());
                     continue;
                 }
 
-                context.log().debug("Populating value for configuration field '{}' in {} (key: {}), value is not logged.", field.name(), valueKey, field.type().name());
+                LOG.debug("Populating value for configuration field '{}' in {} (key: {}), value is not logged.", field.name(), valueKey, field.type().name());
                 field.set(instance, property.get());
             }
             catch (NotPrimitiveException e) {
-                context.log().warn("Could not prepare value field {} in {}", field.name(), processingContext.type().name());
+                LOG.warn("Could not prepare value field {} in {}", field.name(), processingContext.type().name());
                 context.handle(e);
             }
+            catch(Throwable e) {
+                throw new ApplicationException(e);
+            }
         }
+    }
+
+    @Override
+    public int priority() {
+        return ProcessingPriority.NORMAL_PRECEDENCE;
     }
 }

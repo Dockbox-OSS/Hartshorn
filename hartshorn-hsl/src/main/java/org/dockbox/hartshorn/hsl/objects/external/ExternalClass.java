@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @param <T> The type of the class.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
 
@@ -57,11 +58,17 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
         }
         ConstructorView<T> executable = ExecutableLookup.executable(this.type.constructors().all(), arguments);
         if (executable != null) {
-            T objectInstance = executable.create(arguments.toArray())
-                    .mapError(ApplicationException::new)
-                    .rethrow()
-                    .orNull();
-            return new ExternalInstance(objectInstance, interpreter.applicationContext().environment().introspector().introspect(objectInstance));
+            try {
+                T objectInstance = executable.create(arguments.toArray());
+                return new ExternalInstance(objectInstance,
+                        interpreter.applicationContext().environment().introspector().introspect(objectInstance));
+            }
+            catch (ApplicationException e) {
+                throw e;
+            }
+            catch (Throwable throwable) {
+                throw new ApplicationException(throwable);
+            }
         }
         throw new ScriptEvaluationError("No constructor found for class " + this.type.name() + " with arguments " + arguments, Phase.INTERPRETING, at);
     }

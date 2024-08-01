@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn;
 
+import org.dockbox.hartshorn.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,29 +25,27 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.DependencyGraph;
 import org.dockbox.hartshorn.application.context.validate.CyclicDependencyGraphValidator;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.ComponentRequiredException;
+import org.dockbox.hartshorn.component.ComponentPopulator;
 import org.dockbox.hartshorn.component.ComponentResolutionException;
-import org.dockbox.hartshorn.component.ContextualComponentPopulator;
-import org.dockbox.hartshorn.component.Scope;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
+import org.dockbox.hartshorn.component.populate.StrategyComponentPopulator;
+import org.dockbox.hartshorn.component.processing.ComponentMemberType;
 import org.dockbox.hartshorn.inject.ApplicationDependencyResolver;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentDiscoveryList;
 import org.dockbox.hartshorn.inject.ComponentDiscoveryList.DiscoveredComponent;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.DependencyMap;
 import org.dockbox.hartshorn.inject.DependencyResolutionType;
 import org.dockbox.hartshorn.inject.DependencyResolver;
 import org.dockbox.hartshorn.inject.TypePathNode;
 import org.dockbox.hartshorn.inject.processing.DependencyGraphBuilder;
-import org.dockbox.hartshorn.inject.processing.UseContextInjection;
-import org.dockbox.hartshorn.inject.strategy.DependencyResolverUtils;
+import org.dockbox.hartshorn.inject.strategy.IntrospectionDependencyResolver;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.InjectTest;
@@ -59,14 +58,13 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.View;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
-
-import jakarta.inject.Inject;
 import test.org.dockbox.hartshorn.boot.EmptyService;
 import test.org.dockbox.hartshorn.components.BoundCircularDependencyA;
 import test.org.dockbox.hartshorn.components.BoundCircularDependencyB;
@@ -89,24 +87,23 @@ import test.org.dockbox.hartshorn.components.NonProxyComponentType;
 import test.org.dockbox.hartshorn.components.PopulatedType;
 import test.org.dockbox.hartshorn.components.ProvidedInterface;
 import test.org.dockbox.hartshorn.components.ProviderService;
+import test.org.dockbox.hartshorn.components.SampleConfiguration;
 import test.org.dockbox.hartshorn.components.SampleContext;
 import test.org.dockbox.hartshorn.components.SampleField;
 import test.org.dockbox.hartshorn.components.SampleFieldImplementation;
 import test.org.dockbox.hartshorn.components.SampleImplementation;
 import test.org.dockbox.hartshorn.components.SampleInterface;
 import test.org.dockbox.hartshorn.components.SampleMetaAnnotatedImplementation;
-import test.org.dockbox.hartshorn.components.SampleProviderService;
-import test.org.dockbox.hartshorn.components.SampleProviders;
+import test.org.dockbox.hartshorn.components.SampleProviderConfiguration;
 import test.org.dockbox.hartshorn.components.SampleType;
 import test.org.dockbox.hartshorn.components.SetterInjectedComponent;
 import test.org.dockbox.hartshorn.components.SetterInjectedComponentWithAbsentBinding;
 import test.org.dockbox.hartshorn.components.SetterInjectedComponentWithNonRequiredAbsentBinding;
-import test.org.dockbox.hartshorn.components.TypeWithEnabledInjectField;
 import test.org.dockbox.hartshorn.components.TypeWithFailingConstructor;
+import test.org.dockbox.hartshorn.components.TypeWithPostConstructableInjectField;
 import test.org.dockbox.hartshorn.components.contextual.ErrorInConstructorObject;
 
 @HartshornTest(includeBasePackages = false)
-@UseContextInjection
 public class ApplicationContextTests {
 
     @Inject
@@ -220,7 +217,7 @@ public class ApplicationContextTests {
     }
 
     @Test
-    @TestComponents(components = SampleProviders.class)
+    @TestComponents(components = SampleConfiguration.class)
     public void testScannedMetaBindingsCanBeProvided() {
 
         // Ensure that the binding is not bound to the default name
@@ -236,21 +233,30 @@ public class ApplicationContextTests {
     }
 
     @Test
-    @TestComponents(components = TypeWithEnabledInjectField.class)
-    void testEnabledInjectDoesNotInjectTwice() {
-        TypeWithEnabledInjectField instance = this.applicationContext.get(TypeWithEnabledInjectField.class);
+    @TestComponents(components = TypeWithPostConstructableInjectField.class)
+    void testPostConstructInjectDoesNotInjectTwice() {
+        TypeWithPostConstructableInjectField instance = this.applicationContext.get(TypeWithPostConstructableInjectField.class);
         Assertions.assertNotNull(instance);
-        Assertions.assertNotNull(instance.singletonEnableable());
-        Assertions.assertEquals(1, instance.singletonEnableable().enabled());
+        Assertions.assertNotNull(instance.postConstructableObject());
+        Assertions.assertEquals(1, instance.postConstructableObject().getTimesConstructed());
     }
 
-    @Test
+    public static Stream<Arguments> componentPopulators() {
+        return Stream.of(
+            Arguments.of((Function<ApplicationContext, ComponentPopulator>) context -> {
+                return StrategyComponentPopulator.create(Customizer.useDefaults()).initialize(SimpleSingleElementContext.create(context));
+            })
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("componentPopulators")
     @TestComponents(bindings = @TestBinding(type = SampleInterface.class, implementation = SampleImplementation.class))
-    public void testTypesCanBePopulated() {
+    public void testTypesCanBePopulated(Function<ApplicationContext, ComponentPopulator> populatorFactory) {
         PopulatedType populatedType = new PopulatedType();
         Assertions.assertNull(populatedType.sampleInterface());
 
-        new ContextualComponentPopulator(this.applicationContext).populate(populatedType);
+        populatorFactory.apply(this.applicationContext).populate(populatedType);
         Assertions.assertNotNull(populatedType.sampleInterface());
         Assertions.assertEquals(SampleImplementation.NAME, populatedType.sampleInterface().name());
     }
@@ -268,7 +274,7 @@ public class ApplicationContextTests {
 
     @ParameterizedTest
     @MethodSource("providers")
-    @TestComponents(components = {SampleFieldImplementation.class, SampleProviderService.class})
+    @TestComponents(components = {SampleFieldImplementation.class, SampleProviderConfiguration.class})
     void testProvidersCanApply(String meta, String name, boolean field, String fieldMeta, boolean singleton) {
         if (field) {
             if (fieldMeta == null) {this.applicationContext.bind(SampleField.class).to(SampleFieldImplementation.class);}
@@ -303,26 +309,28 @@ public class ApplicationContextTests {
         }
     }
 
-    @Test
-    void testContextFieldsAreInjected() {
+    @ParameterizedTest
+    @MethodSource("componentPopulators")
+    void testContextFieldsAreInjected(Function<ApplicationContext, ComponentPopulator> populatorFactory) {
         String contextName = "InjectedContext";
-        this.applicationContext.add(new SampleContext(contextName));
-        
-        ContextualComponentPopulator populator = new ContextualComponentPopulator(this.applicationContext);
+        this.applicationContext.addContext(new SampleContext(contextName));
+
+        ComponentPopulator populator = populatorFactory.apply(this.applicationContext);
         ContextInjectedType instance = populator.populate(new ContextInjectedType());
-        
+
         Assertions.assertNotNull(instance.context());
         Assertions.assertEquals(contextName, instance.context().name());
     }
 
-    @Test
-    void testNamedContextFieldsAreInjected() {
+    @ParameterizedTest
+    @MethodSource("componentPopulators")
+    void testNamedContextFieldsAreInjected(Function<ApplicationContext, ComponentPopulator> populatorFactory) {
         String contextName = "InjectedContext";
-        this.applicationContext.add("another", new SampleContext(contextName));
-        
-        ContextualComponentPopulator populator = new ContextualComponentPopulator(this.applicationContext);
+        this.applicationContext.addContext("another", new SampleContext(contextName));
+
+        ComponentPopulator populator = populatorFactory.apply(this.applicationContext);
         ContextInjectedType instance = populator.populate(new ContextInjectedType());
-        
+
         Assertions.assertNotNull(instance.anotherContext());
         Assertions.assertEquals(contextName, instance.anotherContext().name());
     }
@@ -330,8 +338,6 @@ public class ApplicationContextTests {
     @Test
     @TestComponents(components = EmptyService.class)
     void servicesAreSingletonsByDefault() {
-        Assertions.assertTrue(this.applicationContext.environment().singleton(EmptyService.class));
-
         EmptyService emptyService = this.applicationContext.get(EmptyService.class);
         EmptyService emptyService2 = this.applicationContext.get(EmptyService.class);
         Assertions.assertSame(emptyService, emptyService2);
@@ -463,29 +469,38 @@ public class ApplicationContextTests {
 
     private DependencyGraph buildDependencyGraph(List<Class<?>> components) {
         Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
+        IntrospectionDependencyResolver dependencyResolver = new IntrospectionDependencyResolver(this.applicationContext.environment());
         for(Class<?> component : components) {
             ComponentKey<?> componentKey = ComponentKey.of(component);
             TypeView<?> typeView = this.applicationContext.environment().introspector().introspect(component);
 
             DependencyMap dependencyMap = DependencyMap.create()
                     // Fields and methods are always delayed
-                    .delayed(DependencyResolverUtils.resolveDependencies(typeView));
+                    .delayed(dependencyResolver.resolveDependencies(typeView));
 
             View origin = typeView;
             if (!typeView.isInterface()) {
-                List<? extends ConstructorView<?>> constructorViews = typeView.constructors().injectable();
+                List<? extends ConstructorView<?>> constructorViews = typeView.constructors().all().stream()
+                        .filter(this.applicationContext.environment().injectionPointsResolver()::isInjectable)
+                        .toList();
                 if (!constructorViews.isEmpty()) {
                     Assertions.assertEquals(1, constructorViews.size());
                     ConstructorView<?> constructorView = constructorViews.get(0);
                     origin = constructorView;
                     // Constructors are always immediate
-                    Set<ComponentKey<?>> immediateDependencies = DependencyResolverUtils.resolveDependencies(constructorView);
+                    Set<ComponentKey<?>> immediateDependencies = dependencyResolver.resolveDependencies(constructorView);
                     dependencyMap.putAll(DependencyResolutionType.IMMEDIATE, immediateDependencies);
                 }
             }
 
-            DependencyContext<?> dependencyContext = new AutoConfiguringDependencyContext<>(componentKey,
-                    dependencyMap, Scope.DEFAULT_SCOPE.installableScopeType(), -1, BindingType.COMPONENT, origin, () -> null);
+            AutoConfiguringDependencyContext<?> dependencyContext = AutoConfiguringDependencyContext.builder(componentKey)
+                .dependencies(dependencyMap)
+                .scope(ApplicationContext.APPLICATION_SCOPE)
+                .priority(-1)
+                .memberType(ComponentMemberType.STANDALONE)
+                .view(origin)
+                .supplier(ContextAwareComponentSupplier.empty())
+                .build();
             dependencyContexts.add(dependencyContext);
         }
 
@@ -506,7 +521,7 @@ public class ApplicationContextTests {
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
         Set<GraphNode<DependencyContext<?>>> roots = dependencyGraph.roots();
-        Assertions.assertEquals(0, roots.size()); // Cyclic, thus no roots
+        Assertions.assertEquals(0, roots.size()); // Cyclic, so no roots
 
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
         Assertions.assertEquals(4, nodes.size()); // 4 nodes, 2 interfaces, 2 implementations
@@ -550,7 +565,7 @@ public class ApplicationContextTests {
     @Test
     @TestComponents(components = SetterInjectedComponentWithAbsentBinding.class)
     void testSetterInjectionWithAbsentRequiredComponent() {
-        Assertions.assertThrows(ComponentRequiredException.class, () -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
+        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
     }
 
     @Test
@@ -565,16 +580,24 @@ public class ApplicationContextTests {
     @TestComponents(components = {SetterInjectedComponent.class, ComponentType.class})
     void testSetterInjectionWithContext() {
         SampleContext sampleContext = new SampleContext("setter");
-        this.applicationContext.add("setter", sampleContext);
+        this.applicationContext.addContext("setter", sampleContext);
         SetterInjectedComponent component = this.applicationContext.get(SetterInjectedComponent.class);
         Assertions.assertNotNull(component);
         Assertions.assertNotNull(component.context());
         Assertions.assertSame(sampleContext, component.context());
     }
 
+    @Inject
+    private Logger loggerField;
+
     @InjectTest
-    void loggerCanBeInjected(Logger logger) {
-        Assertions.assertNotNull(logger);
+    void loggerCanBeInjected(Logger loggerParameter) {
+        Assertions.assertNotNull(loggerParameter);
+        // Name should match the consuming class' name, and not the name of the configuration that uses it
+        Assertions.assertEquals(loggerParameter.getName(), ApplicationContextTests.class.getName());
+
+        Assertions.assertNotNull(this.loggerField);
+        Assertions.assertEquals(this.loggerField.getName(), ApplicationContextTests.class.getName());
     }
 
     @Test

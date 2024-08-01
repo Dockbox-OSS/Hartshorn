@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,23 @@ package org.dockbox.hartshorn.hsl.interpreter.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.RangeExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class RangeExpressionInterpreter implements ASTNodeInterpreter<Object, RangeExpression> {
 
     @Override
-    public Object interpret(RangeExpression node, InterpreterAdapter adapter) {
-        Object start = InterpreterUtilities.unwrap(adapter.evaluate(node.leftExpression()));
-        Object end = InterpreterUtilities.unwrap(adapter.evaluate(node.rightExpression()));
+    public Object interpret(RangeExpression node, Interpreter interpreter) {
+        Object start = InterpreterUtilities.unwrap(interpreter.evaluate(node.leftExpression()));
+        Object end = InterpreterUtilities.unwrap(interpreter.evaluate(node.rightExpression()));
 
         InterpreterUtilities.checkNumberOperands(node.operator(), start, end);
 

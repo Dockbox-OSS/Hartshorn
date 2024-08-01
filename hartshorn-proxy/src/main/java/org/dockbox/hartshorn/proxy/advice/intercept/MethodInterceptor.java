@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,12 @@ import java.util.Objects;
  *
  * @param <T> the type of the proxy. This is only a utility type that is used to allow the interceptor to be
  *           generic.
- * @author Guus Lieben
+ *
+ * @param <R> the return type of the method call
+ *
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface MethodInterceptor<T, R> {
@@ -59,9 +63,9 @@ public interface MethodInterceptor<T, R> {
      */
     default MethodInterceptor<T, R> andThen(MethodInterceptor<T, R> after) {
         Objects.requireNonNull(after);
-        return ctx -> {
-            R previous = this.intercept(ctx);
-            return after.intercept(new MethodInterceptorContext<>(ctx, previous));
+        return context -> {
+            R previous = this.intercept(context);
+            return after.intercept(new MethodInterceptorContext<>(context, previous));
         };
     }
 }

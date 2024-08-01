@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,17 @@ import java.util.concurrent.Callable;
  * @param <T> The type of the value
  * @param <E> The type of the exception
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ThrowingSupplier<T, E extends Throwable> {
+
+    /**
+     * Gets a result.
+     * @return a result
+     * @throws E if an error occurs during the execution of the supplier
+     */
     T get() throws E;
 }

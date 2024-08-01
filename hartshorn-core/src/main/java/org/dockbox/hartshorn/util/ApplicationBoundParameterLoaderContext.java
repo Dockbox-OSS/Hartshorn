@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util;
 
+import java.util.List;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.ComponentProvider;
@@ -23,14 +25,21 @@ import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextCarrier;
 import org.dockbox.hartshorn.context.ContextIdentity;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.context.ProvisionContext;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.List;
-
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ApplicationBoundParameterLoaderContext extends ParameterLoaderContext implements ContextCarrier, ProvisionContext {
 
     private final ApplicationContext applicationContext;
@@ -65,44 +74,54 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
         }
         return new ComponentProvider() {
             @Override
-            public <T> T get(ComponentKey<T> key) {
+            public <T> T get(ComponentKey<T> key, ComponentRequestContext requestContext) {
                 ApplicationBoundParameterLoaderContext self = ApplicationBoundParameterLoaderContext.this;
                 // Explicit scopes get priority, otherwise use our local scope
-                if (key.scope() == Scope.DEFAULT_SCOPE) {
-                    return self.provider.get(key.mutable().scope(self.scope).build());
+                if (key.scope() == self.applicationContext) {
+                    return self.provider.get(key.mutable().scope(self.scope).build(), requestContext);
                 }
-                return self.provider.get(key);
+                return self.provider.get(key, requestContext);
+            }
+
+            @Override
+            public Scope scope() {
+                return ApplicationBoundParameterLoaderContext.this.scope;
             }
         };
     }
 
     @Override
-    public <C extends Context> void add(C context) {
-        this.context.add(context);
+    public <C extends ContextView> void addContext(C context) {
+        this.context.addContext(context);
     }
 
     @Override
-    public <C extends Context> void add(String name, C context) {
-        this.context.add(name, context);
+    public <C extends ContextView> void addContext(String name, C context) {
+        this.context.addContext(name, context);
     }
 
     @Override
-    public List<Context> all() {
-        return this.context.all();
+    public ContextView contextView() {
+        return this.context.contextView();
     }
 
     @Override
-    public <C extends Context> Option<C> first(ContextIdentity<C> key) {
-        return this.context.first(key);
+    public List<ContextView> contexts() {
+        return this.context.contexts();
     }
 
     @Override
-    public <C extends Context> List<C> all(ContextIdentity<C> key) {
-        return this.context.all(key);
+    public <C extends ContextView> Option<C> firstContext(ContextIdentity<C> key) {
+        return this.context.firstContext(key);
     }
 
     @Override
-    public void copyTo(Context context) {
-        this.context.copyTo(context);
+    public <C extends ContextView> List<C> contexts(ContextIdentity<C> key) {
+        return this.context.contexts(key);
+    }
+
+    @Override
+    public void copyToContext(Context context) {
+        this.context.copyToContext(context);
     }
 }

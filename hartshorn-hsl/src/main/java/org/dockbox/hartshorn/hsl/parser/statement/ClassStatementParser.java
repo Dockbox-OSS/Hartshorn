@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
@@ -28,60 +32,60 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.ClassTokenType;
+import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import jakarta.inject.Inject;
-
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
 
     private final FieldStatementParser fieldParser;
 
-    @Inject
     public ClassStatementParser(FieldStatementParser fieldParser) {
         this.fieldParser = fieldParser;
     }
 
     @Override
-    public Option<ClassStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(TokenType.CLASS)) {
-            Token name = validator.expect(TokenType.IDENTIFIER, "class name");
+    public Option<? extends ClassStatement> parse(TokenParser parser, TokenStepValidator validator) {
+        TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
+        if (parser.match(ClassTokenType.CLASS)) {
+            TokenType identifier = parser.tokenRegistry().literals().identifier();
+            Token name = validator.expect(identifier, "class name");
 
-            boolean isDynamic = parser.match(TokenType.QUESTION_MARK);
+            boolean isDynamic = parser.match(BaseTokenType.QUESTION_MARK);
 
             VariableExpression superClass = null;
-            if (parser.match(TokenType.EXTENDS)) {
-                validator.expect(TokenType.IDENTIFIER, "super class name");
+            if (parser.match(ClassTokenType.EXTENDS)) {
+                validator.expect(identifier, "super class name");
                 superClass = new VariableExpression(parser.previous());
             }
 
-            validator.expectBefore(TokenType.LEFT_BRACE, "class body");
+            validator.expectBefore(block.open(), "class body");
 
             List<FunctionStatement> methods = new ArrayList<>();
             List<FieldStatement> fields = new ArrayList<>();
             ConstructorStatement constructor = null;
-            while (!parser.check(TokenType.RIGHT_BRACE) && !parser.isAtEnd()) {
+            while (!parser.check(block.close()) && !parser.isAtEnd()) {
                 Statement declaration = this.classBodyStatement(parser, validator);
-                if (declaration instanceof ConstructorStatement constructorStatement) {
-                    constructor = constructorStatement;
-                }
-                else if (declaration instanceof FunctionStatement function) {
-                    methods.add(function);
-                }
-                else if (declaration instanceof FieldStatement field) {
-                    fields.add(field);
-                }
-                else {
-                    throw new ScriptEvaluationError("Unsupported class body statement type: " + declaration.getClass()
-                            .getSimpleName(), Phase.PARSING, parser.peek());
+                switch(declaration) {
+                case ConstructorStatement constructorStatement -> constructor = constructorStatement;
+                case FunctionStatement function -> methods.add(function);
+                case FieldStatement field -> fields.add(field);
+                case null -> throw new ScriptEvaluationError("Unsupported class body statement type: null", Phase.PARSING, parser.peek());
+                default -> throw new ScriptEvaluationError("Unsupported class body statement type: " + declaration.getClass().getSimpleName(), Phase.PARSING, parser.peek());
                 }
             }
 
-            validator.expectAfter(TokenType.RIGHT_BRACE, "class body");
+            validator.expectAfter(block.close(), "class body");
 
             return Option.of(new ClassStatement(name, superClass, constructor, methods, fields, isDynamic));
         }
@@ -89,10 +93,10 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
     }
 
     private Statement classBodyStatement(TokenParser parser, TokenStepValidator validator) {
-        if (parser.check(TokenType.CONSTRUCTOR)) {
+        if (parser.check(FunctionTokenType.CONSTRUCTOR)) {
             return this.handleDelegate(parser, validator, parser.firstCompatibleParser(ConstructorStatement.class));
         }
-        else if (parser.check(TokenType.FUNCTION)) {
+        else if (parser.check(FunctionTokenType.FUNCTION)) {
             return this.handleDelegate(parser, validator, parser.firstCompatibleParser(FunctionStatement.class));
         }
         else {
@@ -104,8 +108,6 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
                                                    Option<ASTNodeParser<T>> statement) {
         return statement
                 .flatMap(nodeParser -> nodeParser.parse(parser, validator))
-                .attempt(ScriptEvaluationError.class)
-                .rethrow()
                 .orNull();
     }
 

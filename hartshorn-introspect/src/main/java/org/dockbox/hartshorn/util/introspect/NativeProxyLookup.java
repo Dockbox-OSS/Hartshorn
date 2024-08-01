@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,25 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.util.MapBackedAnnotationInvocationHandler;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationAdapterProxy;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationAdapterProxyIntrospector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationProxyIntrospector;
-import org.dockbox.hartshorn.util.introspect.annotations.PolymorphicAnnotationInvocationHandler;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 
 /**
  * A proxy lookup implementation that is capable of looking up native proxies. Native proxies are
  * proxies that are created through the standard Java API.
  *
+ * @since 0.4.9
+ *
  * @author Guus Lieben
- * @since 0.4.10
  */
 public class NativeProxyLookup implements ProxyLookup {
 
@@ -43,8 +44,8 @@ public class NativeProxyLookup implements ProxyLookup {
         // Check if the instance is a proxy, as getInvocationHandler will yield an exception if it is not
         if(Proxy.isProxyClass(instance.getClass())) {
             InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
-            if(invocationHandler instanceof PolymorphicAnnotationInvocationHandler annotationInvocationHandler) {
-                unproxied = TypeUtils.adjustWildcards(annotationInvocationHandler.annotation().annotationType(), Class.class);
+            if(invocationHandler instanceof MapBackedAnnotationInvocationHandler annotationInvocationHandler) {
+                unproxied = TypeUtils.adjustWildcards(annotationInvocationHandler.type(), Class.class);
             }
             else if(invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
                 unproxied = TypeUtils.adjustWildcards(adapterProxy.targetAnnotationClass(), Class.class);
@@ -68,27 +69,20 @@ public class NativeProxyLookup implements ProxyLookup {
 
     @Override
     public <T> Option<ProxyIntrospector<T>> introspector(T instance) {
-        ProxyIntrospector<?> introspector;
+        ProxyIntrospector<?> introspector = null;
         if(Proxy.isProxyClass(instance.getClass())) {
             InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
-            if(invocationHandler instanceof PolymorphicAnnotationInvocationHandler) {
-                throw new UnsupportedOperationException("Polymorphic annotation proxies are not supported, see the documentation for more information.");
-            }
-            else if(instance instanceof Annotation annotation && invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
+            if(instance instanceof Annotation annotation && invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
                 introspector = new AnnotationAdapterProxyIntrospector<>(
                         annotation, adapterProxy);
             }
-            else {
-                introspector = null;
-            }
         }
-        else if(instance instanceof Annotation annotation) {
+
+        if(introspector == null && instance instanceof Annotation annotation) {
             introspector = new AnnotationProxyIntrospector<>(annotation);
         }
-        else {
-            introspector = null;
-        }
+
         //noinspection unchecked
-        return Option.of((ProxyIntrospector<T>)introspector);
+        return Option.of((ProxyIntrospector<T>) introspector);
     }
 }

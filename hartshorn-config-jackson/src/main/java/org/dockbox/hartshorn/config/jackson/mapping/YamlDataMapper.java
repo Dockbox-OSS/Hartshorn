@@ -26,7 +26,16 @@ import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.jackson.JacksonDataMapper;
 
+/**
+ * A {@link JacksonDataMapper} that uses the YAML format. This mapper uses Jackson's {@link YAMLMapper} to
+ * support {@link FileFormats#YAML YAML sources}.
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public class YamlDataMapper implements JacksonDataMapper {
+
     @Override
     public FileFormat fileFormat() {
         return FileFormats.YAML;

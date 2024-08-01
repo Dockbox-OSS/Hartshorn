@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,14 @@ import org.dockbox.hartshorn.util.introspect.view.View;
 
 import java.lang.reflect.Member;
 
+/**
+ * Thrown when an illegal introspection operation is attempted, or when an introspection operation
+ * fails due to an incorrect state.
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class IllegalIntrospectionException extends ApplicationRuntimeException {
 
     public IllegalIntrospectionException(View view, String reason) {

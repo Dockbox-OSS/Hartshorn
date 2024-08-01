@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,28 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import org.dockbox.hartshorn.context.DefaultContext;
+import java.lang.reflect.AnnotatedElement;
+
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.view.IntrospectorAwareView;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
+import org.dockbox.hartshorn.util.option.Option;
 
-public class ReflectionPackageView extends DefaultContext implements PackageView, IntrospectorAwareView {
+/**
+ * TODO: #1059 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+public class ReflectionPackageView extends ReflectionAnnotatedElementView implements PackageView {
 
-    private final Introspector introspector;
     private final Package pkg;
 
     public ReflectionPackageView(Introspector introspector, Package pkg) {
-        this.introspector = introspector;
+        super(introspector);
         this.pkg = pkg;
     }
 
@@ -38,17 +47,65 @@ public class ReflectionPackageView extends DefaultContext implements PackageView
     }
 
     @Override
+    public String specificationTitle() {
+        return StringUtilities.emptyIfNull(this.pkg.getSpecificationTitle());
+    }
+
+    @Override
+    public String specificationVendor() {
+        return StringUtilities.emptyIfNull(this.pkg.getSpecificationVendor());
+    }
+
+    @Override
+    public String specificationVersion() {
+        return StringUtilities.emptyIfNull(this.pkg.getSpecificationVersion());
+    }
+
+    @Override
+    public String implementationTitle() {
+        return StringUtilities.emptyIfNull(this.pkg.getImplementationTitle());
+    }
+
+    @Override
+    public String implementationVendor() {
+        return StringUtilities.emptyIfNull(this.pkg.getImplementationVendor());
+    }
+
+    @Override
+    public String implementationVersion() {
+        return StringUtilities.emptyIfNull(this.pkg.getImplementationVersion());
+    }
+
+    @Override
+    public boolean isSealed() {
+        return this.pkg.isSealed();
+    }
+
+    @Override
     public String qualifiedName() {
         return this.name();
     }
 
     @Override
-    public Introspector introspector() {
-        return this.introspector;
+    protected AnnotatedElement annotatedElement() {
+        return this.pkg;
     }
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("name").write(this.name());
+        collector.property("name").writeString(this.name());
+        collector.property("specificationTitle").writeString(this.specificationTitle());
+        collector.property("specificationVendor").writeString(this.specificationVendor());
+        collector.property("specificationVersion").writeString(this.specificationVersion());
+    }
+
+    @Override
+    public boolean isEnclosed() {
+        return false;
+    }
+
+    @Override
+    public Option<EnclosableView> enclosingView() {
+        return Option.empty();
     }
 }

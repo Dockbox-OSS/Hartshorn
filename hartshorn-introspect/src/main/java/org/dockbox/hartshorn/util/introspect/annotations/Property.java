@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,20 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Collection;
+import java.util.Map;
 
 /**
- * The interface to provide custom information to an object field when creating an object dynamically.
+ * The interface to provide custom introspection information to an object field when creating
+ * an object dynamically.
  *
  * @author Guus Lieben
- * @since 0.4.1
+ * @since 0.4.13
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Property {
+
     /**
      * The alternative identifier for the field. For example a field called {@code firstName} which is
      * being injected into with a value of a property called {@code fn} could look like the following
@@ -73,17 +77,37 @@ public @interface Property {
      *     return this.id;
      * }
      * }</pre>
+     *
+     * @return the name of the getter
      */
     String getter() default "";
 
     /**
      * Whether the field should be ignored when creating an object.
+     *
+     * @return whether the field should be ignored
      */
     boolean ignore() default false;
 
+    /**
+     * If the field is a {@link Map}, this value will be used as the key type if defined.
+     *
+     * @return the key type
+     */
     Class<?> key() default Void.class;
 
+    /**
+     * If the field is a wrapper type (array, {@link Collection}, or {@link Map}), this value will be used as the
+     * content type if defined.
+     *
+     * @return the content type
+     */
     Class<?> content() default Void.class;
 
+    /**
+     * The type of the field. This can be used to narrow down the type of the field.
+     *
+     * @return the type of the field
+     */
     Class<?> type() default Void.class;
 }

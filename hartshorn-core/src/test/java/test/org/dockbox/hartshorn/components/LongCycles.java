@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,31 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
+import org.dockbox.hartshorn.inject.Inject;
 import org.dockbox.hartshorn.component.Component;
+import org.dockbox.hartshorn.inject.LifecycleType;
 
 public class LongCycles {
 
-    @Singleton
-    @Component
+    @Component(lifecycle = LifecycleType.SINGLETON)
     public static class LongCycleA {
         @Inject
         public LongCycleA(LongCycleB cycle) {}
     }
 
-    @Singleton
-    @Component
+    @Component(lifecycle = LifecycleType.SINGLETON)
     public static class LongCycleB {
         @Inject
         public LongCycleB(LongCycleC cycle) {}
     }
 
-    @Singleton
-    @Component
+    @Component(lifecycle = LifecycleType.SINGLETON)
     public static class LongCycleC {
         @Inject
         public LongCycleC(LongCycleD cycle) {}
     }
 
-    @Singleton
-    @Component
+    @Component(lifecycle = LifecycleType.SINGLETON)
     public static class LongCycleD {
         @Inject
         public LongCycleD(LongCycleA cycle) {}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.application.context;
 
+import java.lang.annotation.Annotation;
+import java.util.Properties;
+import java.util.Set;
+import java.util.function.BiConsumer;
+
 import org.dockbox.hartshorn.application.ContextualEnvironmentBinderConfiguration;
 import org.dockbox.hartshorn.application.DefaultBindingConfigurer;
 import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
@@ -26,14 +31,15 @@ import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeAwareComponentProvider;
-import org.dockbox.hartshorn.component.TypeReferenceLookupComponentLocator;
+import org.dockbox.hartshorn.component.TypeReferenceLookupComponentRegistry;
 import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
 import org.dockbox.hartshorn.context.ModifiableContextCarrier;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
@@ -44,14 +50,11 @@ import org.dockbox.hartshorn.util.SingleElementContext;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
-
-import java.lang.annotation.Annotation;
-import java.util.Properties;
-import java.util.Set;
-import java.util.function.BiConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A {@link ApplicationContext} implementation that delegates to a {@link ComponentLocator} and {@link ComponentProvider}.
+ * A {@link ApplicationContext} implementation that delegates to a {@link ComponentRegistry} and {@link ComponentProvider}.
  * This implementation is used to allow for custom implementations of these interfaces, while still allowing for the
  * {@link ApplicationContext} to function in a predictable manner.
  *
@@ -68,23 +71,25 @@ import java.util.function.BiConsumer;
  * {@link ApplicationEnvironment} instances. Additional bindings can be added by providing a
  * {@link DefaultBindingConfigurer} to the {@link DelegatingApplicationContext.Configurer}.
  *
- * @author Guus Lieben
- *
  * @see ApplicationContext
- * @see ComponentLocator
+ * @see ComponentRegistry
  * @see ComponentProvider
  * @see ApplicationEnvironment
  * @see DelegatingApplicationContext.Configurer
  * @see ContextualEnvironmentBinderConfiguration
  *
- * @since 0.5.0
+ * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
 public abstract class DelegatingApplicationContext extends DefaultApplicationAwareContext implements
         ApplicationContext {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DelegatingApplicationContext.class);
+
     private final transient Properties environmentValues;
     private final transient ComponentProvider componentProvider;
-    private final transient ComponentLocator locator;
+    private final transient ComponentRegistry componentRegistry;
     private final transient ApplicationEnvironment environment;
 
     private boolean isClosed = false;
@@ -103,13 +108,13 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         this.environmentValues = this.environment.rawArguments();
 
         SingleElementContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this);
-        this.locator = configurer.componentLocator.initialize(applicationInitializerContext);
-        this.componentProvider = configurer.componentProvider.initialize(initializerContext.transform(this.locator));
+        this.componentRegistry = configurer.componentRegistry.initialize(applicationInitializerContext);
+        this.componentProvider = configurer.componentProvider.initialize(initializerContext.transform(this.componentRegistry));
 
         EnvironmentBinderConfiguration configuration = new ContextualEnvironmentBinderConfiguration();
 
         DefaultBindingConfigurer bindingConfigurer = configurer.defaultBindings.initialize(applicationInitializerContext);
-        for (DefaultBindingConfigurerContext configurerContext : initializerContext.all(DefaultBindingConfigurerContext.class)) {
+        for (DefaultBindingConfigurerContext configurerContext : initializerContext.contexts(DefaultBindingConfigurerContext.class)) {
             bindingConfigurer = bindingConfigurer.compose(configurerContext.configurer());
         }
         configuration.configureBindings(this.environment, bindingConfigurer, this);
@@ -145,20 +150,20 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
 
     @Override
     public Set<Annotation> activators() {
-        return this.first(ServiceActivatorContext.class)
+        return this.firstContext(ServiceActivatorContext.class)
                 .map(ServiceActivatorContext::activators)
                 .orElseGet(Set::of);
     }
 
     @Override
     public <A> Option<A> activator(Class<A> activator) {
-        return this.first(ServiceActivatorContext.class)
+        return this.firstContext(ServiceActivatorContext.class)
                 .map(context -> context.activator(activator));
     }
 
     @Override
     public boolean hasActivator(Class<? extends Annotation> activator) {
-        return this.first(ServiceActivatorContext.class)
+        return this.firstContext(ServiceActivatorContext.class)
                 .map(context -> context.hasActivator(activator))
                 .orElseGet(() -> false);
     }
@@ -174,13 +179,13 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public ExceptionHandler printStacktraces(boolean stacktraces) {
-        return this.environment().printStacktraces(stacktraces);
+    public ExceptionHandler printStackTraces(boolean stacktraces) {
+        return this.environment().printStackTraces(stacktraces);
     }
 
     @Override
-    public <T> T get(ComponentKey<T> key) {
-        return this.componentProvider.get(key);
+    public <T> T get(ComponentKey<T> key, ComponentRequestContext requestContext) {
+        return this.componentProvider.get(key, requestContext);
     }
 
     @Override
@@ -222,11 +227,6 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     @Override
-    public void enableDebugLogging(boolean active) {
-        this.environment().enableDebugLogging(active);
-    }
-
-    @Override
     public void close() {
         if (this.isClosed()) {
             throw new ContextClosedException(ApplicationContext.class);
@@ -234,14 +234,14 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         ApplicationEnvironment environment = this.environment();
         if (environment instanceof ObservableApplicationEnvironment observable) {
             Set<LifecycleObserver> observers = observable.observers(LifecycleObserver.class);
-            this.log().info("Runtime shutting down, notifying {} observers", observers.size());
+            LOG.info("Runtime shutting down, notifying {} observers", observers.size());
             for (LifecycleObserver observer : observers) {
-                this.log().debug("Notifying " + observer.getClass().getSimpleName() + " of shutdown");
+                LOG.debug("Notifying " + observer.getClass().getSimpleName() + " of shutdown");
                 try {
                     observer.onExit(this);
                 }
                 catch (Throwable e) {
-                    this.log().error("Error notifying " + observer.getClass().getSimpleName() + " of shutdown", e);
+                    handle("Error notifying " + observer.getClass().getSimpleName() + " of shutdown", e);
                 }
             }
             this.isClosed = true;
@@ -255,10 +255,10 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
     }
 
     /**
-     * @return the {@link ComponentLocator} that is used by this {@link ApplicationContext} to locate components
+     * @return the {@link ComponentRegistry} that is used by this {@link ApplicationContext} to locate components
      */
-    public ComponentLocator locator() {
-        return this.locator;
+    public ComponentRegistry componentRegistry() {
+        return this.componentRegistry;
     }
 
     /**
@@ -273,38 +273,95 @@ public abstract class DelegatingApplicationContext extends DefaultApplicationAwa
         return this;
     }
 
+    /**
+     * Configuration for the {@link DelegatingApplicationContext}. This configuration is used to configure the
+     * various components required by the {@link DelegatingApplicationContext} to function.
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
     public static class Configurer {
 
-        private ContextualInitializer<ApplicationContext, ? extends ComponentLocator> componentLocator = ContextualInitializer.of(TypeReferenceLookupComponentLocator::new);
-        private ContextualInitializer<ComponentLocator, ? extends ComponentProvider> componentProvider = ScopeAwareComponentProvider.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationContext, ? extends ComponentRegistry> componentRegistry = ContextualInitializer.of(context -> new TypeReferenceLookupComponentRegistry(context.environment()));
+        private ContextualInitializer<ComponentRegistry, ? extends ComponentProvider> componentProvider = ScopeAwareComponentProvider.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings = ContextualInitializer.of(DefaultBindingConfigurer::empty);
 
-        public Configurer componentLocator(ComponentLocator componentLocator) {
-            return this.componentLocator(ContextualInitializer.of(componentLocator));
+        /**
+         * Configures the {@link ComponentRegistry} that is used by the {@link DelegatingApplicationContext} to locate
+         * components.
+         *
+         * @param componentRegistry the {@link ComponentRegistry} to use
+         * @return the current instance
+         */
+        public Configurer componentRegistry(ComponentRegistry componentRegistry) {
+            return this.componentRegistry(ContextualInitializer.of(componentRegistry));
         }
 
-        public Configurer componentLocator(ContextualInitializer<ApplicationContext, ? extends ComponentLocator> componentLocator) {
-            this.componentLocator = componentLocator;
+        /**
+         * Configures the {@link ComponentRegistry} that is used by the {@link DelegatingApplicationContext} to locate
+         * components.
+         *
+         * @param componentRegistry the {@link ComponentRegistry} to use
+         * @return the current instance
+         */
+        public Configurer componentRegistry(ContextualInitializer<ApplicationContext, ? extends ComponentRegistry> componentRegistry) {
+            this.componentRegistry = componentRegistry;
             return this;
         }
 
+        /**
+         * Configures the {@link ComponentProvider} that is used by the {@link DelegatingApplicationContext} to provide
+         * component instances.
+         *
+         * @param componentProvider the {@link ComponentProvider} to use
+         * @return the current instance
+         */
         public Configurer componentProvider(ComponentProvider componentProvider) {
             return this.componentProvider(ContextualInitializer.of(componentProvider));
         }
 
-        public Configurer componentProvider(ContextualInitializer<ComponentLocator, ? extends ComponentProvider> componentProvider) {
+        /**
+         * Configures the {@link ComponentProvider} that is used by the {@link DelegatingApplicationContext} to provide
+         * component instances.
+         *
+         * @param componentProvider the {@link ComponentProvider} to use
+         * @return the current instance
+         */
+        public Configurer componentProvider(ContextualInitializer<ComponentRegistry, ? extends ComponentProvider> componentProvider) {
             this.componentProvider = componentProvider;
             return this;
         }
 
+        /**
+         * Configures the {@link DefaultBindingConfigurer} that is used by the {@link DelegatingApplicationContext} to
+         * configure bindings that should be available by default.
+         *
+         * @param defaultBindings the {@link DefaultBindingConfigurer} to use
+         * @return the current instance
+         */
         public Configurer defaultBindings(DefaultBindingConfigurer defaultBindings) {
             return this.defaultBindings(ContextualInitializer.of(defaultBindings));
         }
 
+        /**
+         * Configures the {@link DefaultBindingConfigurer} that is used by the {@link DelegatingApplicationContext} to
+         * configure bindings that should be available by default.
+         *
+         * @param defaultBindings the {@link DefaultBindingConfigurer} to use
+         * @return the current instance
+         */
         public Configurer defaultBindings(BiConsumer<ApplicationContext, Binder> defaultBindings) {
             return this.defaultBindings(context -> binder -> defaultBindings.accept(context.input(), binder));
         }
 
+        /**
+         * Configures the {@link DefaultBindingConfigurer} that is used by the {@link DelegatingApplicationContext} to
+         * configure bindings that should be available by default.
+         *
+         * @param defaultBindings the {@link DefaultBindingConfigurer} to use
+         * @return the current instance
+         */
         public Configurer defaultBindings(ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings) {
             this.defaultBindings = defaultBindings;
             return this;

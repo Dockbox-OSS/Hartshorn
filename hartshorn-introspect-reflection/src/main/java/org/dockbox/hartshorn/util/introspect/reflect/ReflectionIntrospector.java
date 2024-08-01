@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,22 +26,24 @@ import java.lang.reflect.Type;
 
 import org.dockbox.hartshorn.util.GenericType;
 import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
-import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
-import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.ConcurrentIntrospectionViewCache;
+import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionConstructorView;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionFieldView;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionMethodView;
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionPackageView;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionParameterView;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeView;
 import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -67,12 +69,15 @@ import org.dockbox.hartshorn.util.option.Option;
  * {@link ProxyLookup}. Note that {@link #introspect(Type)} and {@link #introspect(Class)} will
  * return the proxy type, to allow for introspection of proxy types.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ReflectionIntrospector implements BatchCapableIntrospector {
 
     private static final ConcurrentIntrospectionViewCache SHARED_CACHE = new ConcurrentIntrospectionViewCache();
+
+    private static final ClassLoader DEFAULT_CLASS_LOADER = Thread.currentThread().getContextClassLoader();
 
     private final ConcurrentIntrospectionViewCache viewCache = new ConcurrentIntrospectionViewCache();
     private final IntrospectionEnvironment environment = new ReflectionIntrospectionEnvironment();
@@ -176,7 +181,7 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     @Override
     public TypeView<?> introspect(TypeReference reference) {
         try {
-            return this.introspect(reference.getOrLoad());
+            return this.introspect(reference.getOrLoad(DEFAULT_CLASS_LOADER));
         }
         catch(ClassReferenceLoadException e) {
             return this.voidType();
@@ -204,8 +209,21 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     }
 
     @Override
-    public ElementAnnotationsIntrospector introspect(AnnotatedElement annotatedElement) {
-        return new ReflectionElementAnnotationsIntrospector(this, annotatedElement);
+    public PackageView introspect(Package pkg) {
+        return this.viewCache().computeIfAbsent(pkg, () -> new ReflectionPackageView(this, pkg));
+    }
+
+    @Override
+    public AnnotatedElementView introspect(AnnotatedElement element) {
+        return switch(element) {
+            case Type type -> this.introspect(type);
+            case Method method -> this.introspect(method);
+            case Constructor<?> constructor -> this.introspect(constructor);
+            case Field field -> this.introspect(field);
+            case Parameter parameter -> this.introspect(parameter);
+            case Package pkg -> this.introspect(pkg);
+            default -> this.voidType();
+        };
     }
 
     @Override

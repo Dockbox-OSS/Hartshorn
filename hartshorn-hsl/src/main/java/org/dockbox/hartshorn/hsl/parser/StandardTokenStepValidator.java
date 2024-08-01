@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,46 +17,58 @@
 package org.dockbox.hartshorn.hsl.parser;
 
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
-import jakarta.inject.Inject;
-
+/**
+ * Default implementation of {@link TokenStepValidator}, based around the {@link TokenParser#consume(TokenType, String)}
+ * method.
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class StandardTokenStepValidator implements TokenStepValidator {
+
+    private static final String EXPECTED_X = "Expected %s.";
+    private static final String EXPECTED_X_AROUND_Y = "Expected '%s' %s %s.";
+
+    private static final String BEFORE = "before";
+    private static final String AFTER = "after";
+    private static final String KEYWORD = "keyword";
 
     private final TokenParser parser;
 
-    @Inject
     public StandardTokenStepValidator(TokenParser parser) {
         this.parser = parser;
     }
 
     @Override
     public Token expect(TokenType type) {
-        return this.expect(type, type.representation() + (type.keyword() ? " keyword" : ""));
+        return this.expect(type, type.representation() + (type.keyword() ? " " + KEYWORD : ""));
     }
 
     @Override
     public Token expect(TokenType type, String what) {
-        return this.parser.consume(type, "Expected " + what + ".");
+        return this.parser.consume(type, EXPECTED_X.formatted(what));
     }
 
     @Override
     public Token expectBefore(TokenType type, String before) {
-        return this.expectAround(type, before, "before");
+        return this.expectAround(type, before, BEFORE);
     }
 
     @Override
     public Token expectAfter(TokenType type, TokenType after) {
-        return this.expectAround(type, after.representation(), "after");
+        return this.expectAround(type, after.representation(), AFTER);
     }
 
     @Override
     public Token expectAfter(TokenType type, String after) {
-        return this.expectAround(type, after, "after");
+        return this.expectAround(type, after, AFTER);
     }
 
     @Override
     public Token expectAround(TokenType type, String where, String position) {
-        return this.parser.consume(type, "Expected '%s' %s %s.".formatted(type.representation(), position, where));
+        return this.parser.consume(type, EXPECTED_X_AROUND_Y.formatted(type.representation(), position, where));
     }
 }

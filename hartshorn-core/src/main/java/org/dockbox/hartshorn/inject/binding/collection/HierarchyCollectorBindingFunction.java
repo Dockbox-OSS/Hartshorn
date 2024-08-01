@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject.binding.collection;
 
 import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.inject.ComponentObjectContainer;
+import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.LazySingletonProvider;
 import org.dockbox.hartshorn.inject.Provider;
@@ -62,6 +62,11 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
     }
 
     @Override
+    public Binder supplier(ContextAwareComponentSupplier<T> supplier) {
+        return this.provider(supplier);
+    }
+
+    @Override
     public Binder singleton(T instance) {
         return this.provider(new SingletonProvider<>(instance));
     }
@@ -69,7 +74,7 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
     @Override
     public Binder type(Class<? extends T> type) {
         ComponentKey<? extends T> componentKey = this.hierarchy.key().mutable().type(type).build();
-        return this.provider(new ContextDrivenProvider<>(componentKey));
+        return this.provider(ContextDrivenProvider.forPrototype(componentKey));
     }
 
     @Override
@@ -79,7 +84,7 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
             if (instance == null) {
                 throw new IllegalModificationException("Cannot bind null instance");
             }
-            return new ComponentObjectContainer<>(instance);
+            return instance;
         }));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import java.lang.reflect.Constructor;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-
 import org.dockbox.hartshorn.proxy.advice.registry.AdvisorRegistry;
 import org.dockbox.hartshorn.proxy.advice.registry.ConfigurationAdvisorRegistry;
 import org.dockbox.hartshorn.proxy.advice.registry.StateAwareAdvisorRegistry;
@@ -32,7 +27,12 @@ import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.Constructor;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * The default implementation of {@link ProxyFactory}. This implementation is state-aware, as is suggested by its
@@ -44,8 +44,10 @@ import org.dockbox.hartshorn.util.option.Attempt;
  * know how to create proxies. This is the responsibility of the implementing class.
  *
  * @param <T> The parent type of the proxy.
- * @author Guus Lieben
+ *
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T>, ValidatorProxyFactory<T> {
 
@@ -136,23 +138,23 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
-    public Attempt<T, Throwable> proxy() throws ApplicationException {
+    public Option<T> proxy() throws ApplicationException {
         this.validateConstraints();
         return this.createNewProxy();
     }
 
-    protected abstract Attempt<T, Throwable> createNewProxy() throws ApplicationException;
+    protected abstract Option<T> createNewProxy() throws ApplicationException;
 
     @Override
-    public Attempt<T, Throwable> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
+    public Option<T> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
         this.validateConstraints();
         return this.createNewProxy(constructor, args);
     }
 
-    protected abstract Attempt<T, Throwable> createNewProxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException;
+    protected abstract Option<T> createNewProxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException;
 
     @Override
-    public Attempt<T, Throwable> proxy(ConstructorView<? extends T> constructor, Object[] args) throws ApplicationException {
+    public Option<T> proxy(ConstructorView<? extends T> constructor, Object[] args) throws ApplicationException {
         if (constructor.constructor().present()) {
             return this.proxy(constructor.constructor().get(), args);
         }
@@ -175,6 +177,11 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         return this.validator;
     }
 
+    /**
+     * Returns the {@link ProxyOrchestrator} that owns this factory.
+     *
+     * @return the {@link ProxyOrchestrator} that owns this factory
+     */
     public ProxyOrchestrator orchestrator() {
         return this.proxyOrchestrator;
     }

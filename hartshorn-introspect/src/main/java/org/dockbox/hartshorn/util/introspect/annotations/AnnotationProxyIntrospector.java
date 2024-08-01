@@ -16,12 +16,23 @@
 
 package org.dockbox.hartshorn.util.introspect.annotations;
 
-import java.lang.annotation.Annotation;
-
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.lang.annotation.Annotation;
+
+/**
+ * An introspector for {@link Annotation} instances that are proxied, but do not have a known
+ * {@link java.lang.reflect.InvocationHandler}. Such proxies are recognized by the fact that the
+ * result of {@link Object#getClass()} is not equal to the result of {@link Annotation#annotationType()}.
+ *
+ * @param <T> The type of annotation that is proxied
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class AnnotationProxyIntrospector<T extends Annotation> implements ProxyIntrospector<T> {
 
     private final T annotation;

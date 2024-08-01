@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,14 @@ package org.dockbox.hartshorn.util.introspect.convert;
 
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
+/**
+ * Thrown when two or more {@link GenericConverter}s have overlapping {@link GenericConverter#convertibleTypes() convertible types},
+ * and cannot be meaningfully combined.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class AmbiguousConverterException extends ApplicationRuntimeException {
 
     public AmbiguousConverterException(String message) {

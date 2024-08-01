@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package test.org.dockbox.hartshorn;
 
-import jakarta.inject.Inject;
-import java.util.Map.Entry;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.QualifierKey;
 import org.dockbox.hartshorn.inject.ComposedProvider;
 import org.dockbox.hartshorn.inject.ContextDrivenProvider;
 import org.dockbox.hartshorn.inject.Provider;
@@ -30,6 +29,11 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.dockbox.hartshorn.inject.Inject;
+
 @HartshornTest(includeBasePackages = false)
 public class BindingHierarchyTests {
 
@@ -39,29 +43,50 @@ public class BindingHierarchyTests {
     @Test
     void testToString() {
         BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class), this.applicationContext);
-        hierarchy.add(0, new ContextDrivenProvider<>(ComponentKey.of(ImplementationA.class)));
-        hierarchy.add(1, new ContextDrivenProvider<>(ComponentKey.of(ImplementationB.class)));
-        hierarchy.add(2, new ContextDrivenProvider<>(ComponentKey.of(ImplementationC.class)));
+        hierarchy.add(0, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
+        hierarchy.add(1, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
+        hierarchy.add(2, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
 
-        Assertions.assertEquals("Hierarchy[Contract]: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
+        Assertions.assertEquals("Hierarchy<Contract>: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
     }
 
     @Test
     void testToStringNamed() {
         BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class, "sample"), this.applicationContext);
-        hierarchy.add(0, new ContextDrivenProvider<>(ComponentKey.of(ImplementationA.class)));
-        hierarchy.add(1, new ContextDrivenProvider<>(ComponentKey.of(ImplementationB.class)));
-        hierarchy.add(2, new ContextDrivenProvider<>(ComponentKey.of(ImplementationC.class)));
+        hierarchy.add(0, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
+        hierarchy.add(1, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
+        hierarchy.add(2, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
 
-        Assertions.assertEquals("Hierarchy[Contract::sample]: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
+        Assertions.assertEquals("Hierarchy<Contract> Named{value=sample}: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
+    }
+
+    @Test
+    void testToStringMultipleQualifiers() {
+        ComponentKey<Contract> key = ComponentKey.builder(Contract.class)
+                .name("sample")
+                .qualifier(QualifierKey.of(VersionQualifier.class, Map.of("value", Version.V2)))
+                .build();
+
+        BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(key, this.applicationContext);
+        hierarchy.add(0, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
+        hierarchy.add(1, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
+        hierarchy.add(2, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
+
+        String hierarchyString = hierarchy.toString();
+        Assertions.assertTrue(hierarchyString.startsWith("Hierarchy<Contract> "));
+        Assertions.assertTrue(hierarchyString.endsWith(": 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC"));
+
+        // Check with contains,as order is not guaranteed
+        Assertions.assertTrue(hierarchyString.contains("Named{value=sample}"));
+        Assertions.assertTrue(hierarchyString.contains("VersionQualifier{value=V2}"));
     }
 
     @Test
     void testIteratorIsSorted() {
         BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class), this.applicationContext);
-        hierarchy.add(0, new ContextDrivenProvider<>(ComponentKey.of(ImplementationA.class)));
-        hierarchy.add(1, new ContextDrivenProvider<>(ComponentKey.of(ImplementationB.class)));
-        hierarchy.add(2, new ContextDrivenProvider<>(ComponentKey.of(ImplementationC.class)));
+        hierarchy.add(0, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
+        hierarchy.add(1, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
+        hierarchy.add(2, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
 
         int next = 2;
         for (Entry<Integer, Provider<Contract>> entry : hierarchy) {
@@ -76,11 +101,11 @@ public class BindingHierarchyTests {
         ComponentKey<Contract> key = ComponentKey.of(Contract.class);
 
         BindingHierarchy<Contract> secondHierarchy = new NativePrunableBindingHierarchy<>(key, this.applicationContext);
-        secondHierarchy.add(2, new ContextDrivenProvider<>(ComponentKey.of(ImplementationC.class)));
+        secondHierarchy.add(2, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
 
         this.applicationContext.hierarchy(key)
-                .add(0, new ContextDrivenProvider<>(ComponentKey.of(ImplementationA.class)))
-                .add(1, new ContextDrivenProvider<>(ComponentKey.of(ImplementationB.class)))
+                .add(0, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)))
+                .add(1, ContextDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)))
                 .merge(secondHierarchy);
 
         BindingHierarchy<Contract> hierarchy = this.applicationContext.hierarchy(key);
@@ -140,5 +165,13 @@ public class BindingHierarchyTests {
     }
 
     private static class ImplementationC implements Contract {
+    }
+
+    private @interface VersionQualifier {
+        Version value();
+    }
+
+    private enum Version {
+        V1, V2
     }
 }

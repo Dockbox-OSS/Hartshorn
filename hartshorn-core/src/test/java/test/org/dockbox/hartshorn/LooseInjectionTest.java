@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package test.org.dockbox.hartshorn;
 
 import org.dockbox.hartshorn.application.HartshornApplication;
-import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
+import org.dockbox.hartshorn.application.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
@@ -61,7 +61,7 @@ public class LooseInjectionTest {
     @Test
     void testEnvironmentStrictModeIsEnabledByDefault() {
         ApplicationEnvironment environment = HartshornApplication.create(LooseInjectionTest.class, application -> {
-            application.constructor(StandardApplicationContextConstructor.create(constructor -> {
+            application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
                 constructor.includeBasePackages(false);
             }));
         }).environment();
@@ -70,7 +70,7 @@ public class LooseInjectionTest {
 
     public static void main(String[] args) {
         HartshornApplication.create(LooseInjectionTest.class, application -> {
-            application.constructor(StandardApplicationContextConstructor.create(constructor -> {
+            application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
                 constructor.includeBasePackages(false);
             }));
         });
@@ -80,7 +80,7 @@ public class LooseInjectionTest {
     @Test
     void testCustomizingEnvironmentStrictModeAffectsLookup() {
         ApplicationContext applicationContext = HartshornApplication.create(LooseInjectionTest.class, application -> {
-            application.constructor(StandardApplicationContextConstructor.create(constructor -> {
+            application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
                 constructor.includeBasePackages(false);
                 constructor.environment(ContextualApplicationEnvironment.create(Configurer::disableStrictMode));
             }));

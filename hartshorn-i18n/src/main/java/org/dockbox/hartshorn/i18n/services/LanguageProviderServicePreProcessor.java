@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.i18n.services;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationBundle;
 import org.dockbox.hartshorn.i18n.TranslationService;
@@ -28,6 +29,15 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 import java.util.List;
 
+/**
+ * A pre-processor that processes {@link TranslationProvider} annotations on components. This will register
+ * the result of the annotated method as a {@link TranslationBundle} or {@link Message} with the
+ * {@link TranslationService}. If the annotated method returns another type, an exception is thrown.
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 public class LanguageProviderServicePreProcessor extends ComponentPreProcessor {
 
     @Override
@@ -39,20 +49,31 @@ public class LanguageProviderServicePreProcessor extends ComponentPreProcessor {
             ViewContextAdapter adapter = context.get(ViewContextAdapter.class);
 
             for (MethodView<T, ?> method : translationProviderMethods) {
-                Object value = adapter.invoke(method)
-                        .mapError(error -> new IllegalStateException("Failed to invoke translation provider method " + method, error))
-                        .rethrow()
-                        .orNull();
+                Object value;
+                try {
+                    value = adapter.invoke(method).orNull();
+                }
+                catch (Throwable throwable) {
+                    throw new IllegalStateException("Failed to invoke translation provider method " + method, throwable);
+                }
 
-                if (value != null) {
-                    if (value instanceof TranslationBundle bundle) {
-                        translationService.add(bundle);
-                    }
-                    else if (value instanceof Message message) {
-                        translationService.add(message);
-                    }
+                switch (value) {
+                    case TranslationBundle bundle -> translationService.add(bundle);
+                    case Message message -> translationService.add(message);
+                    case null -> throw new IllegalStateException(
+                            "Translation provider method " + method + " returned null. " +
+                                    "Expected " + TranslationBundle.class.getSimpleName() + " or " + Message.class.getSimpleName());
+                    default -> throw new IllegalStateException(
+                            "Translation provider method " + method + " returned an invalid value. " +
+                                    "Expected " + TranslationBundle.class.getSimpleName() + " or " + Message.class.getSimpleName() + ", " +
+                                    "got " + value.getClass().getSimpleName());
                 }
             }
         }
+    }
+
+    @Override
+    public int priority() {
+        return ProcessingPriority.NORMAL_PRECEDENCE;
     }
 }

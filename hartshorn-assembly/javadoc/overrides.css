@@ -1,0 +1,455 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans');
+@import url(//db.onlinewebfonts.com/c/1db29588408eadbd4406aae9238555eb?family=Consolas);
+
+:root {
+    --link-color-active: #64bdd2;
+    --selected-link-color: #64bdd2;
+    --selected-background-color: #468590;
+    --block-font-family: 'IBM Plex Sans';
+}
+
+body {
+    background-color: #ffffff;
+    color: #141414;
+    font-family: 'IBM Plex Sans';
+    font-size: 76%;
+    margin: 0;
+}
+
+:focus {
+    outline: none;
+}
+
+h1 {
+    font-size: 2em;
+}
+
+.header {
+    background: #262626;
+    color: white;
+    padding: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header .title {
+    color: white;
+}
+
+.header a:link, .header a:visited {
+    color: white;
+}
+
+main {
+    padding: 0;
+}
+
+section.class-description, section.details, section.summary {
+    margin: 20px 30px 20px 30px;
+}
+
+dl.notes > dd, code, #class-description > div.block {
+    font-family: 'IBM Plex Sans';
+}
+
+section.class-description {
+    line-height: 1.4;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #dfe3e5;
+}
+
+section.summary {
+    padding-bottom: 1px;
+}
+
+.col-first, .col-first {
+    font-size: 1em;
+}
+.col-second, .col-second, .col-last, .col-constructor-name, .col-summary-item-name, .col-last {
+    font-size: 1em;
+}
+
+dl.notes > dt {
+    font-size: 1.1em;
+}
+
+.flex-content {
+    background: #f4f4f4;
+}
+
+body > div.flex-box > div > main {
+    background: white;
+}
+
+.top-nav {
+    background: white;
+    padding: 10px 10px 0 10px;
+    font-size: 0.857em;
+    flex: 1;
+}
+
+#navbar-top-firstrow > li {
+    color: #4b4b4b;
+}
+
+#navbar-top-firstrow > li.nav-bar-cell1-rev {
+    background-color: #468590;
+    font-weight: bold;
+    color: white;
+}
+
+#navbar-top-firstrow > li > a {
+    color: #141414;
+}
+a:link, a {
+    color: #64bdd2;
+}
+
+a:link, a, #navbar-top-firstrow > li > a{
+    font-weight: normal;
+    text-decoration: none;
+    border-bottom: 1px solid #b4b4b4;
+}
+
+#navbar-top-firstrow > li:hover:has(a) {
+    background: #8dccdb;
+}
+
+a:link:hover, a:hover,
+body > div.flex-box > div > main > div.header > div > a:hover,
+body > div.flex-box > header > nav > div.sub-nav > div:nth-child(1) > ul:nth-child(1) > li > a:hover,
+#class-description > div.block > a:hover > code,
+body > div.flex-box > div > main > div.inheritance > a:hover,
+#class-description > div.type-signature > span.extends-implements > a:hover {
+    color: #64bdd2;
+    border-bottom: 1px solid #64bdd2;
+}
+a:link:focus, a:focus {
+    color: #64bdd2;
+    font-weight: bold;
+    text-decoration: none;
+}
+a:link:active, a:active {
+    color: #4c6b87;
+    text-decoration: none;
+}
+a[name] {
+    color: #141414;
+}
+a[name]:hover {
+    color: #141414;
+    text-decoration: none;
+}
+
+body > div.flex-box > header > nav > div.sub-nav > div:nth-child(1) > ul:nth-child(2),
+body > div.flex-box > header > nav > div.sub-nav > div:nth-child(1) > ul:nth-child(1) > li:nth-child(2), #navbar-top-firstrow > li:nth-child(7),
+#class-description > hr,
+body > div.flex-box > div > main > div.inheritance {
+    display: none;
+}
+
+nav[role="navigation"] {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.sub-nav {
+    overflow: hidden;
+    background-color: white;
+    display: flex;
+    float: right;
+    align-items: stretch;
+    flex: 2;
+    flex-direction: row-reverse;
+}
+
+.sub-nav .sub-nav-list {
+    margin: 10px;
+}
+
+.sub-nav .nav-list-search {
+    padding: 8px
+}
+
+#search-input {
+    background: white;
+    padding: 5px 10px;
+    border-radius: 1px;
+    border: 1px solid #dfe3e5;
+    color: #a3a5a7;
+}
+body > div.flex-box > header > nav > div.sub-nav > div.nav-list-search > label {
+    display: none;
+}
+body > div.flex-box > header > nav > div.sub-nav > div:nth-child(1) {
+    margin-top: 2px;
+}
+#reset-button {
+    display:none;
+}
+.sub-nav div {
+    clear: left;
+    float: left;
+    padding: 0 0 5px 6px;
+}
+
+
+.type-signature, pre {
+    background: #f5f8fa;
+    padding: 10px;
+    border-radius:6px;
+    font-family: 'Consolas', monospace;
+}
+
+section#field-summary, section#constructor-summary, section#method-summary, section#nested-class-summary {
+    background: white;
+    border: none;
+}
+
+#field-summary > h2, #constructor-summary > h2, #method-summary > h2, #nested-class-summary > h2 {
+    font-style: normal;
+}
+
+body.class-declaration-page .summary h3,
+body.class-declaration-page .details h3,
+body.class-declaration-page .summary .inherited-list h2 {
+    background: none;
+    border: none;
+    font-weight: normal;
+    font-size: 14px;
+    margin: 0 0 -5px -8px;
+}
+
+#method-summary-table:after {
+    content: "Inherited Methods";
+    font-size: 1.285em;
+    font-weight: bold;
+    color: #141414;
+    display: block;
+    padding: 0;
+    margin: 20px 0 15px 0;
+}
+
+#method-summary-table:hover:after {
+    cursor: text;
+}
+
+.inherited-list {
+    margin: 0;
+}
+
+.inherited-list code a {
+    font-size: 13px;
+}
+
+.table-header, .odd-row-color, .odd-row-color .table-header {
+    background: #f5f8fa;
+    border: none;
+}
+
+.summary-table {
+    border: none;
+    border-radius: 6px;
+}
+
+.summary-table div, body > div.flex-box > div > main > dl > dd > div {
+    font-family: 'IBM Plex Sans';
+}
+
+code a:link:not(:hover), .summary-table div > code > a:not(:hover) {
+    color: #434c5d;
+    border-bottom: 1px solid #b4b4b4;
+}
+
+main a[href*="://"]::after {
+    display: none;
+}
+
+div.table-tabs > button.active-table-tab, #related-package-summary > div.caption > span, #class-summary > div.caption > span {
+    font-weight: normal;
+    margin-left: 0;
+    color: white;
+}
+div.table-tabs > button.table-tab {
+    background: white;
+    color: #434c5d;
+    font-weight: normal;
+}
+
+.deprecation-block {
+    width: calc(100% - 20px);
+    background: #ffe9e9;
+    padding: 10px;
+    border: none;
+    border-radius: 3px;
+    font-weight: normal;
+    font-family: 'IBM Plex Sans';
+}
+
+.deprecation-comment code {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.deprecation-comment, .help-footnote, .preview-comment {
+    font-style: normal;
+}
+
+#ui-id-1 .ui-state-active {
+    background: #f5f8fa;
+    border-color: #f5f8fa;
+}
+
+#ui-id-1 {
+    border-radius: 0;
+    overflow-x: hidden;
+    border: none;
+}
+
+ul.ui-autocomplete li {
+    background: white;
+    color: #434c5d;
+    font-family: 'IBM Plex Sans'
+}
+
+footer {
+    margin-top: -15px;
+}
+
+footer hr {
+    display: none;
+}
+
+.legal-copy {
+    padding: 1em;
+    background-color: #262626;
+    margin: 0;
+    color: white;
+    font-size: 1.1em;
+}
+
+.caption span {
+    background: transparent;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: white;
+    display: block;
+    padding: 0;
+}
+
+body.class-declaration-page .summary h2,
+body.class-declaration-page .details h2,
+body.class-use-page h2,
+body.module-declaration-page .block-list h2 {
+    margin-bottom: 0;
+}
+
+body.class-declaration-page .summary h2,
+body.class-declaration-page .details h2,
+body.class-use-page h2,
+body.module-declaration-page .block-list h2 {
+    font-style: normal;
+}
+
+.title {
+    margin: 20px 0 10px;
+}
+
+body.class-declaration-page .summary h3,
+body.class-declaration-page .details h3,
+body.class-declaration-page .summary .inherited-list h2 {
+    padding: 7px 10px;
+    background-color: #262626;
+    color: white;
+    margin-bottom: 2px;
+    margin-top: 10px;
+}
+
+body.class-declaration-page .summary h3 img,
+body.class-declaration-page .details h3 img,
+body.class-declaration-page .summary .inherited-list h2 img {
+    filter: brightness(0) invert(1);
+}
+
+.inherited-list, section[class$="-details"] .detail {
+    padding: 0 0 5px 10px;
+}
+
+ul.ui-autocomplete li.ui-autocomplete-category {
+    background: #262626;
+    color: white;
+}
+
+ul.ui-autocomplete li.ui-static-link {
+    background: #f5f8fa;
+    border-top: 1px solid #ccc;
+}
+
+ul.contents-list {
+    margin: 0 0 15px 20px;
+}
+
+h2[title] {
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.deprecation-block .deprecated-label {
+    font-size: 1.2em;
+}
+
+.block .deprecated-label {
+    color: #b95959;
+}
+
+.sub-nav div {
+    text-transform: capitalize;
+}
+
+main hr {
+    display: none;
+}
+
+.summary .summary-list {
+    margin: 0;
+}
+
+.package-signature {
+    background: #f5f8fa;
+    padding: 10px 30px;
+    border-radius: 0;
+    font-family: 'Consolas', monospace;
+}
+
+ul.block-list > li, ul.details-list > li, ul.member-list > li, ul.summary-list > li {
+    border: 0px solid white;
+}
+
+.summary section[class$="-summary"], .details section[class$="-details"], .class-uses .detail, .serialized-class-details {
+    border: none;
+    background: inherit;
+}
+
+.caption {
+    position: relative;
+    text-align: left;
+    clear: none;
+    overflow: hidden;
+    vertical-align: middle;
+    align-items: center;
+    display: flex;
+    align-content: center;
+    padding: 7px 10px;
+    background-color: #262626;
+    margin-bottom: 2px;
+    margin-top: 10px;
+}
+
+.module-signature, .package-signature, .type-signature, .member-signature {
+    background: #f5f8fa;
+    padding: 10px;
+    border-radius: 6px;
+    font-family: 'Consolas', monospace;
+}

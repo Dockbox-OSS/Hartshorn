@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 package test.org.dockbox.hartshorn;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 import test.org.dockbox.hartshorn.components.SampleContextAwareType;
 
 @HartshornTest(includeBasePackages = false)
@@ -46,8 +46,8 @@ public class ContextAwareTests {
     }
 
     @Test
-    void testServiceLocatorIsBound() {
-        ComponentLocator componentLocator = this.applicationContext.get(ComponentLocator.class);
-        Assertions.assertNotNull(componentLocator);
+    void testComponentRegistryIsBound() {
+        ComponentRegistry componentRegistry = this.applicationContext.get(ComponentRegistry.class);
+        Assertions.assertNotNull(componentRegistry);
     }
 }

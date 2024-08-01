@@ -16,10 +16,18 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
-import java.util.function.Supplier;
-
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.util.function.Supplier;
+
+/**
+ * A {@link ProxyLookup} that delegates to a lazily initialized {@link ProxyLookup}. This is useful when the
+ * {@link ProxyLookup} is not available at the time of construction, but is available at the time of use.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SupplierAdapterProxyLookup implements ProxyLookup {
 
     private final Supplier<ProxyLookup> delegate;

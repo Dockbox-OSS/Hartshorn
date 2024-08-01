@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,27 @@ package org.dockbox.hartshorn.proxy.advice.wrap;
  * a {@link MethodWrapper} for the proxy method.
  *
  * @param <T> the type of the proxy method
+ *
+ * @since 0.4.9
+ *
  * @author Guus Lieben
- * @since 0.4.10
  */
 @FunctionalInterface
 public interface ProxyCallback<T> {
 
+    /**
+     * Accepts a context for the proxy method invocation.
+     *
+     * @param context the context
+     */
     void accept(ProxyCallbackContext<T> context);
 
+    /**
+     * Returns a new callback that will execute the current callback, and then the provided callback.
+     *
+     * @param next the callback to execute after the current callback
+     * @return the new callback
+     */
     default ProxyCallback<T> then(ProxyCallback<T> next) {
         return context -> {
             this.accept(context);

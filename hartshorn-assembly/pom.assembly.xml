@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn</artifactId>
-        <version>0.5.0</version>
+        <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -14,7 +14,7 @@
     <description>Assembly project for Hartshorn</description>
 
     <artifactId>hartshorn-assembly</artifactId>
-    <version>0.5.0</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -37,10 +37,6 @@
     <dependencies>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-commands</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dockbox.hartshorn</groupId>
             <artifactId>hartshorn-config</artifactId>
         </dependency>
         <dependency>
@@ -53,7 +49,7 @@
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-discovery</artifactId>
+            <artifactId>hartshorn-spi</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
@@ -77,10 +73,6 @@
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-proxy-cglib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dockbox.hartshorn</groupId>
             <artifactId>hartshorn-proxy-javassist</artifactId>
         </dependency>
         <dependency>
@@ -98,7 +90,6 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
                 <executions>
                     <execution>
                         <id>report-aggregate</id>

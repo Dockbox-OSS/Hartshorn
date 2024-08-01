@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,21 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
+import java.util.Optional;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 
-import java.util.Optional;
-
+/**
+ * Converts an {@link Optional} to an {@link Object}. If the optional is empty, {@code null} is returned.
+ * Otherwise, the value of the optional is returned.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class OptionalToObjectConverter implements Converter<Optional<?>, Object>, ConditionalConverter {
 
     @Override

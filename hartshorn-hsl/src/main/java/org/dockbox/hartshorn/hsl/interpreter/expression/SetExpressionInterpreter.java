@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,31 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SetExpressionInterpreter implements ASTNodeInterpreter<Object, SetExpression> {
 
     @Override
-    public Object interpret(SetExpression node, InterpreterAdapter adapter) {
-        Object object = adapter.evaluate(node.object());
+    public Object interpret(SetExpression node, Interpreter interpreter) {
+        Object object = interpreter.evaluate(node.object());
 
         if (object instanceof PropertyContainer instance) {
-            Object value = adapter.evaluate(node.value());
-            instance.set(node.name(), value, adapter.visitingScope(), adapter.interpreter().executionOptions());
+            Object value = interpreter.evaluate(node.value());
+            instance.set(node.name(), value, interpreter.visitingScope(), interpreter.executionOptions());
             return value;
         }
-        throw new RuntimeError(node.name(), "Only instances have properties.");
+        throw new ScriptEvaluationError("Only instances have properties.", Phase.INTERPRETING, node.name());
     }
 }

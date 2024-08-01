@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,22 @@ package org.dockbox.hartshorn.application;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.context.DelegatingApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.application.environment.FileSystemProvider;
 import org.dockbox.hartshorn.application.environment.ClasspathResourceLocator;
+import org.dockbox.hartshorn.application.environment.FileSystemProvider;
 import org.dockbox.hartshorn.application.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
-import org.dockbox.hartshorn.component.ComponentLocator;
+import org.dockbox.hartshorn.component.ComponentRegistry;
 import org.dockbox.hartshorn.component.ComponentProvider;
+import org.dockbox.hartshorn.component.HierarchicalComponentProvider;
+import org.dockbox.hartshorn.component.Scope;
+import org.dockbox.hartshorn.component.ScopeAwareComponentProvider;
+import org.dockbox.hartshorn.component.SingletonCacheComponentProvider;
 import org.dockbox.hartshorn.inject.binding.Binder;
-import org.dockbox.hartshorn.logging.ApplicationLogger;
-import org.dockbox.hartshorn.logging.LogExclude;
+import org.dockbox.hartshorn.inject.binding.SingletonCache;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
-import org.slf4j.Logger;
 
 /**
  * The default {@link EnvironmentBinderConfiguration} used by the {@link DelegatingApplicationContext}. This configuration
@@ -46,7 +48,7 @@ import org.slf4j.Logger;
  * <p>Bindings for specific implementations will optionally be registered for the following types:
  * <ul>
  *     <li>{@link LifecycleObservable}, if the {@link ApplicationEnvironment environment} is an instance of {@link ObservableApplicationEnvironment}</li>
- *     <li>{@link ComponentLocator}, if the {@link ApplicationContext application context} is an instance of {@link DelegatingApplicationContext}</li>
+ *     <li>{@link ComponentRegistry}, if the {@link ApplicationContext application context} is an instance of {@link DelegatingApplicationContext}</li>
  * </ul>
  *
  * @see DefaultBindingConfigurer
@@ -54,10 +56,10 @@ import org.slf4j.Logger;
  * @see ObservableApplicationEnvironment
  * @see DelegatingApplicationContext
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
-@LogExclude
 public class ContextualEnvironmentBinderConfiguration implements EnvironmentBinderConfiguration {
 
     @Override
@@ -69,16 +71,30 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
         binder.bind(ApplicationPropertyHolder.class).singleton(environment.applicationContext());
 
         if (environment.applicationContext() instanceof DelegatingApplicationContext delegatingApplicationContext) {
-            binder.bind(ComponentLocator.class)
+            binder.bind(ComponentRegistry.class)
                     .processAfterInitialization(false)
-                    .singleton(delegatingApplicationContext.locator());
+                    .singleton(delegatingApplicationContext.componentRegistry());
+
+            ComponentProvider componentProvider = delegatingApplicationContext.componentProvider();
+            binder.bind(Scope.class)
+                    .processAfterInitialization(false)
+                    .singleton(componentProvider.scope());
+
+            if (componentProvider instanceof ScopeAwareComponentProvider scopeAwareComponentProvider) {
+                HierarchicalComponentProvider applicationProvider = scopeAwareComponentProvider.applicationProvider();
+
+                if (applicationProvider instanceof SingletonCacheComponentProvider singletonCacheComponentProvider) {
+                    binder.bind(SingletonCache.class)
+                            .processAfterInitialization(false)
+                            .lazySingleton(singletonCacheComponentProvider::singletonCache);
+                }
+            }
         }
 
         // Application environment
         binder.bind(Introspector.class).singleton(environment.introspector());
         binder.bind(ApplicationEnvironment.class).singleton(environment);
         binder.bind(ProxyLookup.class).singleton(environment.proxyOrchestrator());
-        binder.bind(ApplicationLogger.class).singleton(environment);
         binder.bind(ProxyOrchestrator.class).singleton(environment.proxyOrchestrator());
         binder.bind(FileSystemProvider.class).singleton(environment.fileSystem());
         binder.bind(AnnotationLookup.class).singleton(environment.introspector().annotations());
@@ -88,8 +104,8 @@ public class ContextualEnvironmentBinderConfiguration implements EnvironmentBind
             binder.bind(LifecycleObservable.class).singleton(observableEnvironment);
         }
 
-        // Dynamic components
-        binder.bind(Logger.class).to(environment.applicationContext()::log);
+        // Common bindings
+        binder.bind(Binder.class).singleton(binder);
 
         // Custom default bindings. Runs last to allow for modification of default bindings.
         configurer.configure(binder);

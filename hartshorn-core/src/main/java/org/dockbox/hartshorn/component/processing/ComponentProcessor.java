@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.component.processing;
 
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.inject.Provider;
+import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
  * The {@link ComponentProcessor} is a service that can be used to process components, whether
@@ -26,8 +27,9 @@ import org.dockbox.hartshorn.inject.Provider;
  * <p>This interface defines the basic contract for a component processor. All processors should
  * have an activator annotation, and a phase at which they are performed.
  *
+ * @since 0.4.7
+ *
  * @author Guus Lieben
- * @since 0.4.9
  */
 public sealed interface ComponentProcessor extends OrderedComponentProcessor permits ComponentPostProcessor, ComponentPreProcessor {
 
@@ -43,6 +45,6 @@ public sealed interface ComponentProcessor extends OrderedComponentProcessor per
      * @return The processed component instance.
      * @param <T> The type of the component.
      */
-    <T> T process(ComponentProcessingContext<T> processingContext);
+    <T> T process(ComponentProcessingContext<T> processingContext) throws ApplicationException;
 
 }

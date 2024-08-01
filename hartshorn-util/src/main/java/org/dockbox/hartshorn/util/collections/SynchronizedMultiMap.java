@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,21 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A {@link MultiMap} implementation that synchronizes all access to the backing map. This is
+ * useful when the map is accessed concurrently by multiple threads, and it is not possible to
+ * synchronize the access externally.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @see MultiMap
+ * @see StandardMultiMap
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public abstract class SynchronizedMultiMap<K, V> extends AbstractMultiMap<K, V> {
 
     private transient Map<K, Collection<V>> map;
@@ -41,6 +56,13 @@ public abstract class SynchronizedMultiMap<K, V> extends AbstractMultiMap<K, V> 
         }
     }
 
+    /**
+     * Creates a new backing map. This method is invoked by {@link #map()} when the backing map
+     * needs to be created. A subclass can override this method to return a map implementation of
+     * its choice.
+     *
+     * @return the backing map
+     */
     protected Map<K, Collection<V>> createEmptyMap() {
         return new HashMap<>();
     }

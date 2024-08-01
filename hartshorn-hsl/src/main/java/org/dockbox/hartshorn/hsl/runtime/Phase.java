@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,26 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
+import org.dockbox.hartshorn.hsl.lexer.SimpleTokenRegistryLexer;
+
 /**
  * Represents each of the primary runtime phases which are performed when evaluating
  * a single HSL source.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public enum Phase {
     /**
-     * Performed by the {@link org.dockbox.hartshorn.hsl.lexer.Lexer}, to convert the
+     * Performed by the {@link SimpleTokenRegistryLexer}, to convert the
      * source content into {@link org.dockbox.hartshorn.hsl.token.Token}s. This is the
      * first step of the script evaluation process.
      */
     TOKENIZING,
     /**
      * Performed by the {@link org.dockbox.hartshorn.hsl.parser.TokenParser}, to convert
-     * the token output of the {@link org.dockbox.hartshorn.hsl.lexer.Lexer} into
+     * the token output of the {@link SimpleTokenRegistryLexer} into
      * {@link org.dockbox.hartshorn.hsl.ast.statement.Statement}s. This is the second
      * step of the script evaluation process.
      */

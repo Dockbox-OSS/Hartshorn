@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -35,8 +36,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * Synchronization wrapper for {@link IntrospectionViewCache}. This implementation is thread-safe, but does not guarantee
  * optimal performance, especially when used in batch mode.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class SynchronizedIntrospectionViewCache implements IntrospectionViewCache {
 
@@ -45,6 +47,7 @@ public class SynchronizedIntrospectionViewCache implements IntrospectionViewCach
     private final Map<Field, FieldView<?, ?>> fieldViewCache = Collections.synchronizedMap(new HashMap<>());
     private final Map<Parameter, ParameterView<?>> parameterViewCache = Collections.synchronizedMap(new HashMap<>());
     private final Map<Constructor<?>, ConstructorView<?>> constructorViewCache = Collections.synchronizedMap(new HashMap<>());
+    private final Map<Package, PackageView> packageViewCache = Collections.synchronizedMap(new HashMap<>());
 
     @Override
     public <T> TypeView<T> computeIfAbsent(Class<T> type, Supplier<TypeView<T>> viewSupplier) {
@@ -78,6 +81,13 @@ public class SynchronizedIntrospectionViewCache implements IntrospectionViewCach
     public <T> ConstructorView<T> computeIfAbsent(Constructor<T> constructor, Supplier<ConstructorView<T>> viewSupplier) {
         synchronized(this.constructorViewCache) {
             return (ConstructorView<T>) this.constructorViewCache.computeIfAbsent(constructor, key0 -> viewSupplier.get());
+        }
+    }
+
+    @Override
+    public PackageView computeIfAbsent(Package pkg, Supplier<PackageView> viewSupplier) {
+        synchronized(this.packageViewCache) {
+            return this.packageViewCache.computeIfAbsent(pkg, key0 -> viewSupplier.get());
         }
     }
 }

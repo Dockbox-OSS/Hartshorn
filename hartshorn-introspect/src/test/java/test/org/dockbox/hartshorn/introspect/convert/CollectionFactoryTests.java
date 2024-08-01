@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,6 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.convert.support.CollectionFactory;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.beans.beancontext.BeanContext;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,35 +27,44 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.Vector;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.convert.support.collections.CollectionFactory;
+import org.dockbox.hartshorn.util.introspect.convert.support.collections.SimpleCollectionFactory;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+@SuppressWarnings("unchecked")
 public class CollectionFactoryTests {
 
     @Test
     public void testCreateCollectionWithArrayList() {
-        List<Integer> list = this.createDefaultFactory().createCollection(List.class, Integer.class, 10);
-        Assertions.assertTrue(list instanceof ArrayList);
+        List<Integer> list = this.createDefaultFactory().createCollection(List.class, Integer.class);
+        Assertions.assertInstanceOf(ArrayList.class, list);
         Assertions.assertEquals(list.size(), 0);
     }
 
     @Test
     public void testCreateCollectionWithHashSet() {
-        Set<String> set = this.createDefaultFactory().createCollection(Set.class, String.class, 5);
-        Assertions.assertTrue(set instanceof HashSet);
+        Set<String> set = this.createDefaultFactory().createCollection(Set.class, String.class);
+        Assertions.assertInstanceOf(HashSet.class, set);
         Assertions.assertEquals(set.size(), 0);
     }
 
     @Test
     public void testCreateCollectionWithTreeSet() {
-        SortedSet<Double> sortedSet = this.createDefaultFactory().createCollection(SortedSet.class, Double.class, 3);
-        Assertions.assertTrue(sortedSet instanceof TreeSet);
+        SortedSet<Double> sortedSet = this.createDefaultFactory().createCollection(SortedSet.class, Double.class);
+        Assertions.assertInstanceOf(TreeSet.class, sortedSet);
         Assertions.assertEquals(sortedSet.size(), 0);
     }
 
     @Test
     public void testCreateCollectionWithLinkedList() {
-        Queue<Boolean> queue = this.createDefaultFactory().createCollection(Queue.class, Boolean.class, 7);
-        Assertions.assertTrue(queue instanceof LinkedList);
+        Queue<Boolean> queue = this.createDefaultFactory().createCollection(Queue.class, Boolean.class);
+        Assertions.assertInstanceOf(LinkedList.class, queue);
         Assertions.assertEquals(queue.size(), 0);
     }
 
@@ -68,8 +72,18 @@ public class CollectionFactoryTests {
     public void testCreateCollectionWithEnumSet() {
         CollectionFactory factory = this.createFactory(EnumSet.class, () -> null);
         EnumSet<Color> enumSet = factory.createCollection(EnumSet.class, Color.class, 2);
-        Assertions.assertTrue(enumSet instanceof EnumSet);
+        Assertions.assertInstanceOf(EnumSet.class, enumSet);
         Assertions.assertEquals(enumSet.size(), 0);
+    }
+
+    @Test
+    public void testInitialCapacityIsConfigured() {
+        int initialCapacity = 23;
+        CollectionFactory factory = this.createFactory(Vector.class, Vector::new, Vector::new);
+        Vector<String> enumSet = factory.createCollection(Vector.class, String.class, initialCapacity);
+        Assertions.assertInstanceOf(Vector.class, enumSet);
+        Assertions.assertEquals(enumSet.size(), 0);
+        Assertions.assertEquals(enumSet.capacity(), initialCapacity);
     }
 
     @Test
@@ -82,17 +96,22 @@ public class CollectionFactoryTests {
     public void testCreateCollectionWithConcreteImplementation() {
         CollectionFactory factory = this.createFactory(LinkedList.class, LinkedList::new);
         List<Integer> list = factory.createCollection(LinkedList.class, Integer.class, 0);
-        Assertions.assertTrue(list instanceof LinkedList);
+        Assertions.assertInstanceOf(LinkedList.class, list);
         Assertions.assertEquals(list.size(), 0);
     }
-    
+
     private <T extends Collection<?>> CollectionFactory createFactory(Class<T> targetType, Supplier<T> constructor) {
         Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(targetType, constructor);
-        return new CollectionFactory(introspector);
+        return new SimpleCollectionFactory(introspector);
+    }
+
+    private <T extends Collection<?>> CollectionFactory createFactory(Class<T> targetType, Supplier<T> constructor, IntFunction<T> capacityConstructor) {
+        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(targetType, constructor, capacityConstructor);
+        return new SimpleCollectionFactory(introspector);
     }
 
     private CollectionFactory createDefaultFactory() {
-        return new CollectionFactory(null).withDefaults();
+        return new SimpleCollectionFactory(null).withDefaults();
     }
 
     enum Color {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Executable;
+import java.util.List;
+
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
@@ -25,13 +29,20 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementModifiersI
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionTypeVariablesIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Executable;
-import java.util.List;
-
+/**
+ * TODO: #1059 Add documentation
+ *
+ * @param <Parent> ...
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public abstract class ReflectionExecutableElementView<Parent> extends ReflectionAnnotatedElementView implements ExecutableElementView<Parent> {
 
     private final Introspector introspector;
@@ -39,6 +50,8 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
 
     private ExecutableParametersIntrospector parametersIntrospector;
     private TypeVariablesIntrospector typeVariablesIntrospector;
+
+    private TypeView<Parent> declaredBy;
 
     protected ReflectionExecutableElementView(ReflectionIntrospector introspector, Executable executable) {
         super(introspector);
@@ -74,7 +87,10 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
 
     @Override
     public TypeView<Parent> declaredBy() {
-        return (TypeView<Parent>) this.introspector.introspect(this.executable.getDeclaringClass());
+        if (this.declaredBy == null) {
+            this.declaredBy = (TypeView<Parent>) this.introspector.introspect(this.executable.getDeclaringClass());
+        }
+        return this.declaredBy;
     }
 
     @Override
@@ -85,5 +101,15 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     @Override
     public ElementModifiersIntrospector modifiers() {
         return new ReflectionElementModifiersIntrospector(this.executable);
+    }
+
+    @Override
+    public boolean isEnclosed() {
+        return true;
+    }
+
+    @Override
+    public Option<EnclosableView> enclosingView() {
+        return Option.of(this.declaredBy());
     }
 }

@@ -18,7 +18,17 @@ package org.dockbox.hartshorn.util.collections;
 
 import java.util.HashMap;
 
-public class HashBiMap<K, V> extends StandardBiMap<K, V> {
+/**
+ * A {@link BiMap} implementation that uses {@link HashMap} as its backing maps.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+public class HashBiMap<K, V> extends AbstractBiMap<K, V> {
 
     public HashBiMap() {
         super(new HashMap<>(), new HashMap<>());

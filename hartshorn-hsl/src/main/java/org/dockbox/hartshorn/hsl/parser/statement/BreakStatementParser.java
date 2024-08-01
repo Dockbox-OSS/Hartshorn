@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,32 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
-import org.dockbox.hartshorn.hsl.parser.TokenParser;
-import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
-import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.util.Set;
 
-public class BreakStatementParser implements ASTNodeParser<BreakStatement> {
+import org.dockbox.hartshorn.hsl.ast.statement.BreakStatement;
+import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+
+/**
+ * A parser for the 'break' statement, using the {@link ControlTokenType#BREAK} token type.
+ *
+ * @see BreakStatement
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
+public class BreakStatementParser extends AbstractControlStatementParser<BreakStatement> {
 
     @Override
-    public Option<BreakStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(TokenType.BREAK)) {
-            Token keyword = parser.previous();
-            validator.expectAfter(TokenType.SEMICOLON, "value");
-            return Option.of(new BreakStatement(keyword));
-        }
-        return Option.empty();
+    protected TokenType keyword() {
+        return ControlTokenType.BREAK;
+    }
+
+    @Override
+    protected BreakStatement create(Token keyword) {
+        return new BreakStatement(keyword);
     }
 
     @Override

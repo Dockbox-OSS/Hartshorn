@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.util.CollectionUtilities;
 
 /**
@@ -37,12 +38,13 @@ import org.dockbox.hartshorn.util.CollectionUtilities;
  * a {@link TestStatement} and inline any required {@link NativeModule}s without the need for a
  * standard library or a module header.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
-    public static final String VALIDATION_ID = "$__validation__$";
+    public static final String VALIDATION_ID = ScriptContext.createSafeRuntimeVariable("validation");
 
     public ExpressionCustomizer() {
         super(Phase.RESOLVING);
@@ -69,7 +71,7 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
 
         if (!(lastStatement instanceof ReturnStatement)) {
             ExpressionStatement statement = (ExpressionStatement) lastStatement;
-            Token returnToken = Token.of(TokenType.RETURN)
+            Token returnToken = Token.of(ControlTokenType.RETURN)
                     .lexeme(VALIDATION_ID)
                     .virtual()
                     .build();
@@ -78,7 +80,7 @@ public class ExpressionCustomizer extends AbstractCodeCustomizer {
             statements.set(statements.size() - 1, returnStatement);
         }
 
-        Token testToken = new Token(TokenType.STRING, VALIDATION_ID, VALIDATION_ID, -1, -1);
+        Token testToken = new Token(LiteralTokenType.STRING, VALIDATION_ID, VALIDATION_ID, -1, -1);
         BlockStatement blockStatement = new BlockStatement(testToken, statements);
         TestStatement testStatement = new TestStatement(testToken, blockStatement);
 

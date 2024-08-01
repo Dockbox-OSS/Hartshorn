@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,15 +30,36 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.application.lifecycle.Observer;
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.NamedContext;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 
+/**
+ * A diagnostics reporter that reports information about the application. This includes the following information:
+ * <ul>
+ *     <li>Version of Hartshorn</li>
+ *     <li>Location of the application JAR file</li>
+ *     <li>Application properties</li>
+ *     <li>Service activators</li>
+ *     <li>Observers</li>
+ *     <li>Application-level contexts</li>
+ * </ul>
+ *
+ * <p>Each of these can be enabled or disabled individually, using the {@link ApplicationReportingConfiguration} that
+ * is provided by this reporter.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ApplicationReportingConfiguration>, CategorizedDiagnosticsReporter {
 
+    /**
+     * The category of this reporter.
+     */
     public static final String APPLICATION_CATEGORY = "application";
 
     private final ApplicationReportingConfiguration configuration = new ApplicationReportingConfiguration();
@@ -51,7 +72,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         if (this.configuration.includeVersion()) {
-            collector.property("version").write(Hartshorn.VERSION);
+            collector.property("version").writeDelegate(Hartshorn.VERSION);
         }
         if (this.configuration.includeJarLocation()) {
             reportJarLocation(collector);
@@ -70,68 +91,98 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
         }
     }
 
-    private static void reportJarLocation(DiagnosticsPropertyCollector collector) {
+    /**
+     * Reports the location of the application JAR file.
+     *
+     * @param collector the collector to write to
+     */
+    protected static void reportJarLocation(DiagnosticsPropertyCollector collector) {
         String jarLocation;
         try {
             jarLocation = Hartshorn.class.getProtectionDomain().getCodeSource().getLocation().toURI().toString();
         } catch (Exception e) {
             jarLocation = "Unknown";
         }
-        collector.property("jar").write(jarLocation);
+        collector.property("jar").writeString(jarLocation);
     }
 
-    private void reportApplicationProperties(DiagnosticsPropertyCollector collector) {
+    /**
+     * Reports the application properties. This includes all properties that are available in the application context.
+     *
+     * @param collector the collector to write to
+     */
+    protected void reportApplicationProperties(DiagnosticsPropertyCollector collector) {
         Properties properties = this.applicationContext.properties();
         Reportable reporter = new PropertiesReporter(properties);
-        collector.property("properties").write(reporter);
+        collector.property("properties").writeDelegate(reporter);
     }
 
-    private void reportServiceActivators(DiagnosticsPropertyCollector collector) {
+    /**
+     * Reports the canonical names of all service activators that are registered with the application context.
+     *
+     * @param collector the collector to write to
+     */
+    protected void reportServiceActivators(DiagnosticsPropertyCollector collector) {
         String[] activators = this.applicationContext.activators().stream()
                 .map(activator -> activator.annotationType().getCanonicalName())
                 .toArray(String[]::new);
-        collector.property("activators").write(activators);
+        collector.property("activators").writeStrings(activators);
     }
 
-    private void reportObservers(DiagnosticsPropertyCollector collector) {
+    /**
+     * Reports the number of observers that are registered with the application context. Observers are reported by
+     * their class name, and the number of instances that are registered. If the application environment is not an
+     * instance of {@link ObservableApplicationEnvironment}, no observers are reported.
+     *
+     * @param collector the collector to write to
+     */
+    protected void reportObservers(DiagnosticsPropertyCollector collector) {
         ApplicationEnvironment environment = this.applicationContext.environment();
         if (environment instanceof ObservableApplicationEnvironment observable) {
             Map<Class<? extends Observer>, List<Observer>> observers = observable.observers(Observer.class).stream()
                             .collect(Collectors.groupingBy(Observer::getClass));
 
-            collector.property("observers").write(observerCollector -> {
+            collector.property("observers").writeDelegate(observerCollector -> {
                 for (Entry<Class<? extends Observer>, List<Observer>> entry : observers.entrySet()) {
-                    observerCollector.property(entry.getKey().getSimpleName()).write(entry.getValue().size());
+                    observerCollector.property(entry.getKey().getSimpleName()).writeInts(entry.getValue().size());
                 }
             });
         }
     }
 
-    private void reportContexts(DiagnosticsPropertyCollector collector) {
-        AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference = new AtomicReference<>();
+    /**
+     * Reports all application-level contexts that are registered with the application context. Contexts are reported
+     * by their class name. If a context is an instance of {@link Reportable}, its data is also reported. If a context
+     * is an instance of {@link NamedContext}, its name is also reported. If a context has child contexts, these are
+     * reported recursively.
+     *
+     * @param collector the collector to write to
+     */
+    protected void reportContexts(DiagnosticsPropertyCollector collector) {
+        AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference = new AtomicReference<>();
 
-        BiConsumer<DiagnosticsPropertyCollector, Context> reporter = (contextsCollector, context) -> {
-            contextsCollector.property("type").write(context.getClass().getCanonicalName());
+        BiConsumer<DiagnosticsPropertyCollector, ContextView> reporter = (contextsCollector, context) -> {
+            contextsCollector.property("type").writeString(context.getClass().getCanonicalName());
             if (context instanceof Reportable reportable) {
-                contextsCollector.property("data").write(reportable);
+                contextsCollector.property("data").writeDelegate(reportable);
             }
-            else if (context instanceof NamedContext namedContext) {
-                contextsCollector.property("name").write(namedContext.name());
+            if (context instanceof NamedContext namedContext) {
+                contextsCollector.property("name").writeString(namedContext.name());
             }
-            if (!context.all().isEmpty()) {
+            if (!context.contexts().isEmpty()) {
                 Reportable[] childReporters = childReporters(reporterReference, context);
-                contextsCollector.property("children").write(childReporters);
+                contextsCollector.property("children").writeDelegates(childReporters);
             }
         };
         reporterReference.set(reporter);
 
         Reportable[] reporters = childReporters(reporterReference, this.applicationContext);
-        collector.property("contexts").write(reporters);
+        collector.property("contexts").writeDelegates(reporters);
     }
 
     @NonNull
-    private static Reportable[] childReporters(AtomicReference<BiConsumer<DiagnosticsPropertyCollector, Context>> reporterReference, Context context) {
-        return context.all().stream()
+    private static Reportable[] childReporters(AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference, ContextView context) {
+        return context.contexts().stream()
                 .map(childContext -> (Reportable) (contextsController -> reporterReference.get().accept(contextsController, childContext)))
                 .toArray(Reportable[]::new);
     }

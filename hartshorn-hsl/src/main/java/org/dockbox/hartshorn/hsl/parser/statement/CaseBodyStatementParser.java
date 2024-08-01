@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -24,33 +28,44 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.util.option.Attempt;
+import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
+import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
+/**
+ * A parser for the body of a case statement. A case may take two forms: a block of statements, or a single
+ * expression statement. A block statement should be indicated by the use of a {@link BaseTokenType#COLON},
+ * while a single expression statement should be indicated by the use of a {@link ControlTokenType#ARROW}.
+ *
+ * <p>As this is a parser for a non-standalone statement, it should not be used for dynamic parsing. As such,
+ * the {@link #types()} method returns an empty set.
+ *
+ * @see SwitchStatementParser
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class CaseBodyStatementParser implements ASTNodeParser<Statement> {
 
     @Override
-    public Attempt<Statement, ScriptEvaluationError> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(TokenType.COLON)) {
+    public Option<? extends Statement> parse(TokenParser parser, TokenStepValidator validator) throws ScriptEvaluationError {
+        if (parser.match(BaseTokenType.COLON)) {
             Token colon = parser.previous();
             List<Statement> statements = new ArrayList<>();
-            while (!parser.check(TokenType.CASE, TokenType.DEFAULT, TokenType.RIGHT_BRACE)) {
+            while (!parser.check(ControlTokenType.CASE, ControlTokenType.DEFAULT,parser.tokenRegistry().tokenPairs().block().close())) {
                 statements.add(parser.statement());
             }
-            return Attempt.of(new BlockStatement(colon, statements));
+            return Option.of(new BlockStatement(colon, statements));
         }
-        else if (parser.match(TokenType.ARROW)) {
-            return Attempt.of(parser.expressionStatement());
+        else if (parser.match(ControlTokenType.ARROW)) {
+            return Option.of(parser.expressionStatement());
         }
         else {
-            return Attempt.of(new ScriptEvaluationError("Expected '%s' or '%s'".formatted(
-                    TokenType.COLON.representation(),
-                    TokenType.ARROW.representation()
-            ), Phase.PARSING, parser.peek()));
+            throw new ScriptEvaluationError("Expected '%s' or '%s'".formatted(
+                    BaseTokenType.COLON.representation(),
+                    ControlTokenType.ARROW.representation()
+            ), Phase.PARSING, parser.peek());
         }
     }
 

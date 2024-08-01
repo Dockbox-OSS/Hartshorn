@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,23 +25,33 @@ import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
+import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class FieldStatementParser implements ASTNodeParser<FieldStatement> {
 
     @Override
-    public Option<FieldStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        Token modifier = parser.find(TokenType.PUBLIC, TokenType.PRIVATE);
-        boolean isFinal = parser.match(TokenType.FINAL);
-        Token name = validator.expect(TokenType.IDENTIFIER, "variable name");
+    public Option<? extends FieldStatement> parse(TokenParser parser, TokenStepValidator validator) {
+        Token modifier = parser.find(MemberModifierTokenType.PUBLIC, MemberModifierTokenType.PRIVATE);
+        boolean isFinal = parser.match(MemberModifierTokenType.FINAL);
+        TokenType identifier = parser.tokenRegistry().literals().identifier();
+        Token name = validator.expect(identifier, "variable name");
 
         Expression initializer = null;
-        if(parser.match(TokenType.EQUAL)) {
+        if(parser.match(BaseTokenType.EQUAL)) {
             initializer = parser.expression();
         }
 
-        validator.expectAfter(TokenType.SEMICOLON, "variable declaration");
+        validator.expectAfter(parser.tokenRegistry().statementEnd(), "variable declaration");
         VariableStatement variable = new VariableStatement(name, initializer);
 
         return Option.of(new FieldStatement(modifier, variable.name(), variable.initializer(), isFinal));

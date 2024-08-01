@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,30 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.SynchronizedArrayListMultiMap;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.WildcardType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+/**
+ * TODO: #1059 Add documentation
+ *
+ * @param <T> ...
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ReflectionParameterizedTypeParametersIntrospector<T> extends AbstractReflectionTypeParametersIntrospector {
 
     private final ParameterizedType parameterizedType;
-
-    private MultiMap<Class<?>, TypeView<?>> interfaceTypeParameters;
     private TypeParameterList parameters;
 
     public ReflectionParameterizedTypeParametersIntrospector(TypeView<T> type, ParameterizedType parameterizedType, Introspector introspector) {
@@ -61,58 +62,5 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
             this.parameters = new SimpleTypeParameterList(typeParameters);
         }
         return this.parameters;
-    }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    public List<TypeView<?>> from(Class<?> fromInterface) {
-        if (!fromInterface.isInterface()) {
-            throw new IllegalArgumentException("Provided type " + fromInterface.getSimpleName() + " is not a interface");
-        }
-        if (!this.type().isChildOf(fromInterface)) {
-            throw new IllegalArgumentException("Provided interface " + fromInterface.getSimpleName() + " is not a super type of " + this.type().name());
-        }
-
-        if (this.interfaceTypeParameters == null) {
-            this.interfaceTypeParameters = new SynchronizedArrayListMultiMap<>();
-        }
-
-        if (!this.interfaceTypeParameters.containsKey(fromInterface)) {
-            for (Type genericSuper : this.type().type().getGenericInterfaces()) {
-                if (genericSuper instanceof ParameterizedType parameterized) {
-                    Type raw = parameterized.getRawType();
-                    if (raw instanceof Class<?> clazz && fromInterface.equals(clazz)) {
-                        this.interfaceTypeParameters.putAll(fromInterface, this.contextsFromParameterizedType(parameterized));
-                    }
-                }
-            }
-        }
-
-        return List.copyOf(this.interfaceTypeParameters.get(fromInterface));
-    }
-
-    private List<TypeView<?>> contextsFromParameterizedType(ParameterizedType parameterizedType) {
-        Type[] arguments = parameterizedType.getActualTypeArguments();
-
-        return Arrays.stream(arguments)
-                .filter(type -> type instanceof Class || type instanceof WildcardType || type instanceof ParameterizedType)
-                .map(type -> {
-                    if (type instanceof Class<?> clazz) {
-                        return this.introspector().introspect(clazz);
-                    }
-                    else if (type instanceof WildcardType wildcard) {
-                        if (wildcard.getUpperBounds() != null && wildcard.getUpperBounds().length > 0) {
-                            return this.introspector().introspect(wildcard.getUpperBounds()[0]);
-                        }
-                        return new WildcardTypeView();
-                    }
-                    else if (type instanceof ParameterizedType parameterized) {
-                        return this.introspector().introspect(parameterized);
-                    }
-                    else {
-                        return this.introspector().introspect(Void.class);
-                    }
-                })
-                .collect(Collectors.toList());
     }
 }

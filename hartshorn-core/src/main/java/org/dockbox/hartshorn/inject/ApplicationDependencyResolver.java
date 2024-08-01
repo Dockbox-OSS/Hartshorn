@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,18 @@ package org.dockbox.hartshorn.inject;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.dockbox.hartshorn.application.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.condition.ConditionMatcher;
-import org.dockbox.hartshorn.inject.strategy.BindingStrategyRegistry;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.StreamableConfigurer;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ApplicationDependencyResolver extends CompositeDependencyResolver {
 
     public ApplicationDependencyResolver(Set<DependencyResolver> resolvers, ApplicationContext applicationContext) {
@@ -41,43 +45,35 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
 
             customizer.configure(configurer);
 
-            ConditionMatcher conditionMatcher = configurer.conditionMatcher.initialize(context);
             Set<DependencyResolver> resolvers = configurer.stream()
-                    .map(initializer -> initializer.initialize(context.transform(conditionMatcher)))
+                    .map(initializer -> initializer.initialize(context))
                     .collect(Collectors.toSet());
 
-            DefaultBindingConfigurerContext.compose(context, binder -> {
-                binder.bind(ConditionMatcher.class).singleton(conditionMatcher);
-            });
-
-            return new ApplicationDependencyResolver(resolvers, conditionMatcher.applicationContext());
+            return new ApplicationDependencyResolver(resolvers, context.input());
         };
     }
 
-    public static class Configurer extends StreamableConfigurer<ConditionMatcher, DependencyResolver> {
-
-        private ContextualInitializer<ApplicationContext, ConditionMatcher> conditionMatcher = context -> new ConditionMatcher(context.input());
+    /**
+     * TODO: #1060 Add documentation
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
+    public static class Configurer extends StreamableConfigurer<ApplicationContext, DependencyResolver> {
 
         public Configurer withManagedComponents() {
-            ContextualInitializer<ConditionMatcher, DependencyResolver> methodDependencyResolver = ContextualInitializer.of(matcher -> {
-                return new ComponentDependencyResolver(matcher.applicationContext());
+            ContextualInitializer<ApplicationContext, DependencyResolver> methodDependencyResolver = ContextualInitializer.of(definitionResolver -> {
+                ApplicationContext applicationContext = definitionResolver.applicationContext();
+                return new ComponentDependencyResolver(applicationContext);
             });
             this.add(methodDependencyResolver);
             return this;
         }
 
-        public Configurer withBindsMethods(Customizer<BindingStrategyRegistry> customizer) {
-            ContextualInitializer<ConditionMatcher, DependencyResolver> methodDependencyResolver = BindsMethodDependencyResolver.create(customizer);
+        public Configurer withBindsMethods(Customizer<BindsMethodDependencyResolver.Configurer> customizer) {
+            ContextualInitializer<ApplicationContext, DependencyResolver> methodDependencyResolver = BindsMethodDependencyResolver.create(customizer);
             this.add(methodDependencyResolver);
-            return this;
-        }
-
-        public Configurer conditionMatcher(ConditionMatcher conditionMatcher) {
-            return this.conditionMatcher(ContextualInitializer.of(conditionMatcher));
-        }
-
-        public Configurer conditionMatcher(ContextualInitializer<ApplicationContext, ConditionMatcher> conditionMatcher) {
-            this.conditionMatcher = conditionMatcher;
             return this;
         }
     }

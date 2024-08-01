@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * TODO: #1059 Add documentation
+ *
+ * @param <T> ...
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ReflectionTypeMethodsIntrospector<T> implements TypeMethodsIntrospector<T> {
 
     private final Introspector introspector;
@@ -125,6 +134,20 @@ public class ReflectionTypeMethodsIntrospector<T> implements TypeMethodsIntrospe
     public List<MethodView<T, ?>> annotatedWith(Class<? extends Annotation> annotation) {
         return this.all().stream()
                 .filter(method -> method.annotations().has(annotation))
+                .toList();
+    }
+
+    @Override
+    public List<MethodView<T, ?>> annotatedWithAny(Set<Class<? extends Annotation>> annotations) {
+        return this.all().stream()
+                .filter(method -> method.annotations().hasAny(annotations))
+                .toList();
+    }
+
+    @Override
+    public List<MethodView<T, ?>> annotatedWithAll(Set<Class<? extends Annotation>> annotations) {
+        return this.all().stream()
+                .filter(method -> method.annotations().hasAll(annotations))
                 .toList();
     }
 

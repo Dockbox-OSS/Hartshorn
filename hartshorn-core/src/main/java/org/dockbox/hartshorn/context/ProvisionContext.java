@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,18 +26,19 @@ import org.dockbox.hartshorn.util.option.Option;
  * in the retrieval of values, as context keys support fallback functions and access to
  * the {@link org.dockbox.hartshorn.application.context.ApplicationContext}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ProvisionContext extends Context {
 
     @Override
-    default <C extends Context> Option<C> first(Class<C> context) {
-        return this.first(ContextKey.of(context));
+    default <C extends ContextView> Option<C> firstContext(Class<C> context) {
+        return this.firstContext(ContextKey.of(context));
     }
 
     @Override
-    default <C extends Context> List<C> all(Class<C> context) {
-        return this.all(ContextKey.of(context));
+    default <C extends ContextView> List<C> contexts(Class<C> context) {
+        return this.contexts(ContextKey.of(context));
     }
 }

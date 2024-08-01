@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,31 +30,56 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.ClassTokenType;
+import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
+import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
+import org.dockbox.hartshorn.hsl.token.type.VariableTokenType;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class FinalDeclarationStatementParser implements ASTNodeParser<FinalizableStatement> {
 
     @Override
-    public Option<FinalizableStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(TokenType.FINAL)) {
+    public Option<? extends FinalizableStatement> parse(TokenParser parser, TokenStepValidator validator) {
+        if (parser.match(MemberModifierTokenType.FINAL)) {
+
             Token current = parser.peek();
-            FinalizableStatement finalizable = switch (current.type()) {
-                case PREFIX, INFIX -> {
-                    parser.advance();
-                    if (parser.check(TokenType.FUNCTION)) {
-                        yield lookupFinalizableFunction(parser, validator, parser.peek());
+            FinalizableStatement finalizable;
+            if (current.type() instanceof FunctionTokenType functionTokenType) {
+                 finalizable = switch(functionTokenType) {
+                    case PREFIX, INFIX -> {
+                        parser.advance();
+                        if(parser.check(FunctionTokenType.FUNCTION)) {
+                            yield lookupFinalizableFunction(parser, validator, parser.peek());
+                        }
+                        else {
+                            throw new ScriptEvaluationError(
+                                    "Unexpected token '" + current.lexeme() + "' at line " + current.line() + ", column "
+                                            + current.column(), Phase.PARSING, current);
+                        }
                     }
-                    else {
-                        throw new ScriptEvaluationError("Unexpected token '" + current.lexeme() + "' at line " + current.line() + ", column " + current.column(), Phase.PARSING, current);
-                    }
-                }
-                case FUNCTION -> lookupFinalizableFunction(parser, validator, current);
-                case VAR -> delegateParseStatement(parser, validator, VariableStatement.class, "variable", current);
-                case CLASS -> delegateParseStatement(parser, validator, ClassStatement.class, "class", current);
-                case NATIVE -> delegateParseStatement(parser, validator, NativeFunctionStatement.class, "native function", current);
-                default -> throw new ScriptEvaluationError("Illegal use of %s. Expected valid keyword to follow, but got %s".formatted(TokenType.FINAL.representation(), current.type()), Phase.PARSING, current);
-            };
+                    case FUNCTION -> lookupFinalizableFunction(parser, validator, current);
+                    case NATIVE -> delegateParseStatement(parser, validator, NativeFunctionStatement.class, "native function", current);
+                    default -> throw new ScriptEvaluationError("Illegal use of %s. Expected valid keyword to follow, but got %s".formatted(
+                            MemberModifierTokenType.FINAL.representation(), current.type()), Phase.PARSING, current);
+                };
+            }
+            else if (current.type() == VariableTokenType.VAR) {
+                finalizable = delegateParseStatement(parser, validator, VariableStatement.class, "variable", current);
+            }
+            else if (current.type() == ClassTokenType.CLASS) {
+                finalizable = delegateParseStatement(parser, validator, ClassStatement.class, "class", current);
+            }
+            else {
+                throw new ScriptEvaluationError("Illegal use of %s. Expected valid keyword to follow, but got %s".formatted(
+                        MemberModifierTokenType.FINAL.representation(), current.type()), Phase.PARSING, current);
+            }
             return Option.of(finalizable).peek(FinalizableStatement::makeFinal);
         }
         return Option.empty();

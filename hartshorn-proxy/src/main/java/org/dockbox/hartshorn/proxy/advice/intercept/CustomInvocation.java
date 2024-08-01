@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,18 @@ package org.dockbox.hartshorn.proxy.advice.intercept;
 
 import java.util.concurrent.Callable;
 
+import org.dockbox.hartshorn.util.ApplicationException;
+
 /**
  * A simple functional interface for custom invocation. This is used to provide custom arguments to the
  * invocation. When used in conjunction with {@link MethodInterceptorContext}, this allows for fine-grained
  * control over the invocation.
  *
- * @author Guus Lieben
+ * @param <T> the return type of the invocation
+ *
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface CustomInvocation<T> {
@@ -35,7 +40,7 @@ public interface CustomInvocation<T> {
      * @return the result of the invocation
      * @throws Exception if the invocation fails
      */
-    T call(Object... args) throws Exception;
+    T call(Object... args) throws Throwable;
 
     /**
      * Converts this invocation to a {@link Callable}. This is useful for the {@link MethodInterceptorContext}
@@ -46,6 +51,16 @@ public interface CustomInvocation<T> {
      * @return the invocation as a {@link Callable}
      */
     default Callable<T> toCallable(Object... args) {
-        return () -> this.call(args);
+        return () -> {
+            try {
+                return this.call(args);
+            }
+            catch(Exception e) {
+                throw e;
+            }
+            catch (Throwable throwable) {
+                throw new ApplicationException(throwable);
+            }
+        };
     }
 }

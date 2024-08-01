@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.reporting.collect;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
@@ -28,6 +29,13 @@ import org.dockbox.hartshorn.util.Node;
 import org.dockbox.hartshorn.util.SimpleNode;
 import org.dockbox.hartshorn.util.TypeUtils;
 
+/**
+ * A diagnostics property writer that writes to a {@link GroupNode} in a {@link StandardDiagnosticsReportCollector}.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWriter {
 
     private boolean closed = false;
@@ -42,43 +50,49 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
     }
 
     @Override
-    public DiagnosticsReportCollector write(String value) {
+    public DiagnosticsReportCollector writeString(String value) {
         this.checkClosed();
         return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
-    public DiagnosticsReportCollector write(int value) {
+    public DiagnosticsReportCollector writeInt(int value) {
         this.checkClosed();
         return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
-    public DiagnosticsReportCollector write(long value) {
+    public DiagnosticsReportCollector writeLong(long value) {
         this.checkClosed();
         return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
-    public DiagnosticsReportCollector write(float value) {
+    public DiagnosticsReportCollector writeFloat(float value) {
         this.checkClosed();
         return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
-    public DiagnosticsReportCollector write(double value) {
+    public DiagnosticsReportCollector writeDouble(double value) {
         this.checkClosed();
         return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
-    public DiagnosticsReportCollector write(boolean value) {
+    public DiagnosticsReportCollector writeBoolean(boolean value) {
         this.checkClosed();
         return this.exit(new SimpleNode<>(this.name, value));
     }
 
     @Override
-    public DiagnosticsReportCollector write(Reportable reportable) {
+    public <E extends Enum<E>> DiagnosticsReportCollector writeEnum(E value) {
+        this.checkClosed();
+        return this.exit(new SimpleNode<>(this.name, value.name()));
+    }
+
+    @Override
+    public DiagnosticsReportCollector writeDelegate(Reportable reportable) {
         this.checkClosed();
         GroupNode group = new GroupNode(this.name);
         reportable.report(property -> new StandardDiagnosticsPropertyWriter(property, this.collector, group));
@@ -86,43 +100,49 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
     }
 
     @Override
-    public DiagnosticsReportCollector write(String... values) {
+    public DiagnosticsReportCollector writeStrings(String... values) {
         this.checkClosed();
         return this.exit(new ArrayNode<>(this.name, values));
     }
 
     @Override
-    public DiagnosticsReportCollector write(int... values) {
+    public DiagnosticsReportCollector writeInts(int... values) {
         this.checkClosed();
         return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
-    public DiagnosticsReportCollector write(long... values) {
+    public DiagnosticsReportCollector writeLongs(long... values) {
         this.checkClosed();
         return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
-    public DiagnosticsReportCollector write(float... values) {
+    public DiagnosticsReportCollector writeFloats(float... values) {
         this.checkClosed();
         return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
-    public DiagnosticsReportCollector write(double... values) {
+    public DiagnosticsReportCollector writeDoubles(double... values) {
         this.checkClosed();
         return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
-    public DiagnosticsReportCollector write(boolean... values) {
+    public DiagnosticsReportCollector writeBooleans(boolean... values) {
         this.checkClosed();
         return this.exit(new ArrayNode<>(this.name, TypeUtils.stream(values).toList()));
     }
 
     @Override
-    public DiagnosticsReportCollector write(Reportable... reportables) {
+    public <E extends Enum<E>> DiagnosticsReportCollector writeEnums(E... values) {
+        this.checkClosed();
+        return this.exit(new ArrayNode<>(this.name, Stream.of(values).map(Enum::name).toList()));
+    }
+
+    @Override
+    public DiagnosticsReportCollector writeDelegates(Reportable... reportables) {
         List<Node<?>> nodes = new ArrayList<>();
         for (Reportable reportable : reportables) {
             GroupNode group = new GroupNode(this.name);
@@ -137,7 +157,7 @@ public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWri
             throw new IllegalStateException("Property writer is closed");
         }
     }
-    
+
     private DiagnosticsReportCollector exit(Node<?> node) {
         this.group.add(node);
         this.closed = true;

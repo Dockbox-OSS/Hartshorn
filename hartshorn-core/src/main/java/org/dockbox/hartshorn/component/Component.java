@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.processing.ComponentProcessor;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessor;
+import org.dockbox.hartshorn.inject.LifecycleType;
 
 /**
  * An annotation for components. Components are the building blocks of the framework. If a type is annotated with this
@@ -37,8 +38,8 @@ import java.lang.annotation.Target;
  *         {@link ComponentUtilities#id(ApplicationContext, Class)}</li>
  *     <li>{@link #name()} - The name of the component. This is used to identify the component in the framework. If not
  *         specified, the name of the class is used.</li>
- *     <li>{@link #singleton()} - Indicates whether a component should be treated as a singleton. When this is {@code true}
- *         there will only ever be one managed instance of the component known to the active {@link ApplicationContext}.</li>
+ *     <li>{@link #lifecycle()} - Indicates the lifecycle of the component. This is used to determine when the component
+ *         should be created and destroyed. The default value is {@link LifecycleType#PROTOTYPE 'Prototype'}.</li>
  *     <li>{@link #type()} - The type of the component. This is used to indicate whether the component is a functional
  *         component, and thus modifiable, or if it should only be injected into.</li>
  * </ul>
@@ -52,10 +53,9 @@ import java.lang.annotation.Target;
  * }</pre>
  *
  * @see Service
- * @see ComponentLocator
+ * @see ComponentRegistry
  * @see ComponentContainer
  * @see ComponentProcessor
- * @see ComponentType
  *
  * @author Guus Lieben
  * @since 0.4.1
@@ -84,24 +84,22 @@ public @interface Component {
     String name() default "";
 
     /**
-     * Indicates whether a component should be treated as a singleton. When this is {@code true}
-     * there will only ever be one managed instance of the component known to the active {@link ApplicationContext}.
+     * Indicates the lifecycle of the component. This is used to determine when the component should be created and destroyed.
+     * The default value is {@link LifecycleType#PROTOTYPE 'Prototype'}.
      *
-     * @return {@code true} if the component should be treated as a singleton
-     * @see ComponentContainer#singleton()
+     * @return The lifecycle of the component
      */
-    boolean singleton() default false;
+    LifecycleType lifecycle() default LifecycleType.PROTOTYPE;
 
     /**
      * Indicates whether a component should be created after the application context has been initialized.
      * When this is {@code true} the component will be created after the application context has been
-     * initialized, as long as {@link #singleton()} is {@code true}. If {@link #singleton()} is {@code false},
-     * the component will always be lazy-loaded.
+     * initialized, as long as the active {@link #lifecycle()} is {@link LifecycleType#SINGLETON 'Singleton'}.
      *
      * @return {@code true} if the component should be created after the application context has been initialized
      * @see ComponentContainer#lazy()
      */
-    boolean lazy() default true;
+    boolean lazy() default false;
 
     /**
      * The type of the component. This is used to indicate whether the component is a functional
@@ -109,7 +107,10 @@ public @interface Component {
      *
      * @return The type of the component
      * @see ComponentContainer#type()
+     *
+     * @deprecated See {@link ComponentType}
      */
+    @Deprecated(since = "0.6.0", forRemoval = true)
     ComponentType type() default ComponentType.INJECTABLE;
 
     /**

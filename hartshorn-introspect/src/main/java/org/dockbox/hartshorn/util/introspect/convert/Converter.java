@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param <I> the input object type
  * @param <O> the output object type
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface Converter<I, O> {
@@ -40,6 +44,7 @@ public interface Converter<I, O> {
      * value, or {@code null} itself.
      *
      * @param input the input object to convert, which may be {@code null}
+     *
      * @return the converted object, which may be {@code null}
      */
     @Nullable
@@ -51,8 +56,9 @@ public interface Converter<I, O> {
      * it is relayed to the caller of the composed converter.
      *
      * @param after the converter to apply after this converter is applied
-     * @return a composed converter that first applies this converter and then applies the {@code after}
      * @param <T> the type of output of the {@code after} converter, and of the composed converter
+     *
+     * @return a composed converter that first applies this converter and then applies the {@code after}
      */
     default <T> Converter<I, T> andThen(Converter<O, T> after) {
         return (I input) -> {

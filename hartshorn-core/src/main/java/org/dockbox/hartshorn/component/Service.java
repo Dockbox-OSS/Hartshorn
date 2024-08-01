@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,23 @@
 
 package org.dockbox.hartshorn.component;
 
-import org.dockbox.hartshorn.component.processing.ServiceActivator;
-import org.dockbox.hartshorn.proxy.Proxy;
-import org.dockbox.hartshorn.proxy.ProxyManager;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.dockbox.hartshorn.inject.LifecycleType;
+import org.dockbox.hartshorn.proxy.Proxy;
+import org.dockbox.hartshorn.proxy.ProxyManager;
+import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
  * Annotation to indicate a component is a functional component, better known as a service. A service is a component
  * of which the methods, and thus functionality, can be directly modified through {@link ProxyManager}s to allow for
  * dynamic behavior of service definitions. This transforms the service into a {@link Proxy} instance.
  *
- * <p>By default all services are {@link #singleton() singletons}.
+ * <p>By default all services exist with a {@link LifecycleType#SINGLETON 'singleton'} lifecycle, meaning that only one
+ * instance of the service is created and shared throughout the application.
  *
  * @author Guus Lieben
  * @since 0.4.1
@@ -39,8 +40,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Extends(Component.class)
-@Component(type = ComponentType.FUNCTIONAL)
-@ServiceActivator
 public @interface Service {
 
     /**
@@ -56,10 +55,10 @@ public @interface Service {
     String name() default "";
 
     /**
-     * @see Component#singleton()
-     * @return Whether the service is a singleton.
+     * @see Component#lifecycle()
+     * @return The lifecycle of the component
      */
-    boolean singleton() default true;
+    LifecycleType lifecycle() default LifecycleType.SINGLETON;
 
     /**
      * @see Component#lazy()

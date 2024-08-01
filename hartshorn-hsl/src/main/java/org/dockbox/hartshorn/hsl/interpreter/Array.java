@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,11 @@ import java.util.Iterator;
 
 /**
  * Simple wrapper around an array of objects, without a specific type requirement. This is used
- * by the {@link Interpreter} to represent arrays in the HSL language, and access them natively.
+ * by the {@link SimpleVisitorInterpreter} to represent arrays in the HSL language, and access them natively.
+ *
+ * @since 0.4.12
  *
  * @author Guus Lieben
- * @since 0.4.12
  */
 public class Array implements Iterable<Object>, PropertyContainer {
 

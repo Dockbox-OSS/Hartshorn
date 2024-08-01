@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,19 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
+import java.util.Set;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.Set;
 
 /**
  * A generic converter interface that can be used to convert objects from one type to another. This
  * interface can be used either directly, or through a {@link ConversionService}. Implementations
  * should be thread-safe.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface GenericConverter {
 
@@ -35,6 +36,9 @@ public interface GenericConverter {
      * Returns the set of {@link ConvertibleTypePair} that this converter can convert between. This method
      * is primarily intended to be used for introspection purposes through a {@link ConversionService}. This
      * allows the service to discover all converters that are available for a given conversion task.
+     *
+     * <p>If this converter is {@link ConditionalConverter conditional}, then this method may return
+     * {@code null} to indicate that it does not declare a specific source-to-target conversion pair.
      *
      * @return the set of convertible type pairs
      */

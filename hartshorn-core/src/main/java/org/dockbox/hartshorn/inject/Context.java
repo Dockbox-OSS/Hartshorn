@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,26 @@
 
 package org.dockbox.hartshorn.inject;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.util.introspect.annotations.Extends;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+
 /**
- * Annotation for injecting a {@link org.dockbox.hartshorn.context.Context} into a class. The context is
- * obtained through the responsible {@link ApplicationContext}. If the
- * context does not exist in the active application context, the injected value will be {@code null}.
+ * Annotation for injecting a {@link org.dockbox.hartshorn.context.ContextView context} into a class. The
+ * context is obtained through the responsible {@link ApplicationContext}. If the context does not exist
+ * in the active application context, the injected value will be {@code null}.
  *
  * @author Guus Lieben
  * @since 0.4.7
+ *
+ * @deprecated Context injection is now built-in to default injection strategies. Use {@link Inject} instead.
  */
-@Extends(HandledInjection.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
+@Deprecated(since = "0.6.0", forRemoval = true)
 public @interface Context {
 
     /**

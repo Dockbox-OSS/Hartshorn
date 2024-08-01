@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.component;
 
+import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
 /**
@@ -36,7 +37,7 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
  *
  * @author Guus Lieben
  */
-public interface ScopeKey {
+public interface ScopeKey extends Reportable {
 
     /**
      * Returns the name of the scope type. This is the simple name of the type, without any package

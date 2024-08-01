@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,18 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import org.dockbox.hartshorn.application.Hartshorn;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.condition.RequiresActivator;
+
 /**
- * Annotation used to mark annotations as service activators. Service activators indicate whether specific components
- * processors become active. Additionally, they can be used to filter the activation of components using the
- * {@link RequiresActivator} annotation.
+ * Annotation used to mark annotations as service activators. Service activators indicate whether
+ * specific components processors become active. Additionally, they can be used to filter the activation
+ * of components using the {@link RequiresActivator} annotation.
  *
  * <p>Service activators always need to be annotated with {@link ServiceActivator}. If an annotation
  * is used as activator, but is not annotated with {@link ServiceActivator}, it will be rejected by
@@ -46,13 +45,18 @@ import java.lang.annotation.Target;
 public @interface ServiceActivator {
 
     /**
-     * The base packages to scan for services if this service activator is present. Defaults to the
-     * default {@link Hartshorn#PACKAGE_PREFIX Hartshorn prefix}. If the package has already been
-     * processed before, it is up to the active {@link ApplicationContext} to decide whether to
-     * process it again.
+     * The base packages to scan for services if this service activator is present. If a package has already
+     * been processed before, it is up to the active {@link ApplicationContext} to decide whether to process
+     * it again.
      *
      * @return The base packages to scan for services.
      */
-    String[] scanPackages() default { Hartshorn.PACKAGE_PREFIX };
+    String[] scanPackages() default {};
+
+    /**
+     * The component processors that become active when this service activator is present.
+     *
+     * @return The component processors that become active when this service activator is present.
+     */
     Class<? extends ComponentProcessor>[] processors() default {};
 }

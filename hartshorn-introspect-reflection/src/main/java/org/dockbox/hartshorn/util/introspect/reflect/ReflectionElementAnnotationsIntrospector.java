@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Collections;
 import java.util.List;
@@ -25,11 +26,19 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1059 Add documentation
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class ReflectionElementAnnotationsIntrospector implements ElementAnnotationsIntrospector {
 
     private final Introspector introspector;
@@ -37,7 +46,7 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
     private final AnnotationLookup annotationLookup;
     private Map<Class<?>, Annotation> annotationCache;
 
-    public ReflectionElementAnnotationsIntrospector(ReflectionIntrospector introspector, AnnotatedElement element) {
+    public ReflectionElementAnnotationsIntrospector(Introspector introspector, AnnotatedElement element) {
         this.introspector = introspector;
         this.element = element;
         // Could be instantiated early during application startup, so we don't want to use component provision here. This
@@ -84,6 +93,12 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
 
     @Override
     public <T extends Annotation> Option<T> get(Class<T> annotation) {
+        if (!TypeUtils.hasRetentionPolicy(annotation, RetentionPolicy.RUNTIME)) {
+            // Cannot introspect annotations that are not retained at runtime, so don't waste
+            // time looking for them.
+            assert false : "Annotation " + annotation.getName() + " is not retained at runtime";
+            return Option.empty();
+        }
         if (!annotation.isAnnotation()) {
             return Option.empty();
         }

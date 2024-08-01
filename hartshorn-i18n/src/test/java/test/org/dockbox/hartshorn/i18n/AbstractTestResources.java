@@ -23,12 +23,12 @@ import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 @Service
 public abstract class AbstractTestResources {
 
-    @InjectTranslation("Hello concrete world!")
+    @InjectTranslation(defaultValue = "Hello concrete world!")
     public Message concreteEntry() {
         return null;
     }
 
-    @InjectTranslation("Hello abstract world!")
+    @InjectTranslation(defaultValue = "Hello abstract world!")
     abstract Message abstractEntry();
 
 }

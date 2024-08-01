@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.util.Node;
  * @see ReportSerializer
  * @see DiagnosticsPropertyCollector
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface DiagnosticsReport {
@@ -46,8 +47,10 @@ public interface DiagnosticsReport {
      * to return a value that represents the serialized report.
      *
      * @param serializer the serializer to use
-     * @return the serialized report
      * @param <T> the type of the serialized report
+     *
+     * @return the serialized report
+     *
      * @throws ReportSerializationException if the serialization fails
      */
     default <T> T serialize(ReportSerializer<T> serializer) throws ReportSerializationException {

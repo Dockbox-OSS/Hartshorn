@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,20 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
-import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
-import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-
 import java.util.List;
 
+import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
+import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
+
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class ConstructorStatement extends ParametricExecutableStatement {
 
     private final Token keyword;
@@ -38,11 +46,14 @@ public class ConstructorStatement extends ParametricExecutableStatement {
     }
 
     public Token initializerIdentifier() {
-        return Token.of(TokenType.CONSTRUCTOR)
-                .lexeme("<init>")
+        return Token.of(this.type())
                 .literal(this.keyword().line())
                 .position(this.keyword())
                 .build();
+    }
+
+    protected TokenType type() {
+        return FunctionTokenType.CONSTRUCTOR;
     }
 
     @Override

@@ -18,13 +18,45 @@ package org.dockbox.hartshorn.util.introspect.scan.classpath;
 
 import java.nio.file.Path;
 
+/**
+ * Represents a resource on the classpath. Resources are provided by {@link ClassPathScanner}s and handed
+ * over to {@link ResourceHandler}s for further processing.
+ *
+ * @see ClassPathScanner
+ * @see ResourceHandler
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public interface ClassPathResource {
 
+    /**
+     * The classloader from which this resource was, or should be, loaded.
+     *
+     * @return The classloader, never {@code null}.
+     */
     ClassLoader classLoader();
 
+    /**
+     * The path to the resource. This is the path as it is found on the classpath, and may be inside
+     * a directory or archive.
+     *
+     * @return The path, never {@code null}.
+     */
     Path path();
 
+    /**
+     * The name of the resource. For classes this is the fully qualified class name, for other
+     * resources this is the path to the resource.
+     * @return The name, never {@code null}.
+     */
     String resourceName();
 
+    /**
+     * Whether this resource is a class. If {@code true}, the resource can be loaded as a class.
+     *
+     * @return {@code true} if this resource is a class, {@code false} otherwise.
+     */
     boolean isClassResource();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,14 @@ import org.dockbox.hartshorn.reporting.Reportable;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * An {@link AggregateTypeReferenceCollector} that collects {@link TypeReference}s from multiple
+ * {@link TypeReferenceCollector}s. The provided collectors are invoked in no particular order.
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
 public class AggregateTypeReferenceCollector implements TypeReferenceCollector{
 
     private final Set<TypeReferenceCollector> collectors;
@@ -45,6 +53,6 @@ public class AggregateTypeReferenceCollector implements TypeReferenceCollector{
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("collectors").write(this.collectors.toArray(Reportable[]::new));
+        collector.property("collectors").writeDelegates(this.collectors.toArray(Reportable[]::new));
     }
 }

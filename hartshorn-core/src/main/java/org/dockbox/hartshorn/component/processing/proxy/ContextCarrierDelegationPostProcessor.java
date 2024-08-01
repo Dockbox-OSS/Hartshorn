@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,16 @@
 
 package org.dockbox.hartshorn.component.processing.proxy;
 
+import org.dockbox.hartshorn.component.processing.ProcessingPriority;
 import org.dockbox.hartshorn.context.ContextCarrier;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ContextCarrier> {
 
     @Override
@@ -28,5 +36,10 @@ public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostPr
     @Override
     protected boolean skipConcreteMethods() {
         return true;
+    }
+
+    @Override
+    public int priority() {
+        return ProcessingPriority.NORMAL_PRECEDENCE;
     }
 }

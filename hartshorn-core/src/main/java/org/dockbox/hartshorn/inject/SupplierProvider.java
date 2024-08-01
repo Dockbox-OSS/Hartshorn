@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -30,17 +31,28 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <C> The type to be provided.
  *
- * @author Guus Lieben
  * @see Provider
  * @see ContextDrivenProvider
+ *
  * @since 0.4.3
+ *
+ * @author Guus Lieben
  */
 public record SupplierProvider<C>(CheckedSupplier<C> supplier) implements NonTypeAwareProvider<C> {
 
     @Override
-    public Option<ObjectContainer<C>> provide(ApplicationContext context) throws ApplicationException {
+    public Option<ObjectContainer<C>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
         C instance = this.supplier.get();
-        return Option.of(instance).map(ComponentObjectContainer::new);
+        return Option.of(instance).map(ComponentObjectContainer::ofPrototype);
     }
 
+    @Override
+    public LifecycleType defaultLifecycle() {
+        return LifecycleType.PROTOTYPE;
+    }
+
+    @Override
+    public Tristate defaultLazy() {
+        return Tristate.TRUE;
+    }
 }

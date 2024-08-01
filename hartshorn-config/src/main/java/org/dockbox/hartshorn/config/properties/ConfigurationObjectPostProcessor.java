@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,18 @@ import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.component.processing.ProcessingPriority;
+import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.config.annotations.ConfigurationObject;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1062 Add documentation
+ *
+ * @since 0.4.11
+ *
+ * @author Guus Lieben
+ */
 public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPostProcessor {
 
     private final PropertyHolder propertyHolder;
@@ -34,7 +42,7 @@ public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPost
     }
 
     @Override
-    public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> T initializeComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ObjectMappingException {
         if (processingContext.type().annotations().has(ConfigurationObject.class)) {
             ConfigurationObject configurationObject = processingContext.type().annotations().get(ConfigurationObject.class).get();
 
@@ -45,11 +53,11 @@ public class ConfigurationObjectPostProcessor extends PropertyAwareComponentPost
         return instance;
     }
 
-    private <T> T createOrUpdate(ComponentKey<T> key, T instance, ConfigurationObject configurationObject) {
+    private <T> T createOrUpdate(ComponentKey<T> key, T instance, ConfigurationObject configurationObject) throws ObjectMappingException {
         Option<T> configuration;
         Class<T> type = instance == null
                 ? key.type()
-                : TypeUtils.adjustWildcards(instance.getClass(), Class.class);
+                : TypeUtils.getClass(instance);
 
         if (instance == null) {
             configuration = this.propertyHolder.get(configurationObject.prefix(), type);

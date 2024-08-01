@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +16,39 @@
 
 package org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
-import org.dockbox.hartshorn.hsl.lexer.Lexer;
-import org.dockbox.hartshorn.hsl.modules.NativeModule;
-import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
-import org.dockbox.hartshorn.hsl.parser.TokenParser;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
-import org.dockbox.hartshorn.hsl.semantic.Resolver;
-import org.dockbox.hartshorn.hsl.token.Token;
-
 import java.util.List;
 import java.util.Map;
 
-@Service
-@RequiresActivator(UseExpressionValidation.class)
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
+import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
+import org.dockbox.hartshorn.hsl.lexer.SimpleTokenRegistryLexer;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
+import org.dockbox.hartshorn.hsl.parser.TokenParser;
+import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+
+/**
+ * A standard implementation of the {@link ScriptComponentFactory} interface, using
+ * the default implementations of the various components.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class StandardScriptComponentFactory implements ScriptComponentFactory {
 
     @Override
-    public Lexer lexer(String source) {
-        return new Lexer(source);
+    public SimpleTokenRegistryLexer lexer(TokenRegistry tokenRegistry, String source) {
+        return new SimpleTokenRegistryLexer(source, tokenRegistry);
     }
 
     @Override
-    public TokenParser parser(List<Token> tokens) {
-        return new StandardTokenParser(tokens);
+    public TokenParser parser(TokenRegistry tokenRegistry, List<Token> tokens) {
+        return new StandardTokenParser(tokenRegistry, tokens);
     }
 
     @Override
@@ -52,12 +57,9 @@ public class StandardScriptComponentFactory implements ScriptComponentFactory {
     }
 
     @Override
-    public Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ApplicationContext applicationContext) {
-        return this.interpreter(resultCollector, modules, new ExecutionOptions(), applicationContext);
-    }
-
-    @Override
-    public Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ExecutionOptions options, ApplicationContext applicationContext) {
-        return new Interpreter(resultCollector, modules, options, applicationContext);
+    public Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, TokenRegistry tokenRegistry, ApplicationContext applicationContext) {
+        Interpreter interpreter = new SimpleVisitorInterpreter(resultCollector, applicationContext, tokenRegistry);
+        interpreter.state().externalModules(modules);
+        return interpreter;
     }
 }

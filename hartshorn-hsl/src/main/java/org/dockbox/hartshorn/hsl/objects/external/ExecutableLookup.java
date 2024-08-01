@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,23 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import java.util.List;
+
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.List;
-
 /**
  * Utility class to lookup an executable by name and a list of arguments. The lookup may either use
  * a predefined list of executables, or by matching methods with the given name and argument types.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class ExecutableLookup {
 
@@ -44,8 +46,9 @@ public class ExecutableLookup {
      * @param declaring The declaring type of the method.
      * @param function The name of the method.
      * @param arguments The list of arguments.
-     * @return The found executable.
      * @param <T> The type of the declaring type.
+     *
+     * @return The found executable.
      */
     public static <T> MethodView<T, ?> method(Token at, TypeView<T> declaring, String function, List<Object> arguments) {
         Option<MethodView<T, ?>> zeroParameterMethod = declaring.methods().named(function);
@@ -57,7 +60,10 @@ public class ExecutableLookup {
                 .filter(method -> method.parameters().count() == arguments.size())
                 .toList();
         if (methods.isEmpty()) {
-            throw new RuntimeError(at, "Method '" + function + "' with " + arguments.size() + " parameters does not exist on external instance of type " + declaring.name());
+            throw new ScriptEvaluationError(
+                    "Method '" + function + "' with " + arguments.size() + " parameters does not exist on external instance of type " + declaring.name(),
+                    Phase.INTERPRETING, at
+            );
         }
 
         MethodView<T, ?> executable = executable(methods, arguments);
@@ -65,7 +71,10 @@ public class ExecutableLookup {
             return executable;
         }
 
-        throw new RuntimeError(at, "Method '" + function + "' with parameters accepting " + arguments + " does not exist on external instance of type " + declaring.name());
+        throw new ScriptEvaluationError(
+                "Method '" + function + "' with parameters accepting " + arguments + " does not exist on external instance of type " + declaring.name(),
+                Phase.INTERPRETING, at
+        );
     }
 
     /**
@@ -75,9 +84,10 @@ public class ExecutableLookup {
      *
      * @param executables The list of executables.
      * @param arguments The list of arguments.
-     * @return The found executable.
      * @param <P> The type of the declaring parent of the executable.
      * @param <T> The context type representing the executable.
+     *
+     * @return The found executable.
      */
     public static <P, T extends ExecutableElementView<P>> T executable(List<T> executables, List<Object> arguments) {
         for (T executable : executables) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * TODO: #1059 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class AbstractReflectionTypeParametersIntrospector implements TypeParametersIntrospector {
 
     private final TypeView<?> type;
@@ -63,7 +70,7 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     }
 
     @Override
-    public TypeParameterList resolveInputFor(Class<?> fromParentType) {
+    public TypeParameterList inputFor(Class<?> fromParentType) {
         if (this.type().is(fromParentType)) {
             return this.allInput();
         }
@@ -71,7 +78,7 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
             TypeView<?> parentType = this.introspector().introspect(fromParentType);
             TypeParametersIntrospector typeParameters = parentType.typeParameters();
             // No point in resolving if there are no type parameters
-            if (typeParameters.count() > 0) {
+            if (!(typeParameters.allOutput().isEmpty() && typeParameters.allInput().isEmpty())) {
                 return this.tryResolveInputForParent(parentType);
             }
         }
@@ -108,22 +115,6 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
             this.typeHierarchy = TypeHierarchyGraph.of(this.type());
         }
         return this.typeHierarchy;
-    }
-
-    @Override
-    public int count() {
-        return this.all().count();
-    }
-
-    @Override
-    public Option<TypeView<?>> at(int index) {
-        return this.atIndex(index).flatMap(TypeParameterView::resolvedType);
-    }
-
-    @Override
-    public TypeParameterList all() {
-        List<TypeParameterView> allParameters = CollectionUtilities.mergeList(this.allInput().asList(), this.allOutput().asList());
-        return new SimpleTypeParameterList(allParameters);
     }
 
     @Override

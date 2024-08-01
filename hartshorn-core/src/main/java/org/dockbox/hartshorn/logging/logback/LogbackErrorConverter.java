@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.logging.logback;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.pattern.color.ANSIConstants;
@@ -25,10 +32,12 @@ import ch.qos.logback.core.pattern.color.ForegroundCompositeConverterBase;
  * A logback converter that converts the log level to a color. This only affects error output
  * with the {@link Level#ERROR} level.
  *
- * @author Guus Lieben
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public class LogbackErrorConverter extends ForegroundCompositeConverterBase<ILoggingEvent> {
+
     @Override
     protected String getForegroundColorCode(ILoggingEvent event) {
         Level level = event.getLevel();

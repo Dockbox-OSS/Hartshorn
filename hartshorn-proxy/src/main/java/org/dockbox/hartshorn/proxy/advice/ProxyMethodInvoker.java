@@ -58,7 +58,7 @@ public interface ProxyMethodInvoker<T> {
      * @param args the arguments that are passed to the method
      * @return the result of the method invocation
      */
-    Object invokeDelegate(T self, Invokable target, Object[] args);
+    Object invokeDelegate(T self, Invokable target, Object[] args) throws Throwable;
 
     /**
      * Attempts to invoke the underlying non-proxied method for the current proxy. If the real method is not concrete,

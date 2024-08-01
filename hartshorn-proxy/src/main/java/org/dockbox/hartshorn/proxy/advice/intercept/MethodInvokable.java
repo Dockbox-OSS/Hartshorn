@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
  * Implementation of {@link Invokable} that is backed by a {@link Method}. Invoking the method is delegated to the
  * {@link Method#invoke(Object, Object...)} method.
  *
- * @since 0.4.13
+ * @since 0.4.12
  * @author Guus Lieben
  */
 public class MethodInvokable implements Invokable {
@@ -81,10 +81,20 @@ public class MethodInvokable implements Invokable {
         return this.toIntrospector().qualifiedName();
     }
 
+    /**
+     * Returns a {@link MethodView} for the underlying method.
+     *
+     * @return a {@link MethodView} for the underlying method
+     */
     public MethodView<?, ?> toIntrospector() {
         return this.introspector.introspect(this.method);
     }
 
+    /**
+     * Returns the underlying method.
+     *
+     * @return the underlying method
+     */
     public Method toMethod() {
         return this.method;
     }

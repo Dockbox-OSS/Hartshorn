@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,9 @@ import org.dockbox.hartshorn.context.Context;
  *
  * @param <I> the type of the input object
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface SingleElementContext<I> extends Context {
 
@@ -37,7 +38,7 @@ public interface SingleElementContext<I> extends Context {
      *
      * @return the input object
      */
-    @Nullable I input();
+    @NonNull I input();
 
     /**
      * Transforms the input into a new context. This is useful for when you want to keep the
@@ -48,6 +49,6 @@ public interface SingleElementContext<I> extends Context {
      * @return the new context, containing the new input and a copy of the original context
      * @param <T> the type of the new input
      */
-    <T> @NonNull SingleElementContext<@Nullable T> transform(@Nullable T input);
+    <T> @NonNull SingleElementContext<@Nullable T> transform(@NonNull T input);
 
 }

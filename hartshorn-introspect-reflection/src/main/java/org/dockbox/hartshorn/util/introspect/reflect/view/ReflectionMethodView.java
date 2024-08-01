@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.StringJoiner;
+
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
@@ -23,24 +28,30 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionMethodInvoker;
-import org.dockbox.hartshorn.util.introspect.reflect.ReflectionModifierCarrierView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.StringJoiner;
-
-public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutableElementView<Parent> implements MethodView<Parent, ReturnType>, ReflectionModifierCarrierView {
+/**
+ * TODO: #1059 Add documentation
+ *
+ * @param <Parent> ...
+ * @param <ReturnType> ...
+ *
+ * @since 0.4.13
+ *
+ * @author Guus Lieben
+ */
+public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutableElementView<Parent> implements MethodView<Parent, ReturnType> {
 
     private final Introspector introspector;
     private final Method method;
 
     private MethodInvoker<ReturnType, Parent> invoker;
     private String qualifiedName;
+
+    private TypeView<ReturnType> returnType;
+    private TypeView<ReturnType> genericReturnType;
 
     public ReflectionMethodView(ReflectionIntrospector introspector, Method method) {
         super(introspector, method);
@@ -54,15 +65,16 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public Attempt<ReturnType, Throwable> invoke(Parent instance, Collection<?> arguments) {
+    public Option<ReturnType> invoke(Object instance, Collection<?> arguments) throws Throwable {
         if (this.invoker == null) {
             this.invoker = new ReflectionMethodInvoker<>();
         }
-        return this.invoker.invoke(this, instance, arguments.toArray());
+        Parent checkedInstance = this.declaredBy().cast(instance);
+        return this.invoker.invoke(this, checkedInstance, arguments.toArray());
     }
 
     @Override
-    public Attempt<ReturnType, Throwable> invokeStatic(Collection<?> arguments) {
+    public Option<ReturnType> invokeStatic(Collection<?> arguments) throws Throwable {
         if (this.modifiers().isStatic()) {
             return this.invoke(null, arguments);
         }
@@ -73,12 +85,18 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
 
     @Override
     public TypeView<ReturnType> returnType() {
-        return (TypeView<ReturnType>) this.introspector.introspect(this.method.getReturnType());
+        if (this.returnType == null) {
+            this.returnType = (TypeView<ReturnType>) this.introspector.introspect(this.method.getReturnType());
+        }
+        return this.returnType;
     }
 
     @Override
     public TypeView<ReturnType> genericReturnType() {
-        return (TypeView<ReturnType>) this.introspector.introspect(this.method.getGenericReturnType());
+        if (this.genericReturnType == null) {
+            this.genericReturnType = (TypeView<ReturnType>) this.introspector.introspect(this.method.getGenericReturnType());
+        }
+        return this.genericReturnType;
     }
 
     @Override
@@ -100,41 +118,6 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
     }
 
     @Override
-    public boolean isProtected() {
-        return this.modifiers().isProtected();
-    }
-
-    @Override
-    public boolean isPublic() {
-        return this.modifiers().isPublic();
-    }
-
-    @Override
-    public boolean isPrivate() {
-        return this.modifiers().isPrivate();
-    }
-
-    @Override
-    public boolean isStatic() {
-        return this.modifiers().isStatic();
-    }
-
-    @Override
-    public boolean isFinal() {
-        return this.modifiers().isFinal();
-    }
-
-    @Override
-    public boolean isAbstract() {
-        return this.modifiers().isAbstract();
-    }
-
-    @Override
-    public boolean isDefault() {
-        return this.modifiers().isDefault();
-    }
-
-    @Override
     public TypeView<ReturnType> type() {
         return this.returnType();
     }
@@ -146,10 +129,10 @@ public class ReflectionMethodView<Parent, ReturnType> extends ReflectionExecutab
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("name").write(this.name());
-        collector.property("elementType").write("method");
-        collector.property("returnType").write(this.genericReturnType());
-        collector.property("parameters").write(this.parameters().all().toArray(Reportable[]::new));
-        collector.property("declaredBy").write(this.declaredBy());
+        collector.property("name").writeString(this.name());
+        collector.property("elementType").writeString("method");
+        collector.property("returnType").writeDelegate(this.genericReturnType());
+        collector.property("parameters").writeDelegates(this.parameters().all().toArray(Reportable[]::new));
+        collector.property("declaredBy").writeDelegate(this.declaredBy());
     }
 }

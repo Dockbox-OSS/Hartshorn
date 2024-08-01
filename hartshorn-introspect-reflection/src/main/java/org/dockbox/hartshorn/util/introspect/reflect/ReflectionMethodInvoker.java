@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +16,41 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import org.dockbox.hartshorn.util.introspect.MethodInvoker;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.Attempt;
-import org.dockbox.hartshorn.util.option.Option;
-
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.dockbox.hartshorn.util.introspect.MethodInvoker;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Option;
+
+/**
+ * A {@link MethodInvoker} that uses reflection to invoke methods. This requires the method to be
+ * available in the given {@link MethodView}, and to be accessible to this invoker.
+ *
+ * @param <T> the return type of the method
+ * @param <P> the type of the instance on which the method is invoked
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
 
     @Override
-    public Attempt<T, Throwable> invoke(MethodView<P, T> method, P instance, Object[] args) {
-        Attempt<T, Throwable> result = Attempt.of(() -> {
-            Option<Method> jlrMethod = method.method();
-            if (jlrMethod.absent()) {
-                return null;
-            }
-
-            // Do not use explicit casting here, as it will cause a ClassCastException if the method
-            // returns a primitive type. Instead, use the inferred type from the method view.
-            //noinspection unchecked
-            return (T) jlrMethod.get().invoke(instance, args);
-        }, Throwable.class);
-
-        if (result.errorPresent()) {
-            Throwable cause = result.error();
-            if (result.error().getCause() != null) {
-                cause = result.error().getCause();
-            }
-            return Attempt.of(result.orNull(), cause);
+    public Option<T> invoke(MethodView<P, T> method, P instance, Object[] args) throws Throwable {
+        Option<Method> jlrMethod = method.method();
+        if(jlrMethod.absent()) {
+            return null;
         }
-        return result;
+
+        // Do not use explicit casting here, as it will cause a ClassCastException if the method
+        // returns a primitive type. Instead, use the inferred type from the method view.
+        try {
+            //noinspection unchecked
+            return Option.of((T) jlrMethod.get().invoke(instance, args));
+        }
+        catch (InvocationTargetException e) {
+            throw e.getCause();
+        }
     }
 }

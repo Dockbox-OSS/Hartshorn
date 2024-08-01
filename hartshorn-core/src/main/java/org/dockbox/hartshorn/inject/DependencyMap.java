@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,29 @@
 
 package org.dockbox.hartshorn.inject;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.util.collections.StandardMultiMap;
+
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
+import org.dockbox.hartshorn.util.option.Option;
 
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.util.collections.StandardMultiMap;
-
-public class DependencyMap extends StandardMultiMap<DependencyResolutionType, ComponentKey<?>> {
+/**
+ * A map that can be used to define dependencies for a component. Dependencies are grouped by
+ * their {@link DependencyResolutionType}. If multiple dependencies are defined for the same
+ * resolution type, they are all added to the same collection.
+ *
+ * @see DependencyResolutionType
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+public final class DependencyMap extends StandardMultiMap<DependencyResolutionType, ComponentKey<?>> {
 
     private DependencyMap() {
         // Use static factory method
@@ -40,27 +54,91 @@ public class DependencyMap extends StandardMultiMap<DependencyResolutionType, Co
         return new HashSet<>();
     }
 
+    /**
+     * Creates a new empty dependency map.
+     *
+     * @return the new dependency map
+     */
     public static DependencyMap create() {
         return new DependencyMap();
     }
 
-    public DependencyMap immediate(final ComponentKey<?> key) {
+    /**
+     * Adds the given component key as a dependency which requires immediate resolution.
+     *
+     * @param key the component key to add
+     * @return the dependency map
+     *
+     * @see DependencyResolutionType#IMMEDIATE
+     */
+    public DependencyMap immediate(ComponentKey<?> key) {
         this.put(DependencyResolutionType.IMMEDIATE, key);
         return this;
     }
 
-    public DependencyMap immediate(final Collection<ComponentKey<?>> keys) {
+    /**
+     * Adds the given component keys as dependencies which require immediate resolution.
+     *
+     * @param keys the component keys to add
+     * @return the dependency map
+     *
+     * @see DependencyResolutionType#IMMEDIATE
+     */
+    public DependencyMap immediate(Collection<ComponentKey<?>> keys) {
         this.putAll(DependencyResolutionType.IMMEDIATE, keys);
         return this;
     }
 
-    public DependencyMap delayed(final ComponentKey<?> key) {
+    /**
+     * Adds the given component key as a dependency which may be resolved at a later time.
+     *
+     * @param key the component key to add
+     * @return the dependency map
+     *
+     * @see DependencyResolutionType#DELAYED
+     */
+    public DependencyMap delayed(ComponentKey<?> key) {
         this.put(DependencyResolutionType.DELAYED, key);
         return this;
     }
 
-    public DependencyMap delayed(final Collection<ComponentKey<?>> keys) {
+    /**
+     * Adds the given component keys as dependencies which may be resolved at a later time.
+     *
+     * @param keys the component keys to add
+     * @return the dependency map
+     *
+     * @see DependencyResolutionType#DELAYED
+     */
+    public DependencyMap delayed(Collection<ComponentKey<?>> keys) {
         this.putAll(DependencyResolutionType.DELAYED, keys);
         return this;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("DependencyMap{");
+        List<String> parts = new ArrayList<>();
+        for (DependencyResolutionType resolutionType : DependencyResolutionType.values()) {
+            Collection<ComponentKey<?>> keys = this.get(resolutionType);
+            if (keys != null && !keys.isEmpty()) {
+                parts.add(resolutionType + ": " + keys);
+            }
+        }
+        builder.append(String.join(", ", parts));
+        builder.append("}");
+        return builder.toString();
+    }
+
+    public Option<DependencyResolutionType> resolutionType(ComponentKey<?> componentKey) {
+        if (!this.containsValue(componentKey)) {
+            return Option.empty();
+        }
+        for (Map.Entry<DependencyResolutionType, Collection<ComponentKey<?>>> entry : this.map().entrySet()) {
+            if (entry.getValue().contains(componentKey)) {
+                return Option.of(entry.getKey());
+            }
+        }
+        return Option.empty();
     }
 }

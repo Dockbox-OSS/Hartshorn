@@ -23,7 +23,16 @@ import org.dockbox.hartshorn.config.FileFormat;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.jackson.JacksonDataMapper;
 
+/**
+ * A {@link JacksonDataMapper} that uses the TOML format. This mapper uses Jackson's {@link TomlMapper} to
+ * support {@link FileFormats#TOML TOML sources}.
+ *
+ * @since 0.4.9
+ *
+ * @author Guus Lieben
+ */
 public class TomlDataMapper implements JacksonDataMapper {
+
     @Override
     public FileFormat fileFormat() {
         return FileFormats.TOML;

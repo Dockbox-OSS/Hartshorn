@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,36 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
-import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.objects.CallableNode;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
-import org.dockbox.hartshorn.util.ApplicationException;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.ast.expression.PrefixExpression;
+import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.objects.CallableNode;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.util.ApplicationException;
+
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class PrefixExpressionInterpreter implements ASTNodeInterpreter<Object, PrefixExpression> {
 
     @Override
-    public Object interpret(PrefixExpression node, InterpreterAdapter adapter) {
-        CallableNode value = (CallableNode) adapter.visitingScope().get(node.prefixOperatorName());
+    public Object interpret(PrefixExpression node, Interpreter interpreter) {
+        CallableNode value = (CallableNode) interpreter.visitingScope().get(node.prefixOperatorName());
         List<Object> args = new ArrayList<>();
-        args.add(adapter.evaluate(node.rightExpression()));
+        args.add(interpreter.evaluate(node.rightExpression()));
         try {
-            return value.call(node.prefixOperatorName(), adapter.interpreter(), null, args);
+            return value.call(node.prefixOperatorName(), interpreter, null, args);
         }
         catch (ApplicationException e) {
-            throw new RuntimeError(node.prefixOperatorName(), e.getMessage());
+            throw new ScriptEvaluationError(e, Phase.INTERPRETING, node.prefixOperatorName());
         }
     }
 }

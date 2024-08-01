@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.config.FileFormat;
-import org.dockbox.hartshorn.config.ObjectMapper;
-import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Locale;
@@ -32,14 +26,31 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import org.dockbox.hartshorn.application.ExceptionHandler;
+import org.dockbox.hartshorn.config.FileFormat;
+import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.option.Option;
+
+/**
+ * Default implementation of {@link TranslationBundle}. By default, this uses the
+ * {@link Locale#getDefault() default locale of the current environment}.
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
 public class DefaultTranslationBundle implements TranslationBundle {
 
     private final Map<String, Message> messages = new ConcurrentHashMap<>();
-    private final ApplicationContext applicationContext;
+    private final ObjectMapper objectMapper;
+    private final ExceptionHandler exceptionHandler;
+
     private Locale primaryLanguage = Locale.getDefault();
 
-    public DefaultTranslationBundle(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public DefaultTranslationBundle(ObjectMapper objectMapper, ExceptionHandler exceptionHandler) {
+        this.objectMapper = objectMapper;
+        this.exceptionHandler = exceptionHandler;
     }
 
     @Override
@@ -85,19 +96,16 @@ public class DefaultTranslationBundle implements TranslationBundle {
         return this.register(key, value, this.primaryLanguage());
     }
 
-    protected void add(Message message) {
-        message.translate(this.primaryLanguage());
-    }
-
     @Override
     public TranslationBundle merge(TranslationBundle bundle) {
-        DefaultTranslationBundle translationBundle = new DefaultTranslationBundle(this.applicationContext)
+        DefaultTranslationBundle translationBundle = new DefaultTranslationBundle(this.objectMapper, this.exceptionHandler)
                 .primaryLanguage(this.primaryLanguage());
 
         Map<String, Message> messageDict = translationBundle.messages;
         CollectionUtilities.forEach(
                 message -> messageDict.put(message.key(), this.mergeMessages(message, messageDict)),
-                this.messages(), bundle.messages()
+                this.messages(),
+                bundle.messages()
         );
 
         return translationBundle;
@@ -113,11 +121,17 @@ public class DefaultTranslationBundle implements TranslationBundle {
 
     @Override
     public Set<Message> register(Path source, Locale locale, FileFormat fileFormat) {
-        ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class).fileType(fileFormat);
-        Map<String, String> result = objectMapper.flat(source).entrySet()
-                .stream()
-                .collect(Collectors.toMap(Entry::getKey, value -> String.valueOf(value.getValue())));
-        return this.register(result, locale);
+        ObjectMapper objectMapper = this.objectMapper.fileType(fileFormat);
+        try {
+            Map<String, String> result = objectMapper.flat(source).entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(Entry::getKey, value -> String.valueOf(value.getValue())));
+            return this.register(result, locale);
+        }
+        catch (Exception e) {
+            this.exceptionHandler.handle(e);
+            return Set.of();
+        }
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,23 @@
 
 package test.org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.expression.AssignExpressionInterpreter;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
 
@@ -40,50 +40,50 @@ public class AssignExpressionInterpreterTests {
 
     public static Stream<Arguments> variableDefinitionScopes() {
         return Stream.of(
-                Arguments.of((Function<InterpreterAdapter, VariableScope>) InterpreterAdapter::visitingScope),
-                Arguments.of((Function<InterpreterAdapter, VariableScope>) InterpreterAdapter::global)
+                Arguments.of((Function<Interpreter, VariableScope>) Interpreter::visitingScope),
+                Arguments.of((Function<Interpreter, VariableScope>) Interpreter::global)
         );
     }
 
     @ParameterizedTest
     @MethodSource("variableDefinitionScopes")
-    void testAssignmentToDefinedVariable(Function<InterpreterAdapter, VariableScope> variableScopeFunction) {
-        Token variableName = Token.of(TokenType.IDENTIFIER)
+    void testAssignmentToDefinedVariable(Function<Interpreter, VariableScope> variableScopeFunction) {
+        Token variableName = Token.of(LiteralTokenType.IDENTIFIER)
                 .lexeme("test")
                 .build();
 
-        Token variableValue = Token.of(TokenType.STRING)
+        Token variableValue = Token.of(LiteralTokenType.STRING)
                 .literal("theValue")
                 .build();
 
         LiteralExpression literalExpression = new LiteralExpression(variableValue, variableValue.literal());
         AssignExpression expression = new AssignExpression(variableName, literalExpression);
-        ASTNodeInterpreter<Object, AssignExpression> interpreter = new AssignExpressionInterpreter();
+        ASTNodeInterpreter<Object, AssignExpression> expressionInterpreter = new AssignExpressionInterpreter();
 
-        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
-        variableScopeFunction.apply(adapter).define(variableName.lexeme(), "test");
+        Interpreter interpreter = InterpreterTestHelper.createInterpreter();
+        variableScopeFunction.apply(interpreter).define(variableName.lexeme(), "test");
 
-        Object interpreted = Assertions.assertDoesNotThrow(() -> interpreter.interpret(expression, adapter));
+        Object interpreted = Assertions.assertDoesNotThrow(() -> expressionInterpreter.interpret(expression, interpreter));
         Assertions.assertEquals(literalExpression.value(), interpreted);
     }
 
     @Test
     void testAssignmentToUndefinedVariable() {
-        Token variableName = Token.of(TokenType.IDENTIFIER)
+        Token variableName = Token.of(LiteralTokenType.IDENTIFIER)
                 .lexeme("test")
                 .build();
 
-        Token variableValue = Token.of(TokenType.STRING)
+        Token variableValue = Token.of(LiteralTokenType.STRING)
                 .literal("theValue")
                 .build();
 
         LiteralExpression literalExpression = new LiteralExpression(variableValue, variableValue.literal());
         AssignExpression expression = new AssignExpression(variableName, literalExpression);
-        ASTNodeInterpreter<Object, AssignExpression> interpreter = new AssignExpressionInterpreter();
+        ASTNodeInterpreter<Object, AssignExpression> expressionInterpreter = new AssignExpressionInterpreter();
 
-        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
+        Interpreter interpreter = InterpreterTestHelper.createInterpreter();
 
-        RuntimeError error = Assertions.assertThrows(RuntimeError.class, () -> interpreter.interpret(expression, adapter));
-        Assertions.assertSame(variableName, error.token());
+        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, () -> expressionInterpreter.interpret(expression, interpreter));
+        Assertions.assertSame(variableName, error.at());
     }
 }

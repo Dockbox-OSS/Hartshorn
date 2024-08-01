@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Collection;
-
-import org.dockbox.hartshorn.util.option.Attempt;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents a view of a constructor. This view can be used to invoke the constructor and to
@@ -29,10 +28,11 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> the type of the class that declares the constructor
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
-public interface ConstructorView<T> extends ExecutableElementView<T> {
+public interface ConstructorView<T> extends ExecutableElementView<T>, AnnotatedGenericTypeView<T> {
 
     /**
      * Returns the constructor represented by this view.
@@ -44,26 +44,26 @@ public interface ConstructorView<T> extends ExecutableElementView<T> {
     /**
      * Creates a new instance of the class that declares the constructor represented by this view.
      * The provided arguments are passed to the constructor. If the constructor is not accessible,
-     * it will be made accessible. If the constructor is not available, an empty {@link Attempt} is
-     * returned. If the constructor throws an exception, the exception is wrapped in an {@link Attempt}.
+     * it will be made accessible. If the constructor is not available, an empty {@link Option} is
+     * returned. If the constructor throws an exception, the exception is re-thrown.
      *
      * @param arguments the arguments to pass to the constructor
      * @return a new instance of the class that declares the constructor
      */
-    default Attempt<T, Throwable> create(Object... arguments) {
+    default T create(Object... arguments) throws Throwable {
         return this.create(Arrays.asList(arguments));
     }
 
     /**
      * Creates a new instance of the class that declares the constructor represented by this view.
      * The provided arguments are passed to the constructor. If the constructor is not accessible,
-     * it will be made accessible. If the constructor is not available, an empty {@link Attempt} is
-     * returned. If the constructor throws an exception, the exception is wrapped in an {@link Attempt}.
+     * it will be made accessible. If the constructor is not available, an empty {@link Option} is
+     * returned. If the constructor throws an exception, the exception is re-thrown.
      *
      * @param arguments the arguments to pass to the constructor
      * @return a new instance of the class that declares the constructor
      */
-    Attempt<T, Throwable> create(Collection<?> arguments);
+    T create(Collection<?> arguments) throws Throwable;
 
     /**
      * Returns the type of the class that declares the constructor represented by this view.

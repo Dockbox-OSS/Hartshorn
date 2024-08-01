@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,20 @@ package org.dockbox.hartshorn.config.properties;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.config.ConfigurationURIContextList;
+import org.dockbox.hartshorn.config.ObjectMappingException;
 
+/**
+ * TODO: #1062 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public abstract class PropertyAwareComponentPostProcessor extends ComponentPostProcessor {
 
-    protected void verifyPropertiesAvailable(ApplicationContext context, PropertyHolder propertyHolder) {
+    protected void verifyPropertiesAvailable(ApplicationContext context, PropertyHolder propertyHolder) throws ObjectMappingException {
         if (propertyHolder.properties().isEmpty()) {
-            ConfigurationURIContextList uriContextList = context.first(ConfigurationURIContextList.CONTEXT_KEY).get();
+            ConfigurationURIContextList uriContextList = context.firstContext(ConfigurationURIContextList.CONTEXT_KEY).get();
             URIConfigProcessor configProcessor = context.get(URIConfigProcessor.class);
             configProcessor.process(context, uriContextList.uris());
         }

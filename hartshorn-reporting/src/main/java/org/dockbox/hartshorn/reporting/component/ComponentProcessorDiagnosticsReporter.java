@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,26 @@ import org.dockbox.hartshorn.component.ComponentProvider;
 import org.dockbox.hartshorn.component.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
-import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
-public class ComponentProcessorDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ComponentProcessorReportingConfiguration>, CategorizedDiagnosticsReporter {
+/**
+ * A diagnostics reporter that reports all {@link ComponentPreProcessor pre-processors} and {@link
+ * ComponentPostProcessor post-processors} that are registered in the application context.
+ *
+ * <p>Pre-processors are only reported if the application context is a {@link ProcessableApplicationContext}, and
+ * post-processors are only reported if the application context has a {@link PostProcessingComponentProvider}.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+public class ComponentProcessorDiagnosticsReporter implements CategorizedDiagnosticsReporter {
 
     public static final String COMPONENT_PROCESSORS_CATEGORY = "componentProcessors";
 
-    private final ComponentProcessorReportingConfiguration configuration = new ComponentProcessorReportingConfiguration();
     private final ApplicationContext applicationContext;
 
     public ComponentProcessorDiagnosticsReporter(ApplicationContext applicationContext) {
@@ -52,25 +61,14 @@ public class ComponentProcessorDiagnosticsReporter implements ConfigurableDiagno
 
     private void reportPreProcessors(DiagnosticsPropertyCollector collector,
                                      ProcessableApplicationContext processableApplicationContext) {
-        MultiMap<Integer, ComponentPreProcessor> processors = processableApplicationContext.processors();
-        Reportable[] reporters = processors.allValues().stream()
-                .map(processor -> (Reportable) processorCollector -> {
-                    processorCollector.property("name").write(processor.getClass().getCanonicalName());
-                    processorCollector.property("order").write(processor.priority());
-                }).toArray(Reportable[]::new);
-
-        collector.property("pre").write(reporters);
+        MultiMap<Integer, ? extends ComponentProcessor> processors = processableApplicationContext.processors();
+        collector.property("pre").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 
     private void reportPostProcessors(DiagnosticsPropertyCollector collector,
                                       PostProcessingComponentProvider standardComponentProvider) {
-        MultiMap<Integer, ComponentPostProcessor> processors = standardComponentProvider.postProcessors();
-        collector.property("post").write(new ComponentProcessorsReportable(processors));
-    }
-
-    @Override
-    public ComponentProcessorReportingConfiguration configuration() {
-        return this.configuration;
+        MultiMap<Integer, ? extends ComponentProcessor> processors = standardComponentProvider.postProcessors();
+        collector.property("post").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.application.HartshornApplication;
-import org.dockbox.hartshorn.application.StandardApplicationContextConstructor;
+import org.dockbox.hartshorn.application.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.application.environment.ContextualApplicationEnvironment;
 import test.org.dockbox.hartshorn.ApplicationBatchingTest;
@@ -26,7 +26,7 @@ public class HartshornTestApplication {
 
     public static ApplicationContext createWithoutBasePackages() {
         return HartshornApplication.create(ApplicationBatchingTest.class, builder -> {
-            builder.constructor(StandardApplicationContextConstructor.create(constructor -> {
+            builder.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
                 constructor.includeBasePackages(false);
                 constructor.environment(ContextualApplicationEnvironment.create(ContextualApplicationEnvironment.Configurer::enableBatchMode));
             }));

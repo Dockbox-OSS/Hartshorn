@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,28 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
-import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
+import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SwitchCaseInterpreter implements ASTNodeInterpreter<Void, SwitchCase> {
 
     @Override
-    public Void interpret(SwitchCase node, InterpreterAdapter adapter) {
-        adapter.withNextScope(() -> {
+    public Void interpret(SwitchCase node, Interpreter interpreter) {
+        interpreter.withNextScope(() -> {
             try {
-                adapter.execute(node.body());
-            } catch (MoveKeyword moveKeyword) {
-                if (moveKeyword.moveType() != MoveKeyword.MoveType.BREAK) {
-                    throw new RuntimeException("Unexpected move keyword " + moveKeyword.moveType());
+                interpreter.execute(node.body());
+            } catch (FlowControlKeyword keyword) {
+                if (keyword.moveType() != FlowControlKeyword.MoveType.BREAK) {
+                    throw new RuntimeException("Unexpected move keyword " + keyword.moveType());
                 }
             }
         });

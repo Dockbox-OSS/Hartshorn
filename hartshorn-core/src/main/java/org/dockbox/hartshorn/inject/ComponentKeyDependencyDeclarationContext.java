@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,48 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.CompositeQualifier;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <T> ...
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class ComponentKeyDependencyDeclarationContext<T> implements DependencyDeclarationContext<T> {
 
     private final ComponentKey<T> key;
+    private final Provider<T> provider;
     private final TypeView<T> type;
 
-    public ComponentKeyDependencyDeclarationContext(Introspector introspector, ComponentKey<T> key) {
+    public ComponentKeyDependencyDeclarationContext(Introspector introspector, ComponentKey<T> key, Provider<T> provider) {
         this.key = key;
+        this.provider = provider;
         this.type = TypeUtils.adjustWildcards(introspector.introspect(key.parameterizedType()), TypeView.class);
+    }
+
+    public ComponentKey<T> key() {
+        return this.key;
+    }
+
+    public Provider<T> provider() {
+        return this.provider;
     }
 
     @Override
     public TypeView<T> type() {
         return this.type;
+    }
+
+    @Override
+    public CompositeQualifier qualifier() {
+        return this.key.qualifier();
     }
 
     @Override

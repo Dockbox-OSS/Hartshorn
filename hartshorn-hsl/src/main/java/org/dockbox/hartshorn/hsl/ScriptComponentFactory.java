@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,29 +20,65 @@ import java.util.List;
 import java.util.Map;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.Service;
-import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 
-@Service
-@RequiresActivator(UseExpressionValidation.class)
+/**
+ * The {@link ScriptComponentFactory} is a service that provides the necessary components to
+ * create and execute a script, which cannot be directly provided by the IoC container due to
+ * them requiring additional context or state.
+ *
+ * @see Lexer
+ * @see TokenParser
+ * @see Resolver
+ * @see Interpreter
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public interface ScriptComponentFactory {
 
-    Lexer lexer(String source);
+    /**
+     * Creates a new lexer instance for the given source and token registry.
+     *
+     * @param tokenRegistry the token registry to use
+     * @param source the source to tokenize
+     * @return a new lexer instance
+     */
+    Lexer lexer(TokenRegistry tokenRegistry, String source);
 
-    TokenParser parser(List<Token> tokens);
+    /**
+     * Creates a new token parser instance for the given token registry and tokens.
+     *
+     * @param tokenRegistry the token registry to use
+     * @param tokens the tokens to parse
+     * @return a new token parser instance
+     */
+    TokenParser parser(TokenRegistry tokenRegistry, List<Token> tokens);
 
+    /**
+     * Creates a new resolver instance for the given interpreter.
+     *
+     * @param interpreter the interpreter to use
+     * @return a new resolver instance
+     */
     Resolver resolver(Interpreter interpreter);
 
-    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ApplicationContext applicationContext);
-
-    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, ExecutionOptions options, ApplicationContext applicationContext);
-
+    /**
+     * Creates a new interpreter instance for the given result collector, modules, token registry and application context.
+     *
+     * @param resultCollector the result collector to use
+     * @param modules the modules to use
+     * @param tokenRegistry the token registry to use
+     * @param applicationContext the application context to use
+     * @return a new interpreter instance
+     */
+    Interpreter interpreter(ResultCollector resultCollector, Map<String, NativeModule> modules, TokenRegistry tokenRegistry, ApplicationContext applicationContext);
 }

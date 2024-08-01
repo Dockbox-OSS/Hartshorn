@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,18 @@ package org.dockbox.hartshorn.hsl.interpreter;
 
 import java.math.BigDecimal;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public final class InterpreterUtilities {
 
     public static boolean isTruthy(Object object) {
@@ -61,13 +69,13 @@ public final class InterpreterUtilities {
         if (operand instanceof Double) {
             return;
         }
-        throw new RuntimeError(operator, "Operand must be a number.");
+        throw new ScriptEvaluationError("Operand must be a number.", Phase.INTERPRETING, operator);
     }
 
     public static void checkNumberOperands(Token operator, Object left, Object right) {
         if (left instanceof Number && right instanceof Number) {
             return;
         }
-        throw new RuntimeError(operator, "Operands must the same type -> number.");
+        throw new ScriptEvaluationError("Operands must the same type -> number.", Phase.INTERPRETING, operator);
     }
 }

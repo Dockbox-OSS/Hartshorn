@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,10 @@ package org.dockbox.hartshorn.util;
  * serves as the common interface for all initializers in Hartshorn.
  *
  * @param <T> The type of object to initialize.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface Initializer<T> {
@@ -59,8 +63,9 @@ public interface Initializer<T> {
      * or otherwise pre-initialized objects.
      *
      * @param object The object to return.
-     * @return An initializer that will always return the given object.
      * @param <T> The type of object to initialize.
+     *
+     * @return An initializer that will always return the given object.
      */
     static <T> Initializer<T> of(T object) {
         return () -> object;

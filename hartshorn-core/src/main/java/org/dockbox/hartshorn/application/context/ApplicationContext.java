@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,7 @@ import org.dockbox.hartshorn.component.ScopeKey;
 import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.context.ApplicationAwareContext;
-import org.dockbox.hartshorn.logging.ApplicationLogger;
-import org.dockbox.hartshorn.logging.LogExclude;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.slf4j.Logger;
 
 /**
  * The primary context for an application. This context is responsible for providing the application
@@ -47,15 +44,13 @@ import org.slf4j.Logger;
  * its components. The implementation may choose to perform specific actions based on available
  * activators and properties.
  *
- * @since 0.4.0
+ * @since 0.4.11
  * @author Guus Lieben
  */
-@LogExclude
 public interface ApplicationContext extends
         HierarchicalComponentProvider,
         ApplicationPropertyHolder,
         ApplicationAwareContext,
-        ApplicationLogger,
         ExceptionHandler,
         ActivatorHolder,
         Scope,
@@ -65,7 +60,7 @@ public interface ApplicationContext extends
      * The scope key for the application context. This key is used to register the application context
      * as a global scope.
      */
-    ScopeKey SCOPE_KEY = DirectScopeKey.of(ApplicationContext.class);
+    ScopeKey APPLICATION_SCOPE = DirectScopeKey.of(ApplicationContext.class);
 
     /**
      * Registers a component processor with the application context. The processor will be invoked when
@@ -96,11 +91,6 @@ public interface ApplicationContext extends
      */
     ApplicationEnvironment environment();
 
-    @Override
-    default Logger log() {
-        return this.environment().log();
-    }
-
     /**
      * Indicates whether the application context is closed. A closed context cannot be used reliably to
      * access its components, as the components may have been removed from the context, or have been
@@ -112,7 +102,12 @@ public interface ApplicationContext extends
 
     @Override
     default ScopeKey installableScopeType() {
-        return SCOPE_KEY;
+        return APPLICATION_SCOPE;
+    }
+
+    @Override
+    default Scope scope() {
+        return this;
     }
 
     @Override

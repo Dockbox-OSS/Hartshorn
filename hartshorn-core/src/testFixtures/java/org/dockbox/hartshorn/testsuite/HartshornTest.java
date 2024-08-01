@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.dockbox.hartshorn.application.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.processing.ComponentProcessor;
 import org.dockbox.hartshorn.component.processing.ServiceActivator;
@@ -30,7 +31,7 @@ import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 
 /**
  * Annotation for test classes that should be run with the Hartshorn test suite. This will automatically
@@ -56,8 +57,8 @@ public @interface HartshornTest {
      * the test class or method. These will be added to the default set of {@link ComponentProcessor}s
      * used by the test suite, even if they are not found through prefix scanning.
      *
-     * @see org.dockbox.hartshorn.application.StandardApplicationContextConstructor.Configurer#componentPreProcessors(Customizer)
-     * @see org.dockbox.hartshorn.application.StandardApplicationContextConstructor.Configurer#componentPostProcessors(Customizer)
+     * @see StandardApplicationContextFactory.Configurer#componentPreProcessors(Customizer)
+     * @see StandardApplicationContextFactory.Configurer#componentPostProcessors(Customizer)
      */
     Class<? extends ComponentProcessor>[] processors() default  {};
 
@@ -66,7 +67,7 @@ public @interface HartshornTest {
      * for the test class or method. These will be added to the default set of packages scanned by the
      * test suite, even if they are not known to the chosen {@link #mainClass()}.
      *
-     * @see org.dockbox.hartshorn.application.StandardApplicationContextConstructor.Configurer#scanPackages(Customizer)
+     * @see StandardApplicationContextFactory.Configurer#scanPackages(Customizer)
      */
     String[] scanPackages() default {};
 
@@ -74,7 +75,7 @@ public @interface HartshornTest {
      * Whether to include the base package of the main class explicitly, or to only use the prefixes provided to
      * {@link #scanPackages()}. Defaults to {@code true}.
      *
-     * @see org.dockbox.hartshorn.application.StandardApplicationContextConstructor.Configurer#includeBasePackages(boolean)
+     * @see StandardApplicationContextFactory.Configurer#includeBasePackages(boolean)
      */
     boolean includeBasePackages() default true;
 

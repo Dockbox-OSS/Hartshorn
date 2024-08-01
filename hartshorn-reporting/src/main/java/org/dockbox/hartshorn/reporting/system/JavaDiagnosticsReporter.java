@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,21 @@ package org.dockbox.hartshorn.reporting.system;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 
+/**
+ * A {@link Reportable} that reports information about the Java runtime.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class JavaDiagnosticsReporter implements Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("version").write(System.getProperty("java.version"));
-        collector.property("vendor").write(vendorCollector -> {
-            vendorCollector.property("name").write(System.getProperty("java.vendor"));
-            vendorCollector.property("url").write(System.getProperty("java.vendor.url"));
+        collector.property("version").writeString(System.getProperty("java.version"));
+        collector.property("vendor").writeDelegate(vendorCollector -> {
+            vendorCollector.property("name").writeStrings(System.getProperty("java.vendor"));
+            vendorCollector.property("url").writeStrings(System.getProperty("java.vendor.url"));
         });
     }
 }

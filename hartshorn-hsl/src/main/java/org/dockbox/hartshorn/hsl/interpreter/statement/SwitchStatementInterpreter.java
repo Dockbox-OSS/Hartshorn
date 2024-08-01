@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,23 +19,30 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class SwitchStatementInterpreter implements ASTNodeInterpreter<Void, SwitchStatement> {
 
     @Override
-    public Void interpret(SwitchStatement node, InterpreterAdapter adapter) {
-        Object value = adapter.evaluate(node.expression());
+    public Void interpret(SwitchStatement node, Interpreter interpreter) {
+        Object value = interpreter.evaluate(node.expression());
         value = InterpreterUtilities.unwrap(value);
         for (SwitchCase switchCase : node.cases()) {
             if (InterpreterUtilities.isEqual(value, switchCase.expression().value())) {
-                adapter.execute(switchCase);
+                interpreter.execute(switchCase);
                 return null;
             }
         }
         if (node.defaultCase() != null) {
-            adapter.withNextScope(() -> adapter.execute(node.defaultCase()));
+            interpreter.withNextScope(() -> interpreter.execute(node.defaultCase()));
         }
         return null;
     }

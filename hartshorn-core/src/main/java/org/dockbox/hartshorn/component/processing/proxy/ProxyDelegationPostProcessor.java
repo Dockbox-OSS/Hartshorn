@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,27 @@ package org.dockbox.hartshorn.component.processing.proxy;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.component.processing.FunctionalComponentPostProcessor;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 
-public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponentPostProcessor {
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <P> ...
+ *
+ * @since 0.4.8
+ *
+ * @author Guus Lieben
+ */
+public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProcessor {
 
     protected abstract Class<P> parentTarget();
+
+    @Override
+    public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
+        return processingContext.permitsProxying();
+    }
 
     @Override
     public <T> void preConfigureComponent(ApplicationContext context, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
@@ -33,7 +46,7 @@ public abstract class ProxyDelegationPostProcessor<P> extends FunctionalComponen
             return;
         }
 
-        ProxyFactory<P> factory = processingContext.get(ComponentKey.of(ProxyFactory.class));
+        ProxyFactory<P> factory = processingContext.get(ProxyFactory.class);
         if (factory == null) {
             return;
         }

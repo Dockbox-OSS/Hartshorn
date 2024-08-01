@@ -16,7 +16,25 @@
 
 package org.dockbox.hartshorn.component.condition;
 
+/**
+ * A condition that may be used by a {@link ConditionMatcher} to determine whether a certain operation
+ * should be executed. Conditions are expected to be stateless, and may be reused for multiple matches.
+ *
+ * @see ConditionMatcher
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 @FunctionalInterface
 public interface Condition {
+
+    /**
+     * Returns a {@link ConditionResult} that describes whether the condition is matched.
+     *
+     * @param context the context in which the condition is matched
+     *
+     * @return a {@link ConditionResult} that describes whether the condition is matched
+     */
     ConditionResult matches(ConditionContext context);
 }

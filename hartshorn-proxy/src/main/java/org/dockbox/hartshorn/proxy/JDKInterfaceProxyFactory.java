@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.util.CollectionUtilities;
 import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.dockbox.hartshorn.util.option.Attempt;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -48,14 +47,14 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
     }
 
     @Override
-    public Attempt<T, Throwable> createNewProxy() throws ApplicationException {
+    public Option<T> createNewProxy() throws ApplicationException {
         return this.createProxy(interceptor -> this.type().isInterface()
                         ? this.interfaceProxy(interceptor)
                         : this.concreteOrAbstractProxy(interceptor));
     }
 
     @Override
-    public Attempt<T, Throwable> createNewProxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
+    public Option<T> createNewProxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
         if (args.length != constructor.getParameterCount()) {
             throw new ApplicationException("Invalid number of arguments for constructor " + constructor);
         }
@@ -75,15 +74,15 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @return The proxy
      * @throws ApplicationException When the proxy cannot be created
      */
-    protected Attempt<T, Throwable> createProxy(CheckedFunction<ProxyMethodInterceptor<T>, Attempt<T, Throwable>> instantiate) throws ApplicationException {
+    protected Option<T> createProxy(CheckedFunction<ProxyMethodInterceptor<T>, Option<T>> instantiate) throws ApplicationException {
         LazyProxyManager<T> manager = new LazyProxyManager<>(this);
 
-        this.contextContainer().contexts().forEach(manager::add);
-        this.contextContainer().namedContexts().forEach(manager::add);
+        this.contextContainer().contexts().forEach(manager::addContext);
+        this.contextContainer().namedContexts().forEach(manager::addContext);
 
         ProxyMethodInterceptor<T> interceptor = new ProxyAdvisorMethodInterceptor<>(manager, this.orchestrator());
 
-        Attempt<T, Throwable> proxy = instantiate.apply(interceptor);
+        Option<T> proxy = instantiate.apply(interceptor);
 
         proxy.peek(manager::proxy);
         return proxy;
@@ -117,7 +116,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @return The proxy
      * @throws ApplicationException When the proxy cannot be created
      */
-    protected Attempt<T, Throwable> concreteOrAbstractProxy(ProxyMethodInterceptor<T> interceptor) throws ApplicationException {
+    protected Option<T> concreteOrAbstractProxy(ProxyMethodInterceptor<T> interceptor) throws ApplicationException {
         return this.createClassProxy(interceptor, ProxyConstructorFunction::create);
     }
 
@@ -131,7 +130,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @return The proxy
      * @throws ApplicationException When the proxy cannot be created
      */
-    protected Attempt<T, Throwable> concreteOrAbstractProxy(ProxyMethodInterceptor<T> interceptor, Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
+    protected Option<T> concreteOrAbstractProxy(ProxyMethodInterceptor<T> interceptor, Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
         return this.createClassProxy(interceptor, enhancer -> enhancer.create(constructor, args));
     }
 
@@ -144,14 +143,17 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @return The proxy
      * @throws ApplicationException When the proxy cannot be created
      */
-    protected Attempt<T, Throwable> createClassProxy(ProxyMethodInterceptor<T> interceptor, CheckedFunction<ProxyConstructorFunction<T>, T> instantiate) throws ApplicationException {
+    protected Option<T> createClassProxy(ProxyMethodInterceptor<T> interceptor, CheckedFunction<ProxyConstructorFunction<T>, T> instantiate) throws ApplicationException {
         ProxyConstructorFunction<T> enhancer = this.concreteOrAbstractEnhancer(interceptor);
         try {
             T proxy = instantiate.apply(enhancer);
-            this.advisors().type().delegate().peek(delegate -> this.restoreFields(delegate, proxy));
-            return Attempt.of(proxy);
+            Option<T> delegate = this.advisors().type().delegate();
+            if (delegate.present()) {
+                this.restoreFields(delegate.get(), proxy);
+            }
+            return Option.of(proxy);
         }
-        catch (RuntimeException e) {
+        catch (Throwable e) {
             throw new ApplicationException(e);
         }
     }
@@ -178,12 +180,12 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @param interceptor The interceptor to use
      * @return The proxy
      */
-    protected Attempt<T, Throwable> interfaceProxy(ProxyMethodInterceptor<T> interceptor) {
+    protected Option<T> interfaceProxy(ProxyMethodInterceptor<T> interceptor) {
         Object proxy = java.lang.reflect.Proxy.newProxyInstance(
                 this.defaultClassLoader(),
                 this.proxyInterfaces(true),
                 this.invocationHandler(interceptor));
-        return Attempt.of(this.type().cast(proxy));
+        return Option.of(this.type().cast(proxy));
     }
 
     /**
@@ -193,7 +195,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      * @param existing The existing delegate
      * @param proxy The proxy
      */
-    protected void restoreFields(T existing, T proxy) {
+    protected void restoreFields(T existing, T proxy) throws Throwable {
         TypeView<T> typeView = this.advisors().type().delegate()
                 .map(this.orchestrator().introspector()::introspect)
                 .orElseGet(() -> this.orchestrator().introspector().introspect(this.type()));

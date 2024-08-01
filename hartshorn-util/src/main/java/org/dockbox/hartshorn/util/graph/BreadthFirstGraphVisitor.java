@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,21 @@ package org.dockbox.hartshorn.util.graph;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * A {@link GraphIterator} that iterates over a {@link Graph} in a breadth-first manner. This means
+ * that all nodes on the same level are visited before any nodes on the next level are visited.
+ *
+ * <p>This iterator will not visit nodes that have parents that have not been visited yet. This
+ * means that if a node has a parent that has not been visited yet, the node will not be visited
+ * until all of its parents have been visited.
+ *
+ * @param <T> the type of the value of the node
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+@FunctionalInterface
 public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
 
     @Override
@@ -35,6 +50,14 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
         return visited;
     }
 
+    /**
+     * Visits a single node. If the node has not been visited yet, it will be visited through
+     * {@link #visitRow(Set, Set)}.
+     *
+     * @param visited the set of visited nodes
+     * @param node the node to visit
+     * @throws GraphException when an error occurs while visiting the node
+     */
     default void visitSingle(Set<GraphNode<T>> visited, GraphNode<T> node) throws GraphException {
         if (visited.add(node)) {
             this.visitRow(visited, Set.of(node));
@@ -51,15 +74,31 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
         return nextRow;
     }
 
-    private Set<GraphNode<T>> filterNodesWithUnresolvedParents(Set<GraphNode<T>> visited, Set<GraphNode<T>> nodes) {
+    private Set<GraphNode<T>> filterNodesWithUnresolvedParents(Set<GraphNode<T>> visited, Set<GraphNode<T>> nodes) throws GraphException {
         Set<GraphNode<T>> currentRow = new HashSet<>(nodes);
         // Filter out nodes that have parents that haven't been visited yet, as they can't be visited yet
         // until their parents have been visited first.
         for (GraphNode<T> node : nodes) {
-            if (node instanceof ContainableGraphNode<T> containable && !visited.containsAll(containable.parents())) {
+            if (!this.hasVisitedParents(visited, nodes, node)) {
                 currentRow.remove(node);
             }
         }
         return currentRow;
+    }
+
+    /**
+     * Indicates whether all parent nodes of the given node have been visited or can reasonably be expected to be visited. This
+     * method is used to determine whether a node can be visited or not.
+     *
+     * @param visited the set of visited nodes
+     * @param allNodes the set of all nodes
+     * @param node the node to check
+     * @return {@code true} if all parent nodes have been visited, {@code false} otherwise
+     */
+    default boolean hasVisitedParents(Set<GraphNode<T>> visited, Set<GraphNode<T>> allNodes, GraphNode<T> node) throws GraphException {
+        if (node instanceof ContainableGraphNode<T> containable) {
+            return visited.containsAll(containable.parents());
+        }
+        return true;
     }
 }

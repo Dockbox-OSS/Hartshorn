@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,27 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.config.annotations.SerializationSource;
-import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
-import org.dockbox.hartshorn.component.processing.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.option.Option;
-
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
-public abstract class AbstractSerializerPostProcessor<A extends Annotation> extends ServiceAnnotatedMethodInterceptorPostProcessor<A> {
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
+import org.dockbox.hartshorn.component.processing.proxy.MethodProxyContext;
+import org.dockbox.hartshorn.component.processing.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.config.annotations.SerializationSource;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.option.Option;
 
-    private static final ComponentKey<SerializationSourceConverter> CONVERTER_KEY = ComponentKey.of(SerializationSourceConverter.class);
+/**
+ * TODO: #1062 Add documentation
+ *
+ * @param <A> ...
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
+public abstract class AbstractSerializerPostProcessor<A extends Annotation> extends ServiceAnnotatedMethodInterceptorPostProcessor<A> {
 
     @Override
     public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
@@ -39,8 +45,8 @@ public abstract class AbstractSerializerPostProcessor<A extends Annotation> exte
     }
 
     protected <T> SerializationSourceConverter findConverter(ApplicationContext context, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
-        if (processingContext.containsKey(CONVERTER_KEY)) {
-            return processingContext.get(CONVERTER_KEY);
+        if (processingContext.containsKey(SerializationSourceConverter.class)) {
+            return processingContext.get(SerializationSourceConverter.class);
         }
 
         MethodView<T, ?> method = methodContext.method();
@@ -50,7 +56,7 @@ public abstract class AbstractSerializerPostProcessor<A extends Annotation> exte
                 .orNull();
 
         if (converter != null) {
-            processingContext.put(CONVERTER_KEY, converter);
+            processingContext.put(SerializationSourceConverter.class, converter);
         }
         return converter;
     }

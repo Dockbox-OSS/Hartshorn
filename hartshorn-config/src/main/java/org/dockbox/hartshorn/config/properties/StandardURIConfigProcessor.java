@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,32 @@
 
 package org.dockbox.hartshorn.config.properties;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.config.ConfigurationURIContext;
-import org.dockbox.hartshorn.config.FileFormat;
-import org.dockbox.hartshorn.config.FileFormats;
-import org.dockbox.hartshorn.config.ObjectMapper;
-import org.dockbox.hartshorn.util.TypeUtils;
-
 import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.inject.Singleton;
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.config.ConfigurationURIContext;
+import org.dockbox.hartshorn.config.FileFormat;
+import org.dockbox.hartshorn.config.FileFormats;
+import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.config.ObjectMappingException;
+import org.dockbox.hartshorn.util.GenericType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Singleton
+/**
+ * TODO: #1062 Add documentation
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public class StandardURIConfigProcessor implements URIConfigProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StandardURIConfigProcessor.class);
 
     @Override
     public void process(ApplicationContext context, Set<ConfigurationURIContext> contexts) {
@@ -43,17 +52,22 @@ public class StandardURIConfigProcessor implements URIConfigProcessor {
             FileFormat format = this.lookupFileFormat(uri, source);
 
             if (format == null) {
-                context.log().error("Unknown file format: " + source + ", declared by " + uriContext.key().type().getSimpleName());
+                LOG.error("Unknown file format: " + source + ", declared by " + uriContext.key().type().getSimpleName());
                 return;
             }
 
-            Map<String, Object> cache = TypeUtils.adjustWildcards(context.get(ObjectMapper.class)
-                    .fileType(format)
-                    .read(uri, Map.class)
-                    .orElseGet(HashMap::new), Map.class);
+            try {
+                Map<String, Object> cache = context.get(ObjectMapper.class)
+                        .fileType(format)
+                        .read(uri, new GenericType<Map<String, Object>>() {})
+                        .orElseGet(HashMap::new);
 
-            context.log().debug("Located " + cache.size() + " properties in " + uri.getPath());
-            context.get(PropertyHolder.class).set(cache);
+                LOG.debug("Located " + cache.size() + " properties in " + uri.getPath());
+                context.get(PropertyHolder.class).set(cache);
+            }
+            catch (ObjectMappingException e) {
+                context.handle("Failed to read properties from " + uri.getPath(), e);
+            }
         }
     }
 

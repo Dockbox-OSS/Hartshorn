@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.application;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.util.AbstractSingleElementContext;
 import org.dockbox.hartshorn.util.SingleElementContext;
 
@@ -26,12 +27,13 @@ import org.dockbox.hartshorn.util.SingleElementContext;
  *
  * @param <I> The type of the input object.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ApplicationInitializerContext<I> extends AbstractSingleElementContext<I> {
 
-    public ApplicationInitializerContext(I input) {
+    public ApplicationInitializerContext(@NonNull I input) {
         super(input);
     }
 
@@ -41,12 +43,12 @@ public class ApplicationInitializerContext<I> extends AbstractSingleElementConte
      * @return The current context.
      */
     public ApplicationInitializerContext<I> initializeInitial() {
-        this.add(new DefaultBindingConfigurerContext());
+        this.addContext(new DefaultBindingConfigurerContext());
         return this;
     }
 
     @Override
-    protected <T> SingleElementContext<T> clone(T input) {
+    protected <T> SingleElementContext<T> clone(@NonNull T input) {
         return new ApplicationInitializerContext<>(input);
     }
 }

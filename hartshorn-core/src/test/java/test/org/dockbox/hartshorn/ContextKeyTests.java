@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,9 @@
 package test.org.dockbox.hartshorn;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.context.ContextKey;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.testsuite.HartshornTestApplication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,26 +28,26 @@ public class ContextKeyTests {
 
     @Test
     void testContextKeyNameIsNullIfUndefined() {
-        ContextKey<Context> undefinedNameKey = ContextKey.builder(Context.class).build();
+        ContextIdentity<ContextView> undefinedNameKey = ContextKey.builder(ContextView.class).build();
         Assertions.assertNull(undefinedNameKey.name());
     }
 
     @Test
     void testContextKeyNameIsNullIfEmpty() {
-        ContextKey<Context> emptyNameKey = ContextKey.builder(Context.class).name("").build();
+        ContextIdentity<ContextView> emptyNameKey = ContextKey.builder(ContextView.class).name("").build();
         Assertions.assertNull(emptyNameKey.name());
     }
 
     @Test
     void testContextKeyNameIsNullIfNull() {
+        ContextIdentity<ContextView> nullNameKey = Assertions.assertDoesNotThrow(() -> ContextKey.builder(ContextView.class).name(null).build());
         // Ensure no NPE is thrown
-        ContextKey<Context> nullNameKey = Assertions.assertDoesNotThrow(() -> ContextKey.builder(Context.class).name(null).build());
         Assertions.assertNull(nullNameKey.name());
     }
 
     @Test
     void testRequiresApplicationContextIsTrueIfFunction() {
-        ContextKey<Context> key = ContextKey.builder(Context.class)
+        ContextIdentity<ContextView> key = ContextKey.builder(ContextView.class)
                 .fallback(applicationContext -> null)
                 .build();
         Assertions.assertTrue(key.requiresApplicationContext());
@@ -54,7 +55,7 @@ public class ContextKeyTests {
 
     @Test
     void testRequiresApplicationContextIsFalseIfSupplier() {
-        ContextKey<Context> key = ContextKey.builder(Context.class)
+        ContextIdentity<ContextView> key = ContextKey.builder(ContextView.class)
                 .fallback(() -> null)
                 .build();
         Assertions.assertFalse(key.requiresApplicationContext());
@@ -62,7 +63,7 @@ public class ContextKeyTests {
 
     @Test
     void testContextDoesNotYieldErrorIfFunctionFallbackProvidesNull() {
-        ContextKey<Context> key = ContextKey.builder(Context.class)
+        ContextKey<ContextView> key = ContextKey.builder(ContextView.class)
                 .fallback(applicationContext -> null)
                 .build();
 
@@ -72,7 +73,7 @@ public class ContextKeyTests {
 
     @Test
     void testContextDoesNotYieldErrorIfSupplierFallbackProvidesNull() {
-        ContextKey<Context> key = ContextKey.builder(Context.class)
+        ContextKey<ContextView> key = ContextKey.builder(ContextView.class)
                 .fallback(() -> null)
                 .build();
 
@@ -82,14 +83,14 @@ public class ContextKeyTests {
 
     @Test
     void testCreateYieldsExceptionIfNoFallbackAndApplication() {
-        ContextKey<Context> key = ContextKey.builder(Context.class).build();
+        ContextKey<ContextView> key = ContextKey.builder(ContextView.class).build();
         Assertions.assertThrows(IllegalStateException.class, () -> key.create(null));
     }
 
     @Test
     void testMutableKeyCreatesClone() {
-        ContextKey<Context> key = ContextKey.builder(Context.class).build();
-        ContextKey<Context> mutableKey = key.mutable().name("mutable").build();
+        ContextKey<ContextView> key = ContextKey.builder(ContextView.class).build();
+        ContextIdentity<ContextView> mutableKey = key.mutable().name("mutable").build();
         Assertions.assertNotSame(key, mutableKey);
         Assertions.assertNull(key.name());
         Assertions.assertEquals("mutable", mutableKey.name());

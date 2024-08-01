@@ -6,17 +6,25 @@
     <groupId>org.dockbox.hartshorn</groupId>
     <artifactId>hartshorn</artifactId>
     <packaging>pom</packaging>
-    <version>0.5.0</version>
+    <version>${revision}</version>
 
     <name>Hartshorn Framework</name>
-    <description>Hartshorn is a modern JVM-based full stack Java framework</description>
+    <description>Hartshorn Framework</description>
     <url>https://hartshorn.dockbox.org/</url>
+    <inceptionYear>2019</inceptionYear>
 
     <organization>
         <name>Dockbox OSS</name>
         <url>https://dockbox.org/</url>
     </organization>
-    <inceptionYear>2019</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <scm>
         <url>https://github.com/Dockbox-OSS/Hartshorn</url>
@@ -27,18 +35,10 @@
     <developers>
         <developer>
             <name>Guus Lieben</name>
-            <email>guuslieben@xendox.com</email>
-            <url>https://guuslieben.nl/</url>
+            <email>guuslieben@dockbox.org</email>
+            <url>https://github.com/GuusLieben</url>
             <organization>Dockbox OSS</organization>
             <organizationUrl>https://dockbox.org/</organizationUrl>
-        </developer>
-        <developer>
-            <name>Josh Jeffers</name>
-            <url>https://www.pumbas.net/</url>
-        </developer>
-        <developer>
-            <name>Simon Bolduc</name>
-            <url>https://github.com/simbolduc</url>
         </developer>
     </developers>
 
@@ -48,25 +48,47 @@
     </issueManagement>
 
     <properties>
+        <!-- Project version, inherited by all submodules -->
+        <revision>0.6.0</revision>
+        <hartshorn.version>${revision}</hartshorn.version>
+
+        <!-- Project properties, inherited by all submodules -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
 
-        <hartshorn.version>0.5.0</hartshorn.version>
+        <!--
+        Feature toggles for CI, defaults to opt-out behavior.
+        Use the 'ci' profile to disable by default, making this opt-in instead.
+        -->
         <checkstyle.skip>false</checkstyle.skip>
         <javadoc.skip>false</javadoc.skip>
         <owasp.skip>false</owasp.skip>
         <jacoco.skip>false</jacoco.skip>
         <coverage.skip>false</coverage.skip>
-    </properties>
 
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-            <comments>A business-friendly OSS license</comments>
-        </license>
-    </licenses>
+        <!-- Language versions, also inherited by BOM -->
+        <groovy.version>4.0.18</groovy.version>
+        <kotlin.version>2.0.0</kotlin.version>
+        <scala.version>3.3.1</scala.version>
+
+        <!-- Maven plugin versions, in alphabetical order -->
+        <plugin.buildhelper.version>3.6.0</plugin.buildhelper.version>
+        <plugin.compiler.version>3.13.0</plugin.compiler.version>
+        <plugin.checkstyle.version>3.4.0</plugin.checkstyle.version>
+        <plugin.deploy.version>3.1.2</plugin.deploy.version>
+        <plugin.gpg.version>3.2.4</plugin.gpg.version>
+        <plugin.versions.version>2.17.1</plugin.versions.version>
+        <plugin.groovy.version>2.1.1</plugin.groovy.version>
+        <plugin.jacoco.version>0.8.12</plugin.jacoco.version>
+        <plugin.jar.version>3.4.2</plugin.jar.version>
+        <plugin.javadoc.version>3.8.0</plugin.javadoc.version>
+        <plugin.kotlin.version>${kotlin.version}</plugin.kotlin.version>
+        <plugin.license.version>4.5</plugin.license.version>
+        <plugin.owasp.version>10.0.3</plugin.owasp.version>
+        <plugin.scala.version>4.9.2</plugin.scala.version>
+        <plugin.source.version>3.3.1</plugin.source.version>
+        <plugin.staging.version>1.7.0</plugin.staging.version>
+    </properties>
 
     <profiles>
         <profile>
@@ -76,12 +98,12 @@
             </activation>
 
             <modules>
+                <module>hartshorn-assembly/pom.staging.xml</module>
                 <module>hartshorn-bom</module>
                 <module>hartshorn-assembly/parent/pom.parent.xml</module>
                 <module>hartshorn-util</module>
-                <module>hartshorn-discovery</module>
+                <module>hartshorn-spi</module>
                 <module>hartshorn-proxy</module>
-                <module>hartshorn-proxy-cglib</module>
                 <module>hartshorn-proxy-javassist</module>
                 <module>hartshorn-introspect</module>
                 <module>hartshorn-introspect-reflection</module>
@@ -91,7 +113,6 @@
                 <module>hartshorn-config</module>
                 <module>hartshorn-config-jackson</module>
                 <module>hartshorn-i18n</module>
-                <module>hartshorn-commands</module>
                 <module>hartshorn-assembly/pom.assembly.xml</module>
             </modules>
         </profile>
@@ -108,14 +129,12 @@
         </profile>
         <profile>
             <id>staging</id>
-
             <build>
                 <plugins>
                     <!-- Distribution staging -->
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
@@ -138,12 +157,97 @@
     </profiles>
 
     <build>
+        <pluginManagement>
+            <!-- Plugin management, in alphabetical order of version property -->
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${plugin.buildhelper.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>${plugin.versions.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${plugin.compiler.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${plugin.checkstyle.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${plugin.deploy.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${plugin.gpg.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>groovy-maven-plugin</artifactId>
+                    <version>${plugin.groovy.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${plugin.jacoco.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${plugin.jar.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${plugin.javadoc.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <version>${plugin.kotlin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${plugin.license.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>${plugin.owasp.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <version>${plugin.scala.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${plugin.source.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${plugin.staging.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <!-- License headers -->
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>4.2</version>
                 <configuration>
                     <headerDefinitions>
                         <headerDefinition>hartshorn-assembly/licenses/JavaBlockStyleHeader.xml</headerDefinition>
@@ -168,8 +272,7 @@
                     <dependency>
                         <groupId>com.mycila</groupId>
                         <artifactId>license-maven-plugin-git</artifactId>
-                        <!-- make sure you use the same version as license-maven-plugin -->
-                        <version>4.2</version>
+                        <version>${plugin.license.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -178,7 +281,6 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>8.4.0</version>
                 <configuration>
                     <skip>${owasp.skip}</skip>
                     <failBuildOnCVSS>1</failBuildOnCVSS>
@@ -200,8 +302,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.0</version>
                 <configuration>
+                    <javadocDirectory>${maven.multiModuleProjectDirectory}/hartshorn-assembly/javadoc</javadocDirectory>
+                    <addStylesheets>
+                            <stylesheetfile>overrides.css</stylesheetfile>
+                    </addStylesheets>
                     <skip>${javadoc.skip}</skip>
                     <show>package</show>
                     <show>protected</show>
@@ -232,6 +337,12 @@
                         </goals>
                         <phase>site</phase>
                     </execution>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
 
@@ -239,7 +350,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.3.0</version>
                 <configuration>
                     <skip>${checkstyle.skip}</skip>
                     <configLocation>src/checkstyle/checkstyle.xml</configLocation>
@@ -248,7 +358,7 @@
                     <failOnViolation>true</failOnViolation>
                     <violationSeverity>warning</violationSeverity>
                     <linkXRef>false</linkXRef>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <includeTestSourceDirectory>false</includeTestSourceDirectory>
                     <configLocation>hartshorn-assembly/checkstyle/checkstyle.xml</configLocation>
                     <suppressionsLocation>hartshorn-assembly/checkstyle/suppressions.xml</suppressionsLocation>
                 </configuration>
@@ -263,12 +373,29 @@
                 </executions>
             </plugin>
 
+            <!-- Deployment configuration -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.1.1</version>
                 <configuration>
                     <!-- Skip root pom, re-enabled in hartshorn-assembly/pom.staging.xml -->
                     <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <!-- Dependency version upgrades -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <configuration>
+                    <ignoredVersions>.*[-_\.](alpha|Alpha|ALPHA|b|beta|Beta|BETA|rc|RC|M|MR|EA)[-_\.]?[0-9]*</ignoredVersions>
+                    <generateBackupPoms>false</generateBackupPoms>
+
+                    <!--
+                    Exclude Kotlin plugin version from being updated, as this should always reference the kotlin.version property
+                    instead of being directly updated by the versions plugin.
+                    -->
+                    <excludeProperties>plugin.kotlin.version</excludeProperties>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import org.dockbox.hartshorn.hsl.ast.MoveKeyword;
+import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayLiteralExpression;
@@ -100,136 +100,139 @@ import org.dockbox.hartshorn.hsl.interpreter.statement.SwitchStatementInterprete
 import org.dockbox.hartshorn.hsl.interpreter.statement.TestStatementInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.statement.VariableStatementInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.statement.WhileStatementInterpreter;
-import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
-import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
-public record DelegatingInterpreterVisitor(InterpreterAdapter adapter) implements
-        ExpressionVisitor<Object>,
-        StatementVisitor<Void> {
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
+public record DelegatingInterpreterVisitor(Interpreter interpreter) implements InterpreterVisitor {
 
     @Override
-    public Object visit(BinaryExpression expr) {
-        return new BinaryExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(BinaryExpression expression) {
+        return new BinaryExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(RangeExpression expr) {
-        return new RangeExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(RangeExpression expression) {
+        return new RangeExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(GroupingExpression expr) {
-        return this.adapter.evaluate(expr.expression());
+    public Object visit(GroupingExpression expression) {
+        return this.interpreter.evaluate(expression.expression());
     }
 
     @Override
-    public Object visit(LiteralExpression expr) {
-        return expr.value();
+    public Object visit(LiteralExpression expression) {
+        return expression.value();
     }
 
     @Override
-    public Object visit(AssignExpression expr) {
-        return new AssignExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(AssignExpression expression) {
+        return new AssignExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(LogicalAssignExpression expr) {
-        return new LogicalAssignExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(LogicalAssignExpression expression) {
+        return new LogicalAssignExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(UnaryExpression expr) {
-        return new UnaryExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(UnaryExpression expression) {
+        return new UnaryExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(PostfixExpression expr) {
-        return new PostfixExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(PostfixExpression expression) {
+        return new PostfixExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(LogicalExpression expr) {
-        return new LogicalExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(LogicalExpression expression) {
+        return new LogicalExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(BitwiseExpression expr) {
-        return new BitwiseExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(BitwiseExpression expression) {
+        return new BitwiseExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(ElvisExpression expr) {
-        return new ElvisExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(ElvisExpression expression) {
+        return new ElvisExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(TernaryExpression expr) {
-        return new TernaryExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(TernaryExpression expression) {
+        return new TernaryExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(ArraySetExpression expr) {
-        return new ArraySetExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(ArraySetExpression expression) {
+        return new ArraySetExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(ArrayGetExpression expr) {
-        return new ArrayGetExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(ArrayGetExpression expression) {
+        return new ArrayGetExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(ArrayLiteralExpression expr) {
-        return new ArrayLiteralExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(ArrayLiteralExpression expression) {
+        return new ArrayLiteralExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(ArrayComprehensionExpression expr) {
-        return new ArrayComprehensionExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(ArrayComprehensionExpression expression) {
+        return new ArrayComprehensionExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(PrefixExpression expr) {
-        return new PrefixExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(PrefixExpression expression) {
+        return new PrefixExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(InfixExpression expr) {
-        return new InfixExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(InfixExpression expression) {
+        return new InfixExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(FunctionCallExpression expr) {
-        return new FunctionCallExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(FunctionCallExpression expression) {
+        return new FunctionCallExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(GetExpression expr) {
-        return new GetExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(GetExpression expression) {
+        return new GetExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(SetExpression expr) {
-        return new SetExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(SetExpression expression) {
+        return new SetExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
-    public Object visit(ThisExpression expr) {
-        return this.adapter.lookUpVariable(expr.keyword(), expr);
+    public Object visit(ThisExpression expression) {
+        return this.interpreter.lookUpVariable(expression.keyword(), expression);
     }
 
     @Override
-    public Object visit(VariableExpression expr) {
-        return this.adapter.lookUpVariable(expr.name(), expr);
+    public Object visit(VariableExpression expression) {
+        return this.interpreter.lookUpVariable(expression.name(), expression);
     }
 
     @Override
-    public Object visit(SuperExpression expr) {
-        return new SuperExpressionInterpreter().interpret(expr, this.adapter);
+    public Object visit(SuperExpression expression) {
+        return new SuperExpressionInterpreter().interpret(expression, this.interpreter);
     }
 
     @Override
     public Void visit(ExpressionStatement statement) {
-        this.adapter.evaluate(statement.expression());
+        this.interpreter.evaluate(statement.expression());
         return null;
     }
 
@@ -240,107 +243,107 @@ public record DelegatingInterpreterVisitor(InterpreterAdapter adapter) implement
 
     @Override
     public Void visit(BlockStatement statement) {
-        this.adapter.execute(statement.statements(), new VariableScope(this.adapter.visitingScope()));
+        this.interpreter.execute(statement.statements(), new VariableScope(this.interpreter.visitingScope()));
         return null;
     }
 
     @Override
     public Void visit(IfStatement statement) {
-        return new IfStatementInterpreter().interpret(statement, this.adapter);
+        return new IfStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(WhileStatement statement) {
-        return new WhileStatementInterpreter().interpret(statement, this.adapter);
+        return new WhileStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(DoWhileStatement statement) {
-        return new DoWhileStatementInterpreter().interpret(statement, this.adapter);
+        return new DoWhileStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(ForStatement statement) {
-        return new ForStatementInterpreter().interpret(statement, this.adapter);
+        return new ForStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(ForEachStatement statement) {
-        return new ForEachStatementInterpreter().interpret(statement, this.adapter);
+        return new ForEachStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(RepeatStatement statement) {
-        return new RepeatStatementInterpreter().interpret(statement, this.adapter);
+        return new RepeatStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(VariableStatement statement) {
-        return new VariableStatementInterpreter().interpret(statement, this.adapter);
+        return new VariableStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(ReturnStatement statement) {
-        return new ReturnStatementInterpreter().interpret(statement, this.adapter);
+        return new ReturnStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(ClassStatement statement) {
-        return new ClassStatementInterpreter().interpret(statement, this.adapter);
+        return new ClassStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(NativeFunctionStatement statement) {
-        return new NativeFunctionStatementInterpreter().interpret(statement, this.adapter);
+        return new NativeFunctionStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(TestStatement statement) {
-        if (!this.adapter.interpreter().executionOptions().enableAssertions()) {
+        if (!this.interpreter.executionOptions().enableAssertions()) {
             return null;
         }
         else {
-            return new TestStatementInterpreter().interpret(statement, this.adapter);
+            return new TestStatementInterpreter().interpret(statement, this.interpreter);
         }
     }
 
     @Override
     public Void visit(ModuleStatement statement) {
-        return new ModuleStatementInterpreter().interpret(statement, this.adapter);
+        return new ModuleStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(BreakStatement statement) {
-        throw new MoveKeyword(MoveKeyword.MoveType.BREAK);
+        throw new FlowControlKeyword(FlowControlKeyword.MoveType.BREAK);
     }
 
     @Override
     public Void visit(ContinueStatement statement) {
-        throw new MoveKeyword(MoveKeyword.MoveType.CONTINUE);
+        throw new FlowControlKeyword(FlowControlKeyword.MoveType.CONTINUE);
     }
 
     @Override
     public Void visit(FunctionStatement statement) {
-        return new FunctionStatementInterpreter().interpret(statement, this.adapter);
+        return new FunctionStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(FieldStatement statement) {
-        return new FieldStatementInterpreter().interpret(statement, this.adapter);
+        return new FieldStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(ConstructorStatement statement) {
-        return new ConstructorStatementInterpreter().interpret(statement, this.adapter);
+        return new ConstructorStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(SwitchStatement statement) {
-        return new SwitchStatementInterpreter().interpret(statement, this.adapter);
+        return new SwitchStatementInterpreter().interpret(statement, this.interpreter);
     }
 
     @Override
     public Void visit(SwitchCase statement) {
-        return new SwitchCaseInterpreter().interpret(statement, this.adapter);
+        return new SwitchCaseInterpreter().interpret(statement, this.interpreter);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.application.environment;
 
 import org.dockbox.hartshorn.application.Hartshorn;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.resources.Resources;
-import org.dockbox.hartshorn.util.option.Attempt;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,8 +35,9 @@ import java.util.stream.Collectors;
  * The default implementation of {@link ClasspathResourceLocator}. This implementation will copy the resource to a temporary
  * location and return the path to the temporary location.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLocator {
 
@@ -47,31 +48,39 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
     }
 
     @Override
-    public Attempt<Path, IOException> resource(String name) {
-        return Attempt.of(() -> Resources.getResourceAsFile(name), IOException.class).map(File::toPath);
+    public Option<Path> resource(String name) throws IOException {
+        File file = Resources.getResourceAsFile(name);
+        if(file.exists()) {
+            return Option.of(file.toPath());
+        }
+        return Option.empty();
     }
 
     @Override
     public Set<Path> resources(String name) {
-        try {
-            String normalizedPath = name.replaceAll("\\\\", "/");
-            int lastIndex = normalizedPath.lastIndexOf("/");
-            String path = lastIndex == -1 ? "" : normalizedPath.substring(0, lastIndex + 1);
-            String fileName = lastIndex == -1 ? normalizedPath : normalizedPath.substring(lastIndex + 1);
+        String normalizedPath = name.replaceAll("\\\\", "/");
+        int lastIndex = normalizedPath.lastIndexOf("/");
+        String path = lastIndex == -1 ? "" : normalizedPath.substring(0, lastIndex + 1);
+        String fileName = lastIndex == -1 ? normalizedPath : normalizedPath.substring(lastIndex + 1);
 
-            Set<File> files = new HashSet<>();
-            Set<File> resources = Resources.getResourcesAsFiles(path);
-            for (File parent : resources) {
-                File[] filteredResources = parent.listFiles((dir, file) -> file.startsWith(fileName));
-                if (filteredResources != null) {
-                    files.addAll(Arrays.asList(filteredResources));
-                }
-            }
-            return files.stream().map(File::toPath).collect(Collectors.toUnmodifiableSet());
+        Set<File> files = new HashSet<>();
+        Set<File> resources;
+
+        try {
+            resources = Resources.getResourcesAsFiles(path);
         }
         catch (NullPointerException | IOException e) {
             return new HashSet<>();
         }
+
+        for (File parent : resources) {
+            File[] filteredResources = parent.listFiles((dir, file) -> file.startsWith(fileName));
+            if(filteredResources != null) {
+                files.addAll(Arrays.asList(filteredResources));
+            }
+        }
+
+        return files.stream().map(File::toPath).collect(Collectors.toUnmodifiableSet());
     }
 
     @Override

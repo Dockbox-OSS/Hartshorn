@@ -20,10 +20,10 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArraySetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.expression.ArraySetExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,21 +36,21 @@ public class ArraySetExpressionInterpreterTests {
         Object[] realArray = { "test" };
         int targetIndex = 0;
 
-        Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
+        Token indexToken = Token.of(LiteralTokenType.NUMBER).literal(targetIndex).build();
         LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
-        Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
+        Token arrayIdentifier = Token.of(LiteralTokenType.IDENTIFIER).lexeme("test").build();
         Array hslArray = new Array(realArray);
-        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
-        adapter.visitingScope().define(arrayIdentifier.lexeme(), hslArray);
+        Interpreter interpreter = InterpreterTestHelper.createInterpreter();
+        interpreter.visitingScope().define(arrayIdentifier.lexeme(), hslArray);
 
-        Token valueToken = Token.of(TokenType.STRING).literal("value").build();
+        Token valueToken = Token.of(LiteralTokenType.STRING).literal("value").build();
         LiteralExpression literalExpression = new LiteralExpression(valueToken, "value");
 
         ASTNodeInterpreter<Object, ArraySetExpression> expressionInterpreter = new ArraySetExpressionInterpreter();
         ArraySetExpression setExpression = new ArraySetExpression(arrayIdentifier, index, literalExpression);
 
-        Object interpreted = expressionInterpreter.interpret(setExpression, adapter);
+        Object interpreted = expressionInterpreter.interpret(setExpression, interpreter);
         Assertions.assertEquals(literalExpression.value(), interpreted);
         Assertions.assertEquals(literalExpression.value(), hslArray.value(targetIndex));
     }
@@ -60,20 +60,20 @@ public class ArraySetExpressionInterpreterTests {
         Object[] realArray = { "test" };
         int targetIndex = 1;
 
-        Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
+        Token indexToken = Token.of(LiteralTokenType.NUMBER).literal(targetIndex).build();
         LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
-        Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
+        Token arrayIdentifier = Token.of(LiteralTokenType.IDENTIFIER).lexeme("test").build();
         Array hslArray = new Array(realArray);
-        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
-        adapter.visitingScope().define(arrayIdentifier.lexeme(), hslArray);
+        Interpreter interpreter = InterpreterTestHelper.createInterpreter();
+        interpreter.visitingScope().define(arrayIdentifier.lexeme(), hslArray);
 
-        Token valueToken = Token.of(TokenType.STRING).literal("value").build();
+        Token valueToken = Token.of(LiteralTokenType.STRING).literal("value").build();
         LiteralExpression literalExpression = new LiteralExpression(valueToken, "value");
 
         ASTNodeInterpreter<Object, ArraySetExpression> expressionInterpreter = new ArraySetExpressionInterpreter();
         ArraySetExpression setExpression = new ArraySetExpression(arrayIdentifier, index, literalExpression);
 
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> expressionInterpreter.interpret(setExpression, adapter));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> expressionInterpreter.interpret(setExpression, interpreter));
     }
 }

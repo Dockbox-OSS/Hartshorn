@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,17 @@
 
 package test.org.dockbox.hartshorn.components;
 
-import org.dockbox.hartshorn.inject.Context;
+import org.dockbox.hartshorn.inject.Named;
+
+import org.dockbox.hartshorn.inject.Inject;
 
 public class ContextInjectedType {
-    @Context
+
+    @Inject
     private SampleContext context;
 
-    @Context("another")
+    @Inject
+    @Named("another")
     private SampleContext anotherContext;
 
     public SampleContext context() {

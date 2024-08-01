@@ -18,12 +18,13 @@
     <!--Disable Logback default init output-->
     <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
     <conversionRule conversionWord="ec" converterClass="org.dockbox.hartshorn.logging.logback.LogbackErrorConverter" />
+    <conversionRule conversionWord="lc" converterClass="org.dockbox.hartshorn.logging.logback.LogbackLevelConverter" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <withJansi>true</withJansi>
         <!--Custom encoder to support process_id-->
         <encoder class="org.dockbox.hartshorn.logging.logback.LogbackEncoder">
-            <pattern>%d{HH:mm:ss.SSS} %white([ %-15.15t]) @ %green(%process_id) -> %cyan(%-38.38logger{36}) %magenta(%-5level) - %ec(%msg) %n
+            <pattern>%d{YYYY-MM-dd'T'HH:mm:ss.SSSXXX} %white([ %-15.15t]) @ %green(%process_id) -> %cyan(%-38.38logger{36}) %lc(%-5level) - %ec(%msg) %n
             </pattern>
         </encoder>
     </appender>

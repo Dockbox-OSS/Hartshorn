@@ -5,47 +5,51 @@
 
 <module name="Checker">
     <module name="TreeWalker">
+        <!-- Import rules -->
         <module name="AvoidStarImport">
             <property name="allowStaticMemberImports" value="true"/>
         </module>
         <module name="UnusedImports"/>
+        <module name="IllegalImport">
+            <!-- Should use Checker framework annotations -->
+            <property name="illegalPkgs" value="org.jetbrains.annotations"/>
+            <property name="illegalClasses" value="jakarta.annotation.Nonnull,jakarta.annotation.Nullable"/>
+        </module>
 
-        <!--
-        Javadoc rules are disabled while #748 is open, to prevent blocking builds and
-        other PRs.
-
-        See https://github.com/Dockbox-OSS/Hartshorn/issues/985#issuecomment-1732540073
-
+        <!-- General Javadoc rules -->
         <module name="InvalidJavadocPosition"/>
         <module name="AtclauseOrder">
-            <property name="tagOrder" value="param,throws,author,since,see"/>
+            <!--
+             Order of Javadoc @tags:
+             - Method specifications (parameters, return type, throws)
+             - Javadoc references (see, since, author)
+             - Deprecation notices
+            -->
+            <property name="tagOrder" value="@param, @return, @throws,
+                                             @see, @since, @author,
+                                             @deprecated"/>
         </module>
-        <module name="MissingJavadocType">
-            <property name="excludeScope" value="private"/>
-        </module>
-        <module name="MissingJavadocMethod">
-            <property name="excludeScope" value="private"/>
-            <property name="allowMissingPropertyJavadoc" value="true"/>
-            <property name="tokens" value="METHOD_DEF,ANNOTATION_FIELD_DEF"/>
-        </module>
-        <module name="WriteTag">
-            <property name="tag" value="@since"/>
-            <property name="tagFormat" value="([0-9]+\.[0-9]+\.[0-9]+)"/>
-        </module>
-        <module name="WriteTag">
-            <property name="tag" value="@author"/>
-            <property name="tagFormat" value="([A-Z][a-z]+ )+([A-Z][a-z]+)"/>
-        </module>
-        <module name="JavadocMethod">
-            <property name="accessModifiers" value="public,protected,package"/>
-            <property name="allowMissingParamTags" value="false"/>
-            <property name="allowMissingReturnTag" value="false"/>
-        </module>
-        <module name="JavadocType">
-            <property name="excludeScope" value="private"/>
-            <property name="allowMissingParamTags" value="false"/>
-            <property name="allowUnknownTags" value="false"/>
-        </module>
-        -->
+
+        <!-- Javadoc type rules -->
+<!--        <module name="MissingJavadocType">-->
+<!--            <property name="excludeScope" value="private"/>-->
+<!--        </module>-->
+<!--        <module name="JavadocType">-->
+<!--            <property name="excludeScope" value="private"/>-->
+<!--            <property name="allowMissingParamTags" value="false"/>-->
+<!--            <property name="allowUnknownTags" value="false"/>-->
+<!--        </module>-->
+
+        <!-- Javadoc method rules -->
+<!--        <module name="MissingJavadocMethod">-->
+<!--            <property name="excludeScope" value="private"/>-->
+<!--            <property name="allowMissingPropertyJavadoc" value="true"/>-->
+<!--            <property name="tokens" value="METHOD_DEF,ANNOTATION_FIELD_DEF"/>-->
+<!--        </module>-->
+<!--        <module name="JavadocMethod">-->
+<!--            <property name="accessModifiers" value="public,protected,package"/>-->
+<!--            <property name="allowMissingParamTags" value="false"/>-->
+<!--            <property name="allowMissingReturnTag" value="false"/>-->
+<!--        </module>-->
     </module>
 </module>

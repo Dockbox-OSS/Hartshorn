@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.component.processing;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.ComponentKey;
-import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,18 +23,48 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
+import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.component.ComponentKey;
+import org.dockbox.hartshorn.context.DefaultApplicationAwareContext;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.ObjectContainer;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @param <T> ...
+ *
+ * @since 0.4.10
+ *
+ * @author Guus Lieben
+ */
 public class ComponentProcessingContext<T> extends DefaultApplicationAwareContext {
 
-    protected ComponentKey<T> key;
+    private final ComponentRequestContext requestContext;
     private final Map<ComponentKey<?>, Object> data;
+    private final boolean permitsProxying;
+    private final ComponentKey<T> key;
 
-    protected T instance;
+    protected ObjectContainer<T> container;
 
-    public ComponentProcessingContext(ApplicationContext applicationContext, ComponentKey<T> key, T instance) {
+    public ComponentProcessingContext(
+        ApplicationContext applicationContext,
+        ComponentRequestContext requestContext,
+        ComponentKey<T> key,
+        ObjectContainer<T> container,
+        boolean permitsProxying
+    ) {
         super(applicationContext);
+        this.requestContext = requestContext;
         this.key = key;
-        this.instance = instance;
+        this.container = container;
         this.data = new ConcurrentHashMap<>();
+        this.permitsProxying = permitsProxying;
+    }
+
+    public ComponentRequestContext requestContext() {
+        return this.requestContext;
     }
 
     public ComponentKey<T> key() {
@@ -47,12 +72,23 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
     }
 
     public T instance() {
-        return this.instance;
+        return this.container.instance();
     }
-    
+
+    public ObjectContainer<T> container() {
+        return this.container;
+    }
+
+    public boolean permitsProxying() {
+        return this.permitsProxying;
+    }
+
     public TypeView<T> type() {
-        if (this.instance != null) {
-            return this.applicationContext().environment().introspector().introspect(this.instance);
+        if(this.container != null) {
+            T instance = this.container.instance();
+            if (instance != null) {
+                return this.applicationContext().environment().introspector().introspect(instance);
+            }
         }
         return this.applicationContext().environment().introspector().introspect(this.key.type());
     }
@@ -69,20 +105,32 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
         return this.data.containsKey(key);
     }
 
-    public boolean containsValue(ComponentKey<?> value) {
-        return this.data.containsValue(value);
+    public boolean containsKey(Class<?> type) {
+        return this.containsKey(ComponentKey.of(type));
     }
 
     public <R> R get(ComponentKey<R> key) {
         return key.type().cast(this.data.get(key));
     }
 
+    public <R> R get(Class<R> type) {
+        return this.get(ComponentKey.of(type));
+    }
+
     public <R> R put(ComponentKey<R> key, R value) {
         return key.type().cast(this.data.put(key, value));
     }
 
+    public <R> R put(Class<R> type, R value) {
+        return this.put(ComponentKey.of(type), value);
+    }
+
     public <R> R remove(ComponentKey<R> key) {
         return key.type().cast(this.data.remove(key));
+    }
+
+    public <R> R remove(Class<R> type) {
+        return this.remove(ComponentKey.of(type));
     }
 
     public void clear() {
@@ -105,19 +153,39 @@ public class ComponentProcessingContext<T> extends DefaultApplicationAwareContex
         return key.type().cast(this.data.getOrDefault(key, defaultValue));
     }
 
+    public <R> R getOrDefault(Class<R> type, R defaultValue) {
+        return this.getOrDefault(ComponentKey.of(type), defaultValue);
+    }
+
     public <R> R putIfAbsent(ComponentKey<R> key, R value) {
         return key.type().cast(this.data.putIfAbsent(key, value));
+    }
+
+    public <R> R putIfAbsent(Class<R> type, R value) {
+        return this.putIfAbsent(ComponentKey.of(type), value);
     }
 
     public <R> boolean remove(ComponentKey<R> key, R value) {
         return this.data.remove(key, value);
     }
 
+    public <R> boolean remove(Class<R> type, R value) {
+        return this.remove(ComponentKey.of(type), value);
+    }
+
     public <R> boolean replace(ComponentKey<R> key, R oldValue, R newValue) {
         return this.data.replace(key, oldValue, newValue);
     }
 
+    public <R> boolean replace(Class<R> type, R oldValue, R newValue) {
+        return this.replace(ComponentKey.of(type), oldValue, newValue);
+    }
+
     public <R> R computeIfAbsent(ComponentKey<R> key, Function<? super ComponentKey<R>, R> mappingFunction) {
         return key.type().cast(this.data.computeIfAbsent(key, componentKey -> mappingFunction.apply(key)));
+    }
+
+    public <R> R computeIfAbsent(Class<R> type, Function<? super ComponentKey<R>, R> mappingFunction) {
+        return this.computeIfAbsent(ComponentKey.of(type), mappingFunction);
     }
 }

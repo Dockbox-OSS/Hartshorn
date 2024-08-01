@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,38 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.BindableNode;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Object, FunctionCallExpression> {
 
     @Override
-    public Object interpret(FunctionCallExpression node, InterpreterAdapter adapter) {
-        Object callee = adapter.evaluate(node.callee());
+    public Object interpret(FunctionCallExpression node, Interpreter interpreter) {
+        Object callee = interpreter.evaluate(node.callee());
 
         List<Object> arguments = new ArrayList<>();
         for (Expression argument : node.arguments()) {
-            Object evaluated = adapter.evaluate(argument);
+            Object evaluated = interpreter.evaluate(argument);
             if (evaluated instanceof ExternalObjectReference external) {
                 evaluated = external.externalObject();
             }
@@ -46,23 +55,24 @@ public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Obj
         }
 
         // Can't call non-callable nodes..
-        if (!(callee instanceof final CallableNode function)) {
-            throw new RuntimeError(node.openParenthesis(), "Can only call functions and classes, but received " + callee + ".");
+        Token openParenthesis = node.openParenthesis();
+        if (!(callee instanceof CallableNode function)) {
+            throw new ScriptEvaluationError("Can only call functions and classes, but received " + callee + ".", Phase.INTERPRETING, openParenthesis);
         }
 
         try {
             if (callee instanceof InstanceReference instance) {
-                return function.call(node.openParenthesis(), adapter.interpreter(), instance, arguments);
+                return function.call(openParenthesis, interpreter, instance, arguments);
             }
             else if (callee instanceof BindableNode<?> bindable){
-                return function.call(node.openParenthesis(), adapter.interpreter(), bindable.bound(), arguments);
+                return function.call(openParenthesis, interpreter, bindable.bound(), arguments);
             }
             else {
-                return function.call(node.openParenthesis(), adapter.interpreter(), null, arguments);
+                return function.call(openParenthesis, interpreter, null, arguments);
             }
         }
         catch (ApplicationException e) {
-            throw new RuntimeError(node.openParenthesis(), e.getMessage());
+            throw new ScriptEvaluationError(e, Phase.INTERPRETING, openParenthesis);
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,16 @@ import org.dockbox.hartshorn.component.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.config.ConfigurationServicePreProcessor;
 import org.dockbox.hartshorn.config.FileFormats;
 import org.dockbox.hartshorn.config.ObjectMapper;
+import org.dockbox.hartshorn.config.ObjectMappingException;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.properties.PropertyHolder;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.testsuite.TestComponents;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 
 /**
  * <b>Note:</b> This test requires the resources {@code junit.yml} and {@code junit.properties} to be present in the
@@ -111,7 +113,7 @@ public abstract class ConfigurationManagerTests {
 
     @Test
     @TestComponents(components = DemoFSConfiguration.class)
-    void testFsConfigurations() {
+    void testFsConfigurations() throws ObjectMappingException {
         Path file = FileFormats.YAML.asPath(this.applicationContext.environment().fileSystem().applicationPath(), "junit");
         ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class);
         objectMapper.write(file, """
@@ -119,7 +121,11 @@ public abstract class ConfigurationManagerTests {
                     fs: "This is a value"
                     """);
 
-        ComponentProcessingContext<DemoFSConfiguration> processingContext = new ComponentProcessingContext<>(this.applicationContext, ComponentKey.of(DemoFSConfiguration.class), null);
+        ComponentProcessingContext<DemoFSConfiguration> processingContext = new ComponentProcessingContext<>(
+                this.applicationContext,
+                ComponentRequestContext.createForComponent(),
+                ComponentKey.of(DemoFSConfiguration.class),
+                null, false);
         new ConfigurationServicePreProcessor().process(this.applicationContext, processingContext);
 
         DemoFSConfiguration configuration = this.applicationContext.get(DemoFSConfiguration.class);
@@ -130,7 +136,7 @@ public abstract class ConfigurationManagerTests {
 
     @Test
     @TestComponents(components = ValueTyped.class)
-    void testNormalValuesAreAccessible() {
+    void testNormalValuesAreAccessible() throws ObjectMappingException {
         this.applicationContext.get(PropertyHolder.class).set("demo", "Hartshorn");
         ValueTyped typed = this.applicationContext.get(ValueTyped.class);
 
@@ -140,7 +146,7 @@ public abstract class ConfigurationManagerTests {
 
     @Test
     @TestComponents(components = ValueTyped.class)
-    void testNestedValuesAreAccessible() {
+    void testNestedValuesAreAccessible() throws ObjectMappingException {
         this.applicationContext.get(PropertyHolder.class).set("nested.demo", "Hartshorn");
         ValueTyped typed = this.applicationContext.get(ValueTyped.class);
 
@@ -151,7 +157,7 @@ public abstract class ConfigurationManagerTests {
 
     @Test
     @TestComponents(components = SampleConfigurationObject.class)
-    void testConfigurationObjects() {
+    void testConfigurationObjects() throws ObjectMappingException {
         PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
         propertyHolder.set("user.name", "Hartshorn");
         propertyHolder.set("user.age", 21);
@@ -164,7 +170,7 @@ public abstract class ConfigurationManagerTests {
 
     @Test
     @TestComponents(components = SampleSetterConfigurationObject.class)
-    void testSetterConfigurationObjects() {
+    void testSetterConfigurationObjects() throws ObjectMappingException {
         PropertyHolder propertyHolder = this.applicationContext.get(PropertyHolder.class);
         propertyHolder.set("user.name", "Hartshorn");
         propertyHolder.set("user.age", 21);

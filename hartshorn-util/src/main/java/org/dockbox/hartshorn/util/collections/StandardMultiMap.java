@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,17 @@ package org.dockbox.hartshorn.util.collections;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * A {@link MultiMap} implementation that lazily creates its backing map. The creation
+ * of the backing map is delegated to the {@link #createEmptyMap()} method.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ *
+ * @since 0.4.12
+ *
+ * @author Guus Lieben
+ */
 public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
 
     protected Map<K, Collection<V>> map;
@@ -38,6 +49,11 @@ public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
         return this.map;
     }
 
+    /**
+     * Creates the backing map. This method is only called once, after which the
+     * backing map is stored in a field.
+     *
+     * @return the backing map
+     */
     protected abstract Map<K, Collection<V>> createEmptyMap();
-
 }

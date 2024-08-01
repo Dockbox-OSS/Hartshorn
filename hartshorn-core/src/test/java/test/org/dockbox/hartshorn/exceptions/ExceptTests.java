@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.testsuite.TestCustomizer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
 public class ExceptTests {
@@ -43,7 +43,7 @@ public class ExceptTests {
 
     @Test
     public void testExceptKeepsPreferences() {
-        this.applicationContext.environment().printStacktraces(true);
+        this.applicationContext.environment().printStackTraces(true);
 
         Throwable throwable = new Exception("Test");
         this.applicationContext.handle("Test", throwable);

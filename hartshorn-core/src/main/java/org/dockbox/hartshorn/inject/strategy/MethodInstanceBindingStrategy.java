@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +16,50 @@
 
 package org.dockbox.hartshorn.inject.strategy;
 
-import jakarta.inject.Singleton;
+import java.util.List;
 import java.util.Set;
 import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.DirectScopeKey;
-import org.dockbox.hartshorn.component.InstallTo;
-import org.dockbox.hartshorn.component.Scope;
 import org.dockbox.hartshorn.component.ScopeKey;
+import org.dockbox.hartshorn.component.Scoped;
 import org.dockbox.hartshorn.component.processing.Binds;
-import org.dockbox.hartshorn.component.processing.Binds.BindingType;
-import org.dockbox.hartshorn.context.Context;
+import org.dockbox.hartshorn.component.processing.ComponentMemberType;
+import org.dockbox.hartshorn.component.processing.CompositeMember;
 import org.dockbox.hartshorn.inject.AutoConfiguringDependencyContext;
 import org.dockbox.hartshorn.inject.ComponentInitializationException;
-import org.dockbox.hartshorn.inject.ComponentKeyCustomizerContext;
+import org.dockbox.hartshorn.inject.ContextAwareComponentSupplier;
 import org.dockbox.hartshorn.inject.DependencyContext;
 import org.dockbox.hartshorn.inject.DependencyMap;
-import org.dockbox.hartshorn.inject.ExactPriorityProviderSelectionStrategy;
-import org.dockbox.hartshorn.inject.MaximumPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.Priority;
 import org.dockbox.hartshorn.introspect.IntrospectionViewContextAdapter;
 import org.dockbox.hartshorn.introspect.ViewContextAdapter;
-import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.function.CheckedSupplier;
+import org.dockbox.hartshorn.util.ContextualInitializer;
+import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
+import org.dockbox.hartshorn.util.StreamableConfigurer;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1060 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public class MethodInstanceBindingStrategy implements BindingStrategy {
+
+    private final ApplicationEnvironment environment;
+    private final BindingDeclarationDependencyResolver declarationDependencyResolver;
+
+    public MethodInstanceBindingStrategy(ApplicationEnvironment environment, BindingDeclarationDependencyResolver declarationDependencyResolver) {
+        this.environment = environment;
+        this.declarationDependencyResolver = declarationDependencyResolver;
+    }
 
     @Override
     public <T> boolean canHandle(BindingStrategyContext<T> context) {
@@ -56,9 +72,55 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         MethodAwareBindingStrategyContext<T> strategyContext = (MethodAwareBindingStrategyContext<T>) context;
         Binds bindingDecorator = strategyContext.method().annotations()
                 .get(Binds.class)
-                .orElseThrow(() -> new IllegalStateException("Method is not annotated with @Binds"));
+                .orElseThrow(() -> new IllegalStateException("Method is not annotated with @Binds (or a compatible meta-annotation)"));
 
-        return this.resolveInstanceBinding(strategyContext.method(), bindingDecorator, context.applicationContext());
+        return this.resolveInstanceBinding(strategyContext, strategyContext.method(), bindingDecorator, context.applicationContext());
+    }
+
+    private <T> DependencyContext<T> resolveInstanceBinding(BindingStrategyContext<?> context, AnnotatedGenericTypeView<T> declaration, Binds bindingDecorator, ApplicationContext applicationContext) {
+        ComponentKey<T> componentKey = TypeUtils.adjustWildcards(this.environment.componentKeyResolver().resolve(declaration), ComponentKey.class);
+        Set<ComponentKey<?>> dependencies = this.declarationDependencyResolver.dependencies(context);
+        ContextAwareComponentSupplier<T> supplier = requestContext -> {
+            try {
+                ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
+                contextAdapter.addContext(requestContext);
+                return contextAdapter.load(declaration).orNull();
+            }
+            catch(Throwable throwable) {
+                throw new ComponentInitializationException("Failed to obtain instance for " + declaration.qualifiedName(), throwable);
+            }
+        };
+
+        return AutoConfiguringDependencyContext.builder(componentKey)
+            .dependencies(DependencyMap.create().immediate(dependencies))
+            .scope(this.resolveComponentScope(declaration))
+            .priority(this.resolvePriority(declaration))
+            .memberType(this.resolveMemberType(declaration))
+            .view(declaration)
+            .supplier(supplier)
+            .lazy(bindingDecorator.lazy())
+            .lifecycleType(bindingDecorator.lifecycle())
+            .processAfterInitialization(bindingDecorator.processAfterInitialization())
+            .build();
+    }
+
+    private int resolvePriority(AnnotatedElementView view) {
+        return view.annotations().get(Priority.class)
+            .map(Priority::value)
+            .orElse(Priority.DEFAULT_PRIORITY);
+    }
+
+    private ScopeKey resolveComponentScope(AnnotatedElementView view) {
+        Option<Scoped> installToCandidate = view.annotations().get(Scoped.class);
+        return installToCandidate.present()
+                ? DirectScopeKey.of(installToCandidate.get().value())
+                : ApplicationContext.APPLICATION_SCOPE;
+    }
+
+    private ComponentMemberType resolveMemberType(AnnotatedElementView bindsMethod) {
+        return bindsMethod.annotations().has(CompositeMember.class)
+            ? ComponentMemberType.COMPOSITE
+            : ComponentMemberType.STANDALONE;
     }
 
     @Override
@@ -66,74 +128,35 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         return BindingStrategyPriority.LOW;
     }
 
-    private <T> DependencyContext<T> resolveInstanceBinding(MethodView<?, T> bindsMethod, Binds bindingDecorator, ApplicationContext applicationContext) {
-        ComponentKey<T> componentKey = this.constructInstanceComponentKey(bindsMethod, bindingDecorator);
-        Set<ComponentKey<?>> dependencies = DependencyResolverUtils.resolveDependencies(bindsMethod);
-        ScopeKey scope = this.resolveComponentScope(bindsMethod);
-        int priority = bindingDecorator.priority();
+    public static ContextualInitializer<ApplicationContext, BindingStrategy> create(Customizer<Configurer> customizer) {
+        return context -> {
+            Configurer configurer = new Configurer();
+            customizer.configure(configurer);
 
-        boolean lazy = bindingDecorator.lazy();
-        boolean singleton = this.isSingleton(applicationContext, bindsMethod, componentKey);
-        boolean processAfterInitialization = bindingDecorator.processAfterInitialization();
-        BindingType bindingType = bindingDecorator.type();
+            List<BindingDeclarationDependencyResolver> dependencyResolvers = configurer.declarationDependencyResolvers.initialize(context);
+            BindingDeclarationDependencyResolver resolver = new CompositeBindingDependencyResolver(Set.copyOf(dependencyResolvers));
 
-        DependencyMap dependenciesMap = DependencyMap.create().immediate(dependencies);
-
-        ViewContextAdapter contextAdapter = new IntrospectionViewContextAdapter(applicationContext);
-        boolean hasSelfDependency = dependenciesMap.containsValue(componentKey);
-        if (hasSelfDependency) {
-            ComponentKeyCustomizerContext customizerContext = new ComponentKeyCustomizerContext(
-                (context, key) -> configureParameterPriority(context, key, componentKey, priority)
-            );
-            contextAdapter.add(customizerContext);
-        }
-        CheckedSupplier<T> supplier = () -> contextAdapter.load(bindsMethod)
-                .mapError(error -> new ComponentInitializationException("Failed to obtain instance for " + bindsMethod.qualifiedName(), error))
-                .rethrow()
-                .orNull();
-
-        return new AutoConfiguringDependencyContext<>(componentKey, dependenciesMap, scope, priority, bindingType, bindsMethod, supplier)
-                .lazy(lazy)
-                .singleton(singleton)
-                .processAfterInitialization(processAfterInitialization);
+            return new MethodInstanceBindingStrategy(context.input().environment(), resolver);
+        };
     }
 
-    private static <T> void configureParameterPriority(Context context, ComponentKey.Builder<?> key, ComponentKey<T> componentKey, int priority) {
-        ComponentKey.ComponentKeyView<?> view = key.view();
-        boolean selfProvision = view.matches(componentKey);
-        if (selfProvision) {
-            key.strategy(new MaximumPriorityProviderSelectionStrategy(priority));
+    /**
+     * TODO: #1060 Add documentation
+     *
+     * @since 0.5.0
+     *
+     * @author Guus Lieben
+     */
+    public static class Configurer {
+
+        private final LazyStreamableConfigurer<ApplicationContext, BindingDeclarationDependencyResolver> declarationDependencyResolvers = LazyStreamableConfigurer.of(resolvers -> {
+            resolvers.add(ContextualInitializer.of(context -> new IntrospectionBindingDependencyResolver(context.environment())));
+            resolvers.add(new BindingAfterDeclarationDependencyResolver());
+        });
+
+        public Configurer declarationDependencyResolvers(Customizer<StreamableConfigurer<ApplicationContext, BindingDeclarationDependencyResolver>> customizer) {
+            this.declarationDependencyResolvers.customizer(customizer);
+            return this;
         }
-
-        if (context instanceof AnnotatedElementView annotatedElementView) {
-            Option<Priority> priorityOption = annotatedElementView.annotations().get(Priority.class);
-            if (priorityOption.present()) {
-                int parameterPriority = priorityOption.get().value();
-                if (selfProvision && parameterPriority >= priority) {
-                    throw new ComponentInitializationException("Priority of parameter " + componentKey.type().getName() + " is the equal to- or higher than the priority of the method " + componentKey.type().getName());
-                }
-                key.strategy(new ExactPriorityProviderSelectionStrategy(parameterPriority));
-            }
-        }
-    }
-
-    private boolean isSingleton(ApplicationContext applicationContext, AnnotatedElementView view, ComponentKey<?> componentKey) {
-        return view.annotations().has(Singleton.class)
-                || applicationContext.environment().singleton(componentKey.type());
-    }
-
-    private ScopeKey resolveComponentScope(AnnotatedElementView view) {
-        Option<InstallTo> installToCandidate = view.annotations().get(InstallTo.class);
-        return installToCandidate.present()
-                ? DirectScopeKey.of(installToCandidate.get().value())
-                : Scope.DEFAULT_SCOPE.installableScopeType();
-    }
-
-    private <T> ComponentKey<T> constructInstanceComponentKey(MethodView<?, T> bindsMethod, Binds bindingDecorator) {
-        ComponentKey.Builder<T> keyBuilder = ComponentKey.builder(bindsMethod.genericReturnType());
-        if (StringUtilities.notEmpty(bindingDecorator.value())) {
-            keyBuilder = keyBuilder.name(bindingDecorator.value());
-        }
-        return keyBuilder.build();
     }
 }

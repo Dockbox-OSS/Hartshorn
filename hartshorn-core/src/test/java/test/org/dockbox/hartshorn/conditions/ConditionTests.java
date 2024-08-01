@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,17 @@
 
 package test.org.dockbox.hartshorn.conditions;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.component.ComponentKey;
 import org.dockbox.hartshorn.component.condition.ActivatorCondition;
+import org.dockbox.hartshorn.component.condition.AnnotationConditionDeclaration;
 import org.dockbox.hartshorn.component.condition.ClassCondition;
 import org.dockbox.hartshorn.component.condition.Condition;
 import org.dockbox.hartshorn.component.condition.ConditionContext;
+import org.dockbox.hartshorn.component.condition.ConditionMatcher;
 import org.dockbox.hartshorn.component.condition.ConditionResult;
 import org.dockbox.hartshorn.component.condition.RequiresActivator;
 import org.dockbox.hartshorn.component.condition.RequiresClass;
@@ -41,13 +46,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.List;
-import java.util.stream.Stream;
-
-import jakarta.inject.Inject;
+import org.dockbox.hartshorn.inject.Inject;
 
 @HartshornTest(includeBasePackages = false)
-@TestComponents(components = ConditionalProviders.class)
+@TestComponents(components = ConditionalConfiguration.class)
 @TestProperties({
         "--property.c=o",
         "--property.d=d",
@@ -87,7 +89,7 @@ public class ConditionTests {
 
     @ParameterizedTest
     @MethodSource("properties")
-    @TestComponents(components = ConditionalProviders.class)
+    @TestComponents(components = ConditionalConfiguration.class)
     void testPropertyConditions(String name, boolean present) {
         ComponentKey<String> key = ComponentKey.builder(String.class).name(name).build();
         BindingHierarchy<String> hierarchy = this.applicationContext.hierarchy(key);
@@ -113,8 +115,8 @@ public class ConditionTests {
                 .named("requiresActivator")
                 .get();
         RequiresCondition annotation = method.annotations().get(RequiresCondition.class).get();
-
-        ConditionContext context = new ConditionContext(this.applicationContext, method, annotation);
+        AnnotationConditionDeclaration declaration = new AnnotationConditionDeclaration(annotation);
+        ConditionContext context = new ConditionContext(this.applicationContext, method, declaration);
         Condition condition = new ActivatorCondition();
 
         ConditionResult result = condition.matches(context);
@@ -131,18 +133,38 @@ public class ConditionTests {
 
         MethodView<ConditionTests, ?> requiresClass = type.methods().named("requiresClass").get();
         RequiresCondition annotationForPresent = requiresClass.annotations().get(RequiresCondition.class).get();
-        ConditionContext contextForPresent = new ConditionContext(this.applicationContext, requiresClass, annotationForPresent);
+        ConditionContext contextForPresent = new ConditionContext(this.applicationContext, requiresClass, new AnnotationConditionDeclaration(annotationForPresent));
         Assertions.assertTrue(condition.matches(contextForPresent).matches());
 
         MethodView<ConditionTests, ?> requiresAbsentClass = type.methods().named("requiresAbsentClass").get();
         RequiresCondition annotationForAbsent = requiresAbsentClass.annotations().get(RequiresCondition.class).get();
-        ConditionContext contextForAbsent = new ConditionContext(this.applicationContext, requiresAbsentClass, annotationForAbsent);
+        ConditionContext contextForAbsent = new ConditionContext(this.applicationContext, requiresAbsentClass, new AnnotationConditionDeclaration(annotationForAbsent));
         Assertions.assertFalse(condition.matches(contextForAbsent).matches());
     }
+
     @RequiresClass("java.lang.String")
     private void requiresClass() {}
 
     @RequiresClass("java.gnal.String")
     private void requiresAbsentClass() {}
 
+    @Test
+    void testEnclosedViewsIncludeParentCondition() {
+        TypeView<ParentClass> type = this.applicationContext.environment().introspector().introspect(ParentClass.class);
+        ConditionMatcher matcher = new ConditionMatcher(this.applicationContext);
+        Assertions.assertFalse(matcher.match(type));
+
+        MethodView<ParentClass, ?> methodView = type.methods().named("requiresClass").get();
+        matcher.includeEnclosingConditions(false);
+        Assertions.assertTrue(matcher.match(methodView));
+
+        matcher.includeEnclosingConditions(true);
+        Assertions.assertFalse(matcher.match(methodView));
+    }
+
+    @RequiresClass("java.gnal.String")
+    public static class ParentClass {
+        @RequiresClass("java.lang.String")
+        public void requiresClass() {}
+    }
 }

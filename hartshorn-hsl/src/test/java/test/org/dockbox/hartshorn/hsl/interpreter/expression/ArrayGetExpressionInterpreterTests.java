@@ -20,10 +20,10 @@ import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
-import org.dockbox.hartshorn.hsl.interpreter.InterpreterAdapter;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.expression.ArrayGetExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenType;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,17 +36,17 @@ public class ArrayGetExpressionInterpreterTests {
         Object[] realArray = { "test" };
         int targetIndex = 0;
 
-        Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
+        Token indexToken = Token.of(LiteralTokenType.NUMBER).literal(targetIndex).build();
         LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
-        Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
-        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
-        adapter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
+        Token arrayIdentifier = Token.of(LiteralTokenType.IDENTIFIER).lexeme("test").build();
+        Interpreter interpreter = InterpreterTestHelper.createInterpreter();
+        interpreter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
 
         ASTNodeInterpreter<Object, ArrayGetExpression> expressionInterpreter = new ArrayGetExpressionInterpreter();
         ArrayGetExpression getExpression = new ArrayGetExpression(arrayIdentifier, index);
 
-        Object interpretedValue = expressionInterpreter.interpret(getExpression, adapter);
+        Object interpretedValue = expressionInterpreter.interpret(getExpression, interpreter);
         Assertions.assertEquals(realArray[targetIndex], interpretedValue);
     }
 
@@ -55,16 +55,16 @@ public class ArrayGetExpressionInterpreterTests {
         Object[] realArray = { "test" };
         int targetIndex = 1;
 
-        Token indexToken = Token.of(TokenType.NUMBER).literal(targetIndex).build();
+        Token indexToken = Token.of(LiteralTokenType.NUMBER).literal(targetIndex).build();
         LiteralExpression index = new LiteralExpression(indexToken, targetIndex);
 
-        Token arrayIdentifier = Token.of(TokenType.IDENTIFIER).lexeme("test").build();
-        InterpreterAdapter adapter = InterpreterTestHelper.createInterpreterAdapter();
-        adapter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
+        Token arrayIdentifier = Token.of(LiteralTokenType.IDENTIFIER).lexeme("test").build();
+        Interpreter interpreter = InterpreterTestHelper.createInterpreter();
+        interpreter.visitingScope().define(arrayIdentifier.lexeme(), new Array(realArray));
 
         ASTNodeInterpreter<Object, ArrayGetExpression> expressionInterpreter = new ArrayGetExpressionInterpreter();
         ArrayGetExpression getExpression = new ArrayGetExpression(arrayIdentifier, index);
 
-        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> expressionInterpreter.interpret(getExpression, adapter));
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> expressionInterpreter.interpret(getExpression, interpreter));
     }
 }

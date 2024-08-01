@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,18 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * {@code throws ApplicationException} clause.
  *
  * @see Runnable
+ *
+ * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface CheckedRunnable {
+
+    /**
+     * Executes this runnable.
+     *
+     * @throws ApplicationException if an error occurs during the execution of the runnable
+     */
     void run() throws ApplicationException;
 }

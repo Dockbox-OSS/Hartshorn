@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,24 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.objects.CallableNode;
-import org.dockbox.hartshorn.hsl.objects.InstanceReference;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
-import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.util.ApplicationException;
-
 import java.util.List;
 import java.util.Set;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.objects.CallableNode;
+import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.util.ApplicationException;
+
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public record AmbiguousLibraryFunction(Set<NativeLibrary> libraries) implements CallableNode {
 
     @Override
@@ -37,13 +45,13 @@ public record AmbiguousLibraryFunction(Set<NativeLibrary> libraries) implements 
                 .toList();
 
         if(applicableLibraries.isEmpty()) {
-            throw new RuntimeError(at, "No applicable library found for " + arguments.size() + " arguments");
+            throw new ScriptEvaluationError("No applicable library found for " + arguments.size() + " arguments", Phase.INTERPRETING, at);
         }
         else if(applicableLibraries.size() > 1) {
-            throw new RuntimeError(at, "Multiple applicable libraries found for " + arguments.size() + " arguments");
+            throw new ScriptEvaluationError("Multiple applicable libraries found for " + arguments.size() + " arguments", Phase.INTERPRETING, at);
         }
         else {
-            NativeLibrary library = applicableLibraries.get(0);
+            NativeLibrary library = applicableLibraries.getFirst();
             return library.call(at, interpreter, instance, arguments);
         }
     }

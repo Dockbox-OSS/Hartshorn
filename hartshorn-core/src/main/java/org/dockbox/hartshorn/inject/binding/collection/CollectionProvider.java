@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,14 @@ import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.application.context.ApplicationContext;
 import org.dockbox.hartshorn.inject.CollectionObjectContainer;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.LifecycleType;
 import org.dockbox.hartshorn.inject.NonTypeAwareProvider;
 import org.dockbox.hartshorn.inject.ObjectContainer;
 import org.dockbox.hartshorn.inject.Provider;
 import org.dockbox.hartshorn.inject.TypeAwareProvider;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -55,8 +58,13 @@ public class CollectionProvider<T> implements NonTypeAwareProvider<ComponentColl
 
     private final Set<Provider<T>> providers = ConcurrentHashMap.newKeySet();
 
+    /**
+     * Returns a copy of the providers that are currently part of this collection.
+     *
+     * @return a copy of the providers that are currently part of this collection
+     */
     public Set<Provider<T>> providers() {
-        return Set.copyOf(providers);
+        return Set.copyOf(this.providers);
     }
 
     /**
@@ -105,10 +113,10 @@ public class CollectionProvider<T> implements NonTypeAwareProvider<ComponentColl
     }
 
     @Override
-    public Option<ObjectContainer<ComponentCollection<T>>> provide(ApplicationContext context) throws ApplicationException {
+    public Option<ObjectContainer<ComponentCollection<T>>> provide(ApplicationContext context, ComponentRequestContext requestContext) throws ApplicationException {
         Set<ObjectContainer<T>> containers = new HashSet<>();
         for(Provider<T> provider : this.providers) {
-            Option<ObjectContainer<T>> container = provider.provide(context);
+            Option<ObjectContainer<T>> container = provider.provide(context, requestContext);
             if(container.present()) {
                 containers.add(container.get());
             }
@@ -120,6 +128,16 @@ public class CollectionProvider<T> implements NonTypeAwareProvider<ComponentColl
                 ObjectContainer.class
         );
         return Option.of(container);
+    }
+
+    @Override
+    public LifecycleType defaultLifecycle() {
+        return LifecycleType.PROTOTYPE;
+    }
+
+    @Override
+    public Tristate defaultLazy() {
+        return Tristate.TRUE;
     }
 
     @Override
