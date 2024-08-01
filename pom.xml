@@ -390,6 +390,12 @@
                 <configuration>
                     <ignoredVersions>.*[-_\.](alpha|Alpha|ALPHA|b|beta|Beta|BETA|rc|RC|M|MR|EA)[-_\.]?[0-9]*</ignoredVersions>
                     <generateBackupPoms>false</generateBackupPoms>
+
+                    <!--
+                    Exclude Kotlin plugin version from being updated, as this should always reference the kotlin.version property
+                    instead of being directly updated by the versions plugin.
+                    -->
+                    <excludeProperties>plugin.kotlin.version</excludeProperties>
                 </configuration>
             </plugin>
         </plugins>
