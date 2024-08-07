@@ -17,6 +17,7 @@ content:
       branches: HEAD
       # Effectively null, no versioning on non-released documentation
       version: ~
+      edit_url: https://github.com/Dockbox-OSS/Hartshorn/tree/HEAD/{path}
       start_paths:
         - hartshorn-inject/src/main/docs
         - hartshorn-inject-configurations/src/main/docs
@@ -46,5 +47,5 @@ antora:
 
 ui:
   bundle:
-    url: https://github.com/Dockbox-OSS/Antora-Dockbox-UI/releases/download/R1-may-05-2024/ui-bundle.zip
+    url: https://github.com/Dockbox-OSS/Antora-Dockbox-UI/releases/download/latest/ui-bundle.zip
     snapshot: true
