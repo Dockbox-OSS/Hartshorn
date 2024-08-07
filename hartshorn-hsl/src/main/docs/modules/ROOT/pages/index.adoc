@@ -1,3 +1,5 @@
 = Hartshorn Scripting Language
+Guus Lieben
+:description: The Hartshorn Scripting Language (HSL) is a scripting language that is designed to be integrated with various components in the Hartshorn framework.
 
 To be written

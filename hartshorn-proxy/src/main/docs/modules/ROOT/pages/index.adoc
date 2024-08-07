@@ -1,3 +1,5 @@
 = Hartshorn Proxy Framework
+Guus Lieben
+:description: The Hartshorn Proxy Framework is a Java dynamic object proxy framework supporting the proxying of all non-final types, including interfaces, abstract-, and concrete classes.
 
 To be written

@@ -1,3 +1,5 @@
 = Hartshorn Utilities
+Guus Lieben
+:description: The Hartshorn Utilities module is a utility library that contains common utility classes and methods used throughout the Hartshorn framework.
 
 To be written

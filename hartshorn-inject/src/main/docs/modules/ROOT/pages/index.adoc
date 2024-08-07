@@ -1,3 +1,5 @@
 = Hartshorn Inject
+Guus Lieben
+:description: The Hartshorn Inject module is a dependency injection library containing various APIs for working with dependency injection in Java.
 
 To be written

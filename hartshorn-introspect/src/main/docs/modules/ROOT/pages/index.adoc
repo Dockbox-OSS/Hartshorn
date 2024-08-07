@@ -1,3 +1,5 @@
 = Hartshorn Introspection
+Guus Lieben
+:description: The Hartshorn Introspection module is a type introspection library that provides a broad API for working with Java types and their metadata.
 
 To be written

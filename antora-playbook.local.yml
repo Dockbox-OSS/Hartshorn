@@ -9,6 +9,7 @@
 site:
   title: Hartshorn Framework
   start_page: launchpad::index.adoc
+  url: https://hartshorn.dockbox.org/
 
 content:
   sources:
@@ -47,20 +48,3 @@ ui:
   bundle:
     url: https://github.com/Dockbox-OSS/Antora-Dockbox-UI/releases/download/R1-may-05-2024/ui-bundle.zip
     snapshot: true
-  supplemental_files:
-    - path: css/vendor/tabs.css
-      contents: './hartshorn-assembly/antora/tabs/tabs.css'
-    - path: js/vendor/tabs.js
-      contents: './hartshorn-assembly/antora/tabs/tabs.js'
-    - path: partials/footer-scripts.hbs
-      contents: |
-        <script id="site-script" src="{{{uiRootPath}}}/js/site.js" data-ui-root-path="{{{uiRootPath}}}"></script>
-        <script async src="{{{uiRootPath}}}/js/vendor/highlight.js"></script>
-        <script async src="{{{uiRootPath}}}/js/vendor/tabs.js"></script>
-        {{#if env.SITE_SEARCH_PROVIDER}}
-        {{> search-scripts}}
-        {{/if}}
-    - path: partials/head-styles.hbs
-      contents: |
-        <link rel="stylesheet" href="{{{uiRootPath}}}/css/site.css">
-        <link rel="stylesheet" href="{{{uiRootPath}}}/css/vendor/tabs.css">
