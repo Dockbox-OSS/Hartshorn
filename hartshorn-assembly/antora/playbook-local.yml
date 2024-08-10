@@ -1,19 +1,25 @@
 #
-# Template Antora playbook configuration for local documentation pre-viewing.
-#
-# This playbook is not intended for use in production, but rather for local development
-# and testing of the documentation. You can generate a static site from this playbook by
-# running `antora antora-playbook.local.yml`. The generated site will be placed in the
-# `hartshorn-assembly/target/docs` directory.
+# Template Antora playbook configuration for local (branch) builds.
 #
 site:
   title: Hartshorn Framework
   start_page: launchpad::index.adoc
-  url: https://hartshorn.dockbox.org/
+
+urls:
+  latest_version_segment_strategy: redirect:to
+  latest_version_segment: latest
+
+ui:
+  bundle:
+    url: https://github.com/Dockbox-OSS/Antora-Dockbox-UI/releases/download/latest/ui-bundle.zip
+    snapshot: true
 
 content:
   sources:
-    - url: .
+    # Working in ./hartshorn-assembly/antora, but Git repository is in ./ (root). Note that this
+    # has to be prefixed with ./, as ../ directly is interpreted from root directory.
+    - url: ./../..
+      # Local build, use whatever is in HEAD
       branches: HEAD
       # Effectively null, no versioning on non-released documentation
       version: ~
@@ -31,21 +37,3 @@ content:
         - hartshorn-introspect-reflection/src/main/docs
         - hartshorn-reporting/src/main/docs
         - hartshorn-hsl/src/main/docs
-
-output:
-  dir: hartshorn-assembly/target/docs
-  clean: true
-
-asciidoc:
-  extensions:
-    - '@asciidoctor/tabs'
-    - 'asciidoctor-interdoc-reftext'
-
-antora:
-  extensions:
-    - '@antora/lunr-extension'
-
-ui:
-  bundle:
-    url: https://github.com/Dockbox-OSS/Antora-Dockbox-UI/releases/download/latest/ui-bundle.zip
-    snapshot: true
