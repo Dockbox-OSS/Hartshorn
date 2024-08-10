@@ -1,30 +1,30 @@
-name: Pull request CI
+name: Pull Request
 on: [pull_request]
 
 jobs:
   prebuild_check_codestyle:
     name: Pre-build checks
-    uses: ./.github/workflows/check.codestyle.yml
+    uses: ./.github/workflows/prebuild/check.codestyle.yml
   prebuild_check_license:
-    name: Check code style
-    uses: ./.github/workflows/check.license.yml
+    name: Pre-build checks
+    uses: ./.github/workflows/prebuild/check.license.yml
   prebuild_check_dependency:
-    name: OWASP Dependency Check
-    uses: ./.github/workflows/check.dependency.yml
+    name: Pre-build checks
+    uses: ./.github/workflows/prebuild/check.dependency.yml
   build:
     name: Build modules
     needs:
       - prebuild_check_codestyle
       - prebuild_check_license
       - prebuild_check_dependency
-    uses: ./.github/workflows/build.modules.yml
+    uses: ./.github/workflows/build/build.modules.yml
   postbuild_test:
-    name: Tests
+    name: Post-build actions
     needs:
       - build
-    uses: ./.github/workflows/test.coverage.yml
+    uses: ./.github/workflows/postbuild/test.coverage.yml
   postbuild_documentation:
-    name: Build documentation
+    name: Post-build actions
     needs:
       - postbuild_test
-    uses: ./.github/workflows/build.docs.yml
+    uses: ./.github/workflows/postbuild/build.docs.yml
