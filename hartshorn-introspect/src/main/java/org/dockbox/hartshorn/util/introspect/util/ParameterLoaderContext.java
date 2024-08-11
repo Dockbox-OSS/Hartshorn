@@ -34,6 +34,8 @@ public class ParameterLoaderContext {
     private final Object instance;
 
     public ParameterLoaderContext(ExecutableElementView<?> executable, Object instance) {
+        assert instance != null || !executable.modifiers().isStatic() : "Instance must not be null for non-static methods";
+
         this.executable = executable;
         this.instance = instance;
     }

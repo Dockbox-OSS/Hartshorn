@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.reporting.component;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.context.ProcessableApplicationContext;
-import org.dockbox.hartshorn.component.ComponentProvider;
-import org.dockbox.hartshorn.component.PostProcessingComponentProvider;
-import org.dockbox.hartshorn.component.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.component.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.component.processing.ComponentProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
+import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.collections.MultiMap;
@@ -51,23 +51,21 @@ public class ComponentProcessorDiagnosticsReporter implements CategorizedDiagnos
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         if (this.applicationContext instanceof ProcessableApplicationContext processableApplicationContext) {
-            this.reportPreProcessors(collector, processableApplicationContext);
-        }
-        ComponentProvider componentProvider = this.applicationContext.get(ComponentProvider.class);
-        if (componentProvider instanceof PostProcessingComponentProvider provider) {
-            this.reportPostProcessors(collector, provider);
+            ComponentProcessorRegistry registry = processableApplicationContext.defaultProvider().processorRegistry();
+            this.reportPreProcessors(collector, registry);
+            this.reportPostProcessors(collector, registry);
         }
     }
 
     private void reportPreProcessors(DiagnosticsPropertyCollector collector,
-                                     ProcessableApplicationContext processableApplicationContext) {
-        MultiMap<Integer, ? extends ComponentProcessor> processors = processableApplicationContext.processors();
+            ComponentProcessorRegistry registry) {
+        MultiMap<Integer, ? extends ComponentProcessor> processors = registry.preProcessors();
         collector.property("pre").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 
     private void reportPostProcessors(DiagnosticsPropertyCollector collector,
-                                      PostProcessingComponentProvider standardComponentProvider) {
-        MultiMap<Integer, ? extends ComponentProcessor> processors = standardComponentProvider.postProcessors();
+            ComponentProcessorRegistry registry) {
+        MultiMap<Integer, ? extends ComponentProcessor> processors = registry.postProcessors();
         collector.property("post").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 

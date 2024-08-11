@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -75,7 +76,9 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
 
     @Override
     public String toString() {
-        return this.type.qualifiedName();
+        return ObjectDescriber.of(this)
+                .field("type", this.type.qualifiedName())
+                .describe();
     }
 
     @Override

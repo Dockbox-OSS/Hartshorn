@@ -18,15 +18,15 @@ package test.org.dockbox.hartshorn.hsl;
 
 import java.util.stream.Stream;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.condition.ConditionContext;
-import org.dockbox.hartshorn.component.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.ConditionContext;
+import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.condition.ExpressionCondition;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.condition.RequiresExpression;
-import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -37,9 +37,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 
-@HartshornTest(includeBasePackages = false)
+@HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
 public class ConditionTests {
 
@@ -101,6 +101,4 @@ public class ConditionTests {
 
         return elementView;
     }
-
-    private void mockTarget() {}
 }

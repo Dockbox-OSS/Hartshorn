@@ -21,9 +21,14 @@
         <!-- Versions in alphabetical order -->
         <compile-testing.version>0.21.0</compile-testing.version>
         <checker.version>3.45.0</checker.version>
+        <errorprone.version>${plugin.errorprone.version}</errorprone.version>
         <hamcrest.version>3.0</hamcrest.version>
         <jackson.version>2.17.2</jackson.version>
         <jakarta.annotations.version>3.0.0</jakarta.annotations.version>
+        <checker.version>3.42.0</checker.version>
+        <hamcrest.version>2.2</hamcrest.version>
+        <jackson.version>2.16.1</jackson.version>
+        <jakarta.annotations.version>2.1.1</jakarta.annotations.version>
         <jakarta.inject.version>2.0.1</jakarta.inject.version>
         <javassist.version>3.30.2-GA</javassist.version>
         <javax.inject.version>1</javax.inject.version>
@@ -69,7 +74,17 @@
             </dependency>
             <dependency>
                 <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-core</artifactId>
+                <artifactId>hartshorn-inject</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dockbox.hartshorn</groupId>
+                <artifactId>hartshorn-inject-configurations</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dockbox.hartshorn</groupId>
+                <artifactId>hartshorn-launchpad</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -84,18 +99,9 @@
             </dependency>
             <dependency>
                 <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-config</artifactId>
+                <artifactId>hartshorn-testsuite</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-config-jackson</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-i18n</artifactId>
-                <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- Third-party -->

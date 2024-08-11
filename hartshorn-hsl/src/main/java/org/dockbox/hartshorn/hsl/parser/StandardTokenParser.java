@@ -25,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -38,6 +37,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -59,7 +59,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class StandardTokenParser extends DefaultProvisionContext implements TokenParser {
+public class StandardTokenParser extends DefaultFallbackCompatibleContext implements TokenParser {
 
     private int current = 0;
     private final List<Token> tokens;
@@ -263,6 +263,6 @@ public class StandardTokenParser extends DefaultProvisionContext implements Toke
     private <T extends ASTNode, N extends ASTNode> Stream<ASTNodeParser<T>> compatibleParserStream(Collection<? extends ASTNodeParser<? extends N>> parsers, Class<T> type) {
         return parsers.stream()
                 .filter(parser -> parser.types().contains(type))
-                .map(parser -> TypeUtils.adjustWildcards(parser, ASTNodeParser.class));
+                .map(parser -> TypeUtils.unchecked(parser, ASTNodeParser.class));
     }
 }

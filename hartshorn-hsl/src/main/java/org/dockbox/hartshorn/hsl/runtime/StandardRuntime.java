@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.hsl.runtime;
 
 import java.util.Map;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ParserCustomizer;
 import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;

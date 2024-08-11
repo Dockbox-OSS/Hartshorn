@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,6 @@ public class ObjectToCollectionConverterFactoryTests {
     private static Converter<Object, Set<String>> createConverter() {
         Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(Set.class);
         ConverterFactory<Object, Collection<?>> factory = new ObjectToCollectionConverterFactory(introspector);
-        return TypeUtils.adjustWildcards(factory.create(Set.class), Converter.class);
+        return TypeUtils.unchecked(factory.create(Set.class), Converter.class);
     }
 }

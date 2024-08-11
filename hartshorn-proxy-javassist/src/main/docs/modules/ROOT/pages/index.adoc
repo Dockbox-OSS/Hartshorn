@@ -1,0 +1,7 @@
+= Hartshorn Proxy (Javassist)
+Guus Lieben
+:description: The Javassist implementation of the Hartshorn Proxy Framework uses JBoss Javassist to provide dynamic object proxying capabilities for all non-final types, including interfaces, abstract-, and concrete classes.
+
+To be written
+
+

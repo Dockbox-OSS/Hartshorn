@@ -45,14 +45,14 @@ public class NativeProxyLookup implements ProxyLookup {
         if(Proxy.isProxyClass(instance.getClass())) {
             InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
             if(invocationHandler instanceof MapBackedAnnotationInvocationHandler annotationInvocationHandler) {
-                unproxied = TypeUtils.adjustWildcards(annotationInvocationHandler.type(), Class.class);
+                unproxied = TypeUtils.unchecked(annotationInvocationHandler.type(), Class.class);
             }
             else if(invocationHandler instanceof AnnotationAdapterProxy<?> adapterProxy) {
-                unproxied = TypeUtils.adjustWildcards(adapterProxy.targetAnnotationClass(), Class.class);
+                unproxied = TypeUtils.unchecked(adapterProxy.targetAnnotationClass(), Class.class);
             }
         }
         if(instance instanceof Annotation annotation) {
-            unproxied = TypeUtils.adjustWildcards(annotation.annotationType(), Class.class);
+            unproxied = TypeUtils.unchecked(annotation.annotationType(), Class.class);
         }
         return Option.of(unproxied);
     }

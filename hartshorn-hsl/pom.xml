@@ -17,17 +17,13 @@
     <dependencies>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-core</artifactId>
+            <artifactId>hartshorn-launchpad</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-core</artifactId>
-            <version>${revision}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <artifactId>hartshorn-testsuite</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
             <artifactId>hartshorn-introspect-reflection</artifactId>
@@ -39,17 +35,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <!-- TODO @Guus Lieben, #1061 Remove after documentation finished -->
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

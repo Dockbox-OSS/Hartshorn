@@ -1,0 +1,4 @@
+name: introspect
+title: Hartshorn Introspection
+nav:
+  - modules/ROOT/nav.adoc

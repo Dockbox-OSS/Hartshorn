@@ -25,6 +25,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
 import org.dockbox.hartshorn.util.introspect.ConcurrentIntrospectionViewCache;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
@@ -76,11 +77,11 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ReflectionIntrospector implements BatchCapableIntrospector {
 
     private static final ConcurrentIntrospectionViewCache SHARED_CACHE = new ConcurrentIntrospectionViewCache();
-
     private static final ClassLoader DEFAULT_CLASS_LOADER = Thread.currentThread().getContextClassLoader();
 
     private final ConcurrentIntrospectionViewCache viewCache = new ConcurrentIntrospectionViewCache();
     private final IntrospectionEnvironment environment = new ReflectionIntrospectionEnvironment();
+    private final TypeView<?> voidType = new ReflectionTypeView<>(this, Void.class);
 
     private final ProxyLookup proxyLookup;
     private final AnnotationLookup annotationLookup;
@@ -94,7 +95,7 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
 
     @Override
     public boolean batchModeEnabled() {
-        return batchModeEnabled;
+        return this.batchModeEnabled;
     }
 
     @Override
@@ -107,7 +108,7 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
     }
 
     private <T> TypeView<T> voidType() {
-        return (TypeView<T>) new ReflectionTypeView<>(this, Void.class);
+        return TypeUtils.unchecked(this.voidType, TypeView.class);
     }
 
     @Override
@@ -130,7 +131,8 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
                     : this.voidType();
         }
         else {
-            return this.introspect((Class<T>) instance.getClass());
+            Class<T> type = TypeUtils.unchecked(instance.getClass(), Class.class);
+            return this.introspect(type);
         }
     }
 

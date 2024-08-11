@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import org.dockbox.hartshorn.hsl.token.TokenGraph.TokenNode;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.util.ObjectDescriber;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.graph.MutableGraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleGraph;
@@ -195,9 +196,10 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
 
         @Override
         public String toString() {
-            return "TokenNode[" +
-                    "character=" + character + ", " +
-                    "tokenType=" + tokenType + ']';
+            return ObjectDescriber.of(this)
+                    .field("character", this.character)
+                    .field("tokenType", this.tokenType)
+                    .describe();
         }
     }
 }

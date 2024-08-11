@@ -51,6 +51,27 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implemen
     }
 
     /**
+     * Creates a new instance of {@link RuleBasedParameterLoader} with the default context type.
+     *
+     * @return a new instance of {@link RuleBasedParameterLoader} with the default context type
+     */
+    public static RuleBasedParameterLoader<ParameterLoaderContext> createDefault() {
+        return create(ParameterLoaderContext.class);
+    }
+
+    /**
+     * Creates a new instance of {@link RuleBasedParameterLoader} with the provided context type.
+     *
+     * @param contextType the context type to use
+     * @param <C> the type of the context
+     *
+     * @return a new instance of {@link RuleBasedParameterLoader} with the provided context type
+     */
+    public static <C extends ParameterLoaderContext> RuleBasedParameterLoader<C> create(Class<C> contextType) {
+        return new RuleBasedParameterLoader<>(contextType);
+    }
+
+    /**
      * Adds the provided rule to the set of rules that are used to load parameters.
      *
      * @param rule the rule to add
@@ -66,7 +87,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implemen
      *
      * @return an unmodifiable set of rules that are used to load parameters
      */
-    protected Set<ParameterLoaderRule<C>> rules() {
+    public Set<ParameterLoaderRule<C>> rules() {
         return Set.copyOf(this.rules);
     }
 

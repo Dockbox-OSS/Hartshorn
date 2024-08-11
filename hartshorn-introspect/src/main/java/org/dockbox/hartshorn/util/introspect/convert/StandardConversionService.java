@@ -175,8 +175,8 @@ public class StandardConversionService implements ConversionService, ConverterRe
                 .typeParameters()
                 .inputFor(Converter.class);
 
-        Class<I> sourceType = TypeUtils.adjustWildcards(this.unwrapParameterAtIndex(converterParameters, 0), Class.class);
-        Class<O> targetType = TypeUtils.adjustWildcards(this.unwrapParameterAtIndex(converterParameters, 1), Class.class);
+        Class<I> sourceType = TypeUtils.unchecked(this.unwrapParameterAtIndex(converterParameters, 0), Class.class);
+        Class<O> targetType = TypeUtils.unchecked(this.unwrapParameterAtIndex(converterParameters, 1), Class.class);
         this.addConverter(sourceType, targetType, converter);
     }
 
@@ -234,7 +234,7 @@ public class StandardConversionService implements ConversionService, ConverterRe
                 .inputFor(fromType);
 
         Class<?> parameter = this.unwrapParameterAtIndex(typeParameters, parameterIndex);
-        return TypeUtils.adjustWildcards(parameter, Class.class);
+        return TypeUtils.unchecked(parameter, Class.class);
     }
 
     /**

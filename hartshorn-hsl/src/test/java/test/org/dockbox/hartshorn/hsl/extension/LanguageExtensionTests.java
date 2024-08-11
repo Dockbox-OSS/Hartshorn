@@ -18,7 +18,7 @@ package test.org.dockbox.hartshorn.hsl.extension;
 
 import java.util.List;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ExpressionScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
@@ -29,13 +29,13 @@ import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.extension.RuntimeExtensionCodeCustomizer;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
-import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import org.dockbox.hartshorn.inject.Inject;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 
-@HartshornTest
+@HartshornIntegrationTest
 @UseExpressionValidation
 public class LanguageExtensionTests {
 

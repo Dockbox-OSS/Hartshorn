@@ -1,0 +1,43 @@
+#
+# Template Antora playbook configuration for release documentation.
+#
+site:
+  title: Hartshorn Framework
+  start_page: launchpad::index.adoc
+  url: https://hartshorn.dockbox.org/
+  robots: allow
+
+urls:
+  latest_version_segment_strategy: redirect:to
+  latest_version_segment: latest
+
+ui:
+  bundle:
+    url: https://github.com/Dockbox-OSS/Antora-Dockbox-UI/releases/download/latest/ui-bundle.zip
+    snapshot: true
+
+content:
+  sources:
+    # Working in ./hartshorn-assembly/antora, but Git repository is in ./ (root). Note that this
+    # has to be prefixed with ./, as ../ directly is interpreted from root directory.
+    - url: ./../..
+      # Antora was not included in releases before 0.7.0, ensure we don't attempt to build things
+      # that do not exist.
+      tags: ['{0..9}.{0..9}.{0..9}', '!0.{4..6}.*']
+      version: true
+      # Disable branch builds, only include tags
+      branches: ~
+      edit_url: https://github.com/Dockbox-OSS/Hartshorn/tree/{refname}/{path}
+      start_paths:
+        - hartshorn-inject/src/main/docs
+        - hartshorn-inject-configurations/src/main/docs
+        - hartshorn-launchpad/src/main/docs
+        - hartshorn-testsuite/src/main/docs
+        - hartshorn-util/src/main/docs
+        - hartshorn-spi/src/main/docs
+        - hartshorn-proxy/src/main/docs
+        - hartshorn-proxy-javassist/src/main/docs
+        - hartshorn-introspect/src/main/docs
+        - hartshorn-introspect-reflection/src/main/docs
+        - hartshorn-reporting/src/main/docs
+        - hartshorn-hsl/src/main/docs

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,8 +47,9 @@ public class AnnotationAdapterProxyIntrospector<T extends Annotation> implements
     }
 
     @Override
+    @SuppressWarnings("GetClassOnAnnotation")
     public Class<T> proxyClass() {
-        return TypeUtils.adjustWildcards(this.annotation.getClass(), Class.class);
+        return TypeUtils.unchecked(this.annotation.getClass(), Class.class);
     }
 
     @Override

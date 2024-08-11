@@ -72,7 +72,7 @@ public abstract class AbstractNativeModule implements NativeModule {
     @Override
     public Object call(Token at, Interpreter interpreter, NativeFunctionStatement function, List<Object> arguments) throws NativeExecutionException {
         TypeView<?> typeView = this.applicationContext().environment().introspector().introspect(this.moduleClass());
-        TypeView<Object> type = TypeUtils.adjustWildcards(typeView, TypeView.class);
+        TypeView<Object> type = TypeUtils.unchecked(typeView, TypeView.class);
         MethodView<Object, ?> method;
         if (function.method() == null) {
             String functionName = function.name().lexeme();
@@ -88,13 +88,13 @@ public abstract class AbstractNativeModule implements NativeModule {
             }
         }
         else {
-            method = TypeUtils.adjustWildcards(function.method(), MethodView.class);
+            method = TypeUtils.unchecked(function.method(), MethodView.class);
         }
 
         if (this.supportedFunctions.stream().anyMatch(sf -> function.method().equals(method))) {
             try {
                 Object result = method.invoke(this.instance(), arguments.toArray(Object[]::new)).orNull();
-                return new ExternalInstance(result, TypeUtils.adjustWildcards(method.returnType(), TypeView.class));
+                return new ExternalInstance(result, TypeUtils.unchecked(method.returnType(), TypeView.class));
             }
             catch(Throwable e) {
                 throw new ScriptEvaluationError(e, Phase.INTERPRETING, at);

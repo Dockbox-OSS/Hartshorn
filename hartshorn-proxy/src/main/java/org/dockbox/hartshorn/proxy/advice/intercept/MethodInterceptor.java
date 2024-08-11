@@ -65,7 +65,7 @@ public interface MethodInterceptor<T, R> {
         Objects.requireNonNull(after);
         return context -> {
             R previous = this.intercept(context);
-            return after.intercept(new MethodInterceptorContext<>(context, previous));
+            return after.intercept(MethodInterceptorContext.copyWithResult(context, previous));
         };
     }
 }

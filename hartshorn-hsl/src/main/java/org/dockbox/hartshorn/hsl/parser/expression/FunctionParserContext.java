@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.parser.expression;
 
-import org.dockbox.hartshorn.context.DefaultProvisionContext;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 
 /**
  * TODO: #1061 Add documentation
@@ -29,7 +29,7 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class FunctionParserContext extends DefaultProvisionContext {
+public class FunctionParserContext extends DefaultFallbackCompatibleContext {
 
     private final Set<String> prefixFunctions = new HashSet<>();
     private final Set<String> infixFunctions = new HashSet<>();

@@ -17,11 +17,12 @@
 package org.dockbox.hartshorn.hsl.condition;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.component.condition.Condition;
-import org.dockbox.hartshorn.component.condition.ConditionContext;
-import org.dockbox.hartshorn.component.condition.ConditionResult;
-import org.dockbox.hartshorn.component.condition.ProvidedParameterContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.condition.Condition;
+import org.dockbox.hartshorn.inject.condition.ConditionContext;
+import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.condition.ProvidedParameterContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
@@ -32,13 +33,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Condition which uses the primary {@link ValidateExpressionRuntime} to validate a given expression. The expression
  * is obtained from the {@link org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView} provided through the
- * {@link ConditionContext} for the condition.
+ * {@link ScriptConditionContext} for the condition.
  *
  * <p>An expression should follow the standard HSL syntax, and any restrictions introduces by the active
  * {@link ValidateExpressionRuntime}.
  *
  * <p>The runtime is by default always enhanced with the active {@link ApplicationContext}, under the global alias configured
- * in {@link #GLOBAL_APPLICATION_CONTEXT_NAME}. If the {@link ConditionContext} contains a {@link ExpressionConditionContext}
+ * in {@link #GLOBAL_APPLICATION_CONTEXT_NAME}. If the {@link ScriptConditionContext} contains a {@link ExpressionConditionContext}
  * which has the {@link ExpressionConditionContext#includeApplicationContext()} set to {@code false}, the application context
  * will not be included in the runtime. Any configured customizers, imports, variables, and modules in the {@link
  * ExpressionConditionContext} are made available to the runtime automatically.
@@ -79,13 +80,14 @@ public class ExpressionCondition implements Condition {
             return ConditionResult.of(result);
         }
         catch (ScriptEvaluationError e) {
-            context.applicationContext().handle("Failed to evaluate expression '%s'".formatted(expression), e);
+            context.application().environment().exceptionHandler()
+                    .handle("Failed to evaluate expression '%s'".formatted(expression), e);
             return ConditionResult.notMatched(e.getMessage());
         }
     }
 
     /**
-     * Creates a new {@link ValidateExpressionRuntime} from the given {@link ConditionContext}. This will customize
+     * Creates a new {@link ValidateExpressionRuntime} from the given {@link ScriptConditionContext}. This will customize
      * the runtime based on the presence of a {@link ExpressionConditionContext} and a {@link ProvidedParameterContext}
      * in the given context.
      *
@@ -93,12 +95,12 @@ public class ExpressionCondition implements Condition {
      * @return a new runtime
      */
     protected ValidateExpressionRuntime createRuntime(ConditionContext context) {
-        ValidateExpressionRuntime runtime = context.applicationContext().get(ValidateExpressionRuntime.class);
+        ValidateExpressionRuntime runtime = context.application().defaultProvider().get(ValidateExpressionRuntime.class);
         return this.enhance(runtime, context);
     }
 
     /**
-     * Enhances the given {@link ValidateExpressionRuntime} with the given {@link ConditionContext}. This will customize
+     * Enhances the given {@link ValidateExpressionRuntime} with the given {@link ScriptConditionContext}. This will customize
      * the runtime based on the presence of a {@link ExpressionConditionContext} and a {@link ProvidedParameterContext}
      * in the given context.
      *
@@ -129,20 +131,23 @@ public class ExpressionCondition implements Condition {
             runtime.modules(expressionContext.externalModules());
 
             if (expressionContext.includeApplicationContext()) {
-                this.enhanceWithApplicationContext(runtime, context.applicationContext());
+                this.enhanceWithApplicationContext(runtime, context.application());
             }
         }).onEmpty(() -> {
-            this.enhanceWithApplicationContext(runtime, context.applicationContext());
+            this.enhanceWithApplicationContext(runtime, context.application());
         });
         return runtime;
     }
 
-    private void enhanceWithApplicationContext(ScriptRuntime runtime, ApplicationContext applicationContext) {
+    private void enhanceWithApplicationContext(ScriptRuntime runtime, InjectionCapableApplication application) {
+        if (!(application instanceof ApplicationContext applicationContext)) {
+            throw new IllegalStateException("Application context is not available in the current context");
+        }
         if (runtime.globalVariables().containsKey(GLOBAL_APPLICATION_CONTEXT_NAME)) {
             if (runtime.globalVariables().get(GLOBAL_APPLICATION_CONTEXT_NAME) != applicationContext) {
                 LOG.warn("Runtime contains mismatched application context reference");
             }
-            // Ignore if the global applicationContext is equal to our active context
+            // Ignore if the global application is equal to our active context
         }
         else {
             runtime.global(GLOBAL_APPLICATION_CONTEXT_NAME, applicationContext);

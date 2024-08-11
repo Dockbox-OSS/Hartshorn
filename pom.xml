@@ -64,7 +64,9 @@
         <javadoc.skip>false</javadoc.skip>
         <owasp.skip>false</owasp.skip>
         <jacoco.skip>false</jacoco.skip>
+        <errorprone.skip>false</errorprone.skip>
         <coverage.skip>false</coverage.skip>
+        <antora.skip>false</antora.skip>
 
         <!-- Language versions, also inherited by BOM -->
         <groovy.version>4.0.18</groovy.version>
@@ -72,10 +74,12 @@
         <scala.version>3.3.1</scala.version>
 
         <!-- Maven plugin versions, in alphabetical order -->
+        <plugin.antora.version>1.0.0-alpha.4</plugin.antora.version>
         <plugin.buildhelper.version>3.6.0</plugin.buildhelper.version>
         <plugin.compiler.version>3.13.0</plugin.compiler.version>
         <plugin.checkstyle.version>3.4.0</plugin.checkstyle.version>
         <plugin.deploy.version>3.1.2</plugin.deploy.version>
+        <plugin.gmaven.version>3.0.2</plugin.gmaven.version>
         <plugin.gpg.version>3.2.4</plugin.gpg.version>
         <plugin.versions.version>2.17.1</plugin.versions.version>
         <plugin.groovy.version>2.1.1</plugin.groovy.version>
@@ -88,6 +92,10 @@
         <plugin.scala.version>4.9.2</plugin.scala.version>
         <plugin.source.version>3.3.1</plugin.source.version>
         <plugin.staging.version>1.7.0</plugin.staging.version>
+        <plugin.errorprone.version>2.28.0</plugin.errorprone.version>
+
+        <!-- Antora playbook for documentation build. Set to playbook-local.yml for local builds -->
+        <antora.playbook>playbook-release.yml</antora.playbook>
     </properties>
 
     <modules>
@@ -99,13 +107,14 @@
         <module>hartshorn-proxy-javassist</module>
         <module>hartshorn-introspect</module>
         <module>hartshorn-introspect-reflection</module>
-        <module>hartshorn-core</module>
+        <module>hartshorn-inject</module>
+        <module>hartshorn-integration-tests</module>
+        <module>hartshorn-inject-configurations</module>
+        <module>hartshorn-launchpad</module>
         <module>hartshorn-reporting</module>
         <module>hartshorn-hsl</module>
-        <module>hartshorn-config</module>
-        <module>hartshorn-config-jackson</module>
-        <module>hartshorn-i18n</module>
         <module>hartshorn-assembly/pom.assembly.xml</module>
+        <module>hartshorn-testsuite</module>
     </modules>
 
     <profiles>
@@ -117,7 +126,9 @@
                 <javadoc.skip>true</javadoc.skip>
                 <owasp.skip>true</owasp.skip>
                 <jacoco.skip>true</jacoco.skip>
+                <errorprone.skip>true</errorprone.skip>
                 <coverage.skip>true</coverage.skip>
+                <antora.skip>true</antora.skip>
             </properties>
         </profile>
         <profile>
@@ -233,9 +244,9 @@
                     <version>${plugin.gpg.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.gmaven</groupId>
-                    <artifactId>groovy-maven-plugin</artifactId>
-                    <version>${plugin.groovy.version}</version>
+                    <groupId>org.codehaus.gmavenplus</groupId>
+                    <artifactId>gmavenplus-plugin</artifactId>
+                    <version>${plugin.gmaven.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -281,6 +292,11 @@
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
                     <version>${plugin.staging.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.antora</groupId>
+                    <artifactId>antora-maven-plugin</artifactId>
+                    <version>${plugin.antora.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -421,6 +437,21 @@
                 <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
 
+            <!-- Antora documentation -->
+            <plugin>
+                <groupId>org.antora</groupId>
+                <artifactId>antora-maven-plugin</artifactId>
+                <configuration>
+                    <skip>${antora.skip}</skip>
+                    <playbookFile>hartshorn-assembly/antora/${antora.playbook}</playbookFile>
+                    <packages>
+                        <package>@antora/lunr-extension</package>
+                        <package>@asciidoctor/tabs</package>
+                        <package>asciidoctor-interdoc-reftext</package>
+                    </packages>
+                </configuration>
+            </plugin>
+
             <!-- Dependency version upgrades -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -433,7 +464,7 @@
                     Exclude Kotlin plugin version from being updated, as this should always reference the kotlin.version property
                     instead of being directly updated by the versions plugin.
                     -->
-                    <excludeProperties>plugin.kotlin.version</excludeProperties>
+                    <excludeProperties>plugin.kotlin.version,errorprone.version</excludeProperties>
                 </configuration>
             </plugin>
         </plugins>

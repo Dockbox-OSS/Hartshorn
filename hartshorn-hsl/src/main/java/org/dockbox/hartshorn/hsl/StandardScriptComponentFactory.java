@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl;
 import java.util.List;
 import java.util.Map;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;

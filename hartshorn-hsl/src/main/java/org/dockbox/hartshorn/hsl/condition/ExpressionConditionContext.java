@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.condition;
 
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.context.DefaultProvisionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Collection;
@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Guus Lieben
  */
-public class ExpressionConditionContext extends DefaultProvisionContext implements ConditionContext {
+public class ExpressionConditionContext extends DefaultFallbackCompatibleContext implements ScriptConditionContext {
 
     private final Map<String, Object> globalVariables = new ConcurrentHashMap<>();
     private final Map<String, TypeView<?>> imports = new ConcurrentHashMap<>();

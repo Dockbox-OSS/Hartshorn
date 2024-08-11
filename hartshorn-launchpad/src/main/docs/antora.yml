@@ -1,0 +1,4 @@
+name: launchpad
+title: Hartshorn Launchpad
+nav:
+  - modules/ROOT/nav.adoc

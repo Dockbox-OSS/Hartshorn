@@ -25,13 +25,13 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.application.Hartshorn;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
-import org.dockbox.hartshorn.application.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.application.lifecycle.ObservableApplicationEnvironment;
-import org.dockbox.hartshorn.application.lifecycle.Observer;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.NamedContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.Hartshorn;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.lifecycle.Observer;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
@@ -112,7 +112,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
      * @param collector the collector to write to
      */
     protected void reportApplicationProperties(DiagnosticsPropertyCollector collector) {
-        Properties properties = this.applicationContext.properties();
+        Properties properties = this.applicationContext.properties().properties();
         Reportable reporter = new PropertiesReporter(properties);
         collector.property("properties").writeDelegate(reporter);
     }
@@ -123,7 +123,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
      * @param collector the collector to write to
      */
     protected void reportServiceActivators(DiagnosticsPropertyCollector collector) {
-        String[] activators = this.applicationContext.activators().stream()
+        String[] activators = this.applicationContext.activators().activators().stream()
                 .map(activator -> activator.annotationType().getCanonicalName())
                 .toArray(String[]::new);
         collector.property("activators").writeStrings(activators);
@@ -183,7 +183,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     @NonNull
     private static Reportable[] childReporters(AtomicReference<BiConsumer<DiagnosticsPropertyCollector, ContextView>> reporterReference, ContextView context) {
         return context.contexts().stream()
-                .map(childContext -> (Reportable) (contextsController -> reporterReference.get().accept(contextsController, childContext)))
+                .map(childContext -> (Reportable) contextsController -> reporterReference.get().accept(contextsController, childContext))
                 .toArray(Reportable[]::new);
     }
 
