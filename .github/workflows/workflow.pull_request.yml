@@ -11,6 +11,7 @@ jobs:
   prebuild_check_dependency:
     name: Pre-build
     uses: ./.github/workflows/prebuild.dependency.yml
+    secrets: inherit
   build:
     name: Build
     needs:
