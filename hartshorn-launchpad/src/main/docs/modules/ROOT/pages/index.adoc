@@ -1,0 +1,5 @@
+= Hartshorn Launchpad
+Guus Lieben
+:description: Hartshorn Launchpad is the main module of the Hartshorn framework, providing the core functionality and APIs for the framework. This combines the functionality of various other modules in the Hartshorn framework, such as dependency injection, type introspection, and scripting. Launchpad includes bootstrap classes, default configurations, and easy-to-use entrypoints for the Hartshorn framework.
+
+To be written

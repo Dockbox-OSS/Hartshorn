@@ -1,0 +1,5 @@
+= Hartshorn Introspection (JDK Reflection)
+Guus Lieben
+:description: The JDK Reflection implementation of the Hartshorn Introspection module uses the Java Reflection API to provide information about classes, interfaces, fields, methods, and constructors at runtime. As such, it does not require compile-time processing and is suitable for use in most Java applications.
+
+To be written

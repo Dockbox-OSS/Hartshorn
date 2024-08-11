@@ -1,6 +1,6 @@
-name: Build all
+name: Build modules
 
-on: [pull_request, workflow_dispatch]
+on: workflow_call
 
 jobs:
   buildSource:

@@ -1,12 +1,11 @@
-name: License header check
+name: check_license
 
-on: [pull_request, workflow_dispatch]
+on: workflow_call
 
 jobs:
   depCheck:
     name: License header check
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
         with:

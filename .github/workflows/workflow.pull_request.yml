@@ -1,0 +1,30 @@
+name: Pull Request
+on: [pull_request]
+
+jobs:
+  prebuild_check_codestyle:
+    name: Pre-build
+    uses: ./.github/workflows/prebuild.codestyle.yml
+  prebuild_check_license:
+    name: Pre-build
+    uses: ./.github/workflows/prebuild.license.yml
+  prebuild_check_dependency:
+    name: Pre-build
+    uses: ./.github/workflows/prebuild.dependency.yml
+  build:
+    name: Build
+    needs:
+      - prebuild_check_codestyle
+      - prebuild_check_license
+      - prebuild_check_dependency
+    uses: ./.github/workflows/build.yml
+  postbuild_test:
+    name: Post-build
+    needs:
+      - build
+    uses: ./.github/workflows/postbuild.tests.yml
+  postbuild_documentation:
+    name: Post-build
+    needs:
+      - postbuild_test
+    uses: ./.github/workflows/postbuild.docs.yml

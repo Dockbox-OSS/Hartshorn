@@ -1,0 +1,4 @@
+name: hsl
+title: Hartshorn Scripting Language
+nav:
+  - modules/ROOT/nav.adoc
