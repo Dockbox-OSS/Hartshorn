@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.util.collections;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.dockbox.hartshorn.util.CollectionUtilities;
 
 /**
  * A base implementation of a {@link BiMultiMap}. This implementation handles the inverse map
@@ -44,13 +45,11 @@ public abstract class AbstractBiMultiMap<K, V> extends StandardMultiMap<K, V> im
     public MultiMap<V, K> inverse() {
         Set<Entry<K, Collection<V>>> entries = this.entrySet();
         MultiMap<V, K> inverseMap = this.createEmptyInverseMap();
-        for (Entry<K, Collection<V>> entry : entries) {
-            K key = entry.getKey();
-            Collection<V> values = entry.getValue();
+        CollectionUtilities.iterateEntries(entries, (key, values) -> {
             for (V value : values) {
                 inverseMap.put(value, key);
             }
-        }
+        });
         return inverseMap;
     }
 

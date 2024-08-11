@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.inject.annotations.Named;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.stream.EntryStream;
+import org.dockbox.hartshorn.util.stream.CollectorUtilities;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -139,8 +141,13 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) {
 
     @Override
     public String toString() {
-        String metaString = this.meta.entrySet().stream()
-                .map(entry -> "%s=%s".formatted(entry.getKey(), entry.getValue()))
+        EntryStream.of(this.meta)
+                .mapKeys(String::toUpperCase)
+                .mapValues(String::valueOf)
+                .collect(CollectorUtilities.toMultiMap());
+
+        String metaString = EntryStream.of(this.meta)
+                .map((key, value) -> "%s=%s".formatted(key, value))
                 .collect(Collectors.joining(", "));
         return "%s{%s}".formatted(this.type.getSimpleName(), metaString);
     }

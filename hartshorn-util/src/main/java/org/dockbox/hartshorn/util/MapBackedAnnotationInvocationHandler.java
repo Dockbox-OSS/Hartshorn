@@ -20,7 +20,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * An {@link InvocationHandler} for an annotation which is backed by a {@link Map} of values.
@@ -78,17 +77,17 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
         if (type == null) {
             throw new IllegalStateException("Type is null");
         }
-        for (Entry<String, Object> entry : values.entrySet()) {
+        CollectionUtilities.iterateEntries(values.entrySet(), (property, value) -> {
             try {
-                Method method = type.getDeclaredMethod(entry.getKey());
-                if (!TypeUtils.isAssignable(method.getReturnType(), entry.getValue().getClass())) {
-                    throw new IllegalStateException("Value " + entry.getValue() + " is not assignable to " + method.getReturnType());
+                Method method = type.getDeclaredMethod(property);
+                if (!TypeUtils.isAssignable(method.getReturnType(), value.getClass())) {
+                    throw new IllegalStateException("Value " + value + " is not assignable to " + method.getReturnType());
                 }
             }
             catch (NoSuchMethodException e) {
-                throw new IllegalStateException("No such method " + entry.getKey() + " on annotation " + type.getCanonicalName());
+                throw new IllegalStateException("No such method " + property + " on annotation " + type.getCanonicalName());
             }
-        }
+        });
         return values;
     }
 

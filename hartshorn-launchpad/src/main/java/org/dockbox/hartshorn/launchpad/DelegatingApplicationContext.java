@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.launchpad;
 
-import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
@@ -31,7 +30,6 @@ import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.launchpad.configuration.ApplicationBindingsConfiguration;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.launchpad.activation.ServiceActivatorContext;
-import org.dockbox.hartshorn.inject.ApplicationPropertyHolder;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
@@ -91,7 +89,6 @@ public abstract class DelegatingApplicationContext
 
     private static final Logger LOG = LoggerFactory.getLogger(DelegatingApplicationContext.class);
 
-    private final transient Properties environmentValues;
     private final transient PostProcessingComponentProvider componentProvider;
     private final transient ApplicationEnvironment environment;
 
@@ -106,8 +103,6 @@ public abstract class DelegatingApplicationContext
         }
 
         this.prepareInitialization();
-
-        this.environmentValues = this.environment.rawArguments();
 
         SingleElementContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this);
         // Expose current context to allow initializers to resolve the application, even if the content of the element context
@@ -141,21 +136,6 @@ public abstract class DelegatingApplicationContext
         if (this.isRunning) {
             throw new IllegalModificationException("Application context cannot be modified after it has been started");
         }
-    }
-
-    @Override
-    public ApplicationPropertyHolder properties() {
-        return new ApplicationPropertyHolder() {
-            @Override
-            public Properties properties() {
-                return DelegatingApplicationContext.this.environmentValues;
-            }
-
-            @Override
-            public Option<String> property(String key) {
-                return Option.of(DelegatingApplicationContext.this.environmentValues.getProperty(key));
-            }
-        };
     }
 
     @Override
