@@ -22,10 +22,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.configuration.DefaultConfigurationBinderPostProcessor;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ServiceActivator
+@ServiceActivator(
+        binderPostProcessors = DefaultConfigurationBinderPostProcessor.class
+)
 @UseLifecycleObservers
 @UseProxying
 public @interface UseLaunchpad {

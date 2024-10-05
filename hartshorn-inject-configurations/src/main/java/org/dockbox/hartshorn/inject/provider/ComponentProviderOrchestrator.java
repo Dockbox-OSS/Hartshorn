@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.inject.processing.HierarchicalBinderProcessorRegistry;
 
 /**
  * TODO: #1060 Add documentation
@@ -28,6 +29,8 @@ import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 public interface ComponentProviderOrchestrator extends PostProcessingComponentProvider {
 
     ComponentRegistry componentRegistry();
+
+    HierarchicalBinderProcessorRegistry binderProcessorRegistry();
 
     HierarchicalComponentProvider applicationProvider();
 

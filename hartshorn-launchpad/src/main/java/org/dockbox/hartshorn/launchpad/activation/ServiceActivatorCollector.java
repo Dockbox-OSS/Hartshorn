@@ -24,9 +24,7 @@ import java.util.stream.Stream;
 
 public class ServiceActivatorCollector {
 
-    public Set<Annotation> serviceActivators(
-        Class<?> forClass
-    ) {
+    public Set<Annotation> serviceActivators(Class<?> forClass) {
         return this.collectServiceActivatorsOnType(forClass)
             .stream()
             .flatMap(activator -> this.collectServiceActivatorsRecursively(activator).stream())
