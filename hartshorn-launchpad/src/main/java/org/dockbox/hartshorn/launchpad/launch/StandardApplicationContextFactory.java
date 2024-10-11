@@ -209,9 +209,9 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      * @param activators The activators that are present on the main class
      */
     private void enhanceTypeReferenceCollectorContext(
-        ApplicationBootstrapContext bootstrapContext,
+            ApplicationBootstrapContext bootstrapContext,
             TypeReferenceCollectorContext collectorContext,
-        Set<Annotation> activators
+            Set<Annotation> activators
     ) {
         Set<String> prefixes = this.collectPrefixesForRegistering(bootstrapContext, activators);
         prefixes.stream()
@@ -222,6 +222,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         if (!standaloneComponents.isEmpty()) {
             collectorContext.register(PredefinedSetTypeReferenceCollector.of(standaloneComponents));
         }
+        collectorContext.register(new ResourceConfigurationTypeReferenceCollector());
     }
 
     /**
