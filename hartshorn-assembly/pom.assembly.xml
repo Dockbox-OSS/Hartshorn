@@ -5,13 +5,13 @@
 
     <parent>
         <groupId>org.dockbox.hartshorn</groupId>
-        <artifactId>hartshorn</artifactId>
+        <artifactId>hartshorn-platform-build</artifactId>
         <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>pom.platform.build.xml</relativePath>
     </parent>
 
     <name>Hartshorn Assembly</name>
-    <description>Assembly project for Hartshorn</description>
+    <description>Assembly project for Hartshorn, used to aggregate project artifacts (e.g. JavaDocs)</description>
 
     <artifactId>hartshorn-assembly</artifactId>
     <version>${revision}</version>
@@ -20,6 +20,8 @@
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
         <jacoco.skip>false</jacoco.skip>
+
+        <plugin.jacoco.version>0.8.12</plugin.jacoco.version>
     </properties>
 
     <dependencyManagement>
@@ -90,6 +92,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${plugin.jacoco.version}</version>
                 <executions>
                     <execution>
                         <id>report-aggregate</id>
