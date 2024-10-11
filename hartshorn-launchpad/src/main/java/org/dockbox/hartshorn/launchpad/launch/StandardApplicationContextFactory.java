@@ -176,9 +176,9 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      * @param activators The activators that are present on the main class
      */
     private void enhanceTypeReferenceCollectorContext(
-        ApplicationBootstrapContext bootstrapContext,
+            ApplicationBootstrapContext bootstrapContext,
             TypeReferenceCollectorContext collectorContext,
-        Set<Annotation> activators
+            Set<Annotation> activators
     ) {
         Set<String> prefixes = this.collectPrefixesForRegistering(bootstrapContext, activators);
         prefixes.stream()
@@ -189,6 +189,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         if (!standaloneComponents.isEmpty()) {
             collectorContext.register(PredefinedSetTypeReferenceCollector.of(standaloneComponents));
         }
+        collectorContext.register(new ResourceConfigurationTypeReferenceCollector());
     }
 
     /**
@@ -209,7 +210,8 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
 
         // Not optional, required for the application to function. Note that any configuration that is required for the
         // application can be overridden by the application itself.
-        prefixes.add(Hartshorn.PACKAGE_PREFIX);
+        // TODO: Investigate and follow up for individual modules
+//        prefixes.add(Hartshorn.PACKAGE_PREFIX);
 
         // Optional, application may prefer to use alternative packages for scanning. This is configured by the application
         // bootstrap context.
