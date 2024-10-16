@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.launchpad.annotations;
+package org.dockbox.hartshorn.inject.processing;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.option.Option;
 
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
-import org.dockbox.hartshorn.launchpad.configuration.DefaultConfigurationBinderPostProcessor;
+public interface HierarchicalBinderProcessorRegistry {
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@ServiceActivator(
-        binderPostProcessors = DefaultConfigurationBinderPostProcessor.class
-)
-@UseLifecycleObservers
-@UseProxying
-public @interface UseLaunchpad {
+    void register(HierarchicalBinderPostProcessor processor);
 
+    void unregister(HierarchicalBinderPostProcessor processor);
+
+    boolean isRegistered(Class<? extends HierarchicalBinderPostProcessor> componentProcessor);
+
+    <T extends HierarchicalBinderPostProcessor> Option<T> lookup(Class<T> componentProcessor);
+
+    MultiMap<Integer, HierarchicalBinderPostProcessor> processors();
 }

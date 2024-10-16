@@ -22,10 +22,7 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import test.org.dockbox.hartshorn.inject.provider.NonProcessableType;
-import test.org.dockbox.hartshorn.inject.provider.NonProcessableTypeProcessor;
-
-@HartshornIntegrationTest(includeBasePackages = false, processors = NonProcessableTypeProcessor.class)
+@HartshornIntegrationTest(includeBasePackages = false, componentPostProcessors = NonProcessableTypeProcessor.class)
 public class ComponentProcessorTests {
 
     @Test
