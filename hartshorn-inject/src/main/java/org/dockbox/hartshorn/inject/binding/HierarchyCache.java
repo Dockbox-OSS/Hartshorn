@@ -41,7 +41,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * TODO: #1060 Add documentation
+ * A cache that stores {@link BindingHierarchy} instances, keyed by a view of their {@link ComponentKey}. This cache
+ * is typically used by {@link Binder}s (commonly {@link HierarchicalBinder}s) to store and retrieve hierarchies of
+ * bindings.
  *
  * @since 0.6.0
  *
