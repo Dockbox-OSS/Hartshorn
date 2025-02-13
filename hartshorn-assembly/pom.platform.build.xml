@@ -20,6 +20,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
 
+        <!-- Shorthands for project paths -->
+        <path.assembly>${maven.multiModuleProjectDirectory}/hartshorn-assembly</path.assembly>
+
         <!-- Language versions, also inherited by BOM -->
         <groovy.version>4.0.18</groovy.version>
         <kotlin.version>2.0.0</kotlin.version>
@@ -32,6 +35,7 @@
         <plugin.jar.version>3.4.2</plugin.jar.version>
         <plugin.javadoc.version>3.8.0</plugin.javadoc.version>
         <plugin.kotlin.version>${kotlin.version}</plugin.kotlin.version>
+        <plugin.license.version>4.6</plugin.license.version>
         <plugin.scala.version>4.9.2</plugin.scala.version>
         <plugin.source.version>3.3.1</plugin.source.version>
     </properties>
@@ -71,6 +75,11 @@
                     <version>${plugin.kotlin.version}</version>
                 </plugin>
                 <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${plugin.license.version}</version>
+                </plugin>
+                <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
                     <version>${plugin.scala.version}</version>
@@ -84,6 +93,37 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <headerDefinitions>
+                        <headerDefinition>${path.assembly}/licenses/JavaBlockStyleHeader.xml</headerDefinition>
+                    </headerDefinitions>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>${path.assembly}/licenses/APACHE-2.txt</header>
+                            <useDefaultExcludes>true</useDefaultExcludes>
+                            <includes>
+                                <include>**/*.java</include>
+                                <include>**/*.kt</include>
+                                <include>**/*.groovy</include>
+                                <include>**/*.scala</include>
+                            </includes>
+                        </licenseSet>
+                    </licenseSets>
+                    <mapping>
+                        <java>JavaBlockStyleHeader</java>
+                    </mapping>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin-git</artifactId>
+                        <version>${plugin.license.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
             <!-- JavaDoc -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
