@@ -34,6 +34,18 @@ import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
+/**
+ * A {@link DependencyGraphValidator} that checks for overlapping aliases in a {@link DependencyGraph}. An overlapping
+ * alias is an alias that is defined in multiple locations at the same priority. This is not allowed as it would make it
+ * impossible to determine which binding should be used when resolving the alias.
+ *
+ * <p>Note that an alias that overlaps with a primary key is not considered an overlapping alias, as the primary key
+ * will always take precedence over the alias.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class OverlappingAliasDependencyGraphValidator implements DependencyGraphValidator {
 
     @Override
@@ -50,21 +62,24 @@ public class OverlappingAliasDependencyGraphValidator implements DependencyGraph
                 .toList();
 
             // Collect all ambiguous locations, rather than just failing on the first one
-            MultiMap<ComponentKey<?>, DependencyContext<?>> contextsByAlias = new HashSetMultiMap<>();
+            MultiMap<PrioritizedComponentKey<?>, DependencyContext<?>> contextsByAlias = new HashSetMultiMap<>();
             for (AliasableDependencyContext<?> dependencyContext : aliasedDependencyContexts) {
                 for (ComponentKey<?> componentKey : this.normalizeComponentKeys(dependencyContext, aliasNormalizer)) {
-                    contextsByAlias.put(componentKey, dependencyContext);
+                    PrioritizedComponentKey<?> key = new PrioritizedComponentKey<>(componentKey, dependencyContext.priority());
+                    contextsByAlias.put(key, dependencyContext);
                 }
             }
 
-            for (ComponentKey<?> componentKey : contextsByAlias.keySet()) {
+            for (PrioritizedComponentKey<?> componentKey : contextsByAlias.keySet()) {
                 Collection<DependencyContext<?>> contexts = contextsByAlias.get(componentKey);
                 if (contexts.size() > 1) {
-                    throw new AmbiguousAliasException(componentKey, contexts);
+                    throw new AmbiguousAliasException(componentKey.key(), contexts);
                 }
             }
         }
     }
+
+    record PrioritizedComponentKey<T>(ComponentKey<? super T> key, int priority) {}
 
     private <T> Set<ComponentKey<? super T>> normalizeComponentKeys(
         AliasableDependencyContext<T> dependencyContext,

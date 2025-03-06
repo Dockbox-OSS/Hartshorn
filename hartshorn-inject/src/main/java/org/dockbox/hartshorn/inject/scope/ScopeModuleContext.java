@@ -18,12 +18,10 @@ package org.dockbox.hartshorn.inject.scope;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Optional;
 import java.util.function.Supplier;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ContextKey;
-import org.dockbox.hartshorn.inject.binding.AliasableBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.util.TypeUtils;

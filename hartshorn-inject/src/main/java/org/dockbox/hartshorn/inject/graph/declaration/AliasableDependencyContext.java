@@ -21,15 +21,47 @@ import org.dockbox.hartshorn.inject.QualifierKey;
 
 import java.util.Set;
 
+/**
+ * A {@link DependencyContext} that supports aliases. Aliases are additional keys that can be used to
+ * reference the same binding. This is useful for example when a binding is defined in multiple
+ * modules, and you want to reference the same binding using different keys.
+ *
+ * @param <T> The type of the component that this context is for.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public interface AliasableDependencyContext<T> extends DependencyContext<T> {
 
+    /**
+     * Indicates whether this context has any aliases configured.
+     *
+     * @return {@code true} if this context has any aliases configured, {@code false} otherwise.
+     */
     default boolean hasConfiguredAliases() {
         return !this.aliasTypes().isEmpty() || !this.aliasKeys().isEmpty() || !this.aliasQualifiers().isEmpty();
     }
 
+    /**
+     * Returns all types that are registered as aliases for this context.
+     *
+     * @return All alias types.
+     */
     Set<Class<? super T>> aliasTypes();
 
+    /**
+     * Returns all keys that are registered as aliases for this context. Note that this does not contain
+     * normalized keys from {@link #aliasTypes() types} or {@link #aliasQualifiers() qualifiers}.
+     *
+     * @return All alias keys.
+     */
     Set<ComponentKey<? super T>> aliasKeys();
 
+    /**
+     * Returns all qualifiers that are registered as aliases for this context.
+     *
+     * @return All alias qualifiers.
+     */
     Set<QualifierKey<T>> aliasQualifiers();
 }

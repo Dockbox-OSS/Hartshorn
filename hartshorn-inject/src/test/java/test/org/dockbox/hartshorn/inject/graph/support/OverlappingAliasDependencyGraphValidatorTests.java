@@ -33,7 +33,7 @@ import org.mockito.Mockito;
 public class OverlappingAliasDependencyGraphValidatorTests {
 
     @Test
-    void testOverlappingAliasPrioritiesFromConfigurationFails() {
+    void testOverlappingAliasWithSamePriorityFails() {
         DependencyGraphValidator validator = new OverlappingAliasDependencyGraphValidator();
         DependencyGraph graph = new DependencyGraph();
 
@@ -54,6 +54,25 @@ public class OverlappingAliasDependencyGraphValidatorTests {
         Assertions.assertEquals(ComponentKey.of(CharSequence.class), exception.componentKey());
     }
 
+    @Test
+    void testOverlappingAliasWithDifferentPrioritiesPasses() {
+        DependencyGraphValidator validator = new OverlappingAliasDependencyGraphValidator();
+        DependencyGraph graph = new DependencyGraph();
+
+        AliasableDependencyContext<String> declarationString = createDeclarationMock(String.class);
+        Mockito.when(declarationString.priority()).thenReturn(1);
+
+        AliasableDependencyContext<StringBuilder> declarationStringBuilder = createDeclarationMock(StringBuilder.class);
+        Mockito.when(declarationStringBuilder.priority()).thenReturn(2);
+
+        graph.addRoot(new SimpleGraphNode<>(declarationString));
+        graph.addRoot(new SimpleGraphNode<>(declarationStringBuilder));
+
+        AliasCapableComponentProviderOrchestrator orchestrator = Mockito.mock(AliasCapableComponentProviderOrchestrator.class);
+        Mockito.when(orchestrator.aliasNormalizer()).thenReturn(new DefaultBindingAliasNormalizer());
+        Assertions.assertDoesNotThrow(() -> validator.validateBeforeConfiguration(graph, null, orchestrator));
+    }
+
     private static <T extends CharSequence> AliasableDependencyContext<T> createDeclarationMock(Class<T> keyType) {
         AliasableDependencyContext<T> declarationString = Mockito.mock(AliasableDependencyContext.class);
         Mockito.when(declarationString.componentKey()).thenReturn(ComponentKey.of(keyType));
@@ -62,6 +81,7 @@ public class OverlappingAliasDependencyGraphValidatorTests {
         Mockito.when(declarationString.aliasQualifiers()).thenReturn(Set.of());
         Mockito.when(declarationString.aliasKeys()).thenReturn(Set.of());
         Mockito.when(declarationString.hasConfiguredAliases()).thenReturn(true);
+        Mockito.when(declarationString.priority()).thenReturn(0);
         return declarationString;
     }
 }

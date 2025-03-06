@@ -19,6 +19,20 @@ package org.dockbox.hartshorn.inject.binding;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.QualifierKey;
 
+/**
+ * Default implementation of the {@link BindingAliasNormalizer} interface. This implementation attempts to retain as much
+ * information from the base key as logically possible, while still creating a valid alias key.
+ *
+ * <p>Alias keys created from an alias type will retain all qualifiers from the base key, but will replace the type with the
+ * alias type.
+ *
+ * <p>Alias keys created from an alias qualifier will lose all qualifiers from the base key, but will retain all other
+ * information.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class DefaultBindingAliasNormalizer implements BindingAliasNormalizer {
 
     @Override

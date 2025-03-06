@@ -22,6 +22,14 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 
+/**
+ * Thrown when an alias is ambiguous, meaning that the same alias is defined in multiple locations. This is not allowed
+ * as it would make it impossible to determine which binding should be used when resolving the alias.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class AmbiguousAliasException extends ApplicationException {
 
     private final ComponentKey<?> componentKey;

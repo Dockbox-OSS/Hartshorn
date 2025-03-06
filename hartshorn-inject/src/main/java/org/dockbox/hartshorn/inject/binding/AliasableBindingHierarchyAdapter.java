@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.inject.binding;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.util.option.Option;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +27,17 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A delegating {@link AliasableBindingHierarchy} that delegates all calls to the wrapped {@link BindingHierarchy}, except
+ * for aliasing calls. This allows for the addition of aliases to an existing hierarchy, without affecting the underlying
+ * providers.
+ *
+ * @param <C> The type of the component that this hierarchy is for.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class AliasableBindingHierarchyAdapter<C> implements AliasableBindingHierarchy<C> {
 
     private final Set<ComponentKey<? super C>> aliases = ConcurrentHashMap.newKeySet();
@@ -111,7 +121,6 @@ public class AliasableBindingHierarchyAdapter<C> implements AliasableBindingHier
         return this.delegate.isCompatible(key) || this.aliases.stream().anyMatch(alias -> alias.equals(key));
     }
 
-    @NotNull
     @Override
     public Iterator<Map.Entry<Integer, InstantiationStrategy<C>>> iterator() {
         return this.delegate.iterator();

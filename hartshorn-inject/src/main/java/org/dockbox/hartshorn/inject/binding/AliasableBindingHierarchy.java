@@ -21,10 +21,32 @@ import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 
 import java.util.Set;
 
+/**
+ * A binding hierarchy that supports aliases. Aliases are additional keys that can be used to
+ * reference the same binding. This is useful for example when a binding is defined in multiple
+ * modules, and you want to reference the same binding using different keys.
+ *
+ * @param <C> The type of the component that this hierarchy is for.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public interface AliasableBindingHierarchy<C> extends BindingHierarchy<C> {
 
+    /**
+     * Add an alias to the current hierarchy. Note that this will affect all providers in the hierarchy,
+     * at all configured priorities.
+     *
+     * @param componentKey The key to register as an alias.
+     */
     void alias(ComponentKey<? super C> componentKey);
 
+    /**
+     * Returns all aliases that are registered for this hierarchy.
+     *
+     * @return All aliases.
+     */
     Set<ComponentKey<? super C>> aliases();
 
     @Override

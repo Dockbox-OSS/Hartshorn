@@ -18,6 +18,16 @@ package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.binding.BindingAliasNormalizer;
 
+/**
+ * An orchestrator that is capable of handling aliases.
+ *
+ * @see ComponentProviderOrchestrator
+ * @see BindingAliasNormalizer
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public interface AliasCapableComponentProviderOrchestrator extends ComponentProviderOrchestrator {
 
     BindingAliasNormalizer aliasNormalizer();
