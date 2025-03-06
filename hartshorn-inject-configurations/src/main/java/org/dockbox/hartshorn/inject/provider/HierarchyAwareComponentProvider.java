@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.binding.BindingAliasNormalizer;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchicalAliasCapableBinder;
 import org.dockbox.hartshorn.inject.binding.NestedHierarchyLookup;
@@ -73,6 +74,7 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
     public HierarchyAwareComponentProvider(
         ComponentRegistryAwareProviderOrchestrator orchestrator,
         ComponentPostConstructor postConstructor,
+        BindingAliasNormalizer bindingAliasNormalizer,
         InjectionCapableApplication application,
         SingletonCache singletonCache,
         Scope scope
@@ -80,7 +82,7 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
         this(
                 application,
                 singletonCache,
-                new ScopeAwareHierarchicalBinder(application, singletonCache, scope),
+                new ScopeAwareHierarchicalBinder(application, bindingAliasNormalizer, singletonCache, scope),
                 createProviderPostProcessor(singletonCache, orchestrator, application, postConstructor),
                 scope
         );
@@ -170,6 +172,7 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
     public static HierarchyAwareComponentProvider create(
             ComponentRegistryAwareProviderOrchestrator orchestrator,
             ComponentPostConstructor postConstructor,
+            BindingAliasNormalizer bindingAliasNormalizer,
             InjectionCapableApplication application,
             SingletonCache singletonCache,
             Scope scope,
@@ -187,11 +190,12 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
                 .initialize(SimpleSingleElementContext.create(application));
 
         HierarchyAwareComponentProvider provider = new HierarchyAwareComponentProvider(
-                orchestrator,
-                postConstructor,
-                application,
-                singletonCache,
-                scope
+            orchestrator,
+            postConstructor,
+            bindingAliasNormalizer,
+            application,
+            singletonCache,
+            scope
         );
         provider.strategies(strategies);
         return provider;

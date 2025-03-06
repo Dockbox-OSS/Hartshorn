@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,25 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  * @author Guus Lieben
  */
 public class AmbiguousComponentException extends ApplicationRuntimeException {
+
+    private final ComponentKey<?> lookupKey;
+    private final Set<ComponentKey<?>> foundKeys;
+
     public AmbiguousComponentException(ComponentKey<?> lookupKey, Set<ComponentKey<?>> foundKeys) {
         super(
             "Ambiguous component lookup for key " + lookupKey
                 + ". Found " + foundKeys.size() + " components: " + foundKeys.stream()
                 .map(key -> key.qualifiedName(true))
                 .collect(Collectors.joining(", ")));
+        this.lookupKey = lookupKey;
+        this.foundKeys = foundKeys;
+    }
+
+    public ComponentKey<?> lookupKey() {
+        return this.lookupKey;
+    }
+
+    public Set<ComponentKey<?>> foundKeys() {
+        return this.foundKeys;
     }
 }

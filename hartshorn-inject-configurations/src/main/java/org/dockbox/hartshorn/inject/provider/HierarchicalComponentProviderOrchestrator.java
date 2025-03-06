@@ -30,7 +30,9 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.AliasBindingFunction;
 import org.dockbox.hartshorn.inject.binding.AliasCapableBinder;
 import org.dockbox.hartshorn.inject.binding.Binder;
+import org.dockbox.hartshorn.inject.binding.BindingAliasNormalizer;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.DefaultBindingAliasNormalizer;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
@@ -59,22 +61,29 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
  */
 public class HierarchicalComponentProviderOrchestrator
         extends DefaultFallbackCompatibleContext
-        implements HierarchicalComponentProvider, ComponentRegistryAwareProviderOrchestrator, HierarchicalBinder, AliasCapableBinder {
+        implements HierarchicalComponentProvider, ComponentRegistryAwareProviderOrchestrator, AliasCapableComponentProviderOrchestrator, HierarchicalBinder, AliasCapableBinder {
 
     private final Map<Scope, HierarchicalAliasBinderAwareComponentProvider> scopedProviders = Collections.synchronizedMap(new WeakHashMap<>());
     private final Scope applicationScope;
 
-    private final transient InjectionCapableApplication application;
-    private final transient ComponentRegistry registry;
-    private final transient ComponentPostConstructor postConstructor;
+    private final InjectionCapableApplication application;
+    private final ComponentRegistry registry;
+    private final ComponentPostConstructor postConstructor;
+    private final BindingAliasNormalizer bindingAliasNormalizer;
 
     private final ComponentProcessorRegistry componentProcessorRegistry;
     private final HierarchicalBinderProcessorRegistry binderProcessorRegistry;
 
-    protected HierarchicalComponentProviderOrchestrator(InjectionCapableApplication application, ComponentRegistry registry, ComponentPostConstructor postConstructor) {
+    protected HierarchicalComponentProviderOrchestrator(
+        InjectionCapableApplication application,
+        ComponentRegistry registry,
+        ComponentPostConstructor postConstructor,
+        BindingAliasNormalizer bindingAliasNormalizer
+    ) {
         this.registry = registry;
         this.application = application;
         this.postConstructor = postConstructor;
+        this.bindingAliasNormalizer = bindingAliasNormalizer;
 
         this.applicationScope = ScopeAdapter.of(this);
         this.componentProcessorRegistry = new MultiMapComponentProcessorRegistry();
@@ -86,6 +95,7 @@ public class HierarchicalComponentProviderOrchestrator
         HierarchicalAliasBinderAwareComponentProvider provider = HierarchyAwareComponentProvider.create(
                 this,
                 this.postConstructor,
+                this.bindingAliasNormalizer,
                 this.application,
                 new ConcurrentHashSingletonCache(),
                 scope,
@@ -207,8 +217,15 @@ public class HierarchicalComponentProviderOrchestrator
 
             ComponentRegistry registry = context.input();
             ComponentPostConstructor postConstructor = configurer.componentPostConstructor.initialize(context.transform(application));
-            return new HierarchicalComponentProviderOrchestrator(application, registry, postConstructor);
+            BindingAliasNormalizer bindingAliasNormalizer = configurer.bindingAliasNormalizer.initialize(context.transform(application));
+
+            return new HierarchicalComponentProviderOrchestrator(application, registry, postConstructor, bindingAliasNormalizer);
         };
+    }
+
+    @Override
+    public BindingAliasNormalizer aliasNormalizer() {
+        return this.bindingAliasNormalizer;
     }
 
     /**
@@ -221,6 +238,7 @@ public class HierarchicalComponentProviderOrchestrator
     public static class Configurer {
 
         private ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor> componentPostConstructor = AnnotatedMethodComponentPostConstructor.create(Customizer.useDefaults());
+        private ContextualInitializer<InjectionCapableApplication, BindingAliasNormalizer> bindingAliasNormalizer = ContextualInitializer.of(DefaultBindingAliasNormalizer::new);
 
         public Configurer componentPostConstructor(ComponentPostConstructor componentPostConstructor) {
             return this.componentPostConstructor(ContextualInitializer.of(componentPostConstructor));
@@ -228,6 +246,15 @@ public class HierarchicalComponentProviderOrchestrator
 
         public Configurer componentPostConstructor(ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor> componentPostConstructor) {
             this.componentPostConstructor = componentPostConstructor;
+            return this;
+        }
+
+        public Configurer bindingAliasNormalizer(BindingAliasNormalizer bindingAliasNormalizer) {
+            return this.bindingAliasNormalizer(ContextualInitializer.of(bindingAliasNormalizer));
+        }
+
+        public Configurer bindingAliasNormalizer(ContextualInitializer<InjectionCapableApplication, BindingAliasNormalizer> bindingAliasNormalizer) {
+            this.bindingAliasNormalizer = bindingAliasNormalizer;
             return this;
         }
     }

@@ -56,6 +56,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     private final HierarchicalBinder binder;
     private final SingletonCache singletonCache;
     private final ScopeModuleContext moduleContext;
+    private final BindingAliasNormalizer bindingAliasNormalizer;
 
     private Scope scope;
     private ScopeKey scopeKey;
@@ -64,17 +65,20 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     private boolean processAfterInitialization = true;
 
     public HierarchyBindingFunction(
-            AliasableBindingHierarchy<T> hierarchy,
-            HierarchicalBinder binder,
-            SingletonCache singletonCache,
-            Scope scope,
-            ScopeModuleContext moduleContext) {
+        AliasableBindingHierarchy<T> hierarchy,
+        HierarchicalBinder binder,
+        SingletonCache singletonCache,
+        Scope scope,
+        ScopeModuleContext moduleContext,
+        BindingAliasNormalizer bindingAliasNormalizer
+    ) {
         this.hierarchy = hierarchy;
         this.binder = binder;
         this.singletonCache = singletonCache;
 
         this.scope = scope;
         this.moduleContext = moduleContext;
+        this.bindingAliasNormalizer = bindingAliasNormalizer;
     }
 
     protected BindingHierarchy<T> hierarchy() {
@@ -96,7 +100,12 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
 
     @Override
     public AliasBindingFunction<T> alias(Class<? super T> aliasType) {
-        return this.alias(ComponentKey.of(aliasType));
+        return this.alias(this.bindingAliasNormalizer.alias(this.hierarchy().key(), aliasType));
+    }
+
+    @Override
+    public AliasBindingFunction<T> alias(QualifierKey<T> aliasQualifier) {
+        return this.alias(this.bindingAliasNormalizer.alias(this.hierarchy().key(), aliasQualifier));
     }
 
     @Override
@@ -109,15 +118,6 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
             throw new UnsupportedOperationException("Delegate hierarchy does not support aliasing");
         }
         return this;
-    }
-
-    @Override
-    public AliasBindingFunction<T> alias(QualifierKey<T> aliasQualifier) {
-        ComponentKey<T> key = this.hierarchy().key().mutable()
-                .withoutQualifiers()
-                .qualifier(aliasQualifier)
-                .build();
-        return this.alias(key);
     }
 
     @Override

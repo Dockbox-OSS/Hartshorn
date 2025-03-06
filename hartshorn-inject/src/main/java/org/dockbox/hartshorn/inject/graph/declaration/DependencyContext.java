@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -149,4 +149,12 @@ public interface DependencyContext<T> {
      * @return whether the dependency should be processed after initialization
      */
     boolean processAfterInitialization();
+
+    /**
+     * Returns a description of the dependency context. This description is typically used for
+     * logging purposes, to identify the origin of the dependency.
+     *
+     * @return a description of the dependency context
+     */
+    String describe();
 }

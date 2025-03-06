@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.LifecycleAwareDependencyContext;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
@@ -117,6 +118,11 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
         return this.view;
     }
 
+    @Override
+    public String describe() {
+        return this.view.qualifiedName();
+    }
+
     private InstanceType instanceType() {
         return switch (this.lifecycleType()) {
             case PROTOTYPE -> InstanceType.SUPPLIER;
@@ -129,6 +135,12 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
                 }
             }
         };
+    }
+
+    @Override
+    protected void customizeDescriber(ObjectDescriber<?> describer) {
+        super.customizeDescriber(describer);
+        describer.field("view", this.view.qualifiedName());
     }
 
     /**

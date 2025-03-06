@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.graph.declaration;
+package org.dockbox.hartshorn.inject.provider;
 
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.QualifierKey;
+import org.dockbox.hartshorn.inject.binding.BindingAliasNormalizer;
 
-import java.util.Set;
+public interface AliasCapableComponentProviderOrchestrator extends ComponentProviderOrchestrator {
 
-public interface AliasableDependencyContext<T> extends DependencyContext<T> {
-
-    default boolean hasConfiguredAliases() {
-        return !this.aliasTypes().isEmpty() || !this.aliasKeys().isEmpty() || !this.aliasQualifiers().isEmpty();
-    }
-
-    Set<Class<? super T>> aliasTypes();
-
-    Set<ComponentKey<? super T>> aliasKeys();
-
-    Set<QualifierKey<T>> aliasQualifiers();
+    BindingAliasNormalizer aliasNormalizer();
 }

@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.inject.graph.declaration;
+package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.QualifierKey;
 
-import java.util.Set;
+public interface BindingAliasNormalizer {
 
-public interface AliasableDependencyContext<T> extends DependencyContext<T> {
+    <T> ComponentKey<? super T> alias(ComponentKey<T> baseKey, Class<? super T> aliasType);
 
-    default boolean hasConfiguredAliases() {
-        return !this.aliasTypes().isEmpty() || !this.aliasKeys().isEmpty() || !this.aliasQualifiers().isEmpty();
-    }
-
-    Set<Class<? super T>> aliasTypes();
-
-    Set<ComponentKey<? super T>> aliasKeys();
-
-    Set<QualifierKey<T>> aliasQualifiers();
+    <T> ComponentKey<T> alias(ComponentKey<T> baseKey, QualifierKey<T> aliasQualifier);
 }

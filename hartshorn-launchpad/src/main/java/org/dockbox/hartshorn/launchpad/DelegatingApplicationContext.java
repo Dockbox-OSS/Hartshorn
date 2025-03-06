@@ -243,7 +243,7 @@ public abstract class DelegatingApplicationContext
     /**
      * @return the {@link ComponentProvider} that is used by this {@link ApplicationContext} to provide components
      */
-    public PostProcessingComponentProvider componentProvider() {
+    public ComponentProviderOrchestrator componentProvider() {
         return this.componentProvider;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.graph.support.CyclicDependencyGraphValidator;
 import org.dockbox.hartshorn.inject.graph.support.DependenciesVisitedGraphValidator;
+import org.dockbox.hartshorn.inject.graph.support.OverlappingAliasDependencyGraphValidator;
+import org.dockbox.hartshorn.inject.provider.ComponentProviderOrchestrator;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
@@ -77,15 +79,21 @@ public final class DependencyGraphInitializer {
      * anything other than validation.
      *
      * @param containers the dependency declarations
+     * @param orchestrator
+     *
      * @return the initialized dependency graph
+     *
      * @throws ApplicationException when the graph is invalid, or when the validation fails
      */
-    public DependencyGraph initializeDependencyGraph(Collection<DependencyDeclarationContext<?>> containers) throws ApplicationException {
+    public DependencyGraph initializeDependencyGraph(
+        Collection<DependencyDeclarationContext<?>> containers,
+        ComponentProviderOrchestrator orchestrator
+    ) throws ApplicationException {
         DependencyGraph dependencyGraph = this.buildDependencyGraph(containers);
-        this.graphValidator.validateBeforeConfiguration(dependencyGraph, this.introspector);
+        this.graphValidator.validateBeforeConfiguration(dependencyGraph, this.introspector, orchestrator);
 
         Set<GraphNode<DependencyContext<?>>> visitedDependencies = this.dependencyVisitor.iterate(dependencyGraph);
-        this.graphValidator.validateAfterConfiguration(dependencyGraph, this.introspector, visitedDependencies);
+        this.graphValidator.validateAfterConfiguration(dependencyGraph, this.introspector, visitedDependencies, orchestrator);
 
         LOG.debug("Validated %d dependencies".formatted(visitedDependencies.size()));
         return dependencyGraph;
@@ -126,7 +134,8 @@ public final class DependencyGraphInitializer {
         private ContextualInitializer<InjectionCapableApplication, ConfigurationDependencyVisitor> dependencyVisitor = ContextualInitializer.of(SkipConfigurationDependencyVisitor::new);
         private final LazyStreamableConfigurer<InjectionCapableApplication, DependencyGraphValidator> graphValidator = LazyStreamableConfigurer.of(Set.of(
             new DependenciesVisitedGraphValidator(),
-            new CyclicDependencyGraphValidator()
+            new CyclicDependencyGraphValidator(),
+            new OverlappingAliasDependencyGraphValidator()
         ));
 
         /**

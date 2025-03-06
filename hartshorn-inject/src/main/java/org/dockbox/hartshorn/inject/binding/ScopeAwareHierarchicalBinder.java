@@ -42,13 +42,20 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ScopeAwareHierarchicalBinder implements HierarchicalAliasCapableBinder, NestedHierarchyLookup {
 
     private final InjectionCapableApplication application;
+    private final BindingAliasNormalizer bindingAliasNormalizer;
     private final SingletonCache singletonCache;
     private final Scope scope;
 
     private HierarchyCache hierarchyCache;
 
-    public ScopeAwareHierarchicalBinder(InjectionCapableApplication application, SingletonCache singletonCache, Scope scope) {
+    public ScopeAwareHierarchicalBinder(
+        InjectionCapableApplication application,
+        BindingAliasNormalizer bindingAliasNormalizer,
+        SingletonCache singletonCache,
+        Scope scope
+    ) {
         this.application = application;
+        this.bindingAliasNormalizer = bindingAliasNormalizer;
         this.singletonCache = singletonCache;
         this.scope = scope;
     }
@@ -107,7 +114,11 @@ public class ScopeAwareHierarchicalBinder implements HierarchicalAliasCapableBin
         if (scopeModuleContext.absent() && this.scope() != this.applicationScope()) {
             throw new IllegalModificationException("Cannot add binding to non-application hierarchy without a module context");
         }
-        return new HierarchyBindingFunction<>(aliasableHierarchy, this, this.singletonCache, this.scope(), scopeModuleContext.orNull());
+        return new HierarchyBindingFunction<>(
+            aliasableHierarchy, this, this.singletonCache,
+            this.scope(), scopeModuleContext.orNull(),
+            this.bindingAliasNormalizer
+        );
     }
 
     @Override

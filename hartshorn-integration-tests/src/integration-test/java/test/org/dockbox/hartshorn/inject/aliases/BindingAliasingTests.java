@@ -17,6 +17,7 @@
 package test.org.dockbox.hartshorn.inject.aliases;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.annotations.configuration.BindingAlias;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
@@ -51,6 +52,12 @@ public class BindingAliasingTests {
         Assertions.assertSame(helloWorldString, helloWorldCharSequence);
     }
 
+    @Test
+    void testOverlappingDefaultAndAliasBindingsFromConfigurationCanResolve(@Inject ComponentProvider provider) {
+        Assertions.assertDoesNotThrow(() -> provider.get(String.class));
+        Assertions.assertDoesNotThrow(() -> provider.get(CharSequence.class));
+    }
+
     @Configuration
     public static class BindingAliasingConfiguration {
 
@@ -58,6 +65,39 @@ public class BindingAliasingTests {
         @BindingAlias(CharSequence.class)
         public String helloWorld() {
             return "Hello world";
+        }
+    }
+
+    @Configuration
+    public static class OverlappingPriorityBindingAliasingConfiguration {
+
+        @Singleton
+        @Priority(1)
+        @BindingAlias(CharSequence.class)
+        public String helloWorld() {
+            return "Hello world";
+        }
+
+        @Singleton
+        @Priority(1)
+        @BindingAlias(CharSequence.class)
+        public StringBuilder helloWorldBuilder() {
+            return new StringBuilder("Hello world");
+        }
+    }
+
+    @Configuration
+    public static class OverlappingDefaultAndAliasBindingConfiguration {
+
+        @Singleton
+        @BindingAlias(CharSequence.class)
+        public String helloWorld() {
+            return "Hello world";
+        }
+
+        @Singleton
+        public CharSequence helloWorldSequence() {
+            return "Hello world sequence";
         }
     }
 }

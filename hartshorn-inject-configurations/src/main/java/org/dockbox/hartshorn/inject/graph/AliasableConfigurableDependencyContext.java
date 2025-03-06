@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.inject.graph.declaration.AliasableDependencyContext
 
 import java.util.HashSet;
 import java.util.Set;
+import org.dockbox.hartshorn.util.ObjectDescriber;
 
 public class AliasableConfigurableDependencyContext<T> extends ConfigurableDependencyContext<T> implements AliasableDependencyContext<T> {
 
@@ -47,11 +48,11 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
     public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
         super.configure(function);
         if (function instanceof AliasBindingFunction<T> aliasBindingFunction) {
-            this.aliasTypes().forEach(aliasBindingFunction::alias);
-            this.aliasKeys().forEach(aliasBindingFunction::alias);
-            this.aliasQualifiers().forEach(aliasBindingFunction::alias);
+            this.aliasTypes.forEach(aliasBindingFunction::alias);
+            this.aliasKeys.forEach(aliasBindingFunction::alias);
+            this.aliasQualifiers.forEach(aliasBindingFunction::alias);
         }
-        else if (!aliasTypes.isEmpty() || !aliasKeys.isEmpty() || !aliasQualifiers.isEmpty()) {
+        else if (!this.aliasTypes.isEmpty() || !this.aliasKeys.isEmpty() || !this.aliasQualifiers.isEmpty()) {
             throw new ComponentConfigurationException("Attempted to configure aliases on a binding that does not support aliasing");
         }
     }
@@ -69,6 +70,14 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
     @Override
     public Set<QualifierKey<T>> aliasQualifiers() {
         return Set.copyOf(this.aliasQualifiers);
+    }
+
+    @Override
+    protected void customizeDescriber(ObjectDescriber<?> describer) {
+        super.customizeDescriber(describer);
+        describer.field("aliasTypes", this.aliasTypes);
+        describer.field("aliasKeys", this.aliasKeys);
+        describer.field("aliasQualifiers", this.aliasQualifiers);
     }
 
     public static class AliasableConfigurableDependencyContextBuilder<T> extends AutoConfiguringDependencyContextBuilder<T> {

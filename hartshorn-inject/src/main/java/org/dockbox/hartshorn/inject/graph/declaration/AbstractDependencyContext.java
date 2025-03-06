@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.inject.graph.DependencyResolutionType;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
+import org.dockbox.hartshorn.util.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -202,6 +203,22 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
     @Override
     public boolean processAfterInitialization() {
         return this.processAfterInitialization;
+    }
+
+    @Override
+    public String toString() {
+        ObjectDescriber<AbstractDependencyContext<T>> describer = ObjectDescriber.of(this);
+        this.customizeDescriber(describer);
+        return describer.describe();
+    }
+
+    protected void customizeDescriber(ObjectDescriber<?> describer) {
+        describer.field("key", this.componentKey)
+            .field("priority", this.priority)
+            .field("scope", this.scope)
+            .field("memberType", this.memberType)
+            .field("lifecycleType", this.lifecycleType)
+            .field("lazy", this.lazy);
     }
 
     /**

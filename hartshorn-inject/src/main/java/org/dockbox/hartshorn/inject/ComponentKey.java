@@ -247,9 +247,10 @@ public final class ComponentKey<T> implements Reportable {
         String scopeName = this.scope()
                 .map(Scope::installableScopeType)
                 .map(ScopeKey::name)
-                .orElse("default");
+            .map(scope -> " @ " + scope)
+                .orElse("");
         String typeName = qualifyType ? this.type.toQualifiedString() : this.type.toString();
-        return typeName + qualifierSuffix + " @ " + scopeName;
+        return typeName + qualifierSuffix + scopeName;
     }
 
     @Override
