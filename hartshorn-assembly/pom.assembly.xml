@@ -198,7 +198,6 @@
                         <package>@asciidoctor/tabs</package>
                         <package>asciidoctor-interdoc-reftext</package>
                     </packages>
-                    <!-- TODO: Change output location? -->
                 </configuration>
                 <executions>
                     <execution>

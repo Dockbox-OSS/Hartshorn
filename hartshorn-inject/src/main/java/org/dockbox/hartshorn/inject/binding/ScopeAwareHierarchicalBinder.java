@@ -95,6 +95,9 @@ public class ScopeAwareHierarchicalBinder implements HierarchicalAliasCapableBin
                     "Cannot bind to a different scope. Expected %s, got %s for key %s".formatted(this.scope(), componentScope, key));
         }
         BindingHierarchy<C> hierarchy = this.hierarchy(key);
+        AliasableBindingHierarchy<C> aliasableHierarchy = hierarchy instanceof AliasableBindingHierarchy<C> aliasable
+                ? aliasable
+                : new AliasableBindingHierarchyAdapter<>(hierarchy);
 
         ContextIdentity<ScopeModuleContext> scopeModuleContextKey = ScopeModuleContext.createKey(() -> {
             return this.applicationScope().installableScopeType();
@@ -104,8 +107,7 @@ public class ScopeAwareHierarchicalBinder implements HierarchicalAliasCapableBin
         if (scopeModuleContext.absent() && this.scope() != this.applicationScope()) {
             throw new IllegalModificationException("Cannot add binding to non-application hierarchy without a module context");
         }
-
-        return new HierarchyBindingFunction<>(hierarchy, this, this.singletonCache, this.scope(), scopeModuleContext.orNull());
+        return new HierarchyBindingFunction<>(aliasableHierarchy, this, this.singletonCache, this.scope(), scopeModuleContext.orNull());
     }
 
     @Override

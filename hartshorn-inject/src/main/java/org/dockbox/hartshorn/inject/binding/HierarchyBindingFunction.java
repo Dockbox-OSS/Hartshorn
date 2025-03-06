@@ -52,7 +52,7 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
  */
 public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
 
-    private final BindingHierarchy<T> hierarchy;
+    private final AliasableBindingHierarchy<T> hierarchy;
     private final HierarchicalBinder binder;
     private final SingletonCache singletonCache;
     private final ScopeModuleContext moduleContext;
@@ -64,7 +64,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     private boolean processAfterInitialization = true;
 
     public HierarchyBindingFunction(
-            BindingHierarchy<T> hierarchy,
+            AliasableBindingHierarchy<T> hierarchy,
             HierarchicalBinder binder,
             SingletonCache singletonCache,
             Scope scope,
@@ -96,17 +96,28 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
 
     @Override
     public AliasBindingFunction<T> alias(Class<? super T> aliasType) {
-        throw new UnsupportedOperationException("Not yet implemented"); // TODO: Implement
+        return this.alias(ComponentKey.of(aliasType));
     }
 
     @Override
     public AliasBindingFunction<T> alias(ComponentKey<? super T> aliasKey) {
-        throw new UnsupportedOperationException("Not yet implemented"); // TODO: Implement
+        BindingHierarchy<T> hierarchy = this.hierarchy();
+        if (hierarchy instanceof AliasableBindingHierarchy<T> aliasableBindingHierarchy) {
+            aliasableBindingHierarchy.alias(aliasKey);
+        }
+        else {
+            throw new UnsupportedOperationException("Delegate hierarchy does not support aliasing");
+        }
+        return this;
     }
 
     @Override
     public AliasBindingFunction<T> alias(QualifierKey<T> aliasQualifier) {
-        throw new UnsupportedOperationException("Not yet implemented"); // TODO: Implement
+        ComponentKey<T> key = this.hierarchy().key().mutable()
+                .withoutQualifiers()
+                .qualifier(aliasQualifier)
+                .build();
+        return this.alias(key);
     }
 
     @Override
@@ -175,6 +186,9 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
         else {
             // If no processing should happen, then we can immediately cache the instance
             this.singletonCache.put(this.hierarchy.key(), instance);
+            for (ComponentKey<? super T> alias : this.hierarchy.aliases()) {
+                this.singletonCache.put(alias, instance);
+            }
             return this.binder();
         }
     }

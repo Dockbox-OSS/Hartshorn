@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -503,6 +503,11 @@ public final class ComponentKey<T> implements Reportable {
          */
         public Builder<T> qualifiers(Set<QualifierKey<?>> qualifiers) {
             this.qualifier.addAll(qualifiers);
+            return this;
+        }
+
+        public Builder<T> withoutQualifiers() {
+            this.qualifier.clear();
             return this;
         }
 

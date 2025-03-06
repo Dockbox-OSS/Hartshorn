@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject.binding;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.function.Consumer;
 
@@ -38,21 +39,23 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy<C> {
+public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy<C>, AliasableBindingHierarchy<C> {
 
     private final Consumer<BindingHierarchy<C>> onUpdate;
 
-    private BindingHierarchy<C> real;
+    private AliasableBindingHierarchy<C> real;
 
     public SubscribableBindingHierarchy(BindingHierarchy<C> real, Consumer<BindingHierarchy<C>> onUpdate) {
-        this.real = real;
+        this.real = real instanceof AliasableBindingHierarchy<C> aliasable
+                ? aliasable
+                : new AliasableBindingHierarchyAdapter<>(real);
         this.onUpdate = onUpdate;
     }
 
     /**
      * @return The wrapped {@link BindingHierarchy}.
      */
-    protected BindingHierarchy<C> real() {
+    protected AliasableBindingHierarchy<C> real() {
         return this.real;
     }
 
@@ -62,25 +65,35 @@ public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy
     }
 
     @Override
-    public BindingHierarchy<C> add(InstantiationStrategy<C> strategy) {
+    public void alias(ComponentKey<? super C> componentKey) {
+        this.real().alias(componentKey);
+    }
+
+    @Override
+    public Set<ComponentKey<? super C>> aliases() {
+        return Set.of();
+    }
+
+    @Override
+    public AliasableBindingHierarchy<C> add(InstantiationStrategy<C> strategy) {
         this.real = this.real().add(strategy);
         return this.hierarchyUpdated();
     }
 
     @Override
-    public BindingHierarchy<C> add(int priority, InstantiationStrategy<C> strategy) {
+    public AliasableBindingHierarchy<C> add(int priority, InstantiationStrategy<C> strategy) {
         this.real = this.real().add(priority, strategy);
         return this.hierarchyUpdated();
     }
 
     @Override
-    public BindingHierarchy<C> addNext(InstantiationStrategy<C> strategy) {
+    public AliasableBindingHierarchy<C> addNext(InstantiationStrategy<C> strategy) {
         this.real = this.real().addNext(strategy);
         return this.hierarchyUpdated();
     }
 
     @Override
-    public BindingHierarchy<C> merge(BindingHierarchy<C> hierarchy) {
+    public AliasableBindingHierarchy<C> merge(BindingHierarchy<C> hierarchy) {
         this.real = this.real().merge(hierarchy);
         return this.hierarchyUpdated();
     }
@@ -110,12 +123,17 @@ public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy
         return this.real().key();
     }
 
+    @Override
+    public <T> boolean isCompatible(ComponentKey<T> key) {
+        return this.real.isCompatible(key);
+    }
+
     /**
      * Notifies the subscriber of a change in the hierarchy.
      *
      * @return Itself, for chaining.
      */
-    private BindingHierarchy<C> hierarchyUpdated() {
+    private AliasableBindingHierarchy<C> hierarchyUpdated() {
         this.onUpdate.accept(this.real());
         return this;
     }
@@ -133,7 +151,7 @@ public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy
 
     @Override
     public boolean prune(int priority) {
-        if (this.real() instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
+        if (((BindingHierarchy<C>) this.real()) instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
             return prunableBindingHierarchy.prune(priority);
         }
         return false;
@@ -141,7 +159,7 @@ public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy
 
     @Override
     public int pruneAbove(int priority) {
-        if (this.real() instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
+        if (((BindingHierarchy<C>) this.real()) instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
             return prunableBindingHierarchy.pruneAbove(priority);
         }
         return 0;
@@ -149,7 +167,7 @@ public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy
 
     @Override
     public int pruneBelow(int priority) {
-        if (this.real() instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
+        if (((BindingHierarchy<C>) this.real()) instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
             return prunableBindingHierarchy.pruneBelow(priority);
         }
         return 0;

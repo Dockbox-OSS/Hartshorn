@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,12 @@ package org.dockbox.hartshorn.inject.scope;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.function.Supplier;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ContextKey;
+import org.dockbox.hartshorn.inject.binding.AliasableBindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.util.TypeUtils;
@@ -57,7 +59,7 @@ public class ScopeModuleContext extends DefaultContext {
 
     public <T> BindingHierarchy<T> hierarchy(ScopeKey scope, ComponentKey<T> key) {
         BindingHierarchy<?> bindingHierarchy = this.scopeModules.get(scope).stream()
-                .filter(hierarchy -> hierarchy.key().equals(key))
+                .filter(hierarchy -> hierarchy.isCompatible(key))
                 .findFirst()
                 .orElseGet(() -> {
                     BindingHierarchy<T> hierarchy = new NativePrunableBindingHierarchy<>(key);
