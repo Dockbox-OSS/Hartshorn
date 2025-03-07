@@ -28,6 +28,18 @@ import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
+/**
+ * An adapter for {@link BindingFunction} that does not support aliasing. This may be used to adapt a binding function
+ * to an environment that requires the usage of {@link AliasBindingFunction}. This adapter will delegate all calls to
+ * the original binding function, but will throw an {@link UnsupportedOperationException} when an aliasing method is
+ * called.
+ *
+ * @param <T> the type of the binding
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class NonAliasBindingFunctionAdapter<T> implements AliasBindingFunction<T> {
 
     private final BindingFunction<T> delegate;

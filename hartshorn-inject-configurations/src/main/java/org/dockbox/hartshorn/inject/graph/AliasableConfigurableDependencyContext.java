@@ -26,6 +26,18 @@ import java.util.HashSet;
 import java.util.Set;
 import org.dockbox.hartshorn.util.ObjectDescriber;
 
+/**
+ * A configurable dependency context that supports aliasing.
+ *
+ * @param <T> the type of the dependency
+ *
+ * @see AliasableDependencyContext
+ * @see ConfigurableDependencyContext
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class AliasableConfigurableDependencyContext<T> extends ConfigurableDependencyContext<T> implements AliasableDependencyContext<T> {
 
     private final Set<Class<? super T>> aliasTypes;
@@ -80,6 +92,15 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
         describer.field("aliasQualifiers", this.aliasQualifiers);
     }
 
+    /**
+     * A builder for {@link AliasableConfigurableDependencyContext} instances.
+     *
+     * @param <T> the type of the component that is auto-configured
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
     public static class AliasableConfigurableDependencyContextBuilder<T> extends AutoConfiguringDependencyContextBuilder<T> {
 
         private final Set<Class<? super T>> aliasTypes = new HashSet<>();
