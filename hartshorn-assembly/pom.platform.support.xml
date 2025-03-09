@@ -36,7 +36,7 @@
         <plugin.checkstyle.version>3.6.0</plugin.checkstyle.version>
         <plugin.versions.version>2.18.0</plugin.versions.version>
         <plugin.jacoco.version>0.8.12</plugin.jacoco.version>
-        <plugin.owasp.version>11.1.1</plugin.owasp.version>
+        <plugin.owasp.version>12.1.0</plugin.owasp.version>
         <plugin.errorprone.version>2.28.0</plugin.errorprone.version>
 
         <!-- Maven plugin dependency versions, in alphabetical order -->
