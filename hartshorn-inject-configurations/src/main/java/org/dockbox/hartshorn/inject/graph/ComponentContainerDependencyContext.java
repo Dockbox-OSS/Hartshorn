@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,11 @@ public class ComponentContainerDependencyContext<T> extends ManagedComponentDepe
     @Override
     public boolean processAfterInitialization() {
         return this.container == null || this.container.permitsProcessing();
+    }
+
+    @Override
+    public String describe() {
+        return this.container.type().qualifiedName();
     }
 
     @Override

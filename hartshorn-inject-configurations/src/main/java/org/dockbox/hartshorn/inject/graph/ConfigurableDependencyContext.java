@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.LifecycleAwareDependencyContext;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
@@ -46,12 +47,12 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  *
  * @author Guus Lieben
  */
-public final class ConfigurableDependencyContext<T> extends AbstractDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
+public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
 
     private final PrototypeInstantiationStrategy<T> supplier;
     private final View view;
 
-    private ConfigurableDependencyContext(AutoConfiguringDependencyContextBuilder<T> builder) {
+    protected ConfigurableDependencyContext(AutoConfiguringDependencyContextBuilder<T> builder) {
         super(builder);
         this.supplier = builder.supplier;
         this.view = builder.view;
@@ -117,6 +118,11 @@ public final class ConfigurableDependencyContext<T> extends AbstractDependencyCo
         return this.view;
     }
 
+    @Override
+    public String describe() {
+        return this.view.qualifiedName();
+    }
+
     private InstanceType instanceType() {
         return switch (this.lifecycleType()) {
             case PROTOTYPE -> InstanceType.SUPPLIER;
@@ -129,6 +135,12 @@ public final class ConfigurableDependencyContext<T> extends AbstractDependencyCo
                 }
             }
         };
+    }
+
+    @Override
+    protected void customizeDescriber(ObjectDescriber<?> describer) {
+        super.customizeDescriber(describer);
+        describer.field("view", this.view.qualifiedName());
     }
 
     /**
@@ -145,12 +157,12 @@ public final class ConfigurableDependencyContext<T> extends AbstractDependencyCo
      *
      * @author Guus Lieben
      */
-    public static final class AutoConfiguringDependencyContextBuilder<T> extends AbstractDependencyContextBuilder<T, AutoConfiguringDependencyContextBuilder<T>> {
+    public static class AutoConfiguringDependencyContextBuilder<T> extends AbstractDependencyContextBuilder<T, AutoConfiguringDependencyContextBuilder<T>> {
 
         private PrototypeInstantiationStrategy<T> supplier;
         private View view;
 
-        private AutoConfiguringDependencyContextBuilder(ComponentKey<T> componentKey) {
+        protected AutoConfiguringDependencyContextBuilder(ComponentKey<T> componentKey) {
             super(componentKey);
         }
 
@@ -168,8 +180,6 @@ public final class ConfigurableDependencyContext<T> extends AbstractDependencyCo
             this.view = view;
             return this;
         }
-
-
 
         @Override
         public ConfigurableDependencyContext<T> build() {

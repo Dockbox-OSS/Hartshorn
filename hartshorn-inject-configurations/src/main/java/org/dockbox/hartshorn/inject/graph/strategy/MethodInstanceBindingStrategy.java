@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 
 package org.dockbox.hartshorn.inject.graph.strategy;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.graph.ConfigurableDependencyContext;
+import org.dockbox.hartshorn.inject.annotations.configuration.BindingAlias;
+import org.dockbox.hartshorn.inject.graph.AliasableConfigurableDependencyContext;
 import org.dockbox.hartshorn.inject.graph.resolve.BindingAfterDeclarationDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.resolve.BindingDeclarationDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.resolve.CompositeBindingDependencyResolver;
@@ -95,17 +97,18 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
             }
         };
 
-        return ConfigurableDependencyContext.builder(componentKey)
-            .dependencies(DependencyMap.create().immediate(dependencies))
-            .scope(this.resolveComponentScope(declaration))
-            .priority(this.resolvePriority(declaration))
-            .memberType(this.resolveMemberType(declaration))
-            .view(declaration)
-            .supplier(supplier)
-            .lazy(bindingDecorator.lazy())
-            .lifecycleType(bindingDecorator.lifecycle())
-            .processAfterInitialization(bindingDecorator.processAfterInitialization())
-            .build();
+        return AliasableConfigurableDependencyContext.builder(componentKey)
+                .aliasTypes(this.resolveAliasTypes(declaration, componentKey.type()))
+                .dependencies(DependencyMap.create().immediate(dependencies))
+                .scope(this.resolveComponentScope(declaration))
+                .priority(this.resolvePriority(declaration))
+                .memberType(this.resolveMemberType(declaration))
+                .view(declaration)
+                .supplier(supplier)
+                .lazy(bindingDecorator.lazy())
+                .lifecycleType(bindingDecorator.lifecycle())
+                .processAfterInitialization(bindingDecorator.processAfterInitialization())
+                .build();
     }
 
     private int resolvePriority(AnnotatedElementView view) {
@@ -125,6 +128,22 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         return bindsMethod.annotations().has(CompositeMember.class)
             ? ComponentMemberType.COMPOSITE
             : ComponentMemberType.STANDALONE;
+    }
+
+    private <T> Set<Class<? super T>> resolveAliasTypes(AnnotatedElementView view, Class<T> baseType) {
+        Set<Class<? super T>> types = new HashSet<>();
+        for (BindingAlias alias : view.annotations().all(BindingAlias.class)) {
+            Class<?>[] aliasTypes = alias.value();
+            for (Class<?> type : aliasTypes) {
+                if (type.isAssignableFrom(baseType)) {
+                    types.add((Class<? super T>) type);
+                }
+                else {
+                    throw new IllegalStateException("Binding alias " + type.getSimpleName() + " is not assignable from binding type " + baseType.getSimpleName());
+                }
+            }
+        }
+        return types;
     }
 
     @Override

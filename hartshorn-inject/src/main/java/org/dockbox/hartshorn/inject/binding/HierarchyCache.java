@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,8 +82,19 @@ public class HierarchyCache {
             return this.hierarchies.get(view);
         }
         else {
-            return this.computeHierarchy(key, useGlobalIfAbsent);
+            List<BindingHierarchy<?>> compatibleAliases = this.hierarchies.values().stream()
+                    .filter(hierarchy -> hierarchy.isCompatible(key))
+                    .toList();
+            if (compatibleAliases.size() > 1) {
+                throw new AmbiguousComponentException(key, compatibleAliases.stream()
+                        .map(BindingHierarchy::key)
+                        .collect(Collectors.toSet()));
+            }
+            else if (compatibleAliases.size() == 1) {
+                return compatibleAliases.getFirst();
+            }
         }
+        return this.computeHierarchy(key, useGlobalIfAbsent);
     }
 
     @NonNull
@@ -103,7 +114,7 @@ public class HierarchyCache {
                         .build();
                 return this.globalBinder.hierarchy(unscopedKey);
             }
-            return new NativePrunableBindingHierarchy<>(key);
+            return new AliasableBindingHierarchyAdapter<>(new NativePrunableBindingHierarchy<>(key));
         });
     }
 

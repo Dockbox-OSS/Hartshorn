@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,16 +39,23 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class ScopeAwareHierarchicalBinder implements HierarchicalBinder, NestedHierarchyLookup {
+public class ScopeAwareHierarchicalBinder implements HierarchicalAliasCapableBinder, NestedHierarchyLookup {
 
     private final InjectionCapableApplication application;
+    private final BindingAliasNormalizer bindingAliasNormalizer;
     private final SingletonCache singletonCache;
     private final Scope scope;
 
     private HierarchyCache hierarchyCache;
 
-    public ScopeAwareHierarchicalBinder(InjectionCapableApplication application, SingletonCache singletonCache, Scope scope) {
+    public ScopeAwareHierarchicalBinder(
+        InjectionCapableApplication application,
+        BindingAliasNormalizer bindingAliasNormalizer,
+        SingletonCache singletonCache,
+        Scope scope
+    ) {
         this.application = application;
+        this.bindingAliasNormalizer = bindingAliasNormalizer;
         this.singletonCache = singletonCache;
         this.scope = scope;
     }
@@ -70,7 +77,7 @@ public class ScopeAwareHierarchicalBinder implements HierarchicalBinder, NestedH
     }
 
     @Override
-    public <C> BindingFunction<C> bind(Class<C> type) {
+    public <C> AliasBindingFunction<C> bind(Class<C> type) {
         // Strict, so new hierarchies are created if needed, rather than using loose lookup
         ComponentKey<C> componentKey = ComponentKey.builder(type)
                 .strict(true)
@@ -84,7 +91,7 @@ public class ScopeAwareHierarchicalBinder implements HierarchicalBinder, NestedH
     }
 
     @Override
-    public <C> BindingFunction<C> bind(ComponentKey<C> key) {
+    public <C> AliasBindingFunction<C> bind(ComponentKey<C> key) {
         Scope componentScope = key.scope().orNull();
         if (componentScope == null) {
             componentScope = this.applicationScope();
@@ -95,6 +102,9 @@ public class ScopeAwareHierarchicalBinder implements HierarchicalBinder, NestedH
                     "Cannot bind to a different scope. Expected %s, got %s for key %s".formatted(this.scope(), componentScope, key));
         }
         BindingHierarchy<C> hierarchy = this.hierarchy(key);
+        AliasableBindingHierarchy<C> aliasableHierarchy = hierarchy instanceof AliasableBindingHierarchy<C> aliasable
+                ? aliasable
+                : new AliasableBindingHierarchyAdapter<>(hierarchy);
 
         ContextIdentity<ScopeModuleContext> scopeModuleContextKey = ScopeModuleContext.createKey(() -> {
             return this.applicationScope().installableScopeType();
@@ -104,8 +114,11 @@ public class ScopeAwareHierarchicalBinder implements HierarchicalBinder, NestedH
         if (scopeModuleContext.absent() && this.scope() != this.applicationScope()) {
             throw new IllegalModificationException("Cannot add binding to non-application hierarchy without a module context");
         }
-
-        return new HierarchyBindingFunction<>(hierarchy, this, this.singletonCache, this.scope(), scopeModuleContext.orNull());
+        return new HierarchyBindingFunction<>(
+            aliasableHierarchy, this, this.singletonCache,
+            this.scope(), scopeModuleContext.orNull(),
+            this.bindingAliasNormalizer
+        );
     }
 
     @Override

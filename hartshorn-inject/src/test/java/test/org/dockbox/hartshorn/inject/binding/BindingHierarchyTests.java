@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package test.org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.binding.DefaultBindingAliasNormalizer;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.inject.binding.ScopeAwareHierarchicalBinder;
 import org.dockbox.hartshorn.inject.provider.CompositeInstantiationStrategy;
@@ -42,9 +43,10 @@ public class BindingHierarchyTests {
 
     private HierarchicalBinder binder() {
         return new ScopeAwareHierarchicalBinder(
-                null,
-                new ConcurrentHashSingletonCache(),
-                ScopeAdapter.of("test")
+            null,
+            new DefaultBindingAliasNormalizer(),
+            new ConcurrentHashSingletonCache(),
+            ScopeAdapter.of("test")
         );
     }
 

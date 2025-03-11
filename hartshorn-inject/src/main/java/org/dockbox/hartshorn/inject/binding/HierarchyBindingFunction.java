@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject.binding;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.IllegalScopeException;
+import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.CollectorBindingFunction;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
@@ -49,12 +50,13 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
  *
  * @author Guus Lieben
  */
-public class HierarchyBindingFunction<T> implements BindingFunction<T> {
+public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
 
-    private final BindingHierarchy<T> hierarchy;
+    private final AliasableBindingHierarchy<T> hierarchy;
     private final HierarchicalBinder binder;
     private final SingletonCache singletonCache;
     private final ScopeModuleContext moduleContext;
+    private final BindingAliasNormalizer bindingAliasNormalizer;
 
     private Scope scope;
     private ScopeKey scopeKey;
@@ -63,17 +65,20 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     private boolean processAfterInitialization = true;
 
     public HierarchyBindingFunction(
-            BindingHierarchy<T> hierarchy,
-            HierarchicalBinder binder,
-            SingletonCache singletonCache,
-            Scope scope,
-            ScopeModuleContext moduleContext) {
+        AliasableBindingHierarchy<T> hierarchy,
+        HierarchicalBinder binder,
+        SingletonCache singletonCache,
+        Scope scope,
+        ScopeModuleContext moduleContext,
+        BindingAliasNormalizer bindingAliasNormalizer
+    ) {
         this.hierarchy = hierarchy;
         this.binder = binder;
         this.singletonCache = singletonCache;
 
         this.scope = scope;
         this.moduleContext = moduleContext;
+        this.bindingAliasNormalizer = bindingAliasNormalizer;
     }
 
     protected BindingHierarchy<T> hierarchy() {
@@ -94,7 +99,29 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public BindingFunction<T> installTo(ScopeKey scopeKey) throws IllegalScopeException {
+    public AliasBindingFunction<T> alias(Class<? super T> aliasType) {
+        return this.alias(this.bindingAliasNormalizer.alias(this.hierarchy().key(), aliasType));
+    }
+
+    @Override
+    public AliasBindingFunction<T> alias(QualifierKey<T> aliasQualifier) {
+        return this.alias(this.bindingAliasNormalizer.alias(this.hierarchy().key(), aliasQualifier));
+    }
+
+    @Override
+    public AliasBindingFunction<T> alias(ComponentKey<? super T> aliasKey) {
+        BindingHierarchy<T> hierarchy = this.hierarchy();
+        if (hierarchy instanceof AliasableBindingHierarchy<T> aliasableBindingHierarchy) {
+            aliasableBindingHierarchy.alias(aliasKey);
+        }
+        else {
+            throw new UnsupportedOperationException("Delegate hierarchy does not support aliasing");
+        }
+        return this;
+    }
+
+    @Override
+    public AliasBindingFunction<T> installTo(ScopeKey scopeKey) throws IllegalScopeException {
         boolean expandingApplicationScope = this.moduleContext.isApplicationScope(this.scopeKey)
                 || this.moduleContext.isApplicationScope(this.scope.installableScopeType());
 
@@ -110,13 +137,13 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public BindingFunction<T> priority(int priority) {
+    public AliasBindingFunction<T> priority(int priority) {
         this.priority = priority;
         return this;
     }
 
     @Override
-    public BindingFunction<T> processAfterInitialization(boolean processAfterInitialization) {
+    public AliasBindingFunction<T> processAfterInitialization(boolean processAfterInitialization) {
         this.processAfterInitialization = processAfterInitialization;
         return this;
     }
@@ -159,6 +186,9 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
         else {
             // If no processing should happen, then we can immediately cache the instance
             this.singletonCache.put(this.hierarchy.key(), instance);
+            for (ComponentKey<? super T> alias : this.hierarchy.aliases()) {
+                this.singletonCache.put(alias, instance);
+            }
             return this.binder();
         }
     }

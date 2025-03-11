@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.inject.graph.DependencyGraphValidator;
 import org.dockbox.hartshorn.inject.graph.TypePathNode;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.ImplementationDependencyContext;
+import org.dockbox.hartshorn.inject.provider.ComponentProviderOrchestrator;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.graph.ContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.GraphNode;
@@ -56,7 +57,8 @@ import org.dockbox.hartshorn.util.introspect.view.View;
 public class CyclicDependencyGraphValidator implements DependencyGraphValidator {
 
     @Override
-    public void validateBeforeConfiguration(DependencyGraph dependencyGraph, Introspector introspector) throws ApplicationException {
+    public void validateBeforeConfiguration(DependencyGraph dependencyGraph, Introspector introspector,
+        ComponentProviderOrchestrator orchestrator) throws ApplicationException {
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
         for (GraphNode<DependencyContext<?>> node : nodes) {
             if (node.isLeaf()) {
