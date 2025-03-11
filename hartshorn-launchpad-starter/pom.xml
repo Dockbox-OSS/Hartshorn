@@ -4,8 +4,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.dockbox.hartshorn</groupId>
-  <artifactId>hartshorn-launchpad</artifactId>
-  <version>0.6.0</version>
+  <artifactId>hartshorn-launchpad-starter</artifactId>
+  <version>0.7.0</version>
   <packaging>pom</packaging>
 
   <name>Hartshorn Launchpad Starter</name>
@@ -31,7 +31,7 @@
   <dependencies>
     <dependency>
       <groupId>org.dockbox.hartshorn</groupId>
-      <artifactId>hartshorn-core</artifactId>
+      <artifactId>hartshorn-launchpad</artifactId>
     </dependency>
     <dependency>
       <groupId>org.dockbox.hartshorn</groupId>
@@ -40,6 +40,11 @@
     <dependency>
       <groupId>org.dockbox.hartshorn</groupId>
       <artifactId>hartshorn-introspect-reflection</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <optional>true</optional>
     </dependency>
   </dependencies>
 

@@ -1,7 +1,7 @@
 package com.sample.helloworld;
 
-import org.dockbox.hartshorn.application.HartshornApplication;
-import org.dockbox.hartshorn.application.context.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.HartshornApplication;
 
 public class HelloWorldApplication {
 

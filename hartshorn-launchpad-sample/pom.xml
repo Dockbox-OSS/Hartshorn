@@ -5,13 +5,13 @@
 
     <parent>
         <groupId>org.dockbox.hartshorn</groupId>
-        <artifactId>hartshorn-launchpad</artifactId>
-        <version>0.6.0</version>
-        <relativePath>../pom.xml</relativePath>
+        <artifactId>hartshorn-launchpad-starter</artifactId>
+        <version>0.7.0</version>
+        <relativePath>../hartshorn-launchpad-starter/pom.xml</relativePath>
     </parent>
 
     <name>Hartshorn Sample Project</name>
-    <artifactId>launchpad-sample</artifactId>
+    <artifactId>hartshorn-launchpad-sample</artifactId>
     <packaging>jar</packaging>
 
 </project>
