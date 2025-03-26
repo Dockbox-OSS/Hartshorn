@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.launchpad.HartshornApplication;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
-import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment.Configurer;
+import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment.Configurer;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
@@ -82,7 +82,7 @@ public class LooseInjectionTest {
         ApplicationContext applicationContext = HartshornApplication.create(LooseInjectionTest.class, application -> {
             application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
                 constructor.includeBasePackages(false);
-                constructor.environment(ContextualApplicationEnvironment.create(Configurer::disableStrictMode));
+                constructor.environment(ConfigurableApplicationEnvironment.create(Configurer::disableStrictMode));
             }));
         });
         ApplicationEnvironment environment = applicationContext.environment();

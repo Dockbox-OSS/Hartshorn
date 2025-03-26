@@ -39,7 +39,7 @@ import org.dockbox.hartshorn.launchpad.annotations.UseLifecycleObservers;
 import org.dockbox.hartshorn.launchpad.configuration.BindingConfigurerBinderPostProcessorAdapter;
 import org.dockbox.hartshorn.launchpad.configuration.ScopeFilteredDelegateBinderPostProcessor;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.annotations.UseProxying;
@@ -328,7 +328,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, Class<?>> standaloneComponents = LazyStreamableConfigurer.empty();
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, String> scanPackages = LazyStreamableConfigurer.empty();
 
-        private ContextualInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment> environment = ContextualApplicationEnvironment.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment> environment = ConfigurableApplicationEnvironment.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationBuildContext, Boolean> includeBasePackages = ContextualInitializer.of(true);
 
         /**
@@ -408,7 +408,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
 
         /**
          * Configures the environment that is used to manage the application context. By default, this uses the {@link
-         * ContextualApplicationEnvironment} with default settings.
+         * ConfigurableApplicationEnvironment} with default settings.
          *
          * @param environment The environment to use
          * @return The current configurator instance
@@ -419,7 +419,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
 
         /**
          * Configures the environment that is used to manage the application context. By default, this uses the {@link
-         * ContextualApplicationEnvironment} with default settings.
+         * ConfigurableApplicationEnvironment} with default settings.
          *
          * @param environment The environment to use
          * @return The current configurator instance

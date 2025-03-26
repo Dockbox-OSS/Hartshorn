@@ -77,13 +77,14 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * TODO: #1060 Add documentation
+ * Configurable implementation of a {@link ApplicationEnvironment}. This implementation in itself does not define set
+ * rules on how individual elements behave, but rather delegates to dedicated implementations.
  *
  * @since 0.4.8
  *
  * @author Guus Lieben
  */
-public final class ContextualApplicationEnvironment implements ObservableApplicationEnvironment, ModifiableApplicationContextCarrier {
+public final class ConfigurableApplicationEnvironment implements ObservableApplicationEnvironment, ModifiableApplicationContextCarrier {
 
     private final Set<Observer> observers = ConcurrentHashMap.newKeySet();
     private final Set<Class<? extends Observer>> lazyObservers = ConcurrentHashMap.newKeySet();
@@ -108,7 +109,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     private ApplicationContext applicationContext;
     private Introspector introspector;
 
-    private ContextualApplicationEnvironment(SingleElementContext<? extends ApplicationBootstrapContext> context, Configurer configurer) {
+    private ConfigurableApplicationEnvironment(SingleElementContext<? extends ApplicationBootstrapContext> context, Configurer configurer) {
         SingleElementContext<ApplicationEnvironment> environmentInitializerContext = context.transform(this);
         environmentInitializerContext.addContext(context.input());
 
@@ -219,7 +220,7 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
 
             @Override
             public boolean isStrictMode() {
-                return ContextualApplicationEnvironment.this.isStrictMode;
+                return ConfigurableApplicationEnvironment.this.isStrictMode;
             }
         };
     }
@@ -344,17 +345,17 @@ public final class ContextualApplicationEnvironment implements ObservableApplica
     }
 
     /**
-     * Creates a new {@link ContextualInitializer} for the {@link ContextualApplicationEnvironment} using the given
+     * Creates a new {@link ContextualInitializer} for the {@link ConfigurableApplicationEnvironment} using the given
      * {@link Customizer}.
      *
      * @param customizer the customizer to use, if left empty the default configuration will be used
-     * @return a non-cached {@link ContextualInitializer} for the {@link ContextualApplicationEnvironment}
+     * @return a non-cached {@link ContextualInitializer} for the {@link ConfigurableApplicationEnvironment}
      */
-    public static ContextualInitializer<ApplicationBootstrapContext, ContextualApplicationEnvironment> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<ApplicationBootstrapContext, ConfigurableApplicationEnvironment> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
-            return new ContextualApplicationEnvironment(context, configurer);
+            return new ConfigurableApplicationEnvironment(context, configurer);
         };
     }
 

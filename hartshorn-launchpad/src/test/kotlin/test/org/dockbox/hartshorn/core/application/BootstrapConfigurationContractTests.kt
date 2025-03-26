@@ -29,13 +29,12 @@ import org.dockbox.hartshorn.inject.processing.construction.AnnotatedMethodCompo
 import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor
 import org.dockbox.hartshorn.inject.provider.ComponentProviderOrchestrator
 import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProviderOrchestrator
-import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider
 import org.dockbox.hartshorn.launchpad.ApplicationContext
 import org.dockbox.hartshorn.launchpad.DelegatingApplicationContext
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment
 import org.dockbox.hartshorn.launchpad.environment.ClasspathResourceLocator
-import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment
+import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment
 import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider
 import org.dockbox.hartshorn.launchpad.launch.ApplicationContextFactory
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder
@@ -90,7 +89,7 @@ class BootstrapConfigurationContractTests {
 
     @Test
     fun testContextualEnvironmentContract() {
-        val instance = ContextualApplicationEnvironment.Configurer()
+        val instance = ConfigurableApplicationEnvironment.Configurer()
 
         assertContextInitializer(instance) { configurer, initializer -> configurer.enableBanner(initializer) }
         assertCustom(instance) { configurer -> configurer.enableBanner() }
