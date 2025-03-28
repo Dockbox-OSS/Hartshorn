@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
 import org.dockbox.hartshorn.util.introspect.convert.support.ArrayDefaultValueProviderFactory;

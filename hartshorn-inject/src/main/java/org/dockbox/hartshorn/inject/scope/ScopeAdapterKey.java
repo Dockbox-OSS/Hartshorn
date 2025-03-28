@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject.scope;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
 import java.util.Objects;

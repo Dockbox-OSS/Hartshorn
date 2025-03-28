@@ -76,24 +76,6 @@ public interface ComponentProvider {
     }
 
     /**
-     * Returns the component for the given type and name metadata. If {@code named} is null, the given
-     * {@link Class} is used to identify the component.
-     *
-     * @param type The type of the component to return.
-     * @param qualifiers The metadata of the component to return.
-     * @param <T> The type of the component to return.
-     *
-     * @return The component for the given type and name metadata.
-     *
-     * @deprecated Use {@link #get(ComponentKey)} instead.
-     */
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    default <T> T get(Class<T> type, QualifierKey<?>... qualifiers) {
-        ComponentKey<T> key = ComponentKey.builder(type).qualifiers(qualifiers).build();
-        return this.get(key);
-    }
-
-    /**
      * Returns the component for the given type.
      *
      * @param type The type of the component to return.

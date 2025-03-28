@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.inject.graph.strategy;
 
-import org.dockbox.hartshorn.util.Configurer;
+import org.dockbox.hartshorn.util.configure.Configurer;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Set;

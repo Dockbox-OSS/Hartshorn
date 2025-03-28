@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.TypeConversionException;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.types.TypeConversionException;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;

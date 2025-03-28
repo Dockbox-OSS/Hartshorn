@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.Tristate;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -294,18 +294,6 @@ public final class ComponentKey<T> implements Reportable {
      */
     public ParameterizableType parameterizedType() {
         return this.type;
-    }
-
-    /**
-     * Returns the name of the component. If the component has no name, {@code null} is returned.
-     *
-     * @return the name of the component, or {@code null} if the component has no name
-     *
-     * @deprecated explicit names have been replaced with qualifiers. Use {@link #qualifier()} instead.
-     */
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    public String name() {
-        return null;
     }
 
     /**

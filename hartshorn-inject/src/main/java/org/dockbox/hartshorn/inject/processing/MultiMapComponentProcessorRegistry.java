@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.inject.processing;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.UnmodifiableMultiMap;

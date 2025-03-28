@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject.graph;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.util.ObjectDescriber;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.collections.StandardMultiMap;
 
 import java.util.Collection;

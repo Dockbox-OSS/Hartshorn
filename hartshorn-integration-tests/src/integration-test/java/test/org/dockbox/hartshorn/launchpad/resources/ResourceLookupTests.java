@@ -25,7 +25,7 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

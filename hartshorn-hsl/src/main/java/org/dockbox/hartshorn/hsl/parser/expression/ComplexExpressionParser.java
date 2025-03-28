@@ -61,7 +61,6 @@ import org.dockbox.hartshorn.hsl.token.type.LoopTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
-import org.dockbox.hartshorn.util.function.TriFunction;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -138,7 +137,7 @@ public class ComplexExpressionParser {
         return expression;
     }
 
-    private Expression logicalOrBitwise(Supplier<Expression> next, TriFunction<Expression, Token, Expression, Expression> step, TokenType... whileMatching) {
+    private Expression logicalOrBitwise(Supplier<Expression> next, LogicalOrBitwiseStep step, TokenType... whileMatching) {
         Expression expression = next.get();
         while(this.parser.match(whileMatching)) {
             Token operator = this.parser.previous();
@@ -421,5 +420,9 @@ public class ComplexExpressionParser {
         }
 
         return rule.apply(context.get());
+    }
+
+    private interface LogicalOrBitwiseStep {
+        Expression accept(Expression expression, Token operator, Expression right);
     }
 }

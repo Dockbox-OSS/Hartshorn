@@ -57,39 +57,6 @@ import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
 public @interface Binds {
 
     /**
-     * The name of the binding. If not specified, no name will be bound.
-     *
-     * @return the name of the binding
-     *
-     * @deprecated use the {@link Named} annotation or a custom {@link Qualifier} annotation instead
-     */
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    @AttributeAlias("name")
-    String value() default "";
-
-    /**
-     * The name of the binding. If not specified, no name will be associated with the binding.
-     *
-     * @return the name of the binding, or an empty string if not specified.
-     */
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    @AttributeAlias("value")
-    String name() default "";
-
-    /**
-     * Retrieves the priority of the binding. If not explicitly specified, the binding will be registered with the default priority.
-     *
-     * <p>The priority is an integer value that determines the order in which bindings are processed. A lower value indicates
-     * lower priority. If multiple bindings share the same priority, the registration order is used as a tiebreaker.
-     *
-     * @return The priority of the binding, or -1 if not specified.
-     *
-     * @deprecated use the {@link Priority} annotation instead
-     */
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    int priority() default Priority.DEFAULT_PRIORITY;
-
-    /**
      * Whether the binding should be lazily loaded. If not specified, the binding will be loaded eagerly. Note
      * that this only applies to bindings that are registered as singletons.
      *

@@ -16,11 +16,11 @@
 
 package test.org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.util.ArrayNode;
-import org.dockbox.hartshorn.util.GroupNode;
-import org.dockbox.hartshorn.util.Node;
-import org.dockbox.hartshorn.util.NodeVisitor;
-import org.dockbox.hartshorn.util.SimpleNode;
+import org.dockbox.hartshorn.util.properties.ArrayNode;
+import org.dockbox.hartshorn.util.properties.GroupNode;
+import org.dockbox.hartshorn.util.properties.Node;
+import org.dockbox.hartshorn.util.properties.NodeVisitor;
+import org.dockbox.hartshorn.util.properties.SimpleNode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

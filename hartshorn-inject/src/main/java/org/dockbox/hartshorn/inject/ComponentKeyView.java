@@ -46,18 +46,6 @@ public record ComponentKeyView<T>(
     }
 
     /**
-     * Returns the name of the component. If the component has no name, {@code null} is returned.
-     *
-     * @return the name of the component, or {@code null} if the component has no name
-     *
-     * @deprecated explicit names have been replaced with qualifiers. Use {@link #qualifier()} instead.
-     */
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    public String name() {
-        return null;
-    }
-
-    /**
      * Returns whether this view matches the given key. A view matches if both the type and qualifiers are
      * equal.
      *

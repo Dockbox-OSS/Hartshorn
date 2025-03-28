@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.proxy;
 import org.dockbox.hartshorn.proxy.advice.ProxyAdvisor;
 import org.dockbox.hartshorn.proxy.advice.TypeAdvisorResolver;
 import org.dockbox.hartshorn.proxy.lookup.HartshornProxyLookup;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.NativeProxyLookup;
 import org.dockbox.hartshorn.util.introspect.ProxyIntrospector;

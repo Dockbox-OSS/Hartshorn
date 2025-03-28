@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.properties.loader.support.CompositePredicatePropert
 import org.dockbox.hartshorn.spi.DiscoveryService;
 import org.dockbox.hartshorn.spi.ServiceDiscoveryException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 
 import java.io.IOException;
 import java.net.URI;

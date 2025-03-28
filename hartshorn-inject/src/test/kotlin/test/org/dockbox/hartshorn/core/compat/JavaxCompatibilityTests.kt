@@ -19,7 +19,7 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException
 import org.dockbox.hartshorn.inject.provider.MissingInjectConstructorException
 import org.dockbox.hartshorn.inject.binding.bind
-import org.dockbox.hartshorn.util.TypeUtils
+import org.dockbox.hartshorn.util.types.TypeUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertNotNull

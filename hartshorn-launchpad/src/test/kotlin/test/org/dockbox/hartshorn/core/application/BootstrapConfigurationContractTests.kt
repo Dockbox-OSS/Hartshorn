@@ -40,10 +40,10 @@ import org.dockbox.hartshorn.launchpad.launch.ApplicationContextFactory
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator
-import org.dockbox.hartshorn.util.ContextualInitializer
-import org.dockbox.hartshorn.util.Customizer
-import org.dockbox.hartshorn.util.Initializer
-import org.dockbox.hartshorn.util.StreamableConfigurer
+import org.dockbox.hartshorn.util.configure.ContextualInitializer
+import org.dockbox.hartshorn.util.configure.Customizer
+import org.dockbox.hartshorn.util.configure.Initializer
+import org.dockbox.hartshorn.util.configure.StreamableConfigurer
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

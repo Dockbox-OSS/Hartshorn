@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.util.collections;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.dockbox.hartshorn.util.CollectionUtilities;
 
 /**
  * A base implementation of a {@link BiMultiMap}. This implementation handles the inverse map

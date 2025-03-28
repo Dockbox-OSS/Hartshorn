@@ -28,4 +28,10 @@ public class TristateTests {
         Assertions.assertFalse(Tristate.FALSE.booleanValue());
         Assertions.assertFalse(Tristate.UNDEFINED.booleanValue());
     }
+
+    @Test
+    void testValueOf() {
+        Assertions.assertEquals(Tristate.TRUE, Tristate.valueOf(true));
+        Assertions.assertEquals(Tristate.FALSE, Tristate.valueOf(false));
+    }
 }

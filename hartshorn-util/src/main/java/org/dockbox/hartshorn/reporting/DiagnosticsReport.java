@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.reporting;
 
-import org.dockbox.hartshorn.util.Node;
+import org.dockbox.hartshorn.util.properties.Node;
 
 /**
  * A diagnostics report which uses a {@link Node} as its root node. A report may be used to collect

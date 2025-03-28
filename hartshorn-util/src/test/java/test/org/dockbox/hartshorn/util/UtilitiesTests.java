@@ -16,11 +16,11 @@
 
 package test.org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.NotPrimitiveException;
 import org.dockbox.hartshorn.util.StringUtilities;
-import org.dockbox.hartshorn.util.TypeConversionException;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeConversionException;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class UtilitiesTests {
@@ -54,6 +55,7 @@ public class UtilitiesTests {
 
     private static Stream<Arguments> durations() {
         return Stream.of(
+                Arguments.of("1", 1),
                 Arguments.of("1s", 1),
                 Arguments.of("1m", minute),
                 Arguments.of("1h", hour),
@@ -62,7 +64,8 @@ public class UtilitiesTests {
                 Arguments.of("1w1d1h1m1s", week + day + hour + minute + 1),
                 Arguments.of("2w3d", (2 * week) + (3 * day)),
                 Arguments.of("2w3d5h", (2 * week) + (3 * day) + (5 * hour)),
-                Arguments.of("17h21m13s", (17 * hour) + (21 * minute) + 13)
+                Arguments.of("17h21m13s", (17 * hour) + (21 * minute) + 13),
+                Arguments.of("123456", 123456)
         );
     }
 
@@ -94,12 +97,31 @@ public class UtilitiesTests {
         );
     }
 
+    private static <T, R> Function<T, R> asFunction(Function<T, R> function) {
+        return function;
+    }
+
+    public static Stream<Arguments> stringJoinValues() {
+        return Stream.of(
+                Arguments.of(", ", List.of(1, 2, 3), UtilitiesTests.asFunction(String::valueOf), "1, 2, 3"),
+                Arguments.of("|", List.of("A", "b", "c"), UtilitiesTests.<String, String>asFunction(String::toUpperCase), "A|B|C"),
+                Arguments.of("", List.of(""), UtilitiesTests.asFunction(String::valueOf), "")
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("capitalizeValues")
     void testCapitalizeChangesOnlyFirstCharacter(String input, String expected) {
         String value = StringUtilities.capitalize(input);
         Assertions.assertNotNull(value);
         Assertions.assertEquals(expected, value);
+    }
+
+    @Test
+    void testCapitalizeAcceptsEmptyValue() {
+        String value = Assertions.assertDoesNotThrow(() -> StringUtilities.capitalize(""));
+        Assertions.assertNotNull(value);
+        Assertions.assertEquals("", value);
     }
 
     @Test
@@ -192,6 +214,12 @@ public class UtilitiesTests {
         Assertions.assertEquals(expected, duration.get().getSeconds());
     }
 
+    @Test
+    void testDurationOfWithInvalidValue() {
+        Option<Duration> duration = StringUtilities.durationOf("NotAValidDurationString");
+        Assertions.assertFalse(duration.present());
+    }
+
     @ParameterizedTest
     @MethodSource("differences")
     void testDifferenceInCollections(Collection<String> collectionOne, Collection<String> collectionTwo, Collection<String> expected) {
@@ -221,6 +249,13 @@ public class UtilitiesTests {
     void testMapFormat(String format, String expected, Map<String, String> replacements) {
         String actual = StringUtilities.format(format, replacements);
         Assertions.assertEquals(expected, actual);
+    }
+
+    @ParameterizedTest
+    @MethodSource("stringJoinValues")
+    <T> void testJoin(String delimiter, Iterable<T> elements, Function<T, String> toStringFunction, String expected) {
+        String joined = StringUtilities.join(delimiter, elements, toStringFunction);
+        Assertions.assertEquals(expected, joined);
     }
 
     public static Stream<Arguments> stringsToPrimitives() {

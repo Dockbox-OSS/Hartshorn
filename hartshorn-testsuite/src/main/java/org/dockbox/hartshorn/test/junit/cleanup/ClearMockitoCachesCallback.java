@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.test.junit.cleanup;
 
 import java.lang.reflect.Method;
 
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.extension.ExtensionContext;
 

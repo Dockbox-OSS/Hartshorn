@@ -19,10 +19,10 @@ package org.dockbox.hartshorn.reporting.serialize;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dockbox.hartshorn.util.ArrayNode;
-import org.dockbox.hartshorn.util.GroupNode;
-import org.dockbox.hartshorn.util.Node;
-import org.dockbox.hartshorn.util.NodeVisitor;
+import org.dockbox.hartshorn.util.properties.ArrayNode;
+import org.dockbox.hartshorn.util.properties.GroupNode;
+import org.dockbox.hartshorn.util.properties.Node;
+import org.dockbox.hartshorn.util.properties.NodeVisitor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;

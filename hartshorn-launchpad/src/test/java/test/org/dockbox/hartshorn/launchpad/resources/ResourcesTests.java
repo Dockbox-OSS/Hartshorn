@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Set;
 
-import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.launchpad.resources.Resources;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.types.GenericType;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -65,5 +65,10 @@ public class GenericTypeTests {
         Option<? extends Class<?>> classOption = genericType.asClass();
         Assertions.assertTrue(classOption.present());
         Assertions.assertEquals(Object.class, classOption.get());
+    }
+
+    @Test
+    void testRawGenericTypeFails() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new GenericType() {});
     }
 }

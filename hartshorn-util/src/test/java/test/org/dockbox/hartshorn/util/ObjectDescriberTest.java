@@ -16,8 +16,8 @@
 
 package test.org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.util.ObjectDescriber;
-import org.dockbox.hartshorn.util.ObjectDescriptionStyle;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+import org.dockbox.hartshorn.util.describe.ObjectDescriptionStyle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

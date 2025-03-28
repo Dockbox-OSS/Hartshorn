@@ -40,9 +40,7 @@ import javax.xml.transform.Result;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
-import org.dockbox.hartshorn.util.TypeUtils;
-import org.dockbox.hartshorn.util.option.none.None;
-import org.dockbox.hartshorn.util.option.some.Some;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A container object which may or may not contain a non-null value. If a value is present, {@link #present()} will
@@ -145,22 +143,6 @@ public interface Option<T> extends Context, Iterable<T> {
     static <T> Option<T> empty() {
         return new None<>();
     }
-
-    /**
-     * Returns a {@link Attempt} instance based on the current {@link Option} instance. If the current instance
-     * is already a {@link Attempt}, it is returned. If the current instance is an {@link Option}, a new
-     * {@link Attempt} instance is created.
-     *
-     * @param errorType the type of the error to wrap in the {@link Attempt} instance.
-     * @param <E> the type of the error to wrap in the {@link Attempt} instance.
-     *
-     * @return a {@link Attempt} instance based on the current {@link Option} instance.
-     *
-     * @deprecated since 0.6.0 for removal in 0.7.0. Consider handling exceptions immediately, or rethrowing them
-     *             in a checked manner.
-     */
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    <E extends Throwable> Attempt<T, E> attempt(Class<E> errorType);
 
     /**
      * If a value is present in this {@link Option}, the given {@link Consumer} is executed with the value as argument.

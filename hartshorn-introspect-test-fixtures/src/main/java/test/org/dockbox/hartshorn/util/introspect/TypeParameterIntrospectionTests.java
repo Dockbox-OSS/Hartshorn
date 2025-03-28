@@ -16,8 +16,8 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
-import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.types.GenericType;
 import org.dockbox.hartshorn.util.collections.BiMultiMap;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;

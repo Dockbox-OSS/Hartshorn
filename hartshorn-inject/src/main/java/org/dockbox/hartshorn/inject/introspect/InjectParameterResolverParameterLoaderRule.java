@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.inject.populate.PopulateComponentContext;
 import org.dockbox.hartshorn.inject.targets.AnnotatedInjectionPointRequireRule;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
 import org.dockbox.hartshorn.inject.targets.RequireInjectionPointRule;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;

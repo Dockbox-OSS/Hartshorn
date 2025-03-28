@@ -21,7 +21,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import org.dockbox.hartshorn.properties.loader.StylePropertyPathFormatter;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathFormatter;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.configure.Customizer;
 
 import java.util.Set;
 

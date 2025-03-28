@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.hsl.condition.ScriptConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.configure.Customizer;
 
 /**
  * A mutable version of {@link ScriptRuntime} that allows for additional customization of the

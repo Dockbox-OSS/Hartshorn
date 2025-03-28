@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.util.introspect.view;
 
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.Named;
 
 /**
  * A view is a representation of an element in the Java language. Exact details of the element
@@ -30,7 +29,15 @@ import org.dockbox.hartshorn.util.Named;
  *
  * @author Guus Lieben
  */
-public interface View extends Named, Reportable, Context {
+public interface View extends Reportable, Context {
+
+    /**
+     * Returns the simple name of the element. This can represent the actual {@code name}
+     * property, or a derived value, such as the name of a field or method.
+     *
+     * @return the simple name of the element
+     */
+    String name();
 
     /**
      * Returns the qualified name of the element. For example, if the element is a field,

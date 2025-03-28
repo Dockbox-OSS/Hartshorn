@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.configure.Customizer;
 
 /**
  * A functional interface for customizing the {@link TokenParser}. This interface is similar to {@link Customizer} but

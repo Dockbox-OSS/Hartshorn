@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.inject.graph.declaration.AliasableDependencyContext
 
 import java.util.HashSet;
 import java.util.Set;
-import org.dockbox.hartshorn.util.ObjectDescriber;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
  * A configurable dependency context that supports aliasing.

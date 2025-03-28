@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.proxy.advice.ReflectionProxyMethodInterceptHandler;
 import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallbackContext;
 import org.dockbox.hartshorn.proxy.loaders.ProxyParameterLoaderContext;
 import org.dockbox.hartshorn.proxy.loaders.UnproxyingParameterLoader;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;

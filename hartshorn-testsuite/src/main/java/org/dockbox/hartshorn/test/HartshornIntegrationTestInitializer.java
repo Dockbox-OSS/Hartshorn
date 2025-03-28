@@ -36,8 +36,8 @@ import org.dockbox.hartshorn.test.annotations.TestProperties;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.test.junit.HartshornJUnitIntegrationTestBootstrapCallback;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.SimpleSingleElementContext;
+import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.context.SimpleSingleElementContext;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**

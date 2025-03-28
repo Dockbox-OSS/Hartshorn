@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.util.BuiltInStringTypeAdapters;
+import org.dockbox.hartshorn.util.types.BuiltInStringTypeAdapters;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -19,7 +19,7 @@ package test.org.dockbox.hartshorn.util;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;

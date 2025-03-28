@@ -19,12 +19,13 @@ package org.dockbox.hartshorn.properties;
 import org.dockbox.hartshorn.properties.value.ValuePropertyParser;
 import org.dockbox.hartshorn.properties.value.StandardValuePropertyParsers;
 import org.dockbox.hartshorn.properties.value.support.EnumValuePropertyParser;
-import org.dockbox.hartshorn.util.OptionInitializer;
-import org.dockbox.hartshorn.util.SingleElementContext;
+import org.dockbox.hartshorn.util.configure.OptionInitializer;
+import org.dockbox.hartshorn.context.SingleElementContext;
+import org.dockbox.hartshorn.util.configure.Initializer;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * Utility {@link org.dockbox.hartshorn.util.Initializer} implementation to resolve a property value from
+ * Utility {@link Initializer} implementation to resolve a property value from
  * the {@link PropertyRegistry}. The value is parsed using the provided {@link ValuePropertyParser}, if a
  * value is found.
  *
