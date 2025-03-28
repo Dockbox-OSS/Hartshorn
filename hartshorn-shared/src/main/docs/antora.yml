@@ -1,0 +1,4 @@
+name: shared
+title: Hartshorn Shared Utilities
+nav:
+  - modules/ROOT/nav.adoc

@@ -23,7 +23,7 @@
         <module>hartshorn-assembly/pom.platform.support.xml</module>
 
         <!-- Individually deployable modules -->
-        <module>hartshorn-util</module>
+        <module>hartshorn-shared</module>
         <module>hartshorn-properties</module>
         <module>hartshorn-profiles</module>
         <module>hartshorn-spi</module>

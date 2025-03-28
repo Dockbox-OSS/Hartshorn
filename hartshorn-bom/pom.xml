@@ -47,7 +47,7 @@
             <!-- Hartshorn -->
             <dependency>
                 <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-util</artifactId>
+                <artifactId>hartshorn-shared</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>

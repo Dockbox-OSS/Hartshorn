@@ -10,8 +10,8 @@
         <relativePath>../hartshorn-assembly/pom.platform.support.xml</relativePath>
     </parent>
 
-    <name>Hartshorn Utilities</name>
-    <artifactId>hartshorn-util</artifactId>
+    <name>Hartshorn Shared Utilities</name>
+    <artifactId>hartshorn-shared</artifactId>
     <packaging>jar</packaging>
 
 </project>

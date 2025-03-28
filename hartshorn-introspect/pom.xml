@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-util</artifactId>
+            <artifactId>hartshorn-shared</artifactId>
         </dependency>
     </dependencies>
 </project>
