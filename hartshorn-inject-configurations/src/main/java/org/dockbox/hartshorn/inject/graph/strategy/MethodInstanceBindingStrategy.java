@@ -86,16 +86,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
     private <T> DependencyContext<T> resolveInstanceBinding(BindingStrategyContext<?> context, AnnotatedGenericTypeView<T> declaration, Binds bindingDecorator, InjectionCapableApplication application) {
         ComponentKey<T> componentKey = TypeUtils.unchecked(this.application.environment().componentKeyResolver().resolve(declaration), ComponentKey.class);
         Set<ComponentKey<?>> dependencies = this.declarationDependencyResolver.dependencies(context);
-        PrototypeInstantiationStrategy<T> supplier = requestContext -> {
-            try {
-                ViewContextAdapter contextAdapter = new InjectorApplicationViewAdapter(application);
-                contextAdapter.addContext(requestContext);
-                return contextAdapter.load(declaration).orNull();
-            }
-            catch(Throwable throwable) {
-                throw new ComponentInitializationException("Failed to obtain instance for " + declaration.qualifiedName(), throwable);
-            }
-        };
+        PrototypeInstantiationStrategy<T> supplier = getPrototypeInstantiationStrategy(declaration, application);
 
         return AliasableConfigurableDependencyContext.builder(componentKey)
                 .aliasTypes(this.resolveAliasTypes(declaration, componentKey.type()))
@@ -109,6 +100,18 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
                 .lifecycleType(bindingDecorator.lifecycle())
                 .processAfterInitialization(bindingDecorator.processAfterInitialization())
                 .build();
+    }
+
+    private <T> PrototypeInstantiationStrategy<T> getPrototypeInstantiationStrategy(AnnotatedGenericTypeView<T> declaration, InjectionCapableApplication application) {
+        return requestContext -> {
+            try {
+                ViewContextAdapter contextAdapter = new InjectorApplicationViewAdapter(application);
+                contextAdapter.addContext(requestContext);
+                return contextAdapter.load(declaration).orNull();
+            } catch (Throwable throwable) {
+                throw new ComponentInitializationException("Failed to obtain instance for " + declaration.qualifiedName(), throwable);
+            }
+        };
     }
 
     private int resolvePriority(AnnotatedElementView view) {

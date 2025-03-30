@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.launchpad.configuration;
 
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.InfrastructurePriority;
+import org.dockbox.hartshorn.inject.annotations.PropertyValue;
 import org.dockbox.hartshorn.inject.annotations.Strict;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
@@ -25,6 +26,8 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.inject.condition.support.RequiresAbsentBinding;
+import org.dockbox.hartshorn.inject.condition.support.RequiresProperty;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
 import org.dockbox.hartshorn.launchpad.annotations.UseLaunchpad;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
@@ -40,6 +43,7 @@ import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,18 +61,27 @@ public class LaunchpadSharedComponentConfiguration {
 
     @Prototype
     @InfrastructurePriority
-    public Logger logger(InjectionPoint injectionPoint, ComponentRegistry componentRegistry) {
-        Class<?> declaringType = switch(injectionPoint.injectionPoint()) {
-            case ExecutableElementView<?> executableElementView -> executableElementView.declaredBy().type();
-            case FieldView<?, ?> fieldView -> fieldView.declaredBy().type();
-            case ParameterView<?> parameterView -> parameterView.declaredBy().declaredBy().type();
-            default -> throw new IllegalStateException("Unexpected value: " + injectionPoint.injectionPoint());
-        };
-
+    @RequiresProperty(name = "hartshorn.logging.naming.use-container-names", withValue = "true")
+    public Logger logger(InjectionPoint injectionPoint, ComponentRegistry componentRegistry, InjectionPointDeclarationResolver declarationResolver) {
+        Class<?> declaringType = declarationResolver.resolve(injectionPoint).type();
         return componentRegistry.container(declaringType)
-            .map(ComponentContainer::name)
-            .map(LoggerFactory::getLogger)
-            .orElseGet(() -> LoggerFactory.getLogger(declaringType));
+                    .map(ComponentContainer::name)
+                    .map(LoggerFactory::getLogger)
+                    .orElseGet(() -> LoggerFactory.getLogger(declaringType));
+    }
+
+    @Prototype
+    @InfrastructurePriority
+    @RequiresAbsentBinding(Logger.class)
+    public Logger logger(InjectionPoint injectionPoint, InjectionPointDeclarationResolver declarationResolver) {
+        Class<?> declaringType = declarationResolver.resolve(injectionPoint).type();
+        return LoggerFactory.getLogger(declaringType);
+    }
+
+    @Singleton
+    @InfrastructurePriority
+    public InjectionPointDeclarationResolver injectionPointDeclarationResolver() {
+        return new SimpleInjectionPointDeclarationResolver();
     }
 
     @Singleton

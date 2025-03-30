@@ -1,0 +1,7 @@
+greetings:
+  hello: 'Hello {}!'
+
+hartshorn:
+  logging:
+    naming:
+      use-container-names: false

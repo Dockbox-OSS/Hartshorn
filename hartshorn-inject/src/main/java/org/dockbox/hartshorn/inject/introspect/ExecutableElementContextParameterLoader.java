@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.Required;
 import org.dockbox.hartshorn.inject.populate.ComponentRequiredException;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
+import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
@@ -41,7 +42,7 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
         super(ApplicationBoundParameterLoaderContext.class);
         this.application = application;
         this.add(new ContextParameterLoaderRule(application));
-        this.add(new PropertyParameterLoaderRule(application.defaultProvider()));
+        this.add(new PropertyParameterLoaderRule(new StandardConversionService(application.environment().introspector()).withDefaults()));
     }
 
     @Override
