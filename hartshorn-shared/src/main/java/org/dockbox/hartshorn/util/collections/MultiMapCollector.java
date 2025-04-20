@@ -49,7 +49,7 @@ public record MultiMapCollector<T, K, V>(
     Function<T, V> valueMapper
 ) implements Collector<T, MultiMap<K, V>, MultiMap<K, V>> {
 
-    public static <T, K> MultiMapCollector<T, K, T> toMultiMap(Function<T, K> keyMapper) {
+    public static <T, K> MultiMapCollector<T, K, T> groupingBy(Function<T, K> keyMapper) {
         return toMultiMap(keyMapper, Function.identity());
     }
 

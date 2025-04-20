@@ -57,6 +57,6 @@ public class ConcurrentHierarchicalBinderProcessorRegistry implements Hierarchic
     @Override
     public MultiMap<Integer, HierarchicalBinderPostProcessor> processors() {
         return this.processors.stream()
-            .collect(MultiMapCollector.toMultiMap(HierarchicalBinderPostProcessor::priority));
+            .collect(MultiMapCollector.groupingBy(HierarchicalBinderPostProcessor::priority));
     }
 }

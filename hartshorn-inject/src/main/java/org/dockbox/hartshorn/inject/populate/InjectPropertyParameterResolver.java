@@ -23,9 +23,7 @@ import org.dockbox.hartshorn.properties.ListProperty;
 import org.dockbox.hartshorn.properties.ObjectProperty;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.ValueProperty;
-import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
-import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -43,10 +41,11 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class InjectPropertyParameterResolver implements InjectParameterResolver {
 
-    private final ConversionService conversionService;
+    private final ComponentProvider componentProvider;
+    private ConversionService conversionService;
 
-    public InjectPropertyParameterResolver(ConversionService conversionService) {
-        this.conversionService = conversionService;
+    public InjectPropertyParameterResolver(ComponentProvider componentProvider) {
+        this.componentProvider = componentProvider;
     }
 
     @Override
@@ -78,12 +77,19 @@ public class InjectPropertyParameterResolver implements InjectParameterResolver 
                 return value.get();
             }
         }
-        return this.conversionService.convert(propertyValueAnnotation.defaultValue(), targetType.type());
+        return this.conversionService().convert(propertyValueAnnotation.defaultValue(), targetType.type());
     }
 
     private Option<?> getPropertyValue(InjectionPoint injectionPoint, PropertyRegistry propertyRegistry, String propertyName) {
         return propertyRegistry.value(propertyName, property -> {
-            return Option.of(this.conversionService.convert(property, injectionPoint.type().type()));
+            return Option.of(this.conversionService().convert(property, injectionPoint.type().type()));
         });
+    }
+
+    private ConversionService conversionService() {
+        if (null == this.conversionService) {
+            this.conversionService = this.componentProvider.get(ConversionService.class);
+        }
+        return this.conversionService;
     }
 }

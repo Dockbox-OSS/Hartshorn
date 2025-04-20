@@ -19,8 +19,6 @@ package org.dockbox.hartshorn.inject.introspect;
 import org.dockbox.hartshorn.inject.annotations.PropertyValue;
 import org.dockbox.hartshorn.inject.populate.InjectPropertyParameterResolver;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 
 /**
  * A parameter loader rule that loads parameters annotated with {@link PropertyValue}. Values are resolved from the {@link
@@ -34,7 +32,7 @@ import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
  */
 public class PropertyParameterLoaderRule extends InjectParameterResolverParameterLoaderRule {
 
-    public PropertyParameterLoaderRule(ConversionService conversionService) {
-        super(new InjectPropertyParameterResolver(conversionService));
+    public PropertyParameterLoaderRule(ComponentProvider componentProvider) {
+        super(new InjectPropertyParameterResolver(componentProvider));
     }
 }

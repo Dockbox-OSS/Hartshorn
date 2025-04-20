@@ -86,7 +86,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
     private <T> DependencyContext<T> resolveInstanceBinding(BindingStrategyContext<?> context, AnnotatedGenericTypeView<T> declaration, Binds bindingDecorator, InjectionCapableApplication application) {
         ComponentKey<T> componentKey = TypeUtils.unchecked(this.application.environment().componentKeyResolver().resolve(declaration), ComponentKey.class);
         Set<ComponentKey<?>> dependencies = this.declarationDependencyResolver.dependencies(context);
-        PrototypeInstantiationStrategy<T> supplier = getPrototypeInstantiationStrategy(declaration, application);
+        PrototypeInstantiationStrategy<T> supplier = this.getPrototypeInstantiationStrategy(declaration, application);
 
         return AliasableConfigurableDependencyContext.builder(componentKey)
                 .aliasTypes(this.resolveAliasTypes(declaration, componentKey.type()))

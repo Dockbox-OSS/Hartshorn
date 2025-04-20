@@ -16,11 +16,15 @@
 
 package org.dockbox.hartshorn.inject.condition.support;
 
+import java.util.List;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.condition.Condition;
 import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.inject.graph.ConditionalDependencyContext;
+import org.dockbox.hartshorn.inject.graph.ConditionalDependencyContextsHolder;
 
 /**
  * A condition that matches when a binding is absent. This does not require an instance
@@ -40,9 +44,29 @@ public class AbsentBindingCondition implements Condition {
         return context.annotatedElement().annotations().get(RequiresAbsentBinding.class).map(condition -> {
             ComponentKey<?> key = ComponentKey.of(condition.value(), condition.name());
             BindingHierarchy<?> hierarchy = context.application().defaultBinder().hierarchy(key);
-            return hierarchy.size() > 0
-                    ? ConditionResult.matched()
-                    : ConditionResult.notFound("Binding", String.valueOf(key));
+            if (hierarchy.size() > 0) {
+                return ConditionResult.found("Binding", String.valueOf(key));
+            }
+            else {
+                List<ConditionalDependencyContext<?>> matchedContexts = context.firstContext(ConditionalDependencyContextsHolder.class).stream()
+                    .flatMap(contextsHolder -> matchedConditionalContextsExceptCurrent(contextsHolder, context, key))
+                    .toList();
+                if (!matchedContexts.isEmpty()) {
+                    return ConditionResult.found("Binding", String.valueOf(key));
+                }
+            }
+            return ConditionResult.matched();
         }).orElse(ConditionResult.invalidCondition("absent binding"));
+    }
+
+    private static Stream<ConditionalDependencyContext<?>> matchedConditionalContextsExceptCurrent(
+        ConditionalDependencyContextsHolder contextsHolder,
+        ConditionContext context, ComponentKey<?> key
+    ) {
+        return contextsHolder.conditionalDependencyContexts().get(key).stream()
+            .filter(conditionalDependencyContext -> !conditionalDependencyContext.dependencyContext()
+                .origin()
+                .equals(context.annotatedElement()))
+            .filter(conditionalDependencyContext -> conditionalDependencyContext.conditionsMatched().test(contextsHolder));
     }
 }

@@ -34,7 +34,6 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
-import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 
 import java.util.Set;
 
@@ -160,7 +159,7 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
         private final LazyStreamableConfigurer<InjectionCapableApplication, RequireInjectionPointRule> requiresComponentRules = LazyStreamableConfigurer.of(new AnnotatedInjectionPointRequireRule());
         private final LazyStreamableConfigurer<InjectionCapableApplication, InjectParameterResolver> parameterResolvers = LazyStreamableConfigurer.of(configurer -> {
             configurer.add(ContextualInitializer.of(InjectContextParameterResolver::new));
-            configurer.add(ContextualInitializer.of(application -> new InjectPropertyParameterResolver(new StandardConversionService(application.environment().introspector()).withDefaults())));
+            configurer.add(ContextualInitializer.of(application -> new InjectPropertyParameterResolver(application.defaultProvider())));
         });
 
         public Configurer requiresComponentRules(RequireInjectionPointRule... requiresComponentRules) {

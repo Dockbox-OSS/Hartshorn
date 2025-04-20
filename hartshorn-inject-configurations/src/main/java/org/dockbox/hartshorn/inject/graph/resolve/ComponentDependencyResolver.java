@@ -17,18 +17,17 @@
 package org.dockbox.hartshorn.inject.graph.resolve;
 
 import java.util.Set;
-
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.binding.HierarchyLookup;
 import org.dockbox.hartshorn.inject.graph.AbstractContainerDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.ComponentContainerDependencyContext;
 import org.dockbox.hartshorn.inject.graph.ComponentContainerDependencyDeclarationContext;
+import org.dockbox.hartshorn.inject.graph.ConditionalDependencyContext;
 import org.dockbox.hartshorn.inject.graph.DependencyMap;
 import org.dockbox.hartshorn.inject.graph.DependencyResolutionException;
 import org.dockbox.hartshorn.inject.graph.ManagedComponentKeyDependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.ComponentKeyDependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.provider.ComponentConstructorResolver;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
@@ -58,7 +57,7 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
     }
 
     @Override
-    protected <T> Set<DependencyContext<?>> resolveSingle(
+    protected <T> Set<ConditionalDependencyContext<?>> resolveSingle(
         DependencyDeclarationContext<T> declarationContext
     ) throws DependencyResolutionException {
         TypeView<T> type = declarationContext.type();
@@ -84,7 +83,10 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
 
         if (declarationContext instanceof ComponentContainerDependencyDeclarationContext<T> containerContext) {
             ComponentKey<T> componentKey = ComponentKey.of(type);
-            return Set.of(new ComponentContainerDependencyContext<>(containerContext.container(), componentKey, dependencies, constructorView));
+            ComponentContainerDependencyContext<T> dependencyContext = new ComponentContainerDependencyContext<>(containerContext.container(), componentKey, dependencies, constructorView);
+            // TODO: Consider support of conditional managed components, though this should be handled at the registry (due to state
+            //  correctness) rather than in resolvers.
+            return Set.of(new ConditionalDependencyContext<>(dependencyContext, contexts -> true));
         }
         else if (declarationContext instanceof ComponentKeyDependencyDeclarationContext<T> keyContext) {
             InstantiationStrategy<T> strategy = keyContext.provider();
@@ -94,7 +96,7 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
                 .lazy(strategy.defaultLazy().booleanValue())
                 .lifecycleType(strategy.defaultLifecycle())
                 .build();
-            return Set.of(dependencyContext);
+            return Set.of(new ConditionalDependencyContext<>(dependencyContext, contexts -> true));
         }
         else {
             return Set.of();
