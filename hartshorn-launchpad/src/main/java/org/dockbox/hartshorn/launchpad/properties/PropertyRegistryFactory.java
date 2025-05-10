@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.launchpad.properties;
 
+import java.util.Properties;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 
 import java.io.IOException;
@@ -40,5 +41,5 @@ public interface PropertyRegistryFactory {
      * @return the created registry
      * @throws IOException when an error occurs while loading the sources
      */
-    PropertyRegistry createRegistry(SequencedSet<URI> sources) throws IOException;
+    PropertyRegistry createRegistry(SequencedSet<URI> sources, Properties additionalProperties) throws IOException;
 }

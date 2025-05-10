@@ -192,7 +192,11 @@ public final class ComponentKey<T> implements Reportable {
      * @return a new component key
      */
     public static <T> ComponentKey<T> of(Class<T> key, String name) {
-        return ComponentKey.builder(key).name(name).build();
+        Builder<T> builder = ComponentKey.builder(key);
+        if (StringUtilities.notEmpty(name)) {
+            return builder.name(name).build();
+        }
+        return builder.build();
     }
 
     /**

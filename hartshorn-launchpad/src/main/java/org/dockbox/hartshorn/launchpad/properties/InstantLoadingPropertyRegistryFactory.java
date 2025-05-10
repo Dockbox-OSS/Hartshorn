@@ -16,14 +16,18 @@
 
 package org.dockbox.hartshorn.launchpad.properties;
 
-import org.dockbox.hartshorn.properties.MapPropertyRegistry;
-import org.dockbox.hartshorn.properties.PropertyRegistry;
-import org.dockbox.hartshorn.properties.loader.PropertyRegistryPathLoader;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.Properties;
 import java.util.SequencedSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.dockbox.hartshorn.properties.ConfiguredProperty;
+import org.dockbox.hartshorn.properties.MapPropertyRegistry;
+import org.dockbox.hartshorn.properties.PropertyRegistry;
+import org.dockbox.hartshorn.properties.SingleConfiguredProperty;
+import org.dockbox.hartshorn.properties.loader.PropertyRegistryPathLoader;
 
 /**
  * Factory for creating {@link PropertyRegistry} instances that are loaded immediately after the registry is created,
@@ -51,11 +55,17 @@ public class InstantLoadingPropertyRegistryFactory implements PropertyRegistryFa
     }
 
     @Override
-    public PropertyRegistry createRegistry(SequencedSet<URI> sources) throws IOException {
+    public PropertyRegistry createRegistry(SequencedSet<URI> sources, Properties additionalProperties) throws IOException {
         PropertyRegistry propertyRegistry = this.createRegistry();
         for(URI resource : sources) {
             this.propertyRegistryLoader.loadRegistry(propertyRegistry, Path.of(resource));
         }
+
+        Set<ConfiguredProperty> configuredProperties = additionalProperties.stringPropertyNames().stream()
+            .map(propertyName -> new SingleConfiguredProperty(propertyName, additionalProperties.getProperty(propertyName)))
+            .collect(Collectors.toSet());
+        propertyRegistry.registerAll(configuredProperties);
+
         return propertyRegistry;
     }
 }

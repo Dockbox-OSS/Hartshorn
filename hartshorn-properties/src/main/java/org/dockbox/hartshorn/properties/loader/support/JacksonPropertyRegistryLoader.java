@@ -21,7 +21,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
-
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import org.dockbox.hartshorn.properties.ConfiguredProperty;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.SingleConfiguredProperty;
@@ -29,14 +33,8 @@ import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathFormatter;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathNode;
 import org.dockbox.hartshorn.properties.loader.path.PropertyRootPathNode;
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.FileUtilities;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 
 /**
  * A {@link PredicatePropertyRegistryLoader} that loads properties using a Jackson {@link ObjectMapper}. Depending

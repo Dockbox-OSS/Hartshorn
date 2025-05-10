@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.inject.InjectorConfiguration;
@@ -55,7 +63,6 @@ import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.Initializer;
 import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
-import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -68,13 +75,6 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Configurable implementation of a {@link ApplicationEnvironment}. This implementation in itself does not define set
@@ -123,7 +123,6 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         this.typeResolver = this.configure(environmentInitializerContext, configurer.typeResolver);
         this.componentRegistry = this.configure(environmentInitializerContext, configurer.componentRegistry);
         this.resourceLookup = this.configure(environmentInitializerContext, configurer.resourceLookup);
-        // TODO: #1121 Include application arguments
         this.propertyRegistry = this.initializePropertyRegistry(configurer, environmentInitializerContext);
 
         SingleElementContext<PropertyRegistry> argumentsInitializerContext = context.transform(this.propertyRegistry);
@@ -161,7 +160,17 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
             SingleElementContext<ApplicationEnvironment> environmentInitializerContext
     ) {
         List<PropertySourceResolver> propertySourceResolvers = this.configure(environmentInitializerContext, configurer.propertySourceResolvers);
-        return new EnvironmentPropertyRegistryFactory().createRegistry(propertySourceResolvers, this.resourceLookup());
+        Properties additionalProperties = this.resolveAdditionalProperties(configurer, environmentInitializerContext);
+        return new EnvironmentPropertyRegistryFactory().createRegistry(propertySourceResolvers, this.resourceLookup(), additionalProperties);
+    }
+
+    private Properties resolveAdditionalProperties(Configurer configurer, SingleElementContext<ApplicationEnvironment> environmentInitializerContext) {
+        List<CustomPropertiesResolver> customPropertiesResolvers = configurer.customPropertyResolvers.initialize(environmentInitializerContext);
+        return customPropertiesResolvers.stream().map(resolver -> resolver.resolveProperties(environmentInitializerContext))
+            .reduce(new Properties(), (current, next) -> {
+                current.putAll(next);
+                return current;
+            });
     }
 
     private <I, T> T configure(SingleElementContext<I> context, ContextualInitializer<I, T> initializer) {
@@ -383,6 +392,9 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
                     FileSystemLookupStrategy.NAME + ":application",
                     ClassPathResourceLookupStrategy.NAME + ":application"
             )));
+        });
+        private final LazyStreamableConfigurer<ApplicationEnvironment, CustomPropertiesResolver> customPropertyResolvers = LazyStreamableConfigurer.of(customizer -> {
+            customizer.add(new CommandLineArgumentsPropertiesResolver());
         });
 
         private ContextualInitializer<PropertyRegistry, Boolean> enableBanner = PropertyInitializer.booleanProperty("hartshorn.banner.enabled")
@@ -666,6 +678,19 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         public Configurer propertySourceResolvers(Customizer<StreamableConfigurer<ApplicationEnvironment, PropertySourceResolver>> customizer) {
             this.propertySourceResolvers.customizer(customizer);
             return this;
+        }
+
+        public Configurer customPropertyResolvers(Collection<CustomPropertiesResolver> resolvers) {
+            return this.customPropertyResolvers(configuration -> configuration.addAll(resolvers));
+        }
+
+        public Configurer customPropertyResolvers(Customizer<StreamableConfigurer<ApplicationEnvironment, CustomPropertiesResolver>> customizer) {
+            this.customPropertyResolvers.customizer(customizer);
+            return this;
+        }
+
+        public Configurer customProperties(Collection<String> properties) {
+            return this.customPropertyResolvers(configuration -> configuration.add(new StringListCustomPropertiesResolver(List.copyOf(properties))));
         }
 
         /**
