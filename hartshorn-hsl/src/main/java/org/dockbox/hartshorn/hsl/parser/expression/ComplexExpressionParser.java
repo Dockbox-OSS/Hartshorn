@@ -422,7 +422,26 @@ public class ComplexExpressionParser {
         return rule.apply(context.get());
     }
 
+    /**
+     * Functional interface for a step in the logical or bitwise expression parsing. This is primarily a shorthand
+     * to easily create new expressions from left and right expressions, related by an operator token. Only used for
+     * the {@link #logicalOrBitwise(Supplier, LogicalOrBitwiseStep, TokenType...)} method.
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
     private interface LogicalOrBitwiseStep {
+
+        /**
+         * Accepts the current (left) expression, operator and right expression to create a new
+         * expression.
+         *
+         * @param expression The current expression
+         * @param operator The operator token
+         * @param right The right expression
+         * @return The new expression
+         */
         Expression accept(Expression expression, Token operator, Expression right);
     }
 }
