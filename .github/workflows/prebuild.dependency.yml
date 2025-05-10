@@ -20,10 +20,3 @@ jobs:
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: mvn verify -DskipTests -Dexecution.owasp.skip=false -DnvdApiKey=$NVD_API_KEY -P ci
-      - name: Archive dependency reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: OWASP dependency check report
-          path: '**/target/dependency-check-report.html'
-          if-no-files-found: error
-          retention-days: 7

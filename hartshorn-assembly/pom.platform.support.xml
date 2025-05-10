@@ -364,7 +364,6 @@
                     <suppressionFiles>
                         <suppressionFile>hartshorn-assembly/dependency-check/dependency-check-suppressions.xml</suppressionFile>
                     </suppressionFiles>
-                    <reportOutputDirectory>${project.build.directory}/dependency-check-report</reportOutputDirectory>
                 </configuration>
                 <executions>
                     <execution>
