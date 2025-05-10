@@ -24,9 +24,23 @@
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
         <jacoco.skip>false</jacoco.skip>
+        <antora.skip>false</antora.skip>
+
+        <!-- Antora playbook for documentation build. Set to playbook-local.yml for local builds -->
+        <antora.playbook>playbook-release.yml</antora.playbook>
 
         <plugin.jacoco.version>0.8.12</plugin.jacoco.version>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <properties>
+                <jacoco.skip>true</jacoco.skip>
+                <antora.skip>true</antora.skip>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencyManagement>
         <dependencies>
@@ -93,14 +107,21 @@
 
     <build>
         <plugins>
+            <!-- JaCoCo code coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${plugin.jacoco.version}</version>
+                <configuration>
+                    <skip>${jacoco.skip}</skip>
+                </configuration>
                 <executions>
                     <execution>
                         <id>report-aggregate</id>
                         <phase>verify</phase>
+                        <configuration>
+                            <skip>${jacoco.skip}</skip>
+                        </configuration>
                         <goals>
                             <goal>report-aggregate</goal>
                         </goals>
@@ -112,6 +133,7 @@
                             <goal>merge</goal>
                         </goals>
                         <configuration>
+                            <skip>${jacoco.skip}</skip>
                             <fileSets>
                                 <fileSet>
                                     <directory>${basedir}/../</directory>
@@ -122,6 +144,30 @@
                             </fileSets>
                             <destFile>${project.build.directory}/aggregate.exec</destFile>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Antora documentation -->
+            <plugin>
+                <groupId>org.antora</groupId>
+                <artifactId>antora-maven-plugin</artifactId>
+                <configuration>
+                    <skip>${antora.skip}</skip>
+                    <playbookFile>${maven.multiModuleProjectDirectory}/hartshorn-assembly/antora/${antora.playbook}</playbookFile>
+                    <packages>
+                        <package>@antora/lunr-extension</package>
+                        <package>@asciidoctor/tabs</package>
+                        <package>asciidoctor-interdoc-reftext</package>
+                    </packages>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>antora</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
