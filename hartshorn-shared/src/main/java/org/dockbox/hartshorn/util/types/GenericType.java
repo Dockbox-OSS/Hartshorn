@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.util.types;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.ParameterizedType;

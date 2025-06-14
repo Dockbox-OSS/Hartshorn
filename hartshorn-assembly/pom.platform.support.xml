@@ -32,12 +32,12 @@
 
         <!-- Maven plugin versions, in alphabetical order -->
         <plugin.antora.version>1.0.0-alpha.4</plugin.antora.version>
-        <plugin.checkstyle.version>3.4.0</plugin.checkstyle.version>
-        <plugin.versions.version>2.17.1</plugin.versions.version>
-        <plugin.jacoco.version>0.8.12</plugin.jacoco.version>
-        <plugin.license.version>4.5</plugin.license.version>
-        <plugin.owasp.version>10.0.3</plugin.owasp.version>
-        <plugin.errorprone.version>2.28.0</plugin.errorprone.version>
+        <plugin.checkstyle.version>3.6.0</plugin.checkstyle.version>
+        <plugin.versions.version>2.18.0</plugin.versions.version>
+        <plugin.jacoco.version>0.8.13</plugin.jacoco.version>
+        <plugin.license.version>5.0.0</plugin.license.version>
+        <plugin.owasp.version>12.1.1</plugin.owasp.version>
+        <plugin.errorprone.version>2.38.0</plugin.errorprone.version>
 
         <!-- Only enable through profile below -->
         <argLine.errorprone/>
@@ -324,11 +324,11 @@
                 <configuration>
                     <skip>${license-check.skip}</skip>
                     <headerDefinitions>
-                        <headerDefinition>hartshorn-assembly/licenses/JavaBlockStyleHeader.xml</headerDefinition>
+                        <headerDefinition>${maven.multiModuleProjectDirectory}/hartshorn-assembly/licenses/JavaBlockStyleHeader.xml</headerDefinition>
                     </headerDefinitions>
                     <licenseSets>
                         <licenseSet>
-                            <header>hartshorn-assembly/licenses/APACHE-2.txt</header>
+                            <header>${maven.multiModuleProjectDirectory}/hartshorn-assembly/licenses/APACHE-2.txt</header>
                             <useDefaultExcludes>true</useDefaultExcludes>
                             <includes>
                                 <include>**/*.java</include>
@@ -359,7 +359,7 @@
                     <skip>${owasp.skip}</skip>
                     <failBuildOnCVSS>1</failBuildOnCVSS>
                     <suppressionFiles>
-                        <suppressionFile>hartshorn-assembly/dependency-check/dependency-check-suppressions.xml</suppressionFile>
+                        <suppressionFile>${maven.multiModuleProjectDirectory}/hartshorn-assembly/dependency-check/dependency-check-suppressions.xml</suppressionFile>
                     </suppressionFiles>
                 </configuration>
                 <executions>
@@ -384,8 +384,8 @@
                     <violationSeverity>warning</violationSeverity>
                     <linkXRef>false</linkXRef>
                     <includeTestSourceDirectory>false</includeTestSourceDirectory>
-                    <configLocation>hartshorn-assembly/checkstyle/checkstyle.xml</configLocation>
-                    <suppressionsLocation>hartshorn-assembly/checkstyle/suppressions.xml</suppressionsLocation>
+                    <configLocation>${maven.multiModuleProjectDirectory}/hartshorn-assembly/checkstyle/checkstyle.xml</configLocation>
+                    <suppressionsLocation>${maven.multiModuleProjectDirectory}/hartshorn-assembly/checkstyle/suppressions.xml</suppressionsLocation>
                 </configuration>
                 <executions>
                     <execution>
