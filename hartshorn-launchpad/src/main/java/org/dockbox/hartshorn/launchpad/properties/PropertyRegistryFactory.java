@@ -38,6 +38,8 @@ public interface PropertyRegistryFactory {
      * registry in the order they are provided.
      *
      * @param sources the sources to load into the registry
+     * @param additionalProperties additional properties to be included in the registry
+     *
      * @return the created registry
      * @throws IOException when an error occurs while loading the sources
      */

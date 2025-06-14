@@ -20,6 +20,8 @@ public interface CustomPropertiesResolver {
      * Resolves the properties for the application. This method is called during the initialization of the
      * application environment, and should not depend on other components or services.
      *
+     * @param initializerContext the context for the application environment initialization
+     *
      * @return the resolved properties
      */
     Properties resolveProperties(SingleElementContext<ApplicationEnvironment> initializerContext);

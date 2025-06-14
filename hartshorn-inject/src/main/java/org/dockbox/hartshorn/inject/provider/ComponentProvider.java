@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.scope.Scope;
 
 /**

@@ -6,6 +6,13 @@ import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+/**
+ * A simple implementation of the {@link InjectionPointDeclarationResolver} that resolves the declaration type
+ * of an injection point based on its specific type (executable element, field, or parameter).
+ *
+ * @since 0.7.0
+ * @author Guus Lieben
+ */
 public class SimpleInjectionPointDeclarationResolver implements InjectionPointDeclarationResolver {
 
     @Override

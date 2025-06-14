@@ -8,6 +8,13 @@ import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
 import org.dockbox.hartshorn.util.StringUtilities;
 
+/**
+ * Abstract base class for resolving custom properties.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class AbstractCustomPropertiesResolver implements CustomPropertiesResolver {
 
     @Override

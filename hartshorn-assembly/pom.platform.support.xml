@@ -39,6 +39,9 @@
         <plugin.owasp.version>12.1.1</plugin.owasp.version>
         <plugin.errorprone.version>2.38.0</plugin.errorprone.version>
 
+        <!-- Plugin dependencies, in alphabetical order -->
+        <checkstyle.version>10.21.1</checkstyle.version>
+
         <!-- Only enable through profile below -->
         <argLine.errorprone/>
     </properties>
@@ -387,6 +390,13 @@
                     <configLocation>${maven.multiModuleProjectDirectory}/hartshorn-assembly/checkstyle/checkstyle.xml</configLocation>
                     <suppressionsLocation>${maven.multiModuleProjectDirectory}/hartshorn-assembly/checkstyle/suppressions.xml</suppressionsLocation>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>validate</id>

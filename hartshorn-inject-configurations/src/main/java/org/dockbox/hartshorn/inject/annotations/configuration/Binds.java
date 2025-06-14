@@ -22,13 +22,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.annotations.Named;
-import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.annotations.Qualifier;
 import org.dockbox.hartshorn.inject.graph.DependencyResolver;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
-import org.dockbox.hartshorn.util.introspect.annotations.AttributeAlias;
 
 /**
  * Annotation used to indicate that a method will act as a binding provider. The return type of the

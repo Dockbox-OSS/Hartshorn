@@ -6,6 +6,16 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMapCollector;
 
+/**
+ * A holder for conditional dependency contexts, which are used to determine whether certain dependencies
+ * should be resolved based on specific conditions.
+ *
+ * @see ConditionalDependencyContext
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class ConditionalDependencyContextsHolder extends DefaultContext {
 
     private final MultiMap<ComponentKey<?>, ConditionalDependencyContext<?>> conditionalDependencyContexts;
