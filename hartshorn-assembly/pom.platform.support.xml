@@ -435,6 +435,7 @@
                     <compilerArgs>
                         <arg>-parameters</arg>
                         <arg>-XDcompilePolicy=simple</arg>
+                        <arg>--should-stop=ifError=FLOW</arg>
                         <arg>${argLine.errorprone}</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
