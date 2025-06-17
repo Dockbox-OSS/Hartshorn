@@ -39,11 +39,14 @@ public class InjectionPointParameterLoaderRule implements ParameterLoaderRule<Ap
 
     @Override
     public boolean accepts(ParameterView<?> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
-        return requestContext.isForInjectionPoint() && parameter.type().isChildOf(InjectionPoint.class);
+        return parameter.type().isChildOf(InjectionPoint.class);
     }
 
     @Override
     public <T> Option<T> load(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
+        if (!requestContext.isForInjectionPoint()) {
+            throw new UnsupportedOperationException("Cannot request injection point metadata for non-injection point.");
+        }
         InjectionPoint injectionPoint = requestContext.injectionPoint();
         return Option.of(parameter.type().cast(injectionPoint));
     }
