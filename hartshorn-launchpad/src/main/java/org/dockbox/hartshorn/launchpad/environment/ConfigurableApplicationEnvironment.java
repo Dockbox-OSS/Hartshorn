@@ -420,8 +420,12 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
             TypeReferenceLookupComponentRegistry registry = new TypeReferenceLookupComponentRegistry(environment.typeResolver());
             context.firstContext(ApplicationBootstrapContext.class)
                     .peek(bootstrap -> {
-                        TypeView<?> mainClass = environment.introspector().introspect(bootstrap.mainClass());
-                        registry.addCustomContainer(new ApplicationMainComponentContainer<>(mainClass));
+                        // Potentially started from an unnamed class, in which case there will be no constructors. In such scenarios we do
+                        // not support the main 'class' as an application component.
+                        if (bootstrap.mainClass().getConstructors().length > 0) {
+                            TypeView<?> mainClass = environment.introspector().introspect(bootstrap.mainClass());
+                            registry.addCustomContainer(new ApplicationMainComponentContainer<>(mainClass));
+                        }
                     });
             return registry;
         };
