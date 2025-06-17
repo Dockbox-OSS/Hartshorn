@@ -1,4 +1,4 @@
-package com.sample.helloworld;
+package org.dockbox.sample.java;
 
 public interface GreetingAction {
 

@@ -1,5 +1,5 @@
 greetings:
-  hello: 'Hello {}!'
+  hello: 'Hello {}, welcome to Hartshorn!'
 
 hartshorn:
   logging:
