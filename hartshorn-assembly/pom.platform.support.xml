@@ -23,7 +23,6 @@
         Use the 'ci' profile to disable by default, making this opt-in instead.
         -->
         <checkstyle.skip>false</checkstyle.skip>
-        <javadoc.skip>false</javadoc.skip>
         <owasp.skip>false</owasp.skip>
         <license-check.skip>false</license-check.skip>
         <jacoco.skip>false</jacoco.skip>
@@ -52,7 +51,6 @@
             <id>ci</id>
             <properties>
                 <checkstyle.skip>true</checkstyle.skip>
-                <javadoc.skip>true</javadoc.skip>
                 <owasp.skip>true</owasp.skip>
                 <license-check.skip>true</license-check.skip>
                 <errorprone.skip>true</errorprone.skip>

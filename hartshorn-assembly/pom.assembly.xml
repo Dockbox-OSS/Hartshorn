@@ -25,6 +25,7 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <jacoco.skip>false</jacoco.skip>
         <antora.skip>false</antora.skip>
+        <javadoc.skip>false</javadoc.skip>
 
         <!-- Antora playbook for documentation build. Set to playbook-local.yml for local builds -->
         <antora.playbook>playbook-release.yml</antora.playbook>
@@ -38,6 +39,7 @@
             <properties>
                 <jacoco.skip>true</jacoco.skip>
                 <antora.skip>true</antora.skip>
+                <javadoc.skip>true</javadoc.skip>
             </properties>
         </profile>
     </profiles>
@@ -168,6 +170,49 @@
                         <goals>
                             <goal>antora</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- JavaDoc documentation -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <verbose>true</verbose>
+                    <reportOutputDirectory>${maven.multiModuleProjectDirectory}/hartshorn-assembly/javadoc/site</reportOutputDirectory>
+                    <addStylesheets>
+                        <stylesheetfile>${maven.multiModuleProjectDirectory}/hartshorn-assembly/javadoc/overrides.css</stylesheetfile>
+                    </addStylesheets>
+                    <skip>${javadoc.skip}</skip>
+                    <show>package</show>
+                    <show>protected</show>
+                    <show>public</show>
+                    <tags>
+                        <tag>
+                            <name>apiNote</name>
+                            <placement>a</placement>
+                            <head>API Note:</head>
+                        </tag>
+                        <tag>
+                            <name>implSpec</name>
+                            <placement>a</placement>
+                            <head>Implementation Specification:</head>
+                        </tag>
+                        <tag>
+                            <name>implNote</name>
+                            <placement>a</placement>
+                            <head>Implementation Note:</head>
+                        </tag>
+                    </tags>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>aggregate</id>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <phase>install</phase>
                     </execution>
                 </executions>
             </plugin>

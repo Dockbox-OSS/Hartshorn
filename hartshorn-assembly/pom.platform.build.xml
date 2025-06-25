@@ -141,54 +141,6 @@
         </pluginManagement>
 
         <plugins>
-            <!-- JavaDoc -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <javadocDirectory>${maven.multiModuleProjectDirectory}/hartshorn-assembly/javadoc</javadocDirectory>
-                    <addStylesheets>
-                        <stylesheetfile>overrides.css</stylesheetfile>
-                    </addStylesheets>
-                    <skip>${javadoc.skip}</skip>
-                    <show>package</show>
-                    <show>protected</show>
-                    <show>public</show>
-                    <tags>
-                        <tag>
-                            <name>apiNote</name>
-                            <placement>a</placement>
-                            <head>API Note:</head>
-                        </tag>
-                        <tag>
-                            <name>implSpec</name>
-                            <placement>a</placement>
-                            <head>Implementation Specification:</head>
-                        </tag>
-                        <tag>
-                            <name>implNote</name>
-                            <placement>a</placement>
-                            <head>Implementation Note:</head>
-                        </tag>
-                    </tags>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>aggregate</id>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                        <phase>site</phase>
-                    </execution>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- Standard build configurations -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -288,4 +240,8 @@
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <excludeDefaults>true</excludeDefaults>
+    </reporting>
 </project>
