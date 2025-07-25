@@ -24,8 +24,8 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import org.dockbox.hartshorn.util.GenericType;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.GenericType;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
 import org.dockbox.hartshorn.util.introspect.ConcurrentIntrospectionViewCache;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;

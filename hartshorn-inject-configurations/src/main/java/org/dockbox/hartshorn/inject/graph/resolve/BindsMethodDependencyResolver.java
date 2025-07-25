@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
 import org.dockbox.hartshorn.inject.graph.AbstractContainerDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
+import org.dockbox.hartshorn.inject.graph.ConditionalDependencyContext;
 import org.dockbox.hartshorn.inject.graph.DependencyResolver;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
@@ -44,10 +45,10 @@ import org.dockbox.hartshorn.inject.graph.strategy.MethodInstanceBindingStrategy
 import org.dockbox.hartshorn.inject.graph.strategy.SimpleBindingStrategyRegistry;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.ComponentRegistryAwareComponentProvider;
-import org.dockbox.hartshorn.util.ContextualInitializer;
-import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
-import org.dockbox.hartshorn.util.StreamableConfigurer;
+import org.dockbox.hartshorn.util.configure.ContextualInitializer;
+import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
+import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -80,7 +81,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
     }
 
     @Override
-    protected <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> declarationContext) {
+    protected <T> Set<ConditionalDependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> declarationContext) {
         TypeView<T> componentType = declarationContext.type();
         List<? extends MethodView<T, ?>> bindsMethods = componentType.methods().annotatedWith(Binds.class);
         if (!bindsMethods.isEmpty()) {
@@ -92,7 +93,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
     }
 
     @NonNull
-    private <T> Set<DependencyContext<?>> resolveBindingMethods(DependencyDeclarationContext<T> componentContainer,
+    private <T> Set<ConditionalDependencyContext<?>> resolveBindingMethods(DependencyDeclarationContext<T> componentContainer,
             TypeView<T> componentType, List<? extends MethodView<T, ?>> bindsMethods) {
         // Binds methods are only processed on managed components. If the component container is not present, there is nothing to do but check that there
         // is no incorrect usage of the @Binds annotation.
@@ -106,9 +107,10 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
                     "Component " + componentType.type().getName() + " is not a configuration component, but contains binding declarations.");
             }
             return bindsMethods.stream()
-                .filter(this.conditionMatcher::match)
-                .flatMap(bindsMethod -> this.resolve(componentContainer, bindsMethod).stream())
-                .collect(Collectors.toSet());
+                .flatMap(bindsMethod -> this.resolve(componentContainer, bindsMethod)
+                    .map(context -> new ConditionalDependencyContext<>(context, dependencyContextsHolder -> this.conditionMatcher.match(bindsMethod, dependencyContextsHolder)))
+                    .stream()
+                ).collect(Collectors.toSet());
         }
     }
 

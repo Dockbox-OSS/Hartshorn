@@ -25,11 +25,11 @@ import java.util.Set;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.annotations.Populate;
-import org.dockbox.hartshorn.util.ContextualInitializer;
-import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
-import org.dockbox.hartshorn.util.StreamableConfigurer;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.configure.ContextualInitializer;
+import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
+import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -145,8 +145,8 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
          */
         public Configurer withJavaxAnnotations() {
             return this.annotations(collection -> {
-                TypeUtils.<Annotation>forName("javax.inject.Inject", Annotation.class).peek(collection::add);
-                TypeUtils.<Annotation>forName("javax.annotation.Resource", Annotation.class).peek(collection::add);
+                TypeUtils.forName("javax.inject.Inject", Annotation.class).peek(collection::add);
+                TypeUtils.forName("javax.annotation.Resource", Annotation.class).peek(collection::add);
             });
         }
 
@@ -158,10 +158,9 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
          */
         public Configurer withJakartaAnnotations() {
             return this.annotations(collection -> {
-                TypeUtils.<Annotation>forName("jakarta.inject.Inject", Annotation.class).peek(collection::add);
-                TypeUtils.<Annotation>forName("jakarta.annotation.Resource", Annotation.class).peek(collection::add);
+                TypeUtils.forName("jakarta.inject.Inject", Annotation.class).peek(collection::add);
+                TypeUtils.forName("jakarta.annotation.Resource", Annotation.class).peek(collection::add);
             });
         }
-
     }
 }

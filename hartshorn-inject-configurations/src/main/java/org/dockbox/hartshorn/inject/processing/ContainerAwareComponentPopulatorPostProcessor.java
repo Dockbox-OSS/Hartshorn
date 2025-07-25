@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
-import org.dockbox.hartshorn.util.ContextualInitializer;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.configure.ContextualInitializer;
+import org.dockbox.hartshorn.util.configure.Customizer;
 
 /**
  * A {@link ComponentPopulatorPostProcessor} that is aware of {@link ComponentContainer} instances and their proxying

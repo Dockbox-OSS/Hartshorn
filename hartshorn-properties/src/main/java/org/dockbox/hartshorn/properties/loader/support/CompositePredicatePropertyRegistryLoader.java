@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.properties.loader.support;
 
-import org.dockbox.hartshorn.properties.PropertyRegistry;
-import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
+import org.dockbox.hartshorn.properties.PropertyRegistry;
+import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
 
 /**
  * A {@link PredicatePropertyRegistryLoader} that delegates to multiple other loaders. This loader will

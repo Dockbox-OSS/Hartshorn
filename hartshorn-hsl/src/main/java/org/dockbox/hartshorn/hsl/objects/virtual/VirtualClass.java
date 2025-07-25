@@ -34,7 +34,7 @@ import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.ObjectDescriber;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
  * Represents a class definition inside a script. The class is identified by its name, and

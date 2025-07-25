@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.graph.CompositeDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.DependencyResolver;
-import org.dockbox.hartshorn.util.ContextualInitializer;
-import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.StreamableConfigurer;
+import org.dockbox.hartshorn.util.configure.ContextualInitializer;
+import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 
 /**
  * TODO: #1060 Add documentation

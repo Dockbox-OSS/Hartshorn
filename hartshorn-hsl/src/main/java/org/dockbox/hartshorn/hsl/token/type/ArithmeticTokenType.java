@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.token.type;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenCharacter;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.configure.Customizer;
 
 /**
  * Represents the different types of arithmetic tokens that can be used in the HSL language.

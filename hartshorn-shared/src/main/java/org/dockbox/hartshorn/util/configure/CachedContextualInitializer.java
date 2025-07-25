@@ -1,0 +1,56 @@
+/*
+ * Copyright 2019-2024 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.dockbox.hartshorn.util.configure;
+
+import org.dockbox.hartshorn.context.SingleElementContext;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * A {@link ContextualInitializer} that caches the result of the initialization process. This is useful when the
+ * initialization process is expensive and the result is expected to be reused multiple times.
+ *
+ * <p>Results are cached based on the input of the {@link SingleElementContext} that is passed to the {@link
+ * #initialize(SingleElementContext)} method.
+ *
+ * @param <I> the type of the input
+ * @param <T> the type of the result
+ *
+ * @see ContextualInitializer
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
+public class CachedContextualInitializer<I, T> implements ContextualInitializer<I, T> {
+
+    private final Map<I, T> values = new ConcurrentHashMap<>();
+    private final ContextualInitializer<I, T> initializer;
+
+    public CachedContextualInitializer(ContextualInitializer<I, T> initializer) {
+        this.initializer = initializer;
+    }
+
+    @Override
+    public T initialize(SingleElementContext<? extends I> context) {
+        return this.values.computeIfAbsent(
+                context.input(),
+                input -> this.initializer.initialize(context)
+        );
+    }
+}

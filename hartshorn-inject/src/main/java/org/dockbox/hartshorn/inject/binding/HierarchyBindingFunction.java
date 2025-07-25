@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.inject.provider.SupplierInstantiationStrategy;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.inject.scope.ScopeModuleContext;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 

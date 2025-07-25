@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.util.introspect;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.util.MapBackedAnnotationInvocationHandler;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.MapBackedAnnotationInvocationHandler;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationAdapterProxy;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationAdapterProxyIntrospector;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationProxyIntrospector;

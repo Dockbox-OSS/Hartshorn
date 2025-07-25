@@ -47,8 +47,8 @@ import org.dockbox.hartshorn.inject.provider.singleton.ConcurrentHashSingletonCa
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
 import org.dockbox.hartshorn.inject.scope.ScopeModuleContext;
-import org.dockbox.hartshorn.util.ContextualInitializer;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.configure.ContextualInitializer;
+import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 

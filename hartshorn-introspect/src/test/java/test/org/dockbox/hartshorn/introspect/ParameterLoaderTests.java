@@ -16,7 +16,7 @@
 
 package test.org.dockbox.hartshorn.introspect;
 
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderContext;
 import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;

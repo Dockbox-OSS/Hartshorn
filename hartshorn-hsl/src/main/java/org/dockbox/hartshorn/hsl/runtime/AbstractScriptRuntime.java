@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.configure.Customizer;
 
 /**
  * Base implementation of {@link ScriptRuntime} that provides a default implementation for the

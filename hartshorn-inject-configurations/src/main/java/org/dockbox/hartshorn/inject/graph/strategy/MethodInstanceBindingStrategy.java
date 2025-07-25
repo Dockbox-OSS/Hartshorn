@@ -41,11 +41,11 @@ import org.dockbox.hartshorn.inject.graph.DependencyMap;
 import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.introspect.InjectorApplicationViewAdapter;
 import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
-import org.dockbox.hartshorn.util.ContextualInitializer;
-import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
-import org.dockbox.hartshorn.util.StreamableConfigurer;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.configure.ContextualInitializer;
+import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
+import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -86,16 +86,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
     private <T> DependencyContext<T> resolveInstanceBinding(BindingStrategyContext<?> context, AnnotatedGenericTypeView<T> declaration, Binds bindingDecorator, InjectionCapableApplication application) {
         ComponentKey<T> componentKey = TypeUtils.unchecked(this.application.environment().componentKeyResolver().resolve(declaration), ComponentKey.class);
         Set<ComponentKey<?>> dependencies = this.declarationDependencyResolver.dependencies(context);
-        PrototypeInstantiationStrategy<T> supplier = requestContext -> {
-            try {
-                ViewContextAdapter contextAdapter = new InjectorApplicationViewAdapter(application);
-                contextAdapter.addContext(requestContext);
-                return contextAdapter.load(declaration).orNull();
-            }
-            catch(Throwable throwable) {
-                throw new ComponentInitializationException("Failed to obtain instance for " + declaration.qualifiedName(), throwable);
-            }
-        };
+        PrototypeInstantiationStrategy<T> supplier = this.getPrototypeInstantiationStrategy(declaration, application);
 
         return AliasableConfigurableDependencyContext.builder(componentKey)
                 .aliasTypes(this.resolveAliasTypes(declaration, componentKey.type()))
@@ -109,6 +100,18 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
                 .lifecycleType(bindingDecorator.lifecycle())
                 .processAfterInitialization(bindingDecorator.processAfterInitialization())
                 .build();
+    }
+
+    private <T> PrototypeInstantiationStrategy<T> getPrototypeInstantiationStrategy(AnnotatedGenericTypeView<T> declaration, InjectionCapableApplication application) {
+        return requestContext -> {
+            try {
+                ViewContextAdapter contextAdapter = new InjectorApplicationViewAdapter(application);
+                contextAdapter.addContext(requestContext);
+                return contextAdapter.load(declaration).orNull();
+            } catch (Throwable throwable) {
+                throw new ComponentInitializationException("Failed to obtain instance for " + declaration.qualifiedName(), throwable);
+            }
+        };
     }
 
     private int resolvePriority(AnnotatedElementView view) {

@@ -18,7 +18,7 @@
     <description>Common parent POM for Hartshorn modules which require update automation</description>
 
     <properties>
-        <execution.updates.skip>false</execution.updates.skip>
+        <updates.skip>false</updates.skip>
         <plugin.versions.version>2.18.0</plugin.versions.version>
     </properties>
 
@@ -38,7 +38,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
                 <configuration>
-                    <skip>${execution.updates.skip}</skip>
+                    <skip>${updates.skip}</skip>
                     <ignoredVersions>.*[-_\.](alpha|Alpha|ALPHA|b|beta|Beta|BETA|rc|RC|M|MR|EA)[-_\.]?[0-9]*</ignoredVersions>
                     <generateBackupPoms>false</generateBackupPoms>
 

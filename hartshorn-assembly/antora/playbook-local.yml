@@ -29,7 +29,7 @@ content:
         - hartshorn-inject-configurations/src/main/docs
         - hartshorn-launchpad/src/main/docs
         - hartshorn-testsuite/src/main/docs
-        - hartshorn-util/src/main/docs
+        - hartshorn-shared/src/main/docs
         - hartshorn-properties/src/main/docs
         - hartshorn-profiles/src/main/docs
         - hartshorn-spi/src/main/docs

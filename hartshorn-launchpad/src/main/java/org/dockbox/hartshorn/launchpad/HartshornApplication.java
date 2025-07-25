@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.launchpad;
 
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder.Configurer;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.configure.Customizer;
 
 /**
  * Application starter for Hartshorn applications. This takes a single type

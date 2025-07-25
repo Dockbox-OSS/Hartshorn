@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * TODO: #1060 Add documentation

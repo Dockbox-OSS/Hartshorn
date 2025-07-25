@@ -33,17 +33,17 @@ import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 import org.dockbox.hartshorn.launchpad.annotations.UseLifecycleObservers;
 import org.dockbox.hartshorn.launchpad.annotations.UseProxying;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.launch.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.launchpad.launch.ApplicationBuildContext;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder.Configurer;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
-import org.dockbox.hartshorn.util.ContextualInitializer;
-import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.Initializer;
-import org.dockbox.hartshorn.util.StreamableConfigurer;
+import org.dockbox.hartshorn.util.configure.ContextualInitializer;
+import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.util.configure.Initializer;
+import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
@@ -72,7 +72,7 @@ public class HartshornApplicationConfigurer {
 
     private Customizer<Configurer> applicationBuilder = Customizer.useDefaults();
     private Customizer<StandardApplicationContextFactory.Configurer> applicationContextFactory = Customizer.useDefaults();
-    private Customizer<ContextualApplicationEnvironment.Configurer> environment = Customizer.useDefaults();
+    private Customizer<ConfigurableApplicationEnvironment.Configurer> environment = Customizer.useDefaults();
     private Customizer<SimpleApplicationContext.Configurer> applicationContext = Customizer.useDefaults();
     private Customizer<MethodsAndFieldsInjectionPointResolver.Configurer> injectionPointResolver = Customizer.useDefaults();
     private Customizer<AnnotatedMethodComponentPostConstructor.Configurer> componentPostConstructor = Customizer.useDefaults();
@@ -497,12 +497,12 @@ public class HartshornApplicationConfigurer {
     private void configureApplicationConstructor(StandardApplicationContextFactory.Configurer constructor) {
         this.applicationContextFactory.configure(constructor);
         constructor.environment(this.initializer(
-            ContextualApplicationEnvironment::create,
+            ConfigurableApplicationEnvironment::create,
             this::configureApplicationEnvironment
         ));
     }
 
-    private void configureApplicationEnvironment(ContextualApplicationEnvironment.Configurer environment) {
+    private void configureApplicationEnvironment(ConfigurableApplicationEnvironment.Configurer environment) {
         this.environment.configure(environment);
         environment.applicationContext(this.initializer(
             SimpleApplicationContext::create,

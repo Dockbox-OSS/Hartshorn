@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.reporting.support;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;

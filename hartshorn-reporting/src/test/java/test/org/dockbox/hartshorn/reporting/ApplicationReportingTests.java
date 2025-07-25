@@ -27,8 +27,8 @@ import org.dockbox.hartshorn.reporting.component.ComponentDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.component.ComponentProcessorDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.system.SystemDiagnosticsReporter;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.dockbox.hartshorn.util.GroupNode;
-import org.dockbox.hartshorn.util.Node;
+import org.dockbox.hartshorn.util.properties.GroupNode;
+import org.dockbox.hartshorn.util.properties.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

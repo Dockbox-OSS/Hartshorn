@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.scope.Scope;
 
 /**
@@ -73,24 +72,6 @@ public interface ComponentProvider {
      */
     default <T> T get(ComponentKey<T> key) {
         return this.get(key, ComponentRequestContext.createForComponent());
-    }
-
-    /**
-     * Returns the component for the given type and name metadata. If {@code named} is null, the given
-     * {@link Class} is used to identify the component.
-     *
-     * @param type The type of the component to return.
-     * @param qualifiers The metadata of the component to return.
-     * @param <T> The type of the component to return.
-     *
-     * @return The component for the given type and name metadata.
-     *
-     * @deprecated Use {@link #get(ComponentKey)} instead.
-     */
-    @Deprecated(since = "0.6.0", forRemoval = true)
-    default <T> T get(Class<T> type, QualifierKey<?>... qualifiers) {
-        ComponentKey<T> key = ComponentKey.builder(type).qualifiers(qualifiers).build();
-        return this.get(key);
     }
 
     /**

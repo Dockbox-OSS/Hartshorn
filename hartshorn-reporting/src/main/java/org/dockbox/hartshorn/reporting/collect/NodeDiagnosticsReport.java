@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.reporting.collect;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
-import org.dockbox.hartshorn.util.GroupNode;
+import org.dockbox.hartshorn.util.properties.GroupNode;
 
 /**
  * A diagnostics report which uses a {@link GroupNode} as its root node.

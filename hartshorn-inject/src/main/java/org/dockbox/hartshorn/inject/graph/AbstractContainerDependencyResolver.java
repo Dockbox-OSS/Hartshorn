@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
 
@@ -40,11 +41,15 @@ public abstract class AbstractContainerDependencyResolver implements DependencyR
 
     @Override
     public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> containers) throws DependencyResolutionException {
-        Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
+        Set<ConditionalDependencyContext<?>> dependencyContexts = new HashSet<>();
         for (DependencyDeclarationContext<?> componentContainer : containers) {
             dependencyContexts.addAll(this.resolveSingle(componentContainer));
         }
-        return dependencyContexts;
+        ConditionalDependencyContextsHolder contextsHolder = ConditionalDependencyContextsHolder.create(dependencyContexts);
+        return dependencyContexts.stream()
+            .filter(context -> context.conditionsMatched().test(contextsHolder))
+            .map(ConditionalDependencyContext::dependencyContext)
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -57,6 +62,6 @@ public abstract class AbstractContainerDependencyResolver implements DependencyR
      * @return a collection of {@link DependencyContext} instances
      * @throws DependencyResolutionException when the resolution fails
      */
-    protected abstract <T> Set<DependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> declarationContext) throws DependencyResolutionException;
+    protected abstract <T> Set<ConditionalDependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> declarationContext) throws DependencyResolutionException;
 
 }

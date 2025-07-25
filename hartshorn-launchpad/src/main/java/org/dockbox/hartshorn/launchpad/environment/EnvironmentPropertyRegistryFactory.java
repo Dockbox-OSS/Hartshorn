@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
+import java.util.Properties;
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
 import org.dockbox.hartshorn.launchpad.properties.InstantLoadingPropertyRegistryFactory;
 import org.dockbox.hartshorn.launchpad.properties.PropertyRegistryFactory;
@@ -28,7 +29,7 @@ import org.dockbox.hartshorn.properties.loader.support.CompositePredicatePropert
 import org.dockbox.hartshorn.spi.DiscoveryService;
 import org.dockbox.hartshorn.spi.ServiceDiscoveryException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 
 import java.io.IOException;
 import java.net.URI;
@@ -56,13 +57,13 @@ import java.util.stream.Collectors;
  */
 public class EnvironmentPropertyRegistryFactory {
 
-    public PropertyRegistry createRegistry(Collection<PropertySourceResolver> propertySourceResolvers, ResourceLookup resourceLookup) {
+    public PropertyRegistry createRegistry(Collection<PropertySourceResolver> propertySourceResolvers, ResourceLookup resourceLookup, Properties additionalProperties) {
         Set<PropertyRegistryPathLoader> propertyRegistryLoaders = this.resolveRegistryLoaders();
         PropertyRegistryPathLoader propertyRegistryLoader = this.createRegistryLoader(propertyRegistryLoaders);
         PropertyRegistryFactory propertyRegistryFactory = new InstantLoadingPropertyRegistryFactory(propertyRegistryLoader);
         try {
             SequencedSet<URI> resources = this.resolveResources(propertySourceResolvers, resourceLookup);
-            return propertyRegistryFactory.createRegistry(resources);
+            return propertyRegistryFactory.createRegistry(resources, additionalProperties);
         }
         catch(IOException e) {
             throw new ComponentInitializationException("Could not initialize PropertyRegistry", e);

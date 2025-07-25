@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
-import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.graph.BreadthFirstGraphVisitor;
 import org.dockbox.hartshorn.util.graph.ContentAwareGraph;
 import org.dockbox.hartshorn.util.graph.Graph;

@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.inject.binding.defaults;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.test.annotations.TestProperties;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,11 +35,33 @@ public class DefaultBindingsTests {
     private ComponentRegistry componentRegistry;
 
     @Test
-    void loggerCanBeInjected(@Inject Logger loggerParameter) {
+    @TestProperties("hartshorn.logging.naming.use-container-names=true")
+    void loggerUsesContainerNameIfEnabled(@Inject Logger loggerParameter) {
         Assertions.assertNotNull(loggerParameter);
         // Name should match the consuming class' name, and not the name of the configuration that uses it
-        ComponentContainer<?> container = componentRegistry.container(this.getClass()).orElseGet(Assertions::fail);
+        ComponentContainer<?> container = this.componentRegistry.container(this.getClass()).orElseGet(Assertions::fail);
         String expectedName = container.name();
+        Assertions.assertEquals(expectedName, loggerParameter.getName());
+
+        Assertions.assertNotNull(this.loggerField);
+        Assertions.assertEquals(expectedName, this.loggerField.getName());
+    }
+
+    @Test
+    @TestProperties("hartshorn.logging.naming.use-container-names=false")
+    void loggerUsesClassNameIfDisabled(@Inject Logger loggerParameter) {
+        Assertions.assertNotNull(loggerParameter);
+        String expectedName = this.getClass().getName();
+        Assertions.assertEquals(expectedName, loggerParameter.getName());
+
+        Assertions.assertNotNull(this.loggerField);
+        Assertions.assertEquals(expectedName, this.loggerField.getName());
+    }
+
+    @Test
+    void loggerUsesClassNameByDefault(@Inject Logger loggerParameter) {
+        Assertions.assertNotNull(loggerParameter);
+        String expectedName = this.getClass().getName();
         Assertions.assertEquals(expectedName, loggerParameter.getName());
 
         Assertions.assertNotNull(this.loggerField);

@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.inject.graph.DependencyResolutionType;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
-import org.dockbox.hartshorn.util.ObjectDescriber;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**

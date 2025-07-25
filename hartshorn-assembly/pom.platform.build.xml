@@ -20,35 +20,88 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
 
-        <!-- Shorthands for project paths -->
-        <path.assembly>${maven.multiModuleProjectDirectory}/hartshorn-assembly</path.assembly>
-
         <!-- Language versions, also inherited by BOM -->
         <groovy.version>4.0.18</groovy.version>
         <kotlin.version>2.0.0</kotlin.version>
         <scala.version>3.3.1</scala.version>
 
         <!-- Maven plugin versions, in alphabetical order -->
+        <plugin.buildhelper.version>3.6.0</plugin.buildhelper.version>
         <plugin.compiler.version>3.13.0</plugin.compiler.version>
         <plugin.gmaven.version>3.0.2</plugin.gmaven.version>
         <plugin.groovy.version>2.1.1</plugin.groovy.version>
         <plugin.jar.version>3.4.2</plugin.jar.version>
         <plugin.javadoc.version>3.8.0</plugin.javadoc.version>
         <plugin.kotlin.version>${kotlin.version}</plugin.kotlin.version>
-        <plugin.license.version>4.6</plugin.license.version>
         <plugin.scala.version>4.9.2</plugin.scala.version>
-        <plugin.source.version>3.3.1</plugin.source.version>
+        <plugin.openrewrite.version>5.42.0</plugin.openrewrite.version>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>openrewrite</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.openrewrite.maven</groupId>
+                        <artifactId>rewrite-maven-plugin</artifactId>
+                        <configuration>
+                            <activeRecipes>
+                                <recipe>org.openrewrite.java.testing.assertj.JUnitToAssertj</recipe>
+                            </activeRecipes>
+                            <exclusions>
+                                <!--
+                                Groovy sources are passed to Rewrite by GMaven, even though Groovy isn't Java. Kotlin
+                                and Scala sources are correctly ignored.
+                                -->
+                                <exclusion>*/**.groovy</exclusion>
+                                <!--
+                                Source files using switch expressions/pattern matching. This is currently not supported
+                                by Rewrite, see https://github.com/openrewrite/rewrite/issues/4153 for more information.
+                                -->
+                                <exclusion>hartshorn-introspect-reflection/src/main/java/org/dockbox/hartshorn/util/introspect/reflect/ReflectionIntrospector.java</exclusion>
+                                <exclusion>hartshorn-introspect-reflection/src/main/java/org/dockbox/hartshorn/util/introspect/reflect/view/ReflectionTypeParameterView.java</exclusion>
+                                <exclusion>hartshorn-inject/src/main/java/org/dockbox/hartshorn/inject/introspect/InjectorApplicationViewAdapter.java</exclusion>
+                                <exclusion>hartshorn-inject/src/main/java/org/dockbox/hartshorn/inject/provider/strategy/InstantiationStrategyComponentProviderStrategy.java</exclusion>
+                                <exclusion>hartshorn-inject-configurations/src/main/java/org/dockbox/hartshorn/inject/processing/MultiMapComponentProcessorRegistry.java</exclusion>
+                                <exclusion>hartshorn-launchpad/src/main/java/org/dockbox/hartshorn/launchpad/configuration/LaunchpadSharedComponentConfiguration.java</exclusion>
+                                <exclusion>hartshorn-reporting/src/main/java/org/dockbox/hartshorn/reporting/serialize/NodeToJacksonVisitor.java</exclusion>
+                                <exclusion>hartshorn-hsl/src/main/java/org/dockbox/hartshorn/hsl/parser/statement/ClassStatementParser.java</exclusion>
+                                <exclusion>hartshorn-introspect/src/test/java/test/org/dockbox/hartshorn/introspect/convert/ConverterIntrospectionHelper.java</exclusion>
+                                <exclusion>hartshorn-introspect/src/test/java/test/org/dockbox/hartshorn/introspect/convert/CollectionDefaultValueProviderFactoryTests.java</exclusion>
+                            </exclusions>
+                            <failOnDryRunResults>true</failOnDryRunResults>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.openrewrite.recipe</groupId>
+                                <artifactId>rewrite-testing-frameworks</artifactId>
+                                <version>2.20.0</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <build>
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
             </testResource>
+            <testResource>
+                <directory>src/testFixtures/resources</directory>
+            </testResource>
         </testResources>
         <pluginManagement>
             <!-- Plugin management, in alphabetical order of version property -->
             <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${plugin.buildhelper.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -75,101 +128,19 @@
                     <version>${plugin.kotlin.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>com.mycila</groupId>
-                    <artifactId>license-maven-plugin</artifactId>
-                    <version>${plugin.license.version}</version>
-                </plugin>
-                <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
                     <version>${plugin.scala.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${plugin.source.version}</version>
+                    <groupId>org.openrewrite.maven</groupId>
+                    <artifactId>rewrite-maven-plugin</artifactId>
+                    <version>${plugin.openrewrite.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
-            <plugin>
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <configuration>
-                    <headerDefinitions>
-                        <headerDefinition>${path.assembly}/licenses/JavaBlockStyleHeader.xml</headerDefinition>
-                    </headerDefinitions>
-                    <licenseSets>
-                        <licenseSet>
-                            <header>${path.assembly}/licenses/APACHE-2.txt</header>
-                            <useDefaultExcludes>true</useDefaultExcludes>
-                            <includes>
-                                <include>**/*.java</include>
-                                <include>**/*.kt</include>
-                                <include>**/*.groovy</include>
-                                <include>**/*.scala</include>
-                            </includes>
-                        </licenseSet>
-                    </licenseSets>
-                    <mapping>
-                        <java>JavaBlockStyleHeader</java>
-                    </mapping>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.mycila</groupId>
-                        <artifactId>license-maven-plugin-git</artifactId>
-                        <version>${plugin.license.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <!-- JavaDoc -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <javadocDirectory>${maven.multiModuleProjectDirectory}/hartshorn-assembly/javadoc</javadocDirectory>
-                    <addStylesheets>
-                        <stylesheetfile>overrides.css</stylesheetfile>
-                    </addStylesheets>
-                    <show>package</show>
-                    <show>protected</show>
-                    <show>public</show>
-                    <tags>
-                        <tag>
-                            <name>apiNote</name>
-                            <placement>a</placement>
-                            <head>API Note:</head>
-                        </tag>
-                        <tag>
-                            <name>implSpec</name>
-                            <placement>a</placement>
-                            <head>Implementation Specification:</head>
-                        </tag>
-                        <tag>
-                            <name>implNote</name>
-                            <placement>a</placement>
-                            <head>Implementation Note:</head>
-                        </tag>
-                    </tags>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>bundle-sources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                            <goal>test-jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- Standard build configurations -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -178,14 +149,33 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                        </manifest>
-                    </archive>
-                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Testing -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-gradle-testfixtures</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/testFixtures/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Language support -->
@@ -250,4 +240,8 @@
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <excludeDefaults>true</excludeDefaults>
+    </reporting>
 </project>

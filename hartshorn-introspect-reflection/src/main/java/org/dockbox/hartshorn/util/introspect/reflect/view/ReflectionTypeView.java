@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.collections.BiMap;
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;

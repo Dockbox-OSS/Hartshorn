@@ -14,7 +14,7 @@ jobs:
           java-version: 21
           distribution: temurin
       - name: Build developer documentation
-        run: mvn clean install -DskipTests -P ci,local -Dexecution.antora.skip=false
+        run: mvn clean install -DskipTests -P ci,local -Dantora.skip=false -Dantora.playbook=playbook-local.yml
       - name: Archive Antora artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -23,11 +23,11 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - name: Build Javadocs
-        run: mvn install -DskipTests -P ci -Dexecution.javadoc.skip=false
+        run: mvn site -DskipTests -P ci -Djavadoc.skip=false
       - name: Archive Javadoc artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Javadoc archive
-          path: hartshorn-assembly/target/site/apidocs
+          path: hartshorn-assembly/javadoc
           if-no-files-found: error
           retention-days: 7

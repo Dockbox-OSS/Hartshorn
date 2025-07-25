@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
-import org.dockbox.hartshorn.util.ObjectDescriber;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
  * TODO: #1060 Add documentation

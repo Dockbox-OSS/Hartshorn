@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
 import org.dockbox.hartshorn.launchpad.activation.ServiceActivatorCollector;
-import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
 /**

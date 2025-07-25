@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.introspect.ApplicationBoundParameterLoaderContext;
 import org.dockbox.hartshorn.inject.introspect.ExecutableElementContextParameterLoader;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionElementAnnotationsIntrospector;

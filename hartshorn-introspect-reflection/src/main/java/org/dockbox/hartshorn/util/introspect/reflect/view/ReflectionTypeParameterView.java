@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.util.ObjectDescriber;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;

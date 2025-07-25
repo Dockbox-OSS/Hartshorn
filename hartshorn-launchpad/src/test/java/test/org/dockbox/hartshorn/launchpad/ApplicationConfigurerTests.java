@@ -41,10 +41,10 @@ import org.dockbox.hartshorn.launchpad.HartshornApplicationConfigurer;
 import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
 import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 import org.dockbox.hartshorn.launchpad.banner.HartshornLogoBanner;
-import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
-import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClasspathTypeReferenceCollector;
@@ -231,10 +231,10 @@ public class ApplicationConfigurerTests {
     @DisplayName("Customizer should be able to enable stacktraces")
     void testShowStacktracesCustomizer() {
         ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::showStacktraces);
-        ContextualApplicationEnvironment contextualApplicationEnvironment =
-            assertInstanceOf(ContextualApplicationEnvironment.class, applicationContext.environment());
+        ConfigurableApplicationEnvironment configurableApplicationEnvironment =
+            assertInstanceOf(ConfigurableApplicationEnvironment.class, applicationContext.environment());
         LoggingExceptionHandler exceptionHandler =
-            assertInstanceOf(LoggingExceptionHandler.class, contextualApplicationEnvironment.exceptionHandler());
+            assertInstanceOf(LoggingExceptionHandler.class, configurableApplicationEnvironment.exceptionHandler());
         assertTrue(exceptionHandler.printStackTraces());
     }
 
@@ -242,10 +242,10 @@ public class ApplicationConfigurerTests {
     @DisplayName("Customizer should be able to disable stacktraces")
     void testHideStacktracesCustomizer() {
         ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::hideStacktraces);
-        ContextualApplicationEnvironment contextualApplicationEnvironment =
-            assertInstanceOf(ContextualApplicationEnvironment.class, applicationContext.environment());
+        ConfigurableApplicationEnvironment configurableApplicationEnvironment =
+            assertInstanceOf(ConfigurableApplicationEnvironment.class, applicationContext.environment());
         LoggingExceptionHandler exceptionHandler =
-            assertInstanceOf(LoggingExceptionHandler.class, contextualApplicationEnvironment.exceptionHandler());
+            assertInstanceOf(LoggingExceptionHandler.class, configurableApplicationEnvironment.exceptionHandler());
         assertFalse(exceptionHandler.printStackTraces());
     }
 

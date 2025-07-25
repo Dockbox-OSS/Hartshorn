@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.stub.MethodStub;
 import org.dockbox.hartshorn.proxy.advice.stub.MethodStubContext;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.MethodInvoker;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;

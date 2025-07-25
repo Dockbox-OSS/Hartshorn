@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.UseReporting;
 import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer.JsonReportSerializer;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.dockbox.hartshorn.util.Node;
+import org.dockbox.hartshorn.util.properties.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

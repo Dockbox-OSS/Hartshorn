@@ -47,7 +47,7 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.hsl.token.type.PairTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.VariableTokenType;
-import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 
 /**

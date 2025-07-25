@@ -24,7 +24,7 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.types.GenericType;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;

@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.hsl.token.type.AssertTokenType;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
-import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**

@@ -30,12 +30,12 @@ import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
 import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
-import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.test.annotations.TestBinding;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -53,7 +53,7 @@ public record IntegrationTestApplicationFactoryCustomizer(
 
     @Override
     public void configure(StandardApplicationContextFactory.Configurer constructor) {
-        Customizer<ContextualApplicationEnvironment.Configurer> environmentCustomizer = environment -> {
+        Customizer<ConfigurableApplicationEnvironment.Configurer> environmentCustomizer = environment -> {
             environment.disableBanner(); // Disable banner for tests, to avoid unnecessary noise
             environment.enableBatchMode(); // Enable batch mode, to make use of additional caching between tests. This decreases startup time after warmup (first test).
             environment.showStacktraces(); // Enable stacktraces for tests, to make debugging easier
@@ -66,7 +66,7 @@ public record IntegrationTestApplicationFactoryCustomizer(
                     SimpleApplicationContext.create(applicationContextCustomizer.compose(TestCustomizer.APPLICATION_CONTEXT.customizer())));
         };
         constructor.environment(
-                ContextualApplicationEnvironment.create(environmentCustomizer.compose(TestCustomizer.ENVIRONMENT.customizer())));
+                ConfigurableApplicationEnvironment.create(environmentCustomizer.compose(TestCustomizer.ENVIRONMENT.customizer())));
 
         for(AnnotatedElement element : this.testComponentSources) {
             this.customizeWithComponentSource(constructor, element);

@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.test;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
-import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
+import org.dockbox.hartshorn.util.configure.Customizer;
 
 /**
  * A utility class to provide customizers for the various components of the test suite. These customizers are consumed
@@ -37,7 +37,7 @@ public final class TestCustomizer<T> {
     @Deprecated(forRemoval = true, since = "0.7.0")
     public static final TestCustomizer<StandardApplicationBuilder.Configurer> BUILDER = new TestCustomizer<>();
 
-    public static final TestCustomizer<ContextualApplicationEnvironment.Configurer> ENVIRONMENT = new TestCustomizer<>();
+    public static final TestCustomizer<ConfigurableApplicationEnvironment.Configurer> ENVIRONMENT = new TestCustomizer<>();
     @Deprecated(forRemoval = true, since = "0.7.0")
     public static final TestCustomizer<StandardApplicationContextFactory.Configurer> CONSTRUCTOR = new TestCustomizer<>();
     @Deprecated(forRemoval = true, since = "0.7.0")

@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
@@ -42,7 +42,7 @@ public class ApplicationBatchingTest {
                                     constructor.includeBasePackages(false);
                                     constructor.standaloneComponents(components -> components.add(SimpleComponent.class));
                                     constructor.environment(
-                                            ContextualApplicationEnvironment.create(ContextualApplicationEnvironment.Configurer::enableBatchMode)
+                                            ConfigurableApplicationEnvironment.create(ConfigurableApplicationEnvironment.Configurer::enableBatchMode)
                                     );
                                 })
                         )));

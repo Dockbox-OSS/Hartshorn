@@ -39,7 +39,7 @@ import org.dockbox.hartshorn.launchpad.annotations.UseLifecycleObservers;
 import org.dockbox.hartshorn.launchpad.configuration.BindingConfigurerBinderPostProcessorAdapter;
 import org.dockbox.hartshorn.launchpad.configuration.ScopeFilteredDelegateBinderPostProcessor;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
-import org.dockbox.hartshorn.launchpad.environment.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.annotations.UseProxying;
@@ -48,13 +48,13 @@ import org.dockbox.hartshorn.inject.processing.ComponentPopulatorPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
-import org.dockbox.hartshorn.util.CollectionUtilities;
-import org.dockbox.hartshorn.util.ContextualInitializer;
-import org.dockbox.hartshorn.util.Customizer;
-import org.dockbox.hartshorn.util.LazyStreamableConfigurer;
-import org.dockbox.hartshorn.util.SingleElementContext;
-import org.dockbox.hartshorn.util.StreamableConfigurer;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.configure.ContextualInitializer;
+import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
+import org.dockbox.hartshorn.context.SingleElementContext;
+import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.scan.PredefinedSetTypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScannerTypeReferenceCollector;
@@ -328,7 +328,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, Class<?>> standaloneComponents = LazyStreamableConfigurer.empty();
         private final LazyStreamableConfigurer<ApplicationBootstrapContext, String> scanPackages = LazyStreamableConfigurer.empty();
 
-        private ContextualInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment> environment = ContextualApplicationEnvironment.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment> environment = ConfigurableApplicationEnvironment.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationBuildContext, Boolean> includeBasePackages = ContextualInitializer.of(true);
 
         /**
@@ -408,7 +408,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
 
         /**
          * Configures the environment that is used to manage the application context. By default, this uses the {@link
-         * ContextualApplicationEnvironment} with default settings.
+         * ConfigurableApplicationEnvironment} with default settings.
          *
          * @param environment The environment to use
          * @return The current configurator instance
@@ -419,7 +419,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
 
         /**
          * Configures the environment that is used to manage the application context. By default, this uses the {@link
-         * ContextualApplicationEnvironment} with default settings.
+         * ConfigurableApplicationEnvironment} with default settings.
          *
          * @param environment The environment to use
          * @return The current configurator instance

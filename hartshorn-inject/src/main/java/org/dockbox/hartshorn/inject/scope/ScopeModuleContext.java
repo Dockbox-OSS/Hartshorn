@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 

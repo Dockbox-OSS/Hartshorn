@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.inject.annotations.Named;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.stream.EntryStream;
 
 import java.lang.annotation.Annotation;

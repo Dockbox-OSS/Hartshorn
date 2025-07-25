@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.token.type;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenCharacter;
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.configure.Customizer;
 
 /**
  * Represents the different bitwise operators that are available in the HSL language.

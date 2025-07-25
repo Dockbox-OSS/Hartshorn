@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
-import org.dockbox.hartshorn.util.GenericType;
+import org.dockbox.hartshorn.util.types.GenericType;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**

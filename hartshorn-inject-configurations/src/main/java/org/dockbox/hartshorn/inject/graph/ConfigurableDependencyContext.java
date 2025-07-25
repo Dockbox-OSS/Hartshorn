@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.LifecycleAwareDependencyContext;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.ObjectDescriber;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.View;
 

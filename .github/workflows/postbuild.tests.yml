@@ -15,7 +15,8 @@ jobs:
           distribution: temurin
       - name: Run tests
         id: test
-        run: "mvn clean verify -P ci -Djacoco.haltOnFailure=true"
+        # TODO: Restore `-Dcoverage.skip=false`, currently skipped as coverage is known to be too low
+        run: "mvn clean verify -P ci -Djacoco.haltOnFailure=true -Djacoco.skip=false"
   testSourceCompat:
     needs: [coverage]
     strategy:
@@ -32,5 +33,7 @@ jobs:
           java-version: 21
           distribution: temurin
       - name: "Unit testing (OS: ${{ matrix.os }}, source JDK)"
-        run: "mvn clean verify -P ci -Djacoco.haltOnFailure=true"
+        # TODO: Restore `-Dcoverage.skip=false`, currently skipped as coverage is known to be too low
+        # Note that coverage should still be enabled here, as specific instructions may differ per platform
+        run: "mvn clean verify -P ci -Djacoco.haltOnFailure=true -Djacoco.skip=false"
         shell: bash

@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.hsl.objects.access.StandardPropertyAccessVerifier;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.util.ObjectDescriber;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
  * Represents an instance of a {@link VirtualClass} inside a script. The instance is

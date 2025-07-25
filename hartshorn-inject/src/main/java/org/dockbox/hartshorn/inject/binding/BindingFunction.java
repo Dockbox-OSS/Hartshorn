@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
-import org.dockbox.hartshorn.util.Customizer;
+import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 /**

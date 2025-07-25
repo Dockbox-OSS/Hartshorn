@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject.graph.declaration;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.CompositeQualifier;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 

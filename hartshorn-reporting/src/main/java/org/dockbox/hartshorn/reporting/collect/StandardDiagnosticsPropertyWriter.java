@@ -23,11 +23,11 @@ import java.util.stream.Stream;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.ArrayNode;
-import org.dockbox.hartshorn.util.GroupNode;
-import org.dockbox.hartshorn.util.Node;
-import org.dockbox.hartshorn.util.SimpleNode;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.properties.ArrayNode;
+import org.dockbox.hartshorn.util.properties.GroupNode;
+import org.dockbox.hartshorn.util.properties.Node;
+import org.dockbox.hartshorn.util.properties.SimpleNode;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A diagnostics property writer that writes to a {@link GroupNode} in a {@link StandardDiagnosticsReportCollector}.

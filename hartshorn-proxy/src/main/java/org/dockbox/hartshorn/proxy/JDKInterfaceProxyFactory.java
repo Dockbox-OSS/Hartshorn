@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyAdvisorMethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;

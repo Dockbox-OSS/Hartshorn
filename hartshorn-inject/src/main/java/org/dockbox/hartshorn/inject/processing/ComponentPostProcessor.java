@@ -20,7 +20,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A component post processor is responsible for processing a component after it has been created. This

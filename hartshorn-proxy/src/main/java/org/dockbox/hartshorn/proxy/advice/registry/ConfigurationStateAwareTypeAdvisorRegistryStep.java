@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.proxy.advice.registry;
 
-import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.lang.reflect.Method;
