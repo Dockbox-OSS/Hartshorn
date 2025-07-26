@@ -73,7 +73,6 @@ public class ReportingConfiguration {
      */
     @Singleton
     @CompositeMember
-    @SupportPriority
     public CategorizedDiagnosticsReporter systemDiagnosticsReporter() {
         return new SystemDiagnosticsReporter();
     }
@@ -89,7 +88,6 @@ public class ReportingConfiguration {
      */
     @Singleton
     @CompositeMember
-    @SupportPriority
     public CategorizedDiagnosticsReporter applicationDiagnosticsReporter(ApplicationContext applicationContext) {
         return new ApplicationDiagnosticsReporter(applicationContext);
     }
@@ -106,7 +104,6 @@ public class ReportingConfiguration {
      */
     @Singleton
     @CompositeMember
-    @SupportPriority
     public CategorizedDiagnosticsReporter componentDiagnosticsReporter(ApplicationContext applicationContext) {
         return new ComponentDiagnosticsReporter(applicationContext);
     }
@@ -123,7 +120,6 @@ public class ReportingConfiguration {
      */
     @Singleton
     @CompositeMember
-    @SupportPriority
     public CategorizedDiagnosticsReporter componentProcessorDiagnosticsReporter(ApplicationContext applicationContext) {
         return new ComponentProcessorDiagnosticsReporter(applicationContext);
     }
