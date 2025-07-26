@@ -164,7 +164,7 @@ public final class CollectorUtilities {
                     return left;
                 },
                 EntryStream::of,
-                EnumSet.of(Characteristics.IDENTITY_FINISH)
+                EnumSet.of(Characteristics.UNORDERED)
         );
     }
 
