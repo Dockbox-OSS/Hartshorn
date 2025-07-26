@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util.stream;
 
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -164,6 +165,36 @@ public final class CollectorUtilities {
                 },
                 EntryStream::of,
                 EnumSet.of(Characteristics.IDENTITY_FINISH)
+        );
+    }
+
+    /**
+     * A collector that collects a single element into an {@link Option}. If multiple elements are encountered, an
+     * {@link IllegalStateException} is thrown.
+     *
+     * @return a collector that collects a single element into an {@link Option}
+     * @param <T> the type of the stream
+     */
+    public static <T> Collector<T, ?, Option<T>> toOption() {
+        class IntermediateHolder {
+            Option<T> value = Option.empty();
+        }
+        return Collector.of(
+                IntermediateHolder::new,
+                (holder, item) -> {
+                    if (holder.value.present()) {
+                        throw new IllegalStateException("Multiple elements encountered when only one was expected");
+                    }
+                    holder.value = Option.of(item);
+                },
+                (current, next) -> {
+                    if (current.value.present() && next.value.present()) {
+                        throw new IllegalStateException("Multiple elements encountered when only one was expected");
+                    }
+                    return current.value.present() ? current : next;
+                },
+                holder -> holder.value,
+                Collector.Characteristics.UNORDERED
         );
     }
 

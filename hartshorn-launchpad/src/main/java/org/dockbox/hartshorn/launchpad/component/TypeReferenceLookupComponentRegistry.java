@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.launchpad.component;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.function.Function;
-
 import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.inject.component.AnnotatedComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
@@ -30,6 +24,13 @@ import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.environment.EnvironmentTypeResolver;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationUtilities;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.stream.CollectorUtilities;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.Function;
 
 /**
  * {@link ComponentRegistry} implementation which recognizes classes annotated with {@link Component} (or compatible
@@ -60,8 +61,28 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
      * Register the given container to the current registry
      * @param container the container to register
      */
-    public void addCustomContainer(ComponentContainer<?> container) {
-        this.withContainerCache(containers -> containers.add(container));
+    public boolean addCustomContainer(ComponentContainer<?> container) {
+        return this.withContainerCache(containers -> safeAddContainer(containers, container));
+    }
+
+    private boolean safeAddContainer(Set<ComponentContainer<?>> containers, ComponentContainer<?> container) {
+        Option<ComponentContainer<?>> existingContainer = containers.stream()
+                .filter(c -> c.id().equals(container.id()))
+                .collect(CollectorUtilities.toOption());
+        if (existingContainer.present()) {
+            ComponentContainer<?> firstContainer = existingContainer.get();
+            if (firstContainer.type().is(container.type().type())) {
+                // If the existing container is of the same type, we can safely replace it
+                containers.remove(firstContainer);
+            } else {
+                throw new IllegalStateException("A container with id '%s' already exists (existing: %s, attempted to add: %s). Define a unique ID for either or both of these components.".formatted(
+                        container.id(),
+                        firstContainer.type(),
+                        container.type()
+                ));
+            }
+        }
+        return containers.add(container);
     }
 
     @Override
@@ -94,7 +115,7 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
                     // Filter out component stereotypes
                     .filter(type -> !AnnotationUtilities.isStereotypeOf(type.type(), Component.class))
                     .map(AnnotatedComponentContainer::new)
-                    .forEach(this.containers::add);
+                    .forEach(container -> this.safeAddContainer(this.containers, container));
         }
     }
 }
