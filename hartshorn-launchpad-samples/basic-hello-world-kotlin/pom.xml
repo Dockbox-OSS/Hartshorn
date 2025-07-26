@@ -7,18 +7,14 @@
         <groupId>org.dockbox.hartshorn</groupId>
         <artifactId>hartshorn-launchpad-starter</artifactId>
         <version>0.7.0</version>
-        <relativePath>../hartshorn-launchpad-starter/pom.xml</relativePath>
+        <relativePath>../../hartshorn-launchpad-starter/pom.xml</relativePath>
     </parent>
 
-    <name>Hartshorn Sample Project</name>
-    <artifactId>hartshorn-launchpad-sample</artifactId>
+    <name>Hartshorn Sample: Hello World (Kotlin)</name>
+    <artifactId>hartshorn-sample-hello-world-kotlin</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-reporting</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>

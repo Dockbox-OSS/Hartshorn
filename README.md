@@ -107,7 +107,7 @@ public static void main(String[] args) {
 
 ### Next steps
 
-Once you've taken your first steps with Hartshorn, it's essential to expand your knowledge of the framework. The [documentation](https://hartshorn.dockbox.org/) is an excellent starting point that will help you become more familiar with the framework. Additionally, you can explore the [Launchpad sample application](./hartshorn-launchpad-sample) for more comprehensive examples.
+Once you've taken your first steps with Hartshorn, it's essential to expand your knowledge of the framework. The [documentation](https://hartshorn.dockbox.org/) is an excellent starting point that will help you become more familiar with the framework. Additionally, you can explore the [Launchpad sample applications](./hartshorn-launchpad-samples) for more comprehensive examples.
 
 ## Building Hartshorn
 
