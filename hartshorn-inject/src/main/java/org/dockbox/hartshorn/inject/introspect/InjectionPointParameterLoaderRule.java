@@ -45,7 +45,7 @@ public class InjectionPointParameterLoaderRule implements ParameterLoaderRule<Ap
     @Override
     public <T> Option<T> load(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
         if (!requestContext.isForInjectionPoint()) {
-            throw new UnsupportedOperationException("Cannot request injection point metadata for non-injection point.");
+            return Option.empty();
         }
         InjectionPoint injectionPoint = requestContext.injectionPoint();
         return Option.of(parameter.type().cast(injectionPoint));

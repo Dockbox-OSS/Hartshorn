@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.launchpad.configuration;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.InfrastructurePriority;
+import org.dockbox.hartshorn.inject.annotations.Required;
 import org.dockbox.hartshorn.inject.annotations.Strict;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
@@ -65,7 +66,7 @@ public class LaunchpadSharedComponentConfiguration {
     @Prototype
     @InfrastructurePriority
     @RequiresProperty(name = "hartshorn.logging.naming.use-container-names", withValue = "true")
-    public Logger logger(InjectionPoint injectionPoint, ComponentRegistry componentRegistry, InjectionPointDeclarationResolver declarationResolver) {
+    public Logger logger(@Required(false) InjectionPoint injectionPoint, ComponentRegistry componentRegistry, InjectionPointDeclarationResolver declarationResolver) {
         return logger(injectionPoint, () -> {
             Class<?> declaringType = declarationResolver.resolve(injectionPoint).type();
             return componentRegistry.container(declaringType)
@@ -78,7 +79,7 @@ public class LaunchpadSharedComponentConfiguration {
     @Prototype
     @InfrastructurePriority
     @RequiresAbsentBinding(Logger.class)
-    public Logger logger(InjectionPoint injectionPoint, InjectionPointDeclarationResolver declarationResolver) {
+    public Logger logger(@Required(false) InjectionPoint injectionPoint, InjectionPointDeclarationResolver declarationResolver) {
         return logger(injectionPoint, () -> {
             Class<?> declaringType = declarationResolver.resolve(injectionPoint).type();
             return LoggerFactory.getLogger(declaringType);
@@ -86,6 +87,9 @@ public class LaunchpadSharedComponentConfiguration {
     }
 
     protected Logger logger(InjectionPoint injectionPoint, Supplier<Logger> defaultValue) {
+        if (injectionPoint == null) {
+            return defaultValue.get();
+        }
         return injectionPoint.injectionPoint().annotations()
                 .get(LoggerMeta.class)
                 .map(LoggerMeta::name)
