@@ -35,8 +35,8 @@ import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
  * @see MinimumPriorityProviderSelectionStrategy
  * @see HighestPriorityProviderSelectionStrategy
  * @see ExactPriorityProviderSelectionStrategy
- * @see ComponentKey#strategy()
- * @see ComponentKey.Builder#strategy(ProviderSelectionStrategy)
+ * @see ComponentKey#selectionStrategy()
+ * @see ComponentKey.Builder#selectionStrategy(ProviderSelectionStrategy)
  *
  * @since 0.5.0
  *

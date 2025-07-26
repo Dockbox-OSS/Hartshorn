@@ -16,24 +16,27 @@
 
 package org.dockbox.hartshorn.inject;
 
-import java.util.Objects;
-import java.util.Set;
-
 import org.dockbox.hartshorn.inject.annotations.OnInitialized;
+import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
+import org.dockbox.hartshorn.inject.provider.failure.ComponentResolutionFailureStrategy;
+import org.dockbox.hartshorn.inject.provider.failure.ExceptionOnComponentResolutionFailureStrategy;
+import org.dockbox.hartshorn.inject.provider.failure.NoopComponentResolutionFailureStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.HighestPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.ProviderSelectionStrategy;
-import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.Tristate;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A key that can be used to identify a component. This contains required metadata to identify a component, such as
@@ -56,7 +59,8 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public final class ComponentKey<T> implements Reportable {
 
-    private final ProviderSelectionStrategy strategy;
+    private final ProviderSelectionStrategy selectionStrategy;
+    private final ComponentResolutionFailureStrategy failureStrategy;
     private final ParameterizableType type;
     private final CompositeQualifier qualifier;
     private final Scope scope;
@@ -64,14 +68,16 @@ public final class ComponentKey<T> implements Reportable {
     private final Tristate strict;
 
     private ComponentKey(
-            ProviderSelectionStrategy strategy,
+            ProviderSelectionStrategy selectionStrategy,
+            ComponentResolutionFailureStrategy failureStrategy,
             ParameterizableType type,
             CompositeQualifier qualifier,
             Scope scope,
             boolean postConstructionAllowed,
             Tristate strict
     ) {
-        this.strategy = strategy;
+        this.selectionStrategy = selectionStrategy;
+        this.failureStrategy = failureStrategy;
         this.type = type;
         this.qualifier = qualifier;
         this.scope = scope;
@@ -350,8 +356,17 @@ public final class ComponentKey<T> implements Reportable {
      *
      * @return the strategy that should be used to select a provider for this component
      */
-    public ProviderSelectionStrategy strategy() {
-        return this.strategy;
+    public ProviderSelectionStrategy selectionStrategy() {
+        return this.selectionStrategy;
+    }
+
+    /**
+     * Returns the strategy that should be used to handle the scenario where no component is found for this key.
+     *
+     * @return the strategy that should be used to handle component resolution failures
+     */
+    public ComponentResolutionFailureStrategy failureStrategy() {
+        return this.failureStrategy;
     }
 
     @Override
@@ -381,7 +396,8 @@ public final class ComponentKey<T> implements Reportable {
 
         private final ParameterizableType type;
         private final CompositeQualifier qualifier = new CompositeQualifier();
-        private ProviderSelectionStrategy strategy = HighestPriorityProviderSelectionStrategy.INSTANCE;
+        private ProviderSelectionStrategy selectionStrategy = HighestPriorityProviderSelectionStrategy.INSTANCE;
+        private ComponentResolutionFailureStrategy failureStrategy = ExceptionOnComponentResolutionFailureStrategy.INSTANCE;
         private Scope scope = null; // If not provided, defaults to application scope
         private boolean postConstructionAllowed = true;
         private Tristate strict = Tristate.UNDEFINED;
@@ -447,9 +463,30 @@ public final class ComponentKey<T> implements Reportable {
          *
          * @return this builder
          */
-        public Builder<T> strategy(ProviderSelectionStrategy strategy) {
-            this.strategy = strategy;
+        public Builder<T> selectionStrategy(ProviderSelectionStrategy strategy) {
+            this.selectionStrategy = strategy;
             return this;
+        }
+
+        /**
+         * Sets the strategy that should be used to handle the scenario where no component is found for this key.
+         * The default strategy is {@link ExceptionOnComponentResolutionFailureStrategy}.
+         *
+         * @param failureStrategy the strategy that should be used to handle component resolution failures
+         *
+         * @return this builder
+         */
+        public Builder<T> failureStrategy(ComponentResolutionFailureStrategy failureStrategy) {
+            this.failureStrategy = failureStrategy;
+            return this;
+        }
+
+        public Builder<T> optional() {
+            return this.failureStrategy(NoopComponentResolutionFailureStrategy.INSTANCE);
+        }
+
+        public Builder<T> required() {
+            return this.failureStrategy(ExceptionOnComponentResolutionFailureStrategy.INSTANCE);
         }
 
         /**
@@ -568,7 +605,15 @@ public final class ComponentKey<T> implements Reportable {
          * @return a new key
          */
         public ComponentKey<T> build() {
-            return new ComponentKey<>(this.strategy, this.type, this.qualifier, this.scope, this.postConstructionAllowed, this.strict);
+            return new ComponentKey<>(
+                    this.selectionStrategy,
+                    this.failureStrategy,
+                    this.type,
+                    this.qualifier,
+                    this.scope,
+                    this.postConstructionAllowed,
+                    this.strict
+            );
         }
 
         /**
