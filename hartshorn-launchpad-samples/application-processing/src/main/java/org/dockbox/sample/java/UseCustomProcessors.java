@@ -1,0 +1,20 @@
+package org.dockbox.sample.java;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
+import org.dockbox.sample.java.bindings.CustomBindingPostProcessor;
+import org.dockbox.sample.java.components.CustomComponentPostProcessor;
+import org.dockbox.sample.java.components.CustomComponentPreProcessor;
+
+@ServiceActivator(
+    binderPostProcessors = CustomBindingPostProcessor.class,
+    componentPostProcessors = CustomComponentPostProcessor.class,
+    componentPreProcessors = CustomComponentPreProcessor.class
+)
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE})
+public @interface UseCustomProcessors {
+}

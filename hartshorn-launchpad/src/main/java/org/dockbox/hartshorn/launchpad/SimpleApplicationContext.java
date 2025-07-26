@@ -167,6 +167,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
                 this, ComponentRequestContext.createForComponent(),
                 key, ComponentObjectContainer.empty(), container.permitsProxying()
         );
+        context.put(ComponentContainer.class, container);
         serviceProcessor.process(context);
     }
 

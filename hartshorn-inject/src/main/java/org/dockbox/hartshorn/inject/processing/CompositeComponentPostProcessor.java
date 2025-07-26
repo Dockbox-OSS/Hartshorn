@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,12 @@ package org.dockbox.hartshorn.inject.processing;
 
 import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.function.CheckedConsumer;
-import org.dockbox.hartshorn.util.function.CheckedFunction;
 
 /**
  * A {@link ComponentPostProcessor} which delegates to a collection of other post processors. The post processors are
@@ -80,12 +81,37 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
     }
 
     @Override
+    public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
+        MultiMap<Integer, ComponentPostProcessor> processors = this.postProcessors.get();
+        if (processors.isEmpty()) {
+            // If no processors are available, we consider this compatible, as the composite processor
+            // will not perform any actions.
+            return true;
+        }
+        // Doesn't need to be thread-safe, this will only be retained during the processing of a single component.
+        MultiMap<Integer, ComponentPostProcessor> compatibleProcessors = new ArrayListMultiMap<>();
+        for (Integer priority : processors.keySet()) {
+            for (ComponentPostProcessor postProcessor : processors.get(priority)) {
+                if (postProcessor.isCompatible(processingContext)) {
+                    compatibleProcessors.put(priority, postProcessor);
+                }
+            }
+        }
+        if (compatibleProcessors.isEmpty()) {
+            return false;
+        }
+        // Store, so that we can use these processors later in the processing execution.
+        processingContext.addContext(new CompatibleProcessorsContext(compatibleProcessors));
+        return true;
+    }
+
+    @Override
     public <T> void preConfigureComponent(
         InjectionCapableApplication application,
         @Nullable T instance,
         ComponentProcessingContext<T> processingContext
     ) throws ApplicationException {
-        this.withProcessors(processor -> {
+        this.withProcessors(this.resolveCompatibleProcessors(processingContext), processor -> {
             processor.preConfigureComponent(application, instance, processingContext);
         });
     }
@@ -96,11 +122,13 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
         @Nullable T instance,
         ComponentProcessingContext<T> processingContext
     ) throws ApplicationException {
-        MultiMap<Integer, ComponentPostProcessor> processors = this.postProcessors.get();
-        if (processors.isEmpty()) {
-            return instance;
+        MultiMap<Integer, ComponentPostProcessor> processors = this.resolveCompatibleProcessors(processingContext);
+        for (Integer priority : processors.keySet()) {
+            for (ComponentPostProcessor postProcessor : processors.get(priority)) {
+                instance = postProcessor.initializeComponent(application, instance, processingContext);
+            }
         }
-        return this.withProcessors(processors, processor -> processor.initializeComponent(application, instance, processingContext));
+        return instance;
     }
 
     @Override
@@ -109,26 +137,23 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
         @Nullable T instance,
         ComponentProcessingContext<T> processingContext
     ) throws ApplicationException {
-        this.withProcessors(processor -> {
+        this.withProcessors(this.resolveCompatibleProcessors(processingContext), processor -> {
             processor.postConfigureComponent(application, instance, processingContext);
         });
     }
 
-    private void withProcessors(CheckedConsumer<ComponentPostProcessor> consumer) throws ApplicationException {
-        this.withProcessors(this.postProcessors.get(), processor -> {
-            consumer.accept(processor);
-            return null;
-        });
-    }
-
-    private <T> T withProcessors(MultiMap<Integer, ComponentPostProcessor> processors, CheckedFunction<ComponentPostProcessor, T> processor) throws ApplicationException {
-        T result = null;
+    private void withProcessors(MultiMap<Integer, ComponentPostProcessor> processors, CheckedConsumer<ComponentPostProcessor> processor) throws ApplicationException {
         for (Integer priority : processors.keySet()) {
             for (ComponentPostProcessor postProcessor : processors.get(priority)) {
-                result = processor.apply(postProcessor);
+                processor.accept(postProcessor);
             }
         }
-        return result;
+    }
+
+    private MultiMap<Integer, ComponentPostProcessor> resolveCompatibleProcessors(ContextView context) {
+        return context.firstContext(CompatibleProcessorsContext.class).orElseThrow(() -> {
+            return new IllegalStateException("No compatible processors context found for context: " + context + ". Was the isCompatible method called?");
+        }).processors();
     }
 
     @Override

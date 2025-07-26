@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,12 +155,12 @@ public class ComponentProcessorRegistrar {
      * @param registry the application context
      * @param processorTypes the types of post-processors to register
      *
-     * @see ComponentProcessorRegistry#registryLazy(Class)
+     * @see ComponentProcessorRegistry#registerLazy(Class)
      * @see ComponentProcessorRegistry#register(ComponentProcessor)
      */
     protected void registerPostProcessors(ComponentProcessorRegistry registry, Set<Class<? extends ComponentPostProcessor>> processorTypes) {
         for (Class<? extends ComponentPostProcessor> postProcessorType : processorTypes) {
-            registry.registryLazy(postProcessorType);
+            registry.registerLazy(postProcessorType);
         }
 
         this.additionalComponentProcessors.stream()
