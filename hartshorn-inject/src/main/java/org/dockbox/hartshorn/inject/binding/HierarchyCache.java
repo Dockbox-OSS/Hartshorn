@@ -16,6 +16,21 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentKeyView;
+import org.dockbox.hartshorn.inject.InjectorConfiguration;
+import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
+import org.dockbox.hartshorn.inject.collection.ComponentCollection;
+import org.dockbox.hartshorn.inject.collection.ImmutableCompositeBindingHierarchy;
+import org.dockbox.hartshorn.util.Tristate;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
+import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
+import org.dockbox.hartshorn.util.introspect.ParameterizableType;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -24,21 +39,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.inject.InjectorConfiguration;
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.ComponentKeyView;
-import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
-import org.dockbox.hartshorn.inject.collection.ComponentCollection;
-import org.dockbox.hartshorn.inject.collection.ImmutableCompositeBindingHierarchy;
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.dockbox.hartshorn.util.Tristate;
-import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
-import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
-import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
 /**
  * TODO: #1060 Add documentation
@@ -122,7 +122,7 @@ public class HierarchyCache {
     private <T> BindingHierarchy<?> tryCreateHierarchy(ComponentKey<T> key) {
         final BindingHierarchy<?> hierarchy;
         // Collection components can always be created, as they may contain 0-N elements.
-        if (this.isCollectionComponentKey(key)) {
+        if (this.isCollectionComponentKey(key) && key.strict() == Tristate.UNDEFINED) {
             hierarchy = new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
         }
         else if(this.isStrict(key)) {
