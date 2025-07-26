@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dockbox.hartshorn.application
+package application
 
 import org.dockbox.hartshorn.launchpad.HartshornApplication.ApplicationBootstrap
 import org.dockbox.hartshorn.launchpad.ApplicationContext
