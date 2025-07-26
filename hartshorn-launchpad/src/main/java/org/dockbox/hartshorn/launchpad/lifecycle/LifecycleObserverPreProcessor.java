@@ -38,7 +38,7 @@ public class LifecycleObserverPreProcessor extends ComponentPreProcessor {
     public <T> void process(InjectionCapableApplication application, ComponentProcessingContext<T> processingContext) {
         if (application.environment() instanceof ObservableApplicationEnvironment observableEnvironment) {
             if (processingContext.type().isChildOf(Observer.class)) {
-                observableEnvironment.register((Class<? extends Observer>) processingContext.type().type());
+                observableEnvironment.register(Observer.class.cast(processingContext.type().type()));
             }
         }
     }
