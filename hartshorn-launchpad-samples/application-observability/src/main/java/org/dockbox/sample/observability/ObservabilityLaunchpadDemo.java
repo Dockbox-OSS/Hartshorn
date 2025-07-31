@@ -1,4 +1,4 @@
-package org.dockbox.sample.java;
+package org.dockbox.sample.observability;
 
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
 
