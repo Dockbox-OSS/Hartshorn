@@ -184,6 +184,10 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
         return this.map(Entry::getValue);
     }
 
+    public void forEach(BiConsumer<K, V> action) {
+        this.forEach(entry -> action.accept(entry.getKey(), entry.getValue()));
+    }
+
     @Override
     public EntryStream<K, V> filter(Predicate<? super Entry<K, V>> predicate) {
         return (EntryStream<K, V>) super.filter(predicate);
