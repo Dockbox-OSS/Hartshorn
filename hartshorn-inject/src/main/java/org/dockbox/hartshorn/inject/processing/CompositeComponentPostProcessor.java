@@ -155,9 +155,4 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
             return new IllegalStateException("No compatible processors context found for context: " + context + ". Was the isCompatible method called?");
         }).processors();
     }
-
-    @Override
-    public int priority() {
-        return ProcessingPriority.NORMAL_PRECEDENCE;
-    }
 }
