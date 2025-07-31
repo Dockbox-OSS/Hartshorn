@@ -16,8 +16,10 @@
 
 package org.dockbox.hartshorn.launchpad;
 
+import org.dockbox.hartshorn.util.ApplicationException;
+
 @FunctionalInterface
 public interface ApplicationStarter {
 
-    void run(ApplicationContext applicationContext);
+    void run(ApplicationContext applicationContext) throws ApplicationException;
 }

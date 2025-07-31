@@ -38,6 +38,7 @@ import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.properties.convert.ValuePropertyToObjectConverterFactory;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
@@ -149,7 +150,12 @@ public class LaunchpadSharedComponentConfiguration {
                 // OK to do nothing if no ApplicationStarter is present, as this is optional. Other observers may still
                 // be present, and will be invoked.
                 if (applicationStarter != null) {
-                    applicationStarter.run(applicationContext);
+                    try {
+                        applicationStarter.run(applicationContext);
+                    }
+                    catch (ApplicationException e) {
+                        applicationContext.handle(e);
+                    }
                 }
             }
         };
