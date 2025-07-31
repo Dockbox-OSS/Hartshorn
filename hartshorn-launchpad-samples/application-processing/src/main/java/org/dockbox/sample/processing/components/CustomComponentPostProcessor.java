@@ -1,4 +1,4 @@
-package org.dockbox.sample.java.components;
+package org.dockbox.sample.processing.components;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
@@ -7,7 +7,7 @@ import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.sample.java.SimpleHelloWorldSupplier;
+import org.dockbox.sample.processing.SimpleHelloWorldSupplier;
 import org.slf4j.Logger;
 
 public class CustomComponentPostProcessor extends ComponentPostProcessor {
@@ -49,10 +49,5 @@ public class CustomComponentPostProcessor extends ComponentPostProcessor {
             simpleHelloWorldSupplier.message("Hello from CustomComponentPostProcessor!");
         }
         super.postConfigureComponent(application, instance, processingContext);
-    }
-
-    @Override
-    public int priority() {
-        return ProcessingPriority.NORMAL_PRECEDENCE;
     }
 }

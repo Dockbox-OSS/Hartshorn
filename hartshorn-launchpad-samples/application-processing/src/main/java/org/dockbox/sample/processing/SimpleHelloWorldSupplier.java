@@ -1,4 +1,4 @@
-package org.dockbox.sample.java;
+package org.dockbox.sample.processing;
 
 public class SimpleHelloWorldSupplier implements HelloWorldSupplier {
 

@@ -1,12 +1,12 @@
-package org.dockbox.sample.java.bindings;
+package org.dockbox.sample.processing.bindings;
 
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.inject.processing.HierarchicalBinderPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 import org.dockbox.hartshorn.inject.scope.Scope;
-import org.dockbox.sample.java.HelloWorldSupplier;
-import org.dockbox.sample.java.SimpleHelloWorldSupplier;
+import org.dockbox.sample.processing.HelloWorldSupplier;
+import org.dockbox.sample.processing.SimpleHelloWorldSupplier;
 
 public class CustomBindingPostProcessor implements HierarchicalBinderPostProcessor {
 

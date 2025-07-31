@@ -1,4 +1,4 @@
-package org.dockbox.sample.java;
+package org.dockbox.sample.processing;
 
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.launchpad.ApplicationStarter;

@@ -1,4 +1,4 @@
-package org.dockbox.sample.java.components;
+package org.dockbox.sample.processing.components;
 
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.component.AnnotatedComponentContainer;
@@ -30,10 +30,5 @@ public class CustomComponentPreProcessor extends ComponentPreProcessor {
             default -> "managed";
         };
         this.logger.info("Pre-processing {} component: {}", containerType, processingContext.key().type().getSimpleName());
-    }
-
-    @Override
-    public int priority() {
-        return ProcessingPriority.NORMAL_PRECEDENCE;
     }
 }
