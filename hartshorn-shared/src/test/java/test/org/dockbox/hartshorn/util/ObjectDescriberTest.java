@@ -47,12 +47,12 @@ public class ObjectDescriberTest {
         private static final String FIELD_SEPARATOR = "SEP";
 
         @Override
-        public void describeStart(StringBuilder builder, Object object) {
+        public void describeObjectStart(StringBuilder builder, Object object, boolean includeTypeName) {
             builder.append(START).append("+");
         }
 
         @Override
-        public void describeEnd(StringBuilder builder, Object object) {
+        public void describeObjectEnd(StringBuilder builder, Object object) {
             builder.append(END);
         }
 

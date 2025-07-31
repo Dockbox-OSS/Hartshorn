@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,20 @@
 
 package org.dockbox.hartshorn.inject.collection;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.provider.collections.CollectionObjectContainer;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.inject.provider.NonTypeAwareInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
-import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.collections.CollectionObjectContainer;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A {@link InstantiationStrategy} that composes multiple {@link CollectionInstantiationStrategy} instances into a single {@link ComponentCollection}.
@@ -43,16 +44,16 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class ComposedCollectionInstantiationStrategy<T> implements NonTypeAwareInstantiationStrategy<ComponentCollection<T>> {
 
-    private final Set<CollectionInstantiationStrategy<T>> providers;
+    private final Set<CollectionInstantiationStrategy<T>> strategies;
 
-    public ComposedCollectionInstantiationStrategy(Set<CollectionInstantiationStrategy<T>> providers) {
-        this.providers = providers;
+    public ComposedCollectionInstantiationStrategy(Set<CollectionInstantiationStrategy<T>> strategies) {
+        this.strategies = strategies;
     }
 
     @Override
     public Option<ObjectContainer<ComponentCollection<T>>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
         Set<ObjectContainer<T>> components = new HashSet<>();
-        for (CollectionInstantiationStrategy<T> provider : this.providers) {
+        for (CollectionInstantiationStrategy<T> provider : this.strategies) {
             Option<ObjectContainer<ComponentCollection<T>>> containers = provider.provide(application, requestContext);
             if (containers.present()) {
                 ComponentCollection<T> componentCollection = containers.get().instance();
@@ -74,5 +75,12 @@ public class ComposedCollectionInstantiationStrategy<T> implements NonTypeAwareI
     @Override
     public Tristate defaultLazy() {
         return Tristate.TRUE;
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("strategies", this.strategies)
+                .toString();
     }
 }

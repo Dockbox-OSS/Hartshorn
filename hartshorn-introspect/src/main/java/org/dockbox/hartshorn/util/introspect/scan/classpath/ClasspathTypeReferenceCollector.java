@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@
 
 package org.dockbox.hartshorn.util.introspect.scan.classpath;
 
-import java.util.Objects;
-import java.util.Set;
-
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
+
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A {@link TypeReferenceCollector} that collects {@link TypeReference}s from a classpath. This class is abstract, as
@@ -87,5 +88,12 @@ public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCo
     @Override
     public int hashCode() {
         return Objects.hash(this.packageName);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("packageName", this.packageName)
+                .describe();
     }
 }

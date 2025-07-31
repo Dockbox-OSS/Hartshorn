@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.Tristate;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -61,5 +62,12 @@ public class LazySingletonInstantiationStrategy<T> implements NonTypeAwareInstan
     @Override
     public Tristate defaultLazy() {
         return Tristate.TRUE;
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("supplier", this.supplier)
+                .describe();
     }
 }

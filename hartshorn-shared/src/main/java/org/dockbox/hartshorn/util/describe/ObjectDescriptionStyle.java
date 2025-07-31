@@ -32,7 +32,18 @@ public interface ObjectDescriptionStyle {
      * @param builder the builder to append the description to
      * @param object the object to describe
      */
-    void describeStart(StringBuilder builder, Object object);
+    default void describeObjectStart(StringBuilder builder, Object object) {
+        this.describeObjectStart(builder, object, true);
+    }
+
+    /**
+     * Describes the start of the object, including the type name if specified.
+     *
+     * @param builder the builder to append the description to
+     * @param object the object to describe
+     * @param includeTypeName whether to include the type name in the description
+     */
+    void describeObjectStart(StringBuilder builder, Object object, boolean includeTypeName);
 
     /**
      * Describes the end of the object. This is typically the closing bracket of the object.
@@ -40,7 +51,7 @@ public interface ObjectDescriptionStyle {
      * @param builder the builder to append the description to
      * @param object the object to describe
      */
-    void describeEnd(StringBuilder builder, Object object);
+    void describeObjectEnd(StringBuilder builder, Object object);
 
     /**
      * Describes a single field of the object. This will be called for each field of the object.
@@ -60,4 +71,12 @@ public interface ObjectDescriptionStyle {
      * @param object the object to describe
      */
     void describeFieldSeparator(StringBuilder builder, Object object);
+
+    void describeArrayStart(StringBuilder builder, Object collectionObject, int length, boolean includeTypeName);
+
+    void describeArrayEnd(StringBuilder builder, Object collectionObject);
+
+    void describeArrayElement(StringBuilder builder, Object collectionObject, int index, Object element);
+
+    void describeArrayElementSeparator(StringBuilder builder, Object collectionObject, int index);
 }

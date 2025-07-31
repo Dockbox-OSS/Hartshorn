@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect.scan;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A {@link TypeReferenceCollectorContext} is a {@link org.dockbox.hartshorn.context.Context} that is used
@@ -78,5 +79,12 @@ public class TypeReferenceCollectorContext extends DefaultContext implements Rep
                     referenceCollector.report(trcCollector);
                 }).toArray(Reportable[]::new);
         collector.property("collectors").writeDelegates(reporters);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("collectors", this.collectors)
+                .describe();
     }
 }

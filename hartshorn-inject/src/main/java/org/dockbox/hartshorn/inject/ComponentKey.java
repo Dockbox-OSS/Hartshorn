@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.Tristate;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
@@ -247,11 +248,9 @@ public final class ComponentKey<T> implements Reportable {
      * the component, followed by the name of the scope. If the component has no name, the name is omitted. If the
      * component has no explicit scope, the default scope is the application scope of the component provider.
      *
-     * @param qualifyType whether the type should be qualified with its package name
-     *
      * @return the qualified name
      */
-    public String qualifiedName(boolean qualifyType) {
+    public String qualifiedName() {
         String qualifier = StringUtilities.join(", ", this.qualifier.qualifiers(), QualifierKey::toString);
         String qualifierSuffix = StringUtilities.empty(qualifier) ? "" : ":" + qualifier;
         String scopeName = this.scope()
@@ -259,13 +258,20 @@ public final class ComponentKey<T> implements Reportable {
                 .map(ScopeKey::name)
             .map(scope -> " @ " + scope)
                 .orElse("");
-        String typeName = qualifyType ? this.type.toQualifiedString() : this.type.toString();
-        return typeName + qualifierSuffix + scopeName;
+        return "%s%s%s".formatted(this.type.toQualifiedString(), qualifierSuffix, scopeName);
     }
 
     @Override
     public String toString() {
-        return "ComponentKey<" + this.qualifiedName(false) + ">";
+        return ObjectDescriber.of(this)
+                .field("type", this.type)
+                .field("qualifier", this.qualifier)
+                .field("scope", this.scope)
+                .field("postConstructionAllowed", this.postConstructionAllowed)
+                .field("strict", this.strict)
+                .field("selectionStrategy", this.selectionStrategy)
+                .field("failureStrategy", this.failureStrategy)
+                .describe();
     }
 
     @Override

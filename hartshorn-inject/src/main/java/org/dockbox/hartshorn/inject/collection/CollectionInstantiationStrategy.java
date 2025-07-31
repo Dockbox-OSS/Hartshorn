@@ -16,25 +16,23 @@
 
 package org.dockbox.hartshorn.inject.collection;
 
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.LifecycleType;
+import org.dockbox.hartshorn.inject.provider.NonTypeAwareInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.ObjectContainer;
+import org.dockbox.hartshorn.inject.provider.collections.CollectionObjectContainer;
+import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.Tristate;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
-import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.provider.collections.CollectionObjectContainer;
-import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.provider.LifecycleType;
-import org.dockbox.hartshorn.inject.provider.NonTypeAwareInstantiationStrategy;
-import org.dockbox.hartshorn.inject.provider.ObjectContainer;
-import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
-import org.dockbox.hartshorn.inject.provider.TypeAwareInstantiationStrategy;
-import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-import org.dockbox.hartshorn.util.Tristate;
-import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A provider which provides a {@link ComponentCollection} of all the provided instances. This provider
@@ -143,13 +141,8 @@ public class CollectionInstantiationStrategy<T> implements NonTypeAwareInstantia
 
     @Override
     public String toString() {
-        String providers = this.strategies.stream()
-                .map(provider -> provider instanceof TypeAwareInstantiationStrategy<T> typeAwareProvider
-                        ? typeAwareProvider.type().getSimpleName()
-                        : provider.toString()
-                ).collect(Collectors.joining(", "));
         return ObjectDescriber.of(this)
-                .field("providers", providers)
+                .field("providers", this.strategies)
                 .describe();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package org.dockbox.hartshorn.util.introspect.scan;
+
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
  * A {@link TypeReference} that represents a {@link Class}. No guarantees are made about the state of the class
@@ -50,5 +52,12 @@ public class ClassReference implements TypeReference {
     @Override
     public String packageName() {
         return this.type.getPackage().getName();
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("type", this.type.getName())
+                .describe();
     }
 }

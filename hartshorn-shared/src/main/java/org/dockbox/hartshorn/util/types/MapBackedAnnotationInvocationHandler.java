@@ -22,6 +22,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * An {@link InvocationHandler} for an annotation which is backed by a {@link Map} of values.
@@ -98,7 +99,9 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
         String methodName = method.getName();
         return switch (methodName) {
             case "annotationType" -> this.type;
-            case "toString" -> "@" + this.type;
+            case "toString" -> "@%s(%s)".formatted(this.type, this.values.entrySet().stream()
+                    .map(entry -> entry.getKey() + "=" + entry.getValue())
+                    .collect(Collectors.joining()));
             case "hashCode" -> this.values.hashCode();
             case "equals" -> proxy == args[0];
             default -> {

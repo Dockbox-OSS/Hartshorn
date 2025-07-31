@@ -24,18 +24,22 @@ import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.CollectorBindingFunction;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.collection.HierarchyCollectorBindingFunction;
-import org.dockbox.hartshorn.inject.provider.SimpleConstructorViewDrivenProvider;
-import org.dockbox.hartshorn.inject.provider.LazySingletonInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
-import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
+import org.dockbox.hartshorn.inject.provider.LazySingletonInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.ObjectContainer;
+import org.dockbox.hartshorn.inject.provider.SimpleConstructorViewDrivenProvider;
 import org.dockbox.hartshorn.inject.provider.SingletonInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.SupplierInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.inject.scope.ScopeModuleContext;
-import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
+import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
+
+import java.util.function.Function;
 
 /**
  * A {@link BindingFunction} that configures a {@link BindingHierarchy} for a specific key. The hierarchy is
@@ -226,11 +230,39 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     }
 
     protected Binder add(InstantiationStrategy<T> strategy) {
-        strategy = strategy.map(container -> {
-            container.processed(!this.processAfterInitialization);
-            return container;
-        });
+        strategy = strategy.map(new ProcessAfterInitializationFunction<>(this.processAfterInitialization));
         this.hierarchy().add(this.priority, strategy);
         return this.binder();
+    }
+
+    /**
+     * A function that indicates whether the provided {@link ObjectContainer} should be processed after initialization.
+     * If {@code true}, the container will be marked as non-processed, meaning it will be processed once the container
+     * initializes the instance.
+     *
+     * <p>Practically this function is a lambda, but for the sake of reportability, it is defined as a dedicated record.
+     *
+     * @param processAfterInitialization whether the container should be processed after initialization
+     * @param <T> the type of the component in the container
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
+    private record ProcessAfterInitializationFunction<T>(boolean processAfterInitialization)
+            implements Function<ObjectContainer<T>, ObjectContainer<T>> {
+
+        @Override
+        public ObjectContainer<T> apply(ObjectContainer<T> container) {
+            container.processed(!this.processAfterInitialization);
+            return container;
+        }
+
+        @Override
+        public String toString() {
+            return ObjectDescriber.of(this)
+                    .field("processAfterInitialization", this.processAfterInitialization)
+                    .describe();
+        }
     }
 }

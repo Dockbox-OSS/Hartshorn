@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject.scope;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
@@ -118,5 +119,13 @@ public class ScopeAdapterKey implements ScopeKey {
     public void report(DiagnosticsPropertyCollector collector) {
         collector.property("adapterType").writeDelegate(this.adapterType);
         collector.property("adapteeType").writeDelegate(this.adapteeType);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("adapterType", this.adapterType)
+                .field("adapteeType", this.adapteeType)
+                .describe();
     }
 }

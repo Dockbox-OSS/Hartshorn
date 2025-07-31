@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Iterator;
@@ -124,5 +125,13 @@ public class AliasableBindingHierarchyAdapter<C> implements AliasableBindingHier
     @Override
     public Iterator<Map.Entry<Integer, InstantiationStrategy<C>>> iterator() {
         return this.delegate.iterator();
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("aliases", this.aliases)
+                .field("delegate", this.delegate)
+                .describe();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,9 @@
 
 package org.dockbox.hartshorn.inject.collection;
 
-import java.util.List;
-
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.binding.AbstractBindingHierarchy;
-import org.dockbox.hartshorn.util.introspect.ParameterizableType;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 
 /**
  * A specialized {@link AbstractBindingHierarchy} for {@link ComponentCollection} instances. The primary
@@ -58,18 +55,6 @@ public class CollectionBindingHierarchy<T> extends AbstractBindingHierarchy<Comp
         }
         else {
             throw new IllegalStateException("Existing provider is not a CollectionProvider");
-        }
-    }
-
-    @Override
-    protected String contractTypeToString() {
-        ParameterizableType collectionParameterizableType = this.key().parameterizedType();
-        List<ParameterizableType> parameters = collectionParameterizableType.parameters();
-        if (parameters.size() == 1) {
-            return parameters.getFirst().toString();
-        }
-        else {
-            throw new IllegalStateException("Component key is not typed correctly");
         }
     }
 }

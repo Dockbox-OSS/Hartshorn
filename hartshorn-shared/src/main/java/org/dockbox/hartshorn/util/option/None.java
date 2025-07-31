@@ -16,6 +16,11 @@
 
 package org.dockbox.hartshorn.util.option;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -23,10 +28,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.context.DefaultContext;
 
 /**
  * Represents an empty {@link Option}.
@@ -127,6 +128,6 @@ public class None<T> extends DefaultContext implements Option<T> {
 
     @Override
     public @NonNull String toString() {
-        return "None";
+        return ObjectDescriber.of(this).describe();
     }
 }

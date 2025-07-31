@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject.scope;
 
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -113,8 +114,8 @@ public class DirectScopeKey implements ScopeKey {
 
     @Override
     public String toString() {
-        return "DirectScopeKey{" +
-            "scopeType=" + this.scopeType +
-            '}';
+        return ObjectDescriber.of(this)
+                .field("scopeType", this.scopeType)
+                .describe();
     }
 }
