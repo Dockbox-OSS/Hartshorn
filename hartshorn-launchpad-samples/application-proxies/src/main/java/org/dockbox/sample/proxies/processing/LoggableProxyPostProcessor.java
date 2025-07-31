@@ -4,7 +4,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 import org.dockbox.hartshorn.inject.processing.proxy.PhasedProxyCallbackPostProcessor;
 import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallback;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
@@ -38,11 +37,9 @@ public class LoggableProxyPostProcessor extends PhasedProxyCallbackPostProcessor
     }
 
     private Logger getLogger(ComponentProcessingContext<?> processingContext) {
-        if (processingContext.containsKey(Logger.class)) {
-            return processingContext.get(Logger.class);
-        }
-        Logger logger = LoggerFactory.getLogger(processingContext.type().qualifiedName());
-        processingContext.put(Logger.class, logger);
-        return logger;
+        return processingContext.computeIfAbsent(
+            Logger.class,
+            key -> LoggerFactory.getLogger(processingContext.type().type())
+        );
     }
 }
