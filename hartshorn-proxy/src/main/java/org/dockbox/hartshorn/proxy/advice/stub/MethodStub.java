@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package org.dockbox.hartshorn.proxy.advice.stub;
+
+import java.util.function.Consumer;
 
 /**
  * A {@link MethodStub} is a functional interface that can be used to stub a method invocation. It is used by the
@@ -39,5 +41,20 @@ public interface MethodStub<T> {
      * @throws Throwable Any exception that is thrown by the stubbed method invocation
      */
     Object invoke(MethodStubContext<T> stubContext) throws Throwable;
+
+    /**
+     * Wraps the given consumer in a {@link MethodStub} that always returns null. For primitive types the
+     * result is expected to be transformed by the owning invoker.
+     *
+     * @param methodStub the consumer to wrap in a method stub.
+     * @return a method stub wrapping the given consumer.
+     * @param <T> the type of the proxy.
+     */
+    static <T> MethodStub<T> withoutReturnValue(Consumer<MethodStubContext<T>> methodStub) {
+        return context -> {
+            methodStub.accept(context);
+            return null;
+        };
+    }
 
 }

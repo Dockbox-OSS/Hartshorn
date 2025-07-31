@@ -173,11 +173,17 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
         if (componentContainer != null) {
             processingContext.put(ComponentKey.of(ComponentContainer.class), componentContainer);
             if (componentContainer.permitsProxying()) {
-                StateAwareProxyFactory<T> factory = this.application.environment().proxyOrchestrator().factory(key.type());
+                boolean hasObjectInstance = objectContainer.instance() != null;
+                // Always attempt to use the most detailed proxy factory available, as this allows for
+                // more advanced proxying capabilities.
+                Class<?> proxyBaseType = hasObjectInstance
+                        ? objectContainer.instance().getClass()
+                        : key.type();
+                StateAwareProxyFactory<?> factory = this.application.environment().proxyOrchestrator().factory(proxyBaseType);
 
                 if (objectContainer.instance() != null) {
                     factory.trackState(false);
-                    factory.advisors().type().delegateAbstractOnly(objectContainer.instance());
+                    factory.advisors().type().delegateAbstractOnly(TypeUtils.unchecked(objectContainer.instance(), Object.class));
                     factory.trackState(true);
                 }
                 processingContext.put(ComponentKey.of(ProxyFactory.class), factory);

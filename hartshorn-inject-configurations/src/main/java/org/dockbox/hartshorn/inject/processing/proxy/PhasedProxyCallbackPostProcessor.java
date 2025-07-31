@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.inject.processing.proxy;
 
-import java.util.Collection;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
@@ -28,6 +27,8 @@ import org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapper;
 import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallback;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.Collection;
 
 /**
  * A {@link ComponentPostProcessor} that allows for the wrapping of methods in a proxy. This is useful for
@@ -52,7 +53,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
     @Override
     public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         ComponentKey<T> key = processingContext.key();
-        Collection<MethodView<T, ?>> methods = this.modifiableMethods(application, key, instance);
+        Collection<MethodView<T, ?>> methods = this.modifiableMethods(application, key, instance, processingContext);
 
         ProxyFactory<T> factory = processingContext.get(ProxyFactory.class);
         if (factory == null) {
@@ -62,9 +63,9 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
         instance = this.processProxy(application, instance, processingContext, factory);
 
         for (MethodView<T, ?> method : methods) {
-            ProxyCallback<T> before = this.doBefore(application, method, key, instance);
-            ProxyCallback<T> after = this.doAfter(application, method, key, instance);
-            ProxyCallback<T> afterThrowing = this.doAfterThrowing(application, method, key, instance);
+            ProxyCallback<T> before = this.doBefore(application, method, key, instance, processingContext);
+            ProxyCallback<T> after = this.doAfter(application, method, key, instance, processingContext);
+            ProxyCallback<T> afterThrowing = this.doAfterThrowing(application, method, key, instance, processingContext);
             MethodWrapper<T> wrapper = MethodWrapper.of(before, after, afterThrowing);
 
             if (before != null || after != null || afterThrowing != null) {
@@ -78,13 +79,13 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
         return instance;
     }
 
-    protected <T> Collection<MethodView<T, ?>> modifiableMethods(InjectionCapableApplication application, ComponentKey<T> key, @Nullable T instance) {
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(InjectionCapableApplication application, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         TypeView<T> typeView = instance == null
                 ? application.environment().introspector().introspect(key.type())
                 : application.environment().introspector().introspect(instance);
 
         return typeView.methods().all()
-                .stream().filter(method -> this.preconditions(application, method, key, instance))
+                .stream().filter(method -> this.preconditions(application, method, key, instance, processingContext))
                 .toList();
     }
 
@@ -101,7 +102,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
      *
      * @return {@code true} if the method should be wrapped, {@code false} otherwise
      */
-    public abstract <T> boolean preconditions(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance);
+    public abstract <T> boolean preconditions(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext);
 
     /**
      * Returns the proxy callback that should be called before the method is invoked. This method is called for each
@@ -117,7 +118,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
      * @return the proxy callback that should be called before the method is invoked, or {@code null} if no proxy callback should be called
      */
     @Nullable
-    public abstract <T> ProxyCallback<T> doBefore(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance);
+    public abstract <T> ProxyCallback<T> doBefore(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext);
 
     /**
      * Returns the proxy callback that should be called after the method is invoked. This method is called for each
@@ -133,7 +134,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
      * @return the proxy callback that should be called after the method is invoked, or {@code null} if no proxy callback should be called
      */
     @Nullable
-    public abstract <T> ProxyCallback<T> doAfter(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance);
+    public abstract <T> ProxyCallback<T> doAfter(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext);
 
     /**
      * Returns the proxy callback that should be called after the method has thrown an exception. This method is called for each
@@ -149,5 +150,5 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
      * @return the proxy callback that should be called after the method has thrown an exception, or {@code null} if no proxy callback should be called
      */
     @Nullable
-    public abstract <T> ProxyCallback<T> doAfterThrowing(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance);
+    public abstract <T> ProxyCallback<T> doAfterThrowing(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext);
 }
