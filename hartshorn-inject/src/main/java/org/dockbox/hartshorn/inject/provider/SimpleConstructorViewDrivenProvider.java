@@ -133,6 +133,9 @@ public final class SimpleConstructorViewDrivenProvider<C> implements TypeAwareIn
             try {
                 this.optimalConstructor = ComponentConstructorResolver.create(application).findConstructor(typeView).orNull();
             }
+            catch (ApplicationException e) {
+                throw e;
+            }
             catch(Throwable throwable) {
                 throw new ApplicationException(throwable);
             }
