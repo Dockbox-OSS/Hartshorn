@@ -34,7 +34,7 @@ public class SetterInjectionTests {
     private ApplicationContext applicationContext;
 
     @Test
-    @TestComponents(components = { SetterInjectedComponent.class, ComponentType.class})
+    @TestComponents({ SetterInjectedComponent.class, ComponentType.class})
     void testSetterInjectionWithRegularComponent() {
         SetterInjectedComponent component = this.applicationContext.get(SetterInjectedComponent.class);
         Assertions.assertNotNull(component);
@@ -42,13 +42,13 @@ public class SetterInjectionTests {
     }
 
     @Test
-    @TestComponents(components = SetterInjectedComponentWithAbsentBinding.class)
+    @TestComponents(SetterInjectedComponentWithAbsentBinding.class)
     void testSetterInjectionWithAbsentRequiredComponent() {
         Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
     }
 
     @Test
-    @TestComponents(components = SetterInjectedComponentWithNonRequiredAbsentBinding.class)
+    @TestComponents(SetterInjectedComponentWithNonRequiredAbsentBinding.class)
     void testSetterInjectionWithAbsentComponent() {
         var component = Assertions.assertDoesNotThrow(() -> this.applicationContext.get(SetterInjectedComponentWithNonRequiredAbsentBinding.class));
         Assertions.assertNotNull(component);
@@ -56,7 +56,7 @@ public class SetterInjectionTests {
     }
 
     @Test
-    @TestComponents(components = {SetterInjectedComponent.class, ComponentType.class})
+    @TestComponents({SetterInjectedComponent.class, ComponentType.class})
     void testSetterInjectionWithContext() {
         SampleContext sampleContext = new SampleContext("setter");
         this.applicationContext.addContext("setter", sampleContext);

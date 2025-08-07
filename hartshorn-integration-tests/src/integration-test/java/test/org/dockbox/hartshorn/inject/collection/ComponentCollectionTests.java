@@ -54,7 +54,7 @@ public class ComponentCollectionTests {
     }
 
     @Test
-    @TestComponents(components = CollectionConfiguration.class)
+    @TestComponents(CollectionConfiguration.class)
     void testConfigurationLoadsWithDependencies() {
         ComponentCollection<String> collection = this.applicationContext.get(ComponentKey.collect(String.class));
         Assertions.assertEquals(2, collection.size());

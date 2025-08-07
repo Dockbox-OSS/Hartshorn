@@ -41,15 +41,5 @@ public @interface TestComponents {
      *
      * @return The components to register for the test
      */
-    Class<?>[] components() default {};
-
-    /**
-     * Static bindings to register for the test.
-     *
-     * @return The static bindings to register for the test
-     * @see TestBinding
-     * @deprecated Use configuration classes instead
-     */
-    @Deprecated(since = "0.7.0", forRemoval = true)
-    TestBinding[] bindings() default {};
+    Class<?>[] value() default {};
 }

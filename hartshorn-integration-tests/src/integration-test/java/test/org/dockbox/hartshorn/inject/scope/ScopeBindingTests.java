@@ -66,7 +66,7 @@ public class ScopeBindingTests {
     }
 
     @Test
-    @TestComponents(components = ScopedBindingConfiguration.class)
+    @TestComponents(ScopedBindingConfiguration.class)
     void testConfigurationScopedValuesAreInstalled() {
         String applicationScope = this.applicationContext.get(String.class);
         String scopedValue = this.applicationContext.get(ComponentKey.builder(String.class).scope(new SampleScope()).build());

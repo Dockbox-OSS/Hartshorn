@@ -48,7 +48,7 @@ public class ActivatorScanningTests {
     }
 
     @Test
-    @TestComponents(components = DiscoverableComponentConfiguration.class)
+    @TestComponents(DiscoverableComponentConfiguration.class)
     void testBindingsFromActivatorPrefixArePresent(@Inject DiscoverableComponent component) {
         Assertions.assertNotNull(component);
         Assertions.assertEquals("Demo", component.message());
@@ -56,7 +56,7 @@ public class ActivatorScanningTests {
     }
 
     @Test
-    @TestComponents(components = ComponentInterface.class)
+    @TestComponents(ComponentInterface.class)
     void testServicesFromActivatorPrefixArePresent(@Inject ComponentInterface service, @Inject ProxyOrchestrator proxyOrchestrator) {
         Assertions.assertNotNull(service);
         Assertions.assertTrue(proxyOrchestrator.isProxy(service));
