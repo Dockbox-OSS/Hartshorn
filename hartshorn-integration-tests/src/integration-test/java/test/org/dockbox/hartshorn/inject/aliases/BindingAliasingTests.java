@@ -17,13 +17,10 @@
 package test.org.dockbox.hartshorn.inject.aliases;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
-import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.annotations.configuration.BindingAlias;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.inject.binding.AmbiguousComponentException;
-import org.dockbox.hartshorn.inject.binding.Binder;
-import org.dockbox.hartshorn.inject.graph.support.AmbiguousAliasException;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
@@ -47,7 +44,7 @@ public class BindingAliasingTests {
     }
 
     @Test
-    @TestComponents(components = BindingAliasingConfiguration.class)
+    @TestComponents(BindingAliasingConfiguration.class)
     void testAliasBindingsFromConfigurationCanBeResolved(@Inject ComponentProvider provider) {
         String helloWorldString = provider.get(String.class);
         CharSequence helloWorldCharSequence = provider.get(CharSequence.class);
@@ -56,7 +53,7 @@ public class BindingAliasingTests {
     }
 
     @Test
-    @TestComponents(components = OverlappingDefaultAndAliasBindingConfiguration.class)
+    @TestComponents(OverlappingDefaultAndAliasBindingConfiguration.class)
     void testOverlappingDefaultAndAliasBindingsFromConfigurationCanResolve(@Inject ComponentProvider provider) {
         Assertions.assertDoesNotThrow(() -> provider.get(String.class));
         Assertions.assertDoesNotThrow(() -> provider.get(CharSequence.class));

@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
+import org.dockbox.hartshorn.test.TestApplicationCustomizer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,6 +50,7 @@ import java.lang.annotation.Target;
  *
  * @see HartshornInjectParameterResolver
  * @see HartshornJUnitCleanupCallback
+ * @see HartshornJUnitIntegrationTestBootstrapCallback
  */
 @Target({ ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -60,21 +62,6 @@ import java.lang.annotation.Target;
 @Extends(Populate.class)
 @Populate(Populate.Type.FIELDS)
 public @interface HartshornIntegrationTest {
-
-    /**
-     * Additional {@link ComponentProcessor}s to use when creating the {@link ApplicationContext} for
-     * the test class or method. These will be added to the default set of {@link ComponentProcessor}s
-     * used by the test suite, even if they are not found through prefix scanning.
-     *
-     * @see StandardApplicationContextFactory.Configurer#componentPreProcessors(Customizer)
-     * @see StandardApplicationContextFactory.Configurer#componentPostProcessors(Customizer)
-     *
-     * @return the additional {@link ComponentProcessor}s to use
-     *
-     * @deprecated see {@link ModuleActivator#processors()}
-     */
-    @Deprecated(since = "0.7.0", forRemoval = true)
-    Class<? extends ComponentProcessor>[] processors() default {};
 
     /**
      * Additional {@link ComponentPreProcessor}s to use when creating the {@link ApplicationContext} for
@@ -140,4 +127,6 @@ public @interface HartshornIntegrationTest {
      * @return the main class to use, or {@link Void} if not set
      */
     Class<?> mainClass() default Void.class;
+
+    Class<? extends TestApplicationCustomizer>[] customizers() default {};
 }

@@ -18,13 +18,10 @@ package org.dockbox.hartshorn.test;
 
 import org.dockbox.hartshorn.inject.ObjectFactory;
 import org.dockbox.hartshorn.inject.ReflectionObjectFactory;
-import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
 import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
-import org.dockbox.hartshorn.test.annotations.TestBinding;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.configure.Customizer;
@@ -46,7 +43,8 @@ import java.util.Set;
  */
 public record IntegrationTestApplicationFactoryCustomizer(
         Class<?> testClass,
-        List<AnnotatedElement> testComponentSources
+        List<AnnotatedElement> testComponentSources,
+        TestApplicationCustomizer applicationCustomizer
 ) implements Customizer<StandardApplicationContextFactory.Configurer> {
 
     private static final ObjectFactory OBJECT_FACTORY = new ReflectionObjectFactory();
@@ -58,36 +56,17 @@ public record IntegrationTestApplicationFactoryCustomizer(
             environment.enableBatchMode(); // Enable batch mode, to make use of additional caching between tests. This decreases startup time after warmup (first test).
             environment.showStacktraces(); // Enable stacktraces for tests, to make debugging easier
             environment.applicationFSProvider(new TemporaryFileSystemProvider());
-
-            Customizer<SimpleApplicationContext.Configurer> applicationContextCustomizer = applicationContext -> {
-                this.configureDefaultBindings(applicationContext, this.testComponentSources);
-            };
-            environment.applicationContext(
-                    SimpleApplicationContext.create(applicationContextCustomizer.compose(TestCustomizer.APPLICATION_CONTEXT.customizer())));
+            environment.applicationContext(SimpleApplicationContext.create(applicationCustomizer::customizeApplication));
         };
-        constructor.environment(
-                ConfigurableApplicationEnvironment.create(environmentCustomizer.compose(TestCustomizer.ENVIRONMENT.customizer())));
+        constructor.environment(ConfigurableApplicationEnvironment.create(
+                environmentCustomizer.compose(applicationCustomizer::customizeEnvironment)
+        ));
 
         for(AnnotatedElement element : this.testComponentSources) {
             this.customizeWithComponentSource(constructor, element);
         }
 
         this.customizeModuleActivators(constructor);
-    }
-
-    private void configureDefaultBindings(SimpleApplicationContext.Configurer applicationContext,
-            List<AnnotatedElement> testComponentSources) {
-        for(AnnotatedElement testComponentSource : testComponentSources) {
-            if(testComponentSource.isAnnotationPresent(TestComponents.class)) {
-                TestBinding[] bindings = testComponentSource.getAnnotation(TestComponents.class).bindings();
-                applicationContext.defaultBindings((context, binder) -> {
-                    for(TestBinding binding : bindings) {
-                        //noinspection unchecked
-                        binder.bind(binding.type()).to((Class) binding.implementation());
-                    }
-                });
-            }
-        }
     }
 
     private void customizeModuleActivators(StandardApplicationContextFactory.Configurer constructor) {
@@ -100,7 +79,7 @@ public record IntegrationTestApplicationFactoryCustomizer(
 
             next = next.getSuperclass();
         }
-        constructor.activators(activators -> {
+        constructor.moduleActivators(activators -> {
             activators.addAll(moduleActivators);
         });
     }
@@ -116,37 +95,22 @@ public record IntegrationTestApplicationFactoryCustomizer(
     }
 
     private void registerProcessors(StandardApplicationContextFactory.Configurer constructor, HartshornIntegrationTest testDecorator) {
-        // Deprecated approach, retained for backwards compatibility
-        @Deprecated(since = "0.7.0", forRemoval = true)
-        List<Class<?>> processors = List.of(testDecorator.processors());
-        List<ComponentPreProcessor> preProcessors = this.filterAndInstantiate(ComponentPreProcessor.class, processors);
-        constructor.componentPreProcessors(config -> config.addAll(preProcessors));
-        List<ComponentPostProcessor> postProcessors = this.filterAndInstantiate(ComponentPostProcessor.class, processors);
-        constructor.componentPostProcessors(config -> config.addAll(postProcessors));
-
-        // New approach (dedicated attributes for each processor type)
-        constructor.componentPreProcessors(config -> config.addAll(this.instantiateAll(List.of(testDecorator.componentPreProcessors()))));
-        constructor.componentPostProcessors(config -> config.addAll(this.instantiateAll(List.of(testDecorator.componentPostProcessors()))));
-        constructor.binderPostProcessors(config -> config.addAll(this.instantiateAll(List.of(testDecorator.binderPostProcessors()))));
+        constructor.componentPreProcessors(config ->
+                config.addAll(this.instantiateAll(List.of(testDecorator.componentPreProcessors())))
+        );
+        constructor.componentPostProcessors(config ->
+                config.addAll(this.instantiateAll(List.of(testDecorator.componentPostProcessors())))
+        );
+        constructor.binderPostProcessors(config ->
+                config.addAll(this.instantiateAll(List.of(testDecorator.binderPostProcessors())))
+        );
     }
 
     private static void registerStandaloneComponents(StandardApplicationContextFactory.Configurer constructor, AnnotatedElement element) {
         if(element.isAnnotationPresent(TestComponents.class)) {
             TestComponents testComponents = element.getAnnotation(TestComponents.class);
-            constructor.standaloneComponents(components -> components.addAll(testComponents.components()));
+            constructor.standaloneComponents(components -> components.addAll(testComponents.value()));
         }
-    }
-
-    @Deprecated(since = "0.7.0", forRemoval = true)
-    private <T> List<T> filterAndInstantiate(Class<T> type, List<Class<?>> processors) {
-        List<T> result = new ArrayList<>();
-        for(Class<?> processor : processors) {
-            if(type.isAssignableFrom(processor)) {
-                Object instance = OBJECT_FACTORY.create(processor);
-                result.add(type.cast(instance));
-            }
-        }
-        return result;
     }
 
     private <T> List<T> instantiateAll(List<Class<? extends T>> types) {

@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class ComponentProcessorTests {
 
     @Test
-    @TestComponents(components = NonProcessableType.class)
+    @TestComponents(NonProcessableType.class)
     void testNonProcessableComponent(@Inject NonProcessableType nonProcessableType) {
         Assertions.assertNotNull(nonProcessableType);
         Assertions.assertNull(nonProcessableType.nonNullIfProcessed());

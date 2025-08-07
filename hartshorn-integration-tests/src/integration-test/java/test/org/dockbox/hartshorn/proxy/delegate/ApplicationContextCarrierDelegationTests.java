@@ -32,14 +32,14 @@ import java.lang.reflect.Method;
 public class ApplicationContextCarrierDelegationTests {
 
     @Test
-    @TestComponents(components = ContextCarrierComponent.class)
+    @TestComponents(ContextCarrierComponent.class)
     void testContextCarrierDelegation(@Inject ContextCarrierComponent component) throws NoSuchMethodException {
         this.testDelegateAbsent(component);
         Assertions.assertNotNull(component.applicationContext());
     }
 
     @Test
-    @TestComponents(components = OverrideContextCarrierComponentInterface.class)
+    @TestComponents(OverrideContextCarrierComponentInterface.class)
     void testDefaultCarrierDelegation(@Inject OverrideContextCarrierComponentInterface component) throws NoSuchMethodException {
         this.testDelegateAbsent(component);
         // Default method, should return null (see OverrideContextCarrierComponentInterface)
@@ -47,7 +47,7 @@ public class ApplicationContextCarrierDelegationTests {
     }
 
     @Test
-    @TestComponents(components = ContextCarrierComponentInterface.class)
+    @TestComponents(ContextCarrierComponentInterface.class)
     void testCarrierDelegation(@Inject ContextCarrierComponentInterface component, @Inject ApplicationContext applicationContext) throws NoSuchMethodException {
         Assertions.assertTrue(component instanceof Proxy<?>);
         Method method = ApplicationContextCarrier.class.getMethod("applicationContext");

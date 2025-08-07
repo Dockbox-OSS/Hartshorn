@@ -88,7 +88,7 @@ public class CollectionScopeTests {
 
     @Test
     @DisplayName("Collection components can be provided to a non-specific collection (List)")
-    @TestComponents(components = ComponentWithCollectionDependencies.class)
+    @TestComponents(ComponentWithCollectionDependencies.class)
     void testComponentInjectionWithoutExplicitCollection() {
         ComponentKey<String> nameKey = ComponentKey.of(String.class, "names");
         this.applicationContext.bind(nameKey).collect(collector -> {
@@ -107,6 +107,7 @@ public class CollectionScopeTests {
 
     @Test
     @DisplayName("Collection components can be provided to a specific collection (Set -> TreeSet)")
+    @TestComponents(ComponentWithCollectionDependencies.class)
     void testComponentInjectionWithExplicitCollection() {
         ComponentKey<Integer> ageKey = ComponentKey.of(Integer.class, "ages");
         Binder collect = this.applicationContext.bind(ageKey).collect(collector -> {
@@ -126,7 +127,7 @@ public class CollectionScopeTests {
 
     @Test
     @DisplayName("Collection components can be obtained with a collection component key")
-    @TestComponents(components = CompositeMembersConfiguration.class)
+    @TestComponents(CompositeMembersConfiguration.class)
     void testCollectionsAreCollected() {
         ComponentKey<ComponentCollection<StaticComponent>> componentKey = ComponentKey.collect(StaticComponent.class);
         ComponentCollection<StaticComponent> collection = this.applicationContext.get(componentKey);

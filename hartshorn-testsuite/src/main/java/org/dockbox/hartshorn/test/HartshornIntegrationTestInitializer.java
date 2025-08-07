@@ -16,29 +16,29 @@
 
 package org.dockbox.hartshorn.test;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import java.util.SequencedCollection;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.context.SimpleSingleElementContext;
+import org.dockbox.hartshorn.inject.ObjectFactory;
+import org.dockbox.hartshorn.inject.ReflectionObjectFactory;
 import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
 import org.dockbox.hartshorn.inject.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.launch.ApplicationBuilder;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
-import org.dockbox.hartshorn.test.annotations.CustomizeTests;
 import org.dockbox.hartshorn.test.annotations.TestProperties;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.test.junit.HartshornJUnitIntegrationTestBootstrapCallback;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.configure.Customizer;
-import org.dockbox.hartshorn.context.SimpleSingleElementContext;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.AnnotatedElement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.SequencedCollection;
+import java.util.stream.Collectors;
 
 /**
  * Initializes the test environment for integration tests. This class is responsible for invoking any
@@ -53,6 +53,8 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class HartshornIntegrationTestInitializer {
 
+    private static final ObjectFactory OBJECT_FACTORY = new ReflectionObjectFactory();
+
     /**
      * Creates a new application context for the given test class, test instance and component sources.
      *
@@ -60,24 +62,24 @@ public class HartshornIntegrationTestInitializer {
      * @param testInstance the test instance, may be {@code null} for class lifecycle tests
      * @param testComponentSources the component sources to use for the test
      * @return the created application context
-     * @throws ApplicationException when the application context could not be created
      */
     @NonNull
     public ApplicationContext createTestApplicationContext(
         Class<?> testClass,
         Object testInstance,
         AnnotatedElement[] testComponentSources
-    ) throws ApplicationException {
+    ) {
         if (testClass == null) {
             throw new IllegalArgumentException("Test class cannot be null");
         }
 
-        List<AnnotatedElement> elements = new ArrayList<>(Arrays.asList(testComponentSources));
+        List<AnnotatedElement> elements = Arrays.stream(testComponentSources)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(ArrayList::new));
         elements.add(testClass);
 
-        this.invokeModifiers(testClass);
-
-        ApplicationBuilder<?> applicationBuilder = this.prepareFactory(testClass, elements);
+        TestApplicationCustomizer customizer = this.resolveCustomizer(elements);
+        ApplicationBuilder<?> applicationBuilder = this.prepareFactory(testClass, elements, customizer);
         ApplicationContext applicationContext = applicationBuilder.create();
 
         if (applicationContext == null) {
@@ -90,34 +92,14 @@ public class HartshornIntegrationTestInitializer {
         return applicationContext;
     }
 
-    private void invokeModifiers(Class<?> testClass) throws ApplicationException {
-        List<Method> methods = Arrays.stream(testClass.getMethods())
-                .filter(method -> method.isAnnotationPresent(CustomizeTests.class))
-                .toList();
-
-        for (Method factoryModifier : methods) {
-            doCheckFactoryModifierValid(factoryModifier);
-
-            if (!factoryModifier.canAccess(null)) {
-                factoryModifier.setAccessible(true);
-            }
-
-            Class<?>[] parameters = factoryModifier.getParameterTypes();
-            if (parameters.length == 0) {
-
-                try {
-                    factoryModifier.invoke(null);
-                }
-                catch (Exception e) {
-                    throw new ApplicationException(e);
-                }
-            }
-            else {
-                throw new InvalidFactoryModifierException("Invalid parameter count for " + factoryModifier.getName() + ", expected 0, got " + parameters.length + ".");
-            }
-
-            factoryModifier.setAccessible(false);
-        }
+    private TestApplicationCustomizer resolveCustomizer(List<AnnotatedElement> elements) {
+        List<TestApplicationCustomizer> customizers = elements.stream()
+                .filter(element -> element.isAnnotationPresent(HartshornIntegrationTest.class))
+                .map(element -> element.getAnnotation(HartshornIntegrationTest.class))
+                .flatMap(integrationTest -> Arrays.stream(integrationTest.customizers()))
+                .map(OBJECT_FACTORY::create)
+                .collect(Collectors.toList());
+        return new CompositeTestApplicationCustomizer(customizers);
     }
 
     protected void populateTestInstance(Object instance, ApplicationContext applicationContext) {
@@ -126,26 +108,16 @@ public class HartshornIntegrationTestInitializer {
         populator.populate(instance);
     }
 
-    private ApplicationBuilder<?> prepareFactory(Class<?> testClass, List<AnnotatedElement> testComponentSources) {
+    private ApplicationBuilder<?> prepareFactory(Class<?> testClass, List<AnnotatedElement> testComponentSources, TestApplicationCustomizer applicationCustomizer) {
         Customizer<StandardApplicationBuilder.Configurer> builderCustomizer = Customizer.useDefaults();
         builderCustomizer = builderCustomizer.compose(builder -> {
             customizeBuilderWithTestSources(testClass, testComponentSources, builder);
 
-            Customizer<StandardApplicationContextFactory.Configurer> customizer = new IntegrationTestApplicationFactoryCustomizer(testClass, testComponentSources);
-            builder.applicationContextFactory(StandardApplicationContextFactory.create(customizer.compose(TestCustomizer.CONSTRUCTOR.customizer())));
+            Customizer<StandardApplicationContextFactory.Configurer> customizer = new IntegrationTestApplicationFactoryCustomizer(testClass, testComponentSources, applicationCustomizer);
+            builder.applicationContextFactory(StandardApplicationContextFactory.create(customizer.compose(applicationCustomizer::customizeFactory)));
         });
 
-        return StandardApplicationBuilder.create(builderCustomizer.compose(TestCustomizer.BUILDER.customizer()));
-    }
-
-    private static void doCheckFactoryModifierValid(Method factoryModifier) {
-        if (!Modifier.isStatic(factoryModifier.getModifiers())) {
-            throw new InvalidFactoryModifierException("Expected " + factoryModifier.getName() + " to be static.");
-        }
-
-        if (!factoryModifier.getReturnType().equals(Void.TYPE)) {
-            throw new InvalidFactoryModifierException("Invalid return type for " + factoryModifier.getName() + ", expected void");
-        }
+        return StandardApplicationBuilder.create(builderCustomizer.compose(applicationCustomizer::customizeBuilder));
     }
 
     private static void customizeBuilderWithTestSources(
@@ -153,15 +125,10 @@ public class HartshornIntegrationTestInitializer {
             SequencedCollection<AnnotatedElement> testComponentSources,
             StandardApplicationBuilder.Configurer builder
     ) {
-
-        // Note: initial default, may be overwritten by test component sources below
+        // Note: initial default, may be overwritten by either the test decorator, or test customizers
         builder.mainClass(testClass);
 
         for (AnnotatedElement element : testComponentSources) {
-            if (element == null) {
-                continue;
-            }
-
             Option.of(element.getAnnotation(HartshornIntegrationTest.class))
                     .map(HartshornIntegrationTest::mainClass)
                     .filter(mainClass -> mainClass != Void.class)

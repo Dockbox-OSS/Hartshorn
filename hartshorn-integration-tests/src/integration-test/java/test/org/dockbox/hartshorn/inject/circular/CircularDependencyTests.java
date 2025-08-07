@@ -71,7 +71,7 @@ public class CircularDependencyTests {
     private ApplicationContext applicationContext;
 
     @Test
-    @TestComponents(components = { CircularDependencyA.class, CircularDependencyB.class})
+    @TestComponents({ CircularDependencyA.class, CircularDependencyB.class})
     void testCircularDependenciesAreCorrectOnFieldInject() {
         CircularDependencyA a = Assertions.assertDoesNotThrow(() -> this.applicationContext.get(CircularDependencyA.class));
         CircularDependencyB b = Assertions.assertDoesNotThrow(() -> this.applicationContext.get(CircularDependencyB.class));

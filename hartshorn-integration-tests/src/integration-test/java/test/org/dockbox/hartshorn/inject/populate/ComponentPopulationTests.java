@@ -17,7 +17,10 @@
 package test.org.dockbox.hartshorn.inject.populate;
 
 import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.context.SimpleSingleElementContext;
 import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
 import org.dockbox.hartshorn.inject.populate.ComponentPopulationStrategy;
 import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
 import org.dockbox.hartshorn.inject.populate.InjectPopulationStrategy;
@@ -26,22 +29,19 @@ import org.dockbox.hartshorn.inject.targets.ComponentFieldInjectionPoint;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
 import org.dockbox.hartshorn.inject.targets.ComponentMethodInjectionPoint;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.test.annotations.TestBinding;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.configure.Customizer;
-import org.dockbox.hartshorn.context.SimpleSingleElementContext;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import test.org.dockbox.hartshorn.inject.provider.SampleImplementation;
+import test.org.dockbox.hartshorn.inject.provider.SampleInterface;
 
 import java.util.List;
 import java.util.function.Function;
-
-import test.org.dockbox.hartshorn.inject.provider.SampleImplementation;
-import test.org.dockbox.hartshorn.inject.provider.SampleInterface;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class ComponentPopulationTests {
@@ -100,7 +100,7 @@ public class ComponentPopulationTests {
     }
 
     @Test
-    @TestComponents(bindings = @TestBinding(type = SampleInterface.class, implementation = SampleImplementation.class))
+    @TestComponents(SampleConfiguration.class)
     public void testTypesCanBePopulated(@Inject ComponentPopulator populator) {
         PopulatedType populatedType = new PopulatedType();
         Assertions.assertNull(populatedType.sampleInterface());
@@ -108,6 +108,14 @@ public class ComponentPopulationTests {
         populator.populate(populatedType);
         Assertions.assertNotNull(populatedType.sampleInterface());
         Assertions.assertEquals(SampleImplementation.NAME, populatedType.sampleInterface().name());
+    }
+
+    @Configuration
+    private static class SampleConfiguration {
+        @Prototype
+        public SampleInterface sampleInterface() {
+            return new SampleImplementation();
+        }
     }
 
     private PopulationTestComponent createAndPopulateComponent(ComponentPopulationStrategy strategy, Function<TypeView<PopulationTestComponent>, ComponentInjectionPoint<PopulationTestComponent>> injectionPointProvider) {
