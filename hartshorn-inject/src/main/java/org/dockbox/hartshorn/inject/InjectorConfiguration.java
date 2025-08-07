@@ -39,4 +39,12 @@ public interface InjectorConfiguration {
      */
     boolean isStrictMode();
 
+    /**
+     * Returns whether the injector should allow fallback to the single constructor of a component if there
+     * are no explicit injectable constructors available, and there is no default constructor.
+     *
+     * @return {@code true} if the injector should allow fallback to the single constructor, {@code false} otherwise
+     */
+    boolean allowFallbackToSingleConstructor();
+
 }

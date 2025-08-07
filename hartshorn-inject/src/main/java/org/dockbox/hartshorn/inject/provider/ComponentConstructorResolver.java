@@ -16,10 +16,9 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
-import java.util.List;
-
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.InjectorConfiguration;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchyLookup;
@@ -29,6 +28,8 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
 
 /**
  * TODO: #1060 Add documentation
@@ -42,31 +43,31 @@ public final class ComponentConstructorResolver {
     private final ComponentInjectionPointsResolver injectionPointsResolver;
     private final Introspector introspector;
     private final HierarchyLookup hierarchyLookup;
+    private final InjectorConfiguration configuration;
 
     private ComponentConstructorResolver(
         ComponentInjectionPointsResolver injectionPointsResolver,
         Introspector introspector,
-        HierarchyLookup hierarchyLookup
+        HierarchyLookup hierarchyLookup,
+        InjectorConfiguration configuration
     ) {
         this.injectionPointsResolver = injectionPointsResolver;
         this.introspector = introspector;
         this.hierarchyLookup = hierarchyLookup;
+        this.configuration = configuration;
     }
 
     public static ComponentConstructorResolver create(InjectorEnvironment environment, HierarchyLookup hierarchyLookup) {
         return new ComponentConstructorResolver(
                 environment.injectionPointsResolver(),
                 environment.introspector(),
-                hierarchyLookup
+                hierarchyLookup,
+                environment.configuration()
         );
     }
 
     public static ComponentConstructorResolver create(InjectionCapableApplication applicationContext) {
-        return new ComponentConstructorResolver(
-            applicationContext.environment().injectionPointsResolver(),
-            applicationContext.environment().introspector(),
-            applicationContext.defaultBinder()
-        );
+        return create(applicationContext.environment(), applicationContext.defaultBinder());
     }
 
     public <C> Option<ConstructorView<? extends C>> findConstructor(TypeView<C> type)
@@ -131,7 +132,7 @@ public final class ComponentConstructorResolver {
             if (defaultConstructor.present()) {
                 return List.of(defaultConstructor.get());
             }
-            else if(type.constructors().count() == 1) {
+            else if(configuration.allowFallbackToSingleConstructor() && type.constructors().count() == 1) {
                 return List.of(type.constructors().all().getFirst());
             }
         }

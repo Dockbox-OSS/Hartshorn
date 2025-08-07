@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.inject.InjectorConfiguration;
 import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
 import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
-import org.dockbox.hartshorn.inject.component.ApplicationMainComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.environment.DefaultProxyOrchestratorLoader;
@@ -68,7 +67,6 @@ import org.dockbox.hartshorn.util.introspect.SupplierAdapterProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,6 +108,7 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
     private final boolean isBuildEnvironment;
     private final boolean isBatchMode;
     private final boolean isStrictMode;
+    private final boolean allowFallbackToSingleConstructor;
 
     private ApplicationContext applicationContext;
     private Introspector introspector;
@@ -135,6 +134,7 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         this.printStackTraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
         this.isBatchMode = configurer.enableBatchMode.initialize(argumentsInitializerContext);
         this.isStrictMode = configurer.enableStrictMode.initialize(argumentsInitializerContext);
+        this.allowFallbackToSingleConstructor = configurer.allowFallbackToSingleConstructor.initialize(argumentsInitializerContext);
         if (this.introspector() instanceof BatchCapableIntrospector batchCapableIntrospector) {
             batchCapableIntrospector.enableBatchMode(this.isBatchMode());
         }
@@ -151,11 +151,11 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
 
         ApplicationContext initializedContext = configurer.applicationContext.initialize(environmentInitializerContext);
         // This will handle two aspects:
-        // 1. If the context was not initialized through the implementation of ModifiableContextCarrier, it
-        //    will be set here to the initialized context.
-        // 2. If the context was initialized through the implementation of ModifiableContextCarrier, it will
-        //    verify that the context is the same as the initialized context, or throw an exception to prevent
-        //    the context from being overwritten and leaving the application in an inconsistent state.
+        // 1. If the context was not attached through the implementation of ModifiableContextCarrier, it
+        //    will be attached here.
+        // 2. If the context was attached through the implementation of ModifiableContextCarrier, it will
+        //    verify that the resulting context is the same as the attached context, or throw an exception
+        //    to prevent leaving the application in an inconsistent state.
         if (initializedContext != null) {
             this.applicationContext(initializedContext);
         }
@@ -236,6 +236,11 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
             @Override
             public boolean isStrictMode() {
                 return ConfigurableApplicationEnvironment.this.isStrictMode;
+            }
+
+            @Override
+            public boolean allowFallbackToSingleConstructor() {
+                return ConfigurableApplicationEnvironment.this.allowFallbackToSingleConstructor;
             }
         };
     }
@@ -425,6 +430,9 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         private ContextualInitializer<PropertyRegistry, Boolean> showStacktraces = PropertyInitializer.booleanProperty("hartshorn.exceptions.stacktraces")
                 .orElseGet(() -> true);
 
+        private ContextualInitializer<PropertyRegistry, Boolean> allowFallbackToSingleConstructor = PropertyInitializer.booleanProperty("hartshorn.inject.allow-single-constructor-fallback")
+                .orElseGet(() -> true);
+
         private ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver = context -> {
             TypeReferenceCollectorContext collectorContext = context.firstContext(TypeReferenceCollectorContext.class)
                     .orElseGet(TypeReferenceCollectorContext::new);
@@ -433,17 +441,7 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
 
         private ContextualInitializer<ApplicationEnvironment, ? extends ComponentRegistry> componentRegistry = context -> {
             ApplicationEnvironment environment = context.input();
-            TypeReferenceLookupComponentRegistry registry = new TypeReferenceLookupComponentRegistry(environment.typeResolver());
-            context.firstContext(ApplicationBootstrapContext.class)
-                    .peek(bootstrap -> {
-                        // Potentially started from an unnamed class, in which case there will be no constructors. In such scenarios we do
-                        // not support the main 'class' as an application component.
-                        if (bootstrap.mainClass().getConstructors().length > 0) {
-                            TypeView<?> mainClass = environment.introspector().introspect(bootstrap.mainClass());
-                            registry.addCustomContainer(new ApplicationMainComponentContainer<>(mainClass));
-                        }
-                    });
-            return registry;
+            return new TypeReferenceLookupComponentRegistry(environment.typeResolver());
         };
         private ContextualInitializer<Introspector, ? extends ProxyOrchestrator> proxyOrchestrator = DefaultProxyOrchestratorLoader.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider = ContextualInitializer.of(PathFileSystemProvider::new);
@@ -580,6 +578,40 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
          */
         public Configurer hideStacktraces() {
             return this.showStacktraces(ContextualInitializer.of(false));
+        }
+
+        /**
+         * Enables or disables the fallback to a single constructor.
+         *
+         * @see InjectorConfiguration#allowFallbackToSingleConstructor()
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer allowFallbackToSingleConstructor(ContextualInitializer<PropertyRegistry, Boolean> allowFallbackToSingleConstructor) {
+            this.allowFallbackToSingleConstructor = allowFallbackToSingleConstructor;
+            return this;
+        }
+
+        /**
+         * Enables fallback to a single constructor.
+         *
+         * @see InjectorConfiguration#allowFallbackToSingleConstructor()
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer allowFallbackToSingleConstructor() {
+            return this.allowFallbackToSingleConstructor(ContextualInitializer.of(true));
+        }
+
+        /**
+         * Disables fallback to a single constructor.
+         *
+         * @see InjectorConfiguration#allowFallbackToSingleConstructor()
+         *
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer disallowFallbackToSingleConstructor() {
+            return this.allowFallbackToSingleConstructor(ContextualInitializer.of(false));
         }
 
         /**
