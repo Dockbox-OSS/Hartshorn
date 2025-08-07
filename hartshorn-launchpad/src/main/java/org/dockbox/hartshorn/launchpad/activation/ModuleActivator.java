@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.launchpad.activation;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.processing.HierarchicalBinderPostProcessor;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 
@@ -56,17 +55,6 @@ public @interface ModuleActivator {
      * @return The additional packages to scan for components.
      */
     String[] scanPackages() default {};
-
-    /**
-     * The component processors that become active when this module activator is present.
-     *
-     * @return The component processors that become active when this module activator is present.
-     *
-     * @deprecated Use {@link #componentPreProcessors()} and {@link #componentPostProcessors()} instead for component processors,
-     * and {@link #binderPostProcessors()} for binder post processors.
-     */
-    @Deprecated(since = "0.7.0", forRemoval = true)
-    Class<? extends ComponentProcessor>[] processors() default {};
 
     Class<? extends ComponentPreProcessor>[] componentPreProcessors() default {};
 

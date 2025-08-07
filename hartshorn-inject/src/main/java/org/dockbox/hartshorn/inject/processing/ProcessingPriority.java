@@ -57,35 +57,4 @@ public class ProcessingPriority {
      * value is {@value #NORMAL_PRECEDENCE}.
      */
     public static final int NORMAL_PRECEDENCE = 0;
-
-    /**
-     * @deprecated Use {@link #HIGHEST_PRECEDENCE} instead.
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    public static final int FIRST = -256;
-
-    /**
-     * @deprecated Use {@link #HIGH_PRECEDENCE} instead.
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    public static final int EARLY = -128;
-
-    /**
-     * @deprecated Use {@link #NORMAL_PRECEDENCE} instead.
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    public static final int NORMAL = 0;
-
-    /**
-     * @deprecated Use {@link #LOW_PRECEDENCE} instead.
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    public static final int LATE = 128;
-
-    /**
-     * @deprecated Use {@link #LOWEST_PRECEDENCE} instead.
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    public static final int LAST = 256;
-
 }
