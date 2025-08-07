@@ -11,7 +11,7 @@
     </parent>
 
     <name>Hartshorn Launchpad Kotlin Extensions</name>
-    <artifactId>hartshorn-launchpad-kt-extensions</artifactId>
+    <artifactId>hartshorn-launchpad-kotlin-extensions</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>

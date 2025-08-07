@@ -40,7 +40,7 @@
         <module>hartshorn-reporting</module>
         <module>hartshorn-hsl</module>
         <module>hartshorn-testsuite</module>
-        <module>hartshorn-launchpad-kt-extensions</module>
+        <module>hartshorn-launchpad-kotlin-extensions</module>
         <module>hartshorn-launchpad-starter</module>
         <module>hartshorn-launchpad-samples</module>
 

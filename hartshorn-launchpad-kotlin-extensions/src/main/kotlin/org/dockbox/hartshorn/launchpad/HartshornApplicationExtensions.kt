@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package application
+package org.dockbox.hartshorn.launchpad
 
 import org.dockbox.hartshorn.launchpad.HartshornApplication.ApplicationBootstrap
-import org.dockbox.hartshorn.launchpad.ApplicationContext
-import org.dockbox.hartshorn.launchpad.HartshornApplication
-import org.dockbox.hartshorn.launchpad.HartshornApplicationConfigurer
 import kotlin.reflect.KClass
 
 fun createApplication(mailClass: KClass<*>, vararg arguments: String): ApplicationBootstrapKt {
