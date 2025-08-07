@@ -192,7 +192,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      */
     private Set<Annotation> moduleActivators(ApplicationBootstrapContext bootstrapContext) {
         SingleElementContext<ApplicationBootstrapContext> bootstrap = this.initializerContext.transform(bootstrapContext);
-        List<Annotation> configuredActivators = this.configurer.activators.initialize(bootstrap).stream()
+        List<Annotation> configuredActivators = this.configurer.moduleActivators.initialize(bootstrap).stream()
             .flatMap(activator -> this.activatorCollector.collectModuleActivatorsRecursively(activator).stream())
             .toList();
         Set<Annotation> additionalActivators = this.activatorCollector.moduleActivators(bootstrapContext.mainClass());
@@ -316,7 +316,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<ApplicationBootstrapContext, Annotation> activators = LazyStreamableConfigurer.of(
+        private final LazyStreamableConfigurer<ApplicationBootstrapContext, Annotation> moduleActivators = LazyStreamableConfigurer.of(
                 TypeUtils.annotation(UseLaunchpad.class)
         );
 
@@ -339,8 +339,8 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
          * @param customizer The customizer that is used to configure the module activators
          * @return The current configurator instance
          */
-        public Configurer activators(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Annotation>> customizer) {
-            this.activators.customizer(customizer);
+        public Configurer moduleActivators(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Annotation>> customizer) {
+            this.moduleActivators.customizer(customizer);
             return this;
         }
 

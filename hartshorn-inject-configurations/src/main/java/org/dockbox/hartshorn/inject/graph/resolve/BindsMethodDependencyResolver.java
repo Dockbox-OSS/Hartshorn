@@ -115,7 +115,10 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
             }
             return bindsMethods.stream()
                 .flatMap(bindsMethod -> this.resolve(declarationContext, bindsMethod)
-                    .map(context -> new ConditionalDependencyContext<>(context, dependencyContextsHolder -> this.conditionMatcher.match(bindsMethod, dependencyContextsHolder)))
+                    .map(context -> new ConditionalDependencyContext<>(
+                            context,
+                            dependencyContextsHolder -> this.conditionMatcher.match(bindsMethod, dependencyContextsHolder)
+                    ))
                     .stream()
                 ).collect(Collectors.toSet());
         }
@@ -161,7 +164,13 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
         private final LazyStreamableConfigurer<InjectionCapableApplication, BindingStrategy> bindingStrategies = LazyStreamableConfigurer.ofInitializer(
             MethodInstanceBindingStrategy.create(Customizer.useDefaults())
         );
-        private ContextualInitializer<InjectionCapableApplication, ConditionMatcher> conditionMatcher = context -> new ConditionMatcher(context.input());
+        private ContextualInitializer<InjectionCapableApplication, ConditionMatcher> conditionMatcher = ContextualInitializer.of(application -> {
+            InjectorEnvironment environment = application.environment();
+            if (environment instanceof ManagedComponentEnvironment managedEnvironment) {
+                return managedEnvironment.conditionMatcher();
+            }
+            throw new ComponentConfigurationException("Could not resolve condition matcher from current application environment");
+        });
         private Function<InjectionCapableApplication, ComponentRegistry> registryLookup = new ComponentRegistryLookup();
 
         public Configurer conditionMatcher(ConditionMatcher conditionMatcher) {

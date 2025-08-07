@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.inject.graph.declaration;
 
-import java.util.Set;
-
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
@@ -28,6 +26,8 @@ import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Set;
 
 /**
  * A simple implementation of {@link DependencyContext} that is used for components that are not managed by the container,
@@ -73,17 +73,9 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
             dependencyContext.priority(),
             dependencyContext.memberType()
         );
-
-        if (dependencyContext instanceof AbstractDependencyContext<T> abstractDependencyContext) {
-            this.lazy = abstractDependencyContext.lazy();
-            this.lifecycleType = abstractDependencyContext.lifecycleType();
-            this.processAfterInitialization = abstractDependencyContext.processAfterInitialization();
-        }
-        else {
-            this.lazy = false;
-            this.lifecycleType = LifecycleType.PROTOTYPE; // TODO: Dynamic?
-            this.processAfterInitialization = true;
-        }
+        this.lazy = dependencyContext.lazy();
+        this.lifecycleType = dependencyContext.lifecycleType();
+        this.processAfterInitialization = dependencyContext.processAfterInitialization();
     }
 
     protected AbstractDependencyContext(ComponentKey<T> componentKey, DependencyMap dependencies,

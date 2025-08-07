@@ -74,7 +74,7 @@ class BootstrapConfigurationContractTests {
     fun testApplicationConstructorContract() {
         val instance = StandardApplicationContextFactory.Configurer()
 
-        assertCustomizer(instance) { configurer, customizer -> configurer.activators(customizer) }
+        assertCustomizer(instance) { configurer, customizer -> configurer.moduleActivators(customizer) }
         assertCustomizer(instance) { configurer, customizer -> configurer.componentPreProcessors(customizer) }
         assertCustomizer(instance) { configurer, customizer -> configurer.componentPostProcessors(customizer) }
         assertCustomizer(instance) { configurer, customizer -> configurer.standaloneComponents(customizer) }

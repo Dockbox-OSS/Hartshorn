@@ -16,18 +16,17 @@
 
 package test.org.dockbox.hartshorn.inject.binding;
 
-import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.QualifierKey;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingAliasNormalizer;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
-import org.dockbox.hartshorn.inject.binding.ScopeAwareHierarchicalBinder;
-import org.dockbox.hartshorn.inject.provider.CompositeInstantiationStrategy;
-import org.dockbox.hartshorn.inject.provider.SimpleConstructorViewDrivenProvider;
-import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.SimpleHierarchicalBinder;
+import org.dockbox.hartshorn.inject.provider.CompositeInstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.SimpleConstructorViewDrivenProvider;
 import org.dockbox.hartshorn.inject.provider.singleton.ConcurrentHashSingletonCache;
-import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -42,11 +41,10 @@ import java.util.Map.Entry;
 public class BindingHierarchyTests {
 
     private HierarchicalBinder binder() {
-        return new ScopeAwareHierarchicalBinder(
+        return new SimpleHierarchicalBinder(
             null,
             new DefaultBindingAliasNormalizer(),
-            new ConcurrentHashSingletonCache(),
-            ScopeAdapter.of("test")
+            new ConcurrentHashSingletonCache()
         );
     }
 

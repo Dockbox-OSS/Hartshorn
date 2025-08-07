@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.component.ApplicationMainComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.environment.DefaultProxyOrchestratorLoader;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.inject.targets.MethodsAndFieldsInjectionPointResolver;
@@ -98,6 +99,7 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
     private final AnnotationLookup annotationLookup;
     private final ClasspathResourceLocator classPathResourceLocator;
     private final ResourceLookup resourceLookup;
+    private final ConditionMatcher conditionMatcher;
 
     private final ComponentInjectionPointsResolver injectionPointsResolver;
     private final ComponentKeyResolver componentKeyResolver;
@@ -116,6 +118,7 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         SingleElementContext<ApplicationEnvironment> environmentInitializerContext = context.transform(this);
         environmentInitializerContext.addContext(context.input());
 
+        this.conditionMatcher = this.configure(environmentInitializerContext, configurer.conditionMatcher);
         this.exceptionHandler = this.configure(environmentInitializerContext, configurer.exceptionHandler);
         this.annotationLookup = this.configure(environmentInitializerContext, configurer.annotationLookup);
         this.proxyOrchestrator = this.configure(environmentInitializerContext.transform(this.introspector()), configurer.proxyOrchestrator);
@@ -290,6 +293,11 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
     }
 
     @Override
+    public ConditionMatcher conditionMatcher() {
+        return this.conditionMatcher;
+    }
+
+    @Override
     public ResourceLookup resourceLookup() {
         return this.resourceLookup;
     }
@@ -447,6 +455,7 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         private ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver = ContextualInitializer.defer(() -> MethodsAndFieldsInjectionPointResolver.create(Customizer.useDefaults()));
         private ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver = ContextualInitializer.of(StandardAnnotationComponentKeyResolver::new);
         private ContextualInitializer<ApplicationEnvironment, ResourceLookup> resourceLookup = FallbackResourceLookup.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationEnvironment, ConditionMatcher> conditionMatcher = ContextualInitializer.of(environment -> new ConditionMatcher(environment::applicationContext));
 
         /**
          * Enables or disables the banner. If the banner is enabled, it will be printed to the console when the
@@ -855,6 +864,15 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
 
         public Configurer resourceLookup(ContextualInitializer<ApplicationEnvironment, ResourceLookup> resourceLookup) {
             this.resourceLookup = resourceLookup;
+            return this;
+        }
+
+        public Configurer conditionMatcher(ConditionMatcher conditionMatcher) {
+            return this.conditionMatcher(ContextualInitializer.of(conditionMatcher));
+        }
+
+        public Configurer conditionMatcher(ContextualInitializer<ApplicationEnvironment, ConditionMatcher> conditionMatcher) {
+            this.conditionMatcher = conditionMatcher;
             return this;
         }
     }
