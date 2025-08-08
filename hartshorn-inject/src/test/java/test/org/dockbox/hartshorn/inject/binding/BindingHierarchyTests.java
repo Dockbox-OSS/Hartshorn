@@ -18,6 +18,7 @@ package test.org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.QualifierKey;
+import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingAliasNormalizer;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
@@ -148,7 +149,7 @@ public class BindingHierarchyTests {
         Assertions.assertNotNull(hierarchy);
         Assertions.assertEquals(1, hierarchy.size());
 
-        Option<InstantiationStrategy<LocalContract>> provider = hierarchy.get(-1);
+        Option<InstantiationStrategy<LocalContract>> provider = hierarchy.get(Priority.DEFAULT_PRIORITY);
         Assertions.assertTrue(provider.present());
 
         InstantiationStrategy<LocalContract> contractStrategy = provider.get();

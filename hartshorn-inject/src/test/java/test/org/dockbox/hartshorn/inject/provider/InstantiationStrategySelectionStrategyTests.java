@@ -16,26 +16,28 @@
 
 package test.org.dockbox.hartshorn.inject.provider;
 
-import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.annotations.Priority;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.inject.provider.ObjectContainer;
+import org.dockbox.hartshorn.inject.provider.SingletonInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.ExactPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.HighestPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.MaximumPriorityProviderSelectionStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.MinimumPriorityProviderSelectionStrategy;
-import org.dockbox.hartshorn.inject.provider.ObjectContainer;
-import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.selection.ProviderSelectionStrategy;
-import org.dockbox.hartshorn.inject.provider.SingletonInstantiationStrategy;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 public class InstantiationStrategySelectionStrategyTests {
 
@@ -55,7 +57,7 @@ public class InstantiationStrategySelectionStrategyTests {
 
     private BindingHierarchy<?> createHierarchy() {
         BindingHierarchy<String> hierarchy = createEmptyHierarchy();
-        hierarchy.add(-1, new SingletonInstantiationStrategy<>(PRIORITY_DEFAULT_VALUE));
+        hierarchy.add(Priority.DEFAULT_PRIORITY, new SingletonInstantiationStrategy<>(PRIORITY_DEFAULT_VALUE));
         hierarchy.add(0, new SingletonInstantiationStrategy<>(PRIORITY_ZERO_VALUE));
         hierarchy.add(1, new SingletonInstantiationStrategy<>(PRIORITY_ONE_VALUE));
         hierarchy.add(2, new SingletonInstantiationStrategy<>(PRIORITY_TWO_VALUE));

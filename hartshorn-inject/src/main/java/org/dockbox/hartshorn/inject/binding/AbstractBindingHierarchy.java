@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
@@ -78,13 +79,13 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
 
     @Override
     public BindingHierarchy<T> add(InstantiationStrategy<T> strategy) {
-        return this.add(-1, strategy);
+        return this.add(Priority.DEFAULT_PRIORITY, strategy);
     }
 
     @Override
     public BindingHierarchy<T> add(int priority, InstantiationStrategy<T> strategy) {
         // Default providers may be overwritten without further warnings
-        if (this.priorityProviders().containsKey(priority) && priority != -1) {
+        if (this.priorityProviders().containsKey(priority) && priority != Priority.DEFAULT_PRIORITY) {
             LOG.warn(("There is already a provider for %s with priority %d. It will be overwritten! " +
                     "To avoid unexpected behavior, ensure the priority is not already present. Current hierarchy: %s").formatted(this.key()
                     .type().getSimpleName(), priority, this));
@@ -95,7 +96,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
 
     @Override
     public BindingHierarchy<T> addNext(InstantiationStrategy<T> strategy) {
-        int next = -1;
+        int next = Priority.DEFAULT_PRIORITY;
         if (!this.priorityProviders().isEmpty()) {
             next = this.priorityProviders().lastKey()+1;
         }
@@ -124,7 +125,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     @Override
     public int highestPriority() {
         NavigableMap<Integer, InstantiationStrategy<T>> providers = this.priorityProviders();
-        return providers.isEmpty() ? -1 : providers.firstKey();
+        return providers.isEmpty() ? Priority.DEFAULT_PRIORITY : providers.firstKey();
     }
 
     @Override

@@ -16,18 +16,11 @@
 
 package test.org.dockbox.hartshorn.inject.circular;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import org.dockbox.hartshorn.context.SimpleSingleElementContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
 import org.dockbox.hartshorn.inject.graph.ConfigurableDependencyContext;
 import org.dockbox.hartshorn.inject.graph.DependencyGraph;
@@ -48,7 +41,6 @@ import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.configure.Customizer;
-import org.dockbox.hartshorn.context.SimpleSingleElementContext;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
@@ -58,11 +50,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import test.org.dockbox.hartshorn.inject.circular.LongCycles.LongCycleA;
 import test.org.dockbox.hartshorn.inject.circular.LongCycles.LongCycleB;
 import test.org.dockbox.hartshorn.inject.circular.LongCycles.LongCycleC;
 import test.org.dockbox.hartshorn.inject.circular.LongCycles.LongCycleD;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class CircularDependencyTests {
@@ -175,7 +175,7 @@ public class CircularDependencyTests {
             TypeView<?> typeView = environment.introspector().introspect(component);
 
             DependencyMap dependencyMap = DependencyMap.create()
-                    // Fields and methods are always delayed
+                    // Fields and methods are always delayed, as they are not required for instantiation
                     .delayed(dependencyResolver.resolveDependencies(typeView));
 
             View origin = typeView;
@@ -187,7 +187,7 @@ public class CircularDependencyTests {
                     Assertions.assertEquals(1, constructorViews.size());
                     ConstructorView<?> constructorView = constructorViews.get(0);
                     origin = constructorView;
-                    // Constructors are always immediate
+                    // Constructors are always immediate, as they are required to instantiate the component
                     Set<ComponentKey<?>> immediateDependencies = dependencyResolver.resolveDependencies(constructorView);
                     dependencyMap.putAll(DependencyResolutionType.IMMEDIATE, immediateDependencies);
                 }
@@ -195,7 +195,7 @@ public class CircularDependencyTests {
 
             ConfigurableDependencyContext<?> dependencyContext = ConfigurableDependencyContext.builder(componentKey)
                     .dependencies(dependencyMap)
-                    .priority(-1)
+                    .priority(Priority.DEFAULT_PRIORITY)
                     .memberType(ComponentMemberType.STANDALONE)
                     .view(origin)
                     .supplier(PrototypeInstantiationStrategy.empty())
