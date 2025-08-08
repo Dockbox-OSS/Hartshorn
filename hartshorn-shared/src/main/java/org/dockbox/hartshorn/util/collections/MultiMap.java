@@ -32,7 +32,7 @@ import java.util.function.BiConsumer;
  *
  * @author Guus Lieben
  */
-public interface MultiMap<K, V> {
+public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
 
     /**
      * Returns all values in this {@link MultiMap}. The returned {@link Collection} is a copy of the values in this

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,11 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
-
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterCache;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterRegistry;
-import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverters;
 import org.dockbox.hartshorn.util.introspect.convert.NullAccess;
@@ -38,6 +29,13 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.util.introspect.support.basic.TestEnumType;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 /**
  * Tests for the {@link ConversionService} interface, driven by configurable {@link Introspector}
@@ -258,12 +256,7 @@ public abstract class ConversionServiceTests {
     @Test
     void testImplicitDefaultValueProviderIsAdaptedCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
-                registry -> registry.addDefaultValueProvider(new DefaultValueProvider<String>() {
-                    @Override
-                    public @Nullable String defaultValue() {
-                        return "";
-                    }
-                }),
+                registry -> registry.addDefaultValueProvider(() -> ""),
                 NullAccess.getInstance(), String.class,
                 ConverterType.DEFAULT_VALUE_PROVIDER
         );

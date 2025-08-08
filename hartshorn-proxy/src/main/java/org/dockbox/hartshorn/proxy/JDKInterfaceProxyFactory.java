@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
-
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyAdvisorMethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor;
@@ -28,6 +25,9 @@ import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
 
 /**
  * A {@link ProxyFactory} implementation which uses the JDK {@link java.lang.reflect.Proxy} class to create proxies for
@@ -78,7 +78,7 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
         LazyProxyManager<T> manager = new LazyProxyManager<>(this);
 
         this.contextContainer().contexts().forEach(manager::addContext);
-        this.contextContainer().namedContexts().forEach(manager::addContext);
+        this.contextContainer().namedContexts().forEach((name, context) -> manager.addContext(name, context));
 
         ProxyMethodInterceptor<T> interceptor = new ProxyAdvisorMethodInterceptor<>(manager, this.orchestrator());
 

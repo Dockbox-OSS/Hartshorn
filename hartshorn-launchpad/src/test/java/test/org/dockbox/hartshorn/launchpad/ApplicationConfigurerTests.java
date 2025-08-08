@@ -41,7 +41,6 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClasspathTypeReferenceCollector;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -65,12 +64,11 @@ public class ApplicationConfigurerTests {
     }
 
     @Test
-    @Disabled("#1121: Currently not integrated with property loaders") // TODO #1121: Fix this test
     @DisplayName("Customizer should be able to modify arguments provided to the application")
     void testArgumentsCustomizer() {
         ApplicationContext applicationContext = createApplication(configuration -> {
             configuration.arguments(arguments -> {
-                arguments.add("--sample.x.y=z");
+                arguments.add("sample.x.y=z");
             });
         });
         PropertyRegistry propertyRegistry = applicationContext.environment().propertyRegistry();

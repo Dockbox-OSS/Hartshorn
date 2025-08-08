@@ -36,7 +36,6 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -48,9 +47,9 @@ import java.util.stream.Stream;
 @HartshornIntegrationTest(includeBasePackages = false)
 @TestComponents(ConditionalConfiguration.class)
 @TestProperties({
-        "--property.c=o",
-        "--property.d=d",
-        "--property.e=otherValue"
+        "property.c=o",
+        "property.d=d",
+        "property.e=otherValue"
 })
 @DemoActivator
 public class ConditionTests {
@@ -72,7 +71,6 @@ public class ConditionTests {
     @ParameterizedTest
     @MethodSource("properties")
     @TestComponents(ConditionalConfiguration.class)
-    @Disabled("#1121: Currently not integrated with property loaders") // TODO #1121: Fix this test
     void testPropertyConditions(String name, boolean present) {
         ComponentKey<String> key = ComponentKey.builder(String.class).name(name).build();
         BindingHierarchy<String> hierarchy = this.applicationContext.hierarchy(key);

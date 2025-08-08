@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.collections;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -139,5 +140,10 @@ public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
     @Override
     public void forEach(BiConsumer<K, V> consumer) {
         this.map.forEach(consumer);
+    }
+
+    @Override
+    public Iterator<Entry<K, Collection<V>>> iterator() {
+        return this.map.iterator();
     }
 }

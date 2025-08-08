@@ -58,6 +58,12 @@ public final class CollectorUtilities {
         return toMultiMap(ArrayListMultiMap::new, Entry::getKey, Entry::getValue);
     }
 
+    public static <T, K> Collector<T, ?, MultiMap<K, T>> toMultiMap(
+            Function<? super T, ? extends K> keyMapper
+    ) {
+        return toMultiMap(ArrayListMultiMap::new, keyMapper, Function.identity());
+    }
+
     /**
      * A collector that collects entries into a {@link MultiMap}. The default implementation is an
      * {@link ArrayListMultiMap}.

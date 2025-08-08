@@ -16,14 +16,8 @@
 
 package org.dockbox.hartshorn.launchpad.launch;
 
-import java.lang.reflect.Modifier;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
 import org.dockbox.hartshorn.launchpad.HartshornApplicationConfigurer;
@@ -32,8 +26,14 @@ import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.Initializer;
 import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
-import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
+
+import java.lang.reflect.Modifier;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A standard implementation of {@link ApplicationBuilder}. This implementation uses a {@link ApplicationContextFactory}
@@ -316,7 +316,7 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         }
 
         /**
-         * Sets the arguments that are provided to the application that will be created. The provided arguments are expected
+         * Adds the given arguments to be provided to the application that will be created. The provided arguments are expected
          * to be valid arguments for the main class of the application.
          *
          * @param arguments The arguments that are provided to the application that will be created.
@@ -327,17 +327,14 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         }
 
         /**
-         * Sets the arguments that are provided to the application that will be created. The provided arguments are expected
+         * Adds the given arguments to be provided to the application that will be created. The provided arguments are expected
          * to be valid arguments for the main class of the application.
          *
          * @param arguments The arguments that are provided to the application that will be created.
          * @return This {@link Configurer} instance.
          */
         public Configurer arguments(List<String> arguments) {
-            return this.arguments(args -> {
-                args.clear();
-                args.addAll(arguments);
-            });
+            return this.arguments(args -> args.addAll(arguments));
         }
 
         /**

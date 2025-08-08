@@ -17,12 +17,13 @@
 package org.dockbox.hartshorn.util;
 
 import java.util.Map.Entry;
-import java.util.Objects;
 
 /**
  * Represents a simple tuple holding a single key of type {@code K} and value
  * of type {@code V}. This can be used to populate {@link java.util.Map maps}.
  *
+ * @param key the key
+ * @param value the value
  * @param <K> The type of the key represented by this tuple
  * @param <V> The type of the value represented by this tuple
  *
@@ -30,42 +31,15 @@ import java.util.Objects;
  *
  * @author Guus Lieben
  */
-public class Tuple<K, V> implements Entry<K, V> {
-
-    private final K key;
-    private final V value;
-
-    public Tuple(K key, V value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    /**
-     * Returns the key of this tuple. Equivalent to {@link #getKey()}.
-     *
-     * @return the key of this tuple
-     */
-    public K key() {
-        return this.key;
-    }
-
-    /**
-     * Returns the value of this tuple. Equivalent to {@link #getValue()}.
-     *
-     * @return the value of this tuple
-     */
-    public V value() {
-        return this.value;
-    }
+public record Tuple<K, V>(K key, V value) implements Entry<K, V> {
 
     /**
      * Creates a new {@link Tuple} instance with the given key and value.
      *
-     * @param key the key
+     * @param key   the key
      * @param value the value
-     * @param <K> the type of the key
-     * @param <V> the type of the value
-     *
+     * @param <K>   the type of the key
+     * @param <V>   the type of the value
      * @return a new {@link Tuple} instance
      */
     public static <K, V> Tuple<K, V> of(K key, V value) {
@@ -85,22 +59,5 @@ public class Tuple<K, V> implements Entry<K, V> {
     @Override
     public V setValue(V value) {
         throw new UnsupportedOperationException("Cannot modify Tuple value");
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (other == null || this.getClass() != other.getClass()) {
-            return false;
-        }
-        Tuple<?, ?> tuple = (Tuple<?, ?>) other;
-        return Objects.equals(this.key, tuple.key) && Objects.equals(this.value, tuple.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.key, this.value);
     }
 }

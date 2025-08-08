@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.util.collections;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -162,5 +163,10 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     @Override
     public void forEach(BiConsumer<K, V> consumer) {
         this.map().forEach((key, value) -> value.forEach(value0 -> consumer.accept(key, value0)));
+    }
+
+    @Override
+    public Iterator<Map.Entry<K, Collection<V>>> iterator() {
+        return this.map().entrySet().iterator();
     }
 }
