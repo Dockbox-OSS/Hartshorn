@@ -144,6 +144,22 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
         return this;
     }
 
+    public StreamableConfigurer<I, T> insert(int index, T object) {
+        return this.insert(index, ContextualInitializer.of(object));
+    }
+
+    public StreamableConfigurer<I, T> insert(int index, Initializer<T> initializer) {
+        return this.insert(index, ContextualInitializer.of(initializer));
+    }
+
+    public StreamableConfigurer<I, T> insert(int index, ContextualInitializer<I, T> initializer) {
+        if (index < 0 || index > this.objects.size()) {
+            throw new IndexOutOfBoundsException("Index out of bounds: " + index);
+        }
+        this.objects.add(index, initializer);
+        return this;
+    }
+
     /**
      * Adds all given objects to the configurer. The objects are expected to be fully configured,
      * and will not be modified by the configurer or a given input value.
