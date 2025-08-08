@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.populate;
 
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
@@ -36,12 +37,19 @@ public final class PopulateComponentContext<T> extends DefaultContext {
     private final T originalInstance;
 
     private final TypeView<T> type;
+    private final Scope scope;
     private final InjectionCapableApplication application;
 
-    public PopulateComponentContext(T instance, T originalInstance, TypeView<T> type, InjectionCapableApplication application) {
+    public PopulateComponentContext(
+            T instance,
+            T originalInstance,
+            TypeView<T> type,
+            Scope scope,
+            InjectionCapableApplication application) {
         this.instance = instance;
         this.originalInstance = originalInstance;
         this.type = type;
+        this.scope = scope;
         this.application = application;
     }
 
@@ -72,6 +80,10 @@ public final class PopulateComponentContext<T> extends DefaultContext {
      */
     public TypeView<T> type() {
         return this.type;
+    }
+
+    public Scope scope() {
+        return scope;
     }
 
     public InjectionCapableApplication application() {

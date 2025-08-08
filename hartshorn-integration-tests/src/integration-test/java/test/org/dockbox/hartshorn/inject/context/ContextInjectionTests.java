@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class ContextInjectionTests {
         String contextName = "InjectedContext";
         this.applicationContext.addContext(new SampleContext(contextName));
 
-        ContextInjectedType instance = this.componentPopulator.populate(new ContextInjectedType());
+        ContextInjectedType instance = this.componentPopulator.populate(new ContextInjectedType(), this.applicationContext.scope());
 
         Assertions.assertNotNull(instance.context());
         Assertions.assertEquals(contextName, instance.context().name());
@@ -48,7 +48,7 @@ public class ContextInjectionTests {
         String contextName = "InjectedContext";
         this.applicationContext.addContext("another", new SampleContext(contextName));
 
-        ContextInjectedType instance = this.componentPopulator.populate(new ContextInjectedType());
+        ContextInjectedType instance = this.componentPopulator.populate(new ContextInjectedType(), this.applicationContext.scope());
 
         Assertions.assertNotNull(instance.anotherContext());
         Assertions.assertEquals(contextName, instance.anotherContext().name());

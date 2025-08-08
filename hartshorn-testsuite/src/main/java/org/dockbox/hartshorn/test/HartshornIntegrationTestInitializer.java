@@ -105,7 +105,7 @@ public class HartshornIntegrationTestInitializer {
     protected void populateTestInstance(Object instance, ApplicationContext applicationContext) {
         SimpleSingleElementContext<ApplicationContext> elementContext = SimpleSingleElementContext.create(applicationContext);
         ComponentPopulator populator = StrategyComponentPopulator.create(Customizer.useDefaults()).initialize(elementContext);
-        populator.populate(instance);
+        populator.populate(instance, applicationContext.scope());
     }
 
     private ApplicationBuilder<?> prepareFactory(Class<?> testClass, List<AnnotatedElement> testComponentSources, TestApplicationCustomizer applicationCustomizer) {

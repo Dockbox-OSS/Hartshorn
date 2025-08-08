@@ -16,35 +16,39 @@
 
 package org.dockbox.hartshorn.inject.graph;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
+import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.graph.declaration.ComponentKeyDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.graph.declaration.ImplementationDependencyContext;
-import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.CompositeInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.TypeAwareInstantiationStrategy;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.collection.ComponentCollection;
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.dockbox.hartshorn.util.configure.ContextualInitializer;
-import org.dockbox.hartshorn.util.types.TypeUtils;
+import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.graph.MutableContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.View;
+import org.dockbox.hartshorn.util.stream.CollectorUtilities;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * TODO: #1060 Add documentation
@@ -247,14 +251,22 @@ public class DependencyGraphBuilder {
     }
 
     private void checkNoDuplicateContexts(ComponentKey<?> dependency, Set<GraphNode<DependencyContext<?>>> dependencyNodes) {
-        if (dependencyNodes.size() > 1) {
-            boolean collectionsOnly = dependencyNodes.stream().allMatch(node -> node.value().memberType() == ComponentMemberType.COMPOSITE);
-            if (!collectionsOnly) {
-                MultiMap<Integer, DependencyContext<?>> contextsByPriority = this.groupDependenciesByPriority(dependencyNodes);
-                for (int priority : contextsByPriority.keySet()) {
-                    Collection<DependencyContext<?>> dependencyContexts = contextsByPriority.get(priority);
-                    if (dependencyContexts.size() > 1) {
-                        this.reportDuplicatePrioritiesForDependencyNode(dependency, priority, dependencyContexts);
+        ScopeKey applicationScope = this.binder.scope().installableScopeType();
+        MultiMap<ScopeKey, DependencyContext<?>> dependenciesByScope = dependencyNodes.stream()
+                .map(GraphNode::value)
+                .collect(CollectorUtilities.toMultiMap(d -> d.scope().orElse(applicationScope)));
+
+        for (Map.Entry<ScopeKey, Collection<DependencyContext<?>>> entry : dependenciesByScope) {
+            Collection<DependencyContext<?>> dependencyContexts = entry.getValue();
+            if (dependencyContexts.size() > 1) {
+                boolean collectionsOnly = dependencyContexts.stream().allMatch(context -> context.memberType() == ComponentMemberType.COMPOSITE);
+                if (!collectionsOnly) {
+                    MultiMap<Integer, DependencyContext<?>> contextsByPriority = this.groupDependenciesByPriority(dependencyContexts);
+                    for (int priority : contextsByPriority.keySet()) {
+                        Collection<DependencyContext<?>> dependenciesAtPriority = contextsByPriority.get(priority);
+                        if (dependenciesAtPriority.size() > 1) {
+                            this.reportDuplicatePrioritiesForDependencyNode(dependency, entry.getKey(), priority, dependenciesAtPriority);
+                        }
                     }
                 }
             }
@@ -263,24 +275,25 @@ public class DependencyGraphBuilder {
 
     @NonNull
     private MultiMap<Integer, DependencyContext<?>> groupDependenciesByPriority(
-        Set<GraphNode<DependencyContext<?>>> dependencyNodes) {
+        Collection<DependencyContext<?>> dependencyNodes) {
         MultiMap<Integer, DependencyContext<?>> contextsByPriority = new ArrayListMultiMap<>();
-        for (GraphNode<DependencyContext<?>> dependencyNode : dependencyNodes) {
-            int priority = dependencyNode.value().priority();
-            contextsByPriority.put(priority, dependencyNode.value());
+        for (DependencyContext<?> dependencyNode : dependencyNodes) {
+            int priority = dependencyNode.priority();
+            contextsByPriority.put(priority, dependencyNode);
         }
         return contextsByPriority;
     }
 
-    private void reportDuplicatePrioritiesForDependencyNode(ComponentKey<?> dependency, int priority, Collection<DependencyContext<?>> dependencyContexts) {
+    private void reportDuplicatePrioritiesForDependencyNode(ComponentKey<?> dependency, ScopeKey scope, int priority, Collection<DependencyContext<?>> dependencyContexts) {
         String origins = dependencyContexts.stream()
             .map(DependencyContext::origin)
             .map(View::qualifiedName)
             .collect(Collectors.joining(",\n"));
         throw new IllegalStateException(
-            "Multiple nodes found for dependency %s at priority %d but not all are collections. Defined by: %s".formatted(
+            "Multiple nodes found for dependency %s at priority %d in scope %s but not all are collections. Defined by: %s".formatted(
                 dependency,
                 priority,
+                scope.name(),
                 origins
             ));
     }

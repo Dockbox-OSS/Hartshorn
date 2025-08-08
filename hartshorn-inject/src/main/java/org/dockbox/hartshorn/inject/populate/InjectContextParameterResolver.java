@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.annotations.Named;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
@@ -39,27 +40,39 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  */
 public class InjectContextParameterResolver implements InjectParameterResolver {
 
-    private final Context sourceContext;
+    private final Context globalContext;
 
-    public InjectContextParameterResolver(Context sourceContext) {
-        this.sourceContext = sourceContext;
+    public InjectContextParameterResolver(Context globalContext) {
+        this.globalContext = globalContext;
     }
 
     @Override
-    public boolean accepts(InjectionPoint injectionPoint) {
+    public boolean accepts(InjectionPoint injectionPoint, PopulateComponentContext<?> context) {
         TypeView<?> type = injectionPoint.type();
         boolean childOf = type.isChildOf(ContextView.class);
         if (!childOf) {
             return false;
         }
         ContextIdentity<? extends ContextView> contextKey = getContextKey(injectionPoint);
-        return this.sourceContext.firstContext(contextKey).present();
+        if (this.globalContext.firstContext(contextKey).present()) {
+            return true;
+        }
+        if (context.scope() instanceof Context contextScope) {
+            return contextScope.firstContext(contextKey).present();
+        }
+        return false;
     }
 
     @Override
     public Object resolve(InjectionPoint injectionPoint, PopulateComponentContext<?> context) {
         ContextIdentity<? extends ContextView> key = getContextKey(injectionPoint);
-        return this.sourceContext.firstContext(key).orNull();
+        if (context.scope() instanceof Context contextScope) {
+            Option<? extends ContextView> contextView = contextScope.firstContext(key);
+            if (contextView.present()) {
+                return contextView.get();
+            }
+        }
+        return this.globalContext.firstContext(key).orNull();
     }
 
     private static ContextIdentity<? extends ContextView> getContextKey(InjectionPoint injectionPoint) {

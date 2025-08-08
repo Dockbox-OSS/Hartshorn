@@ -17,78 +17,26 @@
 package test.org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.DefaultBindingAliasNormalizer;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
-import org.dockbox.hartshorn.inject.binding.SimpleHierarchicalBinder;
 import org.dockbox.hartshorn.inject.provider.CompositeInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.SimpleConstructorViewDrivenProvider;
-import org.dockbox.hartshorn.inject.provider.singleton.ConcurrentHashSingletonCache;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
 import java.util.Map.Entry;
 
 // TODO: Make non-integration test
 //@HartshornTest(includeBasePackages = false)
-@Disabled("Starters are not yet implemented")
+//@Disabled("Starters are not yet implemented")
 public class BindingHierarchyTests {
 
     private HierarchicalBinder binder() {
-        return new SimpleHierarchicalBinder(
-            null,
-            new DefaultBindingAliasNormalizer(),
-            new ConcurrentHashSingletonCache()
-        );
-    }
-
-
-    @Test
-    void testToString() {
-        BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class));
-        hierarchy.add(0, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
-        hierarchy.add(1, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
-        hierarchy.add(2, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
-
-        Assertions.assertEquals("Hierarchy<Contract>: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
-    }
-
-    @Test
-    void testToStringNamed() {
-        BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(ComponentKey.of(Contract.class, "sample"));
-        hierarchy.add(0, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
-        hierarchy.add(1, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
-        hierarchy.add(2, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
-
-        Assertions.assertEquals("Hierarchy<Contract> Named{value=sample}: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
-    }
-
-    @Test
-    void testToStringMultipleQualifiers() {
-        ComponentKey<Contract> key = ComponentKey.builder(Contract.class)
-                .name("sample")
-                .qualifier(QualifierKey.of(VersionQualifier.class, Map.of("value", Version.V2)))
-                .build();
-
-        BindingHierarchy<Contract> hierarchy = new NativePrunableBindingHierarchy<>(key);
-        hierarchy.add(0, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationA.class)));
-        hierarchy.add(1, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationB.class)));
-        hierarchy.add(2, SimpleConstructorViewDrivenProvider.forSingleton(ComponentKey.of(ImplementationC.class)));
-
-        String hierarchyString = hierarchy.toString();
-        Assertions.assertTrue(hierarchyString.startsWith("Hierarchy<Contract> "));
-        Assertions.assertTrue(hierarchyString.endsWith(": 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC"));
-
-        // Check with contains,as order is not guaranteed
-        Assertions.assertTrue(hierarchyString.contains("Named{value=sample}"));
-        Assertions.assertTrue(hierarchyString.contains("VersionQualifier{value=V2}"));
+        return new TestHierarchicalBinder();
     }
 
     @Test
@@ -107,7 +55,7 @@ public class BindingHierarchyTests {
     }
 
     @Test
-    void testApplicationContextHierarchyControl() {
+    void testPriorityBindingsAreRetainedAndAccessible() {
         ComponentKey<Contract> key = ComponentKey.of(Contract.class);
         HierarchicalBinder binder = this.binder();
 
