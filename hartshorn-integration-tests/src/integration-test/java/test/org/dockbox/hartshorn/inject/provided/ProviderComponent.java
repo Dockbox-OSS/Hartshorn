@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.launchpad.launch.scanning.service;
+package test.org.dockbox.hartshorn.inject.provided;
 
-import org.dockbox.hartshorn.inject.annotations.Service;
+import org.dockbox.hartshorn.inject.annotations.Component;
+import org.dockbox.hartshorn.inject.annotations.Provided;
 
-// Use service to also ensure prefixes are configured to build annotation hierarchy early on
-@Service
-public class DemoService {
+@Component
+@FunctionalInterface
+public interface ProviderComponent {
+    @Provided
+    String get();
 }

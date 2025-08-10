@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import javax.tools.JavaFileObject;
+import javax.tools.JavaFileObject.Kind;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -28,22 +35,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.tools.JavaFileObject;
-import javax.tools.JavaFileObject.Kind;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 public class DiscoveryServiceTests {
 
-    private static final String IMPLEMENTATION_NAME = "HelloWorldServiceImplementation";
+    private static final String IMPLEMENTATION_NAME = "HelloWorldSupplierImplementation";
     private static final String IMPLEMENTATION_QUALIFIED_NAME = "%s.%s".formatted(DiscoveryServiceTests.class.getPackageName(), IMPLEMENTATION_NAME);
     private static final String HELLO_WORLD_MESSAGE = "Hello World!";
-    private static final String HELLO_WORLD_SERVICE_IMPLEMENTATION_SOURCE = """
+    private static final String HELLO_WORLD_SUPPLIER_IMPLEMENTATION_SOURCE = """
             package org.dockbox.hartshorn.spi;
 
-            public class HelloWorldServiceImplementation implements HelloWorldService {
+            public class HelloWorldSupplierImplementation implements HelloWorldSupplier {
                         
                 @Override
                 public String getHelloWorld() {
@@ -68,10 +69,10 @@ public class DiscoveryServiceTests {
         ByteClassLoader classLoader = createImplementationAwareClassLoader();
 
         DiscoveryService.instance().addClassLoader(classLoader);
-        DiscoveryService.instance().override(HelloWorldService.class, IMPLEMENTATION_QUALIFIED_NAME);
+        DiscoveryService.instance().override(HelloWorldSupplier.class, IMPLEMENTATION_QUALIFIED_NAME);
 
-        HelloWorldService helloWorldService = DiscoveryService.instance().discover(HelloWorldService.class);
-        Assertions.assertEquals(HELLO_WORLD_MESSAGE, helloWorldService.getHelloWorld());
+        HelloWorldSupplier helloWorldSupplier = DiscoveryService.instance().discover(HelloWorldSupplier.class);
+        Assertions.assertEquals(HELLO_WORLD_MESSAGE, helloWorldSupplier.getHelloWorld());
     }
 
     @NonNull
@@ -90,47 +91,47 @@ public class DiscoveryServiceTests {
         ByteClassLoader classLoader = createImplementationAwareClassLoader();
         DiscoveryService.instance().addClassLoader(classLoader);
 
-        Assertions.assertFalse(DiscoveryService.instance().contains(HelloWorldService.class));
+        Assertions.assertFalse(DiscoveryService.instance().contains(HelloWorldSupplier.class));
 
-        DiscoveryService.instance().override(HelloWorldService.class, IMPLEMENTATION_QUALIFIED_NAME);
-        Assertions.assertTrue(DiscoveryService.instance().contains(HelloWorldService.class));
+        DiscoveryService.instance().override(HelloWorldSupplier.class, IMPLEMENTATION_QUALIFIED_NAME);
+        Assertions.assertTrue(DiscoveryService.instance().contains(HelloWorldSupplier.class));
     }
 
     @Test
     void testDiscoveryFailsIfNoImplementationExists() {
-        Assertions.assertThrows(ServiceDiscoveryException.class, () -> DiscoveryService.instance().discover(HelloWorldService.class));
+        Assertions.assertThrows(ServiceDiscoveryException.class, () -> DiscoveryService.instance().discover(HelloWorldSupplier.class));
     }
 
     @Test
     void testDiscoveryFailsIfImplementationClassDoesNotExist() {
         Assertions.assertThrows(ServiceDiscoveryException.class, () -> {
-            DiscoveryService.instance().override(HelloWorldService.class, "org.dockbox.hartshorn.spi.DoesNotExist");
-            DiscoveryService.instance().discover(HelloWorldService.class);
+            DiscoveryService.instance().override(HelloWorldSupplier.class, "org.dockbox.hartshorn.spi.DoesNotExist");
+            DiscoveryService.instance().discover(HelloWorldSupplier.class);
         });
     }
 
     @Test
     void testOverrideFailsIfImplementationNotAssignable() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> DiscoveryService.instance().override(HelloWorldService.class, DiscoveryServiceTests.class));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> DiscoveryService.instance().override(HelloWorldSupplier.class, DiscoveryServiceTests.class));
     }
 
     @Test
     void testDiscoveryFailsIfImplementationHasNoDefaultConstructor() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            DiscoveryService.instance().override(HelloWorldService.class, HelloWorldServiceImplementationWithNoDefaultConstructor.class);
-            DiscoveryService.instance().discover(HelloWorldService.class);
+            DiscoveryService.instance().override(HelloWorldSupplier.class, HelloWorldSupplierImplementationWithNoDefaultConstructor.class);
+            DiscoveryService.instance().discover(HelloWorldSupplier.class);
         });
     }
 
     private static JavaFileObject compileAndGetRuntimeImplementation() {
-        Compilation compilation = Compiler.javac().compile(JavaFileObjects.forSourceString(IMPLEMENTATION_NAME, HELLO_WORLD_SERVICE_IMPLEMENTATION_SOURCE));
+        Compilation compilation = Compiler.javac().compile(JavaFileObjects.forSourceString(IMPLEMENTATION_NAME, HELLO_WORLD_SUPPLIER_IMPLEMENTATION_SOURCE));
         Assertions.assertTrue(compilation.errors().isEmpty());
 
         ImmutableList<JavaFileObject> generatedFiles = compilation.generatedFiles();
         Assertions.assertEquals(1, generatedFiles.size());
 
         Map<Kind, List<JavaFileObject>> generatedByKind = generatedFiles.stream().collect(Collectors.groupingBy(JavaFileObject::getKind));
-        Assertions.assertEquals(1, generatedByKind.get(Kind.CLASS).size()); // HelloWorldServiceImplementation.class
+        Assertions.assertEquals(1, generatedByKind.get(Kind.CLASS).size()); // HelloWorldSupplierImplementation.class
 
         return generatedByKind.get(Kind.CLASS).getFirst();
     }
@@ -153,10 +154,10 @@ public class DiscoveryServiceTests {
         }
     }
 
-    public static class HelloWorldServiceImplementationWithNoDefaultConstructor implements HelloWorldService {
+    public static class HelloWorldSupplierImplementationWithNoDefaultConstructor implements HelloWorldSupplier {
         private final String arg;
 
-        public HelloWorldServiceImplementationWithNoDefaultConstructor(String arg) {
+        public HelloWorldSupplierImplementationWithNoDefaultConstructor(String arg) {
             this.arg = arg;
         }
 

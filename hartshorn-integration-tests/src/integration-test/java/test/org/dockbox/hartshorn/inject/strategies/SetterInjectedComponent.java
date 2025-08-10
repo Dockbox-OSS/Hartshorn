@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.inject.annotations.Inject;
 import test.org.dockbox.hartshorn.inject.stereotype.ComponentType;
 import test.org.dockbox.hartshorn.inject.context.SampleContext;
 
-@Component
+@Component(lazy = true)
 public class SetterInjectedComponent {
 
     private ComponentType component;

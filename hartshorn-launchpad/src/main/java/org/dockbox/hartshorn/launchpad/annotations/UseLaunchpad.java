@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,20 @@
 
 package org.dockbox.hartshorn.launchpad.annotations;
 
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
+import org.dockbox.hartshorn.launchpad.configuration.DefaultConfigurationBinderPostProcessor;
+import org.dockbox.hartshorn.launchpad.launch.ApplicationContextFactory;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
-import org.dockbox.hartshorn.launchpad.launch.ApplicationContextFactory;
-import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
-import org.dockbox.hartshorn.launchpad.configuration.DefaultConfigurationBinderPostProcessor;
-
 /**
- * Default service activator for Launchpad-based applications, enabling lifecycle observers and component proxying. When using
+ * Default module activator for Launchpad-based applications, enabling lifecycle observers and component proxying. When using
  * the built-in {@link ApplicationContextFactory} ({@link StandardApplicationContextFactory}), this activator is automatically
- * registered and used to activate services.
+ * registered and used to activate components.
  *
  * @since 0.7.0
  *
@@ -37,7 +37,7 @@ import org.dockbox.hartshorn.launchpad.configuration.DefaultConfigurationBinderP
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ServiceActivator(
+@ModuleActivator(
         binderPostProcessors = DefaultConfigurationBinderPostProcessor.class
 )
 @UseLifecycleObservers

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 /**
  * Represents a condition declaration, which may put constraints on the usage of a component
  * or element in the application. This may be used to enforce certain conditions, such as
- * the presence of a service activator, or the presence and value of a certain property.
+ * the presence of a module activator, or the presence and value of a certain property.
  *
  * @since 0.6.0
  *

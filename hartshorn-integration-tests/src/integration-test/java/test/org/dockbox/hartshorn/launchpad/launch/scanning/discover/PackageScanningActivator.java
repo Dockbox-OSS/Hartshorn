@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package test.org.dockbox.hartshorn.launchpad.launch.scanning.discover;
 
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-@ServiceActivator(scanPackages = PackageScanningActivator.PACKAGE)
+@ModuleActivator(scanPackages = PackageScanningActivator.PACKAGE)
 public @interface PackageScanningActivator {
 
     String PACKAGE = "test.org.dockbox.hartshorn.launchpad.launch.scanning.discover";

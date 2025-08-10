@@ -46,11 +46,11 @@ class JavaxCompatibilityTests {
     val context = this.createApplicationContext(withJavax = true)
     context.defaultBinder().bind<String>().singleton("Hello, World!")
 
-    val service = context.defaultProvider().get(FieldJavaxService::class.java)
-    assertNotNull(service)
+    val component = context.defaultProvider().get(FieldJavaxComponent::class.java)
+    assertNotNull(component)
 
-    assertEquals("Hello, World!", service.messageAsInject)
-    assertEquals("Hello, World!", service.messageAsResource)
+    assertEquals("Hello, World!", component.messageAsInject)
+    assertEquals("Hello, World!", component.messageAsResource)
   }
 
   @Test
@@ -59,11 +59,11 @@ class JavaxCompatibilityTests {
     val context = this.createApplicationContext(withJavax = false)
     context.defaultBinder().bind<String>().singleton("Hello, World!")
 
-    val service = context.defaultProvider().get(FieldJavaxService::class.java)
-    assertNotNull(service)
+    val component = context.defaultProvider().get(FieldJavaxComponent::class.java)
+    assertNotNull(component)
 
-    assertNull(service.messageAsInject)
-    assertNull(service.messageAsResource)
+    assertNull(component.messageAsInject)
+    assertNull(component.messageAsResource)
   }
 
   @Test
@@ -72,10 +72,10 @@ class JavaxCompatibilityTests {
     val context = this.createApplicationContext(withJavax = true)
     context.defaultBinder().bind<String>().singleton("Hello, World!")
 
-    val service = context.defaultProvider().get(InjectConstructorJavaxService::class.java)
-    assertNotNull(service)
+    val component = context.defaultProvider().get(InjectConstructorJavaxComponent::class.java)
+    assertNotNull(component)
 
-    assertEquals("Hello, World!", service.messageAsInject)
+    assertEquals("Hello, World!", component.messageAsInject)
   }
 
   @Test
@@ -85,7 +85,7 @@ class JavaxCompatibilityTests {
     context.defaultBinder().bind<String>().singleton("Hello, World!")
 
     val initializationException = assertThrows<ComponentInitializationException> {
-      context.defaultProvider().get(InjectConstructorJavaxService::class.java)
+      context.defaultProvider().get(InjectConstructorJavaxComponent::class.java)
     }
     val rootCause = TypeUtils.getRootCause(initializationException)
     assertInstanceOf(MissingInjectConstructorException::class.java, rootCause)
@@ -97,11 +97,11 @@ class JavaxCompatibilityTests {
     val context = this.createApplicationContext(withJavax = true)
     context.defaultBinder().bind<String>().singleton("Hello, World!")
 
-    val service = context.defaultProvider().get(MethodJavaxService::class.java)
-    assertNotNull(service)
+    val component = context.defaultProvider().get(MethodJavaxComponent::class.java)
+    assertNotNull(component)
 
-    assertEquals("Hello, World!", service.messageAsInject)
-    assertEquals("Hello, World!", service.messageAsResource)
+    assertEquals("Hello, World!", component.messageAsInject)
+    assertEquals("Hello, World!", component.messageAsResource)
   }
 
   @Test
@@ -110,14 +110,14 @@ class JavaxCompatibilityTests {
     val context = this.createApplicationContext(withJavax = false)
     context.defaultBinder().bind<String>().singleton("Hello, World!")
 
-    val service = context.defaultProvider().get(MethodJavaxService::class.java)
-    assertNotNull(service)
+    val component = context.defaultProvider().get(MethodJavaxComponent::class.java)
+    assertNotNull(component)
 
-    assertNull(service.messageAsInject)
-    assertNull(service.messageAsResource)
+    assertNull(component.messageAsInject)
+    assertNull(component.messageAsResource)
   }
 
-  class FieldJavaxService {
+  class FieldJavaxComponent {
 
     @javax.inject.Inject
     internal var messageAsInject: String? = null
@@ -126,7 +126,7 @@ class JavaxCompatibilityTests {
     internal var messageAsResource: String? = null
   }
 
-  class InjectConstructorJavaxService {
+  class InjectConstructorJavaxComponent {
     val messageAsInject: String
 
     @javax.inject.Inject
@@ -140,7 +140,7 @@ class JavaxCompatibilityTests {
     }
   }
 
-  class MethodJavaxService {
+  class MethodJavaxComponent {
 
     internal var messageAsInject: String? = null
     internal var messageAsResource: String? = null

@@ -16,15 +16,16 @@
 
 package org.dockbox.hartshorn.inject.processing.proxy;
 
-import java.util.Collection;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.util.Collection;
 
 /**
  * TODO: #1060 Add documentation
@@ -33,7 +34,7 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
  *
  * @author Guus Lieben
  */
-public abstract class ServiceMethodInterceptorPostProcessor extends ComponentPostProcessor {
+public abstract class MethodInterceptorPostProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {

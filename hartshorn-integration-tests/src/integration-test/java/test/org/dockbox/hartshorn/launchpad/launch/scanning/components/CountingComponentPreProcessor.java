@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.launchpad.launch.scanning.service;
+package test.org.dockbox.hartshorn.launchpad.launch.scanning.components;
 
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DemoServicePreProcessor extends ComponentPreProcessor {
+public class CountingComponentPreProcessor extends ComponentPreProcessor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DemoServicePreProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CountingComponentPreProcessor.class);
 
     private int processed = 0;
 
@@ -35,7 +34,7 @@ public class DemoServicePreProcessor extends ComponentPreProcessor {
 
     @Override
     public <T> void process(InjectionCapableApplication application, ComponentProcessingContext<T> processingContext) {
-        if (processingContext.type().is(DemoService.class)) {
+        if (processingContext.type().is(EmptyComponent.class)) {
             LOG.debug("Processing %s".formatted(processingContext));
             this.processed++;
         }

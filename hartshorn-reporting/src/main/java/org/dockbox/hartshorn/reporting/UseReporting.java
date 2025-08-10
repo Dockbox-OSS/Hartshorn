@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 
 /**
- * A {@link ServiceActivator} annotation that enables the default configurations for reporting
+ * A {@link ModuleActivator} annotation that enables the default configurations for reporting
  * capabilities.
  *
  * @since 0.5.0
@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
  *
  * @author Guus Lieben
  */
-@ServiceActivator
+@ModuleActivator
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface UseReporting {

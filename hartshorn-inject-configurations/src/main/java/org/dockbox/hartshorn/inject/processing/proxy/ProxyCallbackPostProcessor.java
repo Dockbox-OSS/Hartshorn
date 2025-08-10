@@ -43,7 +43,7 @@ import java.util.Collection;
  *
  * @author Guus Lieben
  */
-public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProcessor {
+public abstract class ProxyCallbackPostProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {

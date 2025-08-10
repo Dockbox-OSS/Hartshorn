@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.inject.processing.HierarchicalBinderPostProcessor;
 import org.dockbox.hartshorn.inject.processing.HierarchicalBinderProcessorRegistry;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * processed correctly.
  *
  * @see ComponentProcessor
- * @see ServiceActivator
+ * @see ModuleActivator
  * @see ApplicationContext
  * @see ProcessableApplicationContext
  *
@@ -76,14 +76,14 @@ public class ComponentProcessorRegistrar {
 
 
     /**
-     * Registers component processors to the application context. All processors declared on the given {@link ServiceActivator}s
+     * Registers component processors to the application context. All processors declared on the given {@link ModuleActivator}s
      * will be registered to the application context.
      *
      * @param registry the application context
      * @param introspector the introspector to use for constructor lookup
-     * @param activators the set of {@link ServiceActivator}s
+     * @param activators the set of {@link ModuleActivator}s
      */
-    public void registerComponentProcessors(ComponentProcessorRegistry registry, Introspector introspector, Set<ServiceActivator> activators) {
+    public void registerComponentProcessors(ComponentProcessorRegistry registry, Introspector introspector, Set<ModuleActivator> activators) {
         Set<Class<? extends ComponentPreProcessor>> preProcessorTypes = this.resolveComponentPreProcessorTypes(activators);
         Set<Class<? extends ComponentPostProcessor>> postProcessorTypes = this.resolveComponentPostProcessorTypes(activators);
 
@@ -97,14 +97,14 @@ public class ComponentProcessorRegistrar {
     }
 
     /**
-     * Registers binder processors to the application context. All processors declared on the given {@link ServiceActivator}s
+     * Registers binder processors to the application context. All processors declared on the given {@link ModuleActivator}s
      * will be registered to the application context.
      *
      * @param registry the registry to register the binder processors to
      * @param introspector the introspector to use for constructor lookup
-     * @param activators the set of {@link ServiceActivator}s
+     * @param activators the set of {@link ModuleActivator}s
      */
-    public void registerBinderProcessors(HierarchicalBinderProcessorRegistry registry, Introspector introspector, Set<ServiceActivator> activators) {
+    public void registerBinderProcessors(HierarchicalBinderProcessorRegistry registry, Introspector introspector, Set<ModuleActivator> activators) {
         Set<Class<? extends HierarchicalBinderPostProcessor>> binderPostProcessorTypes = this.resolveBinderPostProcessorTypes(activators);
 
         if (this.buildContext.logger().isDebugEnabled()) {
@@ -115,29 +115,29 @@ public class ComponentProcessorRegistrar {
     }
 
     protected Set<Class<? extends HierarchicalBinderPostProcessor>> resolveBinderPostProcessorTypes(
-            Set<ServiceActivator> serviceActivatorAnnotations) {
-        return this.resolveProcessorTypes(serviceActivatorAnnotations, HierarchicalBinderPostProcessor.class, ServiceActivator::binderPostProcessors);
+            Set<ModuleActivator> moduleActivatorAnnotations) {
+        return this.resolveProcessorTypes(moduleActivatorAnnotations, HierarchicalBinderPostProcessor.class, ModuleActivator::binderPostProcessors);
     }
 
     protected Set<Class<? extends ComponentPreProcessor>> resolveComponentPreProcessorTypes(
-            Set<ServiceActivator> serviceActivatorAnnotations) {
-        return this.resolveProcessorTypes(serviceActivatorAnnotations, ComponentPreProcessor.class, ServiceActivator::componentPreProcessors);
+            Set<ModuleActivator> moduleActivatorAnnotations) {
+        return this.resolveProcessorTypes(moduleActivatorAnnotations, ComponentPreProcessor.class, ModuleActivator::componentPreProcessors);
     }
 
     protected Set<Class<? extends ComponentPostProcessor>> resolveComponentPostProcessorTypes(
-            Set<ServiceActivator> serviceActivatorAnnotations) {
-        return this.resolveProcessorTypes(serviceActivatorAnnotations, ComponentPostProcessor.class, ServiceActivator::componentPostProcessors);
+            Set<ModuleActivator> moduleActivatorAnnotations) {
+        return this.resolveProcessorTypes(moduleActivatorAnnotations, ComponentPostProcessor.class, ModuleActivator::componentPostProcessors);
     }
 
-    private <T> Set<Class<? extends T>> resolveProcessorTypes(Set<ServiceActivator> serviceActivators, Class<T> processorType, Function<ServiceActivator, Class<? extends T>[]> lookup) {
+    private <T> Set<Class<? extends T>> resolveProcessorTypes(Set<ModuleActivator> moduleActivators, Class<T> processorType, Function<ModuleActivator, Class<? extends T>[]> lookup) {
         Set<Class<? extends T>> processorsFromActivator = CollectionUtilities
-                .flatMapArray(serviceActivators, lookup)
+                .flatMapArray(moduleActivators, lookup)
                 .collect(Collectors.toSet());
 
         // Compatibility with old activator attribute, to be removed in 0.7.0
         @Deprecated(since = "0.7.0", forRemoval = true)
         Set<Class<? extends ComponentProcessor>> processorsFromOldActivatorAttribute = CollectionUtilities
-                .flatMapArray(serviceActivators, ServiceActivator::processors)
+                .flatMapArray(moduleActivators, ModuleActivator::processors)
                 .collect(Collectors.toSet());
         Set<Class<? extends T>> deprecatedNotationProcessors = this.extractProcessors(processorsFromOldActivatorAttribute, processorType);
 

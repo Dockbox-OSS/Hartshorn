@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ public class ApplicationReportingConfiguration {
     private boolean includeVersion = true;
     private boolean includeJarLocation = true;
     private boolean includeEnvironmentVariables = true;
-    private boolean includeServiceActivators = true;
+    private boolean includeModuleActivators = true;
     private boolean includeObservers = true;
     private boolean includeContexts = true;
 
@@ -97,23 +97,23 @@ public class ApplicationReportingConfiguration {
     }
 
     /**
-     * Returns {@code true} if the service activators should be included in the diagnostics report.
+     * Returns {@code true} if the module activators should be included in the diagnostics report.
      *
-     * @return {@code true} if the service activators should be included in the diagnostics report.
+     * @return {@code true} if the module activators should be included in the diagnostics report.
      */
-    public boolean includeServiceActivators() {
-        return this.includeServiceActivators;
+    public boolean includeModuleActivators() {
+        return this.includeModuleActivators;
     }
 
     /**
-     * Configures if the service activators should be included in the diagnostics report.
+     * Configures if the module activators should be included in the diagnostics report.
      *
-     * @param includeServiceActivators {@code true} if the service activators should be included in the diagnostics report.
+     * @param includeModuleActivators {@code true} if the module activators should be included in the diagnostics report.
      *
      * @return this, for chaining.
      */
-    public ApplicationReportingConfiguration includeServiceActivators(boolean includeServiceActivators) {
-        this.includeServiceActivators = includeServiceActivators;
+    public ApplicationReportingConfiguration includeModuleActivators(boolean includeModuleActivators) {
+        this.includeModuleActivators = includeModuleActivators;
         return this;
     }
 

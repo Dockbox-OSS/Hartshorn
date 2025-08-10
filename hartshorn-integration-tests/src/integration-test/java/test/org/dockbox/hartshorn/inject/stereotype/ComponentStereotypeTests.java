@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@ public class ComponentStereotypeTests {
     private ApplicationContext applicationContext;
 
     @Test
-    @TestComponents(components = EmptyService.class)
+    @TestComponents(components = EmptyComponent.class)
     void servicesAreSingletonsByDefault() {
-        EmptyService emptyService = this.applicationContext.get(EmptyService.class);
-        EmptyService emptyService2 = this.applicationContext.get(EmptyService.class);
-        Assertions.assertSame(emptyService, emptyService2);
+        EmptyComponent emptyComponent = this.applicationContext.get(EmptyComponent.class);
+        EmptyComponent emptyComponent2 = this.applicationContext.get(EmptyComponent.class);
+        Assertions.assertSame(emptyComponent, emptyComponent2);
     }
 
     @Test

@@ -151,16 +151,16 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
         }
     }
 
-    private void processStandaloneComponent(ComponentContainer<?> container, ComponentPreProcessor serviceProcessor) {
-        TypeView<?> service = container.type();
-        ComponentKey<?> key = ComponentKey.of(service.type());
-        LOG.debug("Processing component %s with registered processor %s".formatted(container.id(), serviceProcessor.getClass().getSimpleName()));
+    private void processStandaloneComponent(ComponentContainer<?> container, ComponentPreProcessor componentPreProcessor) {
+        TypeView<?> componentType = container.type();
+        ComponentKey<?> key = ComponentKey.of(componentType.type());
+        LOG.debug("Processing component %s with registered processor %s".formatted(container.id(), componentPreProcessor.getClass().getSimpleName()));
         ComponentProcessingContext<?> context = new ComponentProcessingContext<>(
                 this, ComponentRequestContext.createForComponent(),
                 key, ComponentObjectContainer.empty(), container.permitsProxying()
         );
         context.put(ComponentContainer.class, container);
-        serviceProcessor.process(context);
+        componentPreProcessor.process(context);
     }
 
     /**

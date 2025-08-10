@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,34 +32,34 @@ import java.lang.reflect.Method;
 public class ApplicationContextCarrierDelegationTests {
 
     @Test
-    @TestComponents(components = ContextCarrierService.class)
-    void testContextCarrierDelegation(@Inject ContextCarrierService service) throws NoSuchMethodException {
-        this.testDelegateAbsent(service);
-        Assertions.assertNotNull(service.applicationContext());
+    @TestComponents(components = ContextCarrierComponent.class)
+    void testContextCarrierDelegation(@Inject ContextCarrierComponent component) throws NoSuchMethodException {
+        this.testDelegateAbsent(component);
+        Assertions.assertNotNull(component.applicationContext());
     }
 
     @Test
-    @TestComponents(components = IDefaultContextCarrierService.class)
-    void testDefaultCarrierDelegation(@Inject IDefaultContextCarrierService service) throws NoSuchMethodException {
-        this.testDelegateAbsent(service);
-        // Default method, should return null (see IDefaultContextCarrierService)
-        Assertions.assertNull(service.applicationContext());
+    @TestComponents(components = OverrideContextCarrierComponentInterface.class)
+    void testDefaultCarrierDelegation(@Inject OverrideContextCarrierComponentInterface component) throws NoSuchMethodException {
+        this.testDelegateAbsent(component);
+        // Default method, should return null (see OverrideContextCarrierComponentInterface)
+        Assertions.assertNull(component.applicationContext());
     }
 
     @Test
-    @TestComponents(components = IContextCarrierService.class)
-    void testCarrierDelegation(@Inject IContextCarrierService service, @Inject ApplicationContext applicationContext) throws NoSuchMethodException {
-        Assertions.assertTrue(service instanceof Proxy<?>);
+    @TestComponents(components = ContextCarrierComponentInterface.class)
+    void testCarrierDelegation(@Inject ContextCarrierComponentInterface component, @Inject ApplicationContext applicationContext) throws NoSuchMethodException {
+        Assertions.assertTrue(component instanceof Proxy<?>);
         Method method = ApplicationContextCarrier.class.getMethod("applicationContext");
-        Option<?> methodDelegate = ((Proxy<?>) service).manager()
+        Option<?> methodDelegate = ((Proxy<?>) component).manager()
                 .advisor()
                 .resolver()
                 .method(method)
                 .delegate();
         Assertions.assertTrue(methodDelegate.present());
 
-        Assertions.assertNotNull(service.applicationContext());
-        Assertions.assertSame(service.applicationContext(), applicationContext);
+        Assertions.assertNotNull(component.applicationContext());
+        Assertions.assertSame(component.applicationContext(), applicationContext);
     }
 
     private void testDelegateAbsent(Object object) throws NoSuchMethodException {

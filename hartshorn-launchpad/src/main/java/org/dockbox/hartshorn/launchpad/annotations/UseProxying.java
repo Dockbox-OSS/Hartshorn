@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.launchpad.annotations;
 
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.hartshorn.launchpad.processing.ContextCarrierDelegationPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ContextMethodPostProcessor;
 import org.dockbox.hartshorn.inject.annotations.Component;
@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to indicate that {@link Provided} methods can be proxied when {@link Component#permitProxying()}
- * is {@code true} for any given component. This acts as a service activator, and is loaded as a default in
+ * is {@code true} for any given component. This acts as a module activator, and is loaded as a default in
  * {@link StandardApplicationBuilder}.
  *
  * @author Guus Lieben
@@ -38,7 +38,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ServiceActivator(componentPostProcessors = {
+@ModuleActivator(componentPostProcessors = {
         ContextCarrierDelegationPostProcessor.class,
         ContextMethodPostProcessor.class,
 })

@@ -4,13 +4,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.processing.proxy.PhasedProxyCallbackPostProcessor;
+import org.dockbox.hartshorn.inject.processing.proxy.ProxyCallbackPostProcessor;
 import org.dockbox.hartshorn.proxy.advice.wrap.ProxyCallback;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoggableProxyPostProcessor extends PhasedProxyCallbackPostProcessor {
+public class LoggableCallbackPostProcessor extends ProxyCallbackPostProcessor {
 
     @Override
     public <T> boolean preconditions(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext) {

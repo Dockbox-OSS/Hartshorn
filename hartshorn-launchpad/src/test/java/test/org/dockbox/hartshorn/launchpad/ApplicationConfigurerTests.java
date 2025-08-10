@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.launchpad.DelegatingApplicationContext;
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
 import org.dockbox.hartshorn.launchpad.HartshornApplicationConfigurer;
 import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.hartshorn.launchpad.banner.HartshornLogoBanner;
 import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
@@ -81,8 +81,8 @@ public class ApplicationConfigurerTests {
     }
 
     @Test
-    @DisplayName("Customizer should be able to modify service activators")
-    void testServiceActivatorsCustomizer() {
+    @DisplayName("Customizer should be able to modify module activators")
+    void testModuleActivatorsCustomizer() {
         ApplicationContext applicationContext = createApplication(configuration -> {
             configuration.activators(activators -> {
                 activators.add(TypeUtils.annotation(UseSampleActivator.class));
@@ -278,7 +278,7 @@ public class ApplicationConfigurerTests {
         assertEquals("test", value);
     }
 
-    @ServiceActivator
+    @ModuleActivator
     private @interface UseSampleActivator {
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ import org.dockbox.hartshorn.inject.condition.Condition;
 import org.dockbox.hartshorn.inject.condition.ConditionContext;
 import org.dockbox.hartshorn.inject.condition.ConditionResult;
 import org.dockbox.hartshorn.launchpad.ConfigurableActivationInjectionCapableApplication;
-import org.dockbox.hartshorn.launchpad.activation.ActivatorHolder;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivatorHolder;
 
 /**
  * A condition that matches when an activator is present.
  *
  * @see RequiresActivator
- * @see ActivatorHolder#hasActivator(Class)
+ * @see ModuleActivatorHolder#hasActivator(Class)
  *
  * @since 0.4.12
  *

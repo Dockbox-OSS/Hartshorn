@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.inject.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.proxy.ProxyManager;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Annotation to indicate a component is a functional component, better known as a service. A service is a component
@@ -36,10 +36,13 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
  *
  * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @deprecated Services are deprecated in favor of using {@link Component} directly.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Extends(Component.class)
+@Deprecated(since = "0.7.0", forRemoval = true)
 public @interface Service {
 
     /**

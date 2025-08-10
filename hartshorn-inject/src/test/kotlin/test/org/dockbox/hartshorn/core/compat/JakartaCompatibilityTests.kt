@@ -46,11 +46,11 @@ class JakartaCompatibilityTests {
     val context = this.createApplicationContext(withJakarta = true)
     context.defaultBinder().bind<String>().singleton("Hello, World!")
 
-    val service = context.defaultProvider().get(FieldJakartaService::class.java)
-    assertNotNull(service)
+    val component = context.defaultProvider().get(FieldJakartaComponent::class.java)
+    assertNotNull(component)
 
-    assertEquals("Hello, World!", service.messageAsInject)
-    assertEquals("Hello, World!", service.messageAsResource)
+    assertEquals("Hello, World!", component.messageAsInject)
+    assertEquals("Hello, World!", component.messageAsResource)
   }
 
   @Test
@@ -59,11 +59,11 @@ class JakartaCompatibilityTests {
     val context = this.createApplicationContext(withJakarta = false)
     context.defaultBinder().bind<String>().singleton("Hello, World!")
 
-    val service = context.defaultProvider().get(FieldJakartaService::class.java)
-    assertNotNull(service)
+    val component = context.defaultProvider().get(FieldJakartaComponent::class.java)
+    assertNotNull(component)
 
-    assertNull(service.messageAsInject)
-    assertNull(service.messageAsResource)
+    assertNull(component.messageAsInject)
+    assertNull(component.messageAsResource)
   }
 
   @Test
@@ -72,10 +72,10 @@ class JakartaCompatibilityTests {
     val context = this.createApplicationContext(withJakarta = true)
     context.defaultBinder().bind<String>().singleton("Hello, World!")
 
-    val service = context.defaultProvider().get(InjectConstructorJakartaService::class.java)
-    assertNotNull(service)
+    val component = context.defaultProvider().get(InjectConstructorJakartaComponent::class.java)
+    assertNotNull(component)
 
-    assertEquals("Hello, World!", service.messageAsInject)
+    assertEquals("Hello, World!", component.messageAsInject)
   }
 
   @Test
@@ -85,7 +85,7 @@ class JakartaCompatibilityTests {
     context.defaultBinder().bind<String>().singleton("Hello, World!")
 
     val initializationException = assertThrows<ComponentInitializationException> {
-      context.defaultProvider().get(InjectConstructorJakartaService::class.java)
+      context.defaultProvider().get(InjectConstructorJakartaComponent::class.java)
     }
     val rootCause = TypeUtils.getRootCause(initializationException)
     assertInstanceOf(MissingInjectConstructorException::class.java, rootCause)
@@ -97,11 +97,11 @@ class JakartaCompatibilityTests {
     val context = this.createApplicationContext(withJakarta = true)
     context.defaultBinder().bind<String>().singleton("Hello, World!")
 
-    val service = context.defaultProvider().get(MethodJakartaService::class.java)
-    assertNotNull(service)
+    val component = context.defaultProvider().get(MethodJakartaComponent::class.java)
+    assertNotNull(component)
 
-    assertEquals("Hello, World!", service.messageAsInject)
-    assertEquals("Hello, World!", service.messageAsResource)
+    assertEquals("Hello, World!", component.messageAsInject)
+    assertEquals("Hello, World!", component.messageAsResource)
   }
 
   @Test
@@ -110,14 +110,14 @@ class JakartaCompatibilityTests {
     val context = this.createApplicationContext(withJakarta = false)
     context.defaultBinder().bind<String>().singleton("Hello, World!")
 
-    val service = context.defaultProvider().get(MethodJakartaService::class.java)
-    assertNotNull(service)
+    val component = context.defaultProvider().get(MethodJakartaComponent::class.java)
+    assertNotNull(component)
 
-    assertNull(service.messageAsInject)
-    assertNull(service.messageAsResource)
+    assertNull(component.messageAsInject)
+    assertNull(component.messageAsResource)
   }
 
-  class FieldJakartaService {
+  class FieldJakartaComponent {
 
     @jakarta.inject.Inject
     internal var messageAsInject: String? = null
@@ -126,7 +126,7 @@ class JakartaCompatibilityTests {
     internal var messageAsResource: String? = null
   }
 
-  class InjectConstructorJakartaService {
+  class InjectConstructorJakartaComponent {
     val messageAsInject: String
 
     @jakarta.inject.Inject
@@ -140,7 +140,7 @@ class JakartaCompatibilityTests {
     }
   }
 
-  class MethodJakartaService {
+  class MethodJakartaComponent {
 
     internal var messageAsInject: String? = null
     internal var messageAsResource: String? = null

@@ -4,12 +4,12 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.sample.processing.bindings.CustomBindingPostProcessor;
 import org.dockbox.sample.processing.components.CustomComponentPostProcessor;
 import org.dockbox.sample.processing.components.CustomComponentPreProcessor;
 
-@ServiceActivator(
+@ModuleActivator(
     binderPostProcessors = CustomBindingPostProcessor.class,
     componentPostProcessors = CustomComponentPostProcessor.class,
     componentPreProcessors = CustomComponentPreProcessor.class

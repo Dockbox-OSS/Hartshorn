@@ -1,5 +1,6 @@
 package org.dockbox.sample.java;
 
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
 import org.dockbox.hartshorn.reporting.UseReporting;
 
@@ -7,6 +8,13 @@ import org.dockbox.hartshorn.reporting.UseReporting;
 public class ReportingLaunchpadDemo {
 
     public static void main(String[] args) {
-        HartshornApplication.create(args);
+        ApplicationContext applicationContext = HartshornApplication.create(args);
+        applicationContext.bind(String.class)
+                .priority(100)
+                .singleton("Hello 100");
+        applicationContext.bind(String.class)
+                .priority(50)
+                .singleton("Hello 50");
+        System.out.println();
     }
 }
