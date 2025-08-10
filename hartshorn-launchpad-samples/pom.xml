@@ -6,7 +6,7 @@
     <name>Hartshorn Sample Projects</name>
     <groupId>org.dockbox.hartshorn</groupId>
     <artifactId>hartshorn-launchpad-samples</artifactId>
-    <version>${revision}</version>
+    <version>0.7.0</version>
     <packaging>pom</packaging>
 
     <modules>
