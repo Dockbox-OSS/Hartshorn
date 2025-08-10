@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util.stream;
 
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -163,7 +164,38 @@ public final class CollectorUtilities {
                     return left;
                 },
                 EntryStream::of,
-                EnumSet.of(Characteristics.IDENTITY_FINISH)
+                EnumSet.of(Characteristics.UNORDERED)
+        );
+    }
+
+    /**
+     * A collector that collects a single element into an {@link Option}. If multiple elements are encountered, an
+     * {@link IllegalStateException} is thrown.
+     *
+     * @param <T> the type of the stream
+     *
+     * @return a collector that collects a single element into an {@link Option}
+     */
+    public static <T> Collector<T, ?, Option<T>> toOption() {
+        class IntermediateHolder {
+            Option<T> value = Option.empty();
+        }
+        return Collector.of(
+                IntermediateHolder::new,
+                (holder, item) -> {
+                    if (holder.value.present()) {
+                        throw new IllegalStateException("Multiple elements encountered when only one was expected");
+                    }
+                    holder.value = Option.of(item);
+                },
+                (current, next) -> {
+                    if (current.value.present() && next.value.present()) {
+                        throw new IllegalStateException("Multiple elements encountered when only one was expected");
+                    }
+                    return current.value.present() ? current : next;
+                },
+                holder -> holder.value,
+                Collector.Characteristics.UNORDERED
         );
     }
 

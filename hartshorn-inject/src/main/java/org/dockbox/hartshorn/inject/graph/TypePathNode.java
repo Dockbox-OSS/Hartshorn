@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,6 @@ public record TypePathNode<T>(TypeView<T> type, ComponentKey<T> componentKey, Vi
      * @return the qualified name of the type view
      */
     public String qualifiedName() {
-        return this.componentKey.qualifiedName(true);
+        return this.componentKey.qualifiedName();
     }
 }

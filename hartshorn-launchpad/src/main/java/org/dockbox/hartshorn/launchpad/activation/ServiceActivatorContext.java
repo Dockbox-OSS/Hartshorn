@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,17 @@
 
 package org.dockbox.hartshorn.launchpad.activation;
 
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.launch.ApplicationContextFactory;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+
 import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.dockbox.hartshorn.launchpad.launch.ApplicationContextFactory;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.Reportable;
 
 /**
  * Carrier context for {@link ServiceActivator} annotations. This context is used to store all
@@ -114,5 +115,12 @@ public class ServiceActivatorContext extends DefaultFallbackCompatibleContext im
                 .map(activator -> activator.annotationType().getCanonicalName())
                 .toArray(String[]::new);
         collector.property("activators").writeStrings(activators);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("activators", this.activators)
+                .describe();
     }
 }

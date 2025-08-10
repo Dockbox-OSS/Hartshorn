@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@
 
 package org.dockbox.hartshorn.launchpad.configuration;
 
+import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.InfrastructurePriority;
+import org.dockbox.hartshorn.inject.annotations.Required;
 import org.dockbox.hartshorn.inject.annotations.Strict;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
@@ -28,11 +30,15 @@ import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.condition.support.RequiresAbsentBinding;
 import org.dockbox.hartshorn.inject.condition.support.RequiresProperty;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationStarter;
 import org.dockbox.hartshorn.launchpad.annotations.LoggerMeta;
 import org.dockbox.hartshorn.launchpad.annotations.UseLaunchpad;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
+import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.properties.convert.ValuePropertyToObjectConverterFactory;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
@@ -61,7 +67,7 @@ public class LaunchpadSharedComponentConfiguration {
     @Prototype
     @InfrastructurePriority
     @RequiresProperty(name = "hartshorn.logging.naming.use-container-names", withValue = "true")
-    public Logger logger(InjectionPoint injectionPoint, ComponentRegistry componentRegistry, InjectionPointDeclarationResolver declarationResolver) {
+    public Logger logger(@Required(false) InjectionPoint injectionPoint, ComponentRegistry componentRegistry, InjectionPointDeclarationResolver declarationResolver) {
         return logger(injectionPoint, () -> {
             Class<?> declaringType = declarationResolver.resolve(injectionPoint).type();
             return componentRegistry.container(declaringType)
@@ -74,7 +80,7 @@ public class LaunchpadSharedComponentConfiguration {
     @Prototype
     @InfrastructurePriority
     @RequiresAbsentBinding(Logger.class)
-    public Logger logger(InjectionPoint injectionPoint, InjectionPointDeclarationResolver declarationResolver) {
+    public Logger logger(@Required(false) InjectionPoint injectionPoint, InjectionPointDeclarationResolver declarationResolver) {
         return logger(injectionPoint, () -> {
             Class<?> declaringType = declarationResolver.resolve(injectionPoint).type();
             return LoggerFactory.getLogger(declaringType);
@@ -82,6 +88,9 @@ public class LaunchpadSharedComponentConfiguration {
     }
 
     protected Logger logger(InjectionPoint injectionPoint, Supplier<Logger> defaultValue) {
+        if (injectionPoint == null) {
+            return defaultValue.get();
+        }
         return injectionPoint.injectionPoint().annotations()
                 .get(LoggerMeta.class)
                 .map(LoggerMeta::name)
@@ -122,6 +131,33 @@ public class LaunchpadSharedComponentConfiguration {
         return (conversionService, converterRegistry) -> {
             // From Hartshorn Properties
             converterRegistry.addConverterFactory(ValueProperty.class, new ValuePropertyToObjectConverterFactory(conversionService));
+        };
+    }
+
+    @Singleton
+    @CompositeMember
+    public LifecycleObserver applicationStarterLifecycleObserver() {
+        return new LifecycleObserver() {
+            @Override
+            public void onStarted(ApplicationContext applicationContext) {
+                // Late lookup for ApplicationStarter, to allow for maximum flexibility early in the
+                // application lifecycle.
+                ComponentKey<ApplicationStarter> componentKey = ComponentKey.builder(ApplicationStarter.class)
+                        .strict(false)
+                        .optional()
+                        .build();
+                ApplicationStarter applicationStarter = applicationContext.get(componentKey);
+                // OK to do nothing if no ApplicationStarter is present, as this is optional. Other observers may still
+                // be present, and will be invoked.
+                if (applicationStarter != null) {
+                    try {
+                        applicationStarter.run(applicationContext);
+                    }
+                    catch (ApplicationException e) {
+                        applicationContext.handle(e);
+                    }
+                }
+            }
         };
     }
 }

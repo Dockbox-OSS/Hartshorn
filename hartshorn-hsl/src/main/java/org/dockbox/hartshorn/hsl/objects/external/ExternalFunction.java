@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
-import java.util.List;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
@@ -28,9 +26,12 @@ import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
 
 /**
  * Represents one or more Java methods that can be called from an HSL runtime. The methods
@@ -134,7 +135,11 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
 
     @Override
     public String toString() {
-        return this.type.qualifiedName() + "#" + this.methodName;
+        return ObjectDescriber.of(this)
+                .field("type", this.type.qualifiedName())
+                .field("methodName", this.methodName)
+                .field("instance", this.instance)
+                .describe();
     }
 
     @Override

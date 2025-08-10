@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,9 +84,8 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      *
      * @param application the application in which the component is processed
      * @param instance the component instance
-     * @param <T> the type of the component
-     *
      * @param processingContext the processing context
+     * @param <T> the type of the component
      */
     public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ApplicationException {
         // Do nothing by default

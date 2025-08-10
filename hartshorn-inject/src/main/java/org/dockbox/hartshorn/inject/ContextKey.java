@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@
 
 package org.dockbox.hartshorn.inject;
 
-import java.util.Objects;
-import java.util.function.Supplier;
-
 import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.StringUtilities;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * A {@link ContextKey} is a key which can be used to retrieve a context value from a {@link ContextView
@@ -152,8 +153,11 @@ public final class ContextKey<T extends ContextView> implements ContextIdentity<
 
     @Override
     public String toString() {
-        String nameSuffix = StringUtilities.empty(this.name) ? "" : ":" + this.name;
-        return "ContextKey<%s%s>".formatted(this.type.getSimpleName(), nameSuffix);
+        return ObjectDescriber.of(this)
+                .field("type", this.type.getSimpleName())
+                .field("name", this.name)
+                .field("supportsFallback", this.fallback != null)
+                .describe();
     }
 
     @Override

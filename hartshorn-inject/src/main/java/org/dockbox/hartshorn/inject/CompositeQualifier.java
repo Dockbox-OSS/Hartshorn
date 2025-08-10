@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.inject;
 
+import org.dockbox.hartshorn.inject.annotations.Named;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
-import org.dockbox.hartshorn.inject.annotations.Named;
-import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.StringUtilities;
 
 /**
  * A {@link CompositeQualifier} is a collection of {@link QualifierKey}s. It is used to qualify a {@link ComponentKey}
@@ -124,15 +124,13 @@ public class CompositeQualifier implements Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        String[] qualifierNames = this.qualifiers.keySet().stream()
-                .map(Class::getSimpleName)
-                .toArray(String[]::new);
-        collector.property("qualifiers").writeStrings(qualifierNames);
+        collector.property("qualifiers").writeDelegates(this.qualifiers.values().toArray(Reportable[]::new));
     }
 
     @Override
     public String toString() {
-        String qualifierString = StringUtilities.join(", ", this.qualifiers.values(), QualifierKey::toString);
-        return "%s".formatted(qualifierString);
+        return ObjectDescriber.of(this)
+                .field("qualifiers", this.qualifiers.values())
+                .describe();
     }
 }

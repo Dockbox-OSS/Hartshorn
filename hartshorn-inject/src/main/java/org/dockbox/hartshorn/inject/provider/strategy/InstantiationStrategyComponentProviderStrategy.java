@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * found, or no suitable {@link InstantiationStrategy} is found, the chain is continued.
  *
  * <p>The {@link InstantiationStrategy} is selected from the {@link BindingHierarchy} using the {@link ProviderSelectionStrategy}
- * defined in the {@link ComponentKey#strategy() component key's selection strategy}.
+ * defined in the {@link ComponentKey#selectionStrategy() component key's selection strategy}.
  *
  * @see InstantiationStrategy
  * @see BindingHierarchy
@@ -67,7 +67,7 @@ public class InstantiationStrategyComponentProviderStrategy implements Component
 
     private <T> @Nullable ObjectContainer<T> createFromHierarchy(ComponentKey<T> componentKey, ComponentRequestContext requestContext,
             ComponentProviderStrategyChain<T> chain, BindingHierarchy<T> hierarchy) throws ApplicationException {
-        InstantiationStrategy<T> strategy = componentKey.strategy().selectProvider(hierarchy);
+        InstantiationStrategy<T> strategy = componentKey.selectionStrategy().selectProvider(hierarchy);
         if (strategy != null) {
             return this.createFromInstantiationStrategy(requestContext, chain, strategy);
         }

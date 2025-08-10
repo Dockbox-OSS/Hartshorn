@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package org.dockbox.hartshorn.launchpad.processing;
 
-import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
-import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 import org.dockbox.hartshorn.inject.processing.proxy.ProxyDelegationPostProcessor;
+import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 
 /**
  * TODO: #1060 Add documentation
@@ -37,10 +36,5 @@ public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostPr
     @Override
     protected boolean skipConcreteMethods() {
         return true;
-    }
-
-    @Override
-    public int priority() {
-        return ProcessingPriority.NORMAL_PRECEDENCE;
     }
 }

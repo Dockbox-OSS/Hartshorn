@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import java.lang.reflect.AnnotatedElement;
-
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.reflect.AnnotatedElement;
 
 /**
  * TODO: #1059 Add documentation
@@ -94,9 +94,15 @@ public class ReflectionPackageView extends ReflectionAnnotatedElementView implem
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         collector.property("name").writeString(this.name());
-        collector.property("specificationTitle").writeString(this.specificationTitle());
-        collector.property("specificationVendor").writeString(this.specificationVendor());
-        collector.property("specificationVersion").writeString(this.specificationVersion());
+        writeIfNotEmpty(collector, "SpecificationTitle", this.specificationTitle());
+        writeIfNotEmpty(collector, "SpecificationVendor", this.specificationVendor());
+        writeIfNotEmpty(collector, "SpecificationVersion", this.specificationVersion());
+    }
+
+    private void writeIfNotEmpty(DiagnosticsPropertyCollector collector, String propertyName, String value) {
+        if (value != null && !value.isEmpty()) {
+            collector.property(propertyName).writeString(value);
+        }
     }
 
     @Override

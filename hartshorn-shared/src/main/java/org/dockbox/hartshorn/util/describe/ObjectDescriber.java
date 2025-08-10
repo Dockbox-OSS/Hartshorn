@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,15 @@
 
 package org.dockbox.hartshorn.util.describe;
 
+import org.dockbox.hartshorn.util.collections.MultiMap;
+
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SequencedMap;
+import java.util.stream.StreamSupport;
 
 /**
  * A utility class to describe objects in a pre-defined style. This class is useful for
@@ -84,25 +90,104 @@ public final class ObjectDescriber<T> {
 
     /**
      * Describes the object using the style and fields that have been added to this {@link
-     * ObjectDescriber}.
+     * ObjectDescriber}. Always includes the type name of objects in their descriptions (if
+     * applicable).
      *
      * @return the description of the object
      */
     public String describe() {
+        return this.describe(true);
+    }
+
+    /**
+     * Describes the object using the style and fields that have been added to this {@link
+     * ObjectDescriber}.
+     *
+     * @param includeTypeName whether the type of the described object should be included in
+     * the description
+     *
+     * @return the description of the object
+     */
+    public String describe(boolean includeTypeName) {
         StringBuilder builder = new StringBuilder();
-        this.style.describeStart(builder, this.object);
+        this.style.describeObjectStart(builder, this.object, includeTypeName);
 
         List<String> fieldNames = List.copyOf(fields.sequencedKeySet());
         for(int i = 0; i < fieldNames.size(); i++) {
             String fieldName = fieldNames.get(i);
-            this.style.describeField(builder, this.object, fieldName, this.fields.get(fieldName));
+            Object fieldValue = this.fields.get(fieldName);
+            this.style.describeField(builder, this.object, fieldName, describeValue(fieldValue, includeTypeName));
 
             if(i < fieldNames.size() - 1) {
                 this.style.describeFieldSeparator(builder, this.object);
             }
         }
 
-        this.style.describeEnd(builder, this.object);
+        this.style.describeObjectEnd(builder, this.object);
         return builder.toString();
+    }
+
+    private String describeArrayLikeValue(Collection<?> elements, boolean includeTypeName) {
+        StringBuilder builder = new StringBuilder();
+        this.style.describeArrayStart(builder, elements, elements.size(), includeTypeName);
+        int i = 0;
+        for (Object element : elements) {
+            String value = describeValue(element, includeTypeName);
+            this.style.describeArrayElement(builder, elements, i, value);
+            if (i < elements.size() - 1) {
+                this.style.describeArrayElementSeparator(builder, elements, i);
+            }
+            i++;
+        }
+        this.style.describeArrayEnd(builder, elements);
+        return builder.toString();
+    }
+
+    private String describeMapLikeValue(Map<?, ?> map, boolean includeTypeName) {
+        ObjectDescriber<Map<?, ?>> describer = ObjectDescriber.of(map, style);
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            String key = describeValue(entry.getKey(), includeTypeName);
+            String value = describeValue(entry.getValue(), includeTypeName);
+            describer.field(key, value);
+        }
+        return describer.describe(includeTypeName);
+    }
+
+    private String describeMultiMapLikeValue(MultiMap<?, ?> multiMap, boolean includeTypeName) {
+        ObjectDescriber<MultiMap<?, ?>> describer = ObjectDescriber.of(multiMap, style);
+        for (Map.Entry<?, ? extends Collection<?>> entry : multiMap.entrySet()) {
+            String key = describeValue(entry.getKey(), includeTypeName);
+            String value = describeArrayLikeValue(entry.getValue(), includeTypeName);
+            describer.field(key, value);
+        }
+        return describer.describe(includeTypeName);
+    }
+
+    private String describeValue(Object value, boolean includeTypeName) {
+        return switch (value) {
+            case null -> "null";
+            // DescribeAsObject is a marker interface for objects that should be described using their own
+            // toString() method, rather than a custom case below. E.g. BindingHierarchy is an Iterable,
+            // but should be described using its own toString() method.
+            case DescribeAsObject describeAsObject -> String.valueOf(describeAsObject);
+            case Iterable<?> iterable -> {
+                List<?> elements = StreamSupport.stream(iterable.spliterator(), false).toList();
+                yield this.describeArrayLikeValue(elements, includeTypeName);
+            }
+            case Map<?, ?> map -> this.describeMapLikeValue(map, includeTypeName);
+            // MultiMap does not extend Map, so we need to handle it separately
+            case MultiMap<?, ?> multiMap -> this.describeMultiMapLikeValue(multiMap, includeTypeName);
+            // Class can have an 'interface' or 'class' prefix, which isn't useful here
+            case Class<?> clazz -> clazz.getName();
+            default -> {
+                if (value.getClass().isArray()) {
+                    List<Object> elements = Arrays.stream((Object[]) value).toList();
+                    yield this.describeArrayLikeValue(elements, includeTypeName);
+                } else {
+                    // For other objects (including primitives), we simply convert them to a string
+                    yield String.valueOf(value);
+                }
+            }
+        };
     }
 }

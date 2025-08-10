@@ -113,6 +113,11 @@
             </dependency>
             <dependency>
                 <groupId>org.dockbox.hartshorn</groupId>
+                <artifactId>hartshorn-launchpad-kt-extensions</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dockbox.hartshorn</groupId>
                 <artifactId>hartshorn-reporting</artifactId>
                 <version>${revision}</version>
             </dependency>

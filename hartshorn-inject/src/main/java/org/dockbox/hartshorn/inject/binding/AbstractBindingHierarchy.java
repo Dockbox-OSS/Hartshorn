@@ -18,16 +18,13 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.CompositeQualifier;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
-import org.dockbox.hartshorn.inject.provider.TypeAwareInstantiationStrategy;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
-import org.dockbox.hartshorn.util.stream.EntryStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -35,7 +32,6 @@ import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 /**
  * A base implementation of a {@link BindingHierarchy}. This implementation tracks providers by priority, and allows
@@ -151,35 +147,10 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
 
     @Override
     public String toString() {
-        String contract = this.contractTypeToString();
-        CompositeQualifier qualifier = this.key().qualifier();
-        String qualifiers = "";
-        if (qualifier != null && !qualifier.qualifiers().isEmpty()) {
-            qualifiers = " " + qualifier;
-        }
-
-        // TODO: Verify order is still correct after changes (display low-to-high)
-        String hierarchy = EntryStream.of(this.priorityProviders())
-                .sortedKeys(Comparator.reverseOrder())
-                .map((priority, strategy) -> {
-                    String target = strategy.toString();
-                    if (strategy instanceof TypeAwareInstantiationStrategy<?> typeAwareProvider) {
-                        target = typeAwareProvider.type().getSimpleName();
-                    }
-                    return "%s: %s".formatted(String.valueOf(priority), target);
-                })
-                .collect(Collectors.joining(" -> "));
-
-        return "Hierarchy<%s>%s: %s".formatted(contract, qualifiers, hierarchy);
-    }
-
-    /**
-     * Returns a string representation of the contract type of this hierarchy.
-     *
-     * @return a string representation of the contract type of this hierarchy
-     */
-    protected String contractTypeToString() {
-        return this.key().parameterizedType().toString();
+        return ObjectDescriber.of(this)
+                .field("componentKey", this.key())
+                .field("providers", this.priorityProviders())
+                .describe();
     }
 
     @Override

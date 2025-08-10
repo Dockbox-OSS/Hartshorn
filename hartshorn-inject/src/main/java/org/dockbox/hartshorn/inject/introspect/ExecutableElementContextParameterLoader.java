@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.inject.introspect;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.annotations.Required;
 import org.dockbox.hartshorn.inject.populate.ComponentRequiredException;
+import org.dockbox.hartshorn.inject.targets.AnnotatedInjectionPointRequireRule;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
+import org.dockbox.hartshorn.inject.targets.RequireInjectionPointRule;
 import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
 /**
@@ -35,6 +35,7 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
  */
 public class ExecutableElementContextParameterLoader extends RuleBasedParameterLoader<ApplicationBoundParameterLoaderContext> {
 
+    private final RequireInjectionPointRule requireRule = new AnnotatedInjectionPointRequireRule();
     private final InjectionCapableApplication application;
 
     public ExecutableElementContextParameterLoader(InjectionCapableApplication application) {
@@ -48,19 +49,15 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
     protected <T> T loadDefault(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
         ComponentKey<?> componentKey = this.application.environment().componentKeyResolver().resolve(parameter);
 
-        ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(new InjectionPoint(parameter));
+        InjectionPoint injectionPoint = new InjectionPoint(parameter);
+        ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(injectionPoint);
         Object out = context.provider().get(componentKey, requestContext);
 
-        boolean required = isRequired(parameter);
+        boolean required = requireRule.isRequired(injectionPoint);
 
         if (required && out == null) {
             throw new ComponentRequiredException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required");
         }
         return parameter.type().cast(out);
-    }
-
-    private static boolean isRequired(AnnotatedElementView parameter) {
-        return parameter.annotations().get(Required.class)
-                .test(Required::value);
     }
 }

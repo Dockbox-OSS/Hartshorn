@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,14 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import org.dockbox.hartshorn.context.SingleElementContext;
+import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
 import org.dockbox.hartshorn.inject.InjectorConfiguration;
 import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
 import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
+import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.component.ApplicationMainComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.environment.DefaultProxyOrchestratorLoader;
@@ -75,6 +70,14 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Configurable implementation of a {@link ApplicationEnvironment}. This implementation in itself does not define set
@@ -333,6 +336,11 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
                 .map(this.applicationContext::get)
                 .map(type::cast)
                 .forEach(allObservers::add);
+
+        // In case of observers provided by bindings, we cannot safely cache them inside the environment (primarily due
+        // to prototype components), so we will look them up from the application context.
+        ComponentKey<ComponentCollection<T>> lookupKey = ComponentKey.collect(type).mutable().strict(false).build();
+        allObservers.addAll(this.applicationContext.get(lookupKey));
 
         return allObservers;
     }

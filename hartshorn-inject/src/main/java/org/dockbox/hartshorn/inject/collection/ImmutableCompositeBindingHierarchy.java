@@ -16,6 +16,15 @@
 
 package org.dockbox.hartshorn.inject.collection;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,13 +35,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A {@link BindingHierarchy} that composes multiple {@link CollectionBindingHierarchy} instances into a single hierarchy.
@@ -141,5 +143,13 @@ public class ImmutableCompositeBindingHierarchy<T> implements BindingHierarchy<C
             zippedProviders.put(priority, new ComposedCollectionInstantiationStrategy<>(Set.copyOf(collection)));
         }
         return zippedProviders.entrySet().iterator();
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("componentKey", this.componentKey)
+                .field("hierarchies", this.hierarchies)
+                .describe();
     }
 }

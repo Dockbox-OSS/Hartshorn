@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.proxy.advice.intercept;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * A simple functional interface that can be used to intercept method calls. The interceptor is called in series
@@ -66,6 +67,24 @@ public interface MethodInterceptor<T, R> {
         return context -> {
             R previous = this.intercept(context);
             return after.intercept(MethodInterceptorContext.copyWithResult(context, previous));
+        };
+    }
+
+    /**
+     * Wraps the given consumer in a {@link MethodInterceptor} that always returns null. For primitive types the
+     * result is expected to be transformed by the owning invoker.
+     *
+     * @param interceptor the consumer to wrap in a method interceptor.
+     *
+     * @param <T> the type of the proxy.
+     * @param <R> the return type of the intercepted method.
+     *
+     * @return a method interceptor wrapping the given consumer.
+     */
+    static <T, R> MethodInterceptor<T, R> withoutReturnValue(Consumer<MethodInterceptorContext<T, R>> interceptor) {
+        return context -> {
+            interceptor.accept(context);
+            return null;
         };
     }
 }

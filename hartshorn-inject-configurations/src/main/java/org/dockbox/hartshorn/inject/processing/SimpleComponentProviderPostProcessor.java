@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,9 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
-import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
@@ -28,13 +26,17 @@ import org.dockbox.hartshorn.inject.collection.ContainerAwareComponentCollection
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.provider.ComponentRegistryAwareComponentProvider;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
+import org.dockbox.hartshorn.inject.targets.AnnotatedInjectionPointRequireRule;
+import org.dockbox.hartshorn.inject.targets.RequireInjectionPointRule;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.util.Set;
 
 /**
  * TODO: #1060 Add documentation
@@ -45,6 +47,7 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class SimpleComponentProviderPostProcessor implements ComponentProviderPostProcessor {
 
+    private final RequireInjectionPointRule requireRule = new AnnotatedInjectionPointRequireRule();
     private final ComponentRegistryAwareComponentProvider owner;
     private final ComponentPostProcessor processor;
     private final InjectionCapableApplication application;
@@ -75,8 +78,8 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
                 ? this.processManagedComponent(componentKey, objectContainer, container, requestContext)
                 : this.processUnmanagedComponent(componentKey, objectContainer, type,requestContext);
 
-        if (instance == null) {
-            throw new ComponentResolutionException("No component found for key " + componentKey);
+        if (instance == null && (!requestContext.isForInjectionPoint() || this.requireRule.isRequired(requestContext.injectionPoint()))) {
+            componentKey.failureStrategy().onResolutionFailure(componentKey, requestContext);
         }
 
         return instance;
@@ -170,11 +173,17 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
         if (componentContainer != null) {
             processingContext.put(ComponentKey.of(ComponentContainer.class), componentContainer);
             if (componentContainer.permitsProxying()) {
-                StateAwareProxyFactory<T> factory = this.application.environment().proxyOrchestrator().factory(key.type());
+                boolean hasObjectInstance = objectContainer.instance() != null;
+                // Always attempt to use the most detailed proxy factory available, as this allows for
+                // more advanced proxying capabilities.
+                Class<?> proxyBaseType = hasObjectInstance
+                        ? objectContainer.instance().getClass()
+                        : key.type();
+                StateAwareProxyFactory<?> factory = this.application.environment().proxyOrchestrator().factory(proxyBaseType);
 
                 if (objectContainer.instance() != null) {
                     factory.trackState(false);
-                    factory.advisors().type().delegateAbstractOnly(objectContainer.instance());
+                    factory.advisors().type().delegateAbstractOnly(TypeUtils.unchecked(objectContainer.instance(), Object.class));
                     factory.trackState(true);
                 }
                 processingContext.put(ComponentKey.of(ProxyFactory.class), factory);

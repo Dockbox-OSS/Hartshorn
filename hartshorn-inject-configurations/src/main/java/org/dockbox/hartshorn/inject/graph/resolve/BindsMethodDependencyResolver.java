@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,18 @@
 
 package org.dockbox.hartshorn.inject.graph.resolve;
 
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.ManagedComponentEnvironment;
-import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
-import org.dockbox.hartshorn.inject.component.ComponentRegistry;
-import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
-import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
+import org.dockbox.hartshorn.inject.component.ApplicationMainComponentContainer;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.graph.AbstractContainerDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.ComponentConfigurationException;
 import org.dockbox.hartshorn.inject.graph.ConditionalDependencyContext;
@@ -52,6 +49,11 @@ import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * TODO: #1060 Add documentation
@@ -93,21 +95,26 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
     }
 
     @NonNull
-    private <T> Set<ConditionalDependencyContext<?>> resolveBindingMethods(DependencyDeclarationContext<T> componentContainer,
+    private <T> Set<ConditionalDependencyContext<?>> resolveBindingMethods(DependencyDeclarationContext<T> declarationContext,
             TypeView<T> componentType, List<? extends MethodView<T, ?>> bindsMethods) {
         // Binds methods are only processed on managed components. If the component container is not present, there is nothing to do but check that there
         // is no incorrect usage of the @Binds annotation.
-        if (this.componentRegistry.container(componentType.type()).absent()) {
+        Option<ComponentContainer<?>> container = this.componentRegistry.container(componentType.type());
+        if (container.absent()) {
             throw new IllegalStateException(
                 "Component " + componentType.type().getName() + " is not a managed component, but contains binding declarations.");
         }
         else {
             if (!componentType.annotations().has(Configuration.class)){
-                throw new IllegalStateException(
-                    "Component " + componentType.type().getName() + " is not a configuration component, but contains binding declarations.");
+                ComponentContainer<?> componentContainer = container.get();
+                // Main class is allowed to have @Binds methods, as it is an implicit configuration component.
+                if (!(componentContainer instanceof ApplicationMainComponentContainer)) {
+                    throw new IllegalStateException(
+                            "Component " + componentType.type().getName() + " is not a configuration component, but contains binding declarations.");
+                }
             }
             return bindsMethods.stream()
-                .flatMap(bindsMethod -> this.resolve(componentContainer, bindsMethod)
+                .flatMap(bindsMethod -> this.resolve(declarationContext, bindsMethod)
                     .map(context -> new ConditionalDependencyContext<>(context, dependencyContextsHolder -> this.conditionMatcher.match(bindsMethod, dependencyContextsHolder)))
                     .stream()
                 ).collect(Collectors.toSet());

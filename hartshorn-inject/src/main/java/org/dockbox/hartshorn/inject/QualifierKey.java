@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,13 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.inject.annotations.Named;
-import org.dockbox.hartshorn.util.types.TypeUtils;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
+import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriterConsumer;
+import org.dockbox.hartshorn.reporting.Reportable;
+import org.dockbox.hartshorn.reporting.ValueAdapterDiagnosticsPropertyWriterConsumer;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.stream.EntryStream;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -46,7 +51,7 @@ import java.util.stream.Collectors;
  *
  * @author Guus Lieben
  */
-public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) {
+public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) implements Reportable {
 
     /**
      * Creates a new {@link QualifierKey} instance based on the provided annotation. The type of the qualifier is
@@ -140,9 +145,20 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) {
 
     @Override
     public String toString() {
-        String metaString = EntryStream.of(this.meta)
-                .map((key, value) -> "%s=%s".formatted(key, value))
-                .collect(Collectors.joining(", "));
-        return "%s{%s}".formatted(this.type.getSimpleName(), metaString);
+        return ObjectDescriber.of(this)
+                .field("type", this.type.getSimpleName())
+                .field("meta", this.meta)
+                .describe();
+    }
+
+    @Override
+    public void report(DiagnosticsPropertyCollector collector) {
+        collector.property("type").writeString(this.type.getSimpleName());
+        collector.property("meta").writeDelegate(metaCollector -> {
+            EntryStream.of(this.meta).forEach((key, value) -> {
+                DiagnosticsPropertyWriterConsumer consumer = new ValueAdapterDiagnosticsPropertyWriterConsumer(value);
+                consumer.writeTo(metaCollector.property(key));
+            });
+        });
     }
 }

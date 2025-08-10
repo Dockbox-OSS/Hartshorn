@@ -40,8 +40,9 @@
         <module>hartshorn-reporting</module>
         <module>hartshorn-hsl</module>
         <module>hartshorn-testsuite</module>
+        <module>hartshorn-launchpad-kt-extensions</module>
         <module>hartshorn-launchpad-starter</module>
-        <module>hartshorn-launchpad-sample</module>
+        <module>hartshorn-launchpad-samples</module>
 
         <!-- Assembly modules -->
         <module>hartshorn-assembly/pom.assembly.xml</module>

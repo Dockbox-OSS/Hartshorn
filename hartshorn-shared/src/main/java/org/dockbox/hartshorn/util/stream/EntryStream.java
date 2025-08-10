@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -182,6 +182,10 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
 
     public Stream<V> values() {
         return this.map(Entry::getValue);
+    }
+
+    public void forEach(BiConsumer<K, V> action) {
+        this.forEach(entry -> action.accept(entry.getKey(), entry.getValue()));
     }
 
     @Override

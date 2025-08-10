@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.binding;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.util.describe.DescribeAsObject;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.List;
@@ -42,7 +43,7 @@ import java.util.SortedSet;
  *
  * @author Guus Lieben
  */
-public interface BindingHierarchy<C> extends Iterable<Entry<Integer, InstantiationStrategy<C>>> {
+public interface BindingHierarchy<C> extends Iterable<Entry<Integer, InstantiationStrategy<C>>>, DescribeAsObject {
 
     /**
      * Gets all providers in the order of their priorities.

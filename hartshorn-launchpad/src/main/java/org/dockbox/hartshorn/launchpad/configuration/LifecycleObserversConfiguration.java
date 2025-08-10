@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,17 @@
 
 package org.dockbox.hartshorn.launchpad.configuration;
 
+import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.launchpad.observer.ComponentActivatorObserver;
 import org.dockbox.hartshorn.launchpad.observer.RuntimeHookLifecycleObserver;
 import org.dockbox.hartshorn.launchpad.annotations.UseLifecycleObservers;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
-import org.dockbox.hartshorn.inject.annotations.Named;
 import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 
 /**
- * Registers lifecycle observers to the application context. This configuration is intentionally
- * un-conditioned, as these observers are required for the application to function correctly.
+ * Registers lifecycle observers to the application context.
  *
  * @see LifecycleObserver
  * @see RuntimeHookLifecycleObserver
@@ -42,13 +41,13 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 public class LifecycleObserversConfiguration {
 
     @Singleton
-    @Named("runtimeHookLifecycleObserver")
+    @CompositeMember
     public LifecycleObserver runtimeHookLifecycleObserver() {
         return new RuntimeHookLifecycleObserver();
     }
 
     @Singleton
-    @Named("componentActivatorObserver")
+    @CompositeMember
     public LifecycleObserver componentActivatorObserver() {
         return new ComponentActivatorObserver();
     }

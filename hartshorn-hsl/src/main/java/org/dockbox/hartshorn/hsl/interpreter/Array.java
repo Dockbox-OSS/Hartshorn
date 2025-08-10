@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.hsl.interpreter;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -81,7 +82,10 @@ public class Array implements Iterable<Object>, PropertyContainer {
 
     @Override
     public String toString() {
-        return Arrays.toString(this.values);
+        return ObjectDescriber.of(this)
+                .field("length", length())
+                .field("values", values)
+                .describe();
     }
 
     @Override

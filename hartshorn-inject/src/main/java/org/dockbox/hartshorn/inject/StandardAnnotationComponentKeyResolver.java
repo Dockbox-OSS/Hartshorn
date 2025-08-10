@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -176,7 +176,7 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
         Option<Priority> priorityOption = view.annotations().get(Priority.class);
         if (priorityOption.present()) {
             int parameterPriority = priorityOption.get().value();
-            builder.strategy(new ExactPriorityProviderSelectionStrategy(parameterPriority));
+            builder.selectionStrategy(new ExactPriorityProviderSelectionStrategy(parameterPriority));
         }
         else if(view instanceof ParameterView<?> parameterView) {
             this.configureSelfProvisionCandidate(builder, scope, parameterView);
@@ -200,7 +200,7 @@ public class StandardAnnotationComponentKeyResolver implements ComponentKeyResol
             if (selfProvision) {
                 Option<Priority> priority = declaredBy.annotations().get(Priority.class);
                 if (priority.present()) {
-                    builder.strategy(new MaximumPriorityProviderSelectionStrategy(priority.get().value()));
+                    builder.selectionStrategy(new MaximumPriorityProviderSelectionStrategy(priority.get().value()));
                 }
             }
         }

@@ -16,10 +16,11 @@
 
 package org.dockbox.hartshorn.inject.binding;
 
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Thrown when two or more non-strict components match a lookup key. This indicates that two equally
@@ -42,7 +43,7 @@ public class AmbiguousComponentException extends ApplicationRuntimeException {
         super(
             "Ambiguous component lookup for key " + lookupKey
                 + ". Found " + foundKeys.size() + " components: " + foundKeys.stream()
-                .map(key -> key.qualifiedName(true))
+                .map(ComponentKey::qualifiedName)
                 .collect(Collectors.joining(", ")));
         this.lookupKey = lookupKey;
         this.foundKeys = foundKeys;

@@ -16,17 +16,19 @@
 
 package org.dockbox.hartshorn.inject.scope;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.function.Supplier;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.NativePrunableBindingHierarchy;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Supplier;
 
 /**
  * TODO: #1060 Add documentation
@@ -73,5 +75,13 @@ public class ScopeModuleContext extends DefaultContext {
             return Collections.emptyList();
         }
         return this.scopeModules.get(type);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("applicationScope", this.applicationScope)
+                .field("scopeModules", this.scopeModules)
+                .describe();
     }
 }

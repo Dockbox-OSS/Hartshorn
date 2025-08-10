@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,11 @@ public class ReflectionProxyMethodInterceptHandler<T> implements ProxyMethodInte
 
     @Override
     public Object handleNonInterceptedMethod(T self, MethodInvokable source, Invokable proxy, T callbackTarget, Object[] arguments) throws Throwable {
+        Option<Object> defaultMethod = this.tryInvokeDefaultMethod(self, source, arguments);
+        if (defaultMethod.present()) {
+            return defaultMethod.get();
+        }
+
         Option<?> delegate = this.manager()
                 .advisor()
                 .resolver()
@@ -80,11 +85,6 @@ public class ReflectionProxyMethodInterceptHandler<T> implements ProxyMethodInte
     }
 
     protected Object handleDelegateMethod(Object delegate, T self, Invokable source, Object[] args) throws Throwable {
-        Option<Object> defaultMethod = this.tryInvokeDefaultMethod(self, source, args);
-        if (defaultMethod.present()) {
-            return defaultMethod.get();
-        }
-
         Object result = source.invoke(delegate, args);
         if (result == delegate) {
             return self;
@@ -93,11 +93,6 @@ public class ReflectionProxyMethodInterceptHandler<T> implements ProxyMethodInte
     }
 
     protected Object handleNonDelegateMethod(T self, T callbackTarget, Invokable source, Invokable proxy, Object[] args) throws Throwable {
-        Option<Object> defaultMethod = this.tryInvokeDefaultMethod(self, source, args);
-        if (defaultMethod.present()) {
-            return defaultMethod.get();
-        }
-
         Object result;
         if (callbackTarget == self && proxy != null) {
             result = proxy.invoke(callbackTarget, args);

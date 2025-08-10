@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,5 +55,7 @@ public sealed interface ComponentProcessor permits ComponentPostProcessor, Compo
      *
      * @return The phase of when the component should be processed.
      */
-    int priority();
+    default int priority() {
+        return ProcessingPriority.NORMAL_PRECEDENCE;
+    }
 }

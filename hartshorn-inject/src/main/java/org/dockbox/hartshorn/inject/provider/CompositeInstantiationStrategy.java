@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,17 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Function;
-
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
-import org.dockbox.hartshorn.util.types.TypeUtils;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * A {@link InstantiationStrategy} of which the result can be mapped using a list of {@link Function}s. This
@@ -99,5 +100,13 @@ public final class CompositeInstantiationStrategy<T> implements InstantiationStr
     @Override
     public Tristate defaultLazy() {
         return this.strategy.defaultLazy();
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("strategy", this.strategy)
+                .field("functions", this.functions)
+                .describe();
     }
 }

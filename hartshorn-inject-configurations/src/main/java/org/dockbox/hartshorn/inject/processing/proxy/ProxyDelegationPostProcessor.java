@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,15 +37,11 @@ public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProce
 
     @Override
     public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
-        return processingContext.permitsProxying();
+        return processingContext.permitsProxying() && processingContext.type().isChildOf(this.parentTarget());
     }
 
     @Override
     public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
-        if (!processingContext.type().isChildOf(this.parentTarget())) {
-            return;
-        }
-
         ProxyFactory<P> factory = processingContext.get(ProxyFactory.class);
         if (factory == null) {
             return;

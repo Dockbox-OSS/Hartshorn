@@ -16,24 +16,16 @@
 
 package test.org.dockbox.hartshorn.launchpad;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
-import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
 import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
+import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.DelegatingApplicationContext;
 import org.dockbox.hartshorn.launchpad.HartshornApplication;
@@ -43,19 +35,26 @@ import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 import org.dockbox.hartshorn.launchpad.banner.HartshornLogoBanner;
 import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
-import org.dockbox.hartshorn.util.configure.Customizer;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClasspathTypeReferenceCollector;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ApplicationConfigurerTests {
 
@@ -289,18 +288,10 @@ public class ApplicationConfigurerTests {
         public <T> void process(InjectionCapableApplication application, ComponentProcessingContext<T> processingContext) {
             // Do nothing
         }
-
-        @Override
-        public int priority() {
-            return 0;
-        }
     }
 
     private static class SamplePostProcessor extends ComponentPostProcessor {
-        @Override
-        public int priority() {
-            return 0;
-        }
+        // Dummy post-processor for testing purposes
     }
 
     @Component

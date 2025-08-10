@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,16 @@ package org.dockbox.hartshorn.inject.processing;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 
 /**
- * A component pre-processor is responsible for pre-processing a component. This can be used to
- * validate the component before it is added to the application context, or to add additional
+ * A component pre-processor is responsible for pre-processing managed components. This can be used
+ * to validate components before they are added to the application context, or to add additional
  * information to the component before it is created.
  *
- * <p>The component pre-processor will be called for each component that is added to the application.
- * It is executed during application construction.
+ * <p>The component pre-processor will be called for each managed component that is added to the
+ * application. It is executed during application construction.
+ *
+ * <p>Note that the component pre-processor <b>only processes managed components</b>. Bindings are
+ * not processed by pre-processors, as bindings can be defined at any point in the application's
+ * lifecycle.
  *
  * @since 0.4.9
  *

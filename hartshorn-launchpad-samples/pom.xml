@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Hartshorn Sample Projects</name>
+    <groupId>org.dockbox.hartshorn</groupId>
+    <artifactId>hartshorn-launchpad-samples</artifactId>
+    <version>0.7.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>application-observability</module>
+        <module>application-processing</module>
+        <module>application-proxies</module>
+        <module>application-reporting</module>
+        <module>basic-hello-world-java</module>
+        <module>basic-hello-world-kotlin</module>
+    </modules>
+</project>

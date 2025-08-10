@@ -16,13 +16,6 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
 import org.dockbox.hartshorn.util.introspect.scan.TypeCollectionException;
@@ -30,8 +23,13 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * A collector for types in the environment. This delegates to the {@link TypeReferenceCollector type reference collectors}
@@ -50,8 +48,6 @@ import org.slf4j.LoggerFactory;
  * @author Guus Lieben
  */
 public class EnvironmentTypeCollector {
-
-    private static final Logger LOG = LoggerFactory.getLogger(EnvironmentTypeCollector.class);
 
     private final ApplicationEnvironment environment;
     private final TypeReferenceCollectorContext collectorContext;

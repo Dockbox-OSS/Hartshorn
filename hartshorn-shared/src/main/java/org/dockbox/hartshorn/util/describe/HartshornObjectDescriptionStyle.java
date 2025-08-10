@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,12 +37,15 @@ public final class HartshornObjectDescriptionStyle implements ObjectDescriptionS
     }
 
     @Override
-    public void describeStart(StringBuilder builder, Object object) {
-        builder.append(object.getClass().getSimpleName()).append(" {");
+    public void describeObjectStart(StringBuilder builder, Object object, boolean includeTypeName) {
+        if (includeTypeName) {
+            builder.append(object.getClass().getSimpleName());
+        }
+        builder.append(" {");
     }
 
     @Override
-    public void describeEnd(StringBuilder builder, Object object) {
+    public void describeObjectEnd(StringBuilder builder, Object object) {
         builder.append("}");
     }
 
@@ -53,6 +56,29 @@ public final class HartshornObjectDescriptionStyle implements ObjectDescriptionS
 
     @Override
     public void describeFieldSeparator(StringBuilder builder, Object object) {
+        builder.append(", ");
+    }
+
+    @Override
+    public void describeArrayStart(StringBuilder builder, Object collectionObject, int length, boolean includeTypeName) {
+        if (includeTypeName) {
+            builder.append(collectionObject.getClass().getSimpleName());
+        }
+        builder.append(" [");
+    }
+
+    @Override
+    public void describeArrayEnd(StringBuilder builder, Object collectionObject) {
+        builder.append("]");
+    }
+
+    @Override
+    public void describeArrayElement(StringBuilder builder, Object collectionObject, int index, Object element) {
+        builder.append(element);
+    }
+
+    @Override
+    public void describeArrayElementSeparator(StringBuilder builder, Object collectionObject, int index) {
         builder.append(", ");
     }
 }
