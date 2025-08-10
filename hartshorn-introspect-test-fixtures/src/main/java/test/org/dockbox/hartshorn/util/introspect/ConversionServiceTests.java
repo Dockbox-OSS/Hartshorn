@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterCache;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterRegistry;
+import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverters;
 import org.dockbox.hartshorn.util.introspect.convert.NullAccess;
@@ -255,8 +256,16 @@ public abstract class ConversionServiceTests {
 
     @Test
     void testImplicitDefaultValueProviderIsAdaptedCorrectly() {
+        // Lambdas are not supported in this context due to the absence of sufficient type hints. Though, using
+        // `#addDefaultValueProvider(Class, DefaultValueProvider)` it would be supported in any practical scenario.
+        //noinspection Convert2Lambda
         this.testConverterTypeIsAdaptedCorrectly(
-                registry -> registry.addDefaultValueProvider(() -> ""),
+                registry -> registry.addDefaultValueProvider(new DefaultValueProvider<String>() {
+                    @Override
+                    public String defaultValue() {
+                        return "";
+                    }
+                }),
                 NullAccess.getInstance(), String.class,
                 ConverterType.DEFAULT_VALUE_PROVIDER
         );
