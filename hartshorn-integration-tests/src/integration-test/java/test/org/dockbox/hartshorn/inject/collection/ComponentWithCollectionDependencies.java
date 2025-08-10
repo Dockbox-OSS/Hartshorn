@@ -17,15 +17,14 @@
 package test.org.dockbox.hartshorn.inject.collection;
 
 import org.dockbox.hartshorn.inject.annotations.Component;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.annotations.Named;
 
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.dockbox.hartshorn.inject.annotations.Inject;
-
-@Component
+@Component(lazy = true)
 public class ComponentWithCollectionDependencies {
 
     @Inject

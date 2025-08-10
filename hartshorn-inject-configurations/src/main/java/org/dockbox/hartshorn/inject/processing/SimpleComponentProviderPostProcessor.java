@@ -20,7 +20,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.collection.ContainerAwareComponentCollection;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
@@ -31,8 +30,6 @@ import org.dockbox.hartshorn.inject.targets.RequireInjectionPointRule;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
@@ -94,10 +91,6 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
 
     private <T> T processUnmanagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, Class<? extends T> type, ComponentRequestContext requestContext)
             throws ApplicationException {
-        TypeView<? extends T> typeView = this.application.environment().introspector().introspect(type);
-        if (typeView.annotations().has(Component.class)) {
-            throw new ApplicationRuntimeException("Component " + typeView.name() + " is not registered");
-        }
         if (ComponentCollection.class.isAssignableFrom(componentKey.type())) {
             if (ComponentCollection.class != componentKey.type()) {
                 throw new IllegalArgumentException("Component collection key must be of type ComponentCollection, specific implementations are not supported");

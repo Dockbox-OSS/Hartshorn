@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.inject.annotations.Required;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
 
-@Component
+@Component(lazy = true)
 public class SetterInjectedComponentWithAbsentBinding {
 
     @Inject

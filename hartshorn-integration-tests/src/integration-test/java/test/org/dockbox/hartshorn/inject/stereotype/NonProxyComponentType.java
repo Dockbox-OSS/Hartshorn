@@ -18,6 +18,6 @@ package test.org.dockbox.hartshorn.inject.stereotype;
 
 import org.dockbox.hartshorn.inject.annotations.Component;
 
-@Component(permitProxying = false)
+@Component(permitProxying = false, lazy = true)
 public interface NonProxyComponentType {
 }
