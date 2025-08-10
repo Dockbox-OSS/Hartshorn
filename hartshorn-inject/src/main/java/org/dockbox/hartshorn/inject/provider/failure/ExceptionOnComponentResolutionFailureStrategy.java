@@ -20,6 +20,13 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 
+/**
+ * Standard implementation of {@link ComponentResolutionFailureStrategy} for required components.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class ExceptionOnComponentResolutionFailureStrategy implements ComponentResolutionFailureStrategy {
 
     /**

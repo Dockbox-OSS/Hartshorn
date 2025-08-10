@@ -18,8 +18,25 @@ package org.dockbox.hartshorn.launchpad;
 
 import org.dockbox.hartshorn.util.ApplicationException;
 
+/**
+ * Callback interface that is invoked during the application's startup phase.
+ *
+ * <p>Implementations of this interface can be used to execute custom logic at the
+ * beginning of the application's lifecycle, for example to initialize resources,
+ * perform configuration, or trigger other startup processes.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 @FunctionalInterface
 public interface ApplicationStarter {
 
+    /**
+     * The callback to execute when the application is starting.
+     *
+     * @param applicationContext the application context
+     * @throws ApplicationException when any unrecoverable errors come up
+     */
     void run(ApplicationContext applicationContext) throws ApplicationException;
 }

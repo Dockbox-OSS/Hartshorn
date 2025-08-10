@@ -65,5 +65,25 @@ public class ObjectDescriberTest {
         public void describeFieldSeparator(StringBuilder builder, Object object) {
             builder.append(FIELD_SEPARATOR).append("+");
         }
+
+        @Override
+        public void describeArrayStart(StringBuilder builder, Object collectionObject, int length, boolean includeTypeName) {
+            builder.append("ARRAY_START").append("+");
+        }
+
+        @Override
+        public void describeArrayEnd(StringBuilder builder, Object collectionObject) {
+            builder.append("ARRAY_END").append("+");
+        }
+
+        @Override
+        public void describeArrayElement(StringBuilder builder, Object collectionObject, int index, Object element) {
+            builder.append("ELEMENT:").append(index).append(":").append(element).append("+");
+        }
+
+        @Override
+        public void describeArrayElementSeparator(StringBuilder builder, Object collectionObject, int index) {
+            builder.append("ELEMENT_SEP").append("+");
+        }
     }
 }

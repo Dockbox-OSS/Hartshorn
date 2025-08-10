@@ -98,6 +98,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
      * @param method the method that is being processed
      * @param key the component key of the component that is being processed
      * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
+     * @param processingContext the processing context
      * @param <T> the type of the component that is being processed
      *
      * @return {@code true} if the method should be wrapped, {@code false} otherwise
@@ -113,6 +114,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
      * @param method the method that is being processed
      * @param key the component key of the component that is being processed
      * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
+     * @param processingContext the processing context
      * @param <T> the type of the component that is being processed
      *
      * @return the proxy callback that should be called before the method is invoked, or {@code null} if no proxy callback should be called
@@ -129,6 +131,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
      * @param method the method that is being processed
      * @param key the component key of the component that is being processed
      * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
+     * @param processingContext the processing context
      * @param <T> the type of the component that is being processed
      *
      * @return the proxy callback that should be called after the method is invoked, or {@code null} if no proxy callback should be called
@@ -145,6 +148,7 @@ public abstract class PhasedProxyCallbackPostProcessor extends ComponentPostProc
      * @param method the method that is being processed
      * @param key the component key of the component that is being processed
      * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
+     * @param processingContext the processing context
      * @param <T> the type of the component that is being processed
      *
      * @return the proxy callback that should be called after the method has thrown an exception, or {@code null} if no proxy callback should be called

@@ -75,9 +75,11 @@ public interface MethodInterceptor<T, R> {
      * result is expected to be transformed by the owning invoker.
      *
      * @param interceptor the consumer to wrap in a method interceptor.
-     * @return a method interceptor wrapping the given consumer.
+     *
      * @param <T> the type of the proxy.
      * @param <R> the return type of the intercepted method.
+     *
+     * @return a method interceptor wrapping the given consumer.
      */
     static <T, R> MethodInterceptor<T, R> withoutReturnValue(Consumer<MethodInterceptorContext<T, R>> interceptor) {
         return context -> {

@@ -60,6 +60,7 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
     /**
      * Register the given container to the current registry
      * @param container the container to register
+     * @return whether the registry already contained a container with the same ID
      */
     public boolean addCustomContainer(ComponentContainer<?> container) {
         return this.withContainerCache(containers -> safeAddContainer(containers, container));

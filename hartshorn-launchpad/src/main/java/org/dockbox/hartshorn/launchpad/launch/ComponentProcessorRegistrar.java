@@ -16,25 +16,25 @@
 
 package org.dockbox.hartshorn.launchpad.launch;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
 import org.dockbox.hartshorn.inject.processing.HierarchicalBinderPostProcessor;
 import org.dockbox.hartshorn.inject.processing.HierarchicalBinderProcessorRegistry;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
-import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
-import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivatorCollector;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Registers component processors to the application context. This class should be used to prepare the application
@@ -54,12 +54,9 @@ public class ComponentProcessorRegistrar {
 
     private final Set<ComponentProcessor> additionalComponentProcessors = new HashSet<>();
     private final Set<HierarchicalBinderPostProcessor> additionalBinderProcessors = new HashSet<>();
-
-    private final ServiceActivatorCollector activatorCollector;
     private final ApplicationBuildContext buildContext;
 
-    public ComponentProcessorRegistrar(ServiceActivatorCollector activatorCollector, ApplicationBuildContext buildContext) {
-        this.activatorCollector = activatorCollector;
+    public ComponentProcessorRegistrar(ApplicationBuildContext buildContext) {
         this.buildContext = buildContext;
     }
 

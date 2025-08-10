@@ -111,7 +111,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         applicationContext.addContext(serviceActivatorContext);
         applicationContext.addContext(collectorContext);
 
-        this.componentProcessorRegistrar = new ComponentProcessorRegistrar(this.activatorCollector, this.buildContext);
+        this.componentProcessorRegistrar = new ComponentProcessorRegistrar(this.buildContext);
 
         this.configure(applicationContext, bootstrapInitializerContext);
         if (applicationContext instanceof ProcessableApplicationContext activatingApplicationContext) {

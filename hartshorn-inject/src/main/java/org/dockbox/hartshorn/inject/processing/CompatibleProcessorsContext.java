@@ -19,6 +19,14 @@ package org.dockbox.hartshorn.inject.processing;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
+/**
+ * Intermediate context used by {@link CompositeComponentPostProcessor} to store compatible
+ * {@link ComponentPostProcessor} between phases of post-processing.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class CompatibleProcessorsContext extends DefaultContext {
 
     private final MultiMap<Integer, ComponentPostProcessor> processors;

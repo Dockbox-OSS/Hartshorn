@@ -16,41 +16,39 @@
 
 package org.dockbox.hartshorn.launchpad;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.dockbox.hartshorn.inject.graph.SkipConfigurationDependencyVisitor;
-import org.dockbox.hartshorn.inject.graph.resolve.ApplicationDependencyResolver;
-import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
-import org.dockbox.hartshorn.inject.graph.ComponentContainerDependencyDeclarationContext;
+import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.launchpad.graph.DelegatingConfigurationDependencyVisitor;
-import org.dockbox.hartshorn.launchpad.graph.PostProcessorDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
+import org.dockbox.hartshorn.inject.graph.ComponentContainerDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.graph.DependencyGraphInitializer;
 import org.dockbox.hartshorn.inject.graph.DependencyResolutionException;
+import org.dockbox.hartshorn.inject.graph.SkipConfigurationDependencyVisitor;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
+import org.dockbox.hartshorn.inject.graph.resolve.ApplicationDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
+import org.dockbox.hartshorn.inject.processing.ExitingComponentProcessor;
 import org.dockbox.hartshorn.inject.provider.ComponentObjectContainer;
+import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.graph.DelegatingConfigurationDependencyVisitor;
+import org.dockbox.hartshorn.launchpad.graph.PostProcessorDependencyDeclarationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
-import org.dockbox.hartshorn.context.SingleElementContext;
-import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.graph.GraphException;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Simple implementation of the {@link ApplicationContext} interface. This implementation primarily delegates to individual
@@ -90,20 +88,16 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
         this.checkRunning();
 
         Collection<ComponentContainer<?>> containers = this.environment().componentRegistry().containers();
-        LOG.debug("Located %d components".formatted(containers.size()));
+        LOG.debug("Located {} components", containers.size());
 
         try {
-            Collection<DependencyDeclarationContext<?>> declarationContexts = new ArrayList<>();
-
-            if (this.componentProvider() instanceof PostProcessingComponentProvider postProcessingComponentProvider) {
-                Set<? extends DependencyDeclarationContext<?>> uninitializedPostProcessorContexts = postProcessingComponentProvider
-                        .processorRegistry()
-                        .uninitializedPostProcessors().stream()
-                        .map(this.environment().introspector()::introspect)
-                        .map(PostProcessorDependencyDeclarationContext::new)
-                        .collect(Collectors.toSet());
-                declarationContexts.addAll(uninitializedPostProcessorContexts);
-            }
+            Collection<DependencyDeclarationContext<?>> declarationContexts = this.componentProvider()
+                    .processorRegistry()
+                    .uninitializedPostProcessors().stream()
+                    .map(this.environment().introspector()::introspect)
+                    .map(PostProcessorDependencyDeclarationContext::new)
+                    .distinct()
+                    .collect(Collectors.toList());
 
             List<? extends DependencyDeclarationContext<?>> componentContexts = containers.stream()
                     .map(ComponentContainerDependencyDeclarationContext::new)
@@ -128,12 +122,10 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
     }
 
     private void initializePostProcessors() {
-        if (this.componentProvider() instanceof PostProcessingComponentProvider provider) {
-            ComponentProcessorRegistry registry = provider.processorRegistry();
-            for (Class<? extends ComponentPostProcessor> uninitializedPostProcessor : registry.uninitializedPostProcessors()) {
-                ComponentPostProcessor processor = this.componentProvider().get(uninitializedPostProcessor);
-                registry.register(processor);
-            }
+        ComponentProcessorRegistry registry = this.componentProvider().processorRegistry();
+        for (Class<? extends ComponentPostProcessor> uninitializedPostProcessor : registry.uninitializedPostProcessors()) {
+            ComponentPostProcessor processor = this.componentProvider().get(uninitializedPostProcessor);
+            registry.register(processor);
         }
     }
 

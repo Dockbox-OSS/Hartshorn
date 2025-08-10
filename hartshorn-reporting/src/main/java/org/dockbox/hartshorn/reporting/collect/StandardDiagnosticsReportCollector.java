@@ -16,15 +16,16 @@
 
 package org.dockbox.hartshorn.reporting.collect;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriter;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
+
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 /**
  * A standard implementation of {@link DiagnosticsReportCollector} which uses a {@link NodeDiagnosticsReport} as the
@@ -48,7 +49,7 @@ public class StandardDiagnosticsReportCollector implements DiagnosticsReportColl
 
     @Override
     public DiagnosticsReport report(Reportable reportable) {
-        String timestamp = LocalDateTime.now(Clock.systemDefaultZone()).format(DateTimeFormatter.ISO_DATE_TIME);
+        String timestamp = LocalDateTime.now(Clock.system(ZoneId.systemDefault())).format(DateTimeFormatter.ISO_DATE_TIME);
         this.property("timestamp").writeString(timestamp);
 
         reportable.report(this);

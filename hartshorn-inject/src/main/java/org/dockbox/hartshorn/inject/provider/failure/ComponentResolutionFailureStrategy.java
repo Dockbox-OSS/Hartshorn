@@ -18,7 +18,16 @@ package org.dockbox.hartshorn.inject.provider.failure;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
+import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 
+/**
+ * Strategy which can be used by {@link ComponentProvider component providers} to handle scenarios where
+ * a component could not be resolved. This is typically provided as a hint through a {@link ComponentKey}.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public interface ComponentResolutionFailureStrategy {
 
     <T> void onResolutionFailure(ComponentKey<T> componentKey, ComponentRequestContext requestContext);

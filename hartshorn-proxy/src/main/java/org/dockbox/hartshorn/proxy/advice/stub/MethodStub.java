@@ -47,8 +47,8 @@ public interface MethodStub<T> {
      * result is expected to be transformed by the owning invoker.
      *
      * @param methodStub the consumer to wrap in a method stub.
-     * @return a method stub wrapping the given consumer.
      * @param <T> the type of the proxy.
+     * @return a method stub wrapping the given consumer.
      */
     static <T> MethodStub<T> withoutReturnValue(Consumer<MethodStubContext<T>> methodStub) {
         return context -> {

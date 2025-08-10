@@ -84,9 +84,8 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
      *
      * @param application the application in which the component is processed
      * @param instance the component instance
-     * @param <T> the type of the component
-     *
      * @param processingContext the processing context
+     * @param <T> the type of the component
      */
     public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) throws ApplicationException {
         // Do nothing by default

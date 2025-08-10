@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 import org.dockbox.hartshorn.util.option.Option;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
@@ -59,7 +58,6 @@ public record SupplierInstantiationStrategy<C>(CheckedSupplier<C> supplier) impl
         return Tristate.TRUE;
     }
 
-    @NotNull
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
