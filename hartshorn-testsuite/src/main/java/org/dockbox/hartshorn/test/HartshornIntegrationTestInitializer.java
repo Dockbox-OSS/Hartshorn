@@ -120,7 +120,7 @@ public class HartshornIntegrationTestInitializer {
         return StandardApplicationBuilder.create(builderCustomizer.compose(applicationCustomizer::customizeBuilder));
     }
 
-    private static void customizeBuilderWithTestSources(
+    private void customizeBuilderWithTestSources(
             Class<?> testClass,
             SequencedCollection<AnnotatedElement> testComponentSources,
             StandardApplicationBuilder.Configurer builder

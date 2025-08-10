@@ -119,7 +119,9 @@ public abstract class DelegatingApplicationContext
      *
      * @param initializerContext the context in which the initialization is taking place
      */
-    protected abstract void prepareInitialization(SingleElementContext<? extends ApplicationEnvironment> initializerContext);
+    protected void prepareInitialization(SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
+        // Nothing by default
+    }
 
     /**
      * Checks if the {@link ApplicationContext} is running. If it is, an {@link IllegalModificationException} is thrown.

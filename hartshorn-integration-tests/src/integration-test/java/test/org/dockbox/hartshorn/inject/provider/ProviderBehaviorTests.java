@@ -116,7 +116,7 @@ public class ProviderBehaviorTests {
     }
 
     @Test
-    @TestComponents(SampleConfiguration.class)
+    @TestComponents(SampleNamedConfiguration.class)
     public void testScannedMetaBindingsCanBeProvided() {
 
         // Ensure that the binding is not bound to the default name

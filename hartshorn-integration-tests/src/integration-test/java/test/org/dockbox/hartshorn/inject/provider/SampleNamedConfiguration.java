@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
 import org.dockbox.hartshorn.inject.annotations.Named;
 
 @Configuration
-public class SampleConfiguration {
+public class SampleNamedConfiguration {
 
     @Prototype
     @Named("meta")

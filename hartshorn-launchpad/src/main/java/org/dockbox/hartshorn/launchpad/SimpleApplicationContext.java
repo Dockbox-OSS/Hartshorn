@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.launchpad;
 import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.component.ApplicationMainComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.graph.ComponentContainerDependencyDeclarationContext;
 import org.dockbox.hartshorn.inject.graph.DependencyGraphInitializer;
@@ -38,7 +37,6 @@ import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.graph.DelegatingConfigurationDependencyVisitor;
 import org.dockbox.hartshorn.launchpad.graph.PostProcessorDependencyDeclarationContext;
-import org.dockbox.hartshorn.launchpad.launch.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
@@ -78,19 +76,6 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
     public SimpleApplicationContext(SingleElementContext<? extends ApplicationEnvironment> initializerContext, Configurer configurer) {
         super(initializerContext, configurer);
         this.dependencyGraphInitializer = configurer.dependencyGraphInitializer.initialize(initializerContext.transform(this));
-    }
-
-    @Override
-    protected void prepareInitialization(SingleElementContext<? extends ApplicationEnvironment> context) {
-        context.firstContext(ApplicationBootstrapContext.class)
-                .peek(bootstrap -> {
-                    // Potentially started from an unnamed class, in which case there will be no constructors. In such scenarios we do
-                    // not support the main 'class' as an application component.
-                    if (bootstrap.mainClass().getConstructors().length > 0) {
-                        TypeView<?> mainClass = this.environment().introspector().introspect(bootstrap.mainClass());
-                        this.environment().componentRegistry().addCustomContainer(new ApplicationMainComponentContainer<>(mainClass));
-                    }
-                });
     }
 
     @Override

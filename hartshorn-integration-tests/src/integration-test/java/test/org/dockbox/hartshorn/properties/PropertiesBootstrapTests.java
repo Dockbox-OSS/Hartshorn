@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @PropertiesSource("classpath:it-additional-config.yml")
-@HartshornIntegrationTest
+@HartshornIntegrationTest(includeBasePackages = false)
 public class PropertiesBootstrapTests {
 
     @Test
@@ -37,7 +37,7 @@ public class PropertiesBootstrapTests {
                 "hartshorn.test.additional-config",
                 StandardValuePropertyParsers.BOOLEAN
         );
-        Assertions.assertTrue(isAdditionalConfigPresent.orElse(false));
+        Assertions.assertTrue(isAdditionalConfigPresent.test(Boolean::booleanValue));
     }
 
     @Test

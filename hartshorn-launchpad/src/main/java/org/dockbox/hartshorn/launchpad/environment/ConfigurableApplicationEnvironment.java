@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.inject.InjectorConfiguration;
 import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
 import org.dockbox.hartshorn.inject.StandardAnnotationComponentKeyResolver;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
+import org.dockbox.hartshorn.inject.component.ApplicationMainComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 import org.dockbox.hartshorn.inject.environment.DefaultProxyOrchestratorLoader;
@@ -67,6 +68,7 @@ import org.dockbox.hartshorn.util.introspect.SupplierAdapterProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +117,8 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
 
     private ConfigurableApplicationEnvironment(SingleElementContext<? extends ApplicationBootstrapContext> context, Configurer configurer) {
         SingleElementContext<ApplicationEnvironment> environmentInitializerContext = context.transform(this);
-        environmentInitializerContext.addContext(context.input());
+        ApplicationBootstrapContext bootstrapContext = context.input();
+        environmentInitializerContext.addContext(bootstrapContext);
 
         this.conditionMatcher = this.configure(environmentInitializerContext, configurer.conditionMatcher);
         this.exceptionHandler = this.configure(environmentInitializerContext, configurer.exceptionHandler);
@@ -126,7 +129,16 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         this.injectionPointsResolver = this.configure(environmentInitializerContext, configurer.injectionPointsResolver);
         this.componentKeyResolver = this.configure(environmentInitializerContext, configurer.componentKeyResolver);
         this.typeResolver = this.configure(environmentInitializerContext, configurer.typeResolver);
+
         this.componentRegistry = this.configure(environmentInitializerContext, configurer.componentRegistry);
+        Class<?> mainClass = bootstrapContext.mainClass();
+        // Potentially started from an unnamed class, in which case there will be no constructors. In such scenarios we do
+        // not support the main 'class' as an application component.
+        if (mainClass.getConstructors().length > 0) {
+            TypeView<?> mainType = this.introspector().introspect(mainClass);
+            this.componentRegistry().addCustomContainer(new ApplicationMainComponentContainer<>(mainType));
+        }
+
         this.resourceLookup = this.configure(environmentInitializerContext, configurer.resourceLookup);
         this.propertyRegistry = this.initializePropertyRegistry(configurer, environmentInitializerContext);
 
@@ -146,7 +158,7 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         this.isBuildEnvironment = isBuildEnvironment;
 
         if (!this.isBuildEnvironment && configurer.enableBanner.initialize(argumentsInitializerContext)) {
-            this.printBanner(context.input().mainClass());
+            this.printBanner(mainClass);
         }
 
         ApplicationContext initializedContext = configurer.applicationContext.initialize(environmentInitializerContext);
