@@ -105,7 +105,7 @@ public class ComponentPopulationTests {
         PopulatedType populatedType = new PopulatedType();
         Assertions.assertNull(populatedType.sampleInterface());
 
-        populator.populate(populatedType);
+        populator.populate(populatedType, this.applicationContext.scope());
         Assertions.assertNotNull(populatedType.sampleInterface());
         Assertions.assertEquals(SampleImplementation.NAME, populatedType.sampleInterface().name());
     }
@@ -121,7 +121,11 @@ public class ComponentPopulationTests {
     private PopulationTestComponent createAndPopulateComponent(ComponentPopulationStrategy strategy, Function<TypeView<PopulationTestComponent>, ComponentInjectionPoint<PopulationTestComponent>> injectionPointProvider) {
         PopulationTestComponent component = new PopulationTestComponent();
         TypeView<PopulationTestComponent> typeView = this.applicationContext.environment().introspector().introspect(component);
-        PopulateComponentContext<PopulationTestComponent> componentContext = new PopulateComponentContext<>(component, component, typeView, applicationContext);
+        PopulateComponentContext<PopulationTestComponent> componentContext = new PopulateComponentContext<>(
+                component, component,
+                typeView, applicationContext.scope(),
+                applicationContext
+        );
 
         ComponentInjectionPoint<PopulationTestComponent> injectionPoint = injectionPointProvider.apply(typeView);
         Assertions.assertDoesNotThrow(() -> strategy.populate(componentContext, injectionPoint));

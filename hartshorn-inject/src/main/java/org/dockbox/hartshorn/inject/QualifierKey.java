@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyWriterConsumer;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.ValueAdapterDiagnosticsPropertyWriterConsumer;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-import org.dockbox.hartshorn.util.stream.EntryStream;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
 import java.lang.annotation.Annotation;
@@ -155,7 +154,7 @@ public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) implement
     public void report(DiagnosticsPropertyCollector collector) {
         collector.property("type").writeString(this.type.getSimpleName());
         collector.property("meta").writeDelegate(metaCollector -> {
-            EntryStream.of(this.meta).forEach((key, value) -> {
+            this.meta.forEach((key, value) -> {
                 DiagnosticsPropertyWriterConsumer consumer = new ValueAdapterDiagnosticsPropertyWriterConsumer(value);
                 consumer.writeTo(metaCollector.property(key));
             });

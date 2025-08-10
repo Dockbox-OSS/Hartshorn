@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
 import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
 import org.dockbox.hartshorn.inject.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.inject.provider.ComponentConstructorResolver;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.proxy.lookup.StateAwareProxyFactory;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -81,7 +82,8 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
                 modifiableComponentProcessingContext.requestInstanceLock();
             }
 
-            return this.componentPopulator.populate(finalizingInstance);
+            Scope scope = processingContext.key().scope().orElse(application.defaultProvider().scope());
+            return this.componentPopulator.populate(finalizingInstance, scope);
         }
         return instance;
     }

@@ -170,13 +170,13 @@ public final class ObjectDescriber<T> {
             // toString() method, rather than a custom case below. E.g. BindingHierarchy is an Iterable,
             // but should be described using its own toString() method.
             case DescribeAsObject describeAsObject -> String.valueOf(describeAsObject);
+            case Map<?, ?> map -> this.describeMapLikeValue(map, includeTypeName);
+            // MultiMap does not extend Map, so we need to handle it separately
+            case MultiMap<?, ?> multiMap -> this.describeMultiMapLikeValue(multiMap, includeTypeName);
             case Iterable<?> iterable -> {
                 List<?> elements = StreamSupport.stream(iterable.spliterator(), false).toList();
                 yield this.describeArrayLikeValue(elements, includeTypeName);
             }
-            case Map<?, ?> map -> this.describeMapLikeValue(map, includeTypeName);
-            // MultiMap does not extend Map, so we need to handle it separately
-            case MultiMap<?, ?> multiMap -> this.describeMultiMapLikeValue(multiMap, includeTypeName);
             // Class can have an 'interface' or 'class' prefix, which isn't useful here
             case Class<?> clazz -> clazz.getName();
             default -> {

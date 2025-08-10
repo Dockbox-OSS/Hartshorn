@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,10 @@ public interface InjectParameterResolver {
      * Indicates whether this resolver accepts the given {@link InjectionPoint}.
      *
      * @param injectionPoint the injection point to check
+     * @param context the context in which the injection point is resolved
      * @return {@code true} if this resolver accepts the given injection point, {@code false} otherwise
      */
-    boolean accepts(InjectionPoint injectionPoint);
+    boolean accepts(InjectionPoint injectionPoint, PopulateComponentContext<?> context);
 
     /**
      * Resolves a value for the given {@link InjectionPoint}. If the resolver could not resolve a value,

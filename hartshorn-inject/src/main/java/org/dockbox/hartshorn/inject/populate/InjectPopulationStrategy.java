@@ -100,7 +100,7 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
     @Override
     protected Object resolveInjectedObject(InjectionPoint injectionPoint, PopulateComponentContext<?> context) throws ComponentResolutionException {
         for(InjectParameterResolver resolver : this.parameterResolvers) {
-            if (resolver.accepts(injectionPoint)) {
+            if (resolver.accepts(injectionPoint, context)) {
                 Object resolved = resolver.resolve(injectionPoint, context);
                 // Parameter resolvers are expected to provide compatible instances, or null if they cannot resolve the injection point.
                 // If a non-null value is provided, it must be compatible with the injection point type. If it is not, we do not want
@@ -115,7 +115,7 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
             }
         }
 
-        ComponentKey<?> componentKey = this.componentKeyResolver.resolve(injectionPoint.injectionPoint());
+        ComponentKey<?> componentKey = this.componentKeyResolver.resolve(injectionPoint.injectionPoint(), context.scope());
         ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(injectionPoint);
         Object component = this.componentProvider.get(componentKey, requestContext);
 

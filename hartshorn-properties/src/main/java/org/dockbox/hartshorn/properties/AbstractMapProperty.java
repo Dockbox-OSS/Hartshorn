@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,9 @@ import java.util.stream.Collectors;
  * @author Guus Lieben
  */
 public abstract class AbstractMapProperty<T> {
+
+    private static final String OBJECT_SEPARATOR = ".";
+    private static final String LIST_START = "[";
 
     private final Map<String, ConfiguredProperty> properties;
     private final PropertyPathStyle pathStyle;
@@ -119,11 +122,11 @@ public abstract class AbstractMapProperty<T> {
      * @return the property with the given key
      */
     public Option<ObjectProperty> object(T key) {
-        Map<String, ConfiguredProperty> propertyMap = this.collectToMap(key, (name, property) -> {
-            return name.startsWith(this.valueAccessor(key) + ".");
-        }).entrySet().stream().collect(Collectors.toMap(
-                // Strip trailing . from key
-                entry -> entry.getKey().substring(1),
+        Map<String, ConfiguredProperty> propertyMap = this.collectToMap(key, (name, property) ->
+                name.startsWith(this.valueAccessor(key) + OBJECT_SEPARATOR)
+        ).entrySet().stream().collect(Collectors.toMap(
+                // Strip trailing object separators from key
+                entry -> entry.getKey().substring(OBJECT_SEPARATOR.length()),
                 Map.Entry::getValue
         ));
         ObjectProperty property = new MapObjectProperty(this.name() + this.accessor(key), propertyMap, this.pathStyle);
@@ -172,9 +175,9 @@ public abstract class AbstractMapProperty<T> {
         if (this.properties().containsKey(this.valueAccessor(key))) {
             return this.get(key).map(singleValueMapper);
         } else {
-            Map<String, ConfiguredProperty> propertyMap = this.collectToMap(key, (name, property) -> {
-                return name.startsWith(this.valueAccessor(key) + "[");
-            });
+            Map<String, ConfiguredProperty> propertyMap = this.collectToMap(key, (name, property) ->
+                    name.startsWith(this.valueAccessor(key) + LIST_START)
+            );
             ListProperty property = new MapListProperty(this.name() + this.accessor(key), propertyMap, this.pathStyle);
             return Option.of(property);
         }
@@ -193,8 +196,7 @@ public abstract class AbstractMapProperty<T> {
         } else {
             String accessor = this.accessor(key);
             return this.properties().keySet().stream().anyMatch(propertyKey ->
-                    // TODO: Delegate to implementation
-                    propertyKey.startsWith(accessor + ".") || propertyKey.startsWith(accessor + "[")
+                    propertyKey.startsWith(accessor + OBJECT_SEPARATOR) || propertyKey.startsWith(accessor + LIST_START)
             );
         }
     }

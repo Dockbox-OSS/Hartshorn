@@ -48,7 +48,8 @@ public class ScopeAwareHierarchicalBinder extends SimpleHierarchicalBinder {
         this.scope = scope;
     }
 
-    protected Scope scope() {
+    @Override
+    public Scope scope() {
         return this.scope;
     }
 

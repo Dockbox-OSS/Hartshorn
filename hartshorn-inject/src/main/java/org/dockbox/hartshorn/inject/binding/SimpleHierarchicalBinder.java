@@ -132,4 +132,9 @@ public class SimpleHierarchicalBinder implements HierarchicalAliasCapableBinder,
     protected void populateHierarchies(MultiMap<Scope, BindingHierarchy<?>> hierarchies) {
         hierarchies.putAll(this.applicationScope(), this.hierarchyCache().hierarchies());
     }
+
+    @Override
+    public Scope scope() {
+        return this.applicationScope();
+    }
 }

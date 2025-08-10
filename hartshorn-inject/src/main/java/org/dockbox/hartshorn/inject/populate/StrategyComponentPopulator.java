@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.populate;
 
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.proxy.ProxyManager;
@@ -66,7 +67,7 @@ public class StrategyComponentPopulator implements ComponentPopulator {
     }
 
     @Override
-    public <T> T populate(T instance) {
+    public <T> T populate(T instance, Scope scope) {
         if (null != instance) {
             T modifiableInstance = instance;
             if(this.proxyOrchestrator.isProxy(instance)) {
@@ -80,6 +81,7 @@ public class StrategyComponentPopulator implements ComponentPopulator {
                     modifiableInstance,
                     instance,
                     typeView,
+                    scope,
                     this.application
             );
             this.populate(context);

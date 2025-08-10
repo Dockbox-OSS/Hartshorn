@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 
 package org.dockbox.hartshorn.test.junit;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.test.junit.cleanup.HartshornCleanupCallback;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class HartshornJUnitNamespace {
 
@@ -65,11 +66,11 @@ class HartshornJUnitNamespace {
                 .toList();
     }
 
-    static void registerCleanupCallback(HartshornCleanupCallback callback, ExtensionContext context) throws Exception {
+    static void registerCleanupCallback(HartshornCleanupCallback callback, ExtensionContext context) {
         List<HartshornCleanupCallback> callbacks = store(context).getOrComputeIfAbsent(
                 HartshornCleanupCallback.class,
                 key -> new ArrayList<>(),
-                List.class);
+                TypeUtils.unchecked(List.class, Class.class));
 
         if (!callbacks.contains(callback)) {
             callbacks.add(callback);

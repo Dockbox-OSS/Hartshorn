@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +42,7 @@ public final class StringUtilities {
      * Pattern for matching a string that represents a duration in seconds. The string must be a
      * single unsigned long.
      */
-    private static final Pattern minorTimeString = Pattern.compile("^\\d+$");
+    private static final Pattern MINOR_TIME_STRING = Pattern.compile("^\\d+$");
 
     /**
      * Pattern for matching a string that represents a complex duration according to a simplified
@@ -67,11 +68,11 @@ public final class StringUtilities {
      *     <li>1d4m: 1 day, 4 minutes</li>
      * </ul>
      */
-    private static final Pattern timeString = Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
-    private static final int secondsInMinute = 60;
-    private static final int secondsInHour = 60 * StringUtilities.secondsInMinute;
-    private static final int secondsInDay = 24 * StringUtilities.secondsInHour;
-    private static final int secondsInWeek = 7 * StringUtilities.secondsInDay;
+    private static final Pattern DURATION_PATTERN = Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
+    private static final int SECONDS_IN_MINUTE = 60;
+    private static final int SECONDS_IN_HOUR = 60 * StringUtilities.SECONDS_IN_MINUTE;
+    private static final int SECONDS_IN_DAY = 24 * StringUtilities.SECONDS_IN_HOUR;
+    private static final int SECONDS_IN_WEEK = 7 * StringUtilities.SECONDS_IN_DAY;
 
     private StringUtilities() {
         // Utility class
@@ -163,16 +164,16 @@ public final class StringUtilities {
     public static Option<Duration> durationOf(String value) {
         // First, if just digits, return the number in seconds.
 
-        if (StringUtilities.minorTimeString.matcher(value).matches()) {
+        if (StringUtilities.MINOR_TIME_STRING.matcher(value).matches()) {
             return Option.of(Duration.ofSeconds(Long.parseUnsignedLong(value)));
         }
 
-        Matcher m = StringUtilities.timeString.matcher(value);
+        Matcher m = StringUtilities.DURATION_PATTERN.matcher(value);
         if (m.matches()) {
-            long time = StringUtilities.durationAmount(m.group(2), StringUtilities.secondsInWeek);
-            time += StringUtilities.durationAmount(m.group(4), StringUtilities.secondsInDay);
-            time += StringUtilities.durationAmount(m.group(6), StringUtilities.secondsInHour);
-            time += StringUtilities.durationAmount(m.group(8), StringUtilities.secondsInMinute);
+            long time = StringUtilities.durationAmount(m.group(2), StringUtilities.SECONDS_IN_WEEK);
+            time += StringUtilities.durationAmount(m.group(4), StringUtilities.SECONDS_IN_DAY);
+            time += StringUtilities.durationAmount(m.group(6), StringUtilities.SECONDS_IN_HOUR);
+            time += StringUtilities.durationAmount(m.group(8), StringUtilities.SECONDS_IN_MINUTE);
             time += StringUtilities.durationAmount(m.group(10), 1);
 
             if (0 < time) {
@@ -212,8 +213,8 @@ public final class StringUtilities {
      *
      * <p>Examples:
      * <ul>
-     *     <li>" value  " -> "value"</li>
-     *     <li>"$value$$" -> "value"</li>
+     *     <li>trimWith(' ', " value  ") -> "value"</li>
+     *     <li>trimWith('$', "$value$$") -> "value"</li>
      * </ul>
      *
      * @param trimCharacter the character to trim
@@ -325,15 +326,10 @@ public final class StringUtilities {
      * @return the joined string
      */
     public static <T> String join(String delimiter, Iterable<T> elements, Function<T, String> toStringFunction) {
-        StringBuilder builder = new StringBuilder();
-        int i = 0;
+        StringJoiner joiner = new StringJoiner(delimiter);
         for (T element : elements) {
-            if (i > 0) {
-                builder.append(delimiter);
-            }
-            builder.append(toStringFunction.apply(element));
-            i++;
+            joiner.add(toStringFunction.apply(element));
         }
-        return builder.toString();
+        return joiner.toString();
     }
 }

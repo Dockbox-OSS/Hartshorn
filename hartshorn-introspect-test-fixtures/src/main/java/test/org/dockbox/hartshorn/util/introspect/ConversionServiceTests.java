@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,6 @@
 
 package test.org.dockbox.hartshorn.util.introspect;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
-
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
@@ -38,6 +30,13 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.util.introspect.support.basic.TestEnumType;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 /**
  * Tests for the {@link ConversionService} interface, driven by configurable {@link Introspector}
@@ -257,10 +256,13 @@ public abstract class ConversionServiceTests {
 
     @Test
     void testImplicitDefaultValueProviderIsAdaptedCorrectly() {
+        // Lambdas are not supported in this context due to the absence of sufficient type hints. Though, using
+        // `#addDefaultValueProvider(Class, DefaultValueProvider)` it would be supported in any practical scenario.
+        //noinspection Convert2Lambda
         this.testConverterTypeIsAdaptedCorrectly(
                 registry -> registry.addDefaultValueProvider(new DefaultValueProvider<String>() {
                     @Override
-                    public @Nullable String defaultValue() {
+                    public String defaultValue() {
                         return "";
                     }
                 }),

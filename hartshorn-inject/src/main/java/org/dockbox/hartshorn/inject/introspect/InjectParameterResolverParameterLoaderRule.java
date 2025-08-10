@@ -48,7 +48,7 @@ public class InjectParameterResolverParameterLoaderRule implements ParameterLoad
 
     @Override
     public boolean accepts(ParameterView<?> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
-        return this.parameterResolver.accepts(new InjectionPoint(parameter));
+        return this.parameterResolver.accepts(new InjectionPoint(parameter), this.createContext(context));
     }
 
     private PopulateComponentContext<?> createContext(ApplicationBoundParameterLoaderContext context) {
@@ -57,6 +57,7 @@ public class InjectParameterResolverParameterLoaderRule implements ParameterLoad
         return new PopulateComponentContext<>(
                 instance, instance,
                 TypeUtils.unchecked(type, TypeView.class),
+                context.scope(),
                 context.application()
         );
     }

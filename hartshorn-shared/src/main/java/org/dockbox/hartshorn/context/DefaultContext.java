@@ -138,7 +138,7 @@ public abstract class DefaultContext implements Context {
     @Override
     public void copyToContext(Context context) {
         this.unnamedContexts().forEach(context::addContext);
-        this.namedContexts().forEach(context::addContext);
+        this.namedContexts().forEach((name, view) -> context.addContext(name, view));
     }
 
     @Override

@@ -189,7 +189,7 @@ public class TypeUtils {
      * @param obj The object to adjust
      * @param type The type to adjust to
      * @param <InstanceType> The type of the object to adjust
-     * @param <KeyType> The type to adjust to
+     * @param <KeyType> The intermediate weakest type to adjust to
      * @param <AdjustedType> The adjusted type
      *
      * @return The adjusted object

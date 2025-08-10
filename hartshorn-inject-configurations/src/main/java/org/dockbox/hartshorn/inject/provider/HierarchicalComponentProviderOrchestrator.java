@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.function.Function;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
@@ -44,13 +39,20 @@ import org.dockbox.hartshorn.inject.processing.MultiMapComponentProcessorRegistr
 import org.dockbox.hartshorn.inject.processing.construction.AnnotatedMethodComponentPostConstructor;
 import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor;
 import org.dockbox.hartshorn.inject.provider.singleton.ConcurrentHashSingletonCache;
+import org.dockbox.hartshorn.inject.provider.strategy.ManagedComponentProviderStrategy;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
 import org.dockbox.hartshorn.inject.scope.ScopeModuleContext;
-import org.dockbox.hartshorn.util.configure.ContextualInitializer;
-import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.configure.ContextualInitializer;
+import org.dockbox.hartshorn.util.configure.Customizer;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.function.Function;
 
 /**
  * TODO: #1060 Add documentation
@@ -91,7 +93,7 @@ public class HierarchicalComponentProviderOrchestrator
     }
 
     @NonNull
-    private HierarchicalAliasBinderAwareComponentProvider createComponentProvider(Scope scope) {
+    protected HierarchicalAliasBinderAwareComponentProvider createComponentProvider(Scope scope) {
         HierarchicalAliasBinderAwareComponentProvider provider = HierarchyAwareComponentProvider.create(
                 this,
                 this.postConstructor,
@@ -99,7 +101,9 @@ public class HierarchicalComponentProviderOrchestrator
                 this.application,
                 new ConcurrentHashSingletonCache(),
                 scope,
-                Customizer.useDefaults());
+                strategies -> {
+                    strategies.insert(0, new ManagedComponentProviderStrategy());
+                });
 
         if(scope != this.application) {
             ContextKey<ScopeModuleContext> scopeModuleContextKey = ScopeModuleContext.createKey(() -> this.scope().installableScopeType());
