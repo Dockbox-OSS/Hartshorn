@@ -172,8 +172,9 @@ public final class CollectorUtilities {
      * A collector that collects a single element into an {@link Option}. If multiple elements are encountered, an
      * {@link IllegalStateException} is thrown.
      *
-     * @return a collector that collects a single element into an {@link Option}
      * @param <T> the type of the stream
+     *
+     * @return a collector that collects a single element into an {@link Option}
      */
     public static <T> Collector<T, ?, Option<T>> toOption() {
         class IntermediateHolder {

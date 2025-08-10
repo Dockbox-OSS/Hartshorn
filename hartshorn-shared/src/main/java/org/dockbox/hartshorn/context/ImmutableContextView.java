@@ -23,6 +23,13 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Immutable wrapper for {@link Context contexts}.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class ImmutableContextView implements ContextView {
 
     private final Context context;

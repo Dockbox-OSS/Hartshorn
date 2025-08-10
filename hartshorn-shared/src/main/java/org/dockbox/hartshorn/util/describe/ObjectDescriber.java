@@ -103,6 +103,9 @@ public final class ObjectDescriber<T> {
      * Describes the object using the style and fields that have been added to this {@link
      * ObjectDescriber}.
      *
+     * @param includeTypeName whether the type of the described object should be included in
+     * the description
+     *
      * @return the description of the object
      */
     public String describe(boolean includeTypeName) {
