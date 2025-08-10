@@ -47,9 +47,9 @@ public class ScopeModuleContext extends DefaultContext {
         this.applicationScope = applicationScope;
     }
 
-    public static ContextKey<ScopeModuleContext> createKey(Supplier<ScopeKey> scope) {
+    public static ContextKey<ScopeModuleContext> createKey(Supplier<ScopeKey> fallbackScope) {
         return ContextKey.builder(ScopeModuleContext.class)
-            .fallback(() -> new ScopeModuleContext(scope.get()))
+            .fallback(() -> new ScopeModuleContext(fallbackScope.get()))
             .build();
     }
 

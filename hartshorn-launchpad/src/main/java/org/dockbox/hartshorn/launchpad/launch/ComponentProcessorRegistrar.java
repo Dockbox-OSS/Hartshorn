@@ -116,32 +116,23 @@ public class ComponentProcessorRegistrar {
 
     protected Set<Class<? extends HierarchicalBinderPostProcessor>> resolveBinderPostProcessorTypes(
             Set<ModuleActivator> moduleActivatorAnnotations) {
-        return this.resolveProcessorTypes(moduleActivatorAnnotations, HierarchicalBinderPostProcessor.class, ModuleActivator::binderPostProcessors);
+        return this.resolveProcessorTypes(moduleActivatorAnnotations, ModuleActivator::binderPostProcessors);
     }
 
     protected Set<Class<? extends ComponentPreProcessor>> resolveComponentPreProcessorTypes(
             Set<ModuleActivator> moduleActivatorAnnotations) {
-        return this.resolveProcessorTypes(moduleActivatorAnnotations, ComponentPreProcessor.class, ModuleActivator::componentPreProcessors);
+        return this.resolveProcessorTypes(moduleActivatorAnnotations, ModuleActivator::componentPreProcessors);
     }
 
     protected Set<Class<? extends ComponentPostProcessor>> resolveComponentPostProcessorTypes(
             Set<ModuleActivator> moduleActivatorAnnotations) {
-        return this.resolveProcessorTypes(moduleActivatorAnnotations, ComponentPostProcessor.class, ModuleActivator::componentPostProcessors);
+        return this.resolveProcessorTypes(moduleActivatorAnnotations, ModuleActivator::componentPostProcessors);
     }
 
-    private <T> Set<Class<? extends T>> resolveProcessorTypes(Set<ModuleActivator> moduleActivators, Class<T> processorType, Function<ModuleActivator, Class<? extends T>[]> lookup) {
-        Set<Class<? extends T>> processorsFromActivator = CollectionUtilities
+    private <T> Set<Class<? extends T>> resolveProcessorTypes(Set<ModuleActivator> moduleActivators, Function<ModuleActivator, Class<? extends T>[]> lookup) {
+        return CollectionUtilities
                 .flatMapArray(moduleActivators, lookup)
                 .collect(Collectors.toSet());
-
-        // Compatibility with old activator attribute, to be removed in 0.7.0
-        @Deprecated(since = "0.7.0", forRemoval = true)
-        Set<Class<? extends ComponentProcessor>> processorsFromOldActivatorAttribute = CollectionUtilities
-                .flatMapArray(moduleActivators, ModuleActivator::processors)
-                .collect(Collectors.toSet());
-        Set<Class<? extends T>> deprecatedNotationProcessors = this.extractProcessors(processorsFromOldActivatorAttribute, processorType);
-
-        return CollectionUtilities.merge(processorsFromActivator, deprecatedNotationProcessors);
     }
 
     /**

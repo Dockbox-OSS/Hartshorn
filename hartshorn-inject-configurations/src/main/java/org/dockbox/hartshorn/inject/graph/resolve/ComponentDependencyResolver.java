@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.inject.graph.resolve;
 
-import java.util.Set;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.binding.HierarchyLookup;
@@ -33,6 +32,8 @@ import org.dockbox.hartshorn.inject.provider.ComponentConstructorResolver;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.Set;
 
 /**
  * TODO: #1060 Add documentation
@@ -84,8 +85,6 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
         if (declarationContext instanceof ComponentContainerDependencyDeclarationContext<T> containerContext) {
             ComponentKey<T> componentKey = ComponentKey.of(type);
             ComponentContainerDependencyContext<T> dependencyContext = new ComponentContainerDependencyContext<>(containerContext.container(), componentKey, dependencies, constructorView);
-            // TODO: Consider support of conditional managed components, though this should be handled at the registry (due to state
-            //  correctness) rather than in resolvers.
             return Set.of(new ConditionalDependencyContext<>(dependencyContext, contexts -> true));
         }
         else if (declarationContext instanceof ComponentKeyDependencyDeclarationContext<T> keyContext) {

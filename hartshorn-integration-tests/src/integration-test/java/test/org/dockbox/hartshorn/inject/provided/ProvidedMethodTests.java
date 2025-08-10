@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class ProvidedMethodTests {
 
     @Test
-    @TestComponents(components = ProviderComponent.class)
+    @TestComponents(ProviderComponent.class)
     void testProviderService(@Inject ProviderComponent service, @Inject Binder binder) {
         binder.bind(String.class).singleton("Hello World");
 

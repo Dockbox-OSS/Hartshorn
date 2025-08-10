@@ -113,7 +113,7 @@
             </dependency>
             <dependency>
                 <groupId>org.dockbox.hartshorn</groupId>
-                <artifactId>hartshorn-launchpad-kt-extensions</artifactId>
+                <artifactId>hartshorn-launchpad-kotlin-extensions</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>

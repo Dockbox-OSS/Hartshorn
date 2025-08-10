@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.collection;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
@@ -107,7 +108,7 @@ public class ImmutableCompositeBindingHierarchy<T> implements BindingHierarchy<C
         return this.hierarchies.stream()
             .mapToInt(BindingHierarchy::highestPriority)
             .max()
-            .orElse(-1);
+            .orElse(Priority.DEFAULT_PRIORITY);
     }
 
     @Override

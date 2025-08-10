@@ -124,26 +124,6 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
     }
 
     /**
-     * Processes the specified component. The component is guaranteed to be known to the application.
-     *
-     * @param application the application in which the component is processed
-     * @param instance the component instance
-     * @param processingContext the processing context
-     * @param <T> the type of the component
-     *
-     * @return the processed component
-     *
-     * @deprecated use {@link #preConfigureComponent(InjectionCapableApplication, Object, ComponentProcessingContext)},
-     *             {@link #initializeComponent(InjectionCapableApplication, Object, ComponentProcessingContext)} and
-     *             {@link #postConfigureComponent(InjectionCapableApplication, Object, ComponentProcessingContext)} instead
-     *             of this method
-     */
-    @Deprecated(forRemoval = true, since = "0.5.0")
-    public <T> T process(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
-        throw new UnsupportedOperationException("This method is deprecated, use preConfigureComponent, initializeComponent and postConfigureComponent instead");
-    }
-
-    /**
      * Checks if the specified component has been modified. If the component has been modified, an
      * {@link IllegalComponentModificationException} is thrown. This method is called after each
      * processing step which does not allow modification of the component.

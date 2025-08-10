@@ -13,10 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dockbox.hartshorn.inject.binding
 
-import kotlin.reflect.KClass
+package test.org.dockbox.hartshorn.inject.provider;
 
-fun <T : Any> Binder.bind(type: KClass<T>): BindingFunction<T> = this.bind(type.java)
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
+import org.dockbox.hartshorn.inject.annotations.Named;
 
-inline fun <reified T : Any> Binder.bind(): BindingFunction<T> = this.bind(T::class.java)
+@Configuration
+public class SampleNamedConfiguration {
+
+    @Prototype
+    @Named("meta")
+    public SampleInterface sampleInterface() {
+        return new SampleMetaAnnotatedImplementation();
+    }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,21 @@
 
 package org.dockbox.hartshorn.inject.graph;
 
-import java.util.Set;
-
 import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.component.ComponentRegistry;
-import org.dockbox.hartshorn.inject.scope.Scope;
-import org.dockbox.hartshorn.inject.scope.ScopeKey;
+import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.LifecycleAwareDependencyContext;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
+import org.dockbox.hartshorn.inject.scope.Scope;
+import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.View;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Set;
 
 /**
  * A {@link DependencyContext} implementation that is used for managed components. Managed components are components that
@@ -81,7 +82,7 @@ public abstract class ManagedComponentDependencyContext<T> implements LifecycleA
 
     @Override
     public int priority() {
-        return -1;
+        return Priority.DEFAULT_PRIORITY;
     }
 
     @Override

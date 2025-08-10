@@ -16,13 +16,12 @@
 
 package test.org.dockbox.hartshorn.inject.provider;
 
-import java.util.stream.Stream;
-
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.test.annotations.TestBinding;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -31,8 +30,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import test.org.dockbox.hartshorn.inject.populate.PopulatedType;
+
+import java.util.stream.Stream;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class ProviderBehaviorTests {
@@ -116,7 +116,7 @@ public class ProviderBehaviorTests {
     }
 
     @Test
-    @TestComponents(components = SampleConfiguration.class)
+    @TestComponents(SampleNamedConfiguration.class)
     public void testScannedMetaBindingsCanBeProvided() {
 
         // Ensure that the binding is not bound to the default name
@@ -132,14 +132,20 @@ public class ProviderBehaviorTests {
     }
 
     @Test
-    @TestComponents(
-            components = PopulatedType.class,
-            bindings = @TestBinding(type = SampleInterface.class, implementation = SampleImplementation.class)
-    )
+    @TestComponents({PopulatedType.class, SampleConfiguration.class})
     public void unboundTypesCanBeProvided() {
         PopulatedType provided = this.applicationContext.get(PopulatedType.class);
         Assertions.assertNotNull(provided);
         Assertions.assertNotNull(provided.sampleInterface());
+    }
+
+    @Configuration
+    public static class SampleConfiguration {
+
+        @Singleton
+        public SampleInterface sampleInterface() {
+            return new SampleImplementation();
+        }
     }
 
     @Test
@@ -177,7 +183,7 @@ public class ProviderBehaviorTests {
 
     @ParameterizedTest
     @MethodSource("providers")
-    @TestComponents(components = { SampleFieldImplementation.class, SampleProviderConfiguration.class})
+    @TestComponents({ SampleFieldImplementation.class, SampleProviderConfiguration.class})
     void testProvidersCanApply(String meta, String name, boolean field, String fieldMeta, boolean singleton) {
         if (field) {
             if (fieldMeta == null) {this.applicationContext.bind(SampleField.class).to(SampleFieldImplementation.class);}

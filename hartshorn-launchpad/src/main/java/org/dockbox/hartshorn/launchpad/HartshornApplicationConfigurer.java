@@ -97,7 +97,7 @@ public class HartshornApplicationConfigurer {
      * @return The current configurator instance
      */
     public HartshornApplicationConfigurer activators(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Annotation>> customizer) {
-        this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.activators(customizer));
+        this.applicationContextFactory = this.applicationContextFactory.compose(configuration -> configuration.moduleActivators(customizer));
         return this;
     }
 

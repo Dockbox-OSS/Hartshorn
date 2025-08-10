@@ -16,6 +16,9 @@
 
 package org.dockbox.hartshorn.util.types;
 
+import org.dockbox.hartshorn.util.NotPrimitiveException;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -30,9 +33,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.dockbox.hartshorn.util.NotPrimitiveException;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Utility class for functionalities related to types. Within the context of this class, types can either
@@ -102,8 +102,8 @@ public class TypeUtils {
      * @throws TypeConversionException If the value cannot be converted to the given type
      * @throws NotPrimitiveException If the given type is not a primitive or primitive wrapper
      *
-     * @deprecated Use {@code ConversionService} instead. This method will not be removed in a future release, but is no
-     *             longer recommended for use.
+     * @deprecated Use {@code ConversionService} instead. This method is not scheduled to be removed in a future
+     * release, but is no longer recommended for use.
      */
     @Deprecated(since = "0.6.0", forRemoval = false)
     public static <T> T toPrimitive(Class<?> type, String value) throws TypeConversionException, NotPrimitiveException {

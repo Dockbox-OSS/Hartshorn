@@ -99,7 +99,7 @@ public abstract class DelegatingApplicationContext
             modifiableApplicationContextCarrier.applicationContext(this);
         }
 
-        this.prepareInitialization();
+        this.prepareInitialization(initializerContext);
 
         SingleElementContext<ApplicationContext> applicationInitializerContext = initializerContext.transform(this);
         // Expose current context to allow initializers to resolve the application, even if the content of the element context
@@ -116,8 +116,12 @@ public abstract class DelegatingApplicationContext
      * Prepares the initialization of the {@link ApplicationContext}. This method is called before any bindings are
      * configured. This method is intended to be overridden by implementations to perform any initialization that is
      * required before bindings are configured.
+     *
+     * @param initializerContext the context in which the initialization is taking place
      */
-    protected abstract void prepareInitialization();
+    protected void prepareInitialization(SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
+        // Nothing by default
+    }
 
     /**
      * Checks if the {@link ApplicationContext} is running. If it is, an {@link IllegalModificationException} is thrown.

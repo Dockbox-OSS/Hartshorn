@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 public class ContextConfiguringComponentProcessorTests {
 
     @Test
-    @TestComponents(components = EmptyComponent.class)
+    @TestComponents(EmptyComponent.class)
     void testNonContextComponentIsProcessed(@Inject EmptyComponent emptyComponent, @Inject ProxyOrchestrator proxyOrchestrator) {
         Assertions.assertNotNull(emptyComponent);
         Assertions.assertTrue(proxyOrchestrator.isProxy(emptyComponent));
@@ -45,7 +45,7 @@ public class ContextConfiguringComponentProcessorTests {
     }
 
     @Test
-    @TestComponents(components = ContextComponent.class)
+    @TestComponents(ContextComponent.class)
     void testContextComponentIsProcessed(@Inject ContextComponent contextComponent, @Inject ProxyOrchestrator proxyOrchestrator) {
         Assertions.assertNotNull(contextComponent);
         Assertions.assertFalse(proxyOrchestrator.isProxy(contextComponent));

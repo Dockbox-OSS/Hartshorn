@@ -20,6 +20,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.IllegalScopeException;
 import org.dockbox.hartshorn.inject.QualifierKey;
+import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.CollectorBindingFunction;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
@@ -65,7 +66,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     private Scope scope;
     private ScopeKey scopeKey;
 
-    private int priority = -1;
+    private int priority = Priority.DEFAULT_PRIORITY;
     private boolean processAfterInitialization = true;
 
     public HierarchyBindingFunction(

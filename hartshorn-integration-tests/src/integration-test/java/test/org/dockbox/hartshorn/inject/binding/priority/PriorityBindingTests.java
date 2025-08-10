@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,14 +37,14 @@ public class PriorityBindingTests {
     private ApplicationContext applicationContext;
 
     @Test
-    @TestComponents(components = { ZeroAndDefaultPriorityConfiguration.class, ImplicitPriorityConfiguration.class})
+    @TestComponents({ ZeroAndDefaultPriorityConfiguration.class, ImplicitPriorityConfiguration.class})
     void testProvisionWithImplicitPriority() {
         TestPriorityComponent component = this.applicationContext.get(TestPriorityComponent.class);
         Assertions.assertEquals(PRIORITY_ZERO + PRIORITY_ONE, component.name());
     }
 
     @Test
-    @TestComponents(components = { ZeroAndDefaultPriorityConfiguration.class, ExplicitPriorityConfiguration.class})
+    @TestComponents({ ZeroAndDefaultPriorityConfiguration.class, ExplicitPriorityConfiguration.class})
     void testProvisionWithExplicitPriority() {
         TestPriorityComponent component = this.applicationContext.get(TestPriorityComponent.class);
         Assertions.assertEquals(PRIORITY_DEFAULT + PRIORITY_ONE, component.name());

@@ -62,6 +62,7 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
      * @param container the container to register
      * @return whether the registry already contained a container with the same ID
      */
+    @Override
     public boolean addCustomContainer(ComponentContainer<?> container) {
         return this.withContainerCache(containers -> safeAddContainer(containers, container));
     }
@@ -110,10 +111,12 @@ public class TypeReferenceLookupComponentRegistry implements ComponentRegistry {
     }
 
     private void initializeCacheIfEmpty() {
+        // Don't check if the cache is empty, as that would still be a valid state if no
+        // components are registered.
         if (!this.environmentTypesResolved) {
             this.environmentTypesResolved = true;
             this.typeResolver.types(Component.class).stream()
-                    // Filter out component stereotypes
+                    // Filter out component stereotypes (annotation types)
                     .filter(type -> !AnnotationUtilities.isStereotypeOf(type.type(), Component.class))
                     .map(AnnotatedComponentContainer::new)
                     .forEach(container -> this.safeAddContainer(this.containers, container));

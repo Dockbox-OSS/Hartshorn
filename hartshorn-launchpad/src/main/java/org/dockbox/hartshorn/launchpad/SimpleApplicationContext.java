@@ -79,11 +79,6 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
     }
 
     @Override
-    protected void prepareInitialization() {
-        // Nothing to do, override if needed
-    }
-
-    @Override
     public synchronized void loadContext() {
         this.checkRunning();
 

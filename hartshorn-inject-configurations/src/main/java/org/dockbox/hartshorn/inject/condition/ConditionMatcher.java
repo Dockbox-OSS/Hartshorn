@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,22 @@
 
 package org.dockbox.hartshorn.inject.condition;
 
+import org.dockbox.hartshorn.context.ContextView;
+import org.dockbox.hartshorn.context.DefaultContext;
+import org.dockbox.hartshorn.inject.InjectionApplicationAwareContext;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
+import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.SequencedCollection;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import org.dockbox.hartshorn.context.ContextView;
-import org.dockbox.hartshorn.inject.DefaultInjectionApplicationAwareContext;
-import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
-import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A matcher that can be used to match {@link RequiresCondition} annotations against a given set of contexts.
@@ -48,15 +50,13 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public final class ConditionMatcher extends DefaultInjectionApplicationAwareContext {
+public final class ConditionMatcher extends DefaultContext implements InjectionApplicationAwareContext {
 
+    private final Supplier<InjectionCapableApplication> applicationSupplier;
     private boolean includeEnclosingConditions = true;
 
-    /**
-     * @param application the application, used to resolve {@link Condition} instances
-     */
-    public ConditionMatcher(InjectionCapableApplication application) {
-        super(application);
+    public ConditionMatcher(Supplier<InjectionCapableApplication> applicationSupplier) {
+        this.applicationSupplier = applicationSupplier;
     }
 
     /**
@@ -198,5 +198,10 @@ public final class ConditionMatcher extends DefaultInjectionApplicationAwareCont
         }
 
         return elements;
+    }
+
+    @Override
+    public InjectionCapableApplication application() {
+        return this.applicationSupplier.get();
     }
 }

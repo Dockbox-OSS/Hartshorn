@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject;
 
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 
 /**
  * Represents an environment that is capable of managing components.
@@ -33,4 +34,6 @@ public interface ManagedComponentEnvironment extends InjectorEnvironment {
      * @return the {@link ComponentRegistry} that is used by this {@link ManagedComponentEnvironment} to locate components
      */
     ComponentRegistry componentRegistry();
+
+    ConditionMatcher conditionMatcher();
 }

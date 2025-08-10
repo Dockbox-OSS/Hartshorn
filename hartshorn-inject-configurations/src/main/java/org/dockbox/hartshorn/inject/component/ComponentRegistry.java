@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@
 
 package org.dockbox.hartshorn.inject.component;
 
-import java.util.Collection;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Collection;
 
 /**
  * TODO: #1060 Add documentation
@@ -31,4 +32,6 @@ public interface ComponentRegistry {
     Collection<ComponentContainer<?>> containers();
 
     Option<ComponentContainer<?>> container(Class<?> type);
+
+    boolean addCustomContainer(ComponentContainer<?> container);
 }

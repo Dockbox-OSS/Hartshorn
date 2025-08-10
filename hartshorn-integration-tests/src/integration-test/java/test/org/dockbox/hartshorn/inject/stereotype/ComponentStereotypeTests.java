@@ -31,7 +31,7 @@ public class ComponentStereotypeTests {
     private ApplicationContext applicationContext;
 
     @Test
-    @TestComponents(components = EmptyComponent.class)
+    @TestComponents(EmptyComponent.class)
     void servicesAreSingletonsByDefault() {
         EmptyComponent emptyComponent = this.applicationContext.get(EmptyComponent.class);
         EmptyComponent emptyComponent2 = this.applicationContext.get(EmptyComponent.class);
@@ -44,7 +44,7 @@ public class ComponentStereotypeTests {
     }
 
     @Test
-    @TestComponents(components = ComponentType.class)
+    @TestComponents(ComponentType.class)
     void testPermittedComponentsAreProxiedWhenRegularProvisionFails() {
         ComponentType instance = this.applicationContext.get(ComponentType.class);
         Assertions.assertNotNull(instance);
@@ -52,7 +52,7 @@ public class ComponentStereotypeTests {
     }
 
     @Test
-    @TestComponents(components = NonProxyComponentType.class)
+    @TestComponents(NonProxyComponentType.class)
     void testNonPermittedComponentsAreNotProxied() {
         Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(NonProxyComponentType.class));
     }

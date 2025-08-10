@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,31 @@
 package test.org.dockbox.hartshorn.inject.exception;
 
 import org.dockbox.hartshorn.inject.LoggingExceptionHandler;
+import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.test.TestCustomizer;
-import org.dockbox.hartshorn.test.annotations.CustomizeTests;
+import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
+import org.dockbox.hartshorn.test.TestApplicationCustomizer;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import org.dockbox.hartshorn.inject.annotations.Inject;
-
-@HartshornIntegrationTest(includeBasePackages = false)
+@HartshornIntegrationTest(
+        includeBasePackages = false,
+        customizers = ExceptionHandlerTests.ExceptionHandlerTestsCustomizer.class
+)
 public class ExceptionHandlerTests {
+
+    public static class ExceptionHandlerTestsCustomizer implements TestApplicationCustomizer {
+        @Override
+        public void customizeEnvironment(ConfigurableApplicationEnvironment.Configurer configurer) {
+            ExceptionHandlerTests.HANDLE = new CachingExceptionHandler();
+            configurer.exceptionHandler(ExceptionHandlerTests.HANDLE);
+        }
+    }
 
     @Inject
     private ApplicationContext applicationContext;
     private static CachingExceptionHandler HANDLE;
-
-    @CustomizeTests
-    public static void customize() {
-        TestCustomizer.ENVIRONMENT.compose(environment -> {
-            ExceptionHandlerTests.HANDLE = new CachingExceptionHandler();
-            environment.exceptionHandler(ExceptionHandlerTests.HANDLE);
-        });
-    }
 
     @Test
     public void testExceptKeepsPreferences() {
