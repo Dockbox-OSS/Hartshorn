@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ConcreteDiscoverableComponent;
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.DiscoverableComponentConfiguration;
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.DiscoverableComponent;
-import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ServiceInterface;
+import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ComponentInterface;
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.PackageScanningActivator;
 
 @PackageScanningActivator
@@ -56,8 +56,8 @@ public class ActivatorScanningTests {
     }
 
     @Test
-    @TestComponents(components = ServiceInterface.class)
-    void testServicesFromActivatorPrefixArePresent(@Inject ServiceInterface service, @Inject ProxyOrchestrator proxyOrchestrator) {
+    @TestComponents(components = ComponentInterface.class)
+    void testServicesFromActivatorPrefixArePresent(@Inject ComponentInterface service, @Inject ProxyOrchestrator proxyOrchestrator) {
         Assertions.assertNotNull(service);
         Assertions.assertTrue(proxyOrchestrator.isProxy(service));
     }

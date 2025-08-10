@@ -16,20 +16,12 @@
 
 package org.dockbox.hartshorn.test;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.inject.ObjectFactory;
 import org.dockbox.hartshorn.inject.ReflectionObjectFactory;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.test.annotations.TestBinding;
@@ -37,6 +29,14 @@ import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Customizer for the {@link StandardApplicationContextFactory} that configures the application context for integration tests.
@@ -72,7 +72,7 @@ public record IntegrationTestApplicationFactoryCustomizer(
             this.customizeWithComponentSource(constructor, element);
         }
 
-        this.customizeActivators(constructor);
+        this.customizeModuleActivators(constructor);
     }
 
     private void configureDefaultBindings(SimpleApplicationContext.Configurer applicationContext,
@@ -90,18 +90,18 @@ public record IntegrationTestApplicationFactoryCustomizer(
         }
     }
 
-    private void customizeActivators(StandardApplicationContextFactory.Configurer constructor) {
+    private void customizeModuleActivators(StandardApplicationContextFactory.Configurer constructor) {
         Class<?> next = this.testClass;
-        Set<Annotation> serviceActivators = new HashSet<>();
+        Set<Annotation> moduleActivators = new HashSet<>();
         while(next != null) {
             Arrays.stream(next.getAnnotations())
-                    .filter(annotation -> annotation.annotationType().isAnnotationPresent(ServiceActivator.class))
-                    .forEach(serviceActivators::add);
+                    .filter(annotation -> annotation.annotationType().isAnnotationPresent(ModuleActivator.class))
+                    .forEach(moduleActivators::add);
 
             next = next.getSuperclass();
         }
         constructor.activators(activators -> {
-            activators.addAll(serviceActivators);
+            activators.addAll(moduleActivators);
         });
     }
 

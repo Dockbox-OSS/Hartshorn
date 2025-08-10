@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,10 @@ import java.lang.annotation.Target;
  * annotation, X annotation will also be returned.
  *
  * <p>A common example of this inheritance are component stereotypes in Hartshorn. For example,
- * {@code Service}, which extends {@code Component}.
+ * {@code Configuration}, which extends {@code Component}.
  *
  * <p>If an attribute in the extended (Component) annotation is also present in the extending
- * (Service) annotation, the extending annotation will override the attribute value of the
+ * (Configuration) annotation, the extending annotation will override the attribute value of the
  * extended annotation.
  *
  * @author Guus Lieben

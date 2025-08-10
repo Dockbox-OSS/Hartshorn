@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,39 +16,39 @@
 
 package org.dockbox.hartshorn.launchpad.activation;
 
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import org.dockbox.hartshorn.util.option.Option;
-
 /**
- * A lazy {@link ActivatorHolder} that provides activators from a {@link ServiceActivatorContext} when needed.
+ * A lazy {@link ModuleActivatorHolder} that provides activators from a {@link ModuleActivatorContext} when needed.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public class ContextActivatorHolder implements ActivatorHolder {
+public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
 
-    private final Supplier<Option<ServiceActivatorContext>> contextProvider;
+    private final Supplier<Option<ModuleActivatorContext>> contextProvider;
 
-    protected ContextActivatorHolder(Supplier<Option<ServiceActivatorContext>> contextProvider) {
+    protected ContextModuleActivatorHolder(Supplier<Option<ModuleActivatorContext>> contextProvider) {
         this.contextProvider = contextProvider;
     }
 
-    public static ContextActivatorHolder of(Supplier<Option<ServiceActivatorContext>> contextProvider) {
-        return new ContextActivatorHolder(contextProvider);
+    public static ContextModuleActivatorHolder of(Supplier<Option<ModuleActivatorContext>> contextProvider) {
+        return new ContextModuleActivatorHolder(contextProvider);
     }
 
-    public static ContextActivatorHolder of(ServiceActivatorContext context) {
-        return new ContextActivatorHolder(() -> Option.of(context));
+    public static ContextModuleActivatorHolder of(ModuleActivatorContext context) {
+        return new ContextModuleActivatorHolder(() -> Option.of(context));
     }
 
     @Override
     public Set<Annotation> activators() {
         return this.contextProvider.get()
-                .map(ServiceActivatorContext::activators)
+                .map(ModuleActivatorContext::activators)
                 .orElseGet(Set::of);
     }
 

@@ -16,9 +16,7 @@
 
 package org.dockbox.hartshorn.inject.processing.construction;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Set;
+import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.OnInitialized;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
@@ -29,12 +27,15 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
-import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.Set;
 
 /**
  * TODO: #1060 Add documentation
@@ -58,14 +59,14 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
     @Override
     public <T> T doPostConstruct(T instance, Scope scope) throws ApplicationException {
         TypeView<T> typeView = this.introspector.introspect(instance);
-        List<MethodView<T, ?>> postConstructMethods = typeView.methods().annotatedWithAny(this.annotations);
+        List<MethodView<T, ?>> annotatedMethods = typeView.methods().annotatedWithAny(this.annotations);
 
-        for (MethodView<T, ?> postConstructMethod : postConstructMethods) {
+        for (MethodView<T, ?> annotatedMethod : annotatedMethods) {
             Object[] arguments = this.contextAdapter
                 .scope(scope)
-                .loadParameters(postConstructMethod);
+                .loadParameters(annotatedMethod);
             try {
-                postConstructMethod.invoke(instance, arguments);
+                annotatedMethod.invoke(instance, arguments);
             }
             catch (ApplicationException e) {
                 throw e;

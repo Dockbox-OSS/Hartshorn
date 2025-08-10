@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ScanSpecificPackageActivator;
-import test.org.dockbox.hartshorn.launchpad.launch.scanning.service.DemoServicePreProcessor;
+import test.org.dockbox.hartshorn.launchpad.launch.scanning.components.CountingComponentPreProcessor;
 
 /**
  * This test is associated with <a href="https://github.com/GuusLieben/Hartshorn/issues/609">#609</a>. It tests that
@@ -33,12 +33,12 @@ import test.org.dockbox.hartshorn.launchpad.launch.scanning.service.DemoServiceP
 @HartshornIntegrationTest(
         includeBasePackages = false,
         scanPackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning",
-        componentPreProcessors = { DemoServicePreProcessor.class }
+        componentPreProcessors = { CountingComponentPreProcessor.class }
 )
 public class SpecificPackageTests {
 
     @Test
-    public void specificPackageFilterIsApplied(@Inject DemoServicePreProcessor processor) {
+    public void specificPackageFilterIsApplied(@Inject CountingComponentPreProcessor processor) {
         Assertions.assertEquals(1, processor.processed());
     }
 }

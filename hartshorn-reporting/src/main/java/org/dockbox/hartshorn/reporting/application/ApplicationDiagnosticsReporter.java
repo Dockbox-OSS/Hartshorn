@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.reporting.application;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.context.NamedContext;
@@ -36,13 +30,19 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
+
 /**
  * A diagnostics reporter that reports information about the application. This includes the following information:
  * <ul>
  *     <li>Version of Hartshorn</li>
  *     <li>Location of the application JAR file</li>
  *     <li>Application properties</li>
- *     <li>Service activators</li>
+ *     <li>Module activators</li>
  *     <li>Observers</li>
  *     <li>Application-level contexts</li>
  * </ul>
@@ -80,8 +80,8 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
         if (this.configuration.includeApplicationProperties()) {
             this.reportApplicationProperties(collector);
         }
-        if (this.configuration.includeServiceActivators()) {
-            this.reportServiceActivators(collector);
+        if (this.configuration.includeModuleActivators()) {
+            this.reportModuleActivators(collector);
         }
         if (this.configuration.includeObservers()) {
             this.reportObservers(collector);
@@ -118,11 +118,11 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
     }
 
     /**
-     * Reports the canonical names of all service activators that are registered with the application context.
+     * Reports the canonical names of all module activators that are registered with the application context.
      *
      * @param collector the collector to write to
      */
-    protected void reportServiceActivators(DiagnosticsPropertyCollector collector) {
+    protected void reportModuleActivators(DiagnosticsPropertyCollector collector) {
         String[] activators = this.applicationContext.activators().activators().stream()
                 .map(activator -> activator.annotationType().getCanonicalName())
                 .toArray(String[]::new);

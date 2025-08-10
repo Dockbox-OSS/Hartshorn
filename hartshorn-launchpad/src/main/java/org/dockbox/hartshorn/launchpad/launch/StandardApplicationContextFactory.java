@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.launchpad.launch;
 
-import java.lang.annotation.Annotation;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
+import org.dockbox.hartshorn.inject.condition.Condition;
+import org.dockbox.hartshorn.inject.processing.ComponentPopulatorPostProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
 import org.dockbox.hartshorn.inject.processing.ContainerAwareComponentPopulatorPostProcessor;
 import org.dockbox.hartshorn.inject.processing.HierarchicalBinderPostProcessor;
@@ -32,32 +32,33 @@ import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivatorCollector;
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivatorContext;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivatorCollector;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivatorContext;
 import org.dockbox.hartshorn.launchpad.annotations.UseLaunchpad;
 import org.dockbox.hartshorn.launchpad.annotations.UseLifecycleObservers;
+import org.dockbox.hartshorn.launchpad.annotations.UseProxying;
 import org.dockbox.hartshorn.launchpad.configuration.BindingConfigurerBinderPostProcessorAdapter;
 import org.dockbox.hartshorn.launchpad.configuration.ScopeFilteredDelegateBinderPostProcessor;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
-import org.dockbox.hartshorn.launchpad.annotations.UseProxying;
-import org.dockbox.hartshorn.inject.condition.Condition;
-import org.dockbox.hartshorn.inject.processing.ComponentPopulatorPostProcessor;
-import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
-import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.scan.PredefinedSetTypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScannerTypeReferenceCollector;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.lang.annotation.Annotation;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The standard implementation of an {@link ApplicationContextFactory}. This factory is responsible for creating an
@@ -76,7 +77,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
     private final Configurer configurer;
 
     private ComponentProcessorRegistrar componentProcessorRegistrar;
-    private ServiceActivatorCollector activatorCollector;
+    private ModuleActivatorCollector activatorCollector;
 
     private StandardApplicationContextFactory(SingleElementContext<? extends ApplicationBuildContext> initializerContext, Configurer configurer) {
         this.initializerContext = initializerContext;
@@ -95,11 +96,11 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
 
         SingleElementContext<ApplicationBootstrapContext> bootstrapInitializerContext = this.initializerContext.transform(bootstrapContext);
 
-        this.activatorCollector = new ServiceActivatorCollector();
-        Set<Annotation> activators = this.serviceActivators(bootstrapContext);
-        ServiceActivatorContext serviceActivatorContext = new ServiceActivatorContext(activators);
-        bootstrapContext.addContext(serviceActivatorContext);
-        bootstrapInitializerContext.addContext(serviceActivatorContext);
+        this.activatorCollector = new ModuleActivatorCollector();
+        Set<Annotation> activators = this.moduleActivators(bootstrapContext);
+        ModuleActivatorContext moduleActivatorContext = new ModuleActivatorContext(activators);
+        bootstrapContext.addContext(moduleActivatorContext);
+        bootstrapInitializerContext.addContext(moduleActivatorContext);
 
         TypeReferenceCollectorContext collectorContext = new TypeReferenceCollectorContext();
         this.enhanceTypeReferenceCollectorContext(bootstrapContext, collectorContext, activators);
@@ -108,7 +109,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
 
         ApplicationEnvironment environment = this.configurer.environment.initialize(bootstrapInitializerContext);
         ApplicationContext applicationContext = environment.applicationContext();
-        applicationContext.addContext(serviceActivatorContext);
+        applicationContext.addContext(moduleActivatorContext);
         applicationContext.addContext(collectorContext);
 
         this.componentProcessorRegistrar = new ComponentProcessorRegistrar(this.buildContext);
@@ -123,14 +124,14 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
     }
 
     /**
-     * Configures the application context with all necessary components. This includes service activators, type reference
+     * Configures the application context with all necessary components. This includes module activators, type reference
      * collectors, and component processors.
      *
      * @param applicationContext The application context to configure
      * @param bootstrapContext The bootstrap context that is used to create the application context
      */
     private void configure(ApplicationContext applicationContext, SingleElementContext<ApplicationBootstrapContext> bootstrapContext) {
-        bootstrapContext.input().firstContext(ServiceActivatorContext.class)
+        bootstrapContext.input().firstContext(ModuleActivatorContext.class)
                 .peek(activatorContext -> {
                     this.registerComponentProcessors(activatorContext.activators(), bootstrapContext.transform(applicationContext));
                 });
@@ -141,7 +142,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      * configured by the application itself, and processors that are present on the main class of the application.
      *
      * @param context The initializer context containing the application context to register the processors to
-     * @param activators The set of service activators that are present in the application configuration
+     * @param activators The set of module activators that are present in the application configuration
      */
     private void registerComponentProcessors(Set<Annotation> activators, SingleElementContext<ApplicationContext> context) {
         ApplicationContext applicationContext = context.input();
@@ -149,13 +150,13 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         this.componentProcessorRegistrar.withAdditionalComponentProcessors(this.configurer.componentPostProcessors.initialize(context));
         this.componentProcessorRegistrar.withAdditionalBinderProcessors(this.configurer.binderPostProcessors.initialize(context));
 
-        Set<ServiceActivator> serviceActivators = activators.stream()
+        Set<ModuleActivator> moduleActivators = activators.stream()
             .flatMap(activator -> this.activatorCollector.collectDeclarationsOnActivator(activator).stream())
             .collect(Collectors.toSet());
 
         if (applicationContext.defaultProvider() instanceof PostProcessingComponentProvider processingComponentProvider) {
             ComponentProcessorRegistry registry = processingComponentProvider.processorRegistry();
-            this.componentProcessorRegistrar.registerComponentProcessors(registry, applicationContext.environment().introspector(), serviceActivators);
+            this.componentProcessorRegistrar.registerComponentProcessors(registry, applicationContext.environment().introspector(), moduleActivators);
         }
         else {
             this.buildContext.logger().warn("Default component provider is not processable, component processors will not be registered");
@@ -166,7 +167,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
                 throw new IllegalStateException("Application context scope is already present in the component provider orchestrator, cannot process after release");
             }
             HierarchicalBinderProcessorRegistry registry = orchestrator.binderProcessorRegistry();
-            this.componentProcessorRegistrar.registerBinderProcessors(registry, applicationContext.environment().introspector(), serviceActivators);
+            this.componentProcessorRegistrar.registerBinderProcessors(registry, applicationContext.environment().introspector(), moduleActivators);
 
             DefaultBindingConfigurer configurer = DefaultBindingConfigurer.empty();
             for (DefaultBindingConfigurerContext configurerContext : this.initializerContext.contexts(DefaultBindingConfigurerContext.class)) {
@@ -183,18 +184,18 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
     }
 
     /**
-     * Collects all service activators that are present in the application configuration. This includes activators that are
+     * Collects all module activators that are present in the application configuration. This includes activators that are
      * configured by the application itself, and activators that are present on the main class of the application.
      *
      * @param bootstrapContext The bootstrap context that is used to create the application context
-     * @return The set of service activators that are present in the application configuration
+     * @return The set of module activators that are present in the application configuration
      */
-    private Set<Annotation> serviceActivators(ApplicationBootstrapContext bootstrapContext) {
+    private Set<Annotation> moduleActivators(ApplicationBootstrapContext bootstrapContext) {
         SingleElementContext<ApplicationBootstrapContext> bootstrap = this.initializerContext.transform(bootstrapContext);
         List<Annotation> configuredActivators = this.configurer.activators.initialize(bootstrap).stream()
-            .flatMap(activator -> this.activatorCollector.collectServiceActivatorsRecursively(activator).stream())
+            .flatMap(activator -> this.activatorCollector.collectModuleActivatorsRecursively(activator).stream())
             .toList();
-        Set<Annotation> additionalActivators = this.activatorCollector.serviceActivators(bootstrapContext.mainClass());
+        Set<Annotation> additionalActivators = this.activatorCollector.moduleActivators(bootstrapContext.mainClass());
         return CollectionUtilities.merge(configuredActivators, additionalActivators);
     }
 
@@ -225,7 +226,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
 
     /**
      * Collects the prefixes that should be used to register components in the application context. This collects prefixes
-     * from the main class, and from any service activators that are present in the configuration.
+     * from the main class, and from any module activators that are present in the configuration.
      *
      * @param bootstrapContext The bootstrap context that is used to create the application context
      * @param activators The activators that are present on the main class
@@ -249,12 +250,12 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
             prefixes.add(bootstrapContext.mainClass().getPackageName());
         }
 
-        for (Annotation serviceActivator : activators) {
-            if (!serviceActivator.annotationType().isAnnotationPresent(ServiceActivator.class)) {
-                throw new IllegalStateException("Service activator annotation " + serviceActivator + " is not annotated with @ServiceActivator");
+        for (Annotation moduleActivator : activators) {
+            if (!moduleActivator.annotationType().isAnnotationPresent(ModuleActivator.class)) {
+                throw new IllegalStateException("Module activator annotation " + moduleActivator + " is not annotated with @" + ModuleActivator.class.getSimpleName());
             }
 
-            ServiceActivator activator = serviceActivator.annotationType().getAnnotation(ServiceActivator.class);
+            ModuleActivator activator = moduleActivator.annotationType().getAnnotation(ModuleActivator.class);
             prefixes.addAll(List.of(activator.scanPackages()));
         }
 
@@ -332,10 +333,10 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         private ContextualInitializer<ApplicationBuildContext, Boolean> includeBasePackages = ContextualInitializer.of(true);
 
         /**
-         * Configures the service activators that are used to collect component processors. By default, this includes the
+         * Configures the module activators that are used to collect component processors. By default, this includes the
          * {@link UseLifecycleObservers} and {@link UseProxying} annotations.
          *
-         * @param customizer The customizer that is used to configure the service activators
+         * @param customizer The customizer that is used to configure the module activators
          * @return The current configurator instance
          */
         public Configurer activators(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Annotation>> customizer) {
@@ -396,7 +397,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
 
         /**
          * Configures the packages that should be scanned by the application. By default, this contains no packages outside the
-         * main class package and values provided by {@link ServiceActivator#scanPackages() service activators}.
+         * main class package and values provided by {@link ModuleActivator#scanPackages() module activators}.
          *
          * @param customizer The customizer that is used to configure the packages that should be scanned
          * @return The current configurator instance

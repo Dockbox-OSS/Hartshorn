@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +16,23 @@
 
 package org.dockbox.hartshorn.inject.annotations;
 
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
+import org.dockbox.hartshorn.inject.component.ComponentDescriber;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
+import org.dockbox.hartshorn.inject.provider.LifecycleType;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.inject.component.ComponentContainer;
-import org.dockbox.hartshorn.inject.component.ComponentRegistry;
-import org.dockbox.hartshorn.inject.component.ComponentDescriber;
-import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
-import org.dockbox.hartshorn.inject.provider.LifecycleType;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 /**
  * An annotation for components. Components are the building blocks of the framework. If a type is annotated with this
- * annotation, it is considered a component, allowing it to be processed using {@link
- * ComponentProcessor}s.
- *
- * <p>Components are identified by their type, but it is also possible to specify additional
- * standard properties. These properties are:
- * <ul>
- *     <li>{@link #id()} - The unique identifier of the component. This is used to identify the component in the framework.
- *         If not specified, the type of the component is used to generate a valid ID through
- *         {@link ComponentDescriber#id(TypeView)}</li>
- *     <li>{@link #name()} - The name of the component. This is used to identify the component in the framework. If not
- *         specified, the name of the class is used.</li>
- *     <li>{@link #lifecycle()} - Indicates the lifecycle of the component. This is used to determine when the component
- *         should be created and destroyed. The default value is {@link LifecycleType#PROTOTYPE 'Prototype'}.</li>
- * </ul>
+ * annotation, it is considered a component, allowing it to be processed using {@link ComponentProcessor}s and to be
+ * adopted by the container.
  *
  * <p>The following example shows how to annotate a class as a component:
  * <pre>{@code
@@ -53,7 +42,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *      }
  * }</pre>
  *
- * @see Service
+ * @see Configuration
  * @see ComponentRegistry
  * @see ComponentContainer
  * @see ComponentProcessor
@@ -86,11 +75,11 @@ public @interface Component {
 
     /**
      * Indicates the lifecycle of the component. This is used to determine when the component should be created and destroyed.
-     * The default value is {@link LifecycleType#PROTOTYPE 'Prototype'}.
+     * The default value is {@link LifecycleType#SINGLETON 'Singleton'}.
      *
      * @return The lifecycle of the component
      */
-    LifecycleType lifecycle() default LifecycleType.PROTOTYPE;
+    LifecycleType lifecycle() default LifecycleType.SINGLETON;
 
     /**
      * Indicates whether a component should be created after the application context has been initialized.

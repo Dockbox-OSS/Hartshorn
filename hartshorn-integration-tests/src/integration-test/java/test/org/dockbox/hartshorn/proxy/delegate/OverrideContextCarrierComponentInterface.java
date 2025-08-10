@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package test.org.dockbox.hartshorn.proxy.delegate;
 
+import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.inject.annotations.Service;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 
-@Service
-public interface IDefaultContextCarrierService extends ApplicationContextCarrier {
+@Component
+public interface OverrideContextCarrierComponentInterface extends ApplicationContextCarrier {
 
     @Override
     default ApplicationContext applicationContext() {

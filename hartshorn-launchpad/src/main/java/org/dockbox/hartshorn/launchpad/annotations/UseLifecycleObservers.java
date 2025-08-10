@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,17 @@
 
 package org.dockbox.hartshorn.launchpad.annotations;
 
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
+import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserverPreProcessor;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
-import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserverPreProcessor;
-
 /**
- * Service activator for bootstrap-dependent services. This activator is automatically injected
+ * Module activator for bootstrap-dependent components. This activator is automatically injected
  * when the application is created through {@link StandardApplicationBuilder}.
  *
  * @author Guus Lieben
@@ -34,7 +34,7 @@ import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserverPreProcessor;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ServiceActivator(componentPreProcessors = {
+@ModuleActivator(componentPreProcessors = {
         LifecycleObserverPreProcessor.class,
 })
 public @interface UseLifecycleObservers {

@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.test.junit;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.annotations.Populate;
@@ -29,13 +24,18 @@ import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.processing.HierarchicalBinderPostProcessor;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.Extension;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Annotation for test classes that should be run with the Hartshorn test suite. This will automatically
@@ -71,7 +71,7 @@ public @interface HartshornIntegrationTest {
      *
      * @return the additional {@link ComponentProcessor}s to use
      *
-     * @deprecated see {@link ServiceActivator#processors()}
+     * @deprecated see {@link ModuleActivator#processors()}
      */
     @Deprecated(since = "0.7.0", forRemoval = true)
     Class<? extends ComponentProcessor>[] processors() default {};
@@ -132,7 +132,7 @@ public @interface HartshornIntegrationTest {
 
     /**
      * Sets the main class to use. Depending on the type of application environment, this may require the
-     * class to have relevant {@link ServiceActivator service activators}. Alternative metadata sources may be
+     * class to have relevant {@link ModuleActivator module activators}. Alternative metadata sources may be
      * used, depending on the application environment.
      *
      * @see StandardApplicationBuilder.Configurer#mainClass(Class)

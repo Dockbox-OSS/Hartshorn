@@ -6,7 +6,6 @@ import org.dockbox.hartshorn.inject.component.ApplicationMainComponentContainer;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +22,7 @@ public class CustomComponentPreProcessor extends ComponentPreProcessor {
             // The main component is the class which was passed to the build context. Typically, this is the class from which
             // HartshornApplication.create is called.
             case ApplicationMainComponentContainer<?> mainComponent -> "main";
-            // Annotated components are components which are annotated with @Component, @Service, etc.
+            // Annotated components are components which are annotated with @Component or component stereotypes
             case AnnotatedComponentContainer<?> annotatedComponent -> "annotated";
             // Other cases can be added as needed, such as for custom containers or specific types of components. These do not however
             // fall within the default Hartshorn component types.

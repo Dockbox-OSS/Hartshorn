@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
 import org.dockbox.hartshorn.inject.processing.construction.AnnotatedMethodComponentPostConstructor;
 import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProviderOrchestrator;
 import org.dockbox.hartshorn.inject.targets.MethodsAndFieldsInjectionPointResolver;
-import org.dockbox.hartshorn.launchpad.activation.ServiceActivator;
+import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.hartshorn.launchpad.annotations.UseLifecycleObservers;
 import org.dockbox.hartshorn.launchpad.annotations.UseProxying;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
@@ -90,10 +90,10 @@ public class HartshornApplicationConfigurer {
     }
 
     /**
-     * Configures the service activators that are used to collect component processors. By default, this includes the
+     * Configures the module activators that are used to collect component processors. By default, this includes the
      * {@link UseLifecycleObservers} and {@link UseProxying} annotations.
      *
-     * @param customizer The customizer that is used to configure the service activators
+     * @param customizer The customizer that is used to configure the module activators
      * @return The current configurator instance
      */
     public HartshornApplicationConfigurer activators(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Annotation>> customizer) {
@@ -142,7 +142,7 @@ public class HartshornApplicationConfigurer {
 
     /**
      * Configures the packages that should be scanned by the application. By default, this contains no packages outside the
-     * main class package and values provided by {@link ServiceActivator#scanPackages() service activators}.
+     * main class package and values provided by {@link ModuleActivator#scanPackages() module activators}.
      *
      * @param customizer The customizer that is used to configure the packages that should be scanned
      * @return The current configurator instance

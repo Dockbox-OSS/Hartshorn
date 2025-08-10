@@ -16,14 +16,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Component
-public class ReportingService implements ApplicationStarter {
+public class ApplicationReportingStarter implements ApplicationStarter {
 
     private final Reportable reportable;
     private final DiagnosticsReportCollector reportCollector;
     private final FileSystemProvider fileSystemProvider;
     private final Logger logger;
 
-    public ReportingService(Reportable reportable, DiagnosticsReportCollector reportCollector, FileSystemProvider fileSystemProvider, Logger logger) {
+    public ApplicationReportingStarter(Reportable reportable, DiagnosticsReportCollector reportCollector, FileSystemProvider fileSystemProvider, Logger logger) {
         this.reportable = reportable;
         this.reportCollector = reportCollector;
         this.fileSystemProvider = fileSystemProvider;

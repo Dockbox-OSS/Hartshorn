@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,24 @@
 
 package org.dockbox.hartshorn.launchpad.activation;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.lang.annotation.Annotation;
+import java.util.Set;
+
 /**
- * A holder for {@link ServiceActivator} meta-{@link Annotation}s
- * that may be used to activate components, services, or configurations.
+ * A holder for {@link ModuleActivator} meta-{@link Annotation}s
+ * that may be used to activate components or configurations.
  *
- * @see ServiceActivator
+ * @see ModuleActivator
  * @see RequiresActivator
  *
  * @since 0.4.9
  *
  * @author Guus Lieben
  */
-public interface ActivatorHolder {
+public interface ModuleActivatorHolder {
 
     /**
      * Returns all {@link Annotation}s that are present on this holder.

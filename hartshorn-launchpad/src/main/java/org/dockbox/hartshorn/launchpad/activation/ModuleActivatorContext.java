@@ -29,12 +29,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Carrier context for {@link ServiceActivator} annotations. This context is used to store all
- * {@link ServiceActivator} annotations that are found in the application. This context is used
+ * Carrier context for {@link ModuleActivator} annotations. This context is used to store all
+ * {@link ModuleActivator} annotations that are found in the application. This context is used
  * to determine which activators are available, and to retrieve the actual annotation instance.
  *
  * <p>Depending on the {@link ApplicationContextFactory} that is used to create the
- * {@link ApplicationContext}, this context may be used to supply the {@link ServiceActivator}
+ * {@link ApplicationContext}, this context may be used to supply the {@link ModuleActivator}
  * annotations.
  *
  * <p>This context should always be attached to the {@link ApplicationContext}, and yield the
@@ -42,39 +42,39 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @see ApplicationContextFactory
  * @see ApplicationContext#activators()
- * @see ServiceActivator
- * @see ActivatorHolder
+ * @see ModuleActivator
+ * @see ModuleActivatorHolder
  *
  * @since 0.4.13
  *
  * @author Guus Lieben
  */
-public class ServiceActivatorContext extends DefaultFallbackCompatibleContext implements Reportable {
+public class ModuleActivatorContext extends DefaultFallbackCompatibleContext implements Reportable {
 
     private final Map<Class<? extends Annotation>, Annotation> activators = new ConcurrentHashMap<>();
 
-    public ServiceActivatorContext(Set<Annotation> serviceActivators) {
-        for (Annotation serviceActivator : serviceActivators) {
-            if (!serviceActivator.annotationType().isAnnotationPresent(ServiceActivator.class)) {
-                throw new IllegalArgumentException("Annotation " + serviceActivator + " is not a valid service activator");
+    public ModuleActivatorContext(Set<Annotation> moduleActivators) {
+        for (Annotation moduleActivator : moduleActivators) {
+            if (!moduleActivator.annotationType().isAnnotationPresent(ModuleActivator.class)) {
+                throw new IllegalArgumentException("Annotation " + moduleActivator + " is not a valid module activator");
             }
-            this.activators.put(serviceActivator.annotationType(), serviceActivator);
+            this.activators.put(moduleActivator.annotationType(), moduleActivator);
         }
     }
 
     /**
-     * Returns all {@link ServiceActivator} annotations that are available in this context. This
+     * Returns all {@link ModuleActivator} annotations that are available in this context. This
      * includes all activators that are provided to this context, and will not filter out any hierarchical
      * activators.
      *
-     * @return All {@link ServiceActivator} annotations that are available in this context.
+     * @return All {@link ModuleActivator} annotations that are available in this context.
      */
     public Set<Annotation> activators() {
         return Set.copyOf(this.activators.values());
     }
 
     /**
-     * Returns whether this context contains an activator for the given {@link ServiceActivator}. This
+     * Returns whether this context contains an activator for the given {@link ModuleActivator}. This
      * method will only return {@code true} if the given activator is directly available in this context,
      * but not if the given activator is hierarchical through (virtual) inheritance.
      *
@@ -84,21 +84,21 @@ public class ServiceActivatorContext extends DefaultFallbackCompatibleContext im
      * @see org.dockbox.hartshorn.util.introspect.annotations.Extends
      */
     public boolean hasActivator(Class<? extends Annotation> activator) {
-        if (!activator.isAnnotationPresent(ServiceActivator.class)) {
-            throw new InvalidActivatorException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
+        if (!activator.isAnnotationPresent(ModuleActivator.class)) {
+            throw new InvalidActivatorException("Requested activator " + activator.getSimpleName() + " is not decorated with @" + ModuleActivator.class.getSimpleName());
         }
         return this.activators.containsKey(activator);
     }
 
     /**
-     * Returns the {@link ServiceActivator} annotation instance for the given activator type. This method
+     * Returns the {@link ModuleActivator} annotation instance for the given activator type. This method
      * will only return a value if the given activator is directly available in this context, but not if
      * the given activator is hierarchical through (virtual) inheritance.
      *
      * @param activator The activator to retrieve
      * @param <A> The type of the activator
      *
-     * @return The {@link ServiceActivator} annotation instance for the given activator type, or {@code null} if the
+     * @return The {@link ModuleActivator} annotation instance for the given activator type, or {@code null} if the
      *         given activator is not directly available in this context.
      */
     public <A> A activator(Class<A> activator) {

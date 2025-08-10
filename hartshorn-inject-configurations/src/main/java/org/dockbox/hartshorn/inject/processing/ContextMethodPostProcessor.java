@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.Provided;
 import org.dockbox.hartshorn.inject.processing.proxy.MethodProxyContext;
-import org.dockbox.hartshorn.inject.processing.proxy.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.inject.processing.proxy.AnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
@@ -35,7 +35,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public class ContextMethodPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Provided> {
+public class ContextMethodPostProcessor extends AnnotatedMethodInterceptorPostProcessor<Provided> {
 
     @Override
     public <T, R> MethodInterceptor<T, R> process(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {

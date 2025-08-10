@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,9 +56,6 @@ public final class ComponentDescriber {
 
     private static String format(TypeView<?> type, char delimiter) {
         String raw = type.name();
-        if (raw.endsWith("Service")) {
-            raw = raw.substring(0, raw.length() - 7);
-        }
         String[] parts = StringUtilities.splitCapitals(raw);
         return StringUtilities.capitalize(String.join(String.valueOf(delimiter), parts));
     }

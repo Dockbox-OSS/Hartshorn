@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.reporting.component;
 
 import org.dockbox.hartshorn.inject.annotations.Component;
-import org.dockbox.hartshorn.inject.annotations.Service;
 import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 
 /**
@@ -30,7 +29,7 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 public enum ComponentAttribute {
     /**
      * Group components by their component stereotype, for example {@link Component},
-     * {@link Configuration}, or {@link Service}.
+     * {@link Configuration}, or other custom stereotypes.
      */
     STEREOTYPE,
     /**

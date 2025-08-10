@@ -16,28 +16,28 @@
 
 package org.dockbox.hartshorn.launchpad.activation;
 
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
+import org.dockbox.hartshorn.inject.processing.HierarchicalBinderPostProcessor;
+import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
-import org.dockbox.hartshorn.inject.processing.ComponentPreProcessor;
-import org.dockbox.hartshorn.inject.processing.HierarchicalBinderPostProcessor;
-import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
-import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
-
 /**
- * Annotation used to mark annotations as service activators. Service activators indicate whether
+ * Meta-annotation used to mark annotations as module activators. Module activators indicate whether
  * specific components processors become active. Additionally, they can be used to filter the activation
  * of components using the {@link RequiresActivator} annotation.
  *
- * <p>Service activators always need to be annotated with {@link ServiceActivator}. If an annotation
- * is used as activator, but is not annotated with {@link ServiceActivator}, it will be rejected by
+ * <p>Module activators always need to be annotated with {@link ModuleActivator}. If an annotation
+ * is used as activator, but is not annotated with {@link ModuleActivator}, it will be rejected by
  * the active {@link InjectionCapableApplication}.
  *
- * <p>Service activators offer a way to specify {@link #scanPackages() base packages} which become
+ * <p>Module activators offer a way to specify {@link #scanPackages() base packages} which become
  * active when the activator is present on the application activator. These packages will be scanned
  * when the application is initializing.
  *
@@ -46,21 +46,21 @@ import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
-public @interface ServiceActivator {
+public @interface ModuleActivator {
 
     /**
-     * The base packages to scan for services if this service activator is present. If a package has already
+     * Additional packages to scan for components if this module activator is present. If a package has already
      * been processed before, it is up to the active {@link InjectionCapableApplication} to decide whether to
      * process it again.
      *
-     * @return The base packages to scan for services.
+     * @return The additional packages to scan for components.
      */
     String[] scanPackages() default {};
 
     /**
-     * The component processors that become active when this service activator is present.
+     * The component processors that become active when this module activator is present.
      *
-     * @return The component processors that become active when this service activator is present.
+     * @return The component processors that become active when this module activator is present.
      *
      * @deprecated Use {@link #componentPreProcessors()} and {@link #componentPostProcessors()} instead for component processors,
      * and {@link #binderPostProcessors()} for binder post processors.
