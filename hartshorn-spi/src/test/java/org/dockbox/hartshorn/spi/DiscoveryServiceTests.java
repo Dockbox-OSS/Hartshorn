@@ -44,7 +44,7 @@ public class DiscoveryServiceTests {
     private static final String HELLO_WORLD_SUPPLIER_IMPLEMENTATION_SOURCE = """
             package org.dockbox.hartshorn.spi;
 
-            public class HelloWorldSupplierImplementation implements HelloWorldService {
+            public class HelloWorldSupplierImplementation implements HelloWorldSupplier {
                         
                 @Override
                 public String getHelloWorld() {
