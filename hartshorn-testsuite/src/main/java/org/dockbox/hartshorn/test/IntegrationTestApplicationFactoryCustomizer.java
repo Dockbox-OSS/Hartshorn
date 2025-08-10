@@ -40,6 +40,7 @@ import java.util.Set;
  *
  * @param testClass the test class
  * @param testComponentSources the component sources to use for the test
+ * @param applicationCustomizer the customizer for the test application
  */
 public record IntegrationTestApplicationFactoryCustomizer(
         Class<?> testClass,

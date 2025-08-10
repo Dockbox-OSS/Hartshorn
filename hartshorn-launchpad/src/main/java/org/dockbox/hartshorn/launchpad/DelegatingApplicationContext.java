@@ -116,6 +116,8 @@ public abstract class DelegatingApplicationContext
      * Prepares the initialization of the {@link ApplicationContext}. This method is called before any bindings are
      * configured. This method is intended to be overridden by implementations to perform any initialization that is
      * required before bindings are configured.
+     *
+     * @param initializerContext the context in which the initialization is taking place
      */
     protected abstract void prepareInitialization(SingleElementContext<? extends ApplicationEnvironment> initializerContext);
 

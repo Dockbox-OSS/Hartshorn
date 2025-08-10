@@ -583,9 +583,11 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         /**
          * Enables or disables the fallback to a single constructor.
          *
-         * @see InjectorConfiguration#allowFallbackToSingleConstructor()
+         * @param allowFallbackToSingleConstructor initializer to determine whether fallback is allowed.
          *
          * @return the current {@link Configurer} instance
+         *
+         * @see InjectorConfiguration#allowFallbackToSingleConstructor()
          */
         public Configurer allowFallbackToSingleConstructor(ContextualInitializer<PropertyRegistry, Boolean> allowFallbackToSingleConstructor) {
             this.allowFallbackToSingleConstructor = allowFallbackToSingleConstructor;
@@ -595,9 +597,9 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         /**
          * Enables fallback to a single constructor.
          *
-         * @see InjectorConfiguration#allowFallbackToSingleConstructor()
-         *
          * @return the current {@link Configurer} instance
+         *
+         * @see InjectorConfiguration#allowFallbackToSingleConstructor()
          */
         public Configurer allowFallbackToSingleConstructor() {
             return this.allowFallbackToSingleConstructor(ContextualInitializer.of(true));
@@ -606,9 +608,9 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         /**
          * Disables fallback to a single constructor.
          *
-         * @see InjectorConfiguration#allowFallbackToSingleConstructor()
-         *
          * @return the current {@link Configurer} instance
+         *
+         * @see InjectorConfiguration#allowFallbackToSingleConstructor()
          */
         public Configurer disallowFallbackToSingleConstructor() {
             return this.allowFallbackToSingleConstructor(ContextualInitializer.of(false));
