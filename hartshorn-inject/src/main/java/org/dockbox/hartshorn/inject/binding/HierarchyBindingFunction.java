@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.inject.collection.HierarchyCollectorBindingFunction
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.LazySingletonInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
-import org.dockbox.hartshorn.inject.provider.SimpleConstructorViewDrivenProvider;
+import org.dockbox.hartshorn.inject.provider.PrototypeConstructorInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.SingletonInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.SupplierInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
@@ -159,7 +159,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
             throw new IllegalModificationException("Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(this.hierarchy().key()));
         }
         ComponentKey<? extends T> key = this.buildComponentKey(type);
-        return this.add(SimpleConstructorViewDrivenProvider.forPrototype(key));
+        return this.add(PrototypeConstructorInstantiationStrategy.forPrototype(key));
     }
 
     @NonNull
@@ -201,7 +201,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     @Override
     public Binder lazySingleton(Class<T> type) {
         ComponentKey<? extends T> key = this.buildComponentKey(type);
-        return this.add(SimpleConstructorViewDrivenProvider.forSingleton(key));
+        return this.add(PrototypeConstructorInstantiationStrategy.forSingleton(key));
     }
 
     @Override

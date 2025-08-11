@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
-import org.dockbox.hartshorn.inject.provider.SimpleConstructorViewDrivenProvider;
+import org.dockbox.hartshorn.inject.provider.PrototypeConstructorInstantiationStrategy;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * A {@link ComponentProviderStrategy} that attempts to provide a component using a {@link InstantiationStrategy prototype instantiation
  * strategy}. If the strategy is unable to provide an instance, the chain is continued.
  *
- * @see SimpleConstructorViewDrivenProvider#forPrototype(ComponentKey)
+ * @see PrototypeConstructorInstantiationStrategy#forPrototype(ComponentKey)
  *
  * @since 0.7.0
  *
@@ -40,7 +40,7 @@ public class UnboundPrototypeComponentProviderStrategy implements ComponentProvi
     @Override
     public <T> ObjectContainer<T> get(ComponentKey<T> componentKey, ComponentRequestContext requestContext,
             ComponentProviderStrategyChain<T> chain) throws ComponentResolutionException, ApplicationException {
-        InstantiationStrategy<T> strategy = SimpleConstructorViewDrivenProvider.forPrototype(componentKey);
+        InstantiationStrategy<T> strategy = PrototypeConstructorInstantiationStrategy.forPrototype(componentKey);
         Option<ObjectContainer<T>> container = strategy.provide(chain.application(), requestContext);
         if (container.present()) {
             return container.get();

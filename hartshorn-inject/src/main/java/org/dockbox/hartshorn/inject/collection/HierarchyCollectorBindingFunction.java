@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject.collection;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.provider.SimpleConstructorViewDrivenProvider;
+import org.dockbox.hartshorn.inject.provider.PrototypeConstructorInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.LazySingletonInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.PrototypeInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
@@ -74,7 +74,7 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
     @Override
     public Binder type(Class<? extends T> type) {
         ComponentKey<? extends T> componentKey = this.hierarchy.key().mutable().type(type).build();
-        return this.provider(SimpleConstructorViewDrivenProvider.forPrototype(componentKey));
+        return this.provider(PrototypeConstructorInstantiationStrategy.forPrototype(componentKey));
     }
 
     @Override
