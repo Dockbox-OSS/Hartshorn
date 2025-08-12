@@ -29,9 +29,10 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link SimpleConstructorViewDrivenProvider} is a {@link InstantiationStrategy} that uses a {@link ConstructorView} to
- * create a new instance of a class. The constructor is looked up based on its parameters, where the
- * constructor with the most parameters is chosen in order to satisfy as many dependencies as possible.
+ * A {@link PrototypeConstructorInstantiationStrategy} is a {@link InstantiationStrategy} that uses a
+ * {@link ConstructorView} to create a new instance of a class. The constructor is looked up based on
+ * its parameters, where the constructor with the most parameters is chosen in order to satisfy as many
+ * dependencies as possible.
  *
  * <p>If no injectable constructors can be found, the default constructor is used instead. If this
  * constructor is not injectable, an {@link IllegalStateException} is thrown.
@@ -45,7 +46,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public final class SimpleConstructorViewDrivenProvider<C> implements TypeAwareInstantiationStrategy<C> {
+public final class PrototypeConstructorInstantiationStrategy<C> implements TypeAwareInstantiationStrategy<C> {
 
     private final ComponentKey<? extends C> componentKey;
     private final LifecycleType lifecycleType;
@@ -53,33 +54,33 @@ public final class SimpleConstructorViewDrivenProvider<C> implements TypeAwareIn
     private ConstructorView<? extends C> optimalConstructor;
     private boolean lazy = true;
 
-    private SimpleConstructorViewDrivenProvider(ComponentKey<? extends C> type, LifecycleType lifecycleType) {
+    private PrototypeConstructorInstantiationStrategy(ComponentKey<? extends C> type, LifecycleType lifecycleType) {
         this.componentKey = type;
         this.lifecycleType = lifecycleType;
     }
 
     /**
-     * Creates a new {@link SimpleConstructorViewDrivenProvider} for the given type, with a prototype lifecycle.
+     * Creates a new {@link PrototypeConstructorInstantiationStrategy} for the given type, with a prototype lifecycle.
      *
      * @param type the type of the component to create
      * @param <T> the type of the component to create
      *
-     * @return a new {@link SimpleConstructorViewDrivenProvider} for the given type
+     * @return a new {@link PrototypeConstructorInstantiationStrategy} for the given type
      */
-    public static <T> SimpleConstructorViewDrivenProvider<T> forPrototype(ComponentKey<? extends T> type) {
-        return new SimpleConstructorViewDrivenProvider<>(type, LifecycleType.PROTOTYPE);
+    public static <T> PrototypeConstructorInstantiationStrategy<T> forPrototype(ComponentKey<? extends T> type) {
+        return new PrototypeConstructorInstantiationStrategy<>(type, LifecycleType.PROTOTYPE);
     }
 
     /**
-     * Creates a new {@link SimpleConstructorViewDrivenProvider} for the given type, with a singleton lifecycle.
+     * Creates a new {@link PrototypeConstructorInstantiationStrategy} for the given type, with a singleton lifecycle.
      *
      * @param type the type of the component to create
      * @param <T> the type of the component to create
      *
-     * @return a new {@link SimpleConstructorViewDrivenProvider} for the given type
+     * @return a new {@link PrototypeConstructorInstantiationStrategy} for the given type
      */
-    public static <T> SimpleConstructorViewDrivenProvider<T> forSingleton(ComponentKey<? extends T> type) {
-        return new SimpleConstructorViewDrivenProvider<>(type, LifecycleType.SINGLETON);
+    public static <T> PrototypeConstructorInstantiationStrategy<T> forSingleton(ComponentKey<? extends T> type) {
+        return new PrototypeConstructorInstantiationStrategy<>(type, LifecycleType.SINGLETON);
     }
 
     /**
@@ -91,7 +92,7 @@ public final class SimpleConstructorViewDrivenProvider<C> implements TypeAwareIn
      * @param lazy whether the provider should be lazy
      * @return the provider
      */
-    public SimpleConstructorViewDrivenProvider<C> lazy(boolean lazy) {
+    public PrototypeConstructorInstantiationStrategy<C> lazy(boolean lazy) {
         this.lazy = lazy;
         return this;
     }
