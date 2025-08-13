@@ -16,24 +16,16 @@
 
 package test.org.dockbox.hartshorn.inject.provided;
 
-import org.dockbox.hartshorn.inject.annotations.Component;
-import org.dockbox.hartshorn.inject.annotations.Named;
-import org.dockbox.hartshorn.inject.annotations.Provided;
+import org.dockbox.hartshorn.inject.annotations.Qualifier;
 
-@Component
-public interface ProviderComponent {
-    @Provided
-    String get();
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    @Provided
-    @Named("test")
-    String getNamed();
-
-    @Provided
-    @Color(Colors.RED)
-    String getRed();
-
-    @Provided
-    @Color(Colors.BLUE)
-    String getBlue();
+@Qualifier
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Color {
+    Colors value();
 }

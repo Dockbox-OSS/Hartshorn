@@ -16,27 +16,72 @@
 
 package test.org.dockbox.hartshorn.inject.provided;
 
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.proxy.Proxy;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+@TestComponents(ProviderComponent.class)
 @HartshornIntegrationTest(includeBasePackages = false)
 public class ProvidedMethodTests {
 
+    @Inject 
+    private ProviderComponent providerComponent;
+    @Inject
+    private Binder binder;
+    
     @Test
-    @TestComponents(ProviderComponent.class)
-    void testProviderService(@Inject ProviderComponent service, @Inject Binder binder) {
-        binder.bind(String.class).singleton("Hello World");
+    void testProviderWithoutQualifiers() {
+        this.binder.bind(String.class).singleton("Hello World");
 
-        Assertions.assertNotNull(service);
-        Assertions.assertInstanceOf(Proxy.class, service);
+        Assertions.assertNotNull(this.providerComponent);
+        Assertions.assertInstanceOf(Proxy.class, this.providerComponent);
 
-        String message = service.get();
+        String message = this.providerComponent.get();
         Assertions.assertNotNull(message);
         Assertions.assertEquals("Hello World", message);
+    }
+
+    @Test
+    void testProviderWithNamedQualifier() {
+        this.binder.bind(String.class).singleton("Hello World");
+        this.binder.bind(ComponentKey.of(String.class, "test")).singleton("Hello Test World");
+
+        Assertions.assertNotNull(this.providerComponent);
+        Assertions.assertInstanceOf(Proxy.class, this.providerComponent);
+
+        String message = this.providerComponent.getNamed();
+        Assertions.assertNotNull(message);
+        Assertions.assertEquals("Hello Test World", message);
+    }
+
+    @Test
+    void testProviderWithCustomQualifiers() {
+        this.binder.bind(String.class).singleton("Hello Red World");
+        this.binder.bind(ComponentKey.builder(String.class)
+                .qualifier(QualifierKey.of(TypeUtils.annotation(Color.class, Colors.RED)))
+                .build()
+        ).singleton("Hello Red World");
+        this.binder.bind(ComponentKey.builder(String.class)
+                .qualifier(QualifierKey.of(TypeUtils.annotation(Color.class, Colors.BLUE)))
+                .build()
+        ).singleton("Hello Blue World");
+
+        Assertions.assertNotNull(this.providerComponent);
+        Assertions.assertInstanceOf(Proxy.class, this.providerComponent);
+
+        String redMessage = this.providerComponent.getRed();
+        Assertions.assertNotNull(redMessage);
+        Assertions.assertEquals("Hello Red World", redMessage);
+
+        String blueMessage = this.providerComponent.getBlue();
+        Assertions.assertNotNull(blueMessage);
+        Assertions.assertEquals("Hello Blue World", blueMessage);
     }
 }

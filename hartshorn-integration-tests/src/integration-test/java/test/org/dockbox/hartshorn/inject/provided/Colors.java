@@ -16,24 +16,8 @@
 
 package test.org.dockbox.hartshorn.inject.provided;
 
-import org.dockbox.hartshorn.inject.annotations.Component;
-import org.dockbox.hartshorn.inject.annotations.Named;
-import org.dockbox.hartshorn.inject.annotations.Provided;
-
-@Component
-public interface ProviderComponent {
-    @Provided
-    String get();
-
-    @Provided
-    @Named("test")
-    String getNamed();
-
-    @Provided
-    @Color(Colors.RED)
-    String getRed();
-
-    @Provided
-    @Color(Colors.BLUE)
-    String getBlue();
+public enum Colors {
+    RED,
+    GREEN,
+    BLUE,
 }
