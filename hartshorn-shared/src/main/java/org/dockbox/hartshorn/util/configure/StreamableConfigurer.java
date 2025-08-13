@@ -144,14 +144,35 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
         return this;
     }
 
+    /**
+     * Inserts the given object at the specified index in the configurer.
+     *
+     * @param index the index at which to insert the object
+     * @param object the object to insert
+     * @return the configurer
+     */
     public StreamableConfigurer<I, T> insert(int index, T object) {
         return this.insert(index, ContextualInitializer.of(object));
     }
 
+    /**
+     * Inserts the given initializer at the specified index in the configurer.
+     *
+     * @param index the index at which to insert the initializer
+     * @param initializer the initializer to insert
+     * @return the configurer
+     */
     public StreamableConfigurer<I, T> insert(int index, Initializer<T> initializer) {
         return this.insert(index, ContextualInitializer.of(initializer));
     }
 
+    /**
+     * Inserts the given initializer at the specified index in the configurer.
+     *
+     * @param index the index at which to insert the initializer
+     * @param initializer the initializer to insert
+     * @return the configurer
+     */
     public StreamableConfigurer<I, T> insert(int index, ContextualInitializer<I, T> initializer) {
         if (index < 0 || index > this.objects.size()) {
             throw new IndexOutOfBoundsException("Index out of bounds: " + index);
@@ -175,6 +196,13 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
         return this;
     }
 
+    /**
+     * Adds all given objects to the configurer. The objects are expected to be fully configured,
+     * and will not be modified by the configurer or a given input value.
+     *
+     * @param objects the objects to add
+     * @return the configurer
+     */
     public StreamableConfigurer<I, T> addAll(Collection<T> objects) {
         for (T object : objects) {
             this.add(object);

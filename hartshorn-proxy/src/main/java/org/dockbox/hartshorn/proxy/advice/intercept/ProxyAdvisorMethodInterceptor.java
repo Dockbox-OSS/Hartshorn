@@ -85,8 +85,23 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
         return this.resultValidator.validateResult(source, result);
     }
 
+    /**
+     * Intercepts the method invocation and delegates the invocation to the {@link ProxyMethodInterceptHandler}. This
+     * may involve invoking an advised interceptor, or simply invoking the method on the target instance, depending on
+     * the configuration of the {@link ProxyManager#advisor() proxy manager's advisor}.
+     *
+     * @param self the instance on which the method is invoked
+     * @param source the method being invoked, represented as a {@link MethodInvokable}
+     * @param proxy the proxy method being invoked, which may be null if the method is not proxied
+     * @param callbackTarget the target instance on which the method is invoked, which may differ from `self` if a delegate is used
+     * @param methodView the method view representing the method being invoked, used for introspection
+     * @param defaultInvocation the default invocation to use if no interceptor is present
+     * @param arguments the arguments passed to the method invocation
+     * @return the result of the method invocation, which may be modified by the interceptor
+     * @throws Throwable if an error occurs during the method invocation or interception
+     */
     protected Object interceptAndNotify(T self, MethodInvokable source, Invokable proxy, T callbackTarget,
-                                      MethodView<T, ?> methodView, CustomInvocation<?> customInvocation,
+                                      MethodView<T, ?> methodView, CustomInvocation<?> defaultInvocation,
                                       Object[] arguments) throws Throwable {
 
         ProxyCallbackContext<T> callbackContext = new ProxyCallbackContext<>(callbackTarget, TypeUtils.unchecked(self, Object.class), methodView, arguments);
@@ -98,7 +113,7 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
                     .interceptor();
 
             if (interceptor.present()) {
-                return this.interceptHandler.handleInterceptedMethod(source, callbackTarget, customInvocation, arguments, interceptor.get());
+                return this.interceptHandler.handleInterceptedMethod(source, callbackTarget, defaultInvocation, arguments, interceptor.get());
             }
             else {
                 return this.interceptHandler.handleNonInterceptedMethod(self, source, proxy, callbackTarget, arguments);
@@ -106,6 +121,16 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
         });
     }
 
+    /**
+     * Creates a default invocation for the method. This is used when no interceptor is present, or when the
+     * interceptor does not handle the method. The default invocation can either invoke the method on the
+     * delegate instance (if present), or return a default value based on the method's return type.
+     *
+     * @param source the method being invoked, represented as a {@link MethodInvokable}
+     * @param proxy the proxy method being invoked, which may be null if the method is not proxied
+     * @param callbackTarget the target instance on which the method is invoked, which may differ from the `self` instance
+     * @return a {@link CustomInvocation} that defines how the method should be invoked
+     */
     protected CustomInvocation<?> createDefaultInvocation(Invokable source, Invokable proxy, T callbackTarget) {
         return interceptorArgs -> {
             if (this.manager().delegate().present()) {
@@ -118,12 +143,28 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
         };
     }
 
+    /**
+     * Resolves the arguments for the method invocation, using the {@link #parameterLoader configured parameter loader}.
+     * This typically only involves unproxying the arguments, but may also involve additional processing if the
+     * method has parameters that require special handling (e.g., annotations, default values).
+     *
+     * @param method the method being invoked, represented as a {@link MethodInvokable}
+     * @param instance the instance on which the method is invoked, which may be a proxy or a concrete instance
+     * @param args the arguments passed to the method invocation, which may include proxies or other objects
+     * @return an array of resolved arguments, which may be modified from the original `args` array
+     */
     protected Object[] resolveArgs(MethodInvokable method, Object instance, Object[] args) {
         MethodView<?, ?> methodView = method.toIntrospector();
         ProxyParameterLoaderContext context = new ProxyParameterLoaderContext(methodView, instance, this.proxyOrchestrator);
         return this.parameterLoader().loadArguments(context, args).toArray();
     }
 
+    /**
+     * Returns the {@link ParameterLoader} used to load the parameters for the method invocation. This loader is
+     * responsible for unproxying the arguments and resolving any special handling required for the method's parameters.
+     *
+     * @return the parameter loader used for resolving method arguments
+     */
     protected ParameterLoader parameterLoader() {
         return this.parameterLoader;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,21 +32,4 @@ public class ApplicationContextTests {
     void testContextLoads() {
         Assertions.assertNotNull(this.applicationContext);
     }
-
-    // TODO #1003: Restore, types were moved to test fixtures, so need new test components
-//    @Test
-//    @HartshornTest(includeBasePackages = false, processors = DemoProxyDelegationPostProcessor.class)
-//    @TestComponents({AbstractProxy.class, ProxyProviders.class})
-//    void testMethodCanDelegateToImplementation() {
-//        AbstractProxy abstractProxy = this.applicationContext.get(AbstractProxy.class);
-//        Assertions.assertEquals("concrete", abstractProxy.name());
-//    }
-//
-//    @Test
-//    @HartshornTest(includeBasePackages = false, processors = DemoProxyDelegationPostProcessor.class)
-//    @TestComponents({AbstractProxy.class, ProxyProviders.class})
-//    void testMethodOverrideDoesNotDelegateToImplementation() {
-//        AbstractProxy abstractProxy = this.applicationContext.get(AbstractProxy.class);
-//        Assertions.assertEquals(21, abstractProxy.age());
-//    }
 }

@@ -72,11 +72,42 @@ public interface ObjectDescriptionStyle {
      */
     void describeFieldSeparator(StringBuilder builder, Object object);
 
+    /**
+     * Describes the start of an array. This is typically the opening bracket of the array.
+     *
+     * @param builder the builder to append the description to
+     * @param collectionObject the array or collection object to describe
+     * @param length the length of the array or collection
+     * @param includeTypeName whether to include the type name in the description
+     */
     void describeArrayStart(StringBuilder builder, Object collectionObject, int length, boolean includeTypeName);
 
+    /**
+     * Describes the end of an array. This is typically the closing bracket of the array.
+     *
+     * @param builder the builder to append the description to
+     * @param collectionObject the array or collection object to describe
+     */
     void describeArrayEnd(StringBuilder builder, Object collectionObject);
 
+    /**
+     * Describes a single element of an array or collection. This will be called for each element of the
+     * array or collection.
+     *
+     * @param builder the builder to append the description to
+     * @param collectionObject the array or collection object to describe
+     * @param index the index of the element in the array or collection
+     * @param element the element to describe
+     */
     void describeArrayElement(StringBuilder builder, Object collectionObject, int index, Object element);
 
+    /**
+     * Describes the separator between elements in an array or collection. This will be called for each
+     * element separator of the array or collection.
+     *
+     * @param builder the builder to append the description to
+     * @param collectionObject the array or collection object to describe
+     * @param index the index of the element in the array or collection
+     */
     void describeArrayElementSeparator(StringBuilder builder, Object collectionObject, int index);
 }

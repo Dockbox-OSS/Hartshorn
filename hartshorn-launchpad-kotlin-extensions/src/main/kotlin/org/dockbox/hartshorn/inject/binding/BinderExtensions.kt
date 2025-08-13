@@ -17,6 +17,16 @@ package org.dockbox.hartshorn.inject.binding
 
 import kotlin.reflect.KClass
 
+/**
+ * Extension function to allow binding Kotlin classes.
+ *
+ * @see Binder.bind
+ */
 fun <T : Any> Binder.bind(type: KClass<T>): BindingFunction<T> = this.bind(type.java)
 
+/**
+ * Extension function to allow reified binding of Kotlin classes.
+ *
+ * @see Binder.bind
+ */
 inline fun <reified T : Any> Binder.bind(): BindingFunction<T> = this.bind(T::class.java)

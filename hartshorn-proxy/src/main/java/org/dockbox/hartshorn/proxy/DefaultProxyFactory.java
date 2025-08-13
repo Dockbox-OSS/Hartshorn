@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -143,14 +143,28 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         return this.createNewProxy();
     }
 
-    protected abstract Option<T> createNewProxy() throws ApplicationException;
-
     @Override
     public Option<T> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException {
         this.validateConstraints();
         return this.createNewProxy(constructor, args);
     }
 
+    /**
+     * Creates a new proxy instance of the type this factory is responsible for.
+     *
+     * @return An {@link Option} containing the new proxy instance, or empty if the proxy could not be created
+     * @throws ApplicationException If the proxy could not be created due to a constraint violation or other application error
+     */
+    protected abstract Option<T> createNewProxy() throws ApplicationException;
+
+    /**
+     * Creates a new proxy instance of the type this factory is responsible for, using the given constructor and arguments.
+     *
+     * @param constructor The constructor to use for creating the proxy instance
+     * @param args The arguments to pass to the constructor
+     * @return An {@link Option} containing the new proxy instance, or empty if the proxy could not be created
+     * @throws ApplicationException If the proxy could not be created due to a constraint violation or other application error
+     */
     protected abstract Option<T> createNewProxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException;
 
     @Override
@@ -163,6 +177,12 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         }
     }
 
+    /**
+     * Validates the constraints of the type this factory is responsible for. This method will throw a
+     * {@link ProxyConstraintViolationException} if any constraints are violated.
+     *
+     * @throws ProxyConstraintViolationException if any constraints are violated
+     */
     protected void validateConstraints() throws ProxyConstraintViolationException {
         TypeView<T> typeView = this.orchestrator().introspector().introspect(this.type);
         Set<ProxyConstraintViolation> violations = this.validator().validate(typeView);

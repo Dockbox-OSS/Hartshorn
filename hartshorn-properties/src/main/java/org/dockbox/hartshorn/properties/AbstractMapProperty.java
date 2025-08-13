@@ -58,6 +58,12 @@ public abstract class AbstractMapProperty<T> {
         this.pathStyle = pathStyle;
     }
 
+    /**
+     * Returns the style of the property path used by this map property. This is used to determine how the properties
+     * are accessed and represented.
+     *
+     * @return the style of the property path used by this map property
+     */
     protected PropertyPathStyle pathStyle() {
         return this.pathStyle;
     }

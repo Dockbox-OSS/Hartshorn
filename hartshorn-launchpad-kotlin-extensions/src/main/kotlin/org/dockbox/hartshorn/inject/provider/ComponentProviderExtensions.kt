@@ -15,6 +15,8 @@
  */
 package org.dockbox.hartshorn.inject.provider
 
-import kotlin.reflect.KClass
-
+/**
+ * Extension function to allow using reified Kotlin type parameters when requesting components
+ * from a [ComponentProvider].
+ */
 inline fun <reified T : Any> ComponentProvider.get(): T = this.get(T::class.java)
