@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.util.stream;
 
-import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -44,73 +43,6 @@ import java.util.stream.Collector.Characteristics;
  * @author Guus Lieben
  */
 public final class CollectorUtilities {
-
-    /**
-     * A collector that collects entries into a {@link MultiMap}. The default implementation is an
-     * {@link ArrayListMultiMap}.
-     *
-     * @param <K> the key type
-     * @param <V> the value type
-     *
-     * @return a collector that collects entries into a {@link MultiMap}
-     */
-    public static <K, V> Collector<Entry<K, V>, ?, MultiMap<K, V>> toMultiMap() {
-        return toMultiMap(ArrayListMultiMap::new, Entry::getKey, Entry::getValue);
-    }
-
-    public static <T, K> Collector<T, ?, MultiMap<K, T>> toMultiMap(
-            Function<? super T, ? extends K> keyMapper
-    ) {
-        return toMultiMap(ArrayListMultiMap::new, keyMapper, Function.identity());
-    }
-
-    /**
-     * A collector that collects entries into a {@link MultiMap}. The default implementation is an
-     * {@link ArrayListMultiMap}.
-     *
-     * @param keyMapper the function to map the key
-     * @param valueMapper the function to map the value
-     *
-     * @param <T> the type of the stream
-     * @param <K> the key type
-     * @param <V> the value type
-     *
-     * @return a collector that collects entries into a {@link MultiMap}
-     */
-    public static <T, K, V> Collector<T, ?, MultiMap<K, V>> toMultiMap(
-            Function<? super T, ? extends K> keyMapper,
-            Function<? super T, ? extends V> valueMapper
-    ) {
-        return toMultiMap(ArrayListMultiMap::new, keyMapper, valueMapper);
-    }
-
-    /**
-     * A collector that collects entries into a {@link MultiMap}. The given supplier is used to create the map.
-     *
-     * @param supplier the supplier to create the map
-     * @param keyMapper the function to map the key
-     * @param valueMapper the function to map the value
-     *
-     * @param <T> the type of the stream
-     * @param <K> the key type
-     * @param <V> the value type
-     * @param <M> the type of the map
-     *
-     * @return a collector that collects entries into a {@link MultiMap}
-     */
-    public static <T, K, V, M extends MultiMap<K, V>> Collector<T, ?, M> toMultiMap(
-            Supplier<M> supplier,
-            Function<? super T, ? extends K> keyMapper,
-            Function<? super T, ? extends V> valueMapper
-    ) {
-        return new RecordCollector<>(
-                supplier,
-                (map, next) -> map.put(keyMapper.apply(next), valueMapper.apply(next)),
-                (left, right) -> {
-                    left.putAll(right);
-                    return left;
-                });
-    }
 
     /**
      * A collector that collects {@link Map.Entry entries} into an {@link EntryStream}.

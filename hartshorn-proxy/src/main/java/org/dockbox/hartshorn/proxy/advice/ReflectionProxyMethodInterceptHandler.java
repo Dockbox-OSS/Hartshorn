@@ -84,6 +84,17 @@ public class ReflectionProxyMethodInterceptHandler<T> implements ProxyMethodInte
         return this.methodInvoker;
     }
 
+    /**
+     * Handles the invocation of a method on a delegate instance. If the result of the invocation is the same as
+     * the delegate instance, the original proxy instance is returned instead, to maintain the proxy contract.
+     *
+     * @param delegate the delegate instance on which the method is invoked
+     * @param self the proxy instance on which the method is invoked
+     * @param source the method that is invoked
+     * @param args the arguments that are passed to the method
+     * @return the result of the invocation, or the proxy instance if the result is the same as the delegate
+     * @throws Throwable if the invocation fails
+     */
     protected Object handleDelegateMethod(Object delegate, T self, Invokable source, Object[] args) throws Throwable {
         Object result = source.invoke(delegate, args);
         if (result == delegate) {
@@ -92,6 +103,18 @@ public class ReflectionProxyMethodInterceptHandler<T> implements ProxyMethodInte
         return result;
     }
 
+    /**
+     * Handles the invocation of a method that is not delegated to a specific instance. This method is invoked when
+     * the method is not intercepted by a delegate instance.
+     *
+     * @param self the proxy instance on which the method is invoked
+     * @param callbackTarget the target instance on which the method is invoked
+     * @param source the method that is invoked
+     * @param proxy the proxy method that is invoked, if applicable
+     * @param args the arguments that are passed to the method
+     * @return the result of the invocation
+     * @throws Throwable if the invocation fails
+     */
     protected Object handleNonDelegateMethod(T self, T callbackTarget, Invokable source, Invokable proxy, Object[] args) throws Throwable {
         Object result;
         if (callbackTarget == self && proxy != null) {

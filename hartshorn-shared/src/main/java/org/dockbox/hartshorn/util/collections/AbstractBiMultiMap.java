@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.collections;
 
+import org.dockbox.hartshorn.util.stream.EntryStream;
+
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -44,7 +46,7 @@ public abstract class AbstractBiMultiMap<K, V> extends StandardMultiMap<K, V> im
     public MultiMap<V, K> inverse() {
         Set<Entry<K, Collection<V>>> entries = this.entrySet();
         MultiMap<V, K> inverseMap = this.createEmptyInverseMap();
-        CollectionUtilities.iterateEntries(entries, (key, values) -> {
+        EntryStream.of(entries).forEach((key, values) -> {
             for (V value : values) {
                 inverseMap.put(value, key);
             }

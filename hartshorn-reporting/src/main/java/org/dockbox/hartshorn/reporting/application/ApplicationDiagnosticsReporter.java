@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 
 import java.util.List;
 import java.util.Map;
@@ -143,7 +142,7 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
                             .collect(Collectors.groupingBy(Observer::getClass));
 
             collector.property("observers").writeDelegate(observerCollector -> {
-                CollectionUtilities.iterateEntries(observers.entrySet(), (type, instances) -> {
+                observers.forEach((type, instances) -> {
                     observerCollector.property(type.getSimpleName()).writeInts(instances.size());
                 });
             });

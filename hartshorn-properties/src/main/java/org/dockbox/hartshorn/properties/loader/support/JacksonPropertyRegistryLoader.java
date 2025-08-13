@@ -21,11 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import org.dockbox.hartshorn.properties.ConfiguredProperty;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.SingleConfiguredProperty;
@@ -35,6 +30,13 @@ import org.dockbox.hartshorn.properties.loader.path.PropertyPathNode;
 import org.dockbox.hartshorn.properties.loader.path.PropertyRootPathNode;
 import org.dockbox.hartshorn.util.FileUtilities;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.stream.EntryStream;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A {@link PredicatePropertyRegistryLoader} that loads properties using a Jackson {@link ObjectMapper}. Depending
@@ -165,7 +167,7 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
      */
     protected List<ConfiguredProperty> loadObjectProperties(PropertyPathNode path, ObjectNode objectNode) {
         List<ConfiguredProperty> properties = new ArrayList<>();
-        CollectionUtilities.iterateEntries(objectNode.fields(), (name, value) -> {
+        EntryStream.of(CollectionUtilities.iterableOf(objectNode.fields())).forEach((name, value) -> {
             PropertyPathNode nextPath = path.property(name);
             properties.addAll(this.loadProperties(nextPath, value));
         });

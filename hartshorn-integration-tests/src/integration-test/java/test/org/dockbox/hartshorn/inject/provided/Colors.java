@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.launchpad.context;
+package test.org.dockbox.hartshorn.inject.provided;
 
-import org.dockbox.hartshorn.inject.annotations.Inject;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-@HartshornIntegrationTest(includeBasePackages = false)
-public class ApplicationContextTests {
-
-    @Inject
-    private ApplicationContext applicationContext;
-
-    @Test
-    void testContextLoads() {
-        Assertions.assertNotNull(this.applicationContext);
-    }
+public enum Colors {
+    RED,
+    GREEN,
+    BLUE,
 }

@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.collections;
 
+import org.dockbox.hartshorn.util.stream.EntryStream;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -44,8 +46,22 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
         this.putAll(map);
     }
 
+    /**
+     * Returns the backing map of this multi-map. This method is called by most
+     * methods in this class, so it should return a map that is mutable and
+     * can be modified by the methods in this class.
+     *
+     * @return The backing map of this multi-map.
+     */
     protected abstract Map<K, Collection<V>> map();
 
+    /**
+     * Creates an empty collection that will be used to store the values for a given key.
+     * This method is called when a new key is added to the map, and should return a new
+     * instance of a mutable collection that can hold the values for that key.
+     *
+     * @return A new empty collection instance.
+     */
     protected abstract Collection<V> createEmptyCollection();
 
     @Override
@@ -60,7 +76,7 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public void putAll(MultiMap<K, V> map) {
-        CollectionUtilities.iterateEntries(map.entrySet(), this::putAll);
+        EntryStream.of(map.entrySet()).forEach((key, values) -> this.putAll(key, values));
     }
 
     @Override

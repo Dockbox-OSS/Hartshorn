@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.launchpad.context;
+package test.org.dockbox.hartshorn.inject.provided;
 
-import org.dockbox.hartshorn.inject.annotations.Inject;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.dockbox.hartshorn.inject.annotations.Qualifier;
 
-@HartshornIntegrationTest(includeBasePackages = false)
-public class ApplicationContextTests {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    @Inject
-    private ApplicationContext applicationContext;
-
-    @Test
-    void testContextLoads() {
-        Assertions.assertNotNull(this.applicationContext);
-    }
+@Qualifier
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Color {
+    Colors value();
 }

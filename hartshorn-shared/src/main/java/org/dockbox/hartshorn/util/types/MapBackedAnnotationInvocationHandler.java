@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.util.types;
 
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -80,7 +78,7 @@ public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
         if (type == null) {
             throw new IllegalStateException("Type is null");
         }
-        CollectionUtilities.iterateEntries(values.entrySet(), (property, value) -> {
+        values.forEach((property, value) -> {
             try {
                 Method method = type.getDeclaredMethod(property);
                 if (!TypeUtils.isAssignable(method.getReturnType(), value.getClass())) {

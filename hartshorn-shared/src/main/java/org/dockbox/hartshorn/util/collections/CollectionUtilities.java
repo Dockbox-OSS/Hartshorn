@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.SequencedCollection;
 import java.util.SequencedSet;
 import java.util.Set;
@@ -36,7 +35,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 /**
  * A collection of utility methods for working with collections. This class is not meant to be
@@ -276,47 +274,25 @@ public final class CollectionUtilities {
     }
 
     /**
-     * Iterates over the given {@link java.util.Map.Entry entries} and applies the given consumer
-     * to each entry. This is no different from iterating over the entries and applying a consumer
-     * to each entry, except for the fact that this method allows a bi-consumer to be used instead.
+     * Returns an {@link Iterable} that wraps the given {@link Iterator}, to allow the iterator to
+     * be used in e.g. for-each loops.
      *
-     * @param iterator The iterator to iterate over
-     * @param consumer The consumer to apply to each entry
-     * @param <T> The type of the keys in the entries
-     * @param <U> The type of the values in the entries
+     * @param iterator The iterator to wrap
+     * @param <T> The type of the elements in the iterator
+     *
+     * @return An iterable that wraps the given iterator
      */
-    public static <T, U> void iterateEntries(Collection<Entry<T, U>> iterator, BiConsumer<T, U> consumer) {
-        iterateEntries(iterator.iterator(), consumer);
+    public static <T> Iterable<T> iterableOf(Iterator<T> iterator) {
+        return () -> iterator;
     }
 
     /**
-     * Iterates over the given iterator of {@link java.util.Map.Entry entries} and applies the given
-     * consumer to each entry. This is no different from iterating over the entries and applying a
-     * consumer to each entry, except for the fact that this method allows a bi-consumer to be used
-     * instead.
+     * Creates a new {@link SequencedSet} containing the given values, in the order they are provided.
      *
-     * @param iterator The iterator to iterate over
-     * @param consumer The consumer to apply to each entry
-     * @param <T> The type of the keys in the entries
-     * @param <U> The type of the values in the entries
+     * @param values The values to include in the set
+     * @param <T> The type of the elements in the set
+     * @return A new unmodifiable {@link SequencedSet} containing the provided values
      */
-    public static <T, U> void iterateEntries(Iterator<Entry<T, U>> iterator, BiConsumer<T, U> consumer) {
-        while (iterator.hasNext()) {
-            Entry<T, U> entry = iterator.next();
-            consumer.accept(entry.getKey(), entry.getValue());
-        }
-    }
-
-    public static <T, R> Stream<R> flatMapCollection(Collection<T> collection, Function<T, Collection<R>> function) {
-        return collection.stream()
-                .flatMap(value -> function.apply(value).stream());
-    }
-
-    public static <T, R> Stream<R> flatMapArray(Collection<T> collection, Function<T, R[]> function) {
-        return collection.stream()
-                .flatMap(value -> Stream.of(function.apply(value)));
-    }
-
     @SafeVarargs
     public static <T> SequencedSet<T> sequencedSet(T... values) {
         SequencedSet<T> set = new LinkedHashSet<>();

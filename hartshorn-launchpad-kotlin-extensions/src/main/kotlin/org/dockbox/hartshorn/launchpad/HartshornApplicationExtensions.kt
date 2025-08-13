@@ -18,10 +18,16 @@ package org.dockbox.hartshorn.launchpad
 import org.dockbox.hartshorn.launchpad.HartshornApplication.ApplicationBootstrap
 import kotlin.reflect.KClass
 
+/**
+ * Extension function to allow using Kotlin classes when creating an application.
+ */
 fun createApplication(mailClass: KClass<*>, vararg arguments: String): ApplicationBootstrapKt {
   return createApplication { HartshornApplication.createApplication(mailClass.java, *arguments) }
 }
 
+/**
+ * Extension function to allow using reified Kotlin type parameters when creating an application.
+ */
 inline fun <reified T : Any> createApplication(vararg arguments: String): ApplicationBootstrapKt {
   return createApplication(T::class, *arguments)
 }
@@ -32,9 +38,25 @@ private fun createApplication(bootstrapProvider: () -> ApplicationBootstrap): Ap
   }
 }
 
+/**
+ * Kotlin equivalent of the [ApplicationBootstrap] interface, allowing for a more idiomatic Kotlin
+ * approach to initializing Hartshorn applications.
+ */
 fun interface ApplicationBootstrapKt {
+
+  /**
+   * Initializes the Hartshorn application with the default customizer.
+   *
+   * @return The initialized [ApplicationContext].
+   */
   fun initialize(): ApplicationContext = this.initialize {}
 
+  /**
+   * Initializes the Hartshorn application with a custom configuration.
+   *
+   * @param customizer A lambda function that configures the [HartshornApplicationConfigurer].
+   * @return The initialized [ApplicationContext].
+   */
   fun initialize(customizer: HartshornApplicationConfigurer.() -> Unit): ApplicationContext
 }
 

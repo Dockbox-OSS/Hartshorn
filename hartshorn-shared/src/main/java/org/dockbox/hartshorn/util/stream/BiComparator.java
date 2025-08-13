@@ -42,5 +42,19 @@ public interface BiComparator<K, V> extends Comparator<Map.Entry<K, V>> {
         return this.compare(kvEntry.getKey(), kvEntry.getValue(), t1.getKey(), t1.getValue());
     }
 
+    /**
+     * Compares two entry pairs for order. Returns a negative integer, zero, or a positive
+     * integer as the first pair is less than, equal to, or greater than the second.
+     *
+     * @param key1 the key of the first entry
+     * @param value1 the value of the first entry
+     * @param key2 the key of the second entry
+     * @param value2 the value of the second entry
+     *
+     * @return a negative integer, zero, or a positive integer as the first pair is less than,
+     * equal to, or greater than the second pair.
+     *
+     * @see Comparator#compare(Object, Object)
+     */
     int compare(K key1, V value1, K key2, V value2);
 }

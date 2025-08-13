@@ -16,7 +16,6 @@
 
 package test.org.dockbox.hartshorn.inject.graph.support;
 
-import java.util.Set;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingAliasNormalizer;
 import org.dockbox.hartshorn.inject.graph.DependencyGraph;
@@ -30,6 +29,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Set;
+
 public class OverlappingAliasDependencyGraphValidatorTests {
 
     @Test
@@ -37,8 +38,8 @@ public class OverlappingAliasDependencyGraphValidatorTests {
         DependencyGraphValidator validator = new OverlappingAliasDependencyGraphValidator();
         DependencyGraph graph = new DependencyGraph();
 
-        AliasableDependencyContext<String> declarationString = createDeclarationMock(String.class);
-        AliasableDependencyContext<StringBuilder> declarationStringBuilder = createDeclarationMock(StringBuilder.class);
+        AliasableDependencyContext<String> declarationString = createMockCharSequenceDependencyContext(String.class);
+        AliasableDependencyContext<StringBuilder> declarationStringBuilder = createMockCharSequenceDependencyContext(StringBuilder.class);
 
         graph.addRoot(new SimpleGraphNode<>(declarationString));
         graph.addRoot(new SimpleGraphNode<>(declarationStringBuilder));
@@ -59,10 +60,10 @@ public class OverlappingAliasDependencyGraphValidatorTests {
         DependencyGraphValidator validator = new OverlappingAliasDependencyGraphValidator();
         DependencyGraph graph = new DependencyGraph();
 
-        AliasableDependencyContext<String> declarationString = createDeclarationMock(String.class);
+        AliasableDependencyContext<String> declarationString = createMockCharSequenceDependencyContext(String.class);
         Mockito.when(declarationString.priority()).thenReturn(1);
 
-        AliasableDependencyContext<StringBuilder> declarationStringBuilder = createDeclarationMock(StringBuilder.class);
+        AliasableDependencyContext<StringBuilder> declarationStringBuilder = createMockCharSequenceDependencyContext(StringBuilder.class);
         Mockito.when(declarationStringBuilder.priority()).thenReturn(2);
 
         graph.addRoot(new SimpleGraphNode<>(declarationString));
@@ -73,7 +74,7 @@ public class OverlappingAliasDependencyGraphValidatorTests {
         Assertions.assertDoesNotThrow(() -> validator.validateBeforeConfiguration(graph, null, orchestrator));
     }
 
-    private static <T extends CharSequence> AliasableDependencyContext<T> createDeclarationMock(Class<T> keyType) {
+    private static <T extends CharSequence> AliasableDependencyContext<T> createMockCharSequenceDependencyContext(Class<T> keyType) {
         AliasableDependencyContext<T> declarationString = Mockito.mock(AliasableDependencyContext.class);
         Mockito.when(declarationString.componentKey()).thenReturn(ComponentKey.of(keyType));
         Mockito.when(declarationString.describe()).thenReturn("mockLocation");

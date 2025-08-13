@@ -26,5 +26,10 @@ package org.dockbox.hartshorn.reporting;
  */
 public interface DiagnosticsPropertyWriterConsumer {
 
+    /**
+     * Writes properties to the given {@link DiagnosticsPropertyWriter}.
+     *
+     * @param writer The writer to which properties should be written.
+     */
     void writeTo(DiagnosticsPropertyWriter writer);
 }
