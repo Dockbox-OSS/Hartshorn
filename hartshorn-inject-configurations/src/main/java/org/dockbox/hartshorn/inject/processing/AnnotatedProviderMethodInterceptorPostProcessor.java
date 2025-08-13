@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.Provided;
-import org.dockbox.hartshorn.inject.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.inject.processing.proxy.AnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.inject.processing.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
@@ -35,29 +35,23 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public class ContextMethodPostProcessor extends AnnotatedMethodInterceptorPostProcessor<Provided> {
+public class AnnotatedProviderMethodInterceptorPostProcessor extends AnnotatedMethodInterceptorPostProcessor<Provided> {
 
     @Override
     public <T, R> MethodInterceptor<T, R> process(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
         ConversionService conversionService = application.defaultProvider().get(ConversionService.class);
-        Provided annotation = methodContext.annotation(Provided.class);
-        String name = annotation.value();
-
         MethodView<T, ?> method = methodContext.method();
 
         //noinspection unchecked
         TypeView<R> type = (TypeView<R>) method.returnType();
-        ComponentKey<?> key = ComponentKey.of(type);
-        if (!name.isEmpty()) {
-            key = key.mutable().name(name).build();
-        }
+        ComponentKey<?> componentKey = application.environment()
+                .componentKeyResolver()
+                .resolve(method);
 
         InjectionPoint injectionPoint = new InjectionPoint(method);
         ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(injectionPoint);
-
-        ComponentKey<?> finalKey = key;
         return interceptorContext -> {
-            Object result = application.defaultProvider().get(finalKey, requestContext);
+            Object result = application.defaultProvider().get(componentKey, requestContext);
             return conversionService.convert(result, type.type());
         };
     }

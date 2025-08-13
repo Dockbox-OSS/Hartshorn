@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject.annotations;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.processing.AnnotatedProviderMethodInterceptorPostProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -37,7 +38,7 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
- * @see org.dockbox.hartshorn.inject.processing.ContextMethodPostProcessor
+ * @see AnnotatedProviderMethodInterceptorPostProcessor
  * @author Guus Lieben
  * @since 0.4.1
  */

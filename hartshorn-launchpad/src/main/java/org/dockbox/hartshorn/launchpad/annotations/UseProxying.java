@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.launchpad.annotations;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationBuilder;
 import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.hartshorn.launchpad.processing.ContextCarrierDelegationPostProcessor;
-import org.dockbox.hartshorn.inject.processing.ContextMethodPostProcessor;
+import org.dockbox.hartshorn.inject.processing.AnnotatedProviderMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.inject.annotations.Component;
 import org.dockbox.hartshorn.inject.annotations.Provided;
 
@@ -40,7 +40,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @ModuleActivator(componentPostProcessors = {
         ContextCarrierDelegationPostProcessor.class,
-        ContextMethodPostProcessor.class,
+        AnnotatedProviderMethodInterceptorPostProcessor.class,
 })
 public @interface UseProxying {
 }
