@@ -243,6 +243,10 @@ public class TypeUtils {
         return annotationType.cast(instance);
     }
 
+    public static <A extends Annotation> A annotation(Class<A> annotationType, Object value) {
+        return TypeUtils.annotation(annotationType, Map.of("value", value));
+    }
+
     /**
      * Returns a stream of boxed integers from the given array.
      *

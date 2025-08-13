@@ -16,20 +16,20 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
-import java.util.stream.Stream;
-
-import org.dockbox.hartshorn.inject.condition.ConditionContext;
-import org.dockbox.hartshorn.inject.condition.ConditionResult;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.condition.ExpressionCondition;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.condition.RequiresExpression;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.inject.condition.ConditionContext;
+import org.dockbox.hartshorn.inject.condition.ConditionResult;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,7 +37,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
-import org.dockbox.hartshorn.inject.annotations.Inject;
+import java.util.stream.Stream;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -89,10 +89,7 @@ public class ExpressionConditionTests {
     }
 
     private AnnotatedElementView createAnnotatedElement(String expression) {
-        RequiresExpression condition = Mockito.mock(RequiresExpression.class);
-        Mockito.when(condition.value()).thenReturn(expression);
-        Mockito.doReturn(RequiresExpression.class).when(condition).annotationType();
-
+        RequiresExpression condition = TypeUtils.annotation(RequiresExpression.class, expression);
         ElementAnnotationsIntrospector annotationsIntrospector = Mockito.mock(ElementAnnotationsIntrospector.class);
         Mockito.when(annotationsIntrospector.get(RequiresExpression.class)).thenReturn(Option.of(condition));
 

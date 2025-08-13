@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.proxy.advice.intercept;
 
-import java.util.concurrent.Callable;
-
 import org.dockbox.hartshorn.util.ApplicationException;
+
+import java.util.concurrent.Callable;
 
 /**
  * A simple functional interface for custom invocation. This is used to provide custom arguments to the
@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
  */
 @FunctionalInterface
 public interface CustomInvocation<T> {
+
     /**
      * Invoke the default method with the given arguments.
      *

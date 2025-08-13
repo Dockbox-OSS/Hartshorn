@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.collections;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
@@ -49,14 +50,61 @@ public record MultiMapCollector<T, K, V>(
     Function<T, V> valueMapper
 ) implements Collector<T, MultiMap<K, V>, MultiMap<K, V>> {
 
+    /**
+     * A collector that collects entries into a {@link MultiMap}. The default implementation is an
+     * {@link ArrayListMultiMap}.
+     *
+     * @param <K> the key type
+     * @param <V> the value type
+     *
+     * @return a collector that collects entries into a {@link MultiMap}
+     */
+    public static <K, V> Collector<Map.Entry<K, V>, ?, MultiMap<K, V>> toMultiMap() {
+        return toMultiMap(ArrayListMultiMap::new, Map.Entry::getKey, Map.Entry::getValue);
+    }
+
+    /**
+     * {@link MultiMap} equivalent of {@link java.util.stream.Collectors#groupingBy(Function)}.
+     *
+     * @param keyMapper the classifier function to determine the key for each element
+     * @param <T> the type of the elements to collect
+     * @param <K> the type of the keys in the resulting {@link MultiMap}
+     *
+     * @return a {@link MultiMapCollector} that collects elements into a {@link MultiMap}
+     */
     public static <T, K> MultiMapCollector<T, K, T> groupingBy(Function<T, K> keyMapper) {
         return toMultiMap(keyMapper, Function.identity());
     }
 
+    /**
+     * {@link MultiMap} equivalent of {@link java.util.stream.Collectors#toMap(Function, Function)}, allowing
+     * for duplicate keys by collecting values into a {@link MultiMap}.
+     *
+     * @param keyMapper a mapper function to determine the key for each element
+     * @param valueMapper a mapper function to determine the value for each element
+     * @param <T> the type of the elements to collect
+     * @param <K> the type of the keys in the resulting {@link MultiMap}
+     * @param <V> the type of the values in the resulting {@link MultiMap}
+     *
+     * @return a {@link MultiMapCollector} that collects elements into a {@link MultiMap}
+     */
     public static <T, K, V> MultiMapCollector<T, K, V> toMultiMap(Function<T, K> keyMapper, Function<T, V> valueMapper) {
         return toMultiMap(ArrayListHashBiMultiMap::new, keyMapper, valueMapper);
     }
 
+    /**
+     * Creates a {@link MultiMapCollector} that collects elements into a {@link MultiMap} using the provided
+     * {@link MultiMap} supplier, key mapper, and value mapper.
+     *
+     * @param mapSupplier a supplier that creates a new {@link MultiMap} instance
+     * @param keyMapper a function that maps elements to keys
+     * @param valueMapper a function that maps elements to values
+     * @param <T> the type of the elements to collect
+     * @param <K> the type of the keys in the resulting {@link MultiMap}
+     * @param <V> the type of the values in the resulting {@link MultiMap}
+     *
+     * @return a {@link MultiMapCollector} that collects elements into a {@link MultiMap}
+     */
     public static <T, K, V> MultiMapCollector<T, K, V> toMultiMap(Supplier<MultiMap<K, V>> mapSupplier, Function<T, K> keyMapper, Function<T, V> valueMapper) {
         return new MultiMapCollector<>(mapSupplier, keyMapper, valueMapper);
     }

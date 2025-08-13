@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMapCollector;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.graph.Graph;
 import org.dockbox.hartshorn.util.graph.GraphNode;
@@ -40,7 +41,6 @@ import org.dockbox.hartshorn.util.graph.MutableContainableGraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleGraphNode;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.View;
-import org.dockbox.hartshorn.util.stream.CollectorUtilities;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
 import java.util.Collection;
@@ -254,7 +254,7 @@ public class DependencyGraphBuilder {
         ScopeKey applicationScope = this.binder.scope().installableScopeType();
         MultiMap<ScopeKey, DependencyContext<?>> dependenciesByScope = dependencyNodes.stream()
                 .map(GraphNode::value)
-                .collect(CollectorUtilities.toMultiMap(d -> d.scope().orElse(applicationScope)));
+                .collect(MultiMapCollector.groupingBy(d -> d.scope().orElse(applicationScope)));
 
         for (Map.Entry<ScopeKey, Collection<DependencyContext<?>>> entry : dependenciesByScope) {
             Collection<DependencyContext<?>> dependencyContexts = entry.getValue();

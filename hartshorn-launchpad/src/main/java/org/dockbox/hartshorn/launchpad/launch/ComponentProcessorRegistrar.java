@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.inject.processing.HierarchicalBinderProcessorRegist
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
 import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
 import java.util.Collection;
@@ -35,6 +34,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Registers component processors to the application context. This class should be used to prepare the application
@@ -130,8 +130,9 @@ public class ComponentProcessorRegistrar {
     }
 
     private <T> Set<Class<? extends T>> resolveProcessorTypes(Set<ModuleActivator> moduleActivators, Function<ModuleActivator, Class<? extends T>[]> lookup) {
-        return CollectionUtilities
-                .flatMapArray(moduleActivators, lookup)
+        return moduleActivators.stream()
+                .map(lookup)
+                .flatMap(Stream::of)
                 .collect(Collectors.toSet());
     }
 

@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.collections;
 
+import org.dockbox.hartshorn.util.stream.EntryStream;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -60,7 +62,7 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
 
     @Override
     public void putAll(MultiMap<K, V> map) {
-        CollectionUtilities.iterateEntries(map.entrySet(), this::putAll);
+        EntryStream.of(map.entrySet()).forEach((key, values) -> this.putAll(key, values));
     }
 
     @Override
