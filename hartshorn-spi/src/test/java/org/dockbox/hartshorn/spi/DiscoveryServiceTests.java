@@ -21,6 +21,9 @@ import com.google.testing.compile.Compilation;
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMapCollector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -32,9 +35,8 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 public class DiscoveryServiceTests {
 
@@ -43,9 +45,7 @@ public class DiscoveryServiceTests {
     private static final String HELLO_WORLD_MESSAGE = "Hello World!";
     private static final String HELLO_WORLD_SUPPLIER_IMPLEMENTATION_SOURCE = """
             package org.dockbox.hartshorn.spi;
-
             public class HelloWorldSupplierImplementation implements HelloWorldSupplier {
-                        
                 @Override
                 public String getHelloWorld() {
                     return "%s";
@@ -123,6 +123,24 @@ public class DiscoveryServiceTests {
         });
     }
 
+    @Test
+    void testDiscoveryForMultipleImplementations() throws ServiceDiscoveryException {
+        DiscoveryService.instance().override(HelloWorldSupplier.class, HelloWorldSupplierImplementationA.class);
+        DiscoveryService.instance().override(HelloWorldSupplier.class, HelloWorldSupplierImplementationB.class);
+
+        Assertions.assertThrows(ServiceDiscoveryException.class, () -> DiscoveryService.instance().discover(HelloWorldSupplier.class));
+        Set<HelloWorldSupplier> suppliers = DiscoveryService.instance().discoverAll(HelloWorldSupplier.class);
+        Assertions.assertEquals(2, suppliers.size());
+        Assertions.assertTrue(suppliers.stream().anyMatch(HelloWorldSupplierImplementationA.class::isInstance));
+        Assertions.assertTrue(suppliers.stream().anyMatch(HelloWorldSupplierImplementationB.class::isInstance));
+    }
+
+    @Test
+    void testDiscoveryFailsIfImplementationConstructorFails() {
+        DiscoveryService.instance().override(HelloWorldSupplier.class, HelloWorldSupplierImplementationWithErrorInConstructor.class);
+        Assertions.assertThrows(ServiceDiscoveryException.class, () -> DiscoveryService.instance().discover(HelloWorldSupplier.class));
+    }
+
     private static JavaFileObject compileAndGetRuntimeImplementation() {
         Compilation compilation = Compiler.javac().compile(JavaFileObjects.forSourceString(IMPLEMENTATION_NAME, HELLO_WORLD_SUPPLIER_IMPLEMENTATION_SOURCE));
         Assertions.assertTrue(compilation.errors().isEmpty());
@@ -130,10 +148,11 @@ public class DiscoveryServiceTests {
         ImmutableList<JavaFileObject> generatedFiles = compilation.generatedFiles();
         Assertions.assertEquals(1, generatedFiles.size());
 
-        Map<Kind, List<JavaFileObject>> generatedByKind = generatedFiles.stream().collect(Collectors.groupingBy(JavaFileObject::getKind));
+        MultiMap<Kind, JavaFileObject> generatedByKind = generatedFiles.stream()
+                .collect(MultiMapCollector.groupingBy(JavaFileObject::getKind));
         Assertions.assertEquals(1, generatedByKind.get(Kind.CLASS).size()); // HelloWorldSupplierImplementation.class
 
-        return generatedByKind.get(Kind.CLASS).getFirst();
+        return CollectionUtilities.first(generatedByKind.get(Kind.CLASS));
     }
 
     public static class ByteClassLoader extends URLClassLoader {
@@ -164,6 +183,32 @@ public class DiscoveryServiceTests {
         @Override
         public String getHelloWorld() {
             return this.arg;
+        }
+    }
+
+    public static class HelloWorldSupplierImplementationWithErrorInConstructor implements HelloWorldSupplier {
+
+        public HelloWorldSupplierImplementationWithErrorInConstructor() {
+            throw new RuntimeException("Error in constructor");
+        }
+
+        @Override
+        public String getHelloWorld() {
+            return "Hello World!";
+        }
+    }
+
+    public static class HelloWorldSupplierImplementationA implements HelloWorldSupplier {
+        @Override
+        public String getHelloWorld() {
+            return "Hello World!";
+        }
+    }
+
+    public static class HelloWorldSupplierImplementationB implements HelloWorldSupplier {
+        @Override
+        public String getHelloWorld() {
+            return "Hello Hartshorn!";
         }
     }
 }
