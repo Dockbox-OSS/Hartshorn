@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,8 @@ import java.lang.reflect.Executable;
 import java.util.List;
 
 /**
- * A view that provides access to the constructor of a class. This view is backed by a {@link Executable} instance.
+ * A view that provides access to executable elements of a class (constructors and methods). This view is
+ * backed by a {@link Executable} instance.
  *
  * @see ExecutableParametersIntrospector
  * @see TypeVariablesIntrospector
