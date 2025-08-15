@@ -16,8 +16,13 @@
 
 package org.dockbox.hartshorn.inject.graph.strategy;
 
+import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
+
 /**
- * TODO: #1060 Add documentation
+ * Priority levels for {@link DependencyContextResolver binding strategies}. Unlike {@link ProcessingPriority processing
+ * priorities}, binding strategies do not allow for fine-grained control over the order in which they are
+ * executed. Instead, they are grouped into five distinct priority levels, which are used to determine
+ * the order in which binding strategies are applied to a component graph.
  *
  * @since 0.5.0
  *

@@ -16,12 +16,15 @@
 
 package org.dockbox.hartshorn.inject.processing.proxy;
 
-import java.lang.reflect.Method;
-
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
+import java.lang.reflect.Method;
+
 /**
- * TODO: #1060 Add documentation
+ * Thrown by {@link MethodInterceptorPostProcessor} when a method does meet compatibility requirements for
+ * binding to a proxy, but does not pass the preconditions. For example, if the method is annotated with a
+ * specific annotation that does not allow the method to return values, yet the method does have a non-void
+ * return signature.
  *
  * @since 0.4.1
  *

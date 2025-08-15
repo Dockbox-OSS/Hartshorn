@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject.provider;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
 
 /**
- * TODO: #1060 Add documentation
+ * A provider that supports post-processing of components after they have been created.
  *
  * @since 0.4.1
  *

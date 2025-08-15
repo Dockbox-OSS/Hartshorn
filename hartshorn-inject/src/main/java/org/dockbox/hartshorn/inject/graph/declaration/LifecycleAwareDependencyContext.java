@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.inject.graph.declaration;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 
 /**
- * TODO: #1060 Add documentation
+ * A {@link DependencyContext} that is aware of the lifecycle type of the dependency it represents.
  *
- * @param <T> ...
+ * @param <T> the type of the dependency represented by this context
  *
  * @since 0.6.0
  *

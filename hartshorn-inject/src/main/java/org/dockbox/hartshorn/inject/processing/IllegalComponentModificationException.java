@@ -19,7 +19,8 @@ package org.dockbox.hartshorn.inject.processing;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * TODO: #1060 Add documentation
+ * An exception that is thrown when a component is modified during a processing phase that does not allow for
+ * such modifications.
  *
  * @since 0.4.12
  *

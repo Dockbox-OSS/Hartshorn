@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 /**
- * TODO: #1060 Add documentation
+ * A context for binding strategies that are aware of a specific method being processed.
  *
- * @param <T> ...
+ * @param <T> the type of the component that is being processed
  *
  * @since 0.5.0
  *
@@ -44,6 +44,11 @@ public class MethodAwareBindingStrategyContext<T> extends DefaultContext impleme
         return this.componentContainer;
     }
 
+    /**
+     * Returns the method that is being processed.
+     *
+     * @return the method view representing the method being processed
+     */
     public MethodView<T, ?> method() {
         return this.method;
     }

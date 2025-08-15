@@ -28,9 +28,13 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 /**
- * TODO: #1060 Add documentation
+ * An abstract {@link ComponentPostProcessor} that allows implementations to process methods annotated with a specific
+ * annotation, during the pre-configuration phase. This can be particularly useful for proxy generation or method
+ * interception based on annotations.
  *
- * @param <M> ...
+ * @see AnnotatedMethodInterceptorPostProcessor
+ *
+ * @param <M> the type of the annotation that this post processor processes
  *
  * @since 0.4.1
  *

@@ -18,9 +18,11 @@ package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
+import org.dockbox.hartshorn.util.IllegalModificationException;
 
 /**
- * TODO: #1060 Add documentation
+ * A callback interface for storing and locking components in a component store. Typically, such a store
+ * is used to retain component instances during the processing of components.
  *
  * @since 0.6.0
  *
@@ -28,7 +30,28 @@ import org.dockbox.hartshorn.inject.provider.ObjectContainer;
  */
 public interface ComponentStoreCallback {
 
+    /**
+     * Stores a component in the component store, associated with the given key.
+     *
+     * @param key the key to associate with the component
+     * @param container the container holding the component instance
+     * @param <T> the type of the component being stored
+     *
+     * @throws IllegalModificationException if the component is already locked or if the component
+     * store does not allow modifications
+     */
     <T> void store(ComponentKey<T> key, ObjectContainer<T> container);
 
+    /**
+     * Locks a component in the component store, preventing further modifications to the component
+     * associated with the given key.
+     *
+     * @param key the key of the component to lock
+     * @param container the container holding the component instance
+     * @param <T> the type of the component being locked
+     *
+     * @throws IllegalModificationException if the component is already locked or if the component
+     * being locked is different from the one already stored under the key
+     */
     <T> void lock(ComponentKey<T> key, ObjectContainer<T> container);
 }

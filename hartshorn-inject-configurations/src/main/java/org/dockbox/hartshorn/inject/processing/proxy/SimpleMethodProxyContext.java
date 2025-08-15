@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.lang.annotation.Annotation;
 
 /**
- * TODO: #1060 Add documentation
+ * A basic implementation of the {@link MethodProxyContext} interface.
  *
  * @param <T> ...
  *
@@ -32,12 +32,12 @@ import java.lang.annotation.Annotation;
  *
  * @author Guus Lieben
  */
-public class MethodProxyContextImpl<T> extends DefaultInjectionApplicationAwareContext implements MethodProxyContext<T> {
+public class SimpleMethodProxyContext<T> extends DefaultInjectionApplicationAwareContext implements MethodProxyContext<T> {
 
     private final TypeView<T> type;
     private final MethodView<T, ?> method;
 
-    public MethodProxyContextImpl(InjectionCapableApplication application, TypeView<T> type, MethodView<T, ?> method) {
+    public SimpleMethodProxyContext(InjectionCapableApplication application, TypeView<T> type, MethodView<T, ?> method) {
         super(application);
         this.type = type;
         this.method = method;

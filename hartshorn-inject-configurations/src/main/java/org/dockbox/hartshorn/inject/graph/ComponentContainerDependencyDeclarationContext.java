@@ -22,10 +22,12 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * TODO: #1060 Add documentation
+ * {@link DependencyDeclarationContext} specifically designed for managed components, which are tracked in
+ * {@link ComponentContainer containers}. A managed component never has qualifiers, and is only identified
+ * by its type.
  *
- * @param container ...
- * @param <T> ...
+ * @param container the container in which the component is managed
+ * @param <T> the type of the component managed by the container
  *
  * @since 0.5.0
  *
@@ -43,5 +45,4 @@ public record ComponentContainerDependencyDeclarationContext<T>(ComponentContain
     public CompositeQualifier qualifier() {
         return new CompositeQualifier();
     }
-
 }

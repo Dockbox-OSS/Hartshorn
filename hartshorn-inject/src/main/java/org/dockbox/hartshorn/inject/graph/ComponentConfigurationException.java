@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.inject.graph;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * TODO: #1060 Add documentation
+ * Exception thrown when a component's configuration is invalid or cannot be processed.
  *
  * @since 0.5.0
  *

@@ -23,20 +23,22 @@ import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 
 /**
- * TODO: #1060 Add documentation
+ * A modifiable version of the {@link ComponentProcessingContext}, which allows for modifying the component
+ * instance and requesting a lock on the instance. This is useful for scenarios where the component instance
+ * needs to be modified and potentially replaced, but afterward should not be modified anymore.
  *
- * @param <T> ...
+ * @param <T> the type of the component being processed
  *
  * @since 0.4.13
  *
  * @author Guus Lieben
  */
-public class ModifiableComponentProcessingContext<T> extends ComponentProcessingContext<T> {
+public class LockableComponentProcessingContext<T> extends ComponentProcessingContext<T> {
 
     private final ComponentStoreCallback componentStoreCallback;
     private boolean requestInstanceLock = false;
 
-    public ModifiableComponentProcessingContext(
+    public LockableComponentProcessingContext(
         InjectionCapableApplication application,
         ComponentKey<T> key,
         ComponentRequestContext requestContext,
@@ -48,7 +50,7 @@ public class ModifiableComponentProcessingContext<T> extends ComponentProcessing
         this.componentStoreCallback = componentStoreCallback;
     }
 
-    public ModifiableComponentProcessingContext<T> instance(T instance) {
+    public LockableComponentProcessingContext<T> instance(T instance) {
         if (this.requestInstanceLock) {
             throw new IllegalModificationException("Cannot modify instance after lock has been requested");
         }

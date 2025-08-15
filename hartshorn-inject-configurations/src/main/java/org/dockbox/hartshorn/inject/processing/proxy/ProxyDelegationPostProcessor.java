@@ -23,9 +23,12 @@ import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 
 /**
- * TODO: #1060 Add documentation
+ * An abstract {@link ComponentPostProcessor} that is used to delegate non-implemented methods of a parent
+ * type to a concrete implementation of that parent type. By default, the concrete implementation is provided
+ * by the {@link InjectionCapableApplication}, though this behavior may be changed by overriding {@link
+ * #concreteDelegator(InjectionCapableApplication, ProxyFactory, Class) the concrete delegator} method.
  *
- * @param <P> ...
+ * @param <P> the type of the parent that is being delegated to
  *
  * @since 0.4.8
  *

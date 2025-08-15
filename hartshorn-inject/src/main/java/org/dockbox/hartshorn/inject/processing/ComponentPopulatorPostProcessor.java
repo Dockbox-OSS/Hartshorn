@@ -20,7 +20,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
-import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
+import org.dockbox.hartshorn.inject.introspect.ComponentExecutableInvocationAdapter;
 import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
 import org.dockbox.hartshorn.inject.populate.StrategyComponentPopulator;
 import org.dockbox.hartshorn.inject.provider.ComponentConstructorResolver;
@@ -77,9 +77,9 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
                 }
             }
 
-            if (processingContext instanceof ModifiableComponentProcessingContext<T> modifiableComponentProcessingContext) {
-                modifiableComponentProcessingContext.instance(finalizingInstance);
-                modifiableComponentProcessingContext.requestInstanceLock();
+            if (processingContext instanceof LockableComponentProcessingContext<T> lockableComponentProcessingContext) {
+                lockableComponentProcessingContext.instance(finalizingInstance);
+                lockableComponentProcessingContext.requestInstanceLock();
             }
 
             Scope scope = processingContext.key().scope().orElse(application.defaultProvider().scope());
@@ -100,7 +100,7 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
             ConstructorView<? extends T> constructor = ComponentConstructorResolver.create(application).findConstructor(factoryType)
                     .orElseThrow(() -> new ApplicationException("No default or injectable constructor found for proxy factory " + factoryType.name()));
 
-            ViewContextAdapter adapter = application.defaultProvider().get(ViewContextAdapter.class);
+            ComponentExecutableInvocationAdapter adapter = application.defaultProvider().get(ComponentExecutableInvocationAdapter.class);
             Object[] arguments = adapter.loadParameters(constructor);
             return factory.proxy(constructor, arguments).orElse(instance);
         }

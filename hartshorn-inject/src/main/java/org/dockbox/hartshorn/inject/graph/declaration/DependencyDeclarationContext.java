@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.inject.CompositeQualifier;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * TODO: #1060 Add documentation
+ * A context that provides information about a dependency declaration.
  *
  * @param <T> ...
  *

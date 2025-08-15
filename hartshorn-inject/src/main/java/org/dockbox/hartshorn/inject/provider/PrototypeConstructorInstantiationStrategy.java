@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.inject.provider;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.introspect.InjectorApplicationViewAdapter;
-import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
+import org.dockbox.hartshorn.inject.introspect.InjectorExecutableInvocationAdapter;
+import org.dockbox.hartshorn.inject.introspect.ComponentExecutableInvocationAdapter;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
@@ -104,8 +104,8 @@ public final class PrototypeConstructorInstantiationStrategy<C> implements TypeA
             return Option.empty();
         }
         try {
-            ViewContextAdapter contextAdapter = new InjectorApplicationViewAdapter(application);
-            contextAdapter.addContext(requestContext);
+            ComponentExecutableInvocationAdapter contextAdapter = new InjectorExecutableInvocationAdapter(application)
+                    .requestContext(requestContext);
             return this.componentKey.scope()
                     .map(contextAdapter::scope)
                     .orElse(contextAdapter)

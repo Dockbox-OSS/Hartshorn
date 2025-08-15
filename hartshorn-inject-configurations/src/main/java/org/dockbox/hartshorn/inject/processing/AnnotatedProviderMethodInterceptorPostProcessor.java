@@ -29,7 +29,9 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * TODO: #1060 Add documentation
+ * A post-processor for methods annotated with {@link Provided}.
+ *
+ * @see Provided
  *
  * @since 0.4.1
  *

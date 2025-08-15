@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 
 /**
- * TODO: #1060 Add documentation
+ * An {@link ObjectContainer} that wraps another {@link ObjectContainer} to represent an entry in a collection.
  *
- * @param <T> ...
+ * @param <T> the type of the object contained in this container
  *
  * @since 0.6.0
  *

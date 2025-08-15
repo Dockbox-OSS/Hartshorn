@@ -36,13 +36,18 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
 import java.util.Set;
 
 /**
- * TODO: #1060 Add documentation
+ * An adapter for {@link ComponentProviderPostProcessor} that allows for the processing of components provided
+ * by a {@link ComponentRegistryAwareComponentProvider}. This offers full support for {@link ComponentCollection
+ * component collections}, and allows for the processing of both managed and unmanaged components.
+ *
+ * <p>The actual processing of components is delegated to a {@link ComponentPostProcessor}. This adapter ensures
+ * the instance is sufficiently prepared for processing, and that the component store is updated accordingly.
  *
  * @since 0.6.0
  *
  * @author Guus Lieben
  */
-public class SimpleComponentProviderPostProcessor implements ComponentProviderPostProcessor {
+public class ComponentProviderPostProcessorAdapter implements ComponentProviderPostProcessor {
 
     private final RequireInjectionPointRule requireRule = new AnnotatedInjectionPointRequireRule();
     private final ComponentRegistryAwareComponentProvider owner;
@@ -50,7 +55,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
     private final InjectionCapableApplication application;
     private final ComponentStoreCallback componentStoreCallback;
 
-    public SimpleComponentProviderPostProcessor(
+    public ComponentProviderPostProcessorAdapter(
             ComponentRegistryAwareComponentProvider owner,
             ComponentPostProcessor processor,
             InjectionCapableApplication application,
@@ -127,7 +132,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
         }
     }
 
-    protected <T> ModifiableComponentProcessingContext<T> process(ModifiableComponentProcessingContext<T> processingContext) throws ApplicationException {
+    protected <T> LockableComponentProcessingContext<T> process(LockableComponentProcessingContext<T> processingContext) throws ApplicationException {
         // Store early, so cyclic dependencies may be resolved
         this.componentStoreCallback.store(processingContext.key(), processingContext.container());
         this.processor.process(processingContext);
@@ -139,7 +144,7 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
             return objectContainer.instance();
         }
 
-        ModifiableComponentProcessingContext<T> processingContext = this.prepareProcessingContext(key, objectContainer, container, requestContext);
+        LockableComponentProcessingContext<T> processingContext = this.prepareProcessingContext(key, objectContainer, container, requestContext);
         objectContainer.processed(true);
 
         processingContext = this.process(processingContext);
@@ -157,8 +162,8 @@ public class SimpleComponentProviderPostProcessor implements ComponentProviderPo
         return collection;
     }
 
-    protected <T> ModifiableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, ObjectContainer<T> objectContainer, @Nullable ComponentContainer<?> componentContainer, ComponentRequestContext requestContext) {
-        ModifiableComponentProcessingContext<T> processingContext = new ModifiableComponentProcessingContext<>(
+    protected <T> LockableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, ObjectContainer<T> objectContainer, @Nullable ComponentContainer<?> componentContainer, ComponentRequestContext requestContext) {
+        LockableComponentProcessingContext<T> processingContext = new LockableComponentProcessingContext<>(
                 this.application, key, requestContext, objectContainer,
                 componentContainer == null || componentContainer.permitsProxying(),
                 this.componentStoreCallback);

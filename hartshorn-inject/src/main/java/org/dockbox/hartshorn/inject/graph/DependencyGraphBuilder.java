@@ -51,7 +51,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * TODO: #1060 Add documentation
+ * A builder for creating a {@link DependencyGraph} from a set of {@link DependencyContext}s. This builder supports
+ * both standalone dependencies and composite dependencies (component collections). Depending on how the {@link
+ * DependencyResolver} is configured, this builder can support different types of dependencies, as long as no
+ * duplicate contexts are present for the same dependency.
  *
  * @since 0.5.0
  *

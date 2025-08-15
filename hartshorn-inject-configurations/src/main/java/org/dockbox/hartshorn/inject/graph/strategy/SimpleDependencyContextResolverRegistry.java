@@ -27,48 +27,49 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO: #1060 Add documentation
+ * A simple implementation of the {@link DependencyContextResolverRegistry} interface, which allows multiple
+ * strategies to be registered on the same priority level.
  *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public class SimpleBindingStrategyRegistry extends DefaultContext implements BindingStrategyRegistry {
+public class SimpleDependencyContextResolverRegistry extends DefaultContext implements DependencyContextResolverRegistry {
 
-    private final MultiMap<BindingStrategyPriority, BindingStrategy> strategies = MultiMap.<BindingStrategyPriority, BindingStrategy>builder()
+    private final MultiMap<BindingStrategyPriority, DependencyContextResolver> strategies = MultiMap.<BindingStrategyPriority, DependencyContextResolver>builder()
             .mapSupplier(() -> new EnumMap<>(BindingStrategyPriority.class))
             .collectionSupplier(HashSet::new)
             .build();
 
     @Override
-    public Set<BindingStrategy> strategies() {
+    public Set<DependencyContextResolver> strategies() {
         return Set.copyOf(this.strategies.allValues());
     }
 
     @Override
-    public BindingStrategyRegistry register(BindingStrategy strategy) {
+    public DependencyContextResolverRegistry register(DependencyContextResolver strategy) {
         this.strategies.put(strategy.priority(), strategy);
         return this;
     }
 
     @Override
-    public BindingStrategyRegistry unregister(BindingStrategy strategy) {
+    public DependencyContextResolverRegistry unregister(DependencyContextResolver strategy) {
         this.strategies.remove(strategy.priority(), strategy);
         return this;
     }
 
     @Override
-    public BindingStrategyRegistry clear() {
+    public DependencyContextResolverRegistry clear() {
         this.strategies.clear();
         return this;
     }
 
     @Override
-    public Option<BindingStrategy> find(BindingStrategyContext<?> context) {
+    public Option<DependencyContextResolver> find(BindingStrategyContext<?> context) {
         for (BindingStrategyPriority priority : BindingStrategyPriority.values()) {
-            List<BindingStrategy> matchingStrategies = new ArrayList<>();
-            for (BindingStrategy strategy : this.strategies.get(priority)) {
-                if (strategy.canHandle(context)) {
+            List<DependencyContextResolver> matchingStrategies = new ArrayList<>();
+            for (DependencyContextResolver strategy : this.strategies.get(priority)) {
+                if (strategy.isCompatible(context)) {
                     matchingStrategies.add(strategy);
                 }
             }

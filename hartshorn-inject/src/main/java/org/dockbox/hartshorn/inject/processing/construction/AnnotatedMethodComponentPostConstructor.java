@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.annotations.OnInitialized;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
-import org.dockbox.hartshorn.inject.introspect.InjectorApplicationViewAdapter;
-import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
+import org.dockbox.hartshorn.inject.introspect.InjectorExecutableInvocationAdapter;
+import org.dockbox.hartshorn.inject.introspect.ComponentExecutableInvocationAdapter;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
@@ -38,7 +38,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO: #1060 Add documentation
+ * A component post-constructor that invokes methods annotated with {@link OnInitialized} on the component instance
+ * after it has been constructed.
  *
  * @since 0.4.12
  *
@@ -47,7 +48,7 @@ import java.util.Set;
 public class AnnotatedMethodComponentPostConstructor implements ComponentPostConstructor {
 
     private final Introspector introspector;
-    private final ViewContextAdapter contextAdapter;
+    private final ComponentExecutableInvocationAdapter contextAdapter;
     private final Set<Class<? extends Annotation>> annotations;
 
     protected AnnotatedMethodComponentPostConstructor(SingleElementContext<? extends InjectionCapableApplication> initializerContext, Configurer configurer) {
@@ -86,14 +87,14 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
             AnnotatedMethodComponentPostConstructor postConstructor = new AnnotatedMethodComponentPostConstructor(context, configurer);
             DefaultBindingConfigurerContext.compose(context, binder -> {
                 binder.bind(ComponentPostConstructor.class).singleton(postConstructor);
-                binder.bind(ViewContextAdapter.class).singleton(postConstructor.contextAdapter);
+                binder.bind(ComponentExecutableInvocationAdapter.class).singleton(postConstructor.contextAdapter);
             });
             return postConstructor;
         };
     }
 
     /**
-     * TODO: #1060 Add documentation
+     * Configurer for the {@link AnnotatedMethodComponentPostConstructor}.
      *
      * @since 0.6.0
      *
@@ -104,14 +105,14 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
         private final LazyStreamableConfigurer<InjectionCapableApplication, Class<? extends Annotation>> annotations = LazyStreamableConfigurer.of(
                 OnInitialized.class);
 
-        private ContextualInitializer<InjectionCapableApplication, ViewContextAdapter> viewContextAdapter = ContextualInitializer.of(
-            InjectorApplicationViewAdapter::new);
+        private ContextualInitializer<InjectionCapableApplication, ComponentExecutableInvocationAdapter> viewContextAdapter = ContextualInitializer.of(
+            InjectorExecutableInvocationAdapter::new);
 
-        public Configurer viewContextAdapter(ViewContextAdapter lazyViewContextAdapter) {
-            return this.viewContextAdapter(ContextualInitializer.of(lazyViewContextAdapter));
+        public Configurer viewContextAdapter(ComponentExecutableInvocationAdapter lazyComponentExecutableInvocationAdapter) {
+            return this.viewContextAdapter(ContextualInitializer.of(lazyComponentExecutableInvocationAdapter));
         }
 
-        public Configurer viewContextAdapter(ContextualInitializer<InjectionCapableApplication, ViewContextAdapter> viewContextAdapter) {
+        public Configurer viewContextAdapter(ContextualInitializer<InjectionCapableApplication, ComponentExecutableInvocationAdapter> viewContextAdapter) {
             this.viewContextAdapter = viewContextAdapter;
             return this;
         }

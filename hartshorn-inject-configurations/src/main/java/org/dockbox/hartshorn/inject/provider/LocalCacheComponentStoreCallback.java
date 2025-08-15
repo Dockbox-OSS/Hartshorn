@@ -22,7 +22,8 @@ import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 
 /**
- * TODO: #1060 Add documentation
+ * A {@link ComponentStoreCallback} implementation that stores components in a local {@link SingletonCache
+ * singleton cache}.
  *
  * @since 0.6.0
  *

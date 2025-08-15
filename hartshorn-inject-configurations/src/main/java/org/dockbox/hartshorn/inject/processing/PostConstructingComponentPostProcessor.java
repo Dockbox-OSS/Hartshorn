@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.util.ApplicationException;
  *
  * @author Guus Lieben
  */
-public class PostConstructingComponentPostProcessor implements ComponentProviderPostProcessor{
+public class PostConstructingComponentPostProcessor implements ComponentProviderPostProcessor {
 
     private final ComponentPostConstructor postConstructor;
     private final ComponentProviderPostProcessor delegate;

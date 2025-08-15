@@ -34,12 +34,12 @@ import org.dockbox.hartshorn.inject.graph.ConditionalDependencyContext;
 import org.dockbox.hartshorn.inject.graph.DependencyResolver;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationContext;
-import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategy;
+import org.dockbox.hartshorn.inject.graph.strategy.DependencyContextResolver;
 import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
-import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyRegistry;
+import org.dockbox.hartshorn.inject.graph.strategy.DependencyContextResolverRegistry;
 import org.dockbox.hartshorn.inject.graph.strategy.MethodAwareBindingStrategyContext;
-import org.dockbox.hartshorn.inject.graph.strategy.MethodInstanceBindingStrategy;
-import org.dockbox.hartshorn.inject.graph.strategy.SimpleBindingStrategyRegistry;
+import org.dockbox.hartshorn.inject.graph.strategy.BindingMethodDependencyContextResolver;
+import org.dockbox.hartshorn.inject.graph.strategy.SimpleDependencyContextResolverRegistry;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.ComponentRegistryAwareComponentProvider;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
@@ -56,29 +56,31 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * TODO: #1060 Add documentation
+ * Dependency resolver that resolves dependencies based on methods annotated with {@link Binds}. Binding methods
+ * are only allowed to be declared in managed {@link Configuration configuration} components, and are allowed to
+ * be conditional through the use of the {@link ConditionMatcher}.
  *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public class BindsMethodDependencyResolver extends AbstractContainerDependencyResolver {
+public class ManagedConfigurationDependencyResolver extends AbstractContainerDependencyResolver {
 
     private final ConditionMatcher conditionMatcher;
-    private final BindingStrategyRegistry registry;
+    private final DependencyContextResolverRegistry registry;
     private final ComponentRegistry componentRegistry;
 
-    public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher, ComponentRegistry componentRegistry) {
-        this(conditionMatcher, componentRegistry, new SimpleBindingStrategyRegistry());
+    public ManagedConfigurationDependencyResolver(ConditionMatcher conditionMatcher, ComponentRegistry componentRegistry) {
+        this(conditionMatcher, componentRegistry, new SimpleDependencyContextResolverRegistry());
     }
 
-    public BindsMethodDependencyResolver(ConditionMatcher conditionMatcher, ComponentRegistry componentRegistry, BindingStrategyRegistry registry) {
+    public ManagedConfigurationDependencyResolver(ConditionMatcher conditionMatcher, ComponentRegistry componentRegistry, DependencyContextResolverRegistry registry) {
         this.conditionMatcher = conditionMatcher;
         this.registry = registry;
         this.componentRegistry = componentRegistry;
     }
 
-    public BindingStrategyRegistry registry() {
+    public DependencyContextResolverRegistry registry() {
         return this.registry;
     }
 
@@ -126,7 +128,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
 
     private <T> Option<DependencyContext<?>> resolve(DependencyDeclarationContext<T> componentContainer, MethodView<T, ?> method) {
         BindingStrategyContext<T> strategyContext = new MethodAwareBindingStrategyContext<>(componentContainer, method);
-        return this.registry.find(strategyContext).map(strategy -> strategy.handle(strategyContext));
+        return this.registry.find(strategyContext).map(strategy -> strategy.resolveToDependency(strategyContext));
     }
 
     public static ContextualInitializer<InjectionCapableApplication, DependencyResolver> create(Customizer<Configurer> customizer) {
@@ -134,8 +136,8 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
 
-            List<BindingStrategy> strategies = configurer.bindingStrategies.initialize(context);
-            BindingStrategyRegistry registry = new SimpleBindingStrategyRegistry();
+            List<DependencyContextResolver> strategies = configurer.bindingStrategies.initialize(context);
+            DependencyContextResolverRegistry registry = new SimpleDependencyContextResolverRegistry();
             strategies.forEach(registry::register);
 
             InjectionCapableApplication application = context.input();
@@ -148,12 +150,12 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
             if (componentRegistry == null) {
                 throw new ComponentConfigurationException("Could not resolve component registry from current application");
             }
-            return new BindsMethodDependencyResolver(conditionMatcher, componentRegistry, registry);
+            return new ManagedConfigurationDependencyResolver(conditionMatcher, componentRegistry, registry);
         };
     }
 
     /**
-     * TODO: #1060 Add documentation
+     * Configurer for the {@link ManagedConfigurationDependencyResolver}.
      *
      * @since 0.5.0
      *
@@ -161,8 +163,8 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<InjectionCapableApplication, BindingStrategy> bindingStrategies = LazyStreamableConfigurer.ofInitializer(
-            MethodInstanceBindingStrategy.create(Customizer.useDefaults())
+        private final LazyStreamableConfigurer<InjectionCapableApplication, DependencyContextResolver> bindingStrategies = LazyStreamableConfigurer.ofInitializer(
+            BindingMethodDependencyContextResolver.create(Customizer.useDefaults())
         );
         private ContextualInitializer<InjectionCapableApplication, ConditionMatcher> conditionMatcher = ContextualInitializer.of(application -> {
             InjectorEnvironment environment = application.environment();
@@ -182,7 +184,7 @@ public class BindsMethodDependencyResolver extends AbstractContainerDependencyRe
             return this;
         }
 
-        public Configurer bindingStrategies(Customizer<StreamableConfigurer<InjectionCapableApplication, BindingStrategy>> customizer) {
+        public Configurer bindingStrategies(Customizer<StreamableConfigurer<InjectionCapableApplication, DependencyContextResolver>> customizer) {
             this.bindingStrategies.customizer(customizer);
             return this;
         }

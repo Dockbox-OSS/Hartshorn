@@ -23,9 +23,9 @@ import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * TODO: #1060 Add documentation
+ * A strategy for instantiating components with a prototype lifecycle.
  *
- * @param <T> ...
+ * @param <T> the type of the component being instantiated
  *
  * @since 0.6.0
  *

@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject.graph.resolve;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.binding.HierarchyLookup;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.graph.AbstractContainerDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.ComponentContainerDependencyContext;
 import org.dockbox.hartshorn.inject.graph.ComponentContainerDependencyDeclarationContext;
@@ -36,7 +37,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.util.Set;
 
 /**
- * TODO: #1060 Add documentation
+ * A dependency resolver that defines dependency contexts for managed components, which are allowed to have
+ * dependencies on other components. Managed components are allowed to be conditional through the use of
+ * {@link org.dockbox.hartshorn.inject.condition.Condition conditions}.
  *
  * @since 0.5.0
  *
@@ -82,9 +85,11 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
                 .immediate(constructorDependencies)
                 .delayed(typeDependencies);
 
-        if (declarationContext instanceof ComponentContainerDependencyDeclarationContext<T> containerContext) {
+        if (declarationContext instanceof ComponentContainerDependencyDeclarationContext<T>(
+                ComponentContainer<T> container
+        )) {
             ComponentKey<T> componentKey = ComponentKey.of(type);
-            ComponentContainerDependencyContext<T> dependencyContext = new ComponentContainerDependencyContext<>(containerContext.container(), componentKey, dependencies, constructorView);
+            ComponentContainerDependencyContext<T> dependencyContext = new ComponentContainerDependencyContext<>(container, componentKey, dependencies, constructorView);
             return Set.of(new ConditionalDependencyContext<>(dependencyContext, contexts -> true));
         }
         else if (declarationContext instanceof ComponentKeyDependencyDeclarationContext<T> keyContext) {

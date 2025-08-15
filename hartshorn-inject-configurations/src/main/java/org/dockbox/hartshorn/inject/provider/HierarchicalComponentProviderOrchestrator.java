@@ -55,7 +55,9 @@ import java.util.WeakHashMap;
 import java.util.function.Function;
 
 /**
- * TODO: #1060 Add documentation
+ * A component provider orchestrator that manages component providers for different scopes, and switches between
+ * them based on the scope of the requested component. This implementation supports the full range of features
+ * within the Hartshorn framework, including hierarchical binding and aliasing.
  *
  * @since 0.5.0
  *
@@ -233,7 +235,7 @@ public class HierarchicalComponentProviderOrchestrator
     }
 
     /**
-     * TODO: #1060 Add documentation
+     * Configurer for the {@link HierarchicalComponentProviderOrchestrator}.
      *
      * @since 0.5.0
      *
