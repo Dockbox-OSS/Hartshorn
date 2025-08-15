@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.view.wildcard;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
@@ -31,6 +28,9 @@ import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A {@link TypeView} that represents a wildcard type. This type is used to represent the type of
@@ -234,6 +234,11 @@ public class WildcardTypeView extends DefaultContext implements TypeView<Object>
     @Override
     public TypeView<?> rawType() {
         return this;
+    }
+
+    @Override
+    public boolean isParameterized() {
+        return false;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 /**
- * TODO: #1059 Add documentation
+ * An introspection environment that uses reflection to determine whether parameter names are available.
  *
  * @since 0.5.0
  *
