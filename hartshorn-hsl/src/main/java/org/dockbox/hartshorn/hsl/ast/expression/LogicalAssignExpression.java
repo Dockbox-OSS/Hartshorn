@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,12 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * An expression representing a logical assignment operation, which combines a logical operator
+ * with an assignment.
+ *
+ * <p>For example, in the expression <code>a &&= b</code>, the <code>&&=</code> operator is a logical
+ * assignment operator that assigns the result of the logical operation <code>a && b</code> back to
+ * <code>a</code>.
  *
  * @since 0.4.12
  *

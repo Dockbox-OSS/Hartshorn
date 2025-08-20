@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,15 @@ package org.dockbox.hartshorn.hsl.ast.statement;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 
 /**
- * TODO: #1061 Add documentation
+ * An abstract class representing a statement that contains a body, which is a block of code
+ * that may be executed when the statement is executed.
+ *
+ * @see ForStatement
+ * @see RepeatStatement
+ * @see WhileStatement
+ * @see DoWhileStatement
+ * @see RepeatStatement
+ * @see TestStatement
  *
  * @since 0.4.12
  *

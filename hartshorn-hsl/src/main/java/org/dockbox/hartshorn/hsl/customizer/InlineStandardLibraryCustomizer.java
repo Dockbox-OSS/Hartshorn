@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,21 @@
 
 package org.dockbox.hartshorn.hsl.customizer;
 
-import java.util.List;
-import java.util.Map;
-
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.interpreter.InterpreterState;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
+import java.util.List;
+import java.util.Map;
+
 /**
- * TODO: #1061 Add documentation
+ * Customizer that inlines the standard library modules into the script context, without the need
+ * to explicitly import them. Standard library modules are resolved from the {@link
+ * InterpreterState#externalModules() interpreter's state}.
  *
  * @since 0.4.12
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,17 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * A statement representing a `for-each` loop, which iterates over a collection of elements.
+ * The loop executes the body for each element in the collection, assigning the current element
+ * to the specified selector variable.
+ *
+ * <p>For example, the statement below iterates over a list of integers:
+ * <pre>{@code
+ * var list = [1,2,3];
+ * for (var i in list) {
+ *     // Loop body
+ * }
+ * }</pre>
  *
  * @since 0.4.12
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,27 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * An expression representing an array comprehension, which allows for the creation of a new array by
+ * performing a transformation on an existing collection, with optional filtering.
+ *
+ * <p>In its most basic form, an array comprehension consists of a collection, and a transformation
+ * expression. For example:
+ * <pre>{@code
+ * [x * 2 for x in collection]
+ * }</pre>
+ *
+ * <p>It can also include a filtering condition, allowing for the exclusion of certain elements:
+ * <pre>{@code
+ * [x * 2 for x in collection if x > 10]
+ * }</pre>
+ *
+ * <p>Additionally, a default expression can be provided, which is used when the condition is not met:
+ * <pre>{@code
+ * [x * 2 for x in collection if x > 10 else 0]
+ * }</pre>
+ *
+ * <p>The transformation, condition, and default expression can all be arbitrary expressions, with access
+ * to the current element of the collection via the provided selector token.
  *
  * @since 0.4.12
  *

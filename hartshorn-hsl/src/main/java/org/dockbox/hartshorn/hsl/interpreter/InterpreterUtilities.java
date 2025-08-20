@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import java.math.BigDecimal;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 
+import java.math.BigDecimal;
+
 /**
- * TODO: #1061 Add documentation
+ * Utilities for interpreters, providing common functionality that should remain consistent across
+ * different implementations of the interpreter.
  *
  * @since 0.5.0
  *
