@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.inject.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.inject.component.ComponentContainer;
@@ -35,9 +34,6 @@ import org.dockbox.hartshorn.util.configure.Customizer;
  */
 public class ContainerAwareComponentPopulatorPostProcessor extends ComponentPopulatorPostProcessor {
 
-    @SuppressWarnings("rawtypes")
-    private static final ComponentKey<ComponentContainer> COMPONENT_CONTAINER = ComponentKey.of(ComponentContainer.class);
-
     public ContainerAwareComponentPopulatorPostProcessor(ComponentPopulator componentPopulator) {
         super(componentPopulator);
     }
@@ -48,7 +44,7 @@ public class ContainerAwareComponentPopulatorPostProcessor extends ComponentPopu
         if (!super.permitsProxying(application, instance, processingContext)) {
             return false;
         }
-        return !processingContext.containsKey(COMPONENT_CONTAINER) || processingContext.get(COMPONENT_CONTAINER).permitsProxying();
+        return !processingContext.containsKey(ComponentContainer.class) || processingContext.get(ComponentContainer.class).permitsProxying();
     }
 
     public static ContextualInitializer<InjectionCapableApplication, ComponentPostProcessor> create(Customizer<Configurer> customizer) {

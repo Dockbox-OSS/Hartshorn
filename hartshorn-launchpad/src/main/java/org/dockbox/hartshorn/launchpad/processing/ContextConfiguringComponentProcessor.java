@@ -19,13 +19,11 @@ package org.dockbox.hartshorn.launchpad.processing;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextView;
-import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
  * A {@link ComponentPostProcessor} that configures components with a specific context. This context is created by the
@@ -59,12 +57,9 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
             if (instance instanceof Context contextInstance) {
                 contextInstance.addContext(componentContext);
             }
-            else {
-                ComponentKey<ProxyFactory<T>> factoryKey = TypeUtils.unchecked(ComponentKey.of(ProxyFactory.class), ComponentKey.class);
-                if (processingContext.containsKey(factoryKey)) {
-                    ProxyFactory<T> proxyFactory = processingContext.get(factoryKey);
-                    proxyFactory.contextContainer().addContext(componentContext);
-                }
+            else if (processingContext.containsKey(ProxyFactory.class)) {
+                ProxyFactory<T> proxyFactory = processingContext.get(ProxyFactory.class);
+                proxyFactory.contextContainer().addContext(componentContext);
             }
         }
     }

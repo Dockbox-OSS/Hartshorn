@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.inject.processing;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurerContext;
 import org.dockbox.hartshorn.inject.introspect.ComponentExecutableInvocationAdapter;
@@ -37,16 +36,15 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.util.Collection;
 
 /**
- * TODO: #1060 Add documentation
+ * A {@link ComponentPostProcessor} that populates components using a {@link ComponentPopulator}. If no instance is
+ * available at the time of processing, an attempt is made to create a proxy instance using the {@link ProxyFactory}
+ * stored in the {@link ComponentProcessingContext processing context}.
  *
  * @since 0.4.11
  *
  * @author Guus Lieben
  */
 public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
-
-    @SuppressWarnings("rawtypes")
-    private static final ComponentKey<ProxyFactory> PROXY_FACTORY = ComponentKey.of(ProxyFactory.class);
 
     private final ComponentPopulator componentPopulator;
 
@@ -60,8 +58,8 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
         if (permitsProxying && !(instance instanceof Collection<?>)) {
             T finalizingInstance = instance;
 
-            if (processingContext.containsKey(PROXY_FACTORY)) {
-                ProxyFactory<T> factory = processingContext.get(PROXY_FACTORY);
+            if (processingContext.containsKey(ProxyFactory.class)) {
+                ProxyFactory<T> factory = processingContext.get(ProxyFactory.class);
 
                 boolean isStateAwareFactory = factory instanceof StateAwareProxyFactory<?>;
                 // If not state aware, always assume state has been modified
@@ -75,6 +73,11 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
                 catch (ApplicationException e) {
                     throw new ApplicationRuntimeException(e);
                 }
+            }
+
+            if (finalizingInstance == null) {
+                // If no instance is available, we cannot proceed with population, as there's nothing to populate
+                return null;
             }
 
             if (processingContext instanceof LockableComponentProcessingContext<T> lockableComponentProcessingContext) {
@@ -126,7 +129,7 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
     }
 
     /**
-     * TODO: #1060 Add documentation
+     * Configurer for the {@link ComponentPopulatorPostProcessor}.
      *
      * @since 0.6.0
      *

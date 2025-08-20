@@ -27,7 +27,8 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * TODO: #1060 Add documentation
+ * Basic implementation of {@link ComponentExecutableInvocationAdapter} using the {@link InjectionCapableApplication}
+ * to load parameters.
  *
  * @since 0.5.0
  *

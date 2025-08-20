@@ -169,7 +169,7 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
                 this.componentStoreCallback);
 
         if (componentContainer != null) {
-            processingContext.put(ComponentKey.of(ComponentContainer.class), componentContainer);
+            processingContext.put(ComponentContainer.class, componentContainer);
             if (componentContainer.permitsProxying()) {
                 boolean hasObjectInstance = objectContainer.instance() != null;
                 // Always attempt to use the most detailed proxy factory available, as this allows for
@@ -184,7 +184,7 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
                     factory.advisors().type().delegateAbstractOnly(TypeUtils.unchecked(objectContainer.instance(), Object.class));
                     factory.trackState(true);
                 }
-                processingContext.put(ComponentKey.of(ProxyFactory.class), factory);
+                processingContext.put(ProxyFactory.class, factory);
             }
         }
         return processingContext;

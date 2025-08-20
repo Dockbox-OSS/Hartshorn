@@ -23,7 +23,9 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * TODO: #1060 Add documentation
+ * A {@link ParameterLoaderRule} that loads the {@link InjectionPoint} of a parameter if it is of type
+ * {@link InjectionPoint}. If the current request context is not for an injection point, it will return an empty
+ * value.
  *
  * @since 0.6.0
  *

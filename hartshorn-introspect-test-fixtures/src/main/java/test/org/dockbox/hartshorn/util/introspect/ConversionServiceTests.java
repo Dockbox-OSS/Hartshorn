@@ -257,7 +257,7 @@ public abstract class ConversionServiceTests {
     @Test
     void testImplicitDefaultValueProviderIsAdaptedCorrectly() {
         // Lambdas are not supported in this context due to the absence of sufficient type hints. Though, using
-        // `#addDefaultValueProvider(Class, DefaultValueProvider)` it would be supported in any practical scenario.
+        // #addDefaultValueProvider(Class, DefaultValueProvider) it would be supported in any practical scenario.
         //noinspection Convert2Lambda
         this.testConverterTypeIsAdaptedCorrectly(
                 registry -> registry.addDefaultValueProvider(new DefaultValueProvider<String>() {

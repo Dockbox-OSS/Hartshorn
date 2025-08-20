@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.List;
 
 /**
- * TODO: #1060 Add documentation
+ * A parameter loader context that is aware of the application it is bound to, and in which scope it operates.
  *
  * @since 0.5.0
  *
@@ -62,18 +62,31 @@ public class ApplicationBoundParameterLoaderContext extends ParameterLoaderConte
         this.scope = scope;
     }
 
+    /**
+     * Returns the application this context is bound to.
+     *
+     * @return the application
+     */
     public InjectionCapableApplication application() {
         return this.application;
     }
 
+    /**
+     * Returns the scope in which this context operates.
+     *
+     * @return the scope
+     */
     public Scope scope() {
         return this.scope;
     }
 
-    public Context context() {
-        return this.context;
-    }
-
+    /**
+     * Returns the provider that is used to resolve components in this context. This is the scope-specific
+     * provider, which may differ from the application's default provider if a specific non-application scope
+     * is set.
+     *
+     * @return the component provider for this context
+     */
     public ComponentProvider provider() {
         if (this.scope == this.provider) {
             return this.provider;
