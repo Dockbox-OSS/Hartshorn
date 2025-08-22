@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 
 /**
@@ -45,8 +47,11 @@ public class TestStatementInterpreter implements ASTNodeInterpreter<Void, TestSt
         }
         catch (Return r) {
             Object value = r.value();
-            boolean val = InterpreterUtilities.isTruthy(value);
-            interpreter.resultCollector().addResult(name, val);
+            boolean truthy = InterpreterUtilities.isTruthy(value);
+            interpreter.resultCollector().addResult(name, truthy);
+            if (!truthy && interpreter.executionOptions().failOnAssertionFailure()) {
+                throw new ScriptEvaluationError("Test condition '" + name + "' failed with result: " + value, Phase.INTERPRETING, node);
+            }
         }
         finally {
             interpreter.enterScope(previousScope);

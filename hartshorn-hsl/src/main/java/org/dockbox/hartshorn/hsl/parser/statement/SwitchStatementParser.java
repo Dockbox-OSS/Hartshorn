@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
@@ -35,6 +30,11 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * TODO: #1061 Add documentation
@@ -89,6 +89,9 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
                     }
                 }
                 else {
+                    if (defaultBody != null) {
+                        throw new ScriptEvaluationError("Multiple default cases are not allowed.", Phase.PARSING, caseToken);
+                    }
                     Option<? extends Statement> body = this.caseBodyStatementParser.parse(parser, validator);
                     if (body.present()) {
                         defaultBody = new SwitchCase(caseToken, body.get(), null, true);
@@ -97,6 +100,9 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
             }
 
             validator.expectAfter(block.close(), SWITCH);
+            if (cases.isEmpty() && defaultBody == null) {
+                throw new ScriptEvaluationError("Switch statement must have at least one case or a default case.", Phase.PARSING, switchToken);
+            }
 
             return Option.of(new SwitchStatement(switchToken, expression, cases, defaultBody));
         }

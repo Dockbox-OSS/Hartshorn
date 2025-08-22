@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.dockbox.hartshorn.hsl.ParserCustomizer;
 import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
@@ -37,6 +32,11 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.configure.Customizer;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Base implementation of {@link ScriptRuntime} that provides a default implementation for the

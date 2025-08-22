@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.semantic;
 
-import java.util.Map;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
@@ -59,7 +57,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -75,6 +72,8 @@ import org.dockbox.hartshorn.hsl.semantic.Resolver.FunctionType;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
+
+import java.util.Map;
 
 /**
  * Support for {@link Resolver semantic analysis} of the AST. This visitor is used to resolve all references originating
@@ -217,12 +216,6 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(ExpressionStatement statement) {
-        this.resolve(statement.expression());
-        return null;
-    }
-
-    @Override
-    public Void visit(PrintStatement statement) {
         this.resolve(statement.expression());
         return null;
     }

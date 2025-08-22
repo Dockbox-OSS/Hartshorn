@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,22 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * A statement representing an if-else conditional structure, which executes a block of code
+ * based on the evaluation of a condition. If the condition evaluates to true, the "then
+ * branch" is executed; otherwise, the "else branch" is executed if it is provided.
+ *
+ * <p>The else branch is optional and may be null, indicating that no action should be taken
+ * if the condition is false.
+ *
+ * <p>For example, the statement below represents an if-else structure that checks if a variable
+ * `x` is greater than 10:
+ * <pre>{@code
+ * if (x > 10) {
+ *    // Then branch
+ * } else {
+ *    // Else branch
+ * }
+ * }</pre>
  *
  * @since 0.4.12
  *

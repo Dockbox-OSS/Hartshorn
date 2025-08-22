@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
@@ -29,11 +26,14 @@ import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents one or more Java methods that can be called from an HSL runtime. The methods
@@ -91,7 +91,14 @@ public abstract class AbstractNativeModule implements NativeModule {
             method = TypeUtils.unchecked(function.method(), MethodView.class);
         }
 
-        if (this.supportedFunctions.stream().anyMatch(sf -> function.method().equals(method))) {
+        if (this.supportedFunctions.stream().anyMatch(sf -> {
+            // Method is not yet derived if the function is resolved from a script statement (compared to
+            // a pre-registered external module). In that case, we only check the name.
+            if (function.method() == null) {
+                return sf.name().lexeme().equals(function.name().lexeme());
+            }
+            return function.method().equals(method);
+        })) {
             try {
                 Object result = method.invoke(this.instance(), arguments.toArray(Object[]::new)).orNull();
                 return new ExternalInstance(result, TypeUtils.unchecked(method.returnType(), TypeView.class));

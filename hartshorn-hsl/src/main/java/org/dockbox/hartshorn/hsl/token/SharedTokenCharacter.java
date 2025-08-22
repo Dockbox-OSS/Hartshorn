@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,9 @@
 package org.dockbox.hartshorn.hsl.token;
 
 /**
- * Represents the default characters that are always available to represent certain tokens in the
- * HSL language. This covers whitespace characters and the null character.
+ * Represents the default characters that are always available to lexers, and are typically
+ * not retained in the token stream. These characters are used for various purposes, such as
+ * whitespace handling, line number tracking, and representing characters that are out of bounds.
  *
  * @see TokenCharacter
  *

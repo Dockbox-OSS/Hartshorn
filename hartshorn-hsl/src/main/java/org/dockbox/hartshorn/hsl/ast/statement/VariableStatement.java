@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,14 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * A variable statement, which declares a variable with an optional initializer. If the
+ * initializer is not provided, the variable will be initialized to <code>null</code>.
+ *
+ * <p>For example, the statement below declares a variable named <code>x</code> with an
+ * initializer of <code>10</code>:
+ * <pre>{@code
+ * var x = 10;
+ * }</pre>
  *
  * @since 0.4.12
  *

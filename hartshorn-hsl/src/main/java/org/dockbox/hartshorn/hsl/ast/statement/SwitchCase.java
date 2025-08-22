@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,10 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * A switch case statement, representing a single case within a switch construct. This
+ * statement holds a body, which is the statement to be executed if the case matches,
+ * and an expression, which is the value to match against the switch expression. If the
+ * case is a default case, the expression will be <code>null</code>.
  *
  * @since 0.4.12
  *

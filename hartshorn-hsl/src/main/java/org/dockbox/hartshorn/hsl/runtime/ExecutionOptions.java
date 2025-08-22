@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
+import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
+
 /**
  * Configuration for a {@link org.dockbox.hartshorn.hsl.interpreter.Interpreter interpreter}.
  *
@@ -27,6 +29,7 @@ public class ExecutionOptions {
 
     private boolean permitAmbiguousExternalFunctions = true;
     private boolean enableAssertions = true;
+    private boolean failOnAssertionFailure = true;
 
     /**
      * Whether ambiguous external functions should be permitted. If set to {@code false}, the interpreter
@@ -71,6 +74,31 @@ public class ExecutionOptions {
      */
     public ExecutionOptions enableAssertions(boolean enableAssertions) {
         this.enableAssertions = enableAssertions;
+        return this;
+    }
+
+    /**
+     * Whether the interpreter should fail when an assertion fails. If set to {@code false}, the interpreter
+     * will not throw an exception when an assertion fails, but will include the result in a {@link
+     * ScriptContext#result(String) result entry}.
+     *
+     * @return {@code true} if the interpreter should fail on assertion failure, {@code false} otherwise.
+     */
+    public boolean failOnAssertionFailure() {
+        return this.failOnAssertionFailure;
+    }
+
+    /**
+     * Sets whether the interpreter should fail when an assertion fails. If set to {@code false}, the interpreter
+     * will not throw an exception when an assertion fails, but will include the result in a {@link
+     * ScriptContext#result(String) result entry}.
+     *
+     * @param failOnAssertionFailure {@code true} if the interpreter should fail on assertion failure, {@code false} otherwise.
+     *
+     * @return The current configuration.
+     */
+    public ExecutionOptions failOnAssertionFailure(boolean failOnAssertionFailure) {
+        this.failOnAssertionFailure = failOnAssertionFailure;
         return this;
     }
 }

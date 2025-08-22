@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,28 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * A statement representing a native function declaration, which defines a function that is
+ * implemented in the host language (e.g., Java) rather than in the scripting language itself,
+ * but can be called from the scripting language.
+ *
+ * <p>Native functions declarations are always prepended with their module name, which is used
+ * to resolve the function at runtime. Invoking a native function is done without the module
+ * name, as if it were a regular function defined in the script.
+ *
+ * <p>For example, the statement below defines a native function named <code>calculateSum</code>
+ * that takes two parameters and is implemented in a module named <code>math</code> (where the
+ * <code>math</code> module is not imported in the script, but is available to the runtime):
+ * <pre>{@code
+ * native function math:calculateSum(a, b);
+ * var sum = calculateSum(5, 10)
+ * }</pre>
+ *
+ * <p>Module names can be hierarchical, using dot notation to represent submodules. For example,
+ * a native function could be defined in a submodule like <code>utils.string</code>:
+ * <pre>{@code
+ * native function utils.string:toUpperCase(str);
+ * var upper = toUpperCase("hello");
+ * }</pre>
  *
  * @since 0.4.12
  *

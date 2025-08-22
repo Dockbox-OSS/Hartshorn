@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
@@ -243,12 +242,6 @@ public abstract class AbstractASTWalker<R> implements ExpressionVisitor<R>, Stat
     }
 
     @Override
-    public R visit(PrintStatement statement) {
-        statement.expression().accept(this);
-        return null;
-    }
-
-    @Override
     public R visit(BlockStatement statement) {
         for(Statement innerStatement : statement.statements()) {
             innerStatement.accept(this);
@@ -383,7 +376,9 @@ public abstract class AbstractASTWalker<R> implements ExpressionVisitor<R>, Stat
 
     @Override
     public R visit(SwitchCase statement) {
-        statement.expression().accept(this);
+        if (!statement.isDefault()) {
+            statement.expression().accept(this);
+        }
         statement.body().accept(this);
         return null;
     }
