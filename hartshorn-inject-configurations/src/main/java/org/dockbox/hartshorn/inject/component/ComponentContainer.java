@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ import java.util.Comparator;
  * Represents a container for a component. The metadata provided by this container is used to register the component with
  * the IoC container.
  *
- * @see ComponentRegistry
- *
  * @param <T> the type of the component
+ *
+ * @see ComponentRegistry
  *
  * @since 0.4.1
  *

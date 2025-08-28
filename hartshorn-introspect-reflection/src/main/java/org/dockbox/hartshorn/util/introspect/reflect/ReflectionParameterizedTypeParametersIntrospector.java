@@ -32,9 +32,9 @@ import java.util.List;
  * Reflection-based implementation of {@link TypeParameterList} for any {@link ParameterizedType} that isn't a {@link
  * Class}.
  *
- * @see ParameterizedType#getActualTypeArguments()
- *
  * @param <T> The type of the parameterized type being introspected
+ *
+ * @see ParameterizedType#getActualTypeArguments()
  *
  * @since 0.4.13
  *

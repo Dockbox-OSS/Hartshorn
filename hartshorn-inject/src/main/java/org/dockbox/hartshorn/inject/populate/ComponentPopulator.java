@@ -34,8 +34,11 @@ public interface ComponentPopulator {
      * created and before it is returned to the caller.
      *
      * @param instance the instance to populate
-     * @return the populated instance
+     * @param scope the scope in which the instance is being populated
+     *
      * @param <T> the type of the instance
+     *
+     * @return the populated instance
      */
     <T> T populate(T instance, Scope scope);
 }

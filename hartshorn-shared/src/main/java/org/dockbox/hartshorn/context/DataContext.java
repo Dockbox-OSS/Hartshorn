@@ -115,8 +115,9 @@ public abstract class DataContext extends DefaultContext {
      *
      * @param type the class type for which to retrieve the value
      * @param defaultValue the default value to return if the type is not present
-     * @return the value associated with the type, or the default value if the type is not present
      * @param <R> the type of the value
+     *
+     * @return the value associated with the type, or the default value if the type is not present
      */
     public <R> R getOrDefault(Class<R> type, R defaultValue) {
         return type.cast(this.data.getOrDefault(type, defaultValue));
@@ -127,8 +128,9 @@ public abstract class DataContext extends DefaultContext {
      *
      * @param type the class type under which to store the value
      * @param value the value to store
-     * @return the previous value associated with the type, or {@code null} if there was no mapping
      * @param <R> the type of the value
+     *
+     * @return the previous value associated with the type, or {@code null} if there was no mapping
      */
     public <R> R putIfAbsent(Class<R> type, R value) {
         return type.cast(this.data.putIfAbsent(type, value));
@@ -164,8 +166,9 @@ public abstract class DataContext extends DefaultContext {
      *
      * @param type the class type for which to compute the value
      * @param mappingFunction the function to compute the value
-     * @return the computed value associated with the type
      * @param <R> the type of the value
+     *
+     * @return the computed value associated with the type
      */
     public <R> R computeIfAbsent(Class<R> type, Function<? super Class<R>, R> mappingFunction) {
         return type.cast(this.data.computeIfAbsent(type, componentKey -> mappingFunction.apply(type)));

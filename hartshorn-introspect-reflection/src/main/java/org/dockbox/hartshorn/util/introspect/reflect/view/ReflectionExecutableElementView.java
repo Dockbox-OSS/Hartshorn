@@ -38,10 +38,10 @@ import java.util.List;
  * A view that provides access to executable elements of a class (constructors and methods). This view is
  * backed by a {@link Executable} instance.
  *
+ * @param <Parent> the type of the class that the constructor belongs to
+ *
  * @see ExecutableParametersIntrospector
  * @see TypeVariablesIntrospector
- *
- * @param <Parent> the type of the class that the constructor belongs to
  *
  * @since 0.4.13
  *

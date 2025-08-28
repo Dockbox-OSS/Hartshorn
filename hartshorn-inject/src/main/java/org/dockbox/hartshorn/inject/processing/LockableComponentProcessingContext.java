@@ -50,6 +50,15 @@ public class LockableComponentProcessingContext<T> extends ComponentProcessingCo
         this.componentStoreCallback = componentStoreCallback;
     }
 
+    /**
+     * Sets the instance of the component being processed. If a lock has already been requested, this
+     * method will throw an {@link IllegalModificationException}.
+     *
+     * @param instance the new instance of the component
+     * @return this context, for chaining
+     *
+     * @throws IllegalModificationException if a lock has already been requested
+     */
     public LockableComponentProcessingContext<T> instance(T instance) {
         if (this.requestInstanceLock) {
             throw new IllegalModificationException("Cannot modify instance after lock has been requested");
@@ -59,11 +68,21 @@ public class LockableComponentProcessingContext<T> extends ComponentProcessingCo
         return this;
     }
 
+    /**
+     * Requests a lock on the component instance, preventing any further modifications to it.
+     * Once a lock has been requested, the instance cannot be modified anymore.
+     * This method is idempotent; calling it multiple times has no additional effect.
+     */
     public void requestInstanceLock() {
         this.requestInstanceLock = true;
         this.componentStoreCallback.lock(this.key(), this.container());
     }
 
+    /**
+     * Returns whether a lock on the component instance has been requested.
+     *
+     * @return true if a lock has been requested, false otherwise
+     */
     public boolean isInstanceLocked() {
         return this.requestInstanceLock;
     }

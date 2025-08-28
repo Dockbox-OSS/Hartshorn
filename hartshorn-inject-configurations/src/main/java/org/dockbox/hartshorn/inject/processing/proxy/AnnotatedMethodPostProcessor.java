@@ -32,9 +32,9 @@ import java.util.Collection;
  * annotation, during the pre-configuration phase. This can be particularly useful for proxy generation or method
  * interception based on annotations.
  *
- * @see AnnotatedMethodInterceptorPostProcessor
- *
  * @param <M> the type of the annotation that this post processor processes
+ *
+ * @see AnnotatedMethodInterceptorPostProcessor
  *
  * @since 0.4.1
  *
