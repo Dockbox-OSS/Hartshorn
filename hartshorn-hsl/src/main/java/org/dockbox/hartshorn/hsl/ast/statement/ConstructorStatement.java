@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,20 @@ import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * A constructor statement, which defines a special method used to initialize new objects
+ * of a class. Unlike Java, constructors in HSL are defined using the <code>constructor</code>
+ * keyword, followed by a parameter list and a body.
+ *
+ * <p>Constructors cannot carry access modifiers (e.g., public, private), and are thus public
+ * by default.
+ *
+ * <p>For example, the statement below defines a constructor that takes two parameters,
+ * <code>param1</code> and <code>param2</code>, and initializes the object with these values:
+ * <pre>{@code
+ * constructor(param1, param2) {
+ *    // constructor body
+ * }
+ * }</pre>
  *
  * @since 0.4.12
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,17 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * A do-while statement, which repeatedly executes a block of code as long as a given
+ * condition evaluates to true. The loop body is executed at least once before the
+ * condition is checked.
+ *
+ * <p>For example, the statement below will execute the loop body once, and then
+ * continue executing it as long as the value of <code>condition</code> is true
+ * <pre>{@code
+ * do {
+ *   // loop body
+ *} while (condition);
+ *}</pre>
  *
  * @since 0.4.12
  *

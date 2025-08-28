@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,34 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * A class statement, which represents the declaration of a class. A class may have an optional
+ * superclass, a constructor, methods, and fields. Classes can also be marked as dynamic, allowing
+ * additional properties to be added at runtime.
+ *
+ * <p>For example, the following class declaration includes the full structure of a class:
+ * <pre>{@code
+ * class Point {}
+ * class Vector? extends Point {
+ *   private x;
+ *   private y;
+ *   constructor(x, y) {
+ *     this.x = x;
+ *     this.y = y;
+ *   }
+ *   function magnitude() {
+ *     return Math.sqrt(this.x * this.x + this.y * this.y);
+ *   }
+ * }
+ * // Initialize a new Vector instance
+ * var vector = Vector(3, 4);
+ * vector.z = 5; // Adding a new property dynamically
+ * }</pre>
+ *
+ * <p>In this example, <code>Vector</code> is the name of the class, which extends the superclass
+ * <code>Point</code>. The class has two private fields, <code>x</code> and <code>y</code>, a constructor
+ * that initializes these fields, and a public method <code>magnitude</code> that calculates the magnitude
+ * of the vector. As the class name is followed by a question mark, it is marked as dynamic, allowing
+ * additional properties to be added at runtime.
  *
  * @since 0.4.12
  *

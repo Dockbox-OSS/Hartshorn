@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
-import java.util.List;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
@@ -33,16 +31,21 @@ import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * A {@link VirtualInstance} that combines the capabilities of a virtual instance and an external instance. This is
+ * typically used when a virtual class extends an external class. Any fields and functions defined in the external
+ * instance are directly modified on the external instance, while fields and functions defined in the virtual
+ * instance are handled by the virtual instance.
  *
- * @param <T> ...
+ * @param <T> the type of the first external class in the inheritance hierarchy
  *
  * @since 0.4.12
  *

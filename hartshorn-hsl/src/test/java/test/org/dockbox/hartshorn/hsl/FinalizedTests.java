@@ -110,7 +110,7 @@ public class FinalizedTests {
     @Test
     void testCannotReassignFinalNativeFunctions() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
-                final native function a.x();
+                final native function a:x();
                 function x() { }
                 """);
         // Do not evaluate, as the native function does not exist in the current environment.

@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * <pre>{@code
  * test("isPositive") {
  *    return value > 0;
+ * }
  * }</pre>
  *
  * @since 0.4.12

@@ -197,10 +197,10 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
      * The lexer used to tokenize the script source code. This lexer is responsible
      * for breaking the source code into tokens, which are then parsed into statements.
      *
+     * @return The lexer used for tokenization.
+     *
      * @see Lexer
      * @see org.dockbox.hartshorn.hsl.lexer.SimpleTokenRegistryLexer
-     *
-     * @return The lexer used for tokenization.
      */
     public Lexer lexer() {
         return this.lexer;
@@ -221,10 +221,10 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
      * The parser used to parse the tokens into statements. This parser is responsible
      * for interpreting the tokens and creating an abstract syntax tree (AST).
      *
+     * @return The parser used for parsing tokens.
+     *
      * @see TokenParser
      * @see org.dockbox.hartshorn.hsl.parser.StandardTokenParser
-     *
-     * @return The parser used for parsing tokens.
      */
     public TokenParser parser() {
         return this.parser;
@@ -246,9 +246,9 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
      * The resolver used to resolve identifiers in the script. This resolver is responsible for
      * semantic analysis, ensuring that variables and functions are correctly defined and used.
      *
-     * @see Resolver
-     *
      * @return The resolver used for resolving identifiers.
+     *
+     * @see Resolver
      */
     public Resolver resolver() {
         return this.resolver;
@@ -270,10 +270,10 @@ public class ScriptContext extends DefaultApplicationAwareContext implements Res
      * The interpreter used to execute the script. This interpreter is responsible for
      * executing the statements in the abstract syntax tree (AST) and producing results.
      *
+     * @return The interpreter used for script execution.
+     *
      * @see Interpreter
      * @see org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter
-     *
-     * @return The interpreter used for script execution.
      */
     public Interpreter interpreter() {
         return this.interpreter;

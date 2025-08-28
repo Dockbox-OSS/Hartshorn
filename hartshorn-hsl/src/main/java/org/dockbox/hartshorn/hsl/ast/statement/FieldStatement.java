@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,18 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * A field statement, which represents the declaration of a field within a class. A field may
+ * have an optional modifier (e.g., public, private) and an optional initializer expression.
+ *
+ * <p>For example, the following field declaration includes a modifier and an initializer:
+ * <pre>{@code
+ * public final myField = 42;
+ * }</pre>
+ *
+ * <p>In this example, <code>public</code> is the modifier, <code>myField</code> is the name of
+ * the field, and <code>42</code> is the initializer expression that sets the initial value of
+ * the field. Additionally, the field is marked as <code>final</code>, indicating that its value
+ * cannot be changed after initialization.
  *
  * @since 0.4.12
  *
