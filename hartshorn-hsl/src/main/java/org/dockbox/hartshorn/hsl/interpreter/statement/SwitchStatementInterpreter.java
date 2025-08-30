@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 /**
  * TODO: #1061 Add documentation
@@ -36,6 +38,9 @@ public class SwitchStatementInterpreter implements ASTNodeInterpreter<Void, Swit
         Object value = interpreter.evaluate(node.expression());
         value = InterpreterUtilities.unwrap(value);
         for (SwitchCase switchCase : node.cases()) {
+            if (switchCase.isDefault()) {
+                throw new ScriptEvaluationError("Unexpected default case in switch cases", Phase.INTERPRETING, switchCase);
+            }
             if (InterpreterUtilities.isEqual(value, switchCase.expression().value())) {
                 interpreter.execute(switchCase);
                 return null;

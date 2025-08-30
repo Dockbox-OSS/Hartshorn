@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,11 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
- * TODO: #1061 Add documentation
+ * A standard implementation of the {@link PropertyAccessVerifier} interface, which verifies access to properties
+ * based on their visibility and the instance from which they are accessed.
+ *
+ * <p>If a field is public, access is always granted. If the field is not public, access is granted if the
+ * field is within the current class scope or an enclosing scope.
  *
  * @since 0.4.12
  *

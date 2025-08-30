@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.lang.reflect.AnnotatedElement;
 
 /**
- * TODO: #1059 Add documentation
+ * A view that provides access to a package. This view is backed by a {@link Package} instance.
  *
  * @since 0.5.0
  *

@@ -32,7 +32,13 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.List;
 
 /**
- * TODO: #1060 Add documentation
+ * A resolver for component constructors, which is responsible for finding the optimal constructor for a given
+ * component type. The optimal constructor is the one with the highest number of injectable parameters, allowing
+ * for the most dependencies to be satisfied at once.
+ *
+ * <p>If a component has no explicitly defined injectable constructor, this resolver will attempt to find a
+ * default constructor or, if configured to do so, fallback to a single constructor if only one constructor is
+ * available.
  *
  * @since 0.4.12
  *

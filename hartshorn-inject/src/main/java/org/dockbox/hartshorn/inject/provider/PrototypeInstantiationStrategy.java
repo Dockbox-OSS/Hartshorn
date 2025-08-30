@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * TODO: #1060 Add documentation
+ * A strategy for instantiating components with a prototype lifecycle.
  *
- * @param <T> ...
+ * @param <T> the type of the component being instantiated
  *
  * @since 0.6.0
  *

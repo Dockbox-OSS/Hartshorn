@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,10 @@ package org.dockbox.hartshorn.inject.introspect;
 
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.inject.populate.InjectContextParameterResolver;
+import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 
 /**
- * TODO: #1060 Add documentation
+ * Adapter for {@link InjectContextParameterResolver} and {@link ParameterLoaderRule}.
  *
  * @since 0.4.13
  *

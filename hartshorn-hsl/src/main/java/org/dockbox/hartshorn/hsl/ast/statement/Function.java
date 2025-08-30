@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,12 @@ import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
- * TODO: #1061 Add documentation
+ * An abstract class representing a function definition. This may represent any functionality that can be
+ * executed, such as a method or constructor.
+ *
+ * @see FunctionStatement
+ * @see ConstructorStatement
+ * @see NativeFunctionStatement
  *
  * @since 0.4.12
  *

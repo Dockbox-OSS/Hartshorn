@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.inject.processing.ComponentProviderPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentStoreCallback;
 import org.dockbox.hartshorn.inject.processing.CompositeComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.PostConstructingComponentPostProcessor;
-import org.dockbox.hartshorn.inject.processing.SimpleComponentProviderPostProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentProviderPostProcessorAdapter;
 import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor;
 import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
 import org.dockbox.hartshorn.inject.provider.strategy.ComponentProcessorComponentProviderStrategy;
@@ -111,7 +111,7 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
     ) {
         CompositeComponentPostProcessor postProcessor = new CompositeComponentPostProcessor(() -> orchestrator.processorRegistry().postProcessors());
         ComponentStoreCallback storeCallback = new LocalCacheComponentStoreCallback(singletonCache);
-        ComponentProviderPostProcessor standardProcessor = new SimpleComponentProviderPostProcessor(
+        ComponentProviderPostProcessor standardProcessor = new ComponentProviderPostProcessorAdapter(
                 orchestrator,
                 postProcessor,
                 application,

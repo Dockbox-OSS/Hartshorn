@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
@@ -28,10 +23,18 @@ import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionTypeParamete
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * TODO: #1059 Add documentation
+ * Reflection-based implementation of {@link TypeParameterList} for any {@link ParameterizedType} that isn't a {@link
+ * Class}.
  *
- * @param <T> ...
+ * @param <T> The type of the parameterized type being introspected
+ *
+ * @see ParameterizedType#getActualTypeArguments()
  *
  * @since 0.4.13
  *

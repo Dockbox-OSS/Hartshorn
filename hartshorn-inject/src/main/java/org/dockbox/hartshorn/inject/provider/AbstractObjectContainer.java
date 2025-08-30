@@ -19,9 +19,10 @@ package org.dockbox.hartshorn.inject.provider;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
- * TODO: #1060 Add documentation
+ * An abstract implementation of the {@link ObjectContainer} interface, providing a base
+ * implementation for containers that hold a single object instance.
  *
- * @param <T> ...
+ * @param <T> the type of the object instance contained within this container
  *
  * @since 0.6.0
  *

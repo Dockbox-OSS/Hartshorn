@@ -22,21 +22,23 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Set;
 
 /**
- * TODO: #1060 Add documentation
+ * A registry for {@link DependencyContextResolver} strategies.
+ *
+ * @see DependencyContextResolver
  *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public interface BindingStrategyRegistry extends Configurer {
+public interface DependencyContextResolverRegistry extends Configurer {
 
-    Set<BindingStrategy> strategies();
+    Set<DependencyContextResolver> strategies();
 
-    BindingStrategyRegistry register(BindingStrategy strategy);
+    DependencyContextResolverRegistry register(DependencyContextResolver strategy);
 
-    BindingStrategyRegistry unregister(BindingStrategy strategy);
+    DependencyContextResolverRegistry unregister(DependencyContextResolver strategy);
 
-    BindingStrategyRegistry clear();
+    DependencyContextResolverRegistry clear();
 
-    Option<BindingStrategy> find(BindingStrategyContext<?> context);
+    Option<DependencyContextResolver> find(BindingStrategyContext<?> context);
 }

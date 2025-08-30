@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,21 @@
 
 package org.dockbox.hartshorn.inject.graph.resolve;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.context.ContextView;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
-import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
- * TODO: #1060 Add documentation
+ * A resolver for dependencies of components based on introspection. For types, it resolves the
+ * dependencies by inspecting the injection points of the component. For executable elements, it resolves
+ * the dependencies by inspecting the parameters of the executable element, excluding any context parameters.
  *
  * @since 0.5.0
  *
@@ -44,6 +46,13 @@ public final class IntrospectionDependencyResolver {
         this.componentKeyResolver = componentKeyResolver;
     }
 
+    /**
+     * Resolves the dependencies of a given type by inspecting its injection points, using the configured
+     * {@link ComponentInjectionPointsResolver}.
+     *
+     * @param type the type for which to resolve dependencies
+     * @return a set of component keys representing the dependencies of the type
+     */
     public Set<ComponentKey<?>> resolveDependencies(TypeView<?> type) {
         Set<? extends ComponentInjectionPoint<?>> points = this.injectionPointsResolver.resolve(type);
         return points.stream()
@@ -52,6 +61,13 @@ public final class IntrospectionDependencyResolver {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Resolves the dependencies of a given executable element by inspecting its parameters, excluding any
+     * context parameters. The resolved dependencies are returned as a set of component keys.
+     *
+     * @param executable the executable element for which to resolve dependencies
+     * @return a set of component keys representing the dependencies of the executable element
+     */
     public Set<ComponentKey<?>> resolveDependencies(ExecutableElementView<?> executable) {
         return executable.parameters().all().stream()
                 .filter(parameter -> !parameter.type().isChildOf(ContextView.class))

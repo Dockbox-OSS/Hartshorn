@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,13 @@ package org.dockbox.hartshorn.hsl.interpreter;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 
 /**
- * TODO: #1061 Add documentation
+ * Interface for interpreting AST nodes. Interpreters execute the logic represented by the AST
+ * nodes. In the case of expressions, this typically involves evaluating the expression and
+ * returning a result. For statements, this may involve executing the statement's logic without
+ * returning a value.
  *
- * @param <R> ...
- * @param <T> ...
+ * @param <R> the return type of the interpretation, which can vary based on the node type
+ * @param <T> the specific type of AST node this interpreter can handle
  *
  * @since 0.5.0
  *
@@ -30,5 +33,12 @@ import org.dockbox.hartshorn.hsl.ast.ASTNode;
  */
 public interface ASTNodeInterpreter<R, T extends ASTNode> {
 
+     /**
+      * Interprets the given AST node using the provided interpreter context.
+      *
+      * @param node the AST node to interpret
+      * @param interpreter the interpreter context used for interpreting the node
+      * @return the result of the interpretation, which can vary based on the node type
+      */
      R interpret(T node, Interpreter interpreter);
 }

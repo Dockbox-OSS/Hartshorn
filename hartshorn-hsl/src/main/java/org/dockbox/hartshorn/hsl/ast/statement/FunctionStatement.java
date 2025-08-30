@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,15 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * A statement representing a function declaration, which defines a function with a specified
+ * type, name, parameters, and a body.
+ *
+ * <p>For example, a function statement can be used to define a function like this:</p>
+ * <pre>{@code
+ * function performComplexLogic(param1, param2) {
+ *    // Function body
+ * }
+ * }</pre>
  *
  * @since 0.4.12
  *

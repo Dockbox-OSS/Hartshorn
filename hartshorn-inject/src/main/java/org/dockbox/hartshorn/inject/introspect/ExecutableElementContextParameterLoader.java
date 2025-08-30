@@ -27,7 +27,13 @@ import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
 /**
- * TODO: #1060 Add documentation
+ * A {@link RuleBasedParameterLoader} that loads parameters for executable elements (methods or constructors)
+ * within injectable contexts. Supports the following behaviors:
+ * <ul>
+ *     <li>{@link ContextParameterLoaderRule} for loading context parameters</li>
+ *     <li>{@link PropertyParameterLoaderRule} for loading properties</li>
+ *     <li>Loading parameters based on the component key</li>
+ * </ul>
  *
  * @since 0.4.9
  *

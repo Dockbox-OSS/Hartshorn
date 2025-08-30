@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,12 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * A statement representing a module import, which defines the name of the module being imported.
+ *
+ * <p>For example, the statement below imports a module named <code>math</code>:
+ * <pre>{@code
+ * import math;
+ * }</pre>
  *
  * @since 0.4.12
  *

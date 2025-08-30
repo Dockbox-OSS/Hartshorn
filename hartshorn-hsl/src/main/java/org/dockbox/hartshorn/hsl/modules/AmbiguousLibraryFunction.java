@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
@@ -27,10 +24,15 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
 
+import java.util.List;
+import java.util.Set;
+
 /**
- * TODO: #1061 Add documentation
+ * Represents a function that is ambiguous due to multiple libraries with the same name being present. At
+ * runtime the correct library will be chosen based on the number of arguments provided. If no libraries
+ * match the number of arguments, or if multiple libraries match, an error will be thrown due to the ambiguity.
  *
- * @param libraries ...
+ * @param libraries The set of libraries that share the same name.
  *
  * @since 0.5.0
  *
@@ -53,7 +55,7 @@ public record AmbiguousLibraryFunction(Set<NativeLibrary> libraries) implements 
             throw new ScriptEvaluationError("Multiple applicable libraries found for " + arguments.size() + " arguments", Phase.INTERPRETING, at);
         }
         else {
-            NativeLibrary library = applicableLibraries.getFirst();
+            CallableNode library = applicableLibraries.getFirst();
             return library.call(at, interpreter, instance, arguments);
         }
     }

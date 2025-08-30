@@ -16,65 +16,65 @@
 
 package org.dockbox.hartshorn.inject.graph.strategy;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.annotations.CompositeMember;
+import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.inject.annotations.configuration.BindingAlias;
+import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
+import org.dockbox.hartshorn.inject.annotations.configuration.Scoped;
 import org.dockbox.hartshorn.inject.graph.AliasableConfigurableDependencyContext;
+import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
+import org.dockbox.hartshorn.inject.graph.DependencyMap;
+import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 import org.dockbox.hartshorn.inject.graph.resolve.BindingAfterDeclarationDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.resolve.BindingDeclarationDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.resolve.CompositeBindingDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.resolve.IntrospectionBindingDependencyResolver;
-import org.dockbox.hartshorn.inject.scope.ScopeKey;
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.scope.DirectScopeKey;
-import org.dockbox.hartshorn.inject.annotations.configuration.Scoped;
-import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
-import org.dockbox.hartshorn.inject.graph.ComponentMemberType;
-import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
+import org.dockbox.hartshorn.inject.introspect.InjectorExecutableInvocationAdapter;
+import org.dockbox.hartshorn.inject.introspect.ComponentExecutableInvocationAdapter;
 import org.dockbox.hartshorn.inject.provider.PrototypeInstantiationStrategy;
-import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
-import org.dockbox.hartshorn.inject.graph.DependencyMap;
-import org.dockbox.hartshorn.inject.annotations.Priority;
-import org.dockbox.hartshorn.inject.introspect.InjectorApplicationViewAdapter;
-import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter;
+import org.dockbox.hartshorn.inject.scope.DirectScopeKey;
+import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
-import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
- * TODO: #1060 Add documentation
+ * A {@link DependencyContextResolver} implementation that handles methods annotated with {@link Binds}.
  *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public class MethodInstanceBindingStrategy implements BindingStrategy {
+public class BindingMethodDependencyContextResolver implements DependencyContextResolver {
 
     private final InjectionCapableApplication application;
     private final BindingDeclarationDependencyResolver declarationDependencyResolver;
 
-    public MethodInstanceBindingStrategy(InjectionCapableApplication application, BindingDeclarationDependencyResolver declarationDependencyResolver) {
+    public BindingMethodDependencyContextResolver(InjectionCapableApplication application, BindingDeclarationDependencyResolver declarationDependencyResolver) {
         this.application = application;
         this.declarationDependencyResolver = declarationDependencyResolver;
     }
 
     @Override
-    public <T> boolean canHandle(BindingStrategyContext<T> context) {
+    public <T> boolean isCompatible(BindingStrategyContext<T> context) {
         return context instanceof MethodAwareBindingStrategyContext<T> methodAwareBindingStrategyContext
                 && methodAwareBindingStrategyContext.method().annotations().has(Binds.class);
     }
 
     @Override
-    public <T> DependencyContext<?> handle(BindingStrategyContext<T> context) {
+    public <T> DependencyContext<?> resolveToDependency(BindingStrategyContext<T> context) {
         MethodAwareBindingStrategyContext<T> strategyContext = (MethodAwareBindingStrategyContext<T>) context;
         Binds bindingDecorator = strategyContext.method().annotations()
                 .get(Binds.class)
@@ -83,7 +83,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         return this.resolveInstanceBinding(strategyContext, strategyContext.method(), bindingDecorator, this.application);
     }
 
-    private <T> DependencyContext<T> resolveInstanceBinding(BindingStrategyContext<?> context, AnnotatedGenericTypeView<T> declaration, Binds bindingDecorator, InjectionCapableApplication application) {
+    private <T> DependencyContext<T> resolveInstanceBinding(BindingStrategyContext<?> context, MethodView<?, T> declaration, Binds bindingDecorator, InjectionCapableApplication application) {
         ComponentKey<T> componentKey = TypeUtils.unchecked(this.application.environment().componentKeyResolver().resolve(declaration), ComponentKey.class);
         Set<ComponentKey<?>> dependencies = this.declarationDependencyResolver.dependencies(context);
         PrototypeInstantiationStrategy<T> supplier = this.getPrototypeInstantiationStrategy(declaration, application);
@@ -102,12 +102,13 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
                 .build();
     }
 
-    private <T> PrototypeInstantiationStrategy<T> getPrototypeInstantiationStrategy(AnnotatedGenericTypeView<T> declaration, InjectionCapableApplication application) {
+    private <P, T> PrototypeInstantiationStrategy<T> getPrototypeInstantiationStrategy(MethodView<P, T> declaration, InjectionCapableApplication application) {
         return requestContext -> {
             try {
-                ViewContextAdapter contextAdapter = new InjectorApplicationViewAdapter(application);
-                contextAdapter.addContext(requestContext);
-                return contextAdapter.load(declaration).orNull();
+                ComponentExecutableInvocationAdapter contextAdapter = new InjectorExecutableInvocationAdapter(application)
+                        .requestContext(requestContext);
+                P instance = this.application.defaultProvider().get(ComponentKey.of(declaration.declaredBy()), requestContext);
+                return contextAdapter.invoke(declaration, instance).orNull();
             } catch (Throwable throwable) {
                 throw new ComponentInitializationException("Failed to obtain instance for " + declaration.qualifiedName(), throwable);
             }
@@ -154,7 +155,7 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
         return BindingStrategyPriority.LOW;
     }
 
-    public static ContextualInitializer<InjectionCapableApplication, BindingStrategy> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<InjectionCapableApplication, DependencyContextResolver> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -162,12 +163,12 @@ public class MethodInstanceBindingStrategy implements BindingStrategy {
             List<BindingDeclarationDependencyResolver> dependencyResolvers = configurer.declarationDependencyResolvers.initialize(context);
             BindingDeclarationDependencyResolver resolver = new CompositeBindingDependencyResolver(Set.copyOf(dependencyResolvers));
 
-            return new MethodInstanceBindingStrategy(context.input(), resolver);
+            return new BindingMethodDependencyContextResolver(context.input(), resolver);
         };
     }
 
     /**
-     * TODO: #1060 Add documentation
+     * Configurer for the {@link BindingMethodDependencyContextResolver}.
      *
      * @since 0.5.0
      *

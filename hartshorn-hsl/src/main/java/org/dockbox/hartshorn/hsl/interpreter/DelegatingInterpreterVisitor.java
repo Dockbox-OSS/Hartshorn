@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
@@ -102,9 +101,10 @@ import org.dockbox.hartshorn.hsl.interpreter.statement.VariableStatementInterpre
 import org.dockbox.hartshorn.hsl.interpreter.statement.WhileStatementInterpreter;
 
 /**
- * TODO: #1061 Add documentation
+ * A delegating {@link InterpreterVisitor} that forwards all method calls to the associated {@link ASTNodeInterpreter}
+ * for the specific expression or statement type.
  *
- * @param interpreter ...
+ * @param interpreter The owning {@link Interpreter} instance.
  *
  * @since 0.5.0
  *
@@ -235,11 +235,6 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
     @Override
     public Void visit(ExpressionStatement statement) {
         this.interpreter.evaluate(statement.expression());
-        return null;
-    }
-
-    @Override
-    public Void visit(PrintStatement statement) {
         return null;
     }
 

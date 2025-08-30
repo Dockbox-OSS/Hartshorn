@@ -16,21 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.collections.BiMap;
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -50,6 +37,19 @@ import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * A reflection-based implementation of {@link TypeView}. This implementation is used by the {@link
@@ -307,9 +307,9 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public TypeParametersIntrospector typeParameters() {
         if (this.typeParametersIntrospector == null) {
-            this.typeParametersIntrospector = this.parameterizedType == null
-                    ? new ReflectionClassTypeParametersIntrospector(this, this.introspector)
-                    : new ReflectionParameterizedTypeParametersIntrospector<>(this, this.parameterizedType, this.introspector);
+            this.typeParametersIntrospector = this.isParameterized()
+                    ? new ReflectionParameterizedTypeParametersIntrospector<>(this, this.parameterizedType, this.introspector)
+                    : new ReflectionClassTypeParametersIntrospector(this, this.introspector);
         }
         return this.typeParametersIntrospector;
     }
@@ -467,12 +467,16 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
 
     @Override
     public TypeView<?> rawType() {
-        if (this.parameterizedType == null) {
+        if (this.isParameterized()) {
+            return this.introspector.introspect(this.parameterizedType.getRawType());
+        } else {
             return this;
         }
-        else {
-            return this.introspector.introspect(this.parameterizedType.getRawType());
-        }
+    }
+
+    @Override
+    public boolean isParameterized() {
+        return this.parameterizedType != null;
     }
 
     @Override

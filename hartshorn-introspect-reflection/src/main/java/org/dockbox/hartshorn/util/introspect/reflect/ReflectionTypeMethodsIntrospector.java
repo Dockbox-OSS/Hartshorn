@@ -33,9 +33,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * TODO: #1059 Add documentation
+ * Reflection-based implementation of {@link TypeMethodsIntrospector}.
  *
- * @param <T> ...
+ * @param <T> the type for which methods are introspected
  *
  * @since 0.4.13
  *

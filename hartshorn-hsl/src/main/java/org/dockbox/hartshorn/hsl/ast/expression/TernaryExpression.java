@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,14 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * An expression representing a ternary operation, which is a shorthand for an if-else statement. It
+ * consists of a condition, followed by a question mark, then an expression to evaluate if the condition
+ * is true, followed by a colon, and finally an expression to evaluate if the condition is false.
+ *
+ * <p>For example, in the expression <code>condition ? trueExpression : falseExpression</code>, the
+ * <code>condition</code> is evaluated first. If it evaluates to true, the <code>trueExpression</code> is
+ * evaluated and returned; if it evaluates to false, the <code>falseExpression</code> is evaluated and
+ * returned instead.
  *
  * @since 0.4.12
  *

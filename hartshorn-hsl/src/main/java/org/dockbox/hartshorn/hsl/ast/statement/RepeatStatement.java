@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,11 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * A statement representing a repeat loop, which repeats a block of code a specified number
+ * of times. The number of repetitions is determined by the value of the associated expression.
+ *
+ * <p>For example, in the statement {@code repeat(5) { ... }}, the loop body will be executed
+ * 5 times.
  *
  * @since 0.4.12
  *

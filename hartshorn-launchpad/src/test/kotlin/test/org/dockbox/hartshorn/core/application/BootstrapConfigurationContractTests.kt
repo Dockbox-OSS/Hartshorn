@@ -23,8 +23,8 @@ import org.dockbox.hartshorn.inject.condition.ConditionMatcher
 import org.dockbox.hartshorn.inject.graph.ConfigurationDependencyVisitor
 import org.dockbox.hartshorn.inject.graph.DependencyGraphBuilder
 import org.dockbox.hartshorn.inject.graph.DependencyResolver
-import org.dockbox.hartshorn.inject.graph.resolve.BindsMethodDependencyResolver
-import org.dockbox.hartshorn.inject.introspect.ViewContextAdapter
+import org.dockbox.hartshorn.inject.graph.resolve.ManagedConfigurationDependencyResolver
+import org.dockbox.hartshorn.inject.introspect.ComponentExecutableInvocationAdapter
 import org.dockbox.hartshorn.inject.processing.construction.AnnotatedMethodComponentPostConstructor
 import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor
 import org.dockbox.hartshorn.inject.provider.ComponentProviderOrchestrator
@@ -160,7 +160,7 @@ class BootstrapConfigurationContractTests {
     fun testComponentPostConstructorImplContract() {
         val instance = AnnotatedMethodComponentPostConstructor.Configurer()
 
-        assertDeferred(instance) { configurer, deferred: ViewContextAdapter? -> configurer.viewContextAdapter(deferred) }
+        assertDeferred(instance) { configurer, deferred: ComponentExecutableInvocationAdapter? -> configurer.viewContextAdapter(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.viewContextAdapter(initializer) }
     }
 
@@ -180,7 +180,7 @@ class BootstrapConfigurationContractTests {
 
     @Test
     fun testApplicationDependencyResolverContract() {
-        val instance = BindsMethodDependencyResolver.Configurer()
+        val instance = ManagedConfigurationDependencyResolver.Configurer()
 
         assertDeferred(instance) { configurer, deferred: ConditionMatcher? -> configurer.conditionMatcher(deferred) }
         assertContextInitializer(instance) { configurer, initializer -> configurer.conditionMatcher(initializer) }

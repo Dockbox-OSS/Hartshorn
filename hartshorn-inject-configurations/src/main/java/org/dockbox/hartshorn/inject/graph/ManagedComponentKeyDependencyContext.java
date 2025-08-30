@@ -17,14 +17,16 @@
 package org.dockbox.hartshorn.inject.graph;
 
 import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.component.ComponentContainer;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * TODO: #1060 Add documentation
+ * A {@link ManagedComponentDependencyContext} for components that do not have associated {@link ComponentContainer
+ * containers}, but are still managed by the framework.
  *
- * @param <T> ...
+ * @param <T> the type of the component
  *
  * @since 0.6.0
  *
@@ -75,9 +77,9 @@ public final class ManagedComponentKeyDependencyContext<T> extends ManagedCompon
     }
 
     /**
-     * TODO: #1060 Add documentation
+     * Builder for creating a {@link ManagedComponentKeyDependencyContext}.
      *
-     * @param <T> ...
+     * @param <T> the type of the component
      *
      * @since 0.6.0
      *

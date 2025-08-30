@@ -17,9 +17,6 @@
 package org.dockbox.hartshorn.util.introspect.reflect;
 
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.dockbox.hartshorn.util.graph.Graph;
-import org.dockbox.hartshorn.util.graph.GraphException;
-import org.dockbox.hartshorn.util.graph.GraphInverter;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.SimpleTypeParameterList;
 import org.dockbox.hartshorn.util.introspect.TypeParameterList;
@@ -102,15 +99,10 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     private TypeParameterList tryResolveInputForParent(TypeView<?> parent) {
         if (this.type.isChildOf(parent.type())) {
             return this.resolvedParameters.computeIfAbsent(parent.type(), parentType -> {
-                TypeHierarchyGraph typeHierarchy = this.getTypeHierarchy();
                 try {
-                    Graph<TypeView<?>> inverted = new GraphInverter().invertGraph(typeHierarchy, node -> node.type() == parentType);
-                    TypeParameterResolver visitor = new TypeParameterResolver(parent);
-                    List<TypeParameterView> parameters = visitor.tryResolveFromGraph(inverted);
+                    List<TypeParameterView> parameters = new TypeParameterResolver()
+                            .resolveInputForParent(this.type(), parent);
                     return new SimpleTypeParameterList(parameters);
-                }
-                catch (GraphException e) {
-                    throw new IllegalStateException("Unexpected graph exception while inverting type hierarchy", e);
                 }
                 catch (TypeParameterResolutionException e) {
                     // TypeParameterResolverGraphVisitor doesn't throw any exceptions, so this should never happen. If it does,
@@ -122,13 +114,6 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
         else {
             return new SimpleTypeParameterList(List.of());
         }
-    }
-
-    private TypeHierarchyGraph getTypeHierarchy() {
-        if (this.typeHierarchy == null) {
-            this.typeHierarchy = TypeHierarchyGraph.of(this.type());
-        }
-        return this.typeHierarchy;
     }
 
     @Override

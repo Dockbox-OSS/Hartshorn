@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,13 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * An expression representing a binary operation, which consists of two expressions and an operator
+ * that defines the operation to be performed on those expressions. The operator can be any valid
+ * operator in the HSL language, such as addition, subtraction, multiplication, division, or
+ * logical operations.
+ *
+ * @see org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType
+ * @see org.dockbox.hartshorn.hsl.token.type.ConditionTokenType
  *
  * @since 0.4.12
  *

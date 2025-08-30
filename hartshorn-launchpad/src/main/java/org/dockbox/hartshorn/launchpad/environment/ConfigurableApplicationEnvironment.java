@@ -32,6 +32,8 @@ import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.inject.targets.MethodsAndFieldsInjectionPointResolver;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.DelegatingApplicationContext;
+import org.dockbox.hartshorn.launchpad.HartshornApplication;
+import org.dockbox.hartshorn.launchpad.HartshornApplicationConfigurer;
 import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
 import org.dockbox.hartshorn.launchpad.banner.Banner;
 import org.dockbox.hartshorn.launchpad.banner.HartshornLogoBanner;
@@ -39,6 +41,7 @@ import org.dockbox.hartshorn.launchpad.banner.ResourcePathBanner;
 import org.dockbox.hartshorn.launchpad.component.TypeReferenceLookupComponentRegistry;
 import org.dockbox.hartshorn.launchpad.context.ModifiableApplicationContextCarrier;
 import org.dockbox.hartshorn.launchpad.launch.ApplicationBootstrapContext;
+import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.Observer;
 import org.dockbox.hartshorn.launchpad.properties.PredefinedPropertySourceResolver;
@@ -81,8 +84,22 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Configurable implementation of a {@link ApplicationEnvironment}. This implementation in itself does not define set
- * rules on how individual elements behave, but rather delegates to dedicated implementations.
+ * Common implementation of {@link ApplicationEnvironment}, supporting the full range of standard functionalities and
+ * configurations. This implementation is typically used as a base for standard applications, and can be customized
+ * through the use of the {@link Configurer}.
+ *
+ * <p>This implementation primarily delegates to individual components that are configured before the environment is
+ * initialized. This allows for a high degree of customization and flexibility, while still providing a consistent
+ * environment for the application to run in.
+ *
+ * <p>Typically, this implementation will automatically be selected when creating applications through the standard
+ * {@link StandardApplicationContextFactory}, which is also the default for {@link HartshornApplication} and {@link
+ * HartshornApplicationConfigurer}.
+ *
+ * @see ConfigurableApplicationEnvironment.Configurer
+ * @see StandardApplicationContextFactory.Configurer#environment(ApplicationEnvironment)
+ * @see HartshornApplication
+ * @see ObservableApplicationEnvironment
  *
  * @since 0.4.8
  *
@@ -211,10 +228,6 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
             managed.environment(this);
         }
         return instance;
-    }
-
-    public FileSystemProvider applicationFSProvider() {
-        return this.fileSystemProvider;
     }
 
     @Override
@@ -411,7 +424,9 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
     }
 
     /**
-     * TODO: #1060 Add documentation
+     * Configurer for the {@link ConfigurableApplicationEnvironment}. Allows for the configuration of individual
+     * components which are used by the environment, as well as several global settings that influence the behavior of
+     * the environment.
      *
      * @since 0.5.0
      *
@@ -448,7 +463,7 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         private ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver = context -> {
             TypeReferenceCollectorContext collectorContext = context.firstContext(TypeReferenceCollectorContext.class)
                     .orElseGet(TypeReferenceCollectorContext::new);
-            return new ClassPathEnvironmentTypeResolver(new EnvironmentTypeCollector(context.input(), collectorContext));
+            return new EnvironmentTypeCollectorTypeResolver(new EnvironmentTypeCollector(context.input(), collectorContext));
         };
 
         private ContextualInitializer<ApplicationEnvironment, ? extends ComponentRegistry> componentRegistry = context -> {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package org.dockbox.hartshorn.util.introspect.reflect;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
- * TODO: #1059 Add documentation
+ * Exception to indicate that a type parameter could not be resolved. This can occur when the type parameter is
+ * not available at runtime, such as when using raw types or when the type parameter is erased due to type erasure in
+ * Java generics.
  *
  * @since 0.5.0
  *
@@ -29,5 +31,9 @@ public class TypeParameterResolutionException extends ApplicationException {
 
     public TypeParameterResolutionException(String message) {
         super(message);
+    }
+
+    public TypeParameterResolutionException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

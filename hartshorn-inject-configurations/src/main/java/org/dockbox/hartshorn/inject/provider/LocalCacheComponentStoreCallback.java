@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,8 @@ import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 
 /**
- * TODO: #1060 Add documentation
+ * A {@link ComponentStoreCallback} implementation that stores components in a local {@link SingletonCache
+ * singleton cache}.
  *
  * @since 0.6.0
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.inject.graph.declaration;
 import org.dockbox.hartshorn.inject.provider.LifecycleType;
 
 /**
- * TODO: #1060 Add documentation
+ * A {@link DependencyContext} that is aware of the lifecycle type of the dependency it represents.
  *
- * @param <T> ...
+ * @param <T> the type of the dependency represented by this context
  *
  * @since 0.6.0
  *

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.inject.annotations;
 
-import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.processing.AnnotatedProviderMethodInterceptorPostProcessor;
 
 import java.lang.annotation.ElementType;
@@ -27,13 +27,17 @@ import java.lang.annotation.Target;
 /**
  * Annotation used to indicate a method will return a provided object. The underlying method should not be
  * called, but the provided object should be returned instead. The provided object is obtained from the active
- * {@link org.dockbox.hartshorn.inject.provider.ComponentProvider}. The return type of the method is used to
- * determine the {@link ComponentKey} of the provided object.
+ * {@link org.dockbox.hartshorn.inject.provider.ComponentProvider}.
+ *
+ * <p>The lookup key for the provided object is determined by the {@link InjectorEnvironment#componentKeyResolver()
+ * environment's key resolver}. This means that any method annotated with {@link Provided} will also include any
+ * qualifiers that are present on the method itself, such as {@link Named}.
  *
  * <p>Example:
  * <pre>{@code
  * public interface ProviderComponent {
  *     @Provided
+ *     @Named("sample")
  *     SampleComponent component();
  * }
  * }</pre>
@@ -45,12 +49,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Provided {
-
-    /**
-     * The name of the provided object, used to modify the {@link ComponentKey} of
-     * the provided object.
-     *
-     * @return The name of the provided object.
-     */
-    String value() default "";
 }

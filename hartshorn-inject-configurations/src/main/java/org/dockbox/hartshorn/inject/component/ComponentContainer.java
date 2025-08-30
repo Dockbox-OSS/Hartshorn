@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,12 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.util.Comparator;
 
 /**
- * TODO: #1060 Add documentation
+ * Represents a container for a component. The metadata provided by this container is used to register the component with
+ * the IoC container.
  *
- * @param <T> ...
+ * @param <T> the type of the component
+ *
+ * @see ComponentRegistry
  *
  * @since 0.4.1
  *

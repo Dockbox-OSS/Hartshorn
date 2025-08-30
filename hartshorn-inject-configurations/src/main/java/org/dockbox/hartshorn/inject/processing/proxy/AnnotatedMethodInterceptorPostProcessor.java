@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.inject.processing.proxy;
 
+import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
@@ -23,9 +24,10 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 /**
- * TODO: #1060 Add documentation
+ * An abstract {@link ComponentPostProcessor} that allows implementations to configure interceptors for methods
+ * annotated with a specific annotation.
  *
- * @param <M> ...
+ * @param <M> the type of the annotation that is used to identify methods for which interceptors should be applied
  *
  * @since 0.4.10
  *

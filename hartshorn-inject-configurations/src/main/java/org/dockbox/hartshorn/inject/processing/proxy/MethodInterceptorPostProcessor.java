@@ -28,7 +28,10 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
 import java.util.Collection;
 
 /**
- * TODO: #1060 Add documentation
+ * An abstract {@link ComponentPostProcessor} that allows implementations to configure interceptors for methods matching
+ * the specified criteria. This is useful for adding method-level interceptors to components.
+ *
+ * @see AnnotatedMethodInterceptorPostProcessor
  *
  * @since 0.4.8
  *
@@ -51,7 +54,7 @@ public abstract class MethodInterceptorPostProcessor extends ComponentPostProces
         }
 
         for (MethodView<T, ?> method : methods) {
-            MethodProxyContext<T> context = new MethodProxyContextImpl<>(application, processingContext.type(), method);
+            MethodProxyContext<T> context = new SimpleMethodProxyContext<>(application, processingContext.type(), method);
 
             if (this.preconditions(application, context, processingContext)) {
                 MethodInterceptor<T, ?> function = this.process(application, context, processingContext);

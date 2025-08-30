@@ -16,22 +16,19 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.hsl.token.type.AssertTokenType;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Set;
 
 /**
  * TODO: #1061 Add documentation
@@ -51,23 +48,15 @@ public class TestStatementParser extends AbstractBodyStatementParser<TestStateme
 
             Token name = validator.expect(LiteralTokenType.STRING, "test name");
             validator.expectAfter(parameter.close(), "test statement name value");
-            validator.expectBefore(block.open(), "test body");
 
-            List<Statement> statements = new ArrayList<>();
-            Token bodyStart = parser.peek();
-            while (!parser.match(block.close()) && !parser.isAtEnd()) {
-                Statement statement = parser.statement();
-                statements.add(statement);
-            }
-
-            if (statements.isEmpty()) {
+            BlockStatement body = this.blockStatement("test", name, parser, validator);
+            if (body.statements().isEmpty()) {
                 throw new IllegalStateException("Test body cannot be empty");
             }
-            else if (!(CollectionUtilities.last(statements) instanceof ReturnStatement)) {
+            else if (!(CollectionUtilities.last(body.statements()) instanceof ReturnStatement)) {
                 throw new IllegalStateException("Test body must end with a return statement");
             }
 
-            BlockStatement body = new BlockStatement(bodyStart, statements);
             return Option.of(new TestStatement(name, body));
         }
         return Option.empty();

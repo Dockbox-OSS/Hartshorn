@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,6 +68,7 @@ public enum BaseTokenType implements EnumTokenType {
     BaseTokenType(TokenCharacter character) {
         this.metaData = TokenMetaData.builder(this)
                 .representation(String.valueOf(character.character()))
+                .defaultLexeme(String.valueOf(character.character()))
                 .characters(character)
                 .build();
     }

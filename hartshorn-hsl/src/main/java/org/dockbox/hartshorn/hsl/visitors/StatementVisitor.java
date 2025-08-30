@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.PrintStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
@@ -57,15 +56,6 @@ public interface StatementVisitor<R> {
      * @return The result of the visit
      */
     R visit(ExpressionStatement statement);
-
-    /**
-     * Visits the given {@link PrintStatement print statement}.
-     *
-     * @param statement The statement to visit
-     *
-     * @return The result of the visit
-     */
-    R visit(PrintStatement statement);
 
     /**
      * Visits the given {@link BlockStatement block statement}.

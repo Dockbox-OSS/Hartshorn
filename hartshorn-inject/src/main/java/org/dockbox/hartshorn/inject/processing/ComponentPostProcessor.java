@@ -61,11 +61,11 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
         checkForModification(processingContext, this, instance, processingContext.instance());
 
         T updatedInstance = this.initializeComponent(processingContext.application(), processingContext.instance(), processingContext);
-        if (processingContext instanceof ModifiableComponentProcessingContext<T> modifiableComponentProcessingContext) {
-            if (!modifiableComponentProcessingContext.isInstanceLocked()) {
-                modifiableComponentProcessingContext.instance(updatedInstance);
+        if (processingContext instanceof LockableComponentProcessingContext<T> lockableComponentProcessingContext) {
+            if (!lockableComponentProcessingContext.isInstanceLocked()) {
+                lockableComponentProcessingContext.instance(updatedInstance);
             }
-            else if (updatedInstance != modifiableComponentProcessingContext.instance()) {
+            else if (updatedInstance != lockableComponentProcessingContext.instance()) {
                 throw new IllegalComponentModificationException(processingContext.key().type().getSimpleName(), this.priority(), this);
             }
         }
@@ -146,8 +146,8 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
             if (!ok) {
                 throw new IllegalComponentModificationException(processingContext.key().type().getSimpleName(), postProcessor.priority(), postProcessor);
             }
-            if (processingContext instanceof ModifiableComponentProcessingContext<T> modifiableComponentProcessingContext) {
-                modifiableComponentProcessingContext.instance(modified);
+            if (processingContext instanceof LockableComponentProcessingContext<T> lockableComponentProcessingContext) {
+                lockableComponentProcessingContext.instance(modified);
             }
         }
     }

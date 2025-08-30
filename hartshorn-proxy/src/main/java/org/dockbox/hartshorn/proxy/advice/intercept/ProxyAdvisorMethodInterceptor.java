@@ -93,7 +93,7 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
      * @param self the instance on which the method is invoked
      * @param source the method being invoked, represented as a {@link MethodInvokable}
      * @param proxy the proxy method being invoked, which may be null if the method is not proxied
-     * @param callbackTarget the target instance on which the method is invoked, which may differ from `self` if a delegate is used
+     * @param callbackTarget the target instance on which the method is invoked, which may differ from <code>self</code> if a delegate is used
      * @param methodView the method view representing the method being invoked, used for introspection
      * @param defaultInvocation the default invocation to use if no interceptor is present
      * @param arguments the arguments passed to the method invocation
@@ -128,7 +128,7 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
      *
      * @param source the method being invoked, represented as a {@link MethodInvokable}
      * @param proxy the proxy method being invoked, which may be null if the method is not proxied
-     * @param callbackTarget the target instance on which the method is invoked, which may differ from the `self` instance
+     * @param callbackTarget the target instance on which the method is invoked, which may differ from the <code>self</code> instance
      * @return a {@link CustomInvocation} that defines how the method should be invoked
      */
     protected CustomInvocation<?> createDefaultInvocation(Invokable source, Invokable proxy, T callbackTarget) {
@@ -151,7 +151,7 @@ public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<
      * @param method the method being invoked, represented as a {@link MethodInvokable}
      * @param instance the instance on which the method is invoked, which may be a proxy or a concrete instance
      * @param args the arguments passed to the method invocation, which may include proxies or other objects
-     * @return an array of resolved arguments, which may be modified from the original `args` array
+     * @return an array of resolved arguments, which may be modified from the original <code>args</code> array
      */
     protected Object[] resolveArgs(MethodInvokable method, Object instance, Object[] args) {
         MethodView<?, ?> methodView = method.toIntrospector();

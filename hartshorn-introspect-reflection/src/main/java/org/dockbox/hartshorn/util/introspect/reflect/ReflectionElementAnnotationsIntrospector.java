@@ -34,7 +34,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * TODO: #1059 Add documentation
+ * An {@link ElementAnnotationsIntrospector} that uses reflection to introspect annotations on an {@link
+ * AnnotatedElement}. This introspector is capable of caching annotations, and supports the use of meta-annotations,
+ * assuming the {@link AnnotationLookup} provided supports this.
  *
  * @since 0.4.13
  *

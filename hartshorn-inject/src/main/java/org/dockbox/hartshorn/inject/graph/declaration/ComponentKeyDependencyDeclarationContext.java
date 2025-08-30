@@ -24,9 +24,10 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * TODO: #1060 Add documentation
+ * Basic implementation of a {@link DependencyDeclarationContext} that is used to declare dependencies based on their
+ * {@link ComponentKey}.
  *
- * @param <T> ...
+ * @param <T> the type of the dependency being declared
  *
  * @since 0.5.0
  *

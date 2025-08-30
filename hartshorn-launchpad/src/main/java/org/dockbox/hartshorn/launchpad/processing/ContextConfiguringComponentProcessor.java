@@ -19,18 +19,18 @@ package org.dockbox.hartshorn.launchpad.processing;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.context.ContextView;
-import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
- * TODO: #1060 Add documentation
+ * A {@link ComponentPostProcessor} that configures components with a specific context. This context is created by the
+ * implementation of this class. Depending on how the component is being created, the context may be added directly to
+ * the component, or to the proxy that is created for the component.
  *
- * @param <C> ...
+ * @param <C> The type of the context that is being configured
  *
  * @since 0.5.0
  *
@@ -57,12 +57,9 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
             if (instance instanceof Context contextInstance) {
                 contextInstance.addContext(componentContext);
             }
-            else {
-                ComponentKey<ProxyFactory<T>> factoryKey = TypeUtils.unchecked(ComponentKey.of(ProxyFactory.class), ComponentKey.class);
-                if (processingContext.containsKey(factoryKey)) {
-                    ProxyFactory<T> proxyFactory = processingContext.get(factoryKey);
-                    proxyFactory.contextContainer().addContext(componentContext);
-                }
+            else if (processingContext.containsKey(ProxyFactory.class)) {
+                ProxyFactory<T> proxyFactory = processingContext.get(ProxyFactory.class);
+                proxyFactory.contextContainer().addContext(componentContext);
             }
         }
     }

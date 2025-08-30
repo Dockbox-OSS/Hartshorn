@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.view;
 
-import java.util.List;
-
 import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeFieldsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeMethodsIntrospector;
 import org.dockbox.hartshorn.util.introspect.TypeParametersIntrospector;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
 
 /**
  * A view of a type, which may be a {@link Class}, {@link java.lang.reflect.ParameterizedType}, or any other
@@ -320,4 +320,12 @@ public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
      * @return the raw type of this type
      */
     TypeView<?> rawType();
+
+    /**
+     * Returns whether this type is parameterized. A parameterized type is a type that has type
+     * parameters, such as {@code List<String>} or {@code Map<String, Integer>}.
+     *
+     * @return {@code true} if this type is parameterized, {@code false} otherwise
+     */
+    boolean isParameterized();
 }
