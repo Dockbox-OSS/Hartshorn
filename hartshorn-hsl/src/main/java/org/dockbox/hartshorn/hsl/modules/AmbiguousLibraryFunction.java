@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -49,10 +50,16 @@ public record AmbiguousLibraryFunction(Set<NativeLibrary> libraries) implements 
                 .toList();
 
         if(applicableLibraries.isEmpty()) {
-            throw new ScriptEvaluationError("No applicable library found for " + arguments.size() + " arguments", Phase.INTERPRETING, at);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.NO_COMPATIBLE_LIBRARY_FUNCTION, arguments.size())
+                    .at(at)
+                    .build();
         }
         else if(applicableLibraries.size() > 1) {
-            throw new ScriptEvaluationError("Multiple applicable libraries found for " + arguments.size() + " arguments", Phase.INTERPRETING, at);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.MULTIPLE_COMPATIBLE_LIBRARY_FUNCTIONS, arguments.size())
+                    .at(at)
+                    .build();
         }
         else {
             CallableNode library = applicableLibraries.getFirst();

@@ -16,15 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
-import java.util.List;
-import java.util.Map;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -32,6 +30,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a Java class that can be called from an HSL runtime. This class can be
@@ -56,7 +57,10 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
     @Override
     public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
         if (instance != null) {
-            throw new ScriptEvaluationError("Cannot call a class with an instance", Phase.INTERPRETING, at);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.CONSTRUCTOR_CALL_ON_INSTANCE)
+                    .at(at)
+                    .build();
         }
         ConstructorView<T> executable = ExecutableLookup.executable(this.type.constructors().all(), arguments);
         if (executable != null) {
@@ -72,7 +76,10 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
                 throw new ApplicationException(throwable);
             }
         }
-        throw new ScriptEvaluationError("No constructor found for class " + this.type.name() + " with arguments " + arguments, Phase.INTERPRETING, at);
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.MISSING_CONSTRUCTOR_WITH_PARAMETERS, this.type.name(), arguments)
+                .at(at)
+                .build();
     }
 
     @Override

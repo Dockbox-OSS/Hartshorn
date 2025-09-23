@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.runtime.Yield;
@@ -43,6 +44,9 @@ public class ReturnStatementInterpreter implements ASTNodeInterpreter<Void, Retu
             case RETURN -> throw new Return(value);
             case YIELD -> throw new Yield(value);
         }
-        throw new ScriptEvaluationError("Unknown return type: " + node.returnType(), Phase.INTERPRETING, node.keyword());
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.UNSUPPORTED_RETURN_TYPE, node.returnType())
+                .at(node)
+                .build();
     }
 }

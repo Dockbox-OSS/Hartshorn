@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Yield;
 
@@ -50,7 +51,10 @@ public class TestStatementInterpreter implements ASTNodeInterpreter<Void, TestSt
             boolean truthy = InterpreterUtilities.isTruthy(value);
             interpreter.resultCollector().addResult(name, truthy);
             if (!truthy && interpreter.executionOptions().failOnAssertionFailure()) {
-                throw new ScriptEvaluationError("Test condition '" + name + "' failed with result: " + value, Phase.INTERPRETING, node);
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.TEST_CONDITION_FAILED, name, value)
+                        .at(node)
+                        .build();
             }
         }
         finally {

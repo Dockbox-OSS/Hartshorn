@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
@@ -29,7 +24,13 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.modules.AmbiguousLibraryFunction;
 import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * TODO: #1061 Add documentation
@@ -61,7 +62,10 @@ public class ModuleStatementInterpreter implements ASTNodeInterpreter<Void, Modu
         boolean ambiguousFunction = supportedFunctions.size() > 1;
         if (ambiguousFunction) {
             if (!interpreter.executionOptions().permitAmbiguousExternalFunctions()) {
-                throw new ScriptEvaluationError("Module '" + moduleName + "' contains ambiguous function '" + node.name().lexeme() + "' which is already defined in the global scope.", Phase.INTERPRETING, supportedFunctions.getFirst().name());
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_IN_MODULE, moduleName, node.name().lexeme())
+                        .at(supportedFunctions.getFirst().name())
+                        .build();
             }
             else {
                 Set<NativeLibrary> libraries = supportedFunctions.stream()

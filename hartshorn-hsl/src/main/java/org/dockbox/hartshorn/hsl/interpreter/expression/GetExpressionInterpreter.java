@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalFunction;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 /**
@@ -48,6 +49,9 @@ public class GetExpressionInterpreter implements ASTNodeInterpreter<Object, GetE
             }
             return result;
         }
-        throw new ScriptEvaluationError("Only instances have properties.", Phase.INTERPRETING, node.name());
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.NON_PROPERTY_CONTAINER, object)
+                .at(node)
+                .build();
     }
 }
