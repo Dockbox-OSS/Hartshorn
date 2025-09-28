@@ -40,7 +40,7 @@ public class FinalizedTests {
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                HSL3013: Cannot extend final class 'User'. While interpreting at line 2, column 20.
+                HSL4009: Cannot extend final class 'User'. While interpreting at line 2, column 20.
                 class Admin extends User { }
                                     ^""", error.getMessage());
     }
@@ -62,7 +62,7 @@ public class FinalizedTests {
         script.runtime().imports("User", FinalUser.class);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                HSL3013: Cannot extend final class 'FinalUser'. While interpreting at line 1, column 20.
+                HSL4009: Cannot extend final class 'FinalUser'. While interpreting at line 1, column 20.
                 class Admin extends User { }
                                     ^""", error.getMessage());
     }
@@ -115,9 +115,9 @@ public class FinalizedTests {
         // Do not evaluate, as the native function does not exist in the current environment.
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::resolve);
         Assertions.assertEquals("""
-                HSL3015: Cannot reassign native function x because it is final. While resolving at line 2, column 4.
-                fun x() { }
-                    ^""", error.getMessage());
+                HSL2010: Failed to parse native function statement. While parsing at line 1, column 6.
+                final native fun a.x();
+                      ^""", error.getMessage());
     }
 
     public static class User { }

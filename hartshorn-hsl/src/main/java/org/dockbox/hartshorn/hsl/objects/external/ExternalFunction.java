@@ -86,37 +86,30 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
                 .filter(method -> method.name().equals(this.methodName))
                 .filter(method -> method.parameters().count() == arguments.size())
                 .toList();
-        if (methods.isEmpty()) {
-            throw new ScriptEvaluationError(
-                    "Method '" + this.methodName + "' with " + arguments.size() + " parameters does not exist on external instance of type " + this.type.name(),
-                    Phase.INTERPRETING, at
-            );
-        }
 
         MethodView<Object, ?> executable = ExecutableLookup.executable(methods, arguments);
         if (executable != null) {
             return executable;
         }
-
-        throw new ScriptEvaluationError(
-                "Method '" + this.methodName + "' with parameters accepting " + arguments + " does not exist on external instance of type " + this.type.name(),
-                Phase.INTERPRETING, at
-        );
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.MISSING_METHOD_WITH_PARAMETERS, this.methodName, arguments, this.type.name())
+                .at(at)
+                .build();
     }
 
     @Override
     public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
         if (this.instance != null && instance != this.instance) {
-            throw new ScriptEvaluationError(
-                    "Function reference was bound to " + this.instance + ", but was invoked with a different object " + instance,
-                    Phase.INTERPRETING, at
-            );
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.ILLEGAL_METHOD_BINDING_CALL, this.instance, instance)
+                    .at(at)
+                    .build();
         }
         if (!(instance instanceof ExternalObjectReference externalObjectReference)) {
-            throw new ScriptEvaluationError(
-                    "Cannot call method '" + this.methodName + "' on non-external instance",
-                    Phase.INTERPRETING, at
-            );
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.NON_EXTERNAL_OBJECT_CALL, this.methodName)
+                    .at(at)
+                    .build();
         }
         MethodView<Object, ?> method = this.method(at, arguments);
 

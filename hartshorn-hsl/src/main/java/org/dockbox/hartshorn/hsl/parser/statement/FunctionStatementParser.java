@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Function;
@@ -28,6 +24,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Par
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.parser.expression.FunctionParserContext;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
@@ -35,6 +32,10 @@ import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * TODO: #1061 Add documentation
@@ -90,8 +91,12 @@ public class FunctionStatementParser extends AbstractBodyStatementParser<Functio
             TokenType identifier = parser.tokenRegistry().literals().identifier();
             do {
                 if (parameters.size() >= expectedNumberOrArguments) {
-                    String message = "Cannot have more than " + expectedNumberOrArguments + " parameters" + (token == null ? "" : " for " + token.type() + " functions");
-                    throw new ScriptEvaluationError(message, Phase.PARSING, parser.peek());
+                    throw ScriptEvaluationError.builder(Phase.PARSING)
+                            .message(DiagnosticMessage.TOO_MANY_PARAMETERS_FOR_X,
+                                    expectedNumberOrArguments,
+                                    token.type().representation()
+                            ).at(parser.peek())
+                            .build();
                 }
                 Token parameterName = validator.expect(identifier, "parameter name");
                 parameters.add(new Parameter(parameterName));

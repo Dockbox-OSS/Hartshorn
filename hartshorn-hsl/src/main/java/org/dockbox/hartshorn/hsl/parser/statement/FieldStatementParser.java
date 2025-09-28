@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
@@ -85,7 +86,10 @@ public class FieldStatementParser extends AbstractBodyStatementParser<FieldState
                     final FieldSetStatement statement = this.fieldSetStatement(parser, validator, modifier, member, fieldStatement);
                     fieldStatement.withSetter(statement);
                 }
-                default -> throw new ScriptEvaluationError("Unsupported field member type: " + member.type(), Phase.PARSING, member);
+                default -> throw ScriptEvaluationError.builder(Phase.PARSING)
+                        .message(DiagnosticMessage.UNSUPPORTED_FIELD_MEMBER, member.type())
+                        .at(member)
+                        .build();
             };
         }
     }
@@ -93,7 +97,8 @@ public class FieldStatementParser extends AbstractBodyStatementParser<FieldState
     private FieldGetStatement fieldGetStatement(TokenParser parser, TokenStepValidator validator, Token modifier, final Token get, final FieldStatement field) {
         TokenTypePair parameters = parser.tokenRegistry().tokenPairs().parameters();
         final BlockStatement body;
-        if (parser.check(parameters.open())) {
+        if (parser.match(parameters.open())) {
+            validator.expectAfter(parameters.close(), "field get declaration");
             body = blockStatement("field get declaration", get, parser, validator);
         }
         else {

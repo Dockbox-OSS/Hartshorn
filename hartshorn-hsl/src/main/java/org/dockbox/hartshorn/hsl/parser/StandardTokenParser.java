@@ -16,6 +16,23 @@
 
 package org.dockbox.hartshorn.hsl.parser;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapter;
+import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -24,22 +41,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-import org.dockbox.hartshorn.hsl.ast.ASTNode;
-import org.dockbox.hartshorn.hsl.ast.expression.Expression;
-import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapter;
-import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
-import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenRegistry;
-import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
-import org.dockbox.hartshorn.hsl.token.type.TokenType;
-import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
-import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A parser for the tokens of a script. This parser is used to parse the tokens of a script into an
@@ -208,7 +209,10 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
             return this.advance();
         }
         if (type != this.tokenRegistry().statementEnd()) {
-            throw new ScriptEvaluationError(message, Phase.PARSING, this.peek());
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(message)
+                    .at(this.peek())
+                    .build();
         }
         return null;
     }
@@ -224,7 +228,10 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
 
         TokenType type = this.peek().type();
         if (type.standaloneStatement()) {
-            throw new ScriptEvaluationError("Unsupported standalone statement type: " + type, Phase.PARSING, this.peek());
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.UNSUPPORTED_STANDALONE_STATEMENT, type)
+                    .at(this.peek())
+                    .build();
         }
         return this.expressionStatement();
     }
@@ -239,7 +246,10 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
     @Override
     public Expression expression() {
         return this.expressionParser.parse(this, this.validator)
-                .orElseThrow(() -> new ScriptEvaluationError("Expected expression, but found " + this.peek(), Phase.PARSING, this.peek()));
+                .orElseThrow(() -> ScriptEvaluationError.builder(Phase.PARSING)
+                        .message(DiagnosticMessage.EXPECTED_EXPRESSION, this.peek())
+                        .at(this.peek())
+                        .build());
     }
 
     @Override

@@ -16,16 +16,17 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Set;
 
 /**
  * A parser for a statement that contains a block of statements. Examples of this include functions, if statements, and
@@ -55,7 +56,10 @@ public abstract class AbstractBodyStatementParser<T extends ASTNode> implements 
     protected BlockStatement blockStatement(String afterStatement, ASTNode at, TokenParser parser, TokenStepValidator validator) {
         Set<ASTNodeParser<BlockStatement>> parsers = parser.compatibleParsers(BlockStatement.class);
         if (parsers.isEmpty()) {
-            throw new ScriptEvaluationError("No BlockStatement parsers found", Phase.PARSING, at);
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.NO_PARSERS_FOR_X, BlockStatement.class.getSimpleName())
+                    .at(at)
+                    .build();
         }
 
         for (ASTNodeParser<BlockStatement> nodeParser : parsers) {
@@ -64,7 +68,9 @@ public abstract class AbstractBodyStatementParser<T extends ASTNode> implements 
                 return statement.get();
             }
         }
-
-        throw new ScriptEvaluationError("Expected block after " + afterStatement, Phase.PARSING, parser.peek());
+        throw ScriptEvaluationError.builder(Phase.PARSING)
+                .message(DiagnosticMessage.EXPECTED_BLOCK_AFTER_X, afterStatement)
+                .at(at)
+                .build();
     }
 }

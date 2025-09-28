@@ -16,21 +16,22 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A parser for the body of a case statement. A case may take two forms: a block of statements, or a single
@@ -62,10 +63,14 @@ public class CaseBodyStatementParser implements ASTNodeParser<Statement> {
             return Option.of(parser.expressionStatement());
         }
         else {
-            throw new ScriptEvaluationError("Expected '%s' or '%s'".formatted(
-                    BaseTokenType.COLON.representation(),
-                    ControlTokenType.ARROW.representation()
-            ), Phase.PARSING, parser.peek());
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.EXPECTED_X_OR_Y,
+                            BaseTokenType.COLON.representation(),
+                            ControlTokenType.ARROW.representation(),
+                            parser.peek().lexeme()
+                    )
+                    .at(parser.peek())
+                    .build();
         }
     }
 

@@ -93,11 +93,13 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
         VariableScope variableScope = new VariableScope(this.closure);
         List<Parameter> parameters = this.declaration.parameters();
         if (parameters.size() != arguments.size()) {
-            throw new ScriptEvaluationError("Expected %d %s, but got %d".formatted(
-                    parameters.size(),
-                    (parameters.size() == 1 ? "argument" : "arguments"),
-                    arguments.size()),
-                    Phase.INTERPRETING, at);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.EXPECTED_X_OF_Y_AT_Z,
+                            parameters.size(),
+                            (parameters.size() == 1 ? "argument" : "arguments"),
+                            arguments.size()
+                    ).at(at)
+                    .build();
         }
         for (int i = 0; i < parameters.size(); i++) {
             variableScope.define(parameters.get(i).name().lexeme(), arguments.get(i));

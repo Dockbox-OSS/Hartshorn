@@ -48,10 +48,6 @@ public class ScriptEvaluationError extends RuntimeException {
         this.column = builder.column;
     }
 
-    public ScriptEvaluationError(String message, Phase phase, ASTNode at) {
-        this(null, message, phase, at, at.line(), at.column());
-    }
-
     /**
      * Returns the node at which the error occurred, if available.
      *
@@ -109,7 +105,10 @@ public class ScriptEvaluationError extends RuntimeException {
 
         public Builder at(ASTNode at) {
             this.at = at;
-            return this.position(at.line(), at.column());
+            if (at != null) {
+                return this.position(at.line(), at.column());
+            }
+            return this;
         }
 
         public Builder position(int line, int column) {
@@ -124,13 +123,16 @@ public class ScriptEvaluationError extends RuntimeException {
         }
 
         public Builder message(DiagnosticMessage message, Object... args) {
+            if (message.phase() != null && message.phase() != this.phase) {
+                throw new IllegalArgumentException("Diagnostic message phase " + message.phase() +
+                        " does not match builder phase " + this.phase);
+            }
             this.message = message.format(args);
             return this;
         }
 
         public Builder message(FormattedDiagnostic diagnostic) {
-            this.message = diagnostic.format();
-            return this;
+            return this.message(diagnostic.message(), diagnostic.arguments());
         }
 
         public Builder cause(Throwable cause) {

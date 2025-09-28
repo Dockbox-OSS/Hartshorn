@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.parser.expression;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayGetExpression;
@@ -49,6 +44,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.UnaryExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
@@ -62,6 +58,11 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * TODO: #1061 Add documentation
@@ -106,7 +107,10 @@ public class ComplexExpressionParser {
             else if (expression instanceof GetExpression getExpression) {
                 return new SetExpression(getExpression.object(), getExpression.name(), value);
             }
-            throw new ScriptEvaluationError("Invalid assignment target.", Phase.PARSING, equals);
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.INVALID_ASSIGNMENT_TARGET)
+                    .at(equals)
+                    .build();
         }
         return expression;
     }
@@ -132,7 +136,10 @@ public class ComplexExpressionParser {
                 Expression secondExp = this.logical();
                 return new TernaryExpression(expression, question, firstExp, colon, secondExp);
             }
-            throw new ScriptEvaluationError("Expected expression after " + BaseTokenType.COLON.representation(), Phase.PARSING, colon);
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.EXPECTED_EXPRESSION_AFTER_X, BaseTokenType.COLON.representation())
+                    .at(colon)
+                    .build();
         }
         return expression;
     }
@@ -182,7 +189,10 @@ public class ComplexExpressionParser {
                 return new LogicalAssignExpression(variable.name(), token, right);
             }
             else {
-                throw new ScriptEvaluationError("Invalid assignment target.", Phase.PARSING, token);
+                throw ScriptEvaluationError.builder(Phase.PARSING)
+                        .message(DiagnosticMessage.INVALID_ASSIGNMENT_TARGET, left)
+                        .at(token)
+                        .build();
             }
         }, this.assignmentTokens);
     }
@@ -289,7 +299,10 @@ public class ComplexExpressionParser {
         if (!this.parser.check(this.parser.tokenRegistry().tokenPairs().parameters().close())) {
             do {
                 if (arguments.size() >= MAX_NUM_OF_ARGUMENTS) {
-                    throw new ScriptEvaluationError("Cannot have more than " + MAX_NUM_OF_ARGUMENTS + " arguments.", Phase.PARSING, this.parser.peek());
+                    throw ScriptEvaluationError.builder(Phase.PARSING)
+                            .message(DiagnosticMessage.TOO_MANY_PARAMETERS, MAX_NUM_OF_ARGUMENTS)
+                            .at(this.parser.peek())
+                            .build();
                 }
                 arguments.add(this.parser.expression());
             }

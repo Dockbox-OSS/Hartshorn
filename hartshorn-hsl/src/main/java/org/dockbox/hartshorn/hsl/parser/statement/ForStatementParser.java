@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.Set;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -29,10 +27,13 @@ import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.LoopTokenType;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Set;
 
 /**
  * TODO: #1061 Add documentation
@@ -51,7 +52,10 @@ public class ForStatementParser extends AbstractBodyStatementParser<BodyStatemen
 
             VariableStatement initializer = parser.firstCompatibleParser(VariableStatement.class)
                     .flatMap(nodeParser -> nodeParser.parse(parser, validator))
-                    .orElseThrow(() -> new ScriptEvaluationError("Expected variable statement in for-each loop", Phase.PARSING, forToken));
+                    .orElseThrow(() -> ScriptEvaluationError.builder(Phase.PARSING)
+                            .message(DiagnosticMessage.EXPECTED_VARIABLE_STATEMENT_FOR_EACH)
+                            .at(forToken)
+                            .build());
 
             if (parser.match(LoopTokenType.IN)) {
                 return this.parseForEachStatement(forToken, parser, validator, initializer);

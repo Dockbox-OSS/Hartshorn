@@ -32,6 +32,7 @@ import org.dockbox.hartshorn.hsl.extension.CustomExpression;
 import org.dockbox.hartshorn.hsl.extension.CustomStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.Finalizable;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 
@@ -368,7 +369,10 @@ public class Resolver {
 
         // Never declare variable twice in same scope
         if (scope.containsKey(name.lexeme())) {
-            throw new ScriptEvaluationError("Variable with name '%s' already declared in this scope.".formatted(name.lexeme()), Phase.RESOLVING, name);
+            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+                    .message(DiagnosticMessage.VARIABLE_ALREADY_DECLARED, name.lexeme())
+                    .at(name)
+                    .build();
         }
         scope.put(name.lexeme(), false);
     }
@@ -401,7 +405,10 @@ public class Resolver {
     public void checkFinal(Token name) {
         if (this.finals.peek().containsKey(name.lexeme())) {
             String existingWhat = this.finals.peek().get(name.lexeme());
-            throw new ScriptEvaluationError("Cannot reassign final %s '%s'.".formatted(existingWhat, name.lexeme()), Phase.RESOLVING, name);
+            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+                    .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT, existingWhat, name.lexeme())
+                    .at(name)
+                    .build();
         }
     }
 
