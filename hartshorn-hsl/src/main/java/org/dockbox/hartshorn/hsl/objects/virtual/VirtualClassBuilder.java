@@ -1,30 +1,33 @@
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
-import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.ScopeOwner;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
-import org.dockbox.hartshorn.hsl.runtime.RuntimeError;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class VirtualClassBuilder implements ScopeOwner {
 
     private final Token name;
-    private ClassReference superClass;
-    private VirtualFunction constructor;
-    private VariableScope variableScope;
-    private boolean isDynamic;
-    private boolean isFinal;
+    private final VariableScope variableScope;
+
+    private VirtualFunction constructor = null;
+    private ClassReference superClass = null;
+    private boolean isDynamic = false;
+    private boolean isFinal = false;
 
     private final Map<String, VirtualFunction> methods = new HashMap<>();
     private final Map<String, VirtualProperty> fields = new HashMap<>();
 
-    public VirtualClassBuilder(final Token name) {
-        this.name = name;
+    public VirtualClassBuilder(Token name, VariableScope variableScope) {
+        this.name = Objects.requireNonNull(name, "Class name cannot be null");
+        this.variableScope = Objects.requireNonNull(variableScope, "Variable scope cannot be null");
     }
 
     @Override
@@ -32,84 +35,100 @@ public class VirtualClassBuilder implements ScopeOwner {
         return this.name;
     }
 
-    public ClassReference superClass() {
-        return this.superClass;
-    }
-
-    public VirtualClassBuilder superClass(final ClassReference superClass) {
+    public VirtualClassBuilder superClass(ClassReference superClass) {
         this.superClass = superClass;
         return this;
     }
 
-    public VirtualFunction constructor() {
-        return this.constructor;
-    }
-
-    public VirtualClassBuilder constructor(final VirtualFunction constructor) {
+    public VirtualClassBuilder constructor(VirtualFunction constructor) {
         this.constructor = constructor;
         return this;
     }
 
-    public VariableScope variableScope() {
-        return this.variableScope;
-    }
-
-    public VirtualClassBuilder variableScope(final VariableScope variableScope) {
-        this.variableScope = variableScope;
-        return this;
-    }
-
-    public boolean isDynamic() {
-        return this.isDynamic;
-    }
-
-    public VirtualClassBuilder dynamic(final boolean dynamic) {
+    public VirtualClassBuilder dynamic(boolean dynamic) {
         this.isDynamic = dynamic;
         return this;
     }
 
-    public boolean isFinal() {
-        return this.isFinal;
-    }
-
-    public VirtualClassBuilder isFinal(final boolean finalized) {
+    public VirtualClassBuilder isFinal(boolean finalized) {
         this.isFinal = finalized;
         return this;
     }
 
-    public Map<String, VirtualFunction> methods() {
-        return this.methods;
-    }
-
-    public Map<String, VirtualProperty> fields() {
-        return this.fields;
-    }
-
-    public void field(final FieldStatement field) {
-        if (this.fields.containsKey(field.name().lexeme())) {
-            throw new RuntimeError(field.name(), DiagnosticMessage.DUPLICATE_FIELD, this.name.lexeme(), field.name().lexeme());
+    public VirtualClassBuilder method(String name, VirtualFunction function) {
+        if (this.methods.containsKey(name)) {
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.DUPLICATE_X_DEFINITION, "method", this.name.lexeme(), name)
+                    .at(function.declaration())
+                    .build();
         }
-        this.fields.put(field.name().lexeme(), new VirtualProperty(field));
+        this.methods.put(name, function);
+        return this;
     }
 
-    public void getter(final VirtualMemberFunction getter) {
+    public VirtualClassBuilder methods(Map<String, VirtualFunction> methods) {
+        methods.forEach(this::method);
+        return this;
+    }
+
+    public VirtualClassBuilder field(String name, VirtualProperty property) {
+        if (this.fields.containsKey(name)) {
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.DUPLICATE_X_DEFINITION, "field", this.name.lexeme(), name)
+                    .at(property.fieldStatement().name())
+                    .build();
+        }
+        this.fields.put(name, property);
+        VirtualFieldMemberFunction getter = property.getter();
+        if (getter != null) {
+            this.getter(getter);
+        }
+        VirtualFieldMemberFunction setter = property.setter();
+        if (setter != null) {
+            this.setter(setter);
+        }
+        return this;
+    }
+
+    public VirtualClassBuilder fields(Map<String, VirtualProperty> fields) {
+        fields.forEach(this::field);
+        return this;
+    }
+
+    private void getter(VirtualFieldMemberFunction getter) {
         if (!getter.declaration().parameters().isEmpty()) {
-            throw new RuntimeError(getter.name(), DiagnosticMessage.ILLEGAL_GETTER_WITH_PARAMETERS, getter.name().lexeme());
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.ILLEGAL_GETTER_WITH_PARAMETERS, getter.name().lexeme())
+                    .at(getter.name())
+                    .build();
         }
         if (this.fields.containsKey(getter.name().lexeme())) {
             this.fields.get(getter.name().lexeme()).getter(getter);
+            return;
         }
-        else throw new RuntimeError(getter.name(), DiagnosticMessage.UNDEFINED_PROPERTY_ACCESSOR, "getter", getter.name().lexeme());
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.UNDEFINED_PROPERTY_ACCESSOR, "getter", getter.name().lexeme())
+                .at(getter.name())
+                .build();
     }
 
-    public void setter(final VirtualMemberFunction setter) {
+    private void setter(VirtualFieldMemberFunction setter) {
         if (setter.hasBody() && setter.declaration().parameters().size() != 1) {
-            throw new RuntimeError(setter.name(), DiagnosticMessage.ILLEGAL_SETTER_PARAMETER_MISMATCH, setter.name().lexeme(), setter.declaration().parameters().size());
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.ILLEGAL_SETTER_PARAMETER_MISMATCH,
+                            setter.name().lexeme(),
+                            setter.declaration().parameters().size()
+                    ).at(setter.name())
+                    .build();
         }
         if (this.fields.containsKey(setter.name().lexeme())) {
             this.fields.get(setter.name().lexeme()).setter(setter);
+            return;
         }
-        else throw new RuntimeError(setter.name(), DiagnosticMessage.UNDEFINED_PROPERTY_ACCESSOR, "setter", setter.name().lexeme());
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.UNDEFINED_PROPERTY_ACCESSOR, "setter", setter.name().lexeme())
+                .at(setter.name())
+                .build();
     }
 
     public VirtualClass build() {

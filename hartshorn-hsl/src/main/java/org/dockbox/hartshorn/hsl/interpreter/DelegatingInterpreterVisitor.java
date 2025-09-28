@@ -48,6 +48,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
@@ -327,6 +329,16 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
     @Override
     public Void visit(FieldStatement statement) {
         return new FieldStatementInterpreter().interpret(statement, this.interpreter);
+    }
+
+    @Override
+    public Void visit(FieldGetStatement statement) {
+        return null; // TODO: Implement
+    }
+
+    @Override
+    public Void visit(FieldSetStatement statement) {
+        return null; // TODO: Implement
     }
 
     @Override

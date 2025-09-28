@@ -10,7 +10,7 @@ public abstract class FieldMemberStatement extends ParametricExecutableBodyState
     private final Token keyword;
     private final FieldStatement fieldStatement;
 
-    protected FieldMemberStatement(final Token modifier, final Token keyword, final FieldStatement fieldStatement, final List<Parameter> parameters, final BlockStatement body) {
+    protected FieldMemberStatement(Token modifier, Token keyword, FieldStatement fieldStatement, List<Parameter> parameters, BlockStatement body) {
         super(modifier != null ? modifier : keyword, parameters, body);
         this.modifier = modifier;
         this.keyword = keyword;

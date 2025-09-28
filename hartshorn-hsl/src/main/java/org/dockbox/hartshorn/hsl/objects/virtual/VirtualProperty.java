@@ -7,13 +7,13 @@ public class VirtualProperty {
 
     private final FieldStatement fieldStatement;
 
-    private VirtualMemberFunction getter;
-    private VirtualMemberFunction setter;
+    private VirtualFieldMemberFunction getter;
+    private VirtualFieldMemberFunction setter;
 
     private Token readModifier;
     private Token writeModifier;
 
-    public VirtualProperty(final FieldStatement fieldStatement) {
+    public VirtualProperty(FieldStatement fieldStatement) {
         this.fieldStatement = fieldStatement;
         this.readModifier = fieldStatement.modifier();
         this.writeModifier = fieldStatement.modifier();
@@ -23,23 +23,27 @@ public class VirtualProperty {
         return this.fieldStatement;
     }
 
-    public VirtualMemberFunction getter() {
+    public VirtualFieldMemberFunction getter() {
         return this.getter;
     }
 
-    public VirtualProperty getter(final VirtualMemberFunction getter) {
+    public VirtualProperty getter(VirtualFieldMemberFunction getter) {
         this.getter = getter;
-        if (getter.modifier() != null) this.readModifier = getter.modifier();
+        if (getter.modifier() != null) {
+            this.readModifier = getter.modifier();
+        }
         return this;
     }
 
-    public VirtualMemberFunction setter() {
+    public VirtualFieldMemberFunction setter() {
         return this.setter;
     }
 
-    public VirtualProperty setter(final VirtualMemberFunction setter) {
+    public VirtualProperty setter(VirtualFieldMemberFunction setter) {
         this.setter = setter;
-        if (setter.modifier() != null) this.writeModifier = setter.modifier();
+        if (setter.modifier() != null) {
+            this.writeModifier = setter.modifier();
+        }
         return this;
     }
 
@@ -47,7 +51,7 @@ public class VirtualProperty {
         return this.readModifier;
     }
 
-    public VirtualProperty readModifier(final Token readModifier) {
+    public VirtualProperty readModifier(Token readModifier) {
         this.readModifier = readModifier;
         return this;
     }
@@ -56,7 +60,7 @@ public class VirtualProperty {
         return this.writeModifier;
     }
 
-    public VirtualProperty writeModifier(final Token writeModifier) {
+    public VirtualProperty writeModifier(Token writeModifier) {
         this.writeModifier = writeModifier;
         return this;
     }

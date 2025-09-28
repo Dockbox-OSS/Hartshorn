@@ -24,11 +24,10 @@ import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.access.PropertyAccessVerifier;
 import org.dockbox.hartshorn.hsl.objects.access.StandardPropertyAccessVerifier;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
-import org.dockbox.hartshorn.hsl.runtime.Yield;
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 import java.util.HashMap;
@@ -59,11 +58,11 @@ public class VirtualInstance implements InstanceReference {
         if (field == null && !this.virtualClass.isDynamic()) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                     .at(name)
-                    .message("Undefined property '%s' on %s.".formatted(name.lexeme(), this.type().name()))
+                    .message(DiagnosticMessage.UNDEFINED_PROPERTY, name.lexeme(), this.type().name())
                     .build();
         }
         if (field != null) {
-            final FormattedDiagnostic accessError = this.accessVerifier().read(name, field, this, fromScope);
+            FormattedDiagnostic accessError = this.accessVerifier().write(name, field, this, fromScope);
             if (accessError != null) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                         .at(name)
@@ -72,34 +71,14 @@ public class VirtualInstance implements InstanceReference {
             }
             if (field.setter() != null) {
                 if (field.setter().hasBody()) {
-                    try {
-                        final Object call = field.setter().bind(this).call(name, interpreter, this, List.of(value));
-                        if (call != null) {
-                            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                                    .at(field.setter().modifier())
-                                    .message("Setter for property '%s' returned a value. Did you mean to use '%s'?".formatted(
-                                            name.lexeme(), ControlTokenType.YIELD.representation()
-                                    ))
-                                    .build();
-                        }
-                        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                                .at(field.setter().modifier())
-                                .message("Setter for property '%s' did not yield a value to set.".formatted(name.lexeme()))
-                                .build();
-                    }
-                    catch (final Yield yield) {
-                        final Object result = yield.value();
-                        this.fields.put(name.lexeme(), result);
-                    }
+                    field.setter().bind(this).call(name, interpreter, this, List.of(value));
                     return;
                 }
             }
             if (field.fieldStatement().isFinal() && this.fields.containsKey(name.lexeme())) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                         .at(name)
-                        .message("Cannot reassign property '%s' of %s because it is final.".formatted(
-                                name.lexeme(), this.type().name()
-                        ))
+                        .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT, "property", name.lexeme(), this.type().name())
                         .build();
             }
         }
@@ -108,9 +87,9 @@ public class VirtualInstance implements InstanceReference {
 
     @Override
     public Object get(Interpreter interpreter, Token name, VariableScope fromScope) {
-        final VirtualProperty field = this.virtualClass.property(name.lexeme());
+        VirtualProperty field = this.virtualClass.property(name.lexeme());
         if (field != null) {
-            final FormattedDiagnostic accessError = this.accessVerifier().read(name, field, this, fromScope);
+            FormattedDiagnostic accessError = this.accessVerifier().read(name, field, this, fromScope);
             if (accessError != null) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                         .at(name)
@@ -125,7 +104,7 @@ public class VirtualInstance implements InstanceReference {
             return this.fields.get(name.lexeme());
         }
         else {
-            final MethodReference method = this.virtualClass.method(name.lexeme());
+            MethodReference method = this.virtualClass.method(name.lexeme());
             if (method != null) return method.bind(this);
         }
 

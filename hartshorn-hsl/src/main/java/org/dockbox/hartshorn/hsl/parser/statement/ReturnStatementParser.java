@@ -39,7 +39,7 @@ public class ReturnStatementParser implements ASTNodeParser<ReturnStatement> {
 
     @Override
     public Option<? extends ReturnStatement> parse(TokenParser parser, TokenStepValidator validator) {
-        if (parser.match(ControlTokenType.RETURN)) {
+        if (parser.match(ControlTokenType.RETURN, ControlTokenType.YIELD)) {
             Token keyword = parser.previous();
             Expression value = null;
             TokenType statementEnd = parser.tokenRegistry().statementEnd();

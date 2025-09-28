@@ -1,15 +1,18 @@
 class Vector {
-    private x {
-        public get
-    }
-    public y {
-        public set(value) {
-            this.x = value * 2
-            yield value
+    private ix = 0
+    public x {
+        get() {
+            return this.ix
+        }
+        set(value) {
+            this.ix = value * 2
         }
     }
+    public y = n + 2
 }
 
+var n = 2
 var vector = Vector()
-vector.y = 1
+vector.x = 1
 print(vector.x)
+print(vector.y)

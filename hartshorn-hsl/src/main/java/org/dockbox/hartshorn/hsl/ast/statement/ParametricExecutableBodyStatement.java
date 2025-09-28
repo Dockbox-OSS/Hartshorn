@@ -34,6 +34,6 @@ public abstract class ParametricExecutableBodyStatement extends ParametricExecut
     }
 
     public List<Statement> statements() {
-        return this.body.statements();
+        return this.body != null ? this.body.statements() : List.of();
     }
 }

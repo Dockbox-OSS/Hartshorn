@@ -36,7 +36,7 @@ public class FieldStatementInterpreter implements ASTNodeInterpreter<Void, Field
         Object value = interpreter.evaluate(node.initializer());
         int distance = interpreter.distance(node.initializer());
         PropertyContainer object = (PropertyContainer) interpreter.visitingScope().getAt(node.name(), distance - 1, ObjectTokenType.THIS.representation());
-        object.set(node.name(), value, interpreter.visitingScope(), interpreter.executionOptions());
+        object.set(interpreter, node.name(), value, interpreter.visitingScope());
         return null;
     }
 }

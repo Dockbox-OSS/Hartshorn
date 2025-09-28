@@ -16,20 +16,23 @@
 
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
-import java.util.List;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
+import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.AbstractFinalizable;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.Return;
+import org.dockbox.hartshorn.hsl.runtime.Yield;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
+
+import java.util.List;
 
 /**
  * Represents a function definition inside a script. The function is identified by its name, and
@@ -45,17 +48,28 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
     private final ParametricExecutableStatement declaration;
     private final VariableScope closure;
     private final InstanceReference instance;
+    private final ReturnStatement.ReturnType returnType;
     private final boolean isInitializer;
 
     public VirtualFunction(ParametricExecutableStatement declaration, VariableScope closure, boolean isInitializer) {
-        this(declaration, closure, null, isInitializer);
+        this(declaration, closure, (InstanceReference) null, isInitializer);
     }
 
     public VirtualFunction(ParametricExecutableStatement declaration, VariableScope closure, InstanceReference instance, boolean isInitializer) {
+        this(declaration, closure, instance, ReturnStatement.ReturnType.RETURN, isInitializer);
+    }
+
+
+    public VirtualFunction(ParametricExecutableStatement declaration, VariableScope closure, ReturnStatement.ReturnType returnType, boolean isInitializer) {
+        this(declaration, closure, null, returnType, isInitializer);
+    }
+
+    public VirtualFunction(ParametricExecutableStatement declaration, VariableScope closure, InstanceReference instance, ReturnStatement.ReturnType returnType, boolean isInitializer) {
         super(declaration.isFinal());
         this.declaration = declaration;
         this.closure = closure;
         this.instance = instance;
+        this.returnType = returnType;
         this.isInitializer = isInitializer;
     }
 
@@ -69,6 +83,10 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
 
     public InstanceReference instance() {
         return this.instance;
+    }
+
+    public ReturnStatement.ReturnType returnType() {
+        return returnType;
     }
 
     public boolean isInitializer() {
@@ -85,7 +103,7 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
     public VirtualFunction bind(InstanceReference instance) {
         VariableScope variableScope = new VariableScope(this.closure);
         variableScope.define(ObjectTokenType.THIS.representation(), instance);
-        return new VirtualFunction(this.declaration, variableScope, this.isInitializer);
+        return new VirtualFunction(this.declaration, variableScope, instance, this.returnType, this.isInitializer);
     }
 
     @Override
@@ -107,7 +125,22 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
         try {
             interpreter.execute(this.declaration.statements(), variableScope);
         }
+        catch (Yield yieldValue) {
+            if (this.returnType != ReturnStatement.ReturnType.YIELD) {
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.ILLEGAL_YIELD_IN_NON_GENERATOR)
+                        .at(at)
+                        .build();
+            }
+            return yieldValue.value();
+        }
         catch (Return returnValue) {
+            if (this.returnType != ReturnStatement.ReturnType.RETURN) {
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.ILLEGAL_RETURN_IN_GENERATOR)
+                        .at(at)
+                        .build();
+            }
             if (this.isInitializer) {
                 return this.closure.getAt(at, 0, ObjectTokenType.THIS.representation());
             }

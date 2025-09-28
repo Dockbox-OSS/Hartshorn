@@ -23,16 +23,15 @@ import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
- * A verifier that checks if a property access is allowed. This is used to check if a property
- * can be accessed from a given scope. For example, a private property can only be accessed
- * from within the class that defines it.
- *
- * @since 0.4.12
+ * A verifier that checks if a property access is allowed. For example, a private property can only be
+ * accessed from within the class that defines it.
  *
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public interface PropertyAccessVerifier {
 
     FormattedDiagnostic read(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
+
     FormattedDiagnostic write(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
 }

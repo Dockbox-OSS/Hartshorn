@@ -19,19 +19,26 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClassBuilder;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFieldMemberFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -67,47 +74,71 @@ public class ClassStatementInterpreter implements ASTNodeInterpreter<Void, Class
         }
 
         interpreter.visitingScope().define(node.name().lexeme(), null);
-
         ClassReference superClassReference = (ClassReference) superClass;
-        interpreter.withNextScope(() -> visitClassScope(node, interpreter, superClassReference));
+        interpreter.withNextScope(() -> this.visitClassScope(node, interpreter, superClassReference));
 
         return null;
     }
 
-    private static void visitClassScope(ClassStatement node, Interpreter interpreter, ClassReference superClassReference) {
+    private void visitClassScope(ClassStatement node, Interpreter interpreter, ClassReference superClassReference) {
         if (node.superClass() != null) {
             interpreter.enterScope(new VariableScope(interpreter.visitingScope()));
             interpreter.visitingScope().define(ObjectTokenType.SUPER.representation(), superClassReference);
         }
 
-        Map<String, VirtualFunction> methods = new HashMap<>();
-
-        // Bind all method into the class
-        for (FunctionStatement method : node.methods()) {
-            VirtualFunction function = new VirtualFunction(method, interpreter.visitingScope(), false);
-            methods.put(method.name().lexeme(), function);
-        }
-
-        VirtualFunction constructor = null;
-        if (node.constructor() != null) {
-            constructor = new VirtualFunction(node.constructor(), interpreter.visitingScope(), true);
-        }
-
-        Map<String, VirtualProperty> fields = node.fields().stream()
-                .map(VirtualProperty::new)
-                .collect(Collectors.toUnmodifiableMap(
-                        property -> property.fieldStatement().name().lexeme(),
-                        Function.identity()));
-
-        VirtualClass virtualClass = new VirtualClass(node.name().lexeme(),
-                superClassReference, constructor, interpreter.visitingScope(),
-                methods, fields,
-                node.isFinal(), node.isDynamic());
+        Map<String, VirtualFunction> methods = this.methodsToVirtualFunctions(node, interpreter);
+        VirtualFunction constructor = this.constructorToVirtualFunction(node, interpreter);
+        Map<String, VirtualProperty> fields = this.fieldsToVirtualProperties(node, interpreter);
+        VirtualClass virtualClass = new VirtualClassBuilder(node.name(), interpreter.visitingScope())
+                .superClass(superClassReference)
+                .dynamic(node.isDynamic())
+                .isFinal(node.isFinal())
+                .constructor(constructor)
+                .methods(methods)
+                .fields(fields)
+                .build();
 
         if (superClassReference != null) {
             interpreter.enterScope(interpreter.visitingScope().enclosing());
         }
 
         interpreter.visitingScope().enclosing().assign(node.name(), virtualClass);
+    }
+
+    private VirtualFunction constructorToVirtualFunction(ClassStatement node, Interpreter interpreter) {
+        VirtualFunction constructor = null;
+        if (node.constructor() != null) {
+            constructor = new VirtualFunction(node.constructor(), interpreter.visitingScope(), true);
+        }
+        return constructor;
+    }
+
+    private Map<String, VirtualProperty> fieldsToVirtualProperties(ClassStatement node, Interpreter interpreter) {
+        List<VirtualProperty> properties = new ArrayList<>();
+        for (FieldStatement field : node.fields()) {
+            VirtualProperty virtualProperty = new VirtualProperty(field);
+            FieldGetStatement getter = field.getter();
+            if (getter != null) {
+                virtualProperty.getter(new VirtualFieldMemberFunction(getter, new VariableScope(interpreter.visitingScope())));
+            }
+            FieldSetStatement setter = field.setter();
+            if (setter != null) {
+                virtualProperty.setter(new VirtualFieldMemberFunction(setter, new VariableScope(interpreter.visitingScope())));
+            }
+            properties.add(virtualProperty);
+        }
+        return properties.stream()
+                .collect(Collectors.toUnmodifiableMap(
+                        property -> property.fieldStatement().name().lexeme(),
+                        Function.identity()));
+    }
+
+    private Map<String, VirtualFunction> methodsToVirtualFunctions(ClassStatement node, Interpreter interpreter) {
+        Map<String, VirtualFunction> methods = new HashMap<>();
+        for (FunctionStatement method : node.methods()) {
+            VirtualFunction function = new VirtualFunction(method, interpreter.visitingScope(), false);
+            methods.put(method.name().lexeme(), function);
+        }
+        return methods;
     }
 }

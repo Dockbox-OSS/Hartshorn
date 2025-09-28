@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.objects.access;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
-import org.dockbox.hartshorn.hsl.objects.virtual.VirtualMemberFunction;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFieldMemberFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
@@ -70,8 +70,8 @@ public class StandardPropertyAccessVerifier implements PropertyAccessVerifier {
         final String modifier = modifierToken == null ? MemberModifierTokenType.PUBLIC.representation() : modifierToken.lexeme();
 
         final String members;
-        final VirtualMemberFunction setter = property.setter();
-        final VirtualMemberFunction getter = property.getter();
+        final VirtualFieldMemberFunction setter = property.setter();
+        final VirtualFieldMemberFunction getter = property.getter();
 
         if (setter == null && getter == null) {
             members = "no members.";
