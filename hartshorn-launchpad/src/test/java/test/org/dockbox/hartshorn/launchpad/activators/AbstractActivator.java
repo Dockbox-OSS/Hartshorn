@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-<<<<<<<< HEAD:hartshorn-launchpad/src/test/java/test/org/dockbox/hartshorn/launchpad/activators/AbstractActivator.java
 package test.org.dockbox.hartshorn.launchpad.activators;
 
 public abstract class AbstractActivator {
-========
-apply { 
-    from("${project.rootDir}/gradle/publications.gradle.kts")
-}
-
-dependencies {
-    implementation("org.dockbox.hartshorn:hartshorn-core")
->>>>>>>> b725fb7e3 (Draft: HSL: Common diagnostic message specification):hartshorn-hsl/hartshorn-hsl.gradle.kts
 }
