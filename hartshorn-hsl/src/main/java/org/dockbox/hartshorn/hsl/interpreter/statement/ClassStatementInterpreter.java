@@ -35,12 +35,8 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * TODO: #1061 Add documentation
@@ -113,7 +109,7 @@ public class ClassStatementInterpreter implements StatementInterpreter<ClassStat
     }
 
     private Map<String, VirtualProperty> fieldsToVirtualProperties(ClassStatement node, Interpreter interpreter) {
-        List<VirtualProperty> properties = new ArrayList<>();
+        Map<String, VirtualProperty> properties = new LinkedHashMap<>();
         for (FieldStatement field : node.fields()) {
             VirtualProperty virtualProperty = new VirtualProperty(field);
             FieldGetStatement getter = field.getter();
@@ -124,16 +120,13 @@ public class ClassStatementInterpreter implements StatementInterpreter<ClassStat
             if (setter != null) {
                 virtualProperty.setter(new VirtualFieldMemberFunction(setter, new VariableScope(interpreter.visitingScope())));
             }
-            properties.add(virtualProperty);
+            properties.put(field.name().lexeme(), virtualProperty);
         }
-        return properties.stream()
-                .collect(Collectors.toUnmodifiableMap(
-                        property -> property.fieldStatement().name().lexeme(),
-                        Function.identity()));
+        return properties;
     }
 
     private Map<String, VirtualFunction> methodsToVirtualFunctions(ClassStatement node, Interpreter interpreter) {
-        Map<String, VirtualFunction> methods = new HashMap<>();
+        Map<String, VirtualFunction> methods = new LinkedHashMap<>();
         for (FunctionStatement method : node.methods()) {
             VirtualFunction function = new VirtualFunction(method, interpreter.visitingScope(), false);
             methods.put(method.name().lexeme(), function);

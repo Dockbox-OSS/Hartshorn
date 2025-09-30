@@ -8,7 +8,7 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -22,8 +22,9 @@ public class VirtualClassBuilder implements ScopeOwner {
     private boolean isDynamic = false;
     private boolean isFinal = false;
 
-    private final Map<String, VirtualFunction> methods = new HashMap<>();
-    private final Map<String, VirtualProperty> fields = new HashMap<>();
+    // LinkedHashMap to preserve declaration order
+    private final Map<String, VirtualFunction> methods = new LinkedHashMap<>();
+    private final Map<String, VirtualProperty> fields = new LinkedHashMap<>();
 
     public VirtualClassBuilder(Token name, VariableScope variableScope) {
         this.name = Objects.requireNonNull(name, "Class name cannot be null");

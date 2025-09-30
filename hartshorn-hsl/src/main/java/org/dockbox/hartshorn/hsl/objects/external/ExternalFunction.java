@@ -77,17 +77,20 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         return this.type;
     }
 
-    private MethodView<Object, ?> method(Token at, List<Object> arguments) {
-        Option<MethodView<Object, ?>> zeroParameterMethod = this.type.methods().named(this.methodName);
+    private MethodView<?, ?> method(Token at, List<Object> arguments) {
+        Option<MethodView<?, ?>> zeroParameterMethod = this.type().methods()
+                .named(this.methodName)
+                .map(method -> TypeUtils.unchecked(method, MethodView.class));
         if (arguments.isEmpty() && zeroParameterMethod.present()) {
             return zeroParameterMethod.get();
         }
-        List<MethodView<Object, ?>> methods = this.type.methods().all().stream()
+        MethodView<?, ?> executable = ExecutableLookup.executable(this.type().methods().all().stream()
                 .filter(method -> method.name().equals(this.methodName))
                 .filter(method -> method.parameters().count() == arguments.size())
                 .toList();
 
         MethodView<Object, ?> executable = ExecutableLookup.executable(methods, arguments);
+                .toList(), arguments);
         if (executable != null) {
             return executable;
         }
