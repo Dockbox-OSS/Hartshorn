@@ -22,12 +22,14 @@ import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.expression.bitwise.BitwiseAdditionStrategy;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 
+import java.util.Set;
 import java.util.function.BiPredicate;
 
 /**
@@ -38,6 +40,16 @@ import java.util.function.BiPredicate;
  * @author Guus Lieben
  */
 public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, BinaryExpression> {
+
+    private final Set<BitwiseAdditionStrategy> additionStrategies;
+
+    public BinaryExpressionInterpreter(BitwiseAdditionStrategy... additionStrategies) {
+        this(Set.of(additionStrategies));
+    }
+
+    public BinaryExpressionInterpreter(Set<BitwiseAdditionStrategy> additionStrategies) {
+        this.additionStrategies = additionStrategies;
+    }
 
     @Override
     public Object interpret(BinaryExpression node, Interpreter interpreter) {
@@ -50,30 +62,14 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
         Token operator = node.operator();
         return switch (operator.type()) {
             case ArithmeticTokenType.PLUS -> {
-                // Math plus
-                if (left instanceof Double leftDouble && right instanceof Double rightDouble) {
-                    yield leftDouble + rightDouble;
+                for (BitwiseAdditionStrategy strategy : this.additionStrategies) {
+                    if (strategy.supports(left, right)) {
+                        yield strategy.add(left, right);
+                    }
                 }
-                // String Addition
-                if (left instanceof String || right instanceof String) {
-                    // String.valueOf to handle nulls
-                    yield String.valueOf(left) + right;
-                }
-
-                // Special cases
-                if (left instanceof Character && right instanceof Character) {
-                    yield String.valueOf(left) + right;
-                }
-                if (left instanceof Character leftCharacter && right instanceof Double rightDouble) {
-                    int value = leftCharacter;
-                    yield rightDouble + value;
-                }
-                if (left instanceof Double leftDouble && right instanceof Character rightCharacter) {
-                    int value = rightCharacter;
-                    yield leftDouble + value;
-                }
+                // Otherwise, unsupported
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.UNSUPPORTED_CHILD, ArithmeticTokenType.PLUS.representation())
+                        .message(DiagnosticMessage.UNSUPPORTED_CHILD, ArithmeticTokenType.PLUS.representation(), left, right)
                         .at(operator)
                         .build();
             }
