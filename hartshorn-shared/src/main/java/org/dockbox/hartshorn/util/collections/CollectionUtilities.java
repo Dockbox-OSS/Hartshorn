@@ -201,7 +201,7 @@ public final class CollectionUtilities {
      * @param iterable The collection to get the first element from
      * @param <T> The type of the elements in the collection
      *
-     * @return The first element of the collection
+     * @return The first element of the collection, or null if the iterable is empty
      */
     @Nullable
     public static <T> T first(Iterable<T> iterable) {
@@ -215,7 +215,13 @@ public final class CollectionUtilities {
             return sequencedCollection.getFirst();
         }
         else {
-            return iterable.iterator().next();
+            Iterator<T> iterator = iterable.iterator();
+            // Empty Collections are covered above, but for all other iterables we need to check
+            // if there is a first element, to avoid NoSuchElementExceptions
+            if (!iterator.hasNext()) {
+                return null;
+            }
+            return iterator.next();
         }
     }
 

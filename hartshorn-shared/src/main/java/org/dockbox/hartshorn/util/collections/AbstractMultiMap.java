@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.util.collections;
 
+import java.util.function.BiPredicate;
 import org.dockbox.hartshorn.util.stream.EntryStream;
 
 import java.util.Collection;
@@ -182,7 +183,18 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     }
 
     @Override
+    public int removeIf(BiPredicate<K, V> predicate) {
+        return this.entrySet().stream()
+            .reduce(0, (count, entry) -> count + (entry.getValue().removeIf(value -> predicate.test(entry.getKey(), value)) ? 1 : 0), Integer::sum);
+    }
+
+    @Override
     public Iterator<Map.Entry<K, Collection<V>>> iterator() {
         return this.map().entrySet().iterator();
+    }
+
+    @Override
+    public EntryStream<K, Collection<V>> stream() {
+        return EntryStream.of(this.map());
     }
 }
