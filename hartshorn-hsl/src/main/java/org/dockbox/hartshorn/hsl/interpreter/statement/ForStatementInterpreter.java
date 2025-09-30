@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
@@ -29,7 +28,7 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
  *
  * @author Guus Lieben
  */
-public class ForStatementInterpreter implements ASTNodeInterpreter<Void, ForStatement> {
+public class ForStatementInterpreter implements StatementInterpreter<ForStatement> {
 
     @Override
     public Void interpret(ForStatement node, Interpreter interpreter) {

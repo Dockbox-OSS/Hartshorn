@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.IfStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
@@ -29,7 +28,7 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
  *
  * @author Guus Lieben
  */
-public class IfStatementInterpreter implements ASTNodeInterpreter<Void, IfStatement> {
+public class IfStatementInterpreter implements StatementInterpreter<IfStatement> {
 
     @Override
     public Void interpret(IfStatement node, Interpreter interpreter) {

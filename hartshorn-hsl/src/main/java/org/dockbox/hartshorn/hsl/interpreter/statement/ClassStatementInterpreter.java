@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
@@ -50,7 +49,7 @@ import java.util.stream.Collectors;
  *
  * @author Guus Lieben
  */
-public class ClassStatementInterpreter implements ASTNodeInterpreter<Void, ClassStatement> {
+public class ClassStatementInterpreter implements StatementInterpreter<ClassStatement> {
 
     @Override
     public Void interpret(ClassStatement node, Interpreter interpreter) {

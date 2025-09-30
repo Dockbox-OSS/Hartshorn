@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 
@@ -28,7 +27,7 @@ import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
  *
  * @author Guus Lieben
  */
-public class ConstructorStatementInterpreter implements ASTNodeInterpreter<Void, ConstructorStatement> {
+public class ConstructorStatementInterpreter implements StatementInterpreter<ConstructorStatement> {
 
     @Override
     public Void interpret(ConstructorStatement node, Interpreter interpreter) {

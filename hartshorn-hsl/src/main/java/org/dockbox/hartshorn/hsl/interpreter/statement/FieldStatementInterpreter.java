@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
@@ -29,7 +28,7 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
  *
  * @author Guus Lieben
  */
-public class FieldStatementInterpreter implements ASTNodeInterpreter<Void, FieldStatement> {
+public class FieldStatementInterpreter implements StatementInterpreter<FieldStatement> {
 
     @Override
     public Void interpret(FieldStatement node, Interpreter interpreter) {

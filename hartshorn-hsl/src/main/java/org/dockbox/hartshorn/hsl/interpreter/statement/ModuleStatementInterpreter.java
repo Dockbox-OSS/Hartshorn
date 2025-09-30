@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.modules.AmbiguousLibraryFunction;
 import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
@@ -39,7 +38,7 @@ import java.util.stream.Collectors;
  *
  * @author Guus Lieben
  */
-public class ModuleStatementInterpreter implements ASTNodeInterpreter<Void, ModuleStatement> {
+public class ModuleStatementInterpreter implements StatementInterpreter<ModuleStatement> {
 
     @Override
     public Void interpret(ModuleStatement node, Interpreter interpreter) {

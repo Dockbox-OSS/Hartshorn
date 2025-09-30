@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
@@ -28,7 +27,7 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
  *
  * @author Guus Lieben
  */
-public class ForEachStatementInterpreter implements ASTNodeInterpreter<Void, ForEachStatement> {
+public class ForEachStatementInterpreter implements StatementInterpreter<ForEachStatement> {
 
     @Override
     public Void interpret(ForEachStatement node, Interpreter interpreter) {

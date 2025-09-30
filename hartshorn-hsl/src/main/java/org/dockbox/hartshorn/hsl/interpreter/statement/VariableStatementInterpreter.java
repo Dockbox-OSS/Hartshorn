@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 /**
@@ -27,7 +26,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
  *
  * @author Guus Lieben
  */
-public class VariableStatementInterpreter implements ASTNodeInterpreter<Void, VariableStatement> {
+public class VariableStatementInterpreter implements StatementInterpreter<VariableStatement> {
 
     @Override
     public Void interpret(VariableStatement node, Interpreter interpreter) {

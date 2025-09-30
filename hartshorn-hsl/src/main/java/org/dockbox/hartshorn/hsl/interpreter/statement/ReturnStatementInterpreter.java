@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
@@ -32,7 +31,7 @@ import org.dockbox.hartshorn.hsl.runtime.Yield;
  *
  * @author Guus Lieben
  */
-public class ReturnStatementInterpreter implements ASTNodeInterpreter<Void, ReturnStatement> {
+public class ReturnStatementInterpreter implements StatementInterpreter<ReturnStatement> {
 
     @Override
     public Void interpret(ReturnStatement node, Interpreter interpreter) {

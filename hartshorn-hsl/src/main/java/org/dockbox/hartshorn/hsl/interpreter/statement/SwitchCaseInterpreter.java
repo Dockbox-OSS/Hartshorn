@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 /**
@@ -28,7 +27,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
  *
  * @author Guus Lieben
  */
-public class SwitchCaseInterpreter implements ASTNodeInterpreter<Void, SwitchCase> {
+public class SwitchCaseInterpreter implements StatementInterpreter<SwitchCase> {
 
     @Override
     public Void interpret(SwitchCase node, Interpreter interpreter) {

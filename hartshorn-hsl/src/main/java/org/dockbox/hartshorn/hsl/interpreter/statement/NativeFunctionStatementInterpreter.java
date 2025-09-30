@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
 
@@ -28,7 +27,7 @@ import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
  *
  * @author Guus Lieben
  */
-public class NativeFunctionStatementInterpreter implements ASTNodeInterpreter<Void, NativeFunctionStatement> {
+public class NativeFunctionStatementInterpreter implements StatementInterpreter<NativeFunctionStatement> {
 
     @Override
     public Void interpret(NativeFunctionStatement node, Interpreter interpreter) {

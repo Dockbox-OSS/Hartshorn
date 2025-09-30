@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
 
@@ -29,7 +28,7 @@ import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
  *
  * @author Guus Lieben
  */
-public class DoWhileStatementInterpreter implements ASTNodeInterpreter<Void, DoWhileStatement> {
+public class DoWhileStatementInterpreter implements StatementInterpreter<DoWhileStatement> {
 
     @Override
     public Void interpret(DoWhileStatement node, Interpreter interpreter) {
