@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 import java.util.List;
 
@@ -47,17 +48,17 @@ import java.util.List;
 public class ExternalFunction extends AbstractFinalizable implements MethodReference {
 
     private final String methodName;
-    private final TypeView<Object> type;
+    private final ExternalClass<Object> type;
     private final InstanceReference instance;
 
-    public ExternalFunction(TypeView<?> type, String methodName) {
+    public ExternalFunction(ExternalClass<?> type, String methodName) {
         this(type, methodName, null);
     }
 
-    private ExternalFunction(TypeView<?> type, String methodName, InstanceReference instance) {
+    private ExternalFunction(ExternalClass<?> type, String methodName, InstanceReference instance) {
         super(false);
         this.methodName = methodName;
-        this.type = (TypeView<Object>) type;
+        this.type = (ExternalClass<Object>) type;
         this.instance = instance;
     }
 
@@ -74,7 +75,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
      * @return The {@link TypeView} which declares the method represented by this class.
      */
     public TypeView<?> type() {
-        return this.type;
+        return this.type.type();
     }
 
     private MethodView<?, ?> method(Token at, List<Object> arguments) {
@@ -87,9 +88,6 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         MethodView<?, ?> executable = ExecutableLookup.executable(this.type().methods().all().stream()
                 .filter(method -> method.name().equals(this.methodName))
                 .filter(method -> method.parameters().count() == arguments.size())
-                .toList();
-
-        MethodView<Object, ?> executable = ExecutableLookup.executable(methods, arguments);
                 .toList(), arguments);
         if (executable != null) {
             return executable;
@@ -114,12 +112,17 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
                     .at(at)
                     .build();
         }
-        MethodView<Object, ?> method = this.method(at, arguments);
+        if (!this.type().isInstance(externalObjectReference.externalObject())) {
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.INCORRECT_INSTANCE_TYPE_FOR_FUNCTION, this.methodName, this.type.name(), instance.type().name())
+                    .at(at)
+                    .build();
+        }
 
+        MethodView<?, ?> method = this.method(at, arguments);
         try {
             return method.invoke(externalObjectReference.externalObject(), arguments)
-                    .map(object -> new ExternalInstance(object,
-                            interpreter.applicationContext().environment().introspector().introspect(object)))
+                    .map(object -> new ExternalInstance(object, this.type))
                     .orNull();
         }
         catch (ApplicationException e) {
@@ -133,7 +136,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("type", this.type.qualifiedName())
+                .field("type", this.type().qualifiedName())
                 .field("methodName", this.methodName)
                 .field("instance", this.instance)
                 .describe();
@@ -161,7 +164,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
                     .build();
         }
 
-        return new ExternalFunction(externalClass.type(), this.methodName, instance);
+        return new ExternalFunction(externalClass, this.methodName, instance);
     }
 
     @Override

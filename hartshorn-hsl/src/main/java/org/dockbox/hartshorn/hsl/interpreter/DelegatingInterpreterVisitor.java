@@ -84,6 +84,10 @@ import org.dockbox.hartshorn.hsl.interpreter.expression.SetExpressionInterpreter
 import org.dockbox.hartshorn.hsl.interpreter.expression.SuperExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.expression.TernaryExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.expression.UnaryExpressionInterpreter;
+import org.dockbox.hartshorn.hsl.interpreter.expression.bitwise.CharacterBitwiseAdditionStrategy;
+import org.dockbox.hartshorn.hsl.interpreter.expression.bitwise.NumberBitwiseAdditionStrategy;
+import org.dockbox.hartshorn.hsl.interpreter.expression.bitwise.NumberCharBitwiseAdditionStrategy;
+import org.dockbox.hartshorn.hsl.interpreter.expression.bitwise.StringBitwiseAdditionStrategy;
 import org.dockbox.hartshorn.hsl.interpreter.statement.ClassStatementInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.statement.ConstructorStatementInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.statement.DoWhileStatementInterpreter;
@@ -116,7 +120,12 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
 
     @Override
     public Object visit(BinaryExpression expression) {
-        return new BinaryExpressionInterpreter().interpret(expression, this.interpreter);
+        return new BinaryExpressionInterpreter(
+                new CharacterBitwiseAdditionStrategy(),
+                new NumberBitwiseAdditionStrategy(),
+                new NumberCharBitwiseAdditionStrategy(),
+                new StringBitwiseAdditionStrategy()
+        ).interpret(expression, this.interpreter);
     }
 
     @Override

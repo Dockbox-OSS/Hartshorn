@@ -212,9 +212,9 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     public Void visit(VariableExpression expression) {
         if (this.resolver.hasDefinedScopes()) {
             Boolean initialized = this.resolver.peekScope().get(expression.name().lexeme());
-            if (initialized != null && !initialized) {
+            if (initialized == null || !initialized) {
                 throw ScriptEvaluationError.builder(Phase.RESOLVING)
-                        .message(DiagnosticMessage.LOCAL_VAR_IN_INITIALIZER)
+                        .message(DiagnosticMessage.UNDEFINED_VARIABLE, expression.name().lexeme())
                         .at(expression.name())
                         .build();
             }

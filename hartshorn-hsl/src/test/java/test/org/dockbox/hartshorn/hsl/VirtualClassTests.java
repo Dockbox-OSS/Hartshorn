@@ -38,9 +38,9 @@ public class VirtualClassTests {
     private ApplicationContext applicationContext;
 
     public static Stream<Arguments> propertyAccessors() {
-        final String readMessage = "HSL9010: Cannot read property name of User because it is not accessible from the current scope. The property is declared private and has no members.";
-        final String writeMessage = "HSL9010: Cannot assign to property name of User because it is not accessible from the current scope. The property is declared private and has no members.";
-        final String reassignMessage = "HSL3014: Cannot reassign property name of User because it is final.";
+        final String readMessage = "HSL4026: Cannot read property name of User because it is not accessible from the current scope. The property is declared private and has no members.";
+        final String writeMessage = "HSL4026: Cannot assign to property name of User because it is not accessible from the current scope. The property is declared private and has no members.";
+        final String reassignMessage = "HSL5006: Cannot reassign property name of User because it is final.";
         return Stream.of(
                 Arguments.of("public", "getName()", false, null),
                 Arguments.of("private", "getName()", false, null),

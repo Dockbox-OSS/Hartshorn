@@ -696,7 +696,7 @@ public class SimpleTokenRegistryLexer implements Lexer {
         Token token = Token.of(type, text)
                 .literal(literal)
                 .line(this.line)
-                .column(Math.min(this.start, this.column))
+                .column(this.column - text.length() + 1)
                 .build();
         this.tokens.add(token);
     }

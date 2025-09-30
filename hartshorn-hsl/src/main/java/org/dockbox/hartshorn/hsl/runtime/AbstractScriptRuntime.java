@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.configure.Customizer;
 
 import java.util.HashMap;
@@ -234,7 +235,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         // the resolve phase.
         this.customizePhase(Phase.INTERPRETING, context);
         interpreter.state().global(this.globalVariables());
-        interpreter.state().imports(this.imports());
+        interpreter.state().externalClassRegistry().defineClasses(this.imports());
         interpreter.interpret(context.statements());
     }
 
@@ -268,8 +269,9 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         int column = error.column();
 
         StringBuilder sb = new StringBuilder();
-        sb.append(error.getMessage());
-        if (error.getMessage().trim().endsWith(".")) {
+        String errorMessage = error.getMessage();
+        sb.append(errorMessage);
+        if (StringUtilities.emptyIfNull(errorMessage).trim().endsWith(".")) {
             sb.append(" While ");
         }
         else {

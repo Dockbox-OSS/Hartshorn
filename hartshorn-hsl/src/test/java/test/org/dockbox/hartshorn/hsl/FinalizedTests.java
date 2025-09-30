@@ -75,7 +75,7 @@ public class FinalizedTests {
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                HSL3015: Cannot reassign variable x because it is final. While resolving at line 2, column 0.
+                HSL5006: Cannot reassign variable x because it is final. While resolving at line 2, column 0.
                 x = 2;
                 ^""", error.getMessage());
     }
@@ -88,7 +88,7 @@ public class FinalizedTests {
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                HSL3015: Cannot reassign function x because it is final. While resolving at line 2, column 4.
+                HSL5006: Cannot reassign function x because it is final. While resolving at line 2, column 4.
                 fun x() { }
                     ^""", error.getMessage());
     }
@@ -101,7 +101,7 @@ public class FinalizedTests {
                 """);
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
         Assertions.assertEquals("""
-                HSL3015: Cannot reassign class User because it is final. While resolving at line 2, column 6.
+                HSL5006: Cannot reassign class 'User' because it is final. While resolving at line 2, column 6.
                 class User { }
                       ^""", error.getMessage());
     }

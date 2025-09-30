@@ -16,7 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
+import java.util.List;
+import java.util.Map;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.interpreter.ExternalClassRegistry;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
@@ -30,9 +33,6 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Represents a Java class that can be called from an HSL runtime. This class can be
@@ -52,7 +52,7 @@ import java.util.Map;
  *
  * @author Guus Lieben
  */
-public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
+public record ExternalClass<T>(ExternalClassRegistry registry, TypeView<T> type, String alias) implements ClassReference {
 
     @Override
     public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
@@ -66,8 +66,7 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
         if (executable != null) {
             try {
                 T objectInstance = executable.create(arguments.toArray());
-                return new ExternalInstance(objectInstance,
-                        interpreter.applicationContext().environment().introspector().introspect(objectInstance));
+                return new ExternalInstance(objectInstance, this);
             }
             catch (ApplicationException e) {
                 throw e;
@@ -96,7 +95,7 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
 
     @Override
     public MethodReference method(String name) {
-        return new ExternalFunction(this.type(), name);
+        return new ExternalFunction(this, name);
     }
 
     @Override
@@ -105,13 +104,13 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
         if (parent.isVoid()) {
             return null;
         }
-        return new ExternalClass<>(parent);
+        return this.registry().defineClass(parent);
     }
 
     @Override
     public String name() {
         // TODO #1000: Return alias if imported with non-original name
-        return this.type().name();
+        return this.alias();
     }
 
     @Override

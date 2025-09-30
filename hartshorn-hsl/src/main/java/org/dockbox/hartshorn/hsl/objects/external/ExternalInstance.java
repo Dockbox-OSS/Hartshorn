@@ -28,8 +28,8 @@ import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
 
 import java.util.Map;
 
@@ -47,14 +47,14 @@ import java.util.Map;
 public class ExternalInstance implements ExternalObjectReference {
 
     private final Object instance;
-    private final TypeView<Object> type;
+    private final ExternalClass<?> type;
 
-    public <T> ExternalInstance(T instance, TypeView<T> type) {
-        if (instance != null && !type.isInstance(instance)) {
+    public <T> ExternalInstance(T instance, ExternalClass<T> type) {
+        if (instance != null && !type.type().isInstance(instance)) {
             throw new IllegalArgumentException("Instance of type %s is not an instance of %s".formatted(instance.getClass().getName(), type.name()));
         }
         this.instance = instance;
-        this.type = (TypeView<Object>) type;
+        this.type = type;
     }
 
     /**
@@ -67,7 +67,9 @@ public class ExternalInstance implements ExternalObjectReference {
 
     @Override
     public void set(final Interpreter interpreter, final Token name, final Object value, VariableScope fromScope) {
-        Option<FieldView<Object, ?>> field = this.type.fields().named(name.lexeme());
+        Option<FieldView<?, ?>> field = this.type.type().fields()
+                .named(name.lexeme())
+                .map(f -> TypeUtils.unchecked(f, FieldView.class));
         if (field.present()) {
             try {
                 field.get().set(this.instance(), value);
@@ -87,7 +89,7 @@ public class ExternalInstance implements ExternalObjectReference {
 
     @Override
     public Object get(final Interpreter interpreter, final Token name, VariableScope fromScope) {
-        Object[] methods = this.type.methods().all().stream()
+        Object[] methods = this.type.type().methods().all().stream()
                 .filter(method -> method.name().equals(name.lexeme()))
                 .toArray();
 
@@ -102,7 +104,9 @@ public class ExternalInstance implements ExternalObjectReference {
             return new ExternalFunction(this.type, name.lexeme());
         }
 
-        Option<FieldView<Object, ?>> field = this.type.fields().named(name.lexeme());
+        Option<FieldView<?, ?>> field = this.type.type().fields()
+                .named(name.lexeme())
+                .map(f -> TypeUtils.unchecked(f, FieldView.class));
         if (field.present()) {
             try {
                 return field.get().get(this.instance());
@@ -137,7 +141,7 @@ public class ExternalInstance implements ExternalObjectReference {
     @NonNull
     @Override
     public ClassReference type() {
-        return new ExternalClass<>(this.type);
+        return this.type;
     }
 
     @Override

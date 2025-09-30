@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
@@ -56,14 +57,14 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
     private final Map<String, VirtualProperty> fields;
     private final boolean isDynamic;
 
-    public VirtualClass(final String name,
-                        final ClassReference superClass,
-                        final VirtualFunction constructor,
-                        final VariableScope variableScope,
-                        final Map<String, VirtualFunction> methods,
-                        final Map<String, VirtualProperty> fields,
-                        final boolean finalized,
-                        final boolean isDynamic
+    public VirtualClass(String name,
+                        ClassReference superClass,
+                        VirtualFunction constructor,
+                        VariableScope variableScope,
+                        Map<String, VirtualFunction> methods,
+                        Map<String, VirtualProperty> fields,
+                        boolean finalized,
+                        boolean isDynamic
     ) {
         super(finalized);
         this.name = name;
@@ -199,7 +200,11 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
         else {
             VariableScope currentScope = interpreter.visitingScope();
             InstanceReference virtualInstance = new VirtualInstance(this);
-            interpreter.enterScope(this.variableScope);
+
+            VariableScope instanceScope = new VariableScope(this.variableScope);
+            variableScope.define(ObjectTokenType.THIS.representation(), virtualInstance);
+            interpreter.enterScope(instanceScope);
+
             this.fields.forEach((field, property) -> {
                 FieldStatement fieldStatement = property.fieldStatement();
                 if (fieldStatement.initializer() != null) {
@@ -207,7 +212,7 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
                             interpreter,
                             fieldStatement.name(),
                             interpreter.evaluate(fieldStatement.initializer()),
-                            this.variableScope
+                            instanceScope
                     );
                 }
             });

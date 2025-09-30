@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * TODO: #1061 Add documentation
@@ -40,9 +41,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InterpreterState {
 
     private final Map<String, ExternalInstance> externalVariables = new ConcurrentHashMap<>();
-    private final Map<String, ExternalClass<?>> imports = new ConcurrentHashMap<>();
     private final Map<Expression, Integer> locals = new ConcurrentHashMap<>();
     private final Map<String, NativeModule> externalModules = new ConcurrentHashMap<>();
+    private final ExternalClassRegistry externalClassRegistry = new SimpleExternalClassRegistry();
 
     private final Interpreter owner;
 
@@ -82,12 +83,12 @@ public class InterpreterState {
     public void global(Map<String, Object> globalVariables) {
         globalVariables.forEach((name, instance) -> {
             TypeView<Object> typeView = this.owner.applicationContext().environment().introspector().introspect(instance);
-            this.externalVariables.put(name, new ExternalInstance(instance, typeView));
+            this.externalVariables.put(name, new ExternalInstance(instance, this.externalClassRegistry.defineClass(typeView)));
         });
     }
 
-    public void imports(Map<String, TypeView<?>> imports) {
-        imports.forEach((name, type) -> this.imports.put(name, new ExternalClass<>(type)));
+    public ExternalClassRegistry externalClassRegistry() {
+        return this.externalClassRegistry;
     }
 
     public void enterScope(VariableScope scope) {
@@ -135,8 +136,11 @@ public class InterpreterState {
         else if (this.externalVariables.containsKey(name.lexeme())) {
             return this.externalVariables.get(name.lexeme());
         }
-        else if (this.imports.containsKey(name.lexeme())) {
-            return this.imports.get(name.lexeme());
+        else if (this.externalClassRegistry.containsClassName(name.lexeme())) {
+            Option<ExternalClass<?>> externalClass = this.externalClassRegistry.getByClassNameOrAlias(name.lexeme());
+            if (externalClass.present()) {
+                externalClass.get();
+            }
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                 .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
