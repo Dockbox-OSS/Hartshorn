@@ -212,7 +212,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     public Void visit(VariableExpression expression) {
         if (this.resolver.hasDefinedScopes()) {
             Boolean initialized = this.resolver.peekScope().get(expression.name().lexeme());
-            if (initialized == null || !initialized) {
+            if (initialized != null && !initialized) {
                 throw ScriptEvaluationError.builder(Phase.RESOLVING)
                         .message(DiagnosticMessage.UNDEFINED_VARIABLE, expression.name().lexeme())
                         .at(expression.name())
@@ -341,8 +341,8 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(FieldStatement statement) {
-        this.resolver.makeFinal(statement, "field");
         this.resolver.define(statement.name());
+        this.resolver.makeFinal(statement, "field");
 
         if (statement.getter() != null) {
             this.resolve(statement.getter());

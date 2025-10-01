@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019-2025 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.util.StringUtilities;
@@ -69,7 +85,7 @@ public enum DiagnosticMessage {
     MISSING_METHOD_WITH_PARAMETERS(4023, Phase.INTERPRETING, "Method '{0}' with parameters accepting {1} does not exist on external instance of type {2}."),
     MISSING_ENCLOSING_SCOPE_AT_DIST(4024, Phase.INTERPRETING, "No enclosing scope at distance {0} for active scope."),
     UNDEFINED_PROPERTY_ACCESSOR(4025, Phase.INTERPRETING, "Could not register {0} for unknown property '{1}'."),
-    INVALID_PROPERTY_ACCESS(4026, Phase.INTERPRETING, "Cannot {0} property '{1}' of {2} because it is not accessible from the current scope. The property is declared {3} and has {4}"),
+    INVALID_PROPERTY_ACCESS(4026, Phase.INTERPRETING, "Cannot {0} property '{1}' of {2} because it is not accessible from the current scope. The property is declared {3} and has {4}."),
     AMBIGUOUS_FUNCTION_IN_MODULE(4027, Phase.INTERPRETING, "Module '{0}' contains ambiguous function '{1}' which is already defined in the global scope."),
     UNEXPECTED_DEFAULT_CASE(4028, Phase.INTERPRETING, "Unexpected default case in non-switch statement."),
     TEST_CONDITION_FAILED(4029, Phase.INTERPRETING, "Test condition '{0}' failed with result: {1}"),
@@ -86,9 +102,10 @@ public enum DiagnosticMessage {
     EXPECTED_X_OR_Y(5004, "Expected {0} or {1}, but got {2}."),
     EXPECTED_X_OF_Y_AT_Z(5005, "Expected {0} {1}, but got {2}."),
     ILLEGAL_FINAL_X_REASSIGNMENT(5006, "Cannot reassign {0} '{1}' because it is final."),
-    ILLEGAL_USE_OF_X(5007, "Illegal use of {0}. Expected valid keyword to follow, but got {1}."),
-    UNDEFINED_PROPERTY(5008, "Property '{0}' is not defined on {1}."),
-    UNDEFINED_VARIABLE(5009, "Variable '{0}' is not defined."),
+    ILLEGAL_FINAL_X_OF_Y_REASSIGNMENT(5007, "Cannot reassign {0} '{1}' of {2} because it is final."),
+    ILLEGAL_USE_OF_X(5008, "Illegal use of {0}. Expected valid keyword to follow, but got {1}."),
+    UNDEFINED_PROPERTY(5009, "Property '{0}' is not defined on {1}."),
+    UNDEFINED_VARIABLE(5010, "Variable '{0}' is not defined."),
     ;
 
     /*

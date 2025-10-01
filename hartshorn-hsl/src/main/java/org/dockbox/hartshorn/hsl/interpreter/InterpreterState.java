@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * TODO: #1061 Add documentation
@@ -139,7 +139,7 @@ public class InterpreterState {
         else if (this.externalClassRegistry.containsClassName(name.lexeme())) {
             Option<ExternalClass<?>> externalClass = this.externalClassRegistry.getByClassNameOrAlias(name.lexeme());
             if (externalClass.present()) {
-                externalClass.get();
+                return externalClass.get();
             }
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)

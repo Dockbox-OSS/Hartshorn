@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,15 +54,15 @@ public class ClassStatementInterpreter implements StatementInterpreter<ClassStat
         // Because super class is a variable expression ensure it's a class reference
         if (superClassExpression != null) {
             superClass = interpreter.evaluate(superClassExpression);
-            if (!(superClass instanceof ClassReference virtualClass)) {
+            if (!(superClass instanceof ClassReference classReference)) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                         .message(DiagnosticMessage.ILLEGAL_NON_CLASS_SUPER, superClass)
                         .at(superClassExpression)
                         .build();
             }
-            if (virtualClass.isFinal()) {
+            if (classReference.isFinal()) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE, virtualClass.name())
+                        .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE, classReference.name())
                         .at(superClassExpression)
                         .build();
             }

@@ -78,7 +78,7 @@ public class VirtualInstance implements InstanceReference {
             if (field.fieldStatement().isFinal() && this.fields.containsKey(name.lexeme())) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                         .at(name)
-                        .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT, "property", name.lexeme(), this.type().name())
+                        .message(DiagnosticMessage.ILLEGAL_FINAL_X_OF_Y_REASSIGNMENT, "property", name.lexeme(), this.type().name())
                         .build();
             }
         }

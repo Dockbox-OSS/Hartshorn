@@ -74,7 +74,7 @@ public class StandardPropertyAccessVerifier implements PropertyAccessVerifier {
         final VirtualFieldMemberFunction getter = property.getter();
 
         if (setter == null && getter == null) {
-            members = "no members.";
+            members = "no members";
         } else {
             final StringBuilder memberBuilder = new StringBuilder();
             if (setter != null) {
@@ -91,7 +91,6 @@ public class StandardPropertyAccessVerifier implements PropertyAccessVerifier {
                 memberBuilder.append(getter.modifier() == null ? "public" : getter.modifier().lexeme());
                 memberBuilder.append(" getter");
             }
-            memberBuilder.append(".");
             members = memberBuilder.toString();
         }
 
