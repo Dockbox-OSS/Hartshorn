@@ -16,7 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.util.collections.ArrayListHashBiMultiMap;
 import org.dockbox.hartshorn.util.collections.BiMultiMap;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
@@ -55,8 +58,10 @@ public class SimpleExternalClassRegistry implements ExternalClassRegistry {
                 return TypeUtils.unchecked(existingClass, ExternalClass.class);
             }
             else {
-                // TODO: Use a proper exception type
-                throw new IllegalStateException("An external class is already imported as '" + as + "'");
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.DUPLICATE_EXTERNAL_CLASS_NAME, as)
+                        .virtualPosition()
+                        .build();
             }
         }
         this.imports.put(externalClass, as);

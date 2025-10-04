@@ -101,7 +101,12 @@ public abstract class AbstractNativeModule implements NativeModule {
             return function.method().equals(method);
         })) {
             try {
-                Object result = method.invoke(this.instance(), arguments.toArray(Object[]::new)).orNull();
+                Object instance = this.instance();
+                Object[] argumentsArray = arguments.toArray(Object[]::new);
+                Object result = (instance == null
+                        ? method.invokeStatic(argumentsArray)
+                        : method.invoke(instance, argumentsArray)
+                ).orNull();
                 ExternalClass<?> externalClass = interpreter.state().externalClassRegistry().defineClass(method.returnType());
                 return new ExternalInstance(result, TypeUtils.unchecked(externalClass, ExternalClass.class));
             }

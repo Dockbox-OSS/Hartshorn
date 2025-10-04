@@ -342,12 +342,14 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
 
     @Override
     public Void visit(FieldGetStatement statement) {
-        return null; // TODO: Implement
+        // Declaration only, handled in ClassStatementInterpreter
+        return null;
     }
 
     @Override
     public Void visit(FieldSetStatement statement) {
-        return null; // TODO: Implement
+        // Declaration only, handled in ClassStatementInterpreter
+        return null;
     }
 
     @Override

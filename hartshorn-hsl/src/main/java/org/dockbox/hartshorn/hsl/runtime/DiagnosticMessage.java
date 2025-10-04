@@ -94,6 +94,7 @@ public enum DiagnosticMessage {
     ILLEGAL_YIELD_IN_NON_GENERATOR(4032, Phase.INTERPRETING, "Cannot yield from non-generator function."),
     ILLEGAL_RETURN_IN_GENERATOR(4033, Phase.INTERPRETING, "Cannot return a value from generator function."),
     INCORRECT_INSTANCE_TYPE_FOR_FUNCTION(4034, Phase.INTERPRETING, "Function '{0}' expected instance of type {1}, but got {2}."),
+    DUPLICATE_EXTERNAL_CLASS_NAME(4035, Phase.INTERPRETING, "An external class with name '{0}' is already registered."),
 
     // 5xxx - Common validation
     EXPECTED_EXPRESSION_AFTER_X(5001, "Expected expression after {0}."),

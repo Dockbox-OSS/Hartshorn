@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * Standard libraries for HSL runtimes. These libraries can be loaded by the {@link ScriptRuntime},
@@ -36,20 +36,21 @@ import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
  *
  * @author Guus Lieben
  */
-public enum StandardLibrary {
-    MATH("math", context -> new MathLibrary()),
-    SYSTEM("system", SystemLibrary::new),
+public enum StandardUtilitiesLibrary {
+    MATH("math", context -> {
+        return new UtilityClassNativeModule(Math.class, context.applicationContext());
+    }),
+    SYSTEM("system", context -> {
+        return new InstanceNativeModule(context.applicationContext(), new SystemLibrary(context));
+    }),
     ;
 
     private final String name;
     private final Function<ScriptContext, NativeModule> moduleProvider;
 
-    StandardLibrary(String name, Function<ScriptContext, ?> initializer) {
+    StandardUtilitiesLibrary(String name, Function<ScriptContext, NativeModule> moduleProvider) {
         this.name = name;
-        this.moduleProvider = context -> {
-            Object instance = initializer.apply(context);
-            return new InstanceNativeModule(context.applicationContext(), instance);
-        };
+        this.moduleProvider = moduleProvider;
     }
 
     /**
@@ -79,7 +80,7 @@ public enum StandardLibrary {
      */
     public static Map<String, NativeModule> asModules(ScriptContext context) {
         Map<String, NativeModule> modules = new ConcurrentHashMap<>();
-        for (StandardLibrary library : StandardLibrary.values()) {
+        for (StandardUtilitiesLibrary library : StandardUtilitiesLibrary.values()) {
             modules.put(library.libaryName(), library.asModule(context));
         }
         return modules;

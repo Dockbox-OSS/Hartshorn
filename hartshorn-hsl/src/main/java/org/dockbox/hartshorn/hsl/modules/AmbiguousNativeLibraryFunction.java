@@ -39,7 +39,7 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public record AmbiguousLibraryFunction(Set<NativeLibrary> libraries) implements CallableNode {
+public record AmbiguousNativeLibraryFunction(Set<NativeLibrary> libraries) implements CallableNode {
 
     @Override
     public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments)
@@ -47,6 +47,10 @@ public record AmbiguousLibraryFunction(Set<NativeLibrary> libraries) implements 
 
         List<NativeLibrary> applicableLibraries = this.libraries.stream()
                 .filter(library -> library.declaration().params().size() == arguments.size())
+                .filter(library -> {
+                    Class<?>[] parameterTypes = arguments.stream().map(Object::getClass).toArray(Class[]::new);
+                    return library.declaration().method().parameters().matches(parameterTypes);
+                })
                 .toList();
 
         if(applicableLibraries.isEmpty()) {
@@ -62,8 +66,8 @@ public record AmbiguousLibraryFunction(Set<NativeLibrary> libraries) implements 
                     .build();
         }
         else {
-            CallableNode library = applicableLibraries.getFirst();
-            return library.call(at, interpreter, instance, arguments);
+            CallableNode callableNode = applicableLibraries.getFirst();
+            return callableNode.call(at, interpreter, instance, arguments);
         }
     }
 }

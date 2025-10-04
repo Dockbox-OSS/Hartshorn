@@ -20,7 +20,7 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.modules.AmbiguousLibraryFunction;
+import org.dockbox.hartshorn.hsl.modules.AmbiguousNativeLibraryFunction;
 import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
@@ -70,7 +70,7 @@ public class ModuleStatementInterpreter implements StatementInterpreter<ModuleSt
                 Set<NativeLibrary> libraries = supportedFunctions.stream()
                         .map(function -> new NativeLibrary(function, moduleName, module))
                         .collect(Collectors.toSet());
-                interpreter.global().define(supportedFunctions.getFirst().name().lexeme(), new AmbiguousLibraryFunction(libraries));
+                interpreter.global().define(supportedFunctions.getFirst().name().lexeme(), new AmbiguousNativeLibraryFunction(libraries));
             }
         }
         else {
