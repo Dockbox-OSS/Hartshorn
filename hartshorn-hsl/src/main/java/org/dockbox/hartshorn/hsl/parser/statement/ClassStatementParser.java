@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
@@ -47,7 +46,7 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
+public class ClassStatementParser implements StatementParser<ClassStatement> {
 
     private final FieldStatementParser fieldParser;
 
@@ -112,7 +111,7 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
     }
 
     private <T extends Statement> T handleDelegate(TokenParser parser, TokenStepValidator validator,
-                                                   Option<ASTNodeParser<T>> statement) {
+                                                   Option<StatementParser<T>> statement) {
         return statement
                 .flatMap(nodeParser -> nodeParser.parse(parser, validator))
                 .orNull();

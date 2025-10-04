@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.hsl.runtime;
 import org.dockbox.hartshorn.hsl.ParserCustomizer;
 import org.dockbox.hartshorn.hsl.ScriptComponentFactory;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
@@ -27,8 +26,9 @@ import org.dockbox.hartshorn.hsl.customizer.ConsumerCodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
+import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
+import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.StringUtilities;
@@ -314,12 +314,13 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     }
 
     @Override
-    public void expressionParser(ASTNodeParser<? extends Expression> expressionParser) {
-        this.parserCustomizer = this.parserCustomizer.compose(parser -> parser.expressionParser(expressionParser));
+    public void expressionParser(ExpressionParser expressionParser) {
+        ParserCustomizer customizer = parser -> parser.expressionParser(expressionParser);
+        this.parserCustomizer = customizer.compose(this.parserCustomizer);
     }
 
     @Override
-    public void statementParser(ASTNodeParser<? extends Statement> statementParser) {
+    public void statementParser(StatementParser<? extends Statement> statementParser) {
         this.parserCustomizer = this.parserCustomizer.compose(parser -> parser.statementParser(statementParser));
     }
 

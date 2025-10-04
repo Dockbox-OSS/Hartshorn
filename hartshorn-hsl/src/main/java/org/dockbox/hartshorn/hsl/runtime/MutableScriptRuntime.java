@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.runtime;
 
-import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.condition.ScriptConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
+import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
+import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.util.configure.Customizer;
 
 /**
@@ -47,9 +47,9 @@ public interface MutableScriptRuntime extends ScriptRuntime {
      *
      * @param parser the parser to add
      *
-     * @see org.dockbox.hartshorn.hsl.parser.TokenParser#expressionParser(ASTNodeParser)
+     * @see org.dockbox.hartshorn.hsl.parser.TokenParser#expressionParser(ExpressionParser)
      */
-    void expressionParser(ASTNodeParser<? extends Expression> parser);
+    void expressionParser(ExpressionParser parser);
 
     /**
      * Adds a statement parser to the runtime, which can be used to parse statements in the
@@ -57,9 +57,9 @@ public interface MutableScriptRuntime extends ScriptRuntime {
      *
      * @param parser the parser to add
      *
-     * @see org.dockbox.hartshorn.hsl.parser.TokenParser#statementParser(ASTNodeParser)
+     * @see org.dockbox.hartshorn.hsl.parser.TokenParser#statementParser(StatementParser)
      */
-    void statementParser(ASTNodeParser<? extends Statement> parser);
+    void statementParser(StatementParser<? extends Statement> parser);
 
     /**
      * Adds a customizer to the runtime, which can be used to customize the script runtime

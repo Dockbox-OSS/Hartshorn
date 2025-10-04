@@ -16,9 +16,6 @@
 
 package test.org.dockbox.hartshorn.hsl.interpreter.statement;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
@@ -33,10 +30,12 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import test.org.dockbox.hartshorn.hsl.interpreter.ExecutionCheckStatement;
 import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
 import test.org.dockbox.hartshorn.hsl.interpreter.JavaStatement;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class IfStatementInterpreterTests {
 

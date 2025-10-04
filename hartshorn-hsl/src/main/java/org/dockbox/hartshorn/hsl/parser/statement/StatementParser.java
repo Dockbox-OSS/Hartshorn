@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.hsl.parser;
-
-import java.util.Set;
+package org.dockbox.hartshorn.hsl.parser.statement;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.parser.TokenParser;
+import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Set;
 
 /**
  * A parser for a specific type of AST node. This parser is used to parse the tokens of a script into an
@@ -32,7 +34,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public interface ASTNodeParser<T extends ASTNode> {
+public interface StatementParser<T extends Statement> {
 
     /**
      * Parses the tokens of a script into an abstract syntax tree (AST) node. This method will return

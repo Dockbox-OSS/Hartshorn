@@ -16,23 +16,23 @@
 
 package test.org.dockbox.hartshorn.hsl.extension;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import org.dockbox.hartshorn.hsl.extension.ExpressionModule;
 import org.dockbox.hartshorn.hsl.extension.ResolverExtension;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
-import org.dockbox.hartshorn.hsl.extension.ExpressionModule;
+import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.token.SimpleTokenCharacter;
 import org.dockbox.hartshorn.hsl.token.type.SimpleTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.junit.jupiter.api.Assertions;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class AtNameModule implements ExpressionModule<AtNameExpression> {
 
     public static final TokenType TOKEN_TYPE = SimpleTokenType.builder()
             .characters(SimpleTokenCharacter.of('@', true))
-            .tokenName("at")
+            .tokenName("AT")
             .build();
 
     private final AtomicBoolean resolverAccessed = new AtomicBoolean(false);
@@ -47,7 +47,7 @@ public class AtNameModule implements ExpressionModule<AtNameExpression> {
     }
 
     @Override
-    public ASTNodeParser<AtNameExpression> parser() {
+    public ExpressionParser parser() {
         return new AtNameExpressionParser(this);
     }
 

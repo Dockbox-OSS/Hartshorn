@@ -4,7 +4,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 
-public interface ExpressionParser {
+public interface ExpressionParserChain {
 
-    Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain);
+    Expression next(TokenParser parser, TokenStepValidator validator);
 }

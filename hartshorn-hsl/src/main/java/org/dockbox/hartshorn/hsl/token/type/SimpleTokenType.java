@@ -16,9 +16,11 @@
 
 package org.dockbox.hartshorn.hsl.token.type;
 
+import org.dockbox.hartshorn.hsl.token.TokenCharacter;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.Objects;
-import org.dockbox.hartshorn.hsl.token.TokenCharacter;
 
 /**
  * Represents a simple token type, which is a basic implementation of the {@link TokenType} interface.
@@ -52,6 +54,12 @@ public record SimpleTokenType(
         String defaultLexeme,
         TokenCharacter[] characters
 ) implements TokenType {
+
+    @NotNull
+    @Override
+    public String toString() {
+        return tokenName;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.hsl.extension;
 
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
@@ -58,13 +57,6 @@ public sealed interface ASTExtensionModule<T extends ASTNode & CustomASTNode<T, 
      * @return The token type that the parser should use to identify the node.
      */
     TokenType tokenType();
-
-    /**
-     * The parser that is responsible for parsing the node.
-     *
-     * @return The parser that is responsible for parsing the node.
-     */
-    ASTNodeParser<T> parser();
 
     /**
      * The resolver that is responsible for resolving the node, if required. If the node does not require

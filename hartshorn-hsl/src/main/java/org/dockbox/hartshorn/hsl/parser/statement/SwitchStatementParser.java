@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
@@ -44,7 +43,7 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
+public class SwitchStatementParser implements StatementParser<SwitchStatement> {
 
     private static final String SWITCH = "switch";
 

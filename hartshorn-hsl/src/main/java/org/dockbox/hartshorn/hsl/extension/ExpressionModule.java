@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.extension;
 
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 
 /**
@@ -31,6 +32,13 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
  * @author Guus Lieben
  */
 public non-sealed interface ExpressionModule<T extends Expression & CustomASTNode<T, Object>> extends ASTExtensionModule<T, Object> {
+
+    /**
+     * The parser that is responsible for parsing the node.
+     *
+     * @return The parser that is responsible for parsing the node.
+     */
+    ExpressionParser parser();
 
     /**
      * Accept a visitor for this expression.

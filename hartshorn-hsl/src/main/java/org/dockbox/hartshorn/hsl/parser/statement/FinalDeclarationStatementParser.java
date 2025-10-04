@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.FinalizableStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Function;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
@@ -44,7 +43,7 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class FinalDeclarationStatementParser implements ASTNodeParser<FinalizableStatement> {
+public class FinalDeclarationStatementParser implements StatementParser<FinalizableStatement> {
 
     @Override
     public Option<? extends FinalizableStatement> parse(TokenParser parser, TokenStepValidator validator) {

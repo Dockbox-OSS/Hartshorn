@@ -17,12 +17,13 @@
 package org.dockbox.hartshorn.hsl.parser;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
  * Represents a validator for a step in the token stream. This is used to validate the
- * token stream while parsing, typically when performed through a {@link ASTNodeParser}.
+ * token stream while parsing, typically when performed through a {@link StatementParser}.
  *
  * @since 0.4.13
  *

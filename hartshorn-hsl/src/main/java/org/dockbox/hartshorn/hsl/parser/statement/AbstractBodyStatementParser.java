@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.hsl.parser.statement;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
@@ -40,7 +40,7 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public abstract class AbstractBodyStatementParser<T extends ASTNode> implements ASTNodeParser<T> {
+public abstract class AbstractBodyStatementParser<T extends Statement> implements StatementParser<T> {
 
     /**
      * Parses a block statement from the given parser. The actual parsing of the block is delegated to the parser that is
@@ -54,7 +54,7 @@ public abstract class AbstractBodyStatementParser<T extends ASTNode> implements 
      * @return the parsed block statement
      */
     protected BlockStatement blockStatement(String afterStatement, ASTNode at, TokenParser parser, TokenStepValidator validator) {
-        Set<ASTNodeParser<BlockStatement>> parsers = parser.compatibleParsers(BlockStatement.class);
+        Set<StatementParser<BlockStatement>> parsers = parser.compatibleParsers(BlockStatement.class);
         if (parsers.isEmpty()) {
             throw ScriptEvaluationError.builder(Phase.PARSING)
                     .message(DiagnosticMessage.NO_PARSERS_FOR_X, BlockStatement.class.getSimpleName())
@@ -62,7 +62,7 @@ public abstract class AbstractBodyStatementParser<T extends ASTNode> implements 
                     .build();
         }
 
-        for (ASTNodeParser<BlockStatement> nodeParser : parsers) {
+        for (StatementParser<BlockStatement> nodeParser : parsers) {
             Option<? extends BlockStatement> statement = nodeParser.parse(parser, validator);
             if (statement.present()) {
                 return statement.get();

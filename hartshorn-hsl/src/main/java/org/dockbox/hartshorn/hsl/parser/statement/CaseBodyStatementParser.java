@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.hsl.parser.statement;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
@@ -47,7 +46,7 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class CaseBodyStatementParser implements ASTNodeParser<Statement> {
+public class CaseBodyStatementParser implements StatementParser<Statement> {
 
     @Override
     public Option<? extends Statement> parse(TokenParser parser, TokenStepValidator validator) throws ScriptEvaluationError {

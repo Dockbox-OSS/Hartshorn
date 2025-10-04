@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.hsl.parser.statement;
 
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -35,7 +34,7 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class ReturnStatementParser implements ASTNodeParser<ReturnStatement> {
+public class ReturnStatementParser implements StatementParser<ReturnStatement> {
 
     @Override
     public Option<? extends ReturnStatement> parse(TokenParser parser, TokenStepValidator validator) {

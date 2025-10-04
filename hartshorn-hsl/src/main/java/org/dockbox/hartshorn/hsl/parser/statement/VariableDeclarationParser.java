@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -36,7 +35,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class VariableDeclarationParser implements ASTNodeParser<VariableStatement> {
+public class VariableDeclarationParser implements StatementParser<VariableStatement> {
 
     @Override
     public Option<? extends VariableStatement> parse(TokenParser parser, TokenStepValidator validator) {
