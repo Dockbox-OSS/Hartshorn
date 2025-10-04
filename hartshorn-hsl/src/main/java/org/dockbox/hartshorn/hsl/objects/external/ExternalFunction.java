@@ -164,7 +164,7 @@ public class ExternalFunction extends AbstractFinalizable implements MethodRefer
         if (externalClass == null) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                     .message(DiagnosticMessage.ILLEGAL_EXTERNAL_FUNCTION_BINDING, virtualClass.name())
-                    .position(-1, -1)
+                    .virtualPosition()
                     .build();
         }
 

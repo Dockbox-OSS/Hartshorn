@@ -21,6 +21,8 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.junit.jupiter.api.Assertions;
 
+import java.util.Locale;
+
 public class HSLTestUtilities {
 
     public static void assertEvaluationFails(
@@ -35,8 +37,9 @@ public class HSLTestUtilities {
             ScriptEvaluationError error,
             FormattedDiagnostic diagnosticMessage
     ) {
+        String phase = error.phase().name().toLowerCase(Locale.ROOT);
         String expectedMessageStart = diagnosticMessage.format();
-        String actualMessageStart = error.getMessage().split("While interpreting at")[0].trim();
+        String actualMessageStart = error.getMessage().split("While " + phase)[0].trim();
         Assertions.assertEquals(expectedMessageStart, actualMessageStart);
     }
 

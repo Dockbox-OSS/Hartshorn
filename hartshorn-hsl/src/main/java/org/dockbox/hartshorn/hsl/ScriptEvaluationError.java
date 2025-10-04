@@ -111,6 +111,12 @@ public class ScriptEvaluationError extends RuntimeException {
             return this;
         }
 
+        public Builder virtualPosition() {
+            this.line = -1;
+            this.column = -1;
+            return this;
+        }
+
         public Builder position(int line, int column) {
             this.line = line;
             this.column = column;
