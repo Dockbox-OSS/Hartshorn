@@ -78,16 +78,16 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                 yield (double) left - (double) right;
             }
             case ArithmeticTokenType.STAR -> {
-                if ((left instanceof String || left instanceof Character) && right instanceof Double rightDouble) {
-                    int times = rightDouble.intValue();
+                if ((left instanceof String || left instanceof Character) && right instanceof Number number) {
+                    int times = number.intValue();
                     int length = left.toString().length() * times;
                     StringBuilder result = new StringBuilder(length);
                     String value = left.toString();
                     result.append(value.repeat(Math.max(0, times)));
                     yield result.toString();
                 }
-                else if (left instanceof Array array && right instanceof Double rightDouble) {
-                    int times = rightDouble.intValue();
+                else if (left instanceof Array array && right instanceof Number number) {
+                    int times = number.intValue();
                     int length = array.length() * times;
                     Array result = new Array(length);
                     for (int i = 0; i < times; i++) {

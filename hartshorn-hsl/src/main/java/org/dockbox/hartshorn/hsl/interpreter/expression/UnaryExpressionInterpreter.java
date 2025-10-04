@@ -67,7 +67,7 @@ public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, Un
         else if (type == BitwiseTokenType.COMPLEMENT) {
 
             InterpreterUtilities.checkNumberOperand(node.operator(), right);
-            int value = ((Double) right).intValue();
+            int value = ((Number) right).intValue();
             // Cast to int is redundant, but required to suppress false-positive inspections.
             //noinspection RedundantCast
             newValue = (int) ~value;

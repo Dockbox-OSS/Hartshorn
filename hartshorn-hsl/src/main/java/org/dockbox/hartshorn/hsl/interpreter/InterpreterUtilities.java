@@ -68,7 +68,7 @@ public final class InterpreterUtilities {
     }
 
     public static void checkNumberOperand(Token operator, Object operand) {
-        if (operand instanceof Double) {
+        if (operand instanceof Number) {
             return;
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
