@@ -19,5 +19,14 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @param <T> The type of {@link Statement} this interpreter can interpret.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public interface StatementInterpreter<T extends Statement> extends ASTNodeInterpreter<Void, T> {
 }

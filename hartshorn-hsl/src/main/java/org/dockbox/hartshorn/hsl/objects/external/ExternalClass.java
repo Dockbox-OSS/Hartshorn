@@ -45,7 +45,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * runtime.run("var instance = MyClass();");
  * }</pre>
  *
+ * @param registry The registry that manages this class.
  * @param type The type represented by this reference.
+ * @param alias The alias under which this class was imported.
  * @param <T> The type of the class.
  *
  * @since 0.4.12

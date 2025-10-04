@@ -20,6 +20,13 @@ import org.dockbox.hartshorn.hsl.token.Token;
 
 import java.util.List;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class FieldMemberStatement extends ParametricExecutableBodyStatement implements MemberStatement {
 
     private final Token modifier;

@@ -19,6 +19,13 @@ package org.dockbox.hartshorn.hsl.objects.virtual;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.token.Token;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class VirtualProperty {
 
     private final FieldStatement fieldStatement;

@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.interpreter;
 
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 

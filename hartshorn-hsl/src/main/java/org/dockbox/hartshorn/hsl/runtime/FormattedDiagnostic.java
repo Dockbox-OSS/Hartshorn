@@ -17,11 +17,21 @@
 package org.dockbox.hartshorn.hsl.runtime;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.SequencedCollection;
 
+/**
+ * A formatted diagnostic message, consisting of a {@link DiagnosticMessage} and its arguments.
+ *
+ * @param message The diagnostic message.
+ * @param arguments The arguments to format the message with.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public record FormattedDiagnostic(DiagnosticMessage message, Object... arguments) {
     public String format() {
-        return message.format(arguments);
+        return this.message.format(this.arguments);
     }
 
     public static FormattedDiagnostic of(DiagnosticMessage message, Object... arguments) {
@@ -32,8 +42,15 @@ public record FormattedDiagnostic(DiagnosticMessage message, Object... arguments
         return new Builder();
     }
 
+    /**
+     * A builder for {@link FormattedDiagnostic}.
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
     public static class Builder {
-        private final List<Object> arguments = new ArrayList<>();
+        private final SequencedCollection<Object> arguments = new ArrayList<>();
         private DiagnosticMessage message;
 
         public Builder message(DiagnosticMessage message) {

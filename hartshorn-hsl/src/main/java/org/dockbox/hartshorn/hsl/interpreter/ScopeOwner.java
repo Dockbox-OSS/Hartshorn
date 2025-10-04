@@ -18,6 +18,13 @@ package org.dockbox.hartshorn.hsl.interpreter;
 
 import org.dockbox.hartshorn.hsl.token.Token;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public interface ScopeOwner {
     Token name();
 }

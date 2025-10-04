@@ -18,6 +18,24 @@ package org.dockbox.hartshorn.hsl.runtime;
 
 import org.dockbox.hartshorn.util.StringUtilities;
 
+/**
+ * An enumeration of all diagnostic messages used in HSL, each with a unique code and a message template.
+ *
+ * <p>The codes are structured as follows:
+ * <ul>
+ *     <li>1xxx - Lexical analysis (tokenizing)</li>
+ *     <li>2xxx - Parsing</li>
+ *     <li>3xxx - Resolution</li>
+ *     <li>4xxx - Interpretation</li>
+ *     <li>5xxx - Common validation</li>
+ * </ul>
+ *
+ * <p>Each message can be formatted with arguments using the {@link #format(Object...)} method.
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public enum DiagnosticMessage {
     // 1xxx - Lexical analysis
     UNEXPECTED_CHAR(1001, Phase.TOKENIZING, "Unexpected character: {0}."),

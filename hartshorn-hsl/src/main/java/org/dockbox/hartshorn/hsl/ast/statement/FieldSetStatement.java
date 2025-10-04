@@ -21,6 +21,13 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 import java.util.List;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class FieldSetStatement extends FieldMemberStatement {
 
     private final Parameter parameter;

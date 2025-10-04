@@ -26,8 +26,9 @@ import org.dockbox.hartshorn.hsl.token.Token;
  * A verifier that checks if a property access is allowed. For example, a private property can only be
  * accessed from within the class that defines it.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public interface PropertyAccessVerifier {
 

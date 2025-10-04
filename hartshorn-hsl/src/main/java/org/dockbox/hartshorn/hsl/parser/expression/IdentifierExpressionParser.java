@@ -8,6 +8,13 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class IdentifierExpressionParser implements ExpressionParser {
     @Override
     public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {

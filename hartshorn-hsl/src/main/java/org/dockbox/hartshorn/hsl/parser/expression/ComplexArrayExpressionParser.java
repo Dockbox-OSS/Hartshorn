@@ -14,6 +14,13 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class ComplexArrayExpressionParser implements ExpressionParser {
 
     @Override

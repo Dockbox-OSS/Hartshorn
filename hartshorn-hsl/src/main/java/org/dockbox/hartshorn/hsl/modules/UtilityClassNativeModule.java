@@ -2,6 +2,13 @@ package org.dockbox.hartshorn.hsl.modules;
 
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class UtilityClassNativeModule extends AbstractNativeModule {
 
     private final Class<?> utilityClass;

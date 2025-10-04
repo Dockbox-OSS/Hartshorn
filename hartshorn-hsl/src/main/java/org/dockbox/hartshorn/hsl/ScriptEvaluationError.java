@@ -90,6 +90,13 @@ public class ScriptEvaluationError extends RuntimeException {
         return new Builder(phase);
     }
 
+    /**
+     * Builder for {@link ScriptEvaluationError}.
+     *
+     * @since 0.4.12
+     *
+     * @author Guus Lieben
+     */
     public static class Builder {
 
         private final Phase phase;

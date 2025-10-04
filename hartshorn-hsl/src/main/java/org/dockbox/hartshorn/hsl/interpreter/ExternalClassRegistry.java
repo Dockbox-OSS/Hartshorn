@@ -22,6 +22,13 @@ import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public interface ExternalClassRegistry {
 
     Set<ExternalClass<?>> defineClasses(Map<String, TypeView<?>> imports);

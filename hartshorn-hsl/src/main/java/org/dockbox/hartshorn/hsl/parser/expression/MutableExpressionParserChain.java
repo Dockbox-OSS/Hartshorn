@@ -2,6 +2,13 @@ package org.dockbox.hartshorn.hsl.parser.expression;
 
 import java.util.List;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public interface MutableExpressionParserChain extends ExpressionParserChain {
 
     void add(ExpressionParser parser);

@@ -63,10 +63,12 @@ import org.dockbox.hartshorn.hsl.parser.statement.WhileStatementParser;
  * A default implementation of {@link ParserCustomizer} that configures the {@link TokenParser} with the default
  * statement parsers. This customizer is used by default by the {@link ScriptLanguageConfiguration}.
  *
- * @author Guus Lieben
  * @see ScriptLanguageConfiguration
  * @see ParserCustomizer
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class DefaultScriptStatementsParserCustomizer implements ParserCustomizer {
 

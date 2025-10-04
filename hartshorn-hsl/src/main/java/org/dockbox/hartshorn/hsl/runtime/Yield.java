@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.hsl.runtime;
  * Represents a specific return value, which immediately exits the current
  * scope, even if there are more statements to evaluate.
  *
+ * @since 0.7.0
+ *
  * @author Guus Lieben
- * @since 22.4
  */
 public class Yield extends RuntimeException {
 

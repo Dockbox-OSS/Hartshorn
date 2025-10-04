@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.token.type;
 
 import org.dockbox.hartshorn.hsl.token.TokenCharacter;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -55,10 +54,9 @@ public record SimpleTokenType(
         TokenCharacter[] characters
 ) implements TokenType {
 
-    @NotNull
     @Override
     public String toString() {
-        return tokenName;
+        return this.tokenName;
     }
 
     @Override

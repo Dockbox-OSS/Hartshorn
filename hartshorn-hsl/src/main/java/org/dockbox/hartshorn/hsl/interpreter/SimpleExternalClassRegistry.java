@@ -33,6 +33,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class SimpleExternalClassRegistry implements ExternalClassRegistry {
 
     private final BiMultiMap<ExternalClass<?>, String> imports = new ArrayListHashBiMultiMap<>();

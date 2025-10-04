@@ -12,6 +12,13 @@ import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class LiteralExpressionParser implements ExpressionParser {
     @Override
     public Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain) {

@@ -7,6 +7,13 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class SimpleExpressionParserChain implements MutableExpressionParserChain {
 
     private final List<ExpressionParser> parsers = new ArrayList<>();

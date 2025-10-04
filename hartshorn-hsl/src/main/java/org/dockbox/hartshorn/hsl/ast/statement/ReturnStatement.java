@@ -30,6 +30,13 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  */
 public class ReturnStatement extends Statement {
 
+    /**
+     * TODO: #1061 Add documentation
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
     public enum ReturnType {
         RETURN,
         YIELD,

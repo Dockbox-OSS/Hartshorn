@@ -18,6 +18,13 @@ package org.dockbox.hartshorn.hsl.interpreter.expression.bitwise;
 
 import java.math.BigDecimal;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class NumberBitwiseAdditionStrategy implements BitwiseAdditionStrategy {
     @Override
     public boolean supports(Object left, Object right) {

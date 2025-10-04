@@ -16,6 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression.bitwise;
 
+/**
+ * TODO: #1061 Add documentation
+ *
+ * @since 0.7.0
+ *
+ * @author Guus Lieben
+ */
 public class StringBitwiseAdditionStrategy implements BitwiseAdditionStrategy {
     @Override
     public boolean supports(Object left, Object right) {
