@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,21 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
-import java.util.function.BiPredicate;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.BinaryExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.interpreter.expression.bitwise.BitwiseAdditionStrategy;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
+
+import java.util.Set;
+import java.util.function.BiPredicate;
 
 /**
  * TODO: #1061 Add documentation
@@ -37,6 +40,16 @@ import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
  * @author Guus Lieben
  */
 public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, BinaryExpression> {
+
+    private final Set<BitwiseAdditionStrategy> additionStrategies;
+
+    public BinaryExpressionInterpreter(BitwiseAdditionStrategy... additionStrategies) {
+        this(Set.of(additionStrategies));
+    }
+
+    public BinaryExpressionInterpreter(Set<BitwiseAdditionStrategy> additionStrategies) {
+        this.additionStrategies = additionStrategies;
+    }
 
     @Override
     public Object interpret(BinaryExpression node, Interpreter interpreter) {
@@ -49,45 +62,32 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
         Token operator = node.operator();
         return switch (operator.type()) {
             case ArithmeticTokenType.PLUS -> {
-                // Math plus
-                if (left instanceof Double leftDouble && right instanceof Double rightDouble) {
-                    yield leftDouble + rightDouble;
+                for (BitwiseAdditionStrategy strategy : this.additionStrategies) {
+                    if (strategy.supports(left, right)) {
+                        yield strategy.add(left, right);
+                    }
                 }
-                // String Addition
-                if (left instanceof String || right instanceof String) {
-                    // String.valueOf to handle nulls
-                    yield String.valueOf(left) + right;
-                }
-
-                // Special cases
-                if (left instanceof Character && right instanceof Character) {
-                    yield String.valueOf(left) + right;
-                }
-                if (left instanceof Character leftCharacter && right instanceof Double rightDouble) {
-                    int value = leftCharacter;
-                    yield rightDouble + value;
-                }
-                if (left instanceof Double leftDouble && right instanceof Character rightCharacter) {
-                    int value = rightCharacter;
-                    yield leftDouble + value;
-                }
-                throw new ScriptEvaluationError("Unsupported child for PLUS.\n", Phase.INTERPRETING, operator);
+                // Otherwise, unsupported
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.UNSUPPORTED_CHILD, ArithmeticTokenType.PLUS.representation(), left, right)
+                        .at(operator)
+                        .build();
             }
             case ArithmeticTokenType.MINUS -> {
                 InterpreterUtilities.checkNumberOperands(operator, left, right);
                 yield (double) left - (double) right;
             }
             case ArithmeticTokenType.STAR -> {
-                if ((left instanceof String || left instanceof Character) && right instanceof Double rightDouble) {
-                    int times = rightDouble.intValue();
+                if ((left instanceof String || left instanceof Character) && right instanceof Number number) {
+                    int times = number.intValue();
                     int length = left.toString().length() * times;
                     StringBuilder result = new StringBuilder(length);
                     String value = left.toString();
                     result.append(value.repeat(Math.max(0, times)));
                     yield result.toString();
                 }
-                else if (left instanceof Array array && right instanceof Double rightDouble) {
-                    int times = rightDouble.intValue();
+                else if (left instanceof Array array && right instanceof Number number) {
+                    int times = number.intValue();
                     int length = array.length() * times;
                     Array result = new Array(length);
                     for (int i = 0; i < times; i++) {
@@ -106,7 +106,10 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
             case ArithmeticTokenType.SLASH -> {
                 InterpreterUtilities.checkNumberOperands(operator, left, right);
                 if ((double) right == 0) {
-                    throw new ScriptEvaluationError("Can't use slash with zero double.", Phase.INTERPRETING, operator);
+                    throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                            .message(DiagnosticMessage.ILLEGAL_ZERO_DIVISION)
+                            .at(operator)
+                            .build();
                 }
                 yield (double) left / (double) right;
             }

@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
@@ -31,10 +27,16 @@ import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.external.CompositeInstance;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents a class definition inside a script. The class is identified by its name, and
@@ -52,7 +54,7 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
     private final VirtualFunction constructor;
     private final VariableScope variableScope;
     private final Map<String, VirtualFunction> methods;
-    private final Map<String, FieldStatement> fields;
+    private final Map<String, VirtualProperty> fields;
     private final boolean isDynamic;
 
     public VirtualClass(String name,
@@ -60,7 +62,7 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
                         VirtualFunction constructor,
                         VariableScope variableScope,
                         Map<String, VirtualFunction> methods,
-                        Map<String, FieldStatement> fields,
+                        Map<String, VirtualProperty> fields,
                         boolean finalized,
                         boolean isDynamic
     ) {
@@ -109,7 +111,7 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
      *
      * @return All fields of the class.
      */
-    public Map<String, FieldStatement> fields() {
+    public Map<String, VirtualProperty> fields() {
         return this.fields;
     }
 
@@ -119,7 +121,7 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
      * @param name The name of the field.
      * @return The field, or {@code null} if no field is found.
      */
-    public FieldStatement field(String name) {
+    public VirtualProperty property(String name) {
         return this.fields.get(name);
     }
 
@@ -185,7 +187,10 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
     @Override
     public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
         if (instance != null) {
-            throw new ScriptEvaluationError("Cannot call a class as an instance", Phase.INTERPRETING, at);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .at(at)
+                    .message(DiagnosticMessage.CONSTRUCTOR_CALL_ON_INSTANCE)
+                    .build();
         }
         if (this.superClass instanceof ExternalClass) {
             CompositeInstance<?> compositeInstance = new CompositeInstance<>(this);
@@ -193,7 +198,25 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
             return compositeInstance;
         }
         else {
+            VariableScope currentScope = interpreter.visitingScope();
             InstanceReference virtualInstance = new VirtualInstance(this);
+
+            VariableScope instanceScope = new VariableScope(this.variableScope);
+            variableScope.define(ObjectTokenType.THIS.representation(), virtualInstance);
+            interpreter.enterScope(instanceScope);
+
+            this.fields.forEach((field, property) -> {
+                FieldStatement fieldStatement = property.fieldStatement();
+                if (fieldStatement.initializer() != null) {
+                    virtualInstance.set(
+                            interpreter,
+                            fieldStatement.name(),
+                            interpreter.evaluate(fieldStatement.initializer()),
+                            instanceScope
+                    );
+                }
+            });
+            interpreter.enterScope(currentScope);
             // Acts as a virtual constructor
             VirtualFunction initializer = this.constructor();
             if (initializer != null) {

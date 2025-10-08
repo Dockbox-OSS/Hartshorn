@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.InfixExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
@@ -26,6 +23,9 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.util.ApplicationException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO: #1061 Add documentation
@@ -47,7 +47,11 @@ public class InfixExpressionInterpreter implements ASTNodeInterpreter<Object, In
             return value.call(node.infixOperatorName(), interpreter, null, args);
         }
         catch (ApplicationException e) {
-            throw new ScriptEvaluationError(e, Phase.INTERPRETING, node.infixOperatorName());
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .at(node)
+                    .message("Error while evaluating infix expression with operator '" + node.infixOperatorName() + "': " + e.getMessage())
+                    .cause(e)
+                    .build();
         }
     }
 }

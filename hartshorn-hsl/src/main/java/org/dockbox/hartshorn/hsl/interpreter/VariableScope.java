@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A variable scope represents all declared variables inside a specific scope, with access to a
@@ -72,8 +73,10 @@ public class VariableScope {
         if (this.enclosing != null) {
             return this.enclosing.get(name);
         }
-
-        throw new ScriptEvaluationError("Undefined variable '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
+                .at(name)
+                .build();
     }
 
     /**
@@ -106,7 +109,10 @@ public class VariableScope {
             this.enclosing.assign(name, value);
             return;
         }
-        throw new ScriptEvaluationError("Undefined variable '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
+                .at(name)
+                .build();
     }
 
     public void assignAt(int distance, Token name, Object value) {
@@ -164,7 +170,10 @@ public class VariableScope {
         for (int i = 0; i < distance; i++) {
             variableScope = variableScope.enclosing;
             if (variableScope == null) {
-                throw new ScriptEvaluationError("No enclosing scope at distance %s for active scope.".formatted(distance), Phase.INTERPRETING, name);
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.MISSING_ENCLOSING_SCOPE_AT_DIST, distance)
+                        .at(name)
+                        .build();
             }
         }
         return variableScope;

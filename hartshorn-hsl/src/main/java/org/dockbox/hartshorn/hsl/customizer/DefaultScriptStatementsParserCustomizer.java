@@ -19,6 +19,25 @@ package org.dockbox.hartshorn.hsl.customizer;
 import org.dockbox.hartshorn.hsl.ParserCustomizer;
 import org.dockbox.hartshorn.hsl.ScriptLanguageConfiguration;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
+import org.dockbox.hartshorn.hsl.parser.expression.AssignExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.BinaryAdditionExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.BinaryComparisonExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.BinaryEqualityExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.BinaryMultiplicationExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.BitwiseExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.CallExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.ComplexArrayExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.ElvisExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.GroupingExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.InfixExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.LogicalAssignExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.LogicalExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.PrefixExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.RangeExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.TernaryExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.UnaryExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.statement.BlockStatementParser;
 import org.dockbox.hartshorn.hsl.parser.statement.BreakStatementParser;
 import org.dockbox.hartshorn.hsl.parser.statement.CaseBodyStatementParser;
@@ -55,6 +74,7 @@ public class DefaultScriptStatementsParserCustomizer implements ParserCustomizer
 
     @Override
     public void configure(TokenParser target) {
+        // Statement parsers
         target.statementParser(new BlockStatementParser());
         target.statementParser(new BreakStatementParser());
         target.statementParser(new ClassStatementParser(new FieldStatementParser()));
@@ -73,5 +93,26 @@ public class DefaultScriptStatementsParserCustomizer implements ParserCustomizer
         target.statementParser(new TestStatementParser());
         target.statementParser(new VariableDeclarationParser());
         target.statementParser(new WhileStatementParser());
+
+        // Expression parsers
+        target.expressionParser(new AssignExpressionParser());
+        target.expressionParser(new ElvisExpressionParser());
+        target.expressionParser(new TernaryExpressionParser());
+        target.expressionParser(new BitwiseExpressionParser());
+        target.expressionParser(new LogicalExpressionParser());
+        target.expressionParser(new BinaryEqualityExpressionParser());
+        target.expressionParser(new RangeExpressionParser());
+        target.expressionParser(new LogicalAssignExpressionParser(target.tokenRegistry()));
+        target.expressionParser(new PrefixExpressionParser());
+        target.expressionParser(new BinaryComparisonExpressionParser());
+        target.expressionParser(new BinaryAdditionExpressionParser());
+        target.expressionParser(new BinaryMultiplicationExpressionParser());
+        target.expressionParser(new InfixExpressionParser());
+        target.expressionParser(new UnaryExpressionParser());
+        target.expressionParser(new CallExpressionParser());
+        target.expressionParser(new LiteralExpressionParser());
+        target.expressionParser(new IdentifierExpressionParser());
+        target.expressionParser(new GroupingExpressionParser());
+        target.expressionParser(new ComplexArrayExpressionParser());
     }
 }

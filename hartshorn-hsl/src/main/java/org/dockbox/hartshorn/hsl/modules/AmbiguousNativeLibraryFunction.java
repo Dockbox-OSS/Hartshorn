@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -38,7 +39,7 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public record AmbiguousLibraryFunction(Set<NativeLibrary> libraries) implements CallableNode {
+public record AmbiguousNativeLibraryFunction(Set<NativeLibrary> libraries) implements CallableNode {
 
     @Override
     public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments)
@@ -46,17 +47,27 @@ public record AmbiguousLibraryFunction(Set<NativeLibrary> libraries) implements 
 
         List<NativeLibrary> applicableLibraries = this.libraries.stream()
                 .filter(library -> library.declaration().params().size() == arguments.size())
+                .filter(library -> {
+                    Class<?>[] parameterTypes = arguments.stream().map(Object::getClass).toArray(Class[]::new);
+                    return library.declaration().method().parameters().matches(parameterTypes);
+                })
                 .toList();
 
         if(applicableLibraries.isEmpty()) {
-            throw new ScriptEvaluationError("No applicable library found for " + arguments.size() + " arguments", Phase.INTERPRETING, at);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.NO_COMPATIBLE_LIBRARY_FUNCTION, arguments.size())
+                    .at(at)
+                    .build();
         }
         else if(applicableLibraries.size() > 1) {
-            throw new ScriptEvaluationError("Multiple applicable libraries found for " + arguments.size() + " arguments", Phase.INTERPRETING, at);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.MULTIPLE_COMPATIBLE_LIBRARY_FUNCTIONS, arguments.size())
+                    .at(at)
+                    .build();
         }
         else {
-            CallableNode library = applicableLibraries.getFirst();
-            return library.call(at, interpreter, instance, arguments);
+            CallableNode callableNode = applicableLibraries.getFirst();
+            return callableNode.call(at, interpreter, instance, arguments);
         }
     }
 }

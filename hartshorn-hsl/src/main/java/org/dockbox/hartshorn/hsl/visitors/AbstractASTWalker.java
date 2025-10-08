@@ -313,7 +313,15 @@ public abstract class AbstractASTWalker<R> implements ExpressionVisitor<R>, Stat
 
     @Override
     public R visit(FieldStatement statement) {
-        statement.initializer().accept(this);
+        if (statement.getter() != null) {
+            statement.getter().accept(this);
+        }
+        if (statement.setter() != null) {
+            statement.setter().accept(this);
+        }
+        if (statement.initializer() != null) {
+            statement.initializer().accept(this);
+        }
         return null;
     }
 

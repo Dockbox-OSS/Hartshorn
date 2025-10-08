@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.hsl.parser.statement;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -35,7 +34,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public abstract class AbstractControlStatementParser<T extends Statement> implements ASTNodeParser<T> {
+public abstract class AbstractControlStatementParser<T extends Statement> implements StatementParser<T> {
 
     /**
      * The keyword that represents the control statement.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 /**
@@ -28,7 +27,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
  *
  * @author Guus Lieben
  */
-public class RepeatStatementInterpreter implements ASTNodeInterpreter<Void, RepeatStatement> {
+public class RepeatStatementInterpreter implements StatementInterpreter<RepeatStatement> {
 
     @Override
     public Void interpret(RepeatStatement node, Interpreter interpreter) {

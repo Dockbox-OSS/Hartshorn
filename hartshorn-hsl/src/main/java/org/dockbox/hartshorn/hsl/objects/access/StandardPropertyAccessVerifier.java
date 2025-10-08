@@ -16,11 +16,15 @@
 
 package org.dockbox.hartshorn.hsl.objects.access;
 
-import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFieldMemberFunction;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
 
 /**
  * A standard implementation of the {@link PropertyAccessVerifier} interface, which verifies access to properties
@@ -36,21 +40,60 @@ import org.dockbox.hartshorn.hsl.token.Token;
 public class StandardPropertyAccessVerifier implements PropertyAccessVerifier {
 
     @Override
-    public boolean verify(Token at, FieldStatement field, InstanceReference instance, VariableScope fromScope) {
-        if (field.isPublic()) {
-            return true;
-        }
+    public FormattedDiagnostic read(final Token at, final VirtualProperty property, final InstanceReference instance, final VariableScope fromScope) {
+        if (property.readModifier() == null || property.readModifier().type() == MemberModifierTokenType.PUBLIC) return null;
+        return this.permittedScope("read", property, instance, fromScope);
+    }
 
+    @Override
+    public FormattedDiagnostic write(final Token at, final VirtualProperty property, final InstanceReference instance, final VariableScope fromScope) {
+        if (property.writeModifier() == null || property.writeModifier().type() == MemberModifierTokenType.PUBLIC) return null;
+        return this.permittedScope("assign to", property, instance, fromScope);
+    }
+
+    private FormattedDiagnostic permittedScope(final String action, final VirtualProperty property, final InstanceReference instance, final VariableScope fromScope) {
         if (instance instanceof VirtualInstance virtualInstance) {
             VariableScope classScope = virtualInstance.type().variableScope();
             VariableScope currentScope = fromScope;
             while (currentScope != null) {
                 if (currentScope == classScope) {
-                    return true;
+                    return null;
                 }
                 currentScope = currentScope.enclosing();
             }
         }
-        return false;
+
+        final String name = property.fieldStatement().name().lexeme();
+        final String parent = instance.type().name();
+
+        final Token modifierToken = property.fieldStatement().modifier();
+        final String modifier = modifierToken == null ? MemberModifierTokenType.PUBLIC.representation() : modifierToken.lexeme();
+
+        final String members;
+        final VirtualFieldMemberFunction setter = property.setter();
+        final VirtualFieldMemberFunction getter = property.getter();
+
+        if (setter == null && getter == null) {
+            members = "no members";
+        } else {
+            final StringBuilder memberBuilder = new StringBuilder();
+            if (setter != null) {
+                memberBuilder.append("a ");
+                memberBuilder.append(setter.modifier() == null ? "public" : setter.modifier().lexeme());
+                memberBuilder.append(" setter");
+            }
+            if (getter != null) {
+                if (setter != null) {
+                    memberBuilder.append(" and a ");
+                } else {
+                    memberBuilder.append("a ");
+                }
+                memberBuilder.append(getter.modifier() == null ? "public" : getter.modifier().lexeme());
+                memberBuilder.append(" getter");
+            }
+            members = memberBuilder.toString();
+        }
+
+        return new FormattedDiagnostic(DiagnosticMessage.INVALID_PROPERTY_ACCESS, action, name, parent, modifier, members);
     }
 }

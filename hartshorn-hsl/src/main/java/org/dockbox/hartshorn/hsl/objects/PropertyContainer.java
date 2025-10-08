@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.hsl.objects;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
@@ -38,14 +38,14 @@ public interface PropertyContainer {
      * Sets a property on the instance. If the property is not supported or accessible,
      * an {@link ScriptEvaluationError} is thrown.
      *
+     * @param interpreter The interpreter calling this method.
      * @param name The name of the property.
      * @param value The value of the property.
      * @param fromScope The scope from which the property is set.
-     * @param options The execution options.
      *
      * @throws ScriptEvaluationError If the property is not supported or not accessible.
      */
-    void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options);
+    void set(Interpreter interpreter, Token name, Object value, VariableScope fromScope);
 
     /**
      * Gets a property from the instance. This may either return a {@link CallableNode}
@@ -53,12 +53,12 @@ public interface PropertyContainer {
      * a field. If the property is not supported or accessible, a {@link ScriptEvaluationError}
      * is thrown.
      *
+     * @param interpreter The interpreter calling this method.
      * @param name The name of the property.
      * @param fromScope The scope from which the property is retrieved.
-     * @param options The execution options.
      *
      * @return The value of the property.
      * @throws ScriptEvaluationError If the property is not supported or accessible.
      */
-    Object get(Token name, VariableScope fromScope, ExecutionOptions options);
+    Object get(Interpreter interpreter, Token name, VariableScope fromScope);
 }

@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.token.type;
 
-import java.util.function.Consumer;
-
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
+
+import java.util.function.Consumer;
 
 /**
  * Represents keyword tokens that are related to class definitions in the HSL language.
@@ -51,6 +51,9 @@ public enum ClassTokenType implements EnumTokenType {
      * The 'implements' keyword representing an implementation of an interface.
      */
     IMPLEMENTS,
+
+    GET(builder -> builder.keyword(true).build()),
+    SET(builder -> builder.keyword(true).build()),
     ;
 
     private final TokenMetaData metaData;

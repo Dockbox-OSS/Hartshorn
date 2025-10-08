@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
@@ -42,12 +43,18 @@ public class PostfixExpressionInterpreter implements ASTNodeInterpreter<Object, 
 
         TokenType type = node.operator().type();
         if (!(type instanceof ArithmeticTokenType arithmeticTokenType)) {
-            throw new ScriptEvaluationError("Invalid postfix operator " + type, Phase.INTERPRETING, node.operator());
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.ILLEGAL_POSTFIX, type.representation())
+                    .at(node.operator())
+                    .build();
         }
         double newValue = switch (arithmeticTokenType) {
             case PLUS_PLUS -> (double) left + 1;
             case MINUS_MINUS -> (double) left -1;
-            default -> throw new ScriptEvaluationError("Invalid postfix operator " + type, Phase.INTERPRETING, node.operator());
+            default -> throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, type.representation())
+                    .at(node.operator())
+                    .build();
         };
 
         if (node.leftExpression() instanceof VariableExpression variable) {

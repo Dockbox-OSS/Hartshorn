@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.extension;
 
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
@@ -31,6 +32,13 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  * @author Guus Lieben
  */
 public non-sealed interface StatementModule<T extends Statement & CustomASTNode<T, Void>> extends ASTExtensionModule<T, Void> {
+
+    /**
+     * The parser that is responsible for parsing the node.
+     *
+     * @return The parser that is responsible for parsing the node.
+     */
+    StatementParser<T> parser();
 
     /**
      * Accept a visitor for this statement.

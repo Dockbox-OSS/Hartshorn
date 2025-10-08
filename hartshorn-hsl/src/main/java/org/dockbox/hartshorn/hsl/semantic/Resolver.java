@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,6 @@
  */
 
 package org.dockbox.hartshorn.hsl.semantic;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
@@ -37,8 +32,14 @@ import org.dockbox.hartshorn.hsl.extension.CustomExpression;
 import org.dockbox.hartshorn.hsl.extension.CustomStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.Finalizable;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * Standard resolver to perform semantic analysis and type checking before a collection of statements
@@ -92,6 +93,12 @@ public class Resolver {
          * TestStatement test statements}.
          */
         TEST,
+        /**
+         * A field member, which is a function-like expression used to assign get/set statements
+         * to field in a class. Usually linked to {@link ClassStatement class statements} that have
+         * field members.
+         */
+        FIELD_MEMBER,
     }
 
     /**
@@ -362,7 +369,10 @@ public class Resolver {
 
         // Never declare variable twice in same scope
         if (scope.containsKey(name.lexeme())) {
-            throw new ScriptEvaluationError("Variable with name '%s' already declared in this scope.".formatted(name.lexeme()), Phase.RESOLVING, name);
+            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+                    .message(DiagnosticMessage.VARIABLE_ALREADY_DECLARED, name.lexeme())
+                    .at(name)
+                    .build();
         }
         scope.put(name.lexeme(), false);
     }
@@ -395,7 +405,10 @@ public class Resolver {
     public void checkFinal(Token name) {
         if (this.finals.peek().containsKey(name.lexeme())) {
             String existingWhat = this.finals.peek().get(name.lexeme());
-            throw new ScriptEvaluationError("Cannot reassign final %s '%s'.".formatted(existingWhat, name.lexeme()), Phase.RESOLVING, name);
+            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+                    .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT, existingWhat, name.lexeme())
+                    .at(name)
+                    .build();
         }
     }
 

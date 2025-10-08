@@ -16,10 +16,10 @@
 
 package org.dockbox.hartshorn.hsl.token.type;
 
-import java.util.function.Consumer;
-
 import org.dockbox.hartshorn.hsl.token.TokenMetaData;
 import org.dockbox.hartshorn.hsl.token.TokenMetaDataBuilder;
+
+import java.util.function.Consumer;
 
 /**
  * Represents a control token type, which is a keyword that controls the flow of a script. These
@@ -75,6 +75,10 @@ public enum ControlTokenType implements EnumTokenType {
      * required to be combined with other statements.
      */
     RETURN(true),
+    /**
+     * TODO
+     */
+    YIELD(true),
     /**
      * Represents the 'default' keyword. 'default' keywords indicate the default condition of a
      * 'switch' statement. This is not a standalone statement, and is required to be combined with a

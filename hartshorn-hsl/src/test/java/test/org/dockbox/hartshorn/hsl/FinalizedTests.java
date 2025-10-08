@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import org.dockbox.hartshorn.inject.annotations.Inject;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -39,15 +40,14 @@ public class FinalizedTests {
                 final class User { }
                 class Admin extends User { }
                 """);
-        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
-        Assertions.assertEquals("""
-                Cannot extend final class 'User'. While interpreting at line 2, column 23.
-                class Admin extends User { }
-                                       ^""", error.getMessage());
+        HSLTestUtilities.assertEvaluationFails(script, FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE)
+            .argument("User")
+            .build());
     }
 
     @Test
-    void canExtendExternalNonFinalClass() {
+    void canExtendNonFinalExternalClass() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 class Admin extends User { }
                 """);
@@ -58,14 +58,13 @@ public class FinalizedTests {
     @Test
     void cannotExtendFinalExternalClass() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
-                class Admin extends User { }
+                class Admin extends FinalUser { }
                 """);
-        script.runtime().imports("User", FinalUser.class);
-        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
-        Assertions.assertEquals("""
-                Cannot extend final class 'FinalUser'. While interpreting at line 1, column 20.
-                class Admin extends User { }
-                                    ^""", error.getMessage());
+        script.runtime().imports(FinalUser.class);
+        HSLTestUtilities.assertEvaluationFails(script, FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.ILLEGAL_FINAL_SUPER_TYPE)
+            .argument("FinalUser")
+            .build());
     }
 
     @Test
@@ -74,11 +73,11 @@ public class FinalizedTests {
                 final var x = 1;
                 x = 2;
                 """);
-        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
-        Assertions.assertEquals("""
-                Cannot reassign final variable 'x'. While resolving at line 2, column 0.
-                x = 2;
-                ^""", error.getMessage());
+        HSLTestUtilities.assertEvaluationFails(script, FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
+            .argument("variable")
+            .argument("x")
+            .build());
     }
 
     @Test
@@ -87,11 +86,11 @@ public class FinalizedTests {
                 final function x() { }
                 function x() { }
                 """);
-        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
-        Assertions.assertEquals("""
-                Cannot reassign final function 'x'. While resolving at line 2, column 9.
-                function x() { }
-                         ^""", error.getMessage());
+        HSLTestUtilities.assertEvaluationFails(script, FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
+            .argument("function")
+            .argument("x")
+            .build());
     }
 
     @Test
@@ -100,11 +99,11 @@ public class FinalizedTests {
                 final class User { }
                 class User { }
                 """);
-        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
-        Assertions.assertEquals("""
-                Cannot reassign final class 'User'. While resolving at line 2, column 9.
-                class User { }
-                         ^""", error.getMessage());
+        HSLTestUtilities.assertEvaluationFails(script, FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
+            .argument("class")
+            .argument("User")
+            .build());
     }
 
     @Test
@@ -115,12 +114,17 @@ public class FinalizedTests {
                 """);
         // Do not evaluate, as the native function does not exist in the current environment.
         ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::resolve);
-        Assertions.assertEquals("""
-                Cannot reassign final native function 'x'. While resolving at line 2, column 9.
-                function x() { }
-                         ^""", error.getMessage());
+        HSLTestUtilities.assertEvaluationError(error, FormattedDiagnostic.builder()
+                        .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
+                        .argument("native function")
+                        .argument("x")
+                        .build());
+        HSLTestUtilities.assertEvaluationFailedAtPosition(error, 2, 9);
     }
 
-    public static class User { }
-    public static final class FinalUser { }
+    public static class User {
+    }
+
+    public static final class FinalUser {
+    }
 }

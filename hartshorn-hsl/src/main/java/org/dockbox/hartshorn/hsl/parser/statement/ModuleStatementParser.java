@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.hsl.parser.statement;
 import java.util.Set;
 
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -34,7 +33,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class ModuleStatementParser implements ASTNodeParser<ModuleStatement> {
+public class ModuleStatementParser implements StatementParser<ModuleStatement> {
 
     @Override
     public Option<? extends ModuleStatement> parse(TokenParser parser, TokenStepValidator validator) {

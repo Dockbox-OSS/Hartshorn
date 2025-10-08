@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Par
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.objects.external.ExecutableLookup;
+import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -100,18 +101,28 @@ public abstract class AbstractNativeModule implements NativeModule {
             return function.method().equals(method);
         })) {
             try {
-                Object result = method.invoke(this.instance(), arguments.toArray(Object[]::new)).orNull();
-                return new ExternalInstance(result, TypeUtils.unchecked(method.returnType(), TypeView.class));
+                Object instance = this.instance();
+                Object[] argumentsArray = arguments.toArray(Object[]::new);
+                Object result = (instance == null
+                        ? method.invokeStatic(argumentsArray)
+                        : method.invoke(instance, argumentsArray)
+                ).orNull();
+                ExternalClass<?> externalClass = interpreter.state().externalClassRegistry().defineClass(method.returnType());
+                return new ExternalInstance(result, TypeUtils.unchecked(externalClass, ExternalClass.class));
             }
             catch(Throwable e) {
-                throw new ScriptEvaluationError(e, Phase.INTERPRETING, at);
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .at(at)
+                        .message("Error while invoking function '%s': %s".formatted(function.name().lexeme(), e.getMessage()))
+                        .cause(e)
+                        .build();
             }
         }
         else {
-            throw new ScriptEvaluationError(
-                    "Function '" + function.name().lexeme() + "' is not supported by module '" + this.moduleClass().getSimpleName() + "'",
-                    Phase.INTERPRETING, at
-            );
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .at(at)
+                    .message("Function '%s' is not supported by module '%s'".formatted(function.name().lexeme(), this.moduleClass().getSimpleName()))
+                    .build();
         }
     }
 

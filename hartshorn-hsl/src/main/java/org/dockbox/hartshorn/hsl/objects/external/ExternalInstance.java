@@ -16,22 +16,22 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
-import java.util.Map;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.FieldView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.util.Map;
 
 /**
  * Represents a single nullable {@link Object} instance that can be accessed from an HSL
@@ -47,14 +47,14 @@ import org.dockbox.hartshorn.util.option.Option;
 public class ExternalInstance implements ExternalObjectReference {
 
     private final Object instance;
-    private final TypeView<Object> type;
+    private final ExternalClass<?> type;
 
-    public <T> ExternalInstance(T instance, TypeView<T> type) {
-        if (instance != null && !type.isInstance(instance)) {
+    public <T> ExternalInstance(T instance, ExternalClass<T> type) {
+        if (instance != null && !type.type().isInstance(instance)) {
             throw new IllegalArgumentException("Instance of type %s is not an instance of %s".formatted(instance.getClass().getName(), type.name()));
         }
         this.instance = instance;
-        this.type = (TypeView<Object>) type;
+        this.type = type;
     }
 
     /**
@@ -66,17 +66,20 @@ public class ExternalInstance implements ExternalObjectReference {
     }
 
     @Override
-    public void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options) {
-        Option<FieldView<Object, ?>> field = this.type.fields().named(name.lexeme());
+    public void set(final Interpreter interpreter, final Token name, final Object value, VariableScope fromScope) {
+        Option<FieldView<?, ?>> field = this.type.type().fields()
+                .named(name.lexeme())
+                .map(f -> TypeUtils.unchecked(f, FieldView.class));
         if (field.present()) {
             try {
                 field.get().set(this.instance(), value);
             }
             catch(Throwable throwable) {
-                throw new ScriptEvaluationError(
-                        throwable, "Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.type.name()),
-                        Phase.INTERPRETING, name
-                );
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .at(name)
+                        .message("Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.type.name()))
+                        .cause(throwable)
+                        .build();
             }
         }
         else {
@@ -85,34 +88,35 @@ public class ExternalInstance implements ExternalObjectReference {
     }
 
     @Override
-    public Object get(Token name, VariableScope fromScope, ExecutionOptions options) {
-        Object[] methods = this.type.methods().all().stream()
+    public Object get(final Interpreter interpreter, final Token name, VariableScope fromScope) {
+        Object[] methods = this.type.type().methods().all().stream()
                 .filter(method -> method.name().equals(name.lexeme()))
                 .toArray();
 
-        if (methods.length > 1 && !options.permitAmbiguousExternalFunctions()) {
-            throw new ScriptEvaluationError(
-                    "Ambiguous method call for method %s".formatted(name.lexeme()),
-                    Phase.INTERPRETING, name
-            );
+        if (methods.length > 1 && !interpreter.executionOptions().permitAmbiguousExternalFunctions()) {
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .at(name)
+                    .message("Ambiguous method call for method %s".formatted(name.lexeme()))
+                    .build();
         }
 
         if (methods.length > 0) {
             return new ExternalFunction(this.type, name.lexeme());
         }
 
-        Option<FieldView<Object, ?>> field = this.type.fields().named(name.lexeme());
+        Option<FieldView<?, ?>> field = this.type.type().fields()
+                .named(name.lexeme())
+                .map(f -> TypeUtils.unchecked(f, FieldView.class));
         if (field.present()) {
             try {
                 return field.get().get(this.instance());
             }
             catch(Throwable throwable) {
-                throw new ScriptEvaluationError(
-                        throwable,
-                        "Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.type.name()),
-                        Phase.INTERPRETING,
-                        name
-                );
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .at(name)
+                        .message("Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.type.name()))
+                        .cause(throwable)
+                        .build();
             }
         }
         else {
@@ -121,10 +125,10 @@ public class ExternalInstance implements ExternalObjectReference {
     }
 
     private ScriptEvaluationError propertyDoesNotExist(Token name) {
-        return new ScriptEvaluationError(
-                "Property %s does not exist on external instance of type %s".formatted(name.lexeme(), this.type.name()),
-                Phase.INTERPRETING, name
-        );
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .at(name)
+                .message("Property %s does not exist on external instance of type %s".formatted(name.lexeme(), this.type.name()))
+                .build();
     }
 
     @Override
@@ -137,7 +141,7 @@ public class ExternalInstance implements ExternalObjectReference {
     @NonNull
     @Override
     public ClassReference type() {
-        return new ExternalClass<>(this.type);
+        return this.type;
     }
 
     @Override

@@ -42,7 +42,6 @@ public class TestStatementParser extends AbstractBodyStatementParser<TestStateme
     @Override
     public Option<? extends TestStatement> parse(TokenParser parser, TokenStepValidator validator) {
         TokenTypePair parameter = parser.tokenRegistry().tokenPairs().parameters();
-        TokenTypePair block = parser.tokenRegistry().tokenPairs().block();
         if (parser.match(AssertTokenType.TEST)) {
             validator.expectAfter(parameter.open(), "test statement");
 

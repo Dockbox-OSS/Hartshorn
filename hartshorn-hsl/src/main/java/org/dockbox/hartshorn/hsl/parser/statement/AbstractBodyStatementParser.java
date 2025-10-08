@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,17 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Set;
 
 /**
  * A parser for a statement that contains a block of statements. Examples of this include functions, if statements, and
@@ -39,7 +40,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public abstract class AbstractBodyStatementParser<T extends ASTNode> implements ASTNodeParser<T> {
+public abstract class AbstractBodyStatementParser<T extends Statement> implements StatementParser<T> {
 
     /**
      * Parses a block statement from the given parser. The actual parsing of the block is delegated to the parser that is
@@ -53,18 +54,23 @@ public abstract class AbstractBodyStatementParser<T extends ASTNode> implements 
      * @return the parsed block statement
      */
     protected BlockStatement blockStatement(String afterStatement, ASTNode at, TokenParser parser, TokenStepValidator validator) {
-        Set<ASTNodeParser<BlockStatement>> parsers = parser.compatibleParsers(BlockStatement.class);
+        Set<StatementParser<BlockStatement>> parsers = parser.compatibleParsers(BlockStatement.class);
         if (parsers.isEmpty()) {
-            throw new ScriptEvaluationError("No BlockStatement parsers found", Phase.PARSING, at);
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.NO_PARSERS_FOR_X, BlockStatement.class.getSimpleName())
+                    .at(at)
+                    .build();
         }
 
-        for (ASTNodeParser<BlockStatement> nodeParser : parsers) {
+        for (StatementParser<BlockStatement> nodeParser : parsers) {
             Option<? extends BlockStatement> statement = nodeParser.parse(parser, validator);
             if (statement.present()) {
                 return statement.get();
             }
         }
-
-        throw new ScriptEvaluationError("Expected block after " + afterStatement, Phase.PARSING, parser.peek());
+        throw ScriptEvaluationError.builder(Phase.PARSING)
+                .message(DiagnosticMessage.EXPECTED_BLOCK_AFTER_X, afterStatement)
+                .at(at)
+                .build();
     }
 }

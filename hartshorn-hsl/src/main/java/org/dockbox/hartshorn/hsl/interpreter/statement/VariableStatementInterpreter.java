@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.VariableStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 
 /**
@@ -27,7 +26,7 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
  *
  * @author Guus Lieben
  */
-public class VariableStatementInterpreter implements ASTNodeInterpreter<Void, VariableStatement> {
+public class VariableStatementInterpreter implements StatementInterpreter<VariableStatement> {
 
     @Override
     public Void interpret(VariableStatement node, Interpreter interpreter) {

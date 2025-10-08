@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
+import org.dockbox.hartshorn.hsl.ast.NamedNode;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
 
@@ -26,8 +27,7 @@ import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
  *
  * @author Guus Lieben
  */
-public interface MemberStatement {
-    Token name();
+public interface MemberStatement extends NamedNode {
 
     Token modifier();
 

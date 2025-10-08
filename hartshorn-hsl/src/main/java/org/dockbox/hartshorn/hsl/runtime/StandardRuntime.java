@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.hsl.condition.ExpressionConditionContext;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.InlineStandardLibraryCustomizer;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
-import org.dockbox.hartshorn.hsl.modules.StandardLibrary;
+import org.dockbox.hartshorn.hsl.modules.StandardUtilitiesLibrary;
 
 /**
  * The default runtime implementation, which follows the evaluation phases and order as
@@ -62,6 +62,6 @@ public class StandardRuntime extends AbstractScriptRuntime {
 
     @Override
     protected Map<String, NativeModule> standardLibraries(ScriptContext context) {
-        return StandardLibrary.asModules(context);
+        return StandardUtilitiesLibrary.asModules(context);
     }
 }

@@ -16,6 +16,24 @@
 
 package org.dockbox.hartshorn.hsl.parser;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.MutableExpressionParserChain;
+import org.dockbox.hartshorn.hsl.parser.expression.SimpleExpressionParserChain;
+import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
+import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -25,26 +43,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-import org.dockbox.hartshorn.hsl.ast.ASTNode;
-import org.dockbox.hartshorn.hsl.ast.expression.Expression;
-import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapter;
-import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
-import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.TokenRegistry;
-import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
-import org.dockbox.hartshorn.hsl.token.type.TokenType;
-import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
-import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.dockbox.hartshorn.util.option.Option;
-
 /**
  * A parser for the tokens of a script. This parser is used to parse the tokens of a script into an
  * abstract syntax tree (AST). This implementation delegates the parsing of statements and expressions
- * to a set of registered {@link ASTNodeParser parsers}.
+ * to a set of registered {@link StatementParser parsers}.
  *
  * <p>The primary function of this implementation directly is the tracking of tokens and the current
  * position in the token stream. It also provides a set of methods to parse the tokens into an AST.
@@ -53,7 +55,7 @@ import org.dockbox.hartshorn.util.option.Option;
  * this parser tracks the state directly, it is not thread-safe. It is expected that a new instance is
  * created for each parsing operation.
  *
- * @see ASTNodeParser
+ * @see StatementParser
  *
  * @since 0.4.13
  *
@@ -64,10 +66,9 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
     private int current = 0;
     private final List<Token> tokens;
 
-    private final Set<ASTNodeParser<? extends Statement>> statementParsers = ConcurrentHashMap.newKeySet();
-    private final Set<ASTNodeParser<? extends Expression>> expressionParsers = ConcurrentHashMap.newKeySet();
+    private final Set<StatementParser<? extends Statement>> statementParsers = ConcurrentHashMap.newKeySet();
+    private final MutableExpressionParserChain expressionParserChain;
     private final TokenStepValidator validator;
-    private final ExpressionParser expressionParser;
     private final TokenRegistry tokenRegistry;
 
     public StandardTokenParser(TokenRegistry tokenRegistry) {
@@ -76,19 +77,9 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
 
     public StandardTokenParser(TokenRegistry tokenRegistry, List<Token> tokens) {
         this.tokenRegistry = tokenRegistry;
-        this.expressionParser = new ComplexExpressionParserAdapter(this::parseModuleExpression);
         this.validator = new StandardTokenStepValidator(this);
         this.tokens = new LinkedList<>(tokens);
-    }
-
-    private Expression parseModuleExpression() {
-        for(ASTNodeParser<? extends Expression> parser : this.expressionParsers()) {
-            Option<? extends Expression> result = parser.parse(this, this.validator);
-            if (result.present()) {
-                return result.get();
-            }
-        }
-        return null;
+        this.expressionParserChain = new SimpleExpressionParserChain();
     }
 
     @Override
@@ -97,47 +88,24 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
     }
 
     @Override
-    public StandardTokenParser statementParser(ASTNodeParser<? extends Statement> parser) {
+    public StandardTokenParser statementParser(StatementParser<? extends Statement> parser) {
         if (parser != null) {
-            validateParser(parser, Statement.class);
             this.statementParsers.add(parser);
         }
         return this;
     }
 
     @Override
-    public TokenParser expressionParser(ASTNodeParser<? extends Expression> parser) {
+    public TokenParser expressionParser(ExpressionParser parser) {
         if (parser != null) {
-            validateParser(parser, Expression.class);
-            this.expressionParsers.add(parser);
+            this.expressionParserChain.add(parser);
         }
         return this;
     }
 
-    /**
-     * Returns the set of statement parsers that are currently registered with this parser.
-     *
-     * @return the set of statement parsers that are currently registered with this parser
-     */
-    public Set<ASTNodeParser<? extends Statement>> statementParsers() {
-        return statementParsers;
-    }
-
-    /**
-     * Returns the set of expression parsers that are currently registered with this parser.
-     *
-     * @return the set of expression parsers that are currently registered with this parser
-     */
-    public Set<ASTNodeParser<? extends Expression>> expressionParsers() {
-        return expressionParsers;
-    }
-
-    private static <T extends ASTNode> void validateParser(ASTNodeParser<? extends T> parser, Class<T> expectedType) {
-        for(Class<? extends T> type : parser.types()) {
-            if (!expectedType.isAssignableFrom(type)) {
-                throw new IllegalArgumentException("Parser " + parser.getClass().getName() + " indicated potential yield of type type " + type.getName() + " which is not a child of " + expectedType.getSimpleName());
-            }
-        }
+    @Override
+    public MutableExpressionParserChain expressionParserChain() {
+        return this.expressionParserChain;
     }
 
     @Override
@@ -208,14 +176,17 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
             return this.advance();
         }
         if (type != this.tokenRegistry().statementEnd()) {
-            throw new ScriptEvaluationError(message, Phase.PARSING, this.peek());
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(message)
+                    .at(this.peek())
+                    .build();
         }
         return null;
     }
 
     @Override
     public Statement statement() {
-        for (ASTNodeParser<? extends Statement> parser : this.statementParsers) {
+        for (StatementParser<? extends Statement> parser : this.statementParsers) {
             Option<? extends Statement> statement = parser.parse(this, this.validator);
             if (statement.present()) {
                 return statement.get();
@@ -224,7 +195,10 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
 
         TokenType type = this.peek().type();
         if (type.standaloneStatement()) {
-            throw new ScriptEvaluationError("Unsupported standalone statement type: " + type, Phase.PARSING, this.peek());
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.UNSUPPORTED_STANDALONE_STATEMENT, type)
+                    .at(this.peek())
+                    .build();
         }
         return this.expressionStatement();
     }
@@ -238,31 +212,37 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
 
     @Override
     public Expression expression() {
-        return this.expressionParser.parse(this, this.validator)
-                .orElseThrow(() -> new ScriptEvaluationError("Expected expression, but found " + this.peek(), Phase.PARSING, this.peek()));
+        Expression expression = this.expressionParserChain.next(this, this.validator);
+        if (expression == null) {
+            throw ScriptEvaluationError.builder(Phase.PARSING)
+                    .message(DiagnosticMessage.EXPECTED_EXPRESSION, this.peek())
+                    .at(this.peek())
+                    .build();
+        }
+        return expression;
     }
 
     @Override
-    public <T extends Statement> Set<ASTNodeParser<T>> compatibleParsers(Class<T> type) {
+    public <T extends Statement> Set<StatementParser<T>> compatibleParsers(Class<T> type) {
         return this.compatibleParserStream(type)
                 .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
-    public <T extends Statement> Option<ASTNodeParser<T>> firstCompatibleParser(Class<T> type) {
+    public <T extends Statement> Option<StatementParser<T>> firstCompatibleParser(Class<T> type) {
         return Option.of(this.compatibleParserStream(type).findFirst());
     }
 
-    private <T extends Statement> Stream<ASTNodeParser<T>> compatibleParserStream(Class<T> type) {
+    private <T extends Statement> Stream<StatementParser<T>> compatibleParserStream(Class<T> type) {
         if (Statement.class.isAssignableFrom(type)) {
             return this.compatibleParserStream(this.statementParsers, type);
         }
         return Stream.empty();
     }
 
-    private <T extends ASTNode, N extends ASTNode> Stream<ASTNodeParser<T>> compatibleParserStream(Collection<? extends ASTNodeParser<? extends N>> parsers, Class<T> type) {
+    private <T extends Statement, N extends Statement> Stream<StatementParser<T>> compatibleParserStream(Collection<? extends StatementParser<? extends N>> parsers, Class<T> type) {
         return parsers.stream()
                 .filter(parser -> parser.types().contains(type))
-                .map(parser -> TypeUtils.unchecked(parser, ASTNodeParser.class));
+                .map(parser -> TypeUtils.unchecked(parser, StatementParser.class));
     }
 }

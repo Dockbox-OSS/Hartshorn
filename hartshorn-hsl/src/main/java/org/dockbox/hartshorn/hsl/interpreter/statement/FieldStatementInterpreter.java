@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
@@ -29,14 +28,14 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
  *
  * @author Guus Lieben
  */
-public class FieldStatementInterpreter implements ASTNodeInterpreter<Void, FieldStatement> {
+public class FieldStatementInterpreter implements StatementInterpreter<FieldStatement> {
 
     @Override
     public Void interpret(FieldStatement node, Interpreter interpreter) {
         Object value = interpreter.evaluate(node.initializer());
         int distance = interpreter.distance(node.initializer());
         PropertyContainer object = (PropertyContainer) interpreter.visitingScope().getAt(node.name(), distance - 1, ObjectTokenType.THIS.representation());
-        object.set(node.name(), value, interpreter.visitingScope(), interpreter.executionOptions());
+        object.set(interpreter, node.name(), value, interpreter.visitingScope());
         return null;
     }
 }

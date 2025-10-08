@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.ast.statement;
 
-import java.util.List;
-
 import org.dockbox.hartshorn.hsl.token.Token;
-import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
+import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
+import org.dockbox.hartshorn.util.introspect.Parameter;
+
+import java.util.List;
 
 /**
  * A constructor statement, which defines a special method used to initialize new objects
@@ -43,7 +44,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  *
  * @author Guus Lieben
  */
-public class ConstructorStatement extends ParametricExecutableStatement {
+public class ConstructorStatement extends ParametricExecutableBodyStatement {
 
     private final Token keyword;
 

@@ -30,13 +30,27 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  */
 public class ReturnStatement extends Statement {
 
+    /**
+     * TODO: #1061 Add documentation
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
+    public enum ReturnType {
+        RETURN,
+        YIELD,
+    }
+
+    private final ReturnType returnType;
     private final Token keyword;
     private final Expression expression;
 
-    public ReturnStatement(Token keyword, Expression expression) {
+    public ReturnStatement(final Token keyword, final Expression expression, final ReturnType returnType) {
         super(keyword);
         this.keyword = keyword;
         this.expression = expression;
+        this.returnType = returnType;
     }
 
     public Token keyword() {
@@ -45,6 +59,10 @@ public class ReturnStatement extends Statement {
 
     public Expression expression() {
         return this.expression;
+    }
+
+    public ReturnType returnType() {
+        return this.returnType;
     }
 
     @Override

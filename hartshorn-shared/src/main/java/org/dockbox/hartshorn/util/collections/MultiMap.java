@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
+import org.dockbox.hartshorn.util.stream.EntryStream;
 
 /**
  * A map that can contain multiple values for a single key. This allows for a more natural way of storing multiple values
@@ -208,6 +210,10 @@ public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
      * @param consumer the {@link BiConsumer}
      */
     void forEach(BiConsumer<K, V> consumer);
+
+    int removeIf(BiPredicate<K, V> predicate);
+
+    EntryStream<K, Collection<V>> stream();
 
     /**
      * Creates a new {@link MultiMapBuilder} which can be used to create a new {@link MultiMap} with a custom

@@ -18,13 +18,14 @@ package org.dockbox.hartshorn.hsl.objects.external;
 
 import java.util.List;
 import java.util.Map;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.interpreter.ExternalClassRegistry;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -44,26 +45,30 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * runtime.run("var instance = MyClass();");
  * }</pre>
  *
+ * @param registry The registry that manages this class.
  * @param type The type represented by this reference.
+ * @param alias The alias under which this class was imported.
  * @param <T> The type of the class.
  *
  * @since 0.4.12
  *
  * @author Guus Lieben
  */
-public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
+public record ExternalClass<T>(ExternalClassRegistry registry, TypeView<T> type, String alias) implements ClassReference {
 
     @Override
     public Object call(Token at, Interpreter interpreter, InstanceReference instance, List<Object> arguments) throws ApplicationException {
         if (instance != null) {
-            throw new ScriptEvaluationError("Cannot call a class with an instance", Phase.INTERPRETING, at);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.CONSTRUCTOR_CALL_ON_INSTANCE)
+                    .at(at)
+                    .build();
         }
         ConstructorView<T> executable = ExecutableLookup.executable(this.type.constructors().all(), arguments);
         if (executable != null) {
             try {
                 T objectInstance = executable.create(arguments.toArray());
-                return new ExternalInstance(objectInstance,
-                        interpreter.applicationContext().environment().introspector().introspect(objectInstance));
+                return new ExternalInstance(objectInstance, this);
             }
             catch (ApplicationException e) {
                 throw e;
@@ -72,7 +77,10 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
                 throw new ApplicationException(throwable);
             }
         }
-        throw new ScriptEvaluationError("No constructor found for class " + this.type.name() + " with arguments " + arguments, Phase.INTERPRETING, at);
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.MISSING_CONSTRUCTOR_WITH_PARAMETERS, this.type.name(), arguments)
+                .at(at)
+                .build();
     }
 
     @Override
@@ -89,7 +97,7 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
 
     @Override
     public MethodReference method(String name) {
-        return new ExternalFunction(this.type(), name);
+        return new ExternalFunction(this, name);
     }
 
     @Override
@@ -98,13 +106,13 @@ public record ExternalClass<T>(TypeView<T> type) implements ClassReference {
         if (parent.isVoid()) {
             return null;
         }
-        return new ExternalClass<>(parent);
+        return this.registry().defineClass(parent);
     }
 
     @Override
     public String name() {
         // TODO #1000: Return alias if imported with non-original name
-        return this.type().name();
+        return this.alias();
     }
 
     @Override

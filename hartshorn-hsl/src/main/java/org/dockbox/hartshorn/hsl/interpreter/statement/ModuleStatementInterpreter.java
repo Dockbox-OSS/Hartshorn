@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,20 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
+import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.modules.AmbiguousNativeLibraryFunction;
+import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
+import org.dockbox.hartshorn.hsl.modules.NativeModule;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
-import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
-import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
-import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
-import org.dockbox.hartshorn.hsl.modules.AmbiguousLibraryFunction;
-import org.dockbox.hartshorn.hsl.modules.NativeLibrary;
-import org.dockbox.hartshorn.hsl.modules.NativeModule;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 /**
  * TODO: #1061 Add documentation
@@ -38,7 +38,7 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
  *
  * @author Guus Lieben
  */
-public class ModuleStatementInterpreter implements ASTNodeInterpreter<Void, ModuleStatement> {
+public class ModuleStatementInterpreter implements StatementInterpreter<ModuleStatement> {
 
     @Override
     public Void interpret(ModuleStatement node, Interpreter interpreter) {
@@ -61,13 +61,16 @@ public class ModuleStatementInterpreter implements ASTNodeInterpreter<Void, Modu
         boolean ambiguousFunction = supportedFunctions.size() > 1;
         if (ambiguousFunction) {
             if (!interpreter.executionOptions().permitAmbiguousExternalFunctions()) {
-                throw new ScriptEvaluationError("Module '" + moduleName + "' contains ambiguous function '" + node.name().lexeme() + "' which is already defined in the global scope.", Phase.INTERPRETING, supportedFunctions.getFirst().name());
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.AMBIGUOUS_FUNCTION_IN_MODULE, moduleName, node.name().lexeme())
+                        .at(supportedFunctions.getFirst().name())
+                        .build();
             }
             else {
                 Set<NativeLibrary> libraries = supportedFunctions.stream()
                         .map(function -> new NativeLibrary(function, moduleName, module))
                         .collect(Collectors.toSet());
-                interpreter.global().define(supportedFunctions.getFirst().name().lexeme(), new AmbiguousLibraryFunction(libraries));
+                interpreter.global().define(supportedFunctions.getFirst().name().lexeme(), new AmbiguousNativeLibraryFunction(libraries));
             }
         }
         else {

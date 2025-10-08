@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
+import org.dockbox.hartshorn.util.stream.EntryStream;
 
 /**
  * An unmodifiable {@link MultiMap} implementation that wraps another {@link MultiMap} and prevents
@@ -140,6 +142,16 @@ public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
     @Override
     public void forEach(BiConsumer<K, V> consumer) {
         this.map.forEach(consumer);
+    }
+
+    @Override
+    public int removeIf(BiPredicate<K, V> predicate) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public EntryStream<K, Collection<V>> stream() {
+        return this.map.stream();
     }
 
     @Override

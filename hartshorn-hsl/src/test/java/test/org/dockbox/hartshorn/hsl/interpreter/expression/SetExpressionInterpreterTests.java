@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package test.org.dockbox.hartshorn.hsl.interpreter.expression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.SetExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
+import org.dockbox.hartshorn.hsl.interpreter.ExternalClassRegistry;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.interpreter.SimpleExternalClassRegistry;
 import org.dockbox.hartshorn.hsl.interpreter.expression.SetExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -30,7 +32,6 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
 
 public class SetExpressionInterpreterTests {
@@ -48,7 +49,8 @@ public class SetExpressionInterpreterTests {
                 new VirtualHierarchyAnnotationLookup());
         TypeView<TestClass> typeView = introspector.introspect(TestClass.class);
 
-        ExternalInstance externalInstance = new ExternalInstance(reference, typeView);
+        ExternalClassRegistry externalClassRegistry = new SimpleExternalClassRegistry();
+        ExternalInstance externalInstance = new ExternalInstance(reference, externalClassRegistry.defineClass(typeView));
         interpreter.visitingScope().define("reference", externalInstance);
 
         Token externalName = Token.of(LiteralTokenType.IDENTIFIER).lexeme("reference").build();

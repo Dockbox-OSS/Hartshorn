@@ -16,22 +16,20 @@
 
 package org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.inject.annotations.SupportPriority;
-import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
-import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
-import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.customizer.DefaultScriptStatementsParserCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
-import org.dockbox.hartshorn.hsl.parser.expression.ComplexExpressionParserAdapter;
-import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.runtime.ScriptRuntime;
 import org.dockbox.hartshorn.hsl.runtime.StandardRuntime;
 import org.dockbox.hartshorn.hsl.runtime.ValidateExpressionRuntime;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
+import org.dockbox.hartshorn.inject.annotations.SupportPriority;
+import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
+import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
+import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 
 /**
@@ -55,12 +53,6 @@ public class ScriptLanguageConfiguration {
     @SupportPriority
     private TokenParser tokenParser() {
         return new StandardTokenParser(DefaultTokenRegistry.createDefault());
-    }
-
-    @Prototype
-    @SupportPriority
-    private ExpressionParser expressionParser() {
-        return new ComplexExpressionParserAdapter(() -> null);
     }
 
     @Prototype

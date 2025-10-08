@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.hsl.interpreter;
 
 import java.util.List;
 
+import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
@@ -46,7 +47,7 @@ import org.slf4j.Logger;
  * is to prevent scope pollution, and potential leaking of errors and results.
  *
  * <p>Interpretation starts with the {@link #interpret(List)} method, which takes a list of statements
- * which have been previously parsed by a {@link org.dockbox.hartshorn.hsl.parser.ASTNodeParser}, and
+ * which have been previously parsed by a {@link StatementParser}, and
  * preferably resolved by a {@link org.dockbox.hartshorn.hsl.semantic.Resolver}.
  *
  * @since 0.6.0

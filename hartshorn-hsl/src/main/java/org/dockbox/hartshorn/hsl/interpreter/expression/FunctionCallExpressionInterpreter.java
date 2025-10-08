@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.expression.FunctionCallExpression;
@@ -31,6 +28,9 @@ import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO: #1061 Add documentation
@@ -57,7 +57,10 @@ public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Obj
         // Can't call non-callable nodes..
         Token openParenthesis = node.openParenthesis();
         if (!(callee instanceof CallableNode function)) {
-            throw new ScriptEvaluationError("Can only call functions and classes, but received " + callee + ".", Phase.INTERPRETING, openParenthesis);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .at(openParenthesis)
+                    .message("Can only call functions and classes, but received %s.".formatted(callee))
+                    .build();
         }
 
         try {
@@ -72,7 +75,10 @@ public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Obj
             }
         }
         catch (ApplicationException e) {
-            throw new ScriptEvaluationError(e, Phase.INTERPRETING, openParenthesis);
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .at(openParenthesis)
+                    .cause(e)
+                    .build();
         }
     }
 }

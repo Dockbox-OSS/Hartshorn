@@ -16,17 +16,20 @@
 
 package org.dockbox.hartshorn.hsl.parser;
 
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.context.Context;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
+import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.MutableExpressionParserChain;
+import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * A parser for the tokens of a script. This parser is used to parse the tokens of a script into an
@@ -53,9 +56,9 @@ public interface TokenParser extends Context {
      *
      * @return the current parser, for chaining
      *
-     * @see org.dockbox.hartshorn.hsl.parser.TokenParser#statementParser(ASTNodeParser)
+     * @see org.dockbox.hartshorn.hsl.parser.TokenParser#statementParser(StatementParser)
      */
-    TokenParser statementParser(ASTNodeParser<? extends Statement> parser);
+    TokenParser statementParser(StatementParser<? extends Statement> parser);
 
     /**
      * Adds an expression parser to the runtime, which can be used to parse expressions in the
@@ -65,9 +68,11 @@ public interface TokenParser extends Context {
      *
      * @return the current parser, for chaining
      *
-     * @see org.dockbox.hartshorn.hsl.parser.TokenParser#expressionParser(ASTNodeParser)
+     * @see org.dockbox.hartshorn.hsl.parser.TokenParser#expressionParser(ExpressionParser)
      */
-    TokenParser expressionParser(ASTNodeParser<? extends Expression> parser);
+    TokenParser expressionParser(ExpressionParser parser);
+
+    MutableExpressionParserChain expressionParserChain();
 
     /**
      * Parses the tokens of a script into an abstract syntax tree (AST).
@@ -173,18 +178,18 @@ public interface TokenParser extends Context {
 
     /**
      * Looks up all parsers that are compatible with the given type. A parser is compatible with a type
-     * if the {@link ASTNodeParser#types() parser's types} contains the given type.
+     * if the {@link StatementParser#types() parser's types} contains the given type.
      *
      * @param <T> the type of statement to find compatible parsers for
      * @param type the type of statement to find compatible parsers for
      *
      * @return all parsers that are compatible with the given type
      */
-    <T extends Statement> Set<ASTNodeParser<T>> compatibleParsers(Class<T> type);
+    <T extends Statement> Set<StatementParser<T>> compatibleParsers(Class<T> type);
 
     /**
      * Looks up the first parser that is compatible with the given type. A parser is compatible with a
-     * type if the {@link ASTNodeParser#types() parser's types} contains the given type.
+     * type if the {@link StatementParser#types() parser's types} contains the given type.
      *
      * @param <T> the type of statement to find a compatible parser for
      * @param type the type of statement to find a compatible parser for
@@ -192,5 +197,5 @@ public interface TokenParser extends Context {
      * @return the first parser that is compatible with the given type, or {@link Option#empty()} if no
      * compatible parser is found
      */
-    <T extends Statement> Option<ASTNodeParser<T>> firstCompatibleParser(Class<T> type);
+    <T extends Statement> Option<StatementParser<T>> firstCompatibleParser(Class<T> type);
 }

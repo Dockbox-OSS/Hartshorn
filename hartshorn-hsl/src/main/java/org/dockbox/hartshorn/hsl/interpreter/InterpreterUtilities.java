@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.hsl.interpreter;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 
@@ -67,16 +68,22 @@ public final class InterpreterUtilities {
     }
 
     public static void checkNumberOperand(Token operator, Object operand) {
-        if (operand instanceof Double) {
+        if (operand instanceof Number) {
             return;
         }
-        throw new ScriptEvaluationError("Operand must be a number.", Phase.INTERPRETING, operator);
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.NON_NUMBER_OPERAND, operand)
+                .at(operator)
+                .build();
     }
 
     public static void checkNumberOperands(Token operator, Object left, Object right) {
         if (left instanceof Number && right instanceof Number) {
             return;
         }
-        throw new ScriptEvaluationError("Operands must the same type -> number.", Phase.INTERPRETING, operator);
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.OPERAND_MISMATCH, "number", left, right)
+                .at(operator)
+                .build();
     }
 }

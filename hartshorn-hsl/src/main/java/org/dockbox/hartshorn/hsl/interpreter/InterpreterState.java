@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,20 @@
 
 package org.dockbox.hartshorn.hsl.interpreter;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * TODO: #1061 Add documentation
@@ -39,9 +41,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 public class InterpreterState {
 
     private final Map<String, ExternalInstance> externalVariables = new ConcurrentHashMap<>();
-    private final Map<String, ExternalClass<?>> imports = new ConcurrentHashMap<>();
     private final Map<Expression, Integer> locals = new ConcurrentHashMap<>();
     private final Map<String, NativeModule> externalModules = new ConcurrentHashMap<>();
+    private final ExternalClassRegistry externalClassRegistry = new SimpleExternalClassRegistry();
 
     private final Interpreter owner;
 
@@ -81,12 +83,12 @@ public class InterpreterState {
     public void global(Map<String, Object> globalVariables) {
         globalVariables.forEach((name, instance) -> {
             TypeView<Object> typeView = this.owner.applicationContext().environment().introspector().introspect(instance);
-            this.externalVariables.put(name, new ExternalInstance(instance, typeView));
+            this.externalVariables.put(name, new ExternalInstance(instance, this.externalClassRegistry.defineClass(typeView)));
         });
     }
 
-    public void imports(Map<String, TypeView<?>> imports) {
-        imports.forEach((name, type) -> this.imports.put(name, new ExternalClass<>(type)));
+    public ExternalClassRegistry externalClassRegistry() {
+        return this.externalClassRegistry;
     }
 
     public void enterScope(VariableScope scope) {
@@ -134,10 +136,15 @@ public class InterpreterState {
         else if (this.externalVariables.containsKey(name.lexeme())) {
             return this.externalVariables.get(name.lexeme());
         }
-        else if (this.imports.containsKey(name.lexeme())) {
-            return this.imports.get(name.lexeme());
+        else if (this.externalClassRegistry.containsClassName(name.lexeme())) {
+            Option<ExternalClass<?>> externalClass = this.externalClassRegistry.getByClassNameOrAlias(name.lexeme());
+            if (externalClass.present()) {
+                return externalClass.get();
+            }
         }
-
-        throw new ScriptEvaluationError("Undefined variable '" + name.lexeme() + "'.", Phase.INTERPRETING, name);
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.UNDEFINED_VARIABLE, name.lexeme())
+                .at(name)
+                .build();
     }
 }

@@ -16,17 +16,17 @@
 
 package org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
+import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.util.configure.Customizer;
 
 /**
  * A functional interface for customizing the {@link TokenParser}. This interface is similar to {@link Customizer} but
  * is specific to the {@link TokenParser}. This customizer can be used to configure the {@link TokenParser} with
- * additional {@link org.dockbox.hartshorn.hsl.ast.statement.Statement} {@link ASTNodeParser parsers}.
+ * additional {@link org.dockbox.hartshorn.hsl.ast.statement.Statement} {@link StatementParser parsers}.
  *
  * @see TokenParser
- * @see TokenParser#statementParser(ASTNodeParser)
+ * @see TokenParser#statementParser(StatementParser)
  *
  * @since 0.5.0
  *

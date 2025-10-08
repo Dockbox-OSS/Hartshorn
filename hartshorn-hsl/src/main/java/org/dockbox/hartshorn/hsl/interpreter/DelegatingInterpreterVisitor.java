@@ -48,6 +48,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
@@ -82,6 +84,10 @@ import org.dockbox.hartshorn.hsl.interpreter.expression.SetExpressionInterpreter
 import org.dockbox.hartshorn.hsl.interpreter.expression.SuperExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.expression.TernaryExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.expression.UnaryExpressionInterpreter;
+import org.dockbox.hartshorn.hsl.interpreter.expression.bitwise.CharacterBitwiseAdditionStrategy;
+import org.dockbox.hartshorn.hsl.interpreter.expression.bitwise.NumberBitwiseAdditionStrategy;
+import org.dockbox.hartshorn.hsl.interpreter.expression.bitwise.NumberCharBitwiseAdditionStrategy;
+import org.dockbox.hartshorn.hsl.interpreter.expression.bitwise.StringBitwiseAdditionStrategy;
 import org.dockbox.hartshorn.hsl.interpreter.statement.ClassStatementInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.statement.ConstructorStatementInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.statement.DoWhileStatementInterpreter;
@@ -114,7 +120,12 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
 
     @Override
     public Object visit(BinaryExpression expression) {
-        return new BinaryExpressionInterpreter().interpret(expression, this.interpreter);
+        return new BinaryExpressionInterpreter(
+                new CharacterBitwiseAdditionStrategy(),
+                new NumberBitwiseAdditionStrategy(),
+                new NumberCharBitwiseAdditionStrategy(),
+                new StringBitwiseAdditionStrategy()
+        ).interpret(expression, this.interpreter);
     }
 
     @Override
@@ -327,6 +338,18 @@ public record DelegatingInterpreterVisitor(Interpreter interpreter) implements I
     @Override
     public Void visit(FieldStatement statement) {
         return new FieldStatementInterpreter().interpret(statement, this.interpreter);
+    }
+
+    @Override
+    public Void visit(FieldGetStatement statement) {
+        // Declaration only, handled in ClassStatementInterpreter
+        return null;
+    }
+
+    @Override
+    public Void visit(FieldSetStatement statement) {
+        // Declaration only, handled in ClassStatementInterpreter
+        return null;
     }
 
     @Override

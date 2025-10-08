@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
@@ -48,18 +49,18 @@ public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNod
                 case BitwiseTokenType.BITWISE_AND -> iLeft & iRight;
                 case BitwiseTokenType.BITWISE_OR -> iLeft | iRight;
                 case BitwiseTokenType.XOR -> this.xor(iLeft, iRight);
-                default -> throw new ScriptEvaluationError(
-                        "Unsupported operator type " + operator.type() + " for bitwise operation",
-                        Phase.INTERPRETING, operator
-                );
+                default -> throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.UNSUPPORTED_BITWISE, operator.lexeme())
+                        .at(operator)
+                        .build();
             };
         }
         String leftType = left != null ? left.getClass().getSimpleName() : null;
         String rightType = right != null ? right.getClass().getSimpleName() : null;
-        throw new ScriptEvaluationError(
-                "Bitwise left and right must be a numbers, but got %s (%s) and %s (%s)".formatted(left, leftType, right, rightType),
-                Phase.INTERPRETING, operator
-        );
+        throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                .message(DiagnosticMessage.ILLEGAL_BITWISE_OP, left, leftType, right, rightType)
+                .at(operator)
+                .build();
     }
 
     protected Object xor(Object left, Object right) {

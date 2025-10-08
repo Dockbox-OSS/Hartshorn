@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.interpreter;
 
 import org.dockbox.hartshorn.hsl.objects.PropertyContainer;
-import org.dockbox.hartshorn.hsl.runtime.ExecutionOptions;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
@@ -94,15 +93,16 @@ public class Array implements Iterable<Object>, PropertyContainer {
     }
 
     @Override
-    public void set(Token name, Object value, VariableScope fromScope, ExecutionOptions options) {
+    public void set(final Interpreter interpreter, final Token name, final Object value, VariableScope fromScope) {
         throw new UnsupportedOperationException("Cannot set properties on arrays.");
     }
 
     @Override
-    public Object get(Token name, VariableScope fromScope, ExecutionOptions interpreter) {
+    public Object get(final Interpreter interpreter, final Token name, VariableScope fromScope) {
         if ("length".equals(name.lexeme())) {
             return this.values.length;
-        } else {
+        }
+        else {
             throw new UnsupportedOperationException("Cannot get properties on arrays, only 'length'.");
         }
     }

@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
@@ -66,13 +67,16 @@ public class UnaryExpressionInterpreter implements ASTNodeInterpreter<Object, Un
         else if (type == BitwiseTokenType.COMPLEMENT) {
 
             InterpreterUtilities.checkNumberOperand(node.operator(), right);
-            int value = ((Double) right).intValue();
+            int value = ((Number) right).intValue();
             // Cast to int is redundant, but required to suppress false-positive inspections.
             //noinspection RedundantCast
             newValue = (int) ~value;
         }
         else {
-            throw new ScriptEvaluationError("Unsupported unary operator.", Phase.INTERPRETING, node.operator());
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.UNSUPPORTED_UNARY, node.operator().lexeme())
+                    .at(node.operator())
+                    .build();
         }
 
         if (node.rightExpression() instanceof VariableExpression variable) {

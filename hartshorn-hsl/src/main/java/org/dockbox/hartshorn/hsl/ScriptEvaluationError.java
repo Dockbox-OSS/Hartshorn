@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 /**
@@ -38,28 +40,12 @@ public class ScriptEvaluationError extends RuntimeException {
     private final int column;
     private final ASTNode at;
 
-    public ScriptEvaluationError(String message, Phase phase, int line, int column) {
-        this(null, message, phase, null, line, column);
-    }
-
-    public ScriptEvaluationError(String message, Phase phase, ASTNode at) {
-        this(null, message, phase, at, at.line(), at.column());
-    }
-
-    public ScriptEvaluationError(Throwable cause, Phase phase, ASTNode at) {
-        this(cause, cause.getMessage(), phase, at);
-    }
-
-    public ScriptEvaluationError(Throwable cause, String message, Phase phase, ASTNode at) {
-        this(cause, message, phase, at, at.line(), at.column());
-    }
-
-    public ScriptEvaluationError(Throwable cause, String message, Phase phase, ASTNode at, int line, int column) {
-        super(message, cause);
-        this.phase = phase;
-        this.at = at;
-        this.line = line;
-        this.column = column;
+    private ScriptEvaluationError(Builder builder) {
+        super(builder.message, builder.cause);
+        this.phase = builder.phase;
+        this.at = builder.at;
+        this.line = builder.line;
+        this.column = builder.column;
     }
 
     /**
@@ -98,5 +84,77 @@ public class ScriptEvaluationError extends RuntimeException {
      */
     public Phase phase() {
         return this.phase;
+    }
+
+    public static Builder builder(Phase phase) {
+        return new Builder(phase);
+    }
+
+    /**
+     * Builder for {@link ScriptEvaluationError}.
+     *
+     * @since 0.4.12
+     *
+     * @author Guus Lieben
+     */
+    public static class Builder {
+
+        private final Phase phase;
+        private int line;
+        private int column;
+        private ASTNode at;
+        private String message;
+        private Throwable cause;
+
+        private Builder(Phase phase) {
+            this.phase = phase;
+        }
+
+        public Builder at(ASTNode at) {
+            this.at = at;
+            if (at != null) {
+                return this.position(at.line(), at.column());
+            }
+            return this;
+        }
+
+        public Builder virtualPosition() {
+            this.line = -1;
+            this.column = -1;
+            return this;
+        }
+
+        public Builder position(int line, int column) {
+            this.line = line;
+            this.column = column;
+            return this;
+        }
+
+        public Builder message(String message) {
+            this.message = message;
+            return this;
+        }
+
+        public Builder message(DiagnosticMessage message, Object... args) {
+            if (message.phase() != null && message.phase() != this.phase) {
+                throw new IllegalArgumentException("Diagnostic message phase " + message.phase() +
+                        " does not match builder phase " + this.phase);
+            }
+            this.message = message.format(args);
+            return this;
+        }
+
+        public Builder message(FormattedDiagnostic diagnostic) {
+            return this.message(diagnostic.message(), diagnostic.arguments());
+        }
+
+        public Builder cause(Throwable cause) {
+            this.cause = cause;
+            return this;
+        }
+
+        public ScriptEvaluationError build() {
+            return new ScriptEvaluationError(this);
+        }
     }
 }

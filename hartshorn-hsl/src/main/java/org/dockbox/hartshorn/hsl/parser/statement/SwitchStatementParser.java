@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchCase;
 import org.dockbox.hartshorn.hsl.ast.statement.SwitchStatement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ControlTokenType;
@@ -43,7 +43,7 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
+public class SwitchStatementParser implements StatementParser<SwitchStatement> {
 
     private static final String SWITCH = "switch";
 
@@ -75,11 +75,17 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
                 if (caseToken.type() == ControlTokenType.CASE) {
                     Expression caseExpression = parser.expression();
                     if (!(caseExpression instanceof LiteralExpression literal)) {
-                        throw new ScriptEvaluationError("Case expression must be a literal.", Phase.PARSING, caseToken);
+                        throw ScriptEvaluationError.builder(Phase.PARSING)
+                                .message(DiagnosticMessage.NON_LITERAL_CASE_EXPRESSION, caseExpression)
+                                .at(caseToken)
+                                .build();
                     }
 
                     if (matchedLiterals.contains(literal.value())) {
-                        throw new ScriptEvaluationError("Duplicate case expression '" + literal.value() + "'.", Phase.PARSING, caseToken);
+                        throw ScriptEvaluationError.builder(Phase.PARSING)
+                                .message(DiagnosticMessage.DUPLICATE_CASE_EXPRESSION, literal.value())
+                                .at(caseToken)
+                                .build();
                     }
                     matchedLiterals.add(literal.value());
 
@@ -90,7 +96,10 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
                 }
                 else {
                     if (defaultBody != null) {
-                        throw new ScriptEvaluationError("Multiple default cases are not allowed.", Phase.PARSING, caseToken);
+                        throw ScriptEvaluationError.builder(Phase.PARSING)
+                                .message(DiagnosticMessage.MULTIPLE_DEFAULT_CASES)
+                                .at(caseToken)
+                                .build();
                     }
                     Option<? extends Statement> body = this.caseBodyStatementParser.parse(parser, validator);
                     if (body.present()) {
@@ -101,7 +110,10 @@ public class SwitchStatementParser implements ASTNodeParser<SwitchStatement> {
 
             validator.expectAfter(block.close(), SWITCH);
             if (cases.isEmpty() && defaultBody == null) {
-                throw new ScriptEvaluationError("Switch statement must have at least one case or a default case.", Phase.PARSING, switchToken);
+                throw ScriptEvaluationError.builder(Phase.PARSING)
+                        .message(DiagnosticMessage.SWITCH_MUST_HAVE_CASE_OR_DEFAULT)
+                        .at(switchToken)
+                        .build();
             }
 
             return Option.of(new SwitchStatement(switchToken, expression, cases, defaultBody));

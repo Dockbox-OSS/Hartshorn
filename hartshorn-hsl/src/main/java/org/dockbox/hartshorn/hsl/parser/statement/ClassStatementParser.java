@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.VariableExpression;
 import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
@@ -27,9 +23,9 @@ import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FunctionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
-import org.dockbox.hartshorn.hsl.parser.ASTNodeParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
@@ -39,6 +35,10 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 /**
  * TODO: #1061 Add documentation
  *
@@ -46,7 +46,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
+public class ClassStatementParser implements StatementParser<ClassStatement> {
 
     private final FieldStatementParser fieldParser;
 
@@ -80,8 +80,14 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
                 case ConstructorStatement constructorStatement -> constructor = constructorStatement;
                 case FunctionStatement function -> methods.add(function);
                 case FieldStatement field -> fields.add(field);
-                case null -> throw new ScriptEvaluationError("Unsupported class body statement type: null", Phase.PARSING, parser.peek());
-                default -> throw new ScriptEvaluationError("Unsupported class body statement type: " + declaration.getClass().getSimpleName(), Phase.PARSING, parser.peek());
+                case null -> throw ScriptEvaluationError.builder(Phase.PARSING)
+                        .message(DiagnosticMessage.UNSUPPORTED_BODY_STATEMENT, parser.tokenRegistry().literals().nullLiteral().representation())
+                        .at(parser.peek())
+                        .build();
+                default -> throw ScriptEvaluationError.builder(Phase.PARSING)
+                        .message(DiagnosticMessage.UNSUPPORTED_BODY_STATEMENT, declaration.getClass().getSimpleName())
+                        .at(parser.peek())
+                        .build();
                 }
             }
 
@@ -105,7 +111,7 @@ public class ClassStatementParser implements ASTNodeParser<ClassStatement> {
     }
 
     private <T extends Statement> T handleDelegate(TokenParser parser, TokenStepValidator validator,
-                                                   Option<ASTNodeParser<T>> statement) {
+                                                   Option<StatementParser<T>> statement) {
         return statement
                 .flatMap(nodeParser -> nodeParser.parse(parser, validator))
                 .orNull();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,19 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO: #1061 Add documentation
@@ -46,8 +47,12 @@ public interface ParametricStatementParser {
             TokenType identifier = parser.tokenRegistry().literals().identifier();
             do {
                 if (parameters.size() >= expectedNumberOfArguments) {
-                    String message = "Cannot have more than " + expectedNumberOfArguments + " parameters" + (functionType == null ? "" : " for " + functionType.representation() + " functions");
-                    throw new ScriptEvaluationError(message, Phase.PARSING, parser.peek());
+                    throw ScriptEvaluationError.builder(Phase.PARSING)
+                            .message(DiagnosticMessage.TOO_MANY_PARAMETERS_FOR_X,
+                                    expectedNumberOfArguments,
+                                    functionType.representation()
+                            ).at(parser.peek())
+                            .build();
                 }
                 Token parameterName = validator.expect(identifier, "parameter name");
                 parameters.add(new Parameter(parameterName));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,19 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
-
-import org.dockbox.hartshorn.inject.annotations.Inject;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -38,44 +38,59 @@ public class VirtualClassTests {
     private ApplicationContext applicationContext;
 
     public static Stream<Arguments> propertyAccessors() {
+        FormattedDiagnostic readPrivateMessage = FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.INVALID_PROPERTY_ACCESS)
+            .argument("read")
+            .argument("name")
+            .argument("User")
+            .argument("private")
+            .argument("no members")
+            .build();
+        FormattedDiagnostic writePrivateMessage = FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.INVALID_PROPERTY_ACCESS)
+            .argument("assign to")
+            .argument("name")
+            .argument("User")
+            .argument("private")
+            .argument("no members")
+            .build();
+        FormattedDiagnostic reassignFinalMessage = FormattedDiagnostic.builder()
+            .message(DiagnosticMessage.ILLEGAL_FINAL_X_OF_Y_REASSIGNMENT)
+            .argument("property")
+            .argument("name")
+            .argument("User")
+            .build();
         return Stream.of(
-                Arguments.of("public", "getName()", false, null),
-                Arguments.of("private", "getName()", false, null),
-                Arguments.of("", "getName()", false, null),
-
-                Arguments.of("public", "name", false, null),
-                Arguments.of("private", "name", true, "Cannot access property 'name' outside of its class scope"),
-                Arguments.of("", "name", false, null),
-
-                Arguments.of("public", "setName(\"Foo\")", false, null),
-                Arguments.of("private", "setName(\"Foo\")", false, null),
-                Arguments.of("", "setName(\"Foo\")", false, null),
-
-                Arguments.of("public", "name = \"Foo\"", false, null),
-                Arguments.of("private", "name = \"Foo\"", true, "Cannot access property 'name' outside of its class scope"),
-                Arguments.of("", "name = \"Foo\"", false, null),
-
-                Arguments.of("public final", "getName()", false, null),
-                Arguments.of("private final", "getName()", false, null),
-                Arguments.of("final", "getName()", false, null),
-
-                Arguments.of("public final", "name", false, null),
-                Arguments.of("private final", "name", true, "Cannot access property 'name' outside of its class scope"),
-                Arguments.of("final", "name", false, null),
-
-                Arguments.of("public final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
-                Arguments.of("private final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
-                Arguments.of("final", "setName(\"Foo\")", true, "Cannot reassign final property 'name'"),
-
-                Arguments.of("public final", "name = \"Foo\"", true, "Cannot reassign final property 'name'"),
-                Arguments.of("private final", "name = \"Foo\"", true, "Cannot reassign final property 'name'"),
-                Arguments.of("final", "name = \"Foo\"", true, "Cannot reassign final property 'name'")
+                Arguments.of("public", "getName()", null),
+                Arguments.of("private", "getName()", null),
+                Arguments.of("", "getName()", null),
+                Arguments.of("public", "name", null),
+                Arguments.of("private", "name", readPrivateMessage),
+                Arguments.of("", "name", null),
+                Arguments.of("public", "setName(\"Foo\")", null),
+                Arguments.of("private", "setName(\"Foo\")", null),
+                Arguments.of("", "setName(\"Foo\")", null),
+                Arguments.of("public", "name = \"Foo\"", null),
+                Arguments.of("private", "name = \"Foo\"", writePrivateMessage),
+                Arguments.of("", "name = \"Foo\"", null),
+                Arguments.of("public final", "getName()", null),
+                Arguments.of("private final", "getName()", null),
+                Arguments.of("final", "getName()", null),
+                Arguments.of("public final", "name", null),
+                Arguments.of("private final", "name", readPrivateMessage),
+                Arguments.of("final", "name", null),
+                Arguments.of("public final", "setName(\"Foo\")", reassignFinalMessage),
+                Arguments.of("private final", "setName(\"Foo\")", reassignFinalMessage),
+                Arguments.of("final", "setName(\"Foo\")", reassignFinalMessage),
+                Arguments.of("public final", "name = \"Foo\"", reassignFinalMessage),
+                Arguments.of("private final", "name = \"Foo\"", writePrivateMessage),
+                Arguments.of("final", "name = \"Foo\"", reassignFinalMessage)
         );
     }
 
     @ParameterizedTest
     @MethodSource("propertyAccessors")
-    void test(String modifier, String accessor, boolean shouldFail, String message) {
+    void test(String modifier, String accessor, FormattedDiagnostic message) {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 class User {
                     %s name;
@@ -93,11 +108,10 @@ public class VirtualClassTests {
                 user.%s;
                 """.formatted(modifier, accessor));
 
-        if (shouldFail) {
+        // If an error message is expected, assert that the script evaluation fails with the expected message
+        if (message != null) {
             ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
-            String errorMessage = error.getMessage();
-            errorMessage = errorMessage.substring(0, errorMessage.indexOf("."));
-            Assertions.assertEquals(message, errorMessage);
+            HSLTestUtilities.assertEvaluationError(error, message);
         } else {
             Assertions.assertDoesNotThrow(script::evaluate);
         }
