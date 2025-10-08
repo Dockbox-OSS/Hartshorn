@@ -20,7 +20,11 @@ public abstract class AbstractBitwiseOrLogicalExpressionParser implements Expres
         Expression expression = chain.next(parser, validator);
         while(parser.match(this.whileMatching())) {
             Token operator = parser.previous();
-            Expression right = parser.expression();
+            // Unlike most, we do not want to call parser.expression() for the right-hand side,
+            // as that would allow for operators with a lower precedence to be parsed first.
+            // Instead, we want to continue parsing with the next parser in the chain, which
+            // should be a parser with the same or higher precedence.
+            Expression right = chain.next(parser, validator);
             expression = this.define(expression, operator, right);
         }
         return expression;

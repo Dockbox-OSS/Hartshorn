@@ -111,8 +111,8 @@ public class DefaultScriptStatementsParserCustomizer implements ParserCustomizer
         target.expressionParser(new UnaryExpressionParser());
         target.expressionParser(new CallExpressionParser());
         target.expressionParser(new LiteralExpressionParser());
-        target.expressionParser(new GroupingExpressionParser());
         target.expressionParser(new IdentifierExpressionParser());
+        target.expressionParser(new GroupingExpressionParser());
         target.expressionParser(new ComplexArrayExpressionParser());
     }
 }
