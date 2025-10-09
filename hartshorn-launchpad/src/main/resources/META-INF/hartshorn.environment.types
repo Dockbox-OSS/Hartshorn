@@ -1,4 +1,3 @@
-org.dockbox.hartshorn.launchpad.resources.ResourceLookupConfiguration
 org.dockbox.hartshorn.launchpad.configuration.LaunchpadSharedComponentConfiguration
 org.dockbox.hartshorn.launchpad.configuration.ApplicationContextCarrierConfiguration
 org.dockbox.hartshorn.launchpad.configuration.LifecycleObserversConfiguration
