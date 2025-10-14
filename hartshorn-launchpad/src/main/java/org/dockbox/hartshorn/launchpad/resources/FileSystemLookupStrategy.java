@@ -29,9 +29,6 @@ import java.util.stream.Collectors;
  * Looks up a resource through the local filesystem. The file directory is looked up based on the configuration path of
  * the path representation, typically this will be similar to {@code /config/{owner-id}/}.
  *
- * <p>This strategy does not require the name to be present, as it is the default strategy used in
- * {@link Resources#getResourceURIs(ApplicationEnvironment, String, ResourceLookupStrategy...)}.
- *
  * @since 0.4.7
  *
  * @author Guus Lieben
@@ -66,7 +63,7 @@ public class FileSystemLookupStrategy implements ResourceLookupStrategy {
     }
 
     @Override
-    public URI baseUrl(ApplicationEnvironment environment) {
+    public URI baseUri(ApplicationEnvironment environment) {
         return environment.fileSystem().applicationPath().toUri();
     }
 }

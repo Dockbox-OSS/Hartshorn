@@ -54,11 +54,11 @@ public interface ResourceLookupStrategy {
     Set<URI> lookup(ApplicationEnvironment environment, String path);
 
     /**
-     * Returns the base URL for this strategy, from where all relative resources are resolved. This URL is expected to
+     * Returns the base URI for this strategy, from where all relative resources are resolved. This URI is expected to
      * be absolute.
      *
      * @param environment the application environment
-     * @return the base URL for this strategy
+     * @return the base URI for this strategy
      */
-    URI baseUrl(ApplicationEnvironment environment);
+    URI baseUri(ApplicationEnvironment environment);
 }

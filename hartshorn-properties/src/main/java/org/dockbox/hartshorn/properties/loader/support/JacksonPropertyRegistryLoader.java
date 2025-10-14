@@ -28,12 +28,12 @@ import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathFormatter;
 import org.dockbox.hartshorn.properties.loader.path.PropertyPathNode;
 import org.dockbox.hartshorn.properties.loader.path.PropertyRootPathNode;
-import org.dockbox.hartshorn.util.FileUtilities;
+import org.dockbox.hartshorn.util.IOUtilities;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.stream.EntryStream;
 
 import java.io.IOException;
-import java.nio.file.Path;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -66,9 +66,9 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
     protected abstract ObjectMapper createObjectMapper();
 
     @Override
-    public void loadRegistry(PropertyRegistry registry, Path path) throws IOException {
-        if (FileUtilities.hasFileExtension(path)) {
-            String fileExtension = FileUtilities.getFileExtension(path);
+    public void loadRegistry(PropertyRegistry registry, URI path) throws IOException {
+        if (IOUtilities.hasFileExtension(path)) {
+            String fileExtension = IOUtilities.getFileExtension(path);
             if (!this.supportedExtensions().contains(fileExtension)) {
                 throw new IllegalArgumentException("Unsupported file extension: " + fileExtension);
             }
@@ -77,8 +77,8 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
         }
         else {
             for (String supportedExtension : this.supportedExtensions()) {
-                Path withExtension = path.resolveSibling(path.getFileName() + "." + supportedExtension);
-                if (FileUtilities.exists(withExtension)) {
+                URI withExtension = URI.create(path.toString() + "." + supportedExtension);
+                if (IOUtilities.exists(withExtension)) {
                     JsonNode graph = this.loadGraph(withExtension);
                     this.loadRegistry(registry, graph);
                     return;
@@ -181,8 +181,8 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
      * @return a {@link JsonNode node-based tree structure} representing the contents of the file
      * @throws IOException if an error occurs while reading the file
      */
-    protected JsonNode loadGraph(Path path) throws IOException {
-        return this.objectMapper().readTree(path.toFile());
+    protected JsonNode loadGraph(URI path) throws IOException {
+        return this.objectMapper().readTree(path.toURL());
     }
 
     /**
@@ -207,7 +207,7 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
     protected abstract Set<String> supportedExtensions();
 
     @Override
-    public boolean isCompatible(Path path) {
-        return this.supportedExtensions().contains(FileUtilities.getFileExtension(path));
+    public boolean isCompatible(URI path) {
+        return this.supportedExtensions().contains(IOUtilities.getFileExtension(path));
     }
 }

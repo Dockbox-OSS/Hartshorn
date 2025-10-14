@@ -16,9 +16,10 @@
 
 package org.dockbox.hartshorn.properties.loader;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
+
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * A loader for {@link PropertyRegistry} instances. This loader is used to populate a registry with
@@ -30,12 +31,5 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
  */
 public interface PropertyRegistryPathLoader {
 
-    /**
-     * Loads the given {@link PropertyRegistry} with properties from the given {@link Path}.
-     *
-     * @param registry the registry to load
-     * @param path the path to load properties from
-     * @throws IOException if an error occurs while loading the properties
-     */
-    void loadRegistry(PropertyRegistry registry, Path path) throws IOException;
+    void loadRegistry(PropertyRegistry registry, URI path) throws IOException;
 }

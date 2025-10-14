@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.launchpad.banner;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Prints a banner from a given resource path. The resource path is expected to be a (plain) text file.
@@ -28,19 +28,21 @@ import java.nio.file.Path;
  */
 public class ResourcePathBanner extends AbstractConsoleBanner {
 
-    private final Path resourcePath;
+    private final InputStream resourcePath;
 
-    public ResourcePathBanner(Path resourcePath) {
+    public ResourcePathBanner(InputStream resourcePath) {
         this.resourcePath = resourcePath;
     }
 
     @Override
     protected Iterable<String> lines() {
         try {
-            return Files.readAllLines(this.resourcePath);
+            byte[] bytes = this.resourcePath.readAllBytes();
+            String string = new String(bytes, StandardCharsets.UTF_8);
+            return string.lines().toList();
         }
         catch (Exception e) {
-            throw new IllegalStateException("Failed to read banner resource %s".formatted(this.resourcePath.getFileName()), e);
+            throw new IllegalStateException("Failed to read banner resource", e);
         }
     }
 }

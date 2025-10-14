@@ -16,21 +16,20 @@
 
 package test.org.dockbox.hartshorn.launchpad.resources;
 
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider;
+import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
-
-import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider;
-import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import org.dockbox.hartshorn.inject.annotations.Inject;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class ResourceLookupTests {

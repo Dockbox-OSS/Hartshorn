@@ -45,7 +45,7 @@ public class ProfileLoaderTests {
         }, MapPropertyRegistry::new);
 
         PropertyRegistry rootRegistry = new MapPropertyRegistry();
-        propertyRegistryLoader.loadRegistry(rootRegistry, Path.of("src/test/resources/application.yml"));
+        propertyRegistryLoader.loadRegistry(rootRegistry, Path.of("src/test/resources/application.yml").toUri());
         var profileRegistry = profileRegistryFactory.create(rootRegistry);
         var profilesInOrder = profileRegistry.profiles();
         Assertions.assertEquals(3, profilesInOrder.size());

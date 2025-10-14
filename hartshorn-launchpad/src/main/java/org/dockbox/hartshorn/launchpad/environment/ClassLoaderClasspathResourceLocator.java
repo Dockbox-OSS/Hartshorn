@@ -17,19 +17,15 @@
 package org.dockbox.hartshorn.launchpad.environment;
 
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
-import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.launchpad.resources.Resources;
+import org.dockbox.hartshorn.util.option.Option;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * The default implementation of {@link ClasspathResourceLocator}. This implementation will copy the resource to a temporary
@@ -48,39 +44,28 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
     }
 
     @Override
-    public Option<Path> resource(String name) throws IOException {
-        File file = Resources.getResourceAsFile(name);
-        if(file.exists()) {
-            return Option.of(file.toPath());
+    public Option<URI> resource(String name) throws IOException {
+        URL url = Resources.getResourceURL(name);
+        try {
+            return Option.of(url.toURI());
         }
-        return Option.empty();
+        catch (URISyntaxException e) {
+            throw new IOException("Could not convert URL to URI: " + url, e);
+        }
     }
 
     @Override
-    public Set<Path> resources(String name) {
-        String normalizedPath = name.replaceAll("\\\\", "/");
-        int lastIndex = normalizedPath.lastIndexOf("/");
-        String path = lastIndex == -1 ? "" : normalizedPath.substring(0, lastIndex + 1);
-        String fileName = lastIndex == -1 ? normalizedPath : normalizedPath.substring(lastIndex + 1);
-
-        Set<File> files = new HashSet<>();
-        Set<File> resources;
-
-        try {
-            resources = Resources.getResourcesAsFiles(path);
-        }
-        catch (NullPointerException | IOException e) {
-            return new HashSet<>();
-        }
-
-        for (File parent : resources) {
-            File[] filteredResources = parent.listFiles((dir, file) -> file.startsWith(fileName));
-            if(filteredResources != null) {
-                files.addAll(Arrays.asList(filteredResources));
+    public Set<URI> resources(String name) throws IOException {
+        Set<URI> uris = new HashSet<>();
+        for (URL url : Resources.getResourceURLs(name)) {
+            try {
+                uris.add(url.toURI());
+            }
+            catch (URISyntaxException e) {
+                throw new IOException("Could not convert URL to URI: " + url, e);
             }
         }
-
-        return files.stream().map(File::toPath).collect(Collectors.toUnmodifiableSet());
+        return uris;
     }
 
     @Override

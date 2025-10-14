@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -84,7 +83,7 @@ public class ConfigurationProfileRegistryFactory implements ProfileRegistryFacto
         PropertyRegistry registry = this.registrySupplier.get();
         for(URI resource : resources) {
             try {
-                this.propertyRegistryLoader.loadRegistry(registry, Path.of(resource));
+                this.propertyRegistryLoader.loadRegistry(registry, resource);
             }
             catch(IOException e) {
                 // TODO: Better exception type

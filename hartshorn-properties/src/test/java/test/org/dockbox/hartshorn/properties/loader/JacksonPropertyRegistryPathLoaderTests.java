@@ -41,7 +41,7 @@ public class JacksonPropertyRegistryPathLoaderTests {
 
         // When: Loading registry
         PropertyRegistry registry = new MapPropertyRegistry();
-        loader.loadRegistry(registry, path);
+        loader.loadRegistry(registry, path.toUri());
 
         // Then: Should contain all expected keys
         List<ConfiguredProperty> properties = registry.find(property -> true);
