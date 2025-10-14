@@ -57,6 +57,7 @@ import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.spi.DiscoveryService;
 import org.dockbox.hartshorn.spi.ServiceDiscoveryException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
+import org.dockbox.hartshorn.util.IOUtilities;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
@@ -391,6 +392,7 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
     private Banner createBanner() {
         try {
             return this.classPathResourceLocator.resource("banner.txt")
+                    .flatMap(IOUtilities::openBufferedStream)
                     .map(resource -> (Banner) new ResourcePathBanner(resource))
                     .orElseGet(HartshornLogoBanner::new);
         }

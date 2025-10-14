@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class ProfileLoaderTests {
         }, MapPropertyRegistry::new);
 
         PropertyRegistry rootRegistry = new MapPropertyRegistry();
-        propertyRegistryLoader.loadRegistry(rootRegistry, Path.of("src/test/resources/application.yml"));
+        propertyRegistryLoader.loadRegistry(rootRegistry, Path.of("src/test/resources/application.yml").toUri());
         var profileRegistry = profileRegistryFactory.create(rootRegistry);
         var profilesInOrder = profileRegistry.profiles();
         Assertions.assertEquals(3, profilesInOrder.size());

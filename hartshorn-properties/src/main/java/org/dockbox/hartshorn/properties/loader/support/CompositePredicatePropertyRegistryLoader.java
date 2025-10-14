@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.properties.loader.support;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.loader.PredicatePropertyRegistryLoader;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A {@link PredicatePropertyRegistryLoader} that delegates to multiple other loaders. This loader will
@@ -63,12 +64,12 @@ public class CompositePredicatePropertyRegistryLoader implements PredicateProper
     }
 
     @Override
-    public boolean isCompatible(Path path) {
+    public boolean isCompatible(URI path) {
         return this.loaders.stream().anyMatch(loader -> loader.isCompatible(path));
     }
 
     @Override
-    public void loadRegistry(PropertyRegistry registry, Path path) throws IOException {
+    public void loadRegistry(PropertyRegistry registry, URI path) throws IOException {
         for(PredicatePropertyRegistryLoader loader : this.loaders) {
             if(loader.isCompatible(path)) {
                 loader.loadRegistry(registry, path);

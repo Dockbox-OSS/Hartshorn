@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.properties.loader;
 
-import java.nio.file.Path;
+import java.net.URI;
 
 /**
  * A {@link PropertyRegistryPathLoader} that can be tested for compatibility with a given path before loading
@@ -36,5 +36,5 @@ public interface PredicatePropertyRegistryLoader extends PropertyRegistryPathLoa
      * @param path the path to test
      * @return {@code true} if the loader is compatible with the given path, {@code false} otherwise
      */
-    boolean isCompatible(Path path);
+    boolean isCompatible(URI path);
 }

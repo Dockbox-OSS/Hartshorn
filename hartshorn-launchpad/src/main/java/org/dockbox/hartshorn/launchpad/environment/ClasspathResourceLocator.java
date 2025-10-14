@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.Set;
-
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * A classpath resource locator. This class is used to locate resources in the classpath, and make them available to
@@ -41,10 +40,8 @@ public interface ClasspathResourceLocator {
      * @param name The name of the file to look up
      *
      * @return The resource file wrapped in a {@link Option} if present, otherwise {@link Option#empty()}
-     *
-     * @throws IOException if an I/O error occurs
      */
-    Option<Path> resource(String name) throws IOException;
+    Option<URI> resource(String name) throws IOException;
 
     /**
      * Attempts to look up all resources with the given name. If no resources are found or an I/O
@@ -53,7 +50,7 @@ public interface ClasspathResourceLocator {
      * @param name The name of the resources to look up
      * @return A set of all resources with the given name
      */
-    Set<Path> resources(String name);
+    Set<URI> resources(String name) throws IOException;
 
     /**
      * Returns a URI pointing to the root of the classpath. This URI can be used to access resources

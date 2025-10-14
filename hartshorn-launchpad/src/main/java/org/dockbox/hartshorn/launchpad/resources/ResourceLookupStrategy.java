@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,11 +54,11 @@ public interface ResourceLookupStrategy {
     Set<URI> lookup(ApplicationEnvironment environment, String path);
 
     /**
-     * Returns the base URL for this strategy, from where all relative resources are resolved. This URL is expected to
+     * Returns the base URI for this strategy, from where all relative resources are resolved. This URI is expected to
      * be absolute.
      *
      * @param environment the application environment
-     * @return the base URL for this strategy
+     * @return the base URI for this strategy
      */
-    URI baseUrl(ApplicationEnvironment environment);
+    URI baseUri(ApplicationEnvironment environment);
 }

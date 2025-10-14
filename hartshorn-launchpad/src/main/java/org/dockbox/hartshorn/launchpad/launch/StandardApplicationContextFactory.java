@@ -209,9 +209,9 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      * @param activators The activators that are present on the main class
      */
     private void enhanceTypeReferenceCollectorContext(
-        ApplicationBootstrapContext bootstrapContext,
+            ApplicationBootstrapContext bootstrapContext,
             TypeReferenceCollectorContext collectorContext,
-        Set<Annotation> activators
+            Set<Annotation> activators
     ) {
         Set<String> prefixes = this.collectPrefixesForRegistering(bootstrapContext, activators);
         prefixes.stream()
@@ -222,6 +222,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         if (!standaloneComponents.isEmpty()) {
             collectorContext.register(PredefinedSetTypeReferenceCollector.of(standaloneComponents));
         }
+        collectorContext.register(new ResourceConfigurationTypeReferenceCollector());
     }
 
     /**
@@ -240,11 +241,7 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         Set<String> prefixes = new HashSet<>();
         prefixes.addAll(this.configurer.scanPackages.initialize(this.initializerContext.transform(bootstrapContext)));
 
-        // Not optional, required for the application to function. Note that any configuration that is required for the
-        // application can be overridden by the application itself.
-        prefixes.add("org.dockbox.hartshorn");
-
-        // Optional, application may prefer to use alternative packages for scanning. This is configured by the application
+        // Application may prefer to use alternative packages for scanning. This is configured by the application
         // bootstrap context.
         if (bootstrapContext.includeBasePackages()) {
             prefixes.add(bootstrapContext.mainClass().getPackageName());

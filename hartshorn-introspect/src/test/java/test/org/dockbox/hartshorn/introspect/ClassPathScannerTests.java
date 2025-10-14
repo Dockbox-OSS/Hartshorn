@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,6 @@
 
 package test.org.dockbox.hartshorn.introspect;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScanner;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathWalkingException;
 import org.junit.jupiter.api.Assertions;
@@ -33,6 +27,13 @@ import test.org.dockbox.hartshorn.introspect.types.ScanClass.StaticInnerClass;
 import test.org.dockbox.hartshorn.introspect.types.ScanEnum;
 import test.org.dockbox.hartshorn.introspect.types.ScanInterface;
 import test.org.dockbox.hartshorn.introspect.types.ScanRecord;
+
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ClassPathScannerTests {
 
@@ -59,7 +60,6 @@ public class ClassPathScannerTests {
 
     @Test
     void testCanScanWithEncodedCharacters() throws IOException, ClassPathWalkingException {
-        // Space is encoded as %20 in URLs, though we don't need to encode it here yet.
         // Note that we use an empty directory here, so scanning will yield no results, but won't throw an exception either.
         Path dummyFolder = Files.createTempDirectory("dummy folder");
         dummyFolder.toFile().deleteOnExit();
