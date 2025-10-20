@@ -42,7 +42,7 @@ public class FinalClassConstraint implements ProxyConstraint {
             classType = "record";
         }
         else if (typeView.modifiers().isFinal()) {
-            classType = "class";
+            classType = "final class";
         }
 
         if (classType != null) {
