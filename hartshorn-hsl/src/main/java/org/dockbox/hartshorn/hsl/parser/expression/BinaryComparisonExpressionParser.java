@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for binary comparison expressions, such as greater than and less than.
  *
  * @since 0.7.0
  *

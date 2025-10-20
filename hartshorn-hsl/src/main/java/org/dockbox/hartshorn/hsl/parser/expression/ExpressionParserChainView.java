@@ -24,7 +24,9 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 /**
- * TODO: #1061 Add documentation
+ * An immutable view of a mutable expression parser chain. This class is used to provide
+ * a view of the current state of the parser chain to the expression parsers, without
+ * allowing them to modify the underlying chain.
  *
  * @since 0.7.0
  *

@@ -51,8 +51,13 @@ public enum ClassTokenType implements EnumTokenType {
      * The 'implements' keyword representing an implementation of an interface.
      */
     IMPLEMENTS,
-
+    /**
+     * The 'get' keyword representing a getter member of a field or property.
+     */
     GET(builder -> builder.keyword(true).build()),
+    /**
+     * The 'set' keyword representing a setter member of a field or property.
+     */
     SET(builder -> builder.keyword(true).build()),
     ;
 

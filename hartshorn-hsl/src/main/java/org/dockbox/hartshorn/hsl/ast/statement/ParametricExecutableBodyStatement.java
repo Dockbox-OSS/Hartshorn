@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * An abstract executable statement with parameters and a body.
  *
  * @since 0.7.0
  *
@@ -31,11 +31,16 @@ public abstract class ParametricExecutableBodyStatement extends ParametricExecut
 
     private final BlockStatement body;
 
-    protected ParametricExecutableBodyStatement(final Token token, final List<Parameter> params, final BlockStatement body) {
+    protected ParametricExecutableBodyStatement(Token token, List<Parameter> params, BlockStatement body) {
         super(token, params);
         this.body = body;
     }
 
+    /**
+     * The body of this executable statement.
+     *
+     * @return the body block
+     */
     public BlockStatement body() {
         return this.body;
     }

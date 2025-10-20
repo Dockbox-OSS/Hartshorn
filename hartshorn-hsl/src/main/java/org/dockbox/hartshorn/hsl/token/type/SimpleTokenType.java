@@ -223,6 +223,11 @@ public record SimpleTokenType(
             return this.self();
         }
 
+        /**
+         * Returns the current builder instance.
+         *
+         * @return the current builder instance
+         */
         protected S self() {
             return (S) this;
         }

@@ -57,7 +57,6 @@ public enum DefaultTokenCharacter implements SimpleTokenCharacter {
     CARET('^'),
     TILDE('~'),
     UNDERSCORE('_'),
-
     ;
 
     private final char character;

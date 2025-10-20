@@ -30,14 +30,33 @@ import java.util.SequencedCollection;
  * @author Guus Lieben
  */
 public record FormattedDiagnostic(DiagnosticMessage message, Object... arguments) {
+
+    /**
+     * Formats the diagnostic message with its arguments. Shorthand for
+     * {@link DiagnosticMessage#format(Object...)} on the underlying message.
+     *
+     * @return The formatted diagnostic message.
+     */
     public String format() {
         return this.message.format(this.arguments);
     }
 
+    /**
+     * Creates a new {@link FormattedDiagnostic} instance.
+     *
+     * @param message the diagnostic message
+     * @param arguments the arguments to format the message with
+     * @return the formatted diagnostic
+     */
     public static FormattedDiagnostic of(DiagnosticMessage message, Object... arguments) {
         return new FormattedDiagnostic(message, arguments);
     }
 
+    /**
+     * Creates a new {@link Builder} for {@link FormattedDiagnostic}.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -53,16 +72,33 @@ public record FormattedDiagnostic(DiagnosticMessage message, Object... arguments
         private final SequencedCollection<Object> arguments = new ArrayList<>();
         private DiagnosticMessage message;
 
+        /**
+         * Sets the diagnostic message.
+         *
+         * @param message the diagnostic message
+         * @return this builder
+         */
         public Builder message(DiagnosticMessage message) {
             this.message = message;
             return this;
         }
 
+        /**
+         * Adds an argument to the diagnostic message. The order of arguments is preserved.
+         *
+         * @param argument the argument to add
+         * @return this builder
+         */
         public Builder argument(Object argument) {
             this.arguments.add(argument);
             return this;
         }
 
+        /**
+         * Builds the {@link FormattedDiagnostic} instance.
+         *
+         * @return the formatted diagnostic
+         */
         public FormattedDiagnostic build() {
             return new FormattedDiagnostic(this.message, this.arguments.toArray());
         }

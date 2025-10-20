@@ -23,7 +23,8 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for prefix function (call) expressions. Prefix functions are functions that are
+ * called without parentheses, for example {@code not true} instead of {@code not(true)}.
  *
  * @since 0.7.0
  *

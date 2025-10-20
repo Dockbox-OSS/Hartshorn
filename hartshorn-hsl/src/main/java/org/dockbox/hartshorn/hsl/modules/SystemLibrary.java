@@ -45,12 +45,24 @@ public class SystemLibrary {
         return System.getenv(program);
     }
 
+    /**
+     * Prints the given object to the logger associated with the current script.
+     *
+     * @param object The object to print.
+     */
     public void print(Object object) {
         String text = this.stringify(object);
         // Create logger late, in case the script name changes.
         LoggerFactory.getLogger(context.scriptName()).info(text);
     }
 
+    /**
+     * Stringifies the given object, converting nulls to "null" and handling
+     * special cases such as doubles ending with ".0".
+     *
+     * @param object The object to stringify.
+     * @return The string representation of the object.
+     */
     public String stringify(Object object) {
         if (object == null) {
             return LiteralTokenType.NULL.representation();

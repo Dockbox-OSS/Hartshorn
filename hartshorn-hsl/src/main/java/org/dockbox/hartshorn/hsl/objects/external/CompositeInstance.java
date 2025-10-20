@@ -70,6 +70,15 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         }
     }
 
+    /**
+     * Creates the external instance and calls the virtual constructor, if any.
+     *
+     * @param at the token representing the position of the constructor call
+     * @param interpreter the interpreter executing the constructor
+     * @param arguments the arguments to pass to the virtual constructor
+     * @param virtualConstructor the virtual constructor to call, or {@code null} if none
+     * @throws ApplicationException if an error occurs during instance creation or virtual constructor execution
+     */
     public void makeInstance(Token at, Interpreter interpreter, List<Object> arguments, VirtualFunction virtualConstructor) throws ApplicationException {
         if (this.instance != null) {
             throw new IllegalStateException("Instance already made");

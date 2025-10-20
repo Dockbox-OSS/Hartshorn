@@ -20,7 +20,8 @@ import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 
 /**
- * TODO: #1061 Add documentation
+ * A visitor that has access to the {@link Interpreter} instance. This visitor can be used to
+ * interpret all default expressions and statements.
  *
  * @since 0.6.0
  *
@@ -28,6 +29,10 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
  */
 public interface InterpreterVisitor extends ExpressionVisitor<Object>, StatementVisitor<Void> {
 
+    /**
+     * Gets the interpreter instance associated with this visitor.
+     *
+     * @return the interpreter instance
+     */
     Interpreter interpreter();
-
 }

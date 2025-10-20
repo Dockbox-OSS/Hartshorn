@@ -27,7 +27,10 @@ import org.dockbox.hartshorn.hsl.token.TokenRegistry;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for logical assignment expressions. Handles the parsing of expressions involving
+ * logical assignment operators such as <code>&=</code> and <code>|=</code>.
+ *
+ * @see org.dockbox.hartshorn.hsl.token.type.BitwiseAssignmentTokenType
  *
  * @since 0.7.0
  *

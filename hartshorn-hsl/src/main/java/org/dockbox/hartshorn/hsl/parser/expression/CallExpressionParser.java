@@ -34,7 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for call expressions, property access, and postfix operations. Handles function calls with arguments,
+ * property access using the dot operator, and postfix increment/decrement operations.
+ *
+ * <p>Call expressions are parsed when an opening parenthesis is encountered after an expression, indicating a
+ * function call. The parser collects arguments until a closing parenthesis is found, enforcing an artificial
+ * maximum number of arguments (defaults to {@value #MAX_NUM_OF_ARGUMENTS}).
  *
  * @since 0.7.0
  *

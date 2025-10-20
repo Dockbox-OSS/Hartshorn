@@ -341,9 +341,9 @@ public class Resolver {
         this.currentFunction = type;
 
         this.beginScope();
-        for (Parameter param : executable.parameters()) {
-            this.declare(param.name());
-            this.define(param.name());
+        for (Parameter parameter : executable.parameters()) {
+            this.declare(parameter.name());
+            this.define(parameter.name());
         }
         this.resolve(executable.statements());
         this.endScope();

@@ -158,8 +158,22 @@ public interface StatementVisitor<R> {
      */
     R visit(FieldStatement statement);
 
+    /**
+     * Visits the given {@link FieldGetStatement field get statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(FieldGetStatement statement);
 
+    /**
+     * Visits the given {@link FieldSetStatement field set statement}.
+     *
+     * @param statement The statement to visit
+     *
+     * @return The result of the visit
+     */
     R visit(FieldSetStatement statement);
 
     /**

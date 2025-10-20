@@ -17,7 +17,8 @@
 package org.dockbox.hartshorn.hsl.interpreter.expression.bitwise;
 
 /**
- * TODO: #1061 Add documentation
+ * A {@link BitwiseAdditionStrategy} that supports addition of {@link Character} instances.
+ * The result of adding two characters is a {@link String} containing both characters.
  *
  * @since 0.7.0
  *

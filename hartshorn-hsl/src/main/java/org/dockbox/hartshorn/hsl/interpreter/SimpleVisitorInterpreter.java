@@ -77,15 +77,6 @@ public class SimpleVisitorInterpreter implements ApplicationContextCarrier, Inte
         this.state = new InterpreterState(this);
     }
 
-    /**
-     * Restores the interpreter to its initial state. This is to prevent scope pollution, and potential
-     * leaking of errors and results. This does not clear the external modules and variables, nor the
-     * dynamic imports, as these can be reused safely.
-     *
-     * <p>This method should be called before starting a new runtime. This should be at least before a
-     * potential {@link org.dockbox.hartshorn.hsl.semantic.Resolver} is called, as the resolver will
-     * typically modify the {@link InterpreterState}.
-     */
     @Override
     public void restore() {
         this.state.restore();

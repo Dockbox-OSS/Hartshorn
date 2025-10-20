@@ -85,15 +85,6 @@ public class SimpleTokenRegistryLexer implements Lexer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleTokenRegistryLexer.class);
 
-    private static final String UNEXPECTED_CHAR = "Unexpected character '%s'";
-    private static final String UNEXPECTED_EOT = "Unexpected end of token, expected any of: %s";
-    private static final String UNEXPECTED_DANGLING_NUMBER = "Unexpected dangling number separator";
-    private static final String UNEXPECTED_NULL = "Unexpected null character";
-    private static final String INVALID_COMMENT_TP = "Invalid comment token pair";
-    private static final String INVALID_COMMENT_TYPE = "Invalid comment type";
-    private static final String UNTERMINATED_STR = "Unterminated string";
-    private static final String UNTERMINATED_CHAR = "Unterminated char variable";
-
     private final List<Token> tokens = new ArrayList<>();
     private final List<Comment> comments = new ArrayList<>();
     private final Map<String, TokenType> keywords = new HashMap<>();
@@ -615,10 +606,9 @@ public class SimpleTokenRegistryLexer implements Lexer {
         // Look for a fractional part.
         if (this.tokenRegistry.characterList().numberDelimiter() == this.currentChar() && this.nextChar().isDigit()) {
             // Consume the delimiter
-            this.pointToNextChar();
-            while (this.currentChar().isDigit()) {
+            do {
                 this.pointToNextChar();
-            }
+            } while (this.currentChar().isDigit());
         }
 
         String number = this.source.substring(this.start, this.current);
@@ -684,9 +674,10 @@ public class SimpleTokenRegistryLexer implements Lexer {
 
     protected void addToken(TokenType type) {
         if (type.reserved()) {
-            LOG.warn("Reserved token type used: " + type + " at line " + this.line + ", column " + this.column + ". " +
-                    "Reserved tokens are not supported and may not be implemented yet. " +
-                    "This may cause unexpected behavior.");
+            LOG.warn(
+                    "Reserved token type used: {} at line {}, column {}. Reserved tokens are not supported and may not be implemented yet. This may cause unexpected behavior.",
+                    type, this.line, this.column
+            );
         }
         this.addToken(type, null);
     }

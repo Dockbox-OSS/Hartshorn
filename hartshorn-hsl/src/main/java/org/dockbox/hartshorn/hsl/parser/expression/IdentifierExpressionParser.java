@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenTypePair;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for identifiers. Handles the parsing of variable names and array access expressions.
  *
  * @since 0.7.0
  *

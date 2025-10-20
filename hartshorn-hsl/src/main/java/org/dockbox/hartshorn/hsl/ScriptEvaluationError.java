@@ -86,6 +86,12 @@ public class ScriptEvaluationError extends RuntimeException {
         return this.phase;
     }
 
+    /**
+     * Creates a new builder for a {@link ScriptEvaluationError} at the given phase.
+     *
+     * @param phase the phase at which the error occurred
+     * @return a new builder for a {@link ScriptEvaluationError}
+     */
     public static Builder builder(Phase phase) {
         return new Builder(phase);
     }
@@ -110,6 +116,13 @@ public class ScriptEvaluationError extends RuntimeException {
             this.phase = phase;
         }
 
+        /**
+         * Sets the node at which the error occurred. If the node is not {@code null}, the
+         * line and column will be set to the line and column of the node.
+         *
+         * @param at the node at which the error occurred
+         * @return this builder
+         */
         public Builder at(ASTNode at) {
             this.at = at;
             if (at != null) {
@@ -118,23 +131,51 @@ public class ScriptEvaluationError extends RuntimeException {
             return this;
         }
 
+        /**
+         * Sets the position of the error to be virtual, meaning that it does not have a specific
+         * line or column.
+         *
+         * @return this builder
+         */
         public Builder virtualPosition() {
             this.line = -1;
             this.column = -1;
             return this;
         }
 
+        /**
+         * Sets the position of the error.
+         *
+         * @param line the line number of the error
+         * @param column the column number of the error
+         * @return this builder
+         */
         public Builder position(int line, int column) {
             this.line = line;
             this.column = column;
             return this;
         }
 
+        /**
+         * Sets the message of the error.
+         *
+         * @param message the message of the error
+         * @return this builder
+         */
         public Builder message(String message) {
             this.message = message;
             return this;
         }
 
+        /**
+         * Sets the message of the error using a {@link DiagnosticMessage} and optional arguments.
+         * Requires that the phase of the message matches the phase of the builder.
+         *
+         * @param message the diagnostic message
+         * @param args the arguments for the diagnostic message
+         * @return this builder
+         * @throws IllegalArgumentException if the phase of the message does not match the phase of the builder
+         */
         public Builder message(DiagnosticMessage message, Object... args) {
             if (message.phase() != null && message.phase() != this.phase) {
                 throw new IllegalArgumentException("Diagnostic message phase " + message.phase() +
@@ -144,15 +185,34 @@ public class ScriptEvaluationError extends RuntimeException {
             return this;
         }
 
+        /**
+         * Sets the message of the error using a {@link FormattedDiagnostic}. Requires that the phase of
+         * the diagnostic matches the phase of the builder.
+         *
+         * @param diagnostic the formatted diagnostic
+         * @return this builder
+         * @throws IllegalArgumentException if the phase of the diagnostic does not match the phase of the builder
+         */
         public Builder message(FormattedDiagnostic diagnostic) {
             return this.message(diagnostic.message(), diagnostic.arguments());
         }
 
+        /**
+         * Sets the cause of the error.
+         *
+         * @param cause the cause of the error
+         * @return this builder
+         */
         public Builder cause(Throwable cause) {
             this.cause = cause;
             return this;
         }
 
+        /**
+         * Builds the {@link ScriptEvaluationError} instance.
+         *
+         * @return the built {@link ScriptEvaluationError} instance
+         */
         public ScriptEvaluationError build() {
             return new ScriptEvaluationError(this);
         }

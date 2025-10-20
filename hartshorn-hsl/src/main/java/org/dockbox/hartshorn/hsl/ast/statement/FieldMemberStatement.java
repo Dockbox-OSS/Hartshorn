@@ -21,7 +21,9 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * A member statement that defines a getter or setter for a field, with optional parameters and a body. This
+ * abstract class serves as a base for specific field member statements like {@link FieldGetStatement} and
+ * {@link FieldSetStatement}.
  *
  * @since 0.7.0
  *
@@ -40,14 +42,26 @@ public abstract class FieldMemberStatement extends ParametricExecutableBodyState
         this.fieldStatement = fieldStatement;
     }
 
+    /**
+     * Indicates whether this member statement has a body.
+     * @return true if a body is present, false otherwise
+     */
     public boolean hasBody() {
         return this.statements() != null;
     }
 
+    /**
+     * The keyword token representing the type of field member (e.g., "get" or "set").
+     * @return the keyword token
+     */
     public Token keyword() {
         return this.keyword;
     }
 
+    /**
+     * The field statement associated with this member.
+     * @return the field statement
+     */
     public FieldStatement field() {
         return this.fieldStatement;
     }

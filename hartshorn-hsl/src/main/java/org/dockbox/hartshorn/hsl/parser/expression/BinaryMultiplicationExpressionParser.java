@@ -23,7 +23,8 @@ import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for binary multiplication, division, and modulo expressions. Handles the parsing of expressions
+ * involving multiplication (<code>*</code>), division (<code>/</code>), and module (<code>%</code>) operators.
  *
  * @since 0.7.0
  *

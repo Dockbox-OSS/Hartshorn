@@ -21,7 +21,8 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 
 /**
- * TODO: #1061 Add documentation
+ * Base interface for expression parsers. Implementations of this interface are responsible for parsing
+ * specific types of expressions from a stream of tokens.
  *
  * @since 0.7.0
  *
@@ -29,5 +30,15 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
  */
 public interface ExpressionParser {
 
+    /**
+     * Parses an expression from the given {@link TokenParser}, using the provided {@link TokenStepValidator}
+     * to validate each step of the parsing process. If this parser cannot handle the current tokens, or requires
+     * further parsing of sub-expressions, it should delegate to the next parser in the {@link ExpressionParserChain}.
+     *
+     * @param parser the token parser calling this method
+     * @param validator the token step validator
+     * @param chain the expression parser chain for delegation
+     * @return the parsed expression
+     */
     Expression parse(TokenParser parser, TokenStepValidator validator, ExpressionParserChain chain);
 }

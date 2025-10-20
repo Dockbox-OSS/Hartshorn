@@ -73,22 +73,46 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
         this.isInitializer = isInitializer;
     }
 
+    /**
+     * Gets the declaration of this function.
+     * @return The declaration of this function.
+     */
     public ParametricExecutableStatement declaration() {
         return this.declaration;
     }
 
+    /**
+     * Gets the closure of this function. The closure is the variable scope of the functio body.
+     *
+     * @return The closure of this function.
+     */
     public VariableScope closure() {
         return this.closure;
     }
 
+    /**
+     * Gets the instance this function is bound to, or null if it is not bound.
+     * @return The instance this function is bound to, or null if it is not bound.
+     */
     public InstanceReference instance() {
         return this.instance;
     }
 
+    /**
+     * Gets the return type of this function.
+     * @return The return type of this function.
+     */
     public ReturnStatement.ReturnType returnType() {
         return returnType;
     }
 
+    /**
+     * Checks whether this function is an initializer. An initializer is a special type of function
+     * that is called when an instance of a class is created. Initializers always return the
+     * instance they are called on, and thus do not need an explicit return statement.
+     *
+     * @return True if this function is an initializer, false otherwise.
+     */
     public boolean isInitializer() {
         return this.isInitializer;
     }

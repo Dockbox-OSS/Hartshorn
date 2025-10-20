@@ -31,7 +31,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for complex array expressions, including array literals and array comprehensions. The most
+ * basic array literal is a list of expressions enclosed in array brackets (e.g., <code>[1, 2, 3]</code>).
+ *
+ * <p>Array comprehensions allow for more complex array constructions using loops and conditions
+ * (e.g., <code>[x * 2 for x in range if x > 5 else x]</code>).
  *
  * @since 0.7.0
  *

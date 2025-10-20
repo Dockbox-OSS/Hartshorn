@@ -22,7 +22,10 @@ import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for grouping expressions, which are expressions enclosed in parentheses. This is commonly
+ * used to override the default precedence of operations in expressions. For example, in the expression
+ * <code>(a + b) * c</code>, the addition operation is performed before the multiplication due to the
+ * grouping of <code>a + b</code> within parentheses.
  *
  * @since 0.7.0
  *

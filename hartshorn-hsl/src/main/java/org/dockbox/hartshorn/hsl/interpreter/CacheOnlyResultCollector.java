@@ -53,7 +53,7 @@ public class CacheOnlyResultCollector implements ResultCollector {
 
     @Override
     public <T> Option<T> result(Class<T> type) {
-        return this.result().filter(type::isInstance).map(type::cast);
+        return this.result().ofType(type);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class CacheOnlyResultCollector implements ResultCollector {
 
     @Override
     public <T> Option<T> result(String id, Class<T> type) {
-        return this.result(id).filter(type::isInstance).map(type::cast);
+        return this.result(id).ofType(type);
     }
 
     @Override

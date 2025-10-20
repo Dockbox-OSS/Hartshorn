@@ -180,22 +180,62 @@ public enum DiagnosticMessage {
         this.phase = phase;
     }
 
+    /**
+     * Gets the unique identifier for this diagnostic message.
+     * @return the unique identifier
+     */
     public int id() {
         return id;
     }
 
+    /**
+     * Gets the group of this diagnostic message. The group represents the category of the message (e.g., tokenizing,
+     * parsing, etc.). The group is determined by the thousands place of the message ID. For example, {@link #
+     * UNEXPECTED_TOKEN} has ID 2014, which means it belongs to group 2 (parsing).
+     *
+     * <p>The following groups are defined:
+     * <ul>
+     *     <li>1 - Lexical analysis (tokenizing)</li>
+     *     <li>2 - Parsing</li>
+     *     <li>3 - Resolution</li>
+     *     <li>4 - Interpretation</li>
+     *     <li>5 - Common validation</li>
+     * </ul>
+     *
+     * @return the group
+     */
     public int group() {
         return group;
     }
 
+    /**
+     * Gets the member number within its group for this diagnostic message. For example, {@link #UNEXPECTED_TOKEN} has
+     * ID 2014, which means it belongs to group 2 (parsing) and is member 14 within that group.
+     *
+     * @return the member number
+     */
     public int member() {
         return member;
     }
 
+    /**
+     * Gets the phase associated with this diagnostic message. This indicates the stage of processing (e.g.,
+     * tokenizing, parsing, etc.) where the message is relevant. If no specific phase is associated, this method
+     * returns {@code null}.
+     *
+     * @return the associated phase, or {@code null} if none is associated
+     */
     public Phase phase() {
         return phase;
     }
 
+    /**
+     * Formats the diagnostic message with the given arguments. The message template may contain positional
+     * placeholders (e.g., {0}, {1}, etc.) that will be replaced by the corresponding arguments.
+     *
+     * @param args the arguments to format the message with
+     * @return the formatted message
+     */
     public String format(Object... args) {
         return "HSL" + this.id + ": " + StringUtilities.format(message, args);
     }

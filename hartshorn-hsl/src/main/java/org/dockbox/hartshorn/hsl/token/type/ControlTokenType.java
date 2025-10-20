@@ -76,7 +76,10 @@ public enum ControlTokenType implements EnumTokenType {
      */
     RETURN(true),
     /**
-     * TODO
+     * Represents the 'yield' keyword. 'yield' keywords indicate the transfer of control back to the
+     * enclosing generator function, optionally providing a value to be sent back to the caller. This is
+     * a standalone statement and is not required to be combined with other statements.
+     *
      */
     YIELD(true),
     /**

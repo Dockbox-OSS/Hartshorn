@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.hsl.objects.virtual;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-import org.dockbox.hartshorn.hsl.interpreter.ScopeOwner;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
@@ -29,13 +28,13 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * TODO: #1061 Add documentation
+ * A builder for {@link VirtualClass} instances.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public class VirtualClassBuilder implements ScopeOwner {
+public class VirtualClassBuilder {
 
     private final Token name;
     private final VariableScope variableScope;
@@ -54,31 +53,67 @@ public class VirtualClassBuilder implements ScopeOwner {
         this.variableScope = Objects.requireNonNull(variableScope, "Variable scope cannot be null");
     }
 
-    @Override
-    public Token name() {
-        return this.name;
-    }
-
+    /**
+     * Sets the superclass of the virtual class.
+     *
+     * @param superClass the superclass
+     * @return this builder, for chaining
+     *
+     * @see VirtualClass#superClass()
+     */
     public VirtualClassBuilder superClass(ClassReference superClass) {
         this.superClass = superClass;
         return this;
     }
 
+    /**
+     * Sets the constructor of the virtual class.
+     *
+     * @param constructor the constructor
+     * @return this builder, for chaining
+     *
+     * @see VirtualClass#constructor()
+     */
     public VirtualClassBuilder constructor(VirtualFunction constructor) {
         this.constructor = constructor;
         return this;
     }
 
+    /**
+     * Sets whether the virtual class is dynamic.
+     *
+     * @param dynamic whether the class is dynamic
+     * @return this builder, for chaining
+     *
+     * @see VirtualClass#isDynamic()
+     */
     public VirtualClassBuilder dynamic(boolean dynamic) {
         this.isDynamic = dynamic;
         return this;
     }
 
+    /**
+     * Sets whether the virtual class is final.
+     *
+     * @param finalized whether the class is final
+     * @return this builder, for chaining
+     *
+     * @see VirtualClass#isFinal()
+     */
     public VirtualClassBuilder isFinal(boolean finalized) {
         this.isFinal = finalized;
         return this;
     }
 
+    /**
+     * Adds a method to the virtual class.
+     *
+     * @param name the name of the method
+     * @param function the method function
+     * @return this builder, for chaining
+     *
+     * @see VirtualClass#method(String)
+     */
     public VirtualClassBuilder method(String name, VirtualFunction function) {
         if (this.methods.containsKey(name)) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
@@ -90,11 +125,28 @@ public class VirtualClassBuilder implements ScopeOwner {
         return this;
     }
 
+    /**
+     * Adds multiple methods to the virtual class.
+     *
+     * @param methods a map of method names to method functions
+     * @return this builder, for chaining
+     *
+     * @see VirtualClass#methods()
+     */
     public VirtualClassBuilder methods(Map<String, VirtualFunction> methods) {
         methods.forEach(this::method);
         return this;
     }
 
+    /**
+     * Adds a field to the virtual class.
+     *
+     * @param name the name of the field
+     * @param property the field property
+     * @return this builder, for chaining
+     *
+     * @see VirtualClass#fields()
+     */
     public VirtualClassBuilder field(String name, VirtualProperty property) {
         if (this.fields.containsKey(name)) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
@@ -114,6 +166,14 @@ public class VirtualClassBuilder implements ScopeOwner {
         return this;
     }
 
+    /**
+     * Adds multiple fields to the virtual class.
+     *
+     * @param fields a map of field names to field properties
+     * @return this builder, for chaining
+     *
+     * @see VirtualClass#fields()
+     */
     public VirtualClassBuilder fields(Map<String, VirtualProperty> fields) {
         fields.forEach(this::field);
         return this;
@@ -155,6 +215,11 @@ public class VirtualClassBuilder implements ScopeOwner {
                 .build();
     }
 
+    /**
+     * Builds the {@link VirtualClass} instance.
+     *
+     * @return the built virtual class
+     */
     public VirtualClass build() {
         return new VirtualClass(
                 this.name.lexeme(),

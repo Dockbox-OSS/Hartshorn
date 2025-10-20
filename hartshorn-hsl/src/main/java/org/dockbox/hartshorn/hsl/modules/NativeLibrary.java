@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.modules;
 
-import java.util.List;
-import java.util.Map;
-
 import org.dockbox.hartshorn.hsl.ast.statement.ModuleStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.NativeFunctionStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -27,6 +24,9 @@ import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * A common library containing multiple {@link NativeModule native modules} which can be
@@ -51,6 +51,11 @@ public class NativeLibrary implements CallableNode {
         this(declaration, Map.of(moduleName, externalModule));
     }
 
+    /**
+     * Gets the native function declaration associated with this library.
+     *
+     * @return The native function declaration.
+     */
     public NativeFunctionStatement declaration() {
         return this.declaration;
     }
