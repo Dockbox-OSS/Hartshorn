@@ -1,4 +1,4 @@
-package org.dockbox.sample.java;
+package org.dockbox.sample.reporting;
 
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;

@@ -114,7 +114,7 @@ public class DefaultConfigurationBinderPostProcessor implements HierarchicalBind
                 if (applicationProvider instanceof SingletonCacheComponentProvider singletonCacheComponentProvider) {
                     binder.bind(SingletonCache.class)
                         .processAfterInitialization(false)
-                        .lazySingleton(singletonCacheComponentProvider::singletonCache);
+                        .lazySingleton(scope -> singletonCacheComponentProvider.singletonCache());
                 }
             }
         }

@@ -24,8 +24,10 @@ import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.collection.CollectorBindingFunction;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 /**
@@ -108,7 +110,7 @@ public class NonAliasBindingFunctionAdapter<T> implements AliasBindingFunction<T
     }
 
     @Override
-    public Binder lazySingleton(CheckedSupplier<T> supplier) {
+    public Binder lazySingleton(CheckedFunction<Scope, T> supplier) {
         return this.delegate.lazySingleton(supplier);
     }
 

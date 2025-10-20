@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
@@ -43,7 +44,7 @@ import java.util.function.Supplier;
 public record SupplierInstantiationStrategy<C>(CheckedSupplier<C> supplier) implements NonTypeAwareInstantiationStrategy<C> {
 
     @Override
-    public Option<ObjectContainer<C>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
+    public Option<ObjectContainer<C>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
         C instance = this.supplier.get();
         return Option.of(instance).map(ComponentObjectContainer::ofPrototype);
     }

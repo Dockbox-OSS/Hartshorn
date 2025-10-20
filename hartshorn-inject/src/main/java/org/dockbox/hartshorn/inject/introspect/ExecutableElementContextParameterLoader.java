@@ -49,12 +49,12 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
         this.application = application;
         this.add(new ContextParameterLoaderRule(application));
         this.add(new PropertyParameterLoaderRule(application.defaultProvider()));
+        this.add(new ScopeParameterLoaderRule());
     }
 
     @Override
     protected <T> T loadDefault(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
-        ComponentKey<?> componentKey = this.application.environment().componentKeyResolver().resolve(parameter);
-
+        ComponentKey<?> componentKey = this.application.environment().componentKeyResolver().resolve(parameter, context.scope());
         InjectionPoint injectionPoint = new InjectionPoint(parameter);
         ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(injectionPoint);
         Object out = context.provider().get(componentKey, requestContext);

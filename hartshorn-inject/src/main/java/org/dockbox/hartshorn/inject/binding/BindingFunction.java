@@ -23,8 +23,10 @@ import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeKey;
 import org.dockbox.hartshorn.util.configure.Customizer;
+import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 /**
@@ -125,7 +127,7 @@ public interface BindingFunction<T> {
      * @param supplier The supplier to bind to
      * @return The binder
      */
-    Binder lazySingleton(CheckedSupplier<T> supplier);
+    Binder lazySingleton(CheckedFunction<Scope, T> supplier);
 
     /**
      * Transforms the current binding function into a {@link CollectorBindingFunction} which

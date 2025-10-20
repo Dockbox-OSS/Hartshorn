@@ -18,11 +18,12 @@ package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
-import org.dockbox.hartshorn.util.function.CheckedSupplier;
+import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -39,15 +40,15 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class LazySingletonInstantiationStrategy<T> implements NonTypeAwareInstantiationStrategy<T> {
 
-    private final CheckedSupplier<T> supplier;
+    private final CheckedFunction<Scope, T> supplier;
 
-    public LazySingletonInstantiationStrategy(CheckedSupplier<T> supplier) {
+    public LazySingletonInstantiationStrategy(CheckedFunction<Scope, T> supplier) {
         this.supplier = supplier;
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
-        T instance = this.supplier.get();
+    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
+        T instance = this.supplier.apply(scope);
         if (instance == null) {
             throw new IllegalModificationException("Cannot bind null instance");
         }

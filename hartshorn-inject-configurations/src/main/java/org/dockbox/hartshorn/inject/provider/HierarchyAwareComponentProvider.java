@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
-import java.util.List;
+import org.dockbox.hartshorn.context.SimpleSingleElementContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
@@ -27,10 +27,10 @@ import org.dockbox.hartshorn.inject.binding.HierarchicalAliasCapableBinder;
 import org.dockbox.hartshorn.inject.binding.NestedHierarchyLookup;
 import org.dockbox.hartshorn.inject.binding.ScopeAwareHierarchicalBinder;
 import org.dockbox.hartshorn.inject.processing.ComponentProviderPostProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentProviderPostProcessorAdapter;
 import org.dockbox.hartshorn.inject.processing.ComponentStoreCallback;
 import org.dockbox.hartshorn.inject.processing.CompositeComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.PostConstructingComponentPostProcessor;
-import org.dockbox.hartshorn.inject.processing.ComponentProviderPostProcessorAdapter;
 import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor;
 import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
 import org.dockbox.hartshorn.inject.provider.strategy.ComponentProcessorComponentProviderStrategy;
@@ -41,11 +41,12 @@ import org.dockbox.hartshorn.inject.provider.strategy.StrategyChainComponentProv
 import org.dockbox.hartshorn.inject.provider.strategy.UnboundPrototypeComponentProviderStrategy;
 import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
+import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
-import org.dockbox.hartshorn.context.SimpleSingleElementContext;
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
-import org.dockbox.hartshorn.util.collections.MultiMap;
+
+import java.util.List;
 
 /**
  * A {@link ComponentProvider} which is aware of the {@link Scope} in which it is installed, and tracks bindings
@@ -182,7 +183,7 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
                 configurer -> {
                     configurer.add(new SingletonCacheComponentProviderStrategy());
                     configurer.add(new ComponentProcessorComponentProviderStrategy());
-                    configurer.add(new InstantiationStrategyComponentProviderStrategy());
+                    configurer.add(new InstantiationStrategyComponentProviderStrategy(scope));
                     configurer.add(new UnboundPrototypeComponentProviderStrategy());
                 });
 

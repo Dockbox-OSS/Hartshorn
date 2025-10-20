@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.inject.provider.NonTypeAwareInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.inject.provider.collections.CollectionObjectContainer;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
@@ -112,10 +113,10 @@ public class CollectionInstantiationStrategy<T> implements NonTypeAwareInstantia
     }
 
     @Override
-    public Option<ObjectContainer<ComponentCollection<T>>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
+    public Option<ObjectContainer<ComponentCollection<T>>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
         Set<ObjectContainer<T>> containers = new HashSet<>();
         for(InstantiationStrategy<T> strategy : this.strategies) {
-            Option<ObjectContainer<T>> container = strategy.provide(application, requestContext);
+            Option<ObjectContainer<T>> container = strategy.provide(application, requestContext, scope);
             if(container.present()) {
                 containers.add(container.get());
             }

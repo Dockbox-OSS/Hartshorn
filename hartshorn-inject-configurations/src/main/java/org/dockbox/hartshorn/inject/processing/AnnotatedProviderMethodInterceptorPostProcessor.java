@@ -48,7 +48,7 @@ public class AnnotatedProviderMethodInterceptorPostProcessor extends AnnotatedMe
         TypeView<R> type = (TypeView<R>) method.returnType();
         ComponentKey<?> componentKey = application.environment()
                 .componentKeyResolver()
-                .resolve(method);
+                .resolve(method, processingContext.key().scope().orElse(application.defaultProvider().scope()));
 
         InjectionPoint injectionPoint = new InjectionPoint(method);
         ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(injectionPoint);
