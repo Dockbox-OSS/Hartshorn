@@ -16,9 +16,11 @@
 
 package test.org.dockbox.hartshorn.inject.collection;
 
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.annotations.Inject;
-import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.CollectionInstantiationStrategy;
@@ -32,10 +34,6 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class CollectionScopeTests {
@@ -115,7 +113,7 @@ public class CollectionScopeTests {
     @TestComponents(ComponentWithCollectionDependencies.class)
     void testComponentInjectionWithExplicitCollection() {
         ComponentKey<Integer> ageKey = ComponentKey.of(Integer.class, "ages");
-        Binder collect = this.applicationContext.bind(ageKey).collect(collector -> {
+        this.applicationContext.bind(ageKey).collect(collector -> {
             collector.singleton(1);
             collector.singleton(2);
         });

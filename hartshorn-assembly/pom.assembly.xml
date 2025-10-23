@@ -32,7 +32,7 @@
     <!-- Antora playbook for documentation build. Set to playbook-local.yml for local builds -->
     <antora.playbook>playbook-release.yml</antora.playbook>
 
-    <plugin.jacoco.version>0.8.12</plugin.jacoco.version>
+    <plugin.jacoco.version>0.8.14</plugin.jacoco.version>
   </properties>
 
   <profiles>

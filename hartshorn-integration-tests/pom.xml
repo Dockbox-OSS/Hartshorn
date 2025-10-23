@@ -90,6 +90,7 @@
               <goal>compileTests</goal>
             </goals>
             <configuration>
+              <targetBytecode>25</targetBytecode>
               <testSources>
                 <testSource>
                   <directory>${project.basedir}/src/integration-test/groovy</directory>
