@@ -41,7 +41,11 @@ public class UnboundPrototypeComponentProviderStrategy implements ComponentProvi
     public <T> ObjectContainer<T> get(ComponentKey<T> componentKey, ComponentRequestContext requestContext,
             ComponentProviderStrategyChain<T> chain) throws ComponentResolutionException, ApplicationException {
         InstantiationStrategy<T> strategy = PrototypeConstructorInstantiationStrategy.forPrototype(componentKey);
-        Option<ObjectContainer<T>> container = strategy.provide(chain.application(), requestContext);
+        Option<ObjectContainer<T>> container = strategy.provide(
+                chain.application(),
+                requestContext,
+                componentKey.scope().orElse(chain.componentProvider().scope())
+        );
         if (container.present()) {
             return container.get();
         } else {

@@ -103,11 +103,14 @@ public class BindingMethodDependencyContextResolver implements DependencyContext
     }
 
     private <P, T> PrototypeInstantiationStrategy<T> getPrototypeInstantiationStrategy(MethodView<P, T> declaration, InjectionCapableApplication application) {
-        return requestContext -> {
+        return (requestContext, scope) -> {
             try {
                 ComponentExecutableInvocationAdapter contextAdapter = new InjectorExecutableInvocationAdapter(application)
+                        .scope(scope)
                         .requestContext(requestContext);
-                P instance = this.application.defaultProvider().get(ComponentKey.of(declaration.declaredBy()), requestContext);
+                P instance = this.application.defaultProvider().get(ComponentKey.builder(declaration.declaredBy())
+                        .scope(scope)
+                        .build(), requestContext);
                 return contextAdapter.invoke(declaration, instance).orNull();
             } catch (Throwable throwable) {
                 throw new ComponentInitializationException("Failed to obtain instance for " + declaration.qualifiedName(), throwable);

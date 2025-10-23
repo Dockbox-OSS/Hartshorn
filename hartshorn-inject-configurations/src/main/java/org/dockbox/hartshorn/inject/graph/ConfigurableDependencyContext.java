@@ -89,8 +89,8 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
             try {
                 switch(instanceType) {
                 case SUPPLIER -> collector.supplier(this.supplier);
-                case SINGLETON -> collector.singleton(this.supplier.get(ComponentRequestContext.createForComponent()));
-                case LAZY_SINGLETON -> collector.lazySingleton(() -> this.supplier.get(ComponentRequestContext.createForComponent()));
+                case SINGLETON -> collector.singleton(this.supplier.get(ComponentRequestContext.createForComponent(), null));
+                case LAZY_SINGLETON -> collector.lazySingleton(scope -> this.supplier.get(ComponentRequestContext.createForComponent(), scope));
                 }
             }
             catch(ApplicationException e) {
@@ -104,8 +104,8 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
         try {
             switch (instanceType) {
                 case SUPPLIER -> function.to(this.supplier);
-                case SINGLETON -> function.singleton(this.supplier.get(ComponentRequestContext.createForComponent()));
-                case LAZY_SINGLETON -> function.lazySingleton(() -> this.supplier.get(ComponentRequestContext.createForComponent()));
+                case SINGLETON -> function.singleton(this.supplier.get(ComponentRequestContext.createForComponent(), null));
+                case LAZY_SINGLETON -> function.lazySingleton(scope -> this.supplier.get(ComponentRequestContext.createForComponent(), scope));
             }
         }
         catch (ApplicationException e) {
@@ -127,7 +127,8 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
         return switch (this.lifecycleType()) {
             case PROTOTYPE -> InstanceType.SUPPLIER;
             case SINGLETON -> {
-                if (this.lazy()) {
+                // Scopes are always lazy, as scopes are not guaranteed to be available at configuration time
+                if (this.lazy() || this.scope().present()) {
                     yield InstanceType.LAZY_SINGLETON;
                 }
                 else {

@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.inject.provider.NonTypeAwareInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.inject.provider.collections.CollectionObjectContainer;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
@@ -51,10 +52,10 @@ public class ComposedCollectionInstantiationStrategy<T> implements NonTypeAwareI
     }
 
     @Override
-    public Option<ObjectContainer<ComponentCollection<T>>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
+    public Option<ObjectContainer<ComponentCollection<T>>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
         Set<ObjectContainer<T>> components = new HashSet<>();
         for (CollectionInstantiationStrategy<T> provider : this.strategies) {
-            Option<ObjectContainer<ComponentCollection<T>>> containers = provider.provide(application, requestContext);
+            Option<ObjectContainer<ComponentCollection<T>>> containers = provider.provide(application, requestContext, scope);
             if (containers.present()) {
                 ComponentCollection<T> componentCollection = containers.get().instance();
                 if (componentCollection instanceof ContainerAwareComponentCollection<T> containerAwareCollection) {

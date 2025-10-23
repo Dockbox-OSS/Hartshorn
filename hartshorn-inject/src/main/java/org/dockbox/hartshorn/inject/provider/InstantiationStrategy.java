@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@
 
 package org.dockbox.hartshorn.inject.provider;
 
-import java.util.function.Function;
-
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.function.Function;
 
 /**
  * A provider is a class that can provide an instance of a {@link ComponentKey} binding. The
@@ -46,10 +47,11 @@ public sealed interface InstantiationStrategy<T> permits TypeAwareInstantiationS
      *
      * @param application The application in which the component is requested.
      * @param requestContext The context describing the component request.
+     * @param scope The scope in which the component is requested.
      *
      * @return The instance, if it can be created.
      */
-    Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException;
+    Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException;
 
     /**
      * Maps the result of this provider using the provided {@link Function}. The result of the

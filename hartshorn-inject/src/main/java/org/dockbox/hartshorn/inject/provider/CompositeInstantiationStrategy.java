@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
@@ -74,8 +75,8 @@ public final class CompositeInstantiationStrategy<T> implements InstantiationStr
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
-        return this.strategy.provide(application, requestContext)
+    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
+        return this.strategy.provide(application, requestContext, scope)
                 .map(this::transformContainer);
     }
 

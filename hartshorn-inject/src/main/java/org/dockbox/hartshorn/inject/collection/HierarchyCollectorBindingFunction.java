@@ -25,7 +25,9 @@ import org.dockbox.hartshorn.inject.provider.PrototypeInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.SingletonInstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.SupplierInstantiationStrategy;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.IllegalModificationException;
+import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 /**
@@ -78,9 +80,9 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
     }
 
     @Override
-    public Binder lazySingleton(CheckedSupplier<T> supplier) {
-        return this.provider(new LazySingletonInstantiationStrategy<>(() -> {
-            T instance = supplier.get();
+    public Binder lazySingleton(CheckedFunction<Scope, T> supplier) {
+        return this.provider(new LazySingletonInstantiationStrategy<>(scope -> {
+            T instance = supplier.apply(scope);
             if (instance == null) {
                 throw new IllegalModificationException("Cannot bind null instance");
             }

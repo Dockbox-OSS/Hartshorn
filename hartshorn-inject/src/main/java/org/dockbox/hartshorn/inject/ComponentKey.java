@@ -406,17 +406,32 @@ public final class ComponentKey<T> implements Reportable {
         private ComponentResolutionFailureStrategy failureStrategy = ExceptionOnComponentResolutionFailureStrategy.INSTANCE;
         private Scope scope = null; // If not provided, defaults to application scope
         private boolean postConstructionAllowed = true;
-        private Tristate strict = Tristate.UNDEFINED;
+        private Tristate strict = Tristate.UNDEFINED; // If not provided, defaults to InjectorConfiguration#isStrictMode
 
         private Builder(ComponentKey<T> key) {
             this.type = key.type;
             this.qualifier.addAll(key.qualifier);
+            this.selectionStrategy = key.selectionStrategy;
+            this.failureStrategy = key.failureStrategy;
             this.scope = key.scope;
             this.postConstructionAllowed = key.postConstructionAllowed;
+            this.strict = key.strict;
         }
 
         private Builder(ParameterizableType type) {
             this.type = type;
+        }
+
+        private <U> Builder<U> copyProperties(Builder<U> builder) {
+            builder.qualifiers(this.qualifier.qualifiers())
+                    .selectionStrategy(this.selectionStrategy)
+                    .failureStrategy(this.failureStrategy)
+                    .scope(this.scope)
+                    .postConstructionAllowed(this.postConstructionAllowed);
+            if (this.strict != Tristate.UNDEFINED) {
+                builder.strict(this.strict.booleanValue());
+            }
+            return builder;
         }
 
         /**
@@ -454,13 +469,6 @@ public final class ComponentKey<T> implements Reportable {
             return this.copyProperties(builder(type));
         }
 
-        private <U> Builder<U> copyProperties(Builder<U> builder) {
-            return builder
-                    .qualifiers(this.qualifier.qualifiers())
-                    .scope(this.scope)
-                    .postConstructionAllowed(this.postConstructionAllowed);
-        }
-
         /**
          * Sets the strategy that should be used to select a provider for this component. This often selects
          * a provider based on the priority of the key.
@@ -487,10 +495,22 @@ public final class ComponentKey<T> implements Reportable {
             return this;
         }
 
+        /**
+         * Sets the {@link #failureStrategy(ComponentResolutionFailureStrategy) failure strategy} to ignore lookup
+         * failures, thus making it possible to result in {@code null} values from a lookup.
+         *
+         * @return this builder
+         */
         public Builder<T> optional() {
             return this.failureStrategy(NoopComponentResolutionFailureStrategy.INSTANCE);
         }
 
+        /**
+         * Sets the {@link #failureStrategy(ComponentResolutionFailureStrategy) failure strategy} to throw an exception
+         * when a lookup fails, thus ensuring the result is always non-null.
+         *
+         * @return this builder
+         */
         public Builder<T> required() {
             return this.failureStrategy(ExceptionOnComponentResolutionFailureStrategy.INSTANCE);
         }
@@ -531,7 +551,8 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Adds multiple qualifiers to the component. Qualifiers are used to differentiate between components of the same type.
+         * Adds multiple qualifiers to the component. Qualifiers are used to differentiate between components of the
+         * same type.
          *
          * @param qualifiers the qualifiers to add
          *
@@ -542,6 +563,11 @@ public final class ComponentKey<T> implements Reportable {
             return this;
         }
 
+        /**
+         * Removes all qualifiers, making it so a lookup will only match by type.
+         *
+         * @return this builder
+         */
         public Builder<T> withoutQualifiers() {
             this.qualifier.clear();
             return this;

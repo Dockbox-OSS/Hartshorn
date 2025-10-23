@@ -38,6 +38,7 @@ import org.dockbox.hartshorn.inject.scope.ScopeModuleContext;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
+import org.dockbox.hartshorn.util.function.CheckedFunction;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
 import java.util.function.Function;
@@ -205,7 +206,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     }
 
     @Override
-    public Binder lazySingleton(CheckedSupplier<T> supplier) {
+    public Binder lazySingleton(CheckedFunction<Scope, T> supplier) {
         return this.add(new LazySingletonInstantiationStrategy<>(supplier));
     }
 

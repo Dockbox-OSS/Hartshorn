@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
@@ -42,7 +43,7 @@ public class SingletonInstantiationStrategy<T> implements NonTypeAwareInstantiat
     }
 
     @Override
-    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) {
+    public Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) {
         return Option.of(this.container);
     }
 

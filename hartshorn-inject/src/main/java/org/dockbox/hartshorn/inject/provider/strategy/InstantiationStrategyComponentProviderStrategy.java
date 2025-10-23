@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.inject.provider.selection.ProviderSelectionStrategy;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.option.Option;
 
@@ -49,6 +50,12 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class InstantiationStrategyComponentProviderStrategy implements ComponentProviderStrategy {
 
+    private final Scope defaultScope;
+
+    public InstantiationStrategyComponentProviderStrategy(Scope defaultScope) {
+        this.defaultScope = defaultScope;
+    }
+
     @Override
     public <T> ObjectContainer<T> get(
             ComponentKey<T> componentKey,
@@ -69,14 +76,17 @@ public class InstantiationStrategyComponentProviderStrategy implements Component
             ComponentProviderStrategyChain<T> chain, BindingHierarchy<T> hierarchy) throws ApplicationException {
         InstantiationStrategy<T> strategy = componentKey.selectionStrategy().selectProvider(hierarchy);
         if (strategy != null) {
-            return this.createFromInstantiationStrategy(requestContext, chain, strategy);
+            return this.createFromInstantiationStrategy(requestContext, chain, strategy, componentKey.scope().orElse(defaultScope));
         }
         return null;
     }
 
-    private <T> @Nullable ObjectContainer<T> createFromInstantiationStrategy(ComponentRequestContext requestContext,
-            ComponentProviderStrategyChain<T> chain, InstantiationStrategy<T> strategy) throws ApplicationException {
-        Option<ObjectContainer<T>> container = strategy.provide(chain.application(), requestContext);
+    private <T> @Nullable ObjectContainer<T> createFromInstantiationStrategy(
+            ComponentRequestContext requestContext,
+            ComponentProviderStrategyChain<T> chain,
+            InstantiationStrategy<T> strategy,
+            Scope scope) throws ApplicationException {
+        Option<ObjectContainer<T>> container = strategy.provide(chain.application(), requestContext, scope);
         return container.orNull();
     }
 

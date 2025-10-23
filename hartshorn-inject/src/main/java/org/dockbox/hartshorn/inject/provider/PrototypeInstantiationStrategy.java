@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.provider;
 
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.option.Option;
@@ -35,11 +36,11 @@ import org.dockbox.hartshorn.util.option.Option;
 public interface PrototypeInstantiationStrategy<T> extends NonTypeAwareInstantiationStrategy<T> {
 
     @Override
-    default Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
-        return Option.of(ComponentObjectContainer.ofPrototype(this.get(requestContext)));
+    default Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
+        return Option.of(ComponentObjectContainer.ofPrototype(this.get(requestContext, scope)));
     }
 
-    T get(ComponentRequestContext context) throws ApplicationException;
+    T get(ComponentRequestContext context, Scope scope) throws ApplicationException;
 
     @Override
     default LifecycleType defaultLifecycle() {
@@ -52,6 +53,6 @@ public interface PrototypeInstantiationStrategy<T> extends NonTypeAwareInstantia
     }
 
     static <T> PrototypeInstantiationStrategy<T> empty() {
-        return context -> null;
+        return (context, scope) -> null;
     }
 }

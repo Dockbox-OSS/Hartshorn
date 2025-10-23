@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.introspect.InjectorExecutableInvocationAdapter;
 import org.dockbox.hartshorn.inject.introspect.ComponentExecutableInvocationAdapter;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
@@ -98,18 +99,17 @@ public final class PrototypeConstructorInstantiationStrategy<C> implements TypeA
     }
 
     @Override
-    public Option<ObjectContainer<C>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext) throws ApplicationException {
+    public Option<ObjectContainer<C>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
         Option<? extends ConstructorView<? extends C>> constructor = this.optimalConstructor(application);
         if (constructor.absent()) {
             return Option.empty();
         }
         try {
             ComponentExecutableInvocationAdapter contextAdapter = new InjectorExecutableInvocationAdapter(application)
-                    .requestContext(requestContext);
-            return this.componentKey.scope()
-                    .map(contextAdapter::scope)
-                    .orElse(contextAdapter)
-                    .create(constructor.get())
+                    .requestContext(requestContext)
+                    // Prefer component scope, but fall back to the given scope (which may be null, for global)
+                    .scope(componentKey.scope().orElse(scope));
+            return contextAdapter.create(constructor.get())
                     .cast(this.type())
                     .map(instance -> ComponentObjectContainer.ofLifecycleType(instance, this.lifecycleType));
         }
