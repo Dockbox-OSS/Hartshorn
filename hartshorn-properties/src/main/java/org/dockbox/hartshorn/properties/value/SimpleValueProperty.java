@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.properties.value;
 
 import org.dockbox.hartshorn.properties.ValueProperty;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -51,5 +52,13 @@ public class SimpleValueProperty implements ValueProperty {
     @Override
     public <T> Option<T> parse(ValuePropertyParser<T> parser) {
         return parser.parse(this);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("name", this.name)
+                .field("value", this.value)
+                .describe();
     }
 }

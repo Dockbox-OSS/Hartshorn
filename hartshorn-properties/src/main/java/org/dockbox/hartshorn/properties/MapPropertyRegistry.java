@@ -34,15 +34,19 @@ import java.util.function.Predicate;
 public class MapPropertyRegistry extends MapObjectProperty implements PropertyRegistry {
 
     public MapPropertyRegistry() {
-        this(StandardPropertyPathStyle.INSTANCE);
+        this(Map.of(), StandardPropertyPathStyle.INSTANCE);
+    }
+
+    public MapPropertyRegistry(Map<String, ConfiguredProperty> properties) {
+        this(properties, StandardPropertyPathStyle.INSTANCE);
     }
 
     public MapPropertyRegistry(PropertyPathStyle pathStyle) {
-        this("", pathStyle);
+        this(Map.of(), pathStyle);
     }
 
-    public MapPropertyRegistry(String name, PropertyPathStyle pathStyle) {
-        super(name, Map.of(), pathStyle);
+    public MapPropertyRegistry(Map<String, ConfiguredProperty> properties, PropertyPathStyle pathStyle) {
+        super("", properties, pathStyle);
     }
 
     @Override

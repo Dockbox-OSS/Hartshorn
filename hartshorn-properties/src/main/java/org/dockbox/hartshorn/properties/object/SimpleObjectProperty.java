@@ -51,4 +51,6 @@ public class SimpleObjectProperty extends AbstractMapObjectProperty<Property> {
     public Option<ListProperty> list(String name) {
         return this.property(name).ofType(ListProperty.class);
     }
+
+
 }

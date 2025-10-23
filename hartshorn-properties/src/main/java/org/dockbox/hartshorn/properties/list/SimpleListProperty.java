@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.properties.ListProperty;
 import org.dockbox.hartshorn.properties.ObjectProperty;
 import org.dockbox.hartshorn.properties.Property;
 import org.dockbox.hartshorn.properties.ValueProperty;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.Collection;
@@ -89,5 +90,13 @@ public record SimpleListProperty(String name, List<Property> elements) implement
     @Override
     public <T> Collection<T> parse(ListPropertyParser<T> parser) {
         return parser.parse(this);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("name", this.name)
+                .field("values", this.values())
+                .describe();
     }
 }

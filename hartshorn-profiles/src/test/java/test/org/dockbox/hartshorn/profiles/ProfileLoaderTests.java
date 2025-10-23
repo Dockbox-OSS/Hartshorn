@@ -17,17 +17,24 @@
 package test.org.dockbox.hartshorn.profiles;
 
 import org.dockbox.hartshorn.profiles.ConfigurationProfileRegistryFactory;
+import org.dockbox.hartshorn.profiles.EnvironmentProfile;
+import org.dockbox.hartshorn.profiles.ProfilePropertyRegistryAggregator;
+import org.dockbox.hartshorn.profiles.ProfileRegistry;
 import org.dockbox.hartshorn.profiles.ProfileRegistryFactory;
+import org.dockbox.hartshorn.profiles.SimpleProfilePropertyRegistryAggregator;
 import org.dockbox.hartshorn.properties.MapPropertyRegistry;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
+import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.properties.loader.support.CompositePredicatePropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.support.JacksonJavaPropsPropertyRegistryLoader;
 import org.dockbox.hartshorn.properties.loader.support.JacksonYamlPropertyRegistryLoader;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Set;
 
 public class ProfileLoaderTests {
@@ -46,11 +53,20 @@ public class ProfileLoaderTests {
 
         PropertyRegistry rootRegistry = new MapPropertyRegistry();
         propertyRegistryLoader.loadRegistry(rootRegistry, Path.of("src/test/resources/application.yml").toUri());
-        var profileRegistry = profileRegistryFactory.create(rootRegistry);
-        var profilesInOrder = profileRegistry.profiles();
+        ProfileRegistry profileRegistry = profileRegistryFactory.create(rootRegistry);
+        List<EnvironmentProfile> profilesInOrder = profileRegistry.profiles();
         Assertions.assertEquals(3, profilesInOrder.size());
         Assertions.assertEquals("default", profilesInOrder.get(0).name());
         Assertions.assertEquals("base", profilesInOrder.get(1).name());
         Assertions.assertEquals("dev", profilesInOrder.get(2).name());
+
+//        PropertyRegistry registry = new ProfilePropertyRegistry(profileRegistry);
+        ProfilePropertyRegistryAggregator aggregator = new SimpleProfilePropertyRegistryAggregator();
+        PropertyRegistry registry = aggregator.aggregate(profileRegistry);
+        Option<ValueProperty> propertyOption = registry.get("some.property");
+        Assertions.assertTrue(propertyOption.present());
+        ValueProperty property = propertyOption.get();
+        Assertions.assertEquals("some.property", property.name());
+        Assertions.assertTrue(property.value().contains("2"));
     }
 }
