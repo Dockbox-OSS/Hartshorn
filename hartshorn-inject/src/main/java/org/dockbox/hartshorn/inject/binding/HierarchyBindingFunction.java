@@ -88,7 +88,7 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     }
 
     protected BindingHierarchy<T> hierarchy() {
-        if (this.scopeKey != null && !moduleContext.isApplicationScope(scopeKey)) {
+        if (this.scopeKey != null && !this.moduleContext.isApplicationScope(this.scopeKey)) {
             return this.moduleContext.hierarchy(this.scopeKey, this.hierarchy.key());
         }
         else {

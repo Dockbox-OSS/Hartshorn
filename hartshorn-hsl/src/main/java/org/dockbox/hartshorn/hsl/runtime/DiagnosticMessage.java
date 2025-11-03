@@ -185,13 +185,13 @@ public enum DiagnosticMessage {
      * @return the unique identifier
      */
     public int id() {
-        return id;
+        return this.id;
     }
 
     /**
-     * Gets the group of this diagnostic message. The group represents the category of the message (e.g., tokenizing,
-     * parsing, etc.). The group is determined by the thousands place of the message ID. For example, {@link #
-     * UNEXPECTED_TOKEN} has ID 2014, which means it belongs to group 2 (parsing).
+     * Gets the group of this diagnostic message. The group represents the category of the message (e.g., tokenizing, parsing,
+     * etc.). The group is determined by the thousands place of the message ID. For example, {@link #UNEXPECTED_TOKEN} has ID 2014,
+     * which means it belongs to group 2 (parsing).
      *
      * <p>The following groups are defined:
      * <ul>
@@ -205,7 +205,7 @@ public enum DiagnosticMessage {
      * @return the group
      */
     public int group() {
-        return group;
+        return this.group;
     }
 
     /**
@@ -215,7 +215,7 @@ public enum DiagnosticMessage {
      * @return the member number
      */
     public int member() {
-        return member;
+        return this.member;
     }
 
     /**
@@ -226,7 +226,7 @@ public enum DiagnosticMessage {
      * @return the associated phase, or {@code null} if none is associated
      */
     public Phase phase() {
-        return phase;
+        return this.phase;
     }
 
     /**
@@ -237,6 +237,6 @@ public enum DiagnosticMessage {
      * @return the formatted message
      */
     public String format(Object... args) {
-        return "HSL" + this.id + ": " + StringUtilities.format(message, args);
+        return "HSL" + this.id + ": " + StringUtilities.format(this.message, args);
     }
 }

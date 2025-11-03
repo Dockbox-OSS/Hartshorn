@@ -103,7 +103,7 @@ public class VirtualFunction extends AbstractFinalizable implements MethodRefere
      * @return The return type of this function.
      */
     public ReturnStatement.ReturnType returnType() {
-        return returnType;
+        return this.returnType;
     }
 
     /**

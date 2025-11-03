@@ -83,7 +83,7 @@ public final class PopulateComponentContext<T> extends DefaultContext {
     }
 
     public Scope scope() {
-        return scope;
+        return this.scope;
     }
 
     public InjectionCapableApplication application() {

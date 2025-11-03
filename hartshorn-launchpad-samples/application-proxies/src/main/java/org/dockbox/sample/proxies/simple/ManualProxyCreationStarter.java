@@ -41,11 +41,11 @@ public class ManualProxyCreationStarter implements ApplicationStarter {
                         // Greeter.sayHello(name)
                         .method(greeterType.methods().named("sayHello", String.class).get())
                         .intercept(MethodInterceptor.withoutReturnValue(context -> {
-                            logger.info("Hello {}!", context.args()[0]);
+                            this.logger.info("Hello {}!", context.args()[0]);
                         }))
                         // All non-configured methods
                         .defaultStub(MethodStub.withoutReturnValue(stubContext -> {
-                            logger.info("Stubbing method {}", stubContext.target());
+                            this.logger.info("Stubbing method {}", stubContext.target());
                         })));
 
         Option<Greeter> greeterOption = proxyFactory.proxy();
@@ -56,7 +56,7 @@ public class ManualProxyCreationStarter implements ApplicationStarter {
             Fareweller fareweller = (Fareweller) greeter;
             fareweller.sayFarewell();
 
-            logger.info("Greeter: {}", greeter);
+            this.logger.info("Greeter: {}", greeter);
         });
     }
 }

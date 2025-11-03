@@ -44,9 +44,9 @@ public class ExpressionParserChainView implements ExpressionParserChain {
 
     @Override
     public Expression next(TokenParser parser, TokenStepValidator validator) {
-        if (this.index < chain.parsers().size()) {
-            ExpressionParser current = chain.parsers().get(this.index);
-            ExpressionParserChain view = new ExpressionParserChainView(chain, this.index + 1);
+        if (this.index < this.chain.parsers().size()) {
+            ExpressionParser current = this.chain.parsers().get(this.index);
+            ExpressionParserChain view = new ExpressionParserChainView(this.chain, this.index + 1);
             return current.parse(parser, validator, view);
         }
         throw ScriptEvaluationError.builder(Phase.PARSING)

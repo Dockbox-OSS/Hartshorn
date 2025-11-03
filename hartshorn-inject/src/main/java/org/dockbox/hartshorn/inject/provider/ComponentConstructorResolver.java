@@ -138,7 +138,7 @@ public final class ComponentConstructorResolver {
             if (defaultConstructor.present()) {
                 return List.of(defaultConstructor.get());
             }
-            else if(configuration.allowFallbackToSingleConstructor() && type.constructors().count() == 1) {
+            else if(this.configuration.allowFallbackToSingleConstructor() && type.constructors().count() == 1) {
                 return List.of(type.constructors().all().getFirst());
             }
         }

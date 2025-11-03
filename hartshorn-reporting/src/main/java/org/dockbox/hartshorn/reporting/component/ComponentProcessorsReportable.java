@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class ComponentProcessorsReportable implements Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector propertyCollector) {
-        Reportable[] reportables = processors.values().stream()
+        Reportable[] reportables = this.processors.values().stream()
                 .flatMap(Collection::stream)
                 .map(processor -> (Reportable) processorCollector -> {
                     processorCollector.property("name").writeString(processor.getClass().getCanonicalName());

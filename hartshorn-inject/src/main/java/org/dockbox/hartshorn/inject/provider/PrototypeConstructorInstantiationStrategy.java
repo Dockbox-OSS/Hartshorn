@@ -108,7 +108,7 @@ public final class PrototypeConstructorInstantiationStrategy<C> implements TypeA
             ComponentExecutableInvocationAdapter contextAdapter = new InjectorExecutableInvocationAdapter(application)
                     .requestContext(requestContext)
                     // Prefer component scope, but fall back to the given scope (which may be null, for global)
-                    .scope(componentKey.scope().orElse(scope));
+                    .scope(this.componentKey.scope().orElse(scope));
             return contextAdapter.create(constructor.get())
                     .cast(this.type())
                     .map(instance -> ComponentObjectContainer.ofLifecycleType(instance, this.lifecycleType));

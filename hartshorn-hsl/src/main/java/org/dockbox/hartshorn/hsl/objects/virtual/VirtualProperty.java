@@ -114,6 +114,8 @@ public class VirtualProperty {
 
     /**
      * The write modifier for this property. This will return {@code null} if no setter is defined.
+     *
+     * @return the write modifier
      */
     public Token writeModifier() {
         return this.writeModifier;

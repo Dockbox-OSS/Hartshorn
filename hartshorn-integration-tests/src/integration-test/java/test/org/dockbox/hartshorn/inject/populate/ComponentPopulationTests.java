@@ -123,8 +123,8 @@ public class ComponentPopulationTests {
         TypeView<PopulationTestComponent> typeView = this.applicationContext.environment().introspector().introspect(component);
         PopulateComponentContext<PopulationTestComponent> componentContext = new PopulateComponentContext<>(
                 component, component,
-                typeView, applicationContext.scope(),
-                applicationContext
+                typeView, this.applicationContext.scope(),
+            this.applicationContext
         );
 
         ComponentInjectionPoint<PopulationTestComponent> injectionPoint = injectionPointProvider.apply(typeView);

@@ -59,7 +59,7 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
         ComponentRequestContext requestContext = ComponentRequestContext.createForInjectionPoint(injectionPoint);
         Object out = context.provider().get(componentKey, requestContext);
 
-        boolean required = requireRule.isRequired(injectionPoint);
+        boolean required = this.requireRule.isRequired(injectionPoint);
 
         if (required && out == null) {
             throw new ComponentRequiredException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required");

@@ -73,9 +73,9 @@ public class JavaxCompatibilityTests {
     @HartshornIntegrationTest(customizers = EnableJavaxTestApplicationCustomizer.class)
     @DisplayName("Javax annotations are supported for field injection, if enabled")
     void testJavaxFieldInjectSupportedIfEnabled() {
-        applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
+        this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
-        FieldJavaxComponent component = applicationContext.defaultProvider().get(FieldJavaxComponent.class);
+        FieldJavaxComponent component = this.applicationContext.defaultProvider().get(FieldJavaxComponent.class);
         Assertions.assertNotNull(component);
 
         Assertions.assertEquals("Hello, World!", component.messageAsInject);

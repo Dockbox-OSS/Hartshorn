@@ -70,7 +70,7 @@ public class ValueAdapterDiagnosticsPropertyWriterConsumer implements Diagnostic
                         .toArray(AnnotationReporter[]::new);
                 writer.writeDelegates(array);
             }
-            default -> throw new IllegalStateException("Unexpected value: " + object);
+            default -> throw new IllegalStateException("Unexpected value: " + this.object);
         }
     }
 }

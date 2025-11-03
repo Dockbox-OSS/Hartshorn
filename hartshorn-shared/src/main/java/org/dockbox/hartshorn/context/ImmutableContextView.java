@@ -40,7 +40,7 @@ public class ImmutableContextView implements ContextView {
 
     @Override
     public List<ContextView> contexts() {
-        return context.contexts();
+        return this.context.contexts();
     }
 
     @Override
@@ -55,12 +55,12 @@ public class ImmutableContextView implements ContextView {
 
     @Override
     public <C extends ContextView> Option<C> firstContext(ContextIdentity<C> key) {
-        return context.firstContext(key);
+        return this.context.firstContext(key);
     }
 
     @Override
     public <C extends ContextView> List<C> contexts(ContextIdentity<C> key) {
-        return context.contexts(key);
+        return this.context.contexts(key);
     }
 
     @Override

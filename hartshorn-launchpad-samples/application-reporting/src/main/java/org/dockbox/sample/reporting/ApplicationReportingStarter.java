@@ -32,7 +32,7 @@ public class ApplicationReportingStarter implements ApplicationStarter {
 
     @Override
     public void run(ApplicationContext applicationContext) {
-        DiagnosticsReport diagnosticsReport = this.reportCollector.report(reportable);
+        DiagnosticsReport diagnosticsReport = this.reportCollector.report(this.reportable);
         try {
             String serializedReport = diagnosticsReport.serialize(new ObjectMapperReportSerializer.JsonReportSerializer());
             Path targetFile = this.fileSystemProvider.applicationPath()

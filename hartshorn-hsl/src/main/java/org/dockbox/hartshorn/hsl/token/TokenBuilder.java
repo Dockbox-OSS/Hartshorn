@@ -144,7 +144,7 @@ public class TokenBuilder {
      * @see Token
      */
     public Token build() {
-        if (lexeme == null) {
+        if (this.lexeme == null) {
             if (this.type.keyword()) {
                 this.lexeme = this.type.representation();
             }
