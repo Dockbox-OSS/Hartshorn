@@ -133,7 +133,7 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
                 propertyRegistryLoader,
                 this::resolveProfileResources,
                 MapPropertyRegistry::new,
-                profileNameResolver
+            this.profileNameResolver
         );
         ProfileRegistry profileRegistry = profileRegistryFactory.create(defaultRegistry);
         ProfilePropertyRegistryAggregator aggregator = new SimpleProfilePropertyRegistryAggregator();

@@ -67,7 +67,7 @@ public class ConfigurationProfileRegistryFactory implements ProfileRegistryFacto
         EnvironmentProfile defaultProfile = new SimpleEnvironmentProfile(DEFAULT_PROFILE_NAME, rootRegistry);
         profileRegistry.register(0, defaultProfile);
 
-        List<EnvironmentProfile> additionalProfiles = profileNameResolver
+        List<EnvironmentProfile> additionalProfiles = this.profileNameResolver
                 .resolveProfileNames(rootRegistry).stream()
                 .map(this::resolveProfile)
                 .toList();
