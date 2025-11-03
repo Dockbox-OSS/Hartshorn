@@ -22,6 +22,9 @@ import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
 import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
+import org.dockbox.hartshorn.launchpad.properties.EnvironmentProfilesPropertyRegistryFactory;
+import org.dockbox.hartshorn.profiles.support.CompositeProfileNameResolver;
+import org.dockbox.hartshorn.profiles.support.FromPropertyProfileNameResolver;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.configure.Customizer;
@@ -58,6 +61,13 @@ public record IntegrationTestApplicationFactoryCustomizer(
             environment.showStacktraces(); // Enable stacktraces for tests, to make debugging easier
             environment.applicationFSProvider(new TemporaryFileSystemProvider());
             environment.applicationContext(SimpleApplicationContext.create(this.applicationCustomizer::customizeApplication));
+
+            environment.propertyRegistryFactory(EnvironmentProfilesPropertyRegistryFactory.create(propertyRegistryFactory -> {
+                propertyRegistryFactory.profileNameResolver(new CompositeProfileNameResolver(
+                        new FromPropertyProfileNameResolver(),
+                        new FromTestAnnotationProfileNameResolver(this.testComponentSources)
+                ));
+            }));
         };
         constructor.environment(ConfigurableApplicationEnvironment.create(
                 environmentCustomizer.compose(this.applicationCustomizer::customizeEnvironment)

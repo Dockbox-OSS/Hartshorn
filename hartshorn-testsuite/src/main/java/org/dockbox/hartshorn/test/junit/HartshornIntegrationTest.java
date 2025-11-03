@@ -128,5 +128,11 @@ public @interface HartshornIntegrationTest {
      */
     Class<?> mainClass() default Void.class;
 
+    /**
+     * Customizers to apply to the test application upon creation. These can be used to further
+     * configure the application before it is started.
+     *
+     * @return the customizers to apply
+     */
     Class<? extends TestApplicationCustomizer>[] customizers() default {};
 }
