@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.launchpad.properties;
+package org.dockbox.hartshorn.profiles.support;
 
-import java.util.Collections;
-import java.util.SequencedSet;
+import org.dockbox.hartshorn.profiles.EnvironmentProfile;
+import org.dockbox.hartshorn.properties.PropertyRegistry;
 
 /**
- * Resolver which always returns the same set of property sources.
+ * A simple implementation of {@link EnvironmentProfile}.
  *
- * @param sources the sources to return
+ * @param name the name of the profile
+ * @param propertyRegistry the property registry of the profile
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public record PredefinedPropertySourceResolver(SequencedSet<String> sources) implements PropertySourceResolver {
-
-    @Override
-    public SequencedSet<String> resolve() {
-        return Collections.unmodifiableSequencedSet(this.sources);
-    }
-}
+public record SimpleEnvironmentProfile(
+        String name,
+        PropertyRegistry propertyRegistry
+) implements EnvironmentProfile { }

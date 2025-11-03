@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.properties.loader.path.PropertyPathStyle;
 import org.dockbox.hartshorn.properties.object.ObjectPropertyParser;
 import org.dockbox.hartshorn.util.option.Option;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Basic implementation of {@link ObjectProperty} that uses a map to store {@link ConfiguredProperty properties}.
@@ -55,11 +55,8 @@ public class MapObjectProperty extends AbstractMapProperty<String> implements Ob
     }
 
     @Override
-    public List<String> keys() {
-        return this.properties().keySet().stream()
-                .map(key -> this.pathStyle().resolveFields(key)[0])
-                .distinct()
-                .toList();
+    public Set<String> keys() {
+        return Set.copyOf(this.properties().keySet());
     }
 
     @Override

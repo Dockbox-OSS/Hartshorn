@@ -29,19 +29,17 @@ import java.util.stream.Stream;
  * Property source resolver that discovers property sources based on the {@link PropertiesSource} annotation on
  * components within the application environment.
  *
+ * @param environment The application environment to inspect for components with the {@link PropertiesSource} annotation.
+ *
  * @see PropertiesSource
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public class TypeDiscoveryPropertySourceResolver implements PropertySourceResolver {
-
-    private final ApplicationEnvironment environment;
-
-    public TypeDiscoveryPropertySourceResolver(ApplicationEnvironment environment) {
-        this.environment = environment;
-    }
+public record TypeDiscoveryPropertySourceResolver(
+        ApplicationEnvironment environment
+) implements PropertySourceResolver {
 
     @Override
     public SequencedSet<String> resolve() {

@@ -44,13 +44,10 @@ import org.dockbox.hartshorn.launchpad.launch.ApplicationBootstrapContext;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.Observer;
-import org.dockbox.hartshorn.launchpad.properties.PredefinedPropertySourceResolver;
-import org.dockbox.hartshorn.launchpad.properties.PropertySourceResolver;
-import org.dockbox.hartshorn.launchpad.properties.TypeDiscoveryPropertySourceResolver;
-import org.dockbox.hartshorn.launchpad.resources.ClassPathResourceLookupStrategy;
-import org.dockbox.hartshorn.launchpad.resources.FallbackResourceLookup;
-import org.dockbox.hartshorn.launchpad.resources.FileSystemLookupStrategy;
+import org.dockbox.hartshorn.launchpad.properties.EnvironmentProfilesPropertyRegistryFactory;
+import org.dockbox.hartshorn.launchpad.properties.PropertyRegistryFactory;
 import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
+import org.dockbox.hartshorn.launchpad.resources.StrategyResourceLookup;
 import org.dockbox.hartshorn.properties.PropertyInitializer;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
@@ -58,12 +55,9 @@ import org.dockbox.hartshorn.spi.DiscoveryService;
 import org.dockbox.hartshorn.spi.ServiceDiscoveryException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.IOUtilities;
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.configure.Initializer;
-import org.dockbox.hartshorn.util.configure.LazyStreamableConfigurer;
-import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.IntrospectorLoader;
@@ -77,10 +71,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -195,18 +186,8 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
             Configurer configurer,
             SingleElementContext<ApplicationEnvironment> environmentInitializerContext
     ) {
-        List<PropertySourceResolver> propertySourceResolvers = this.configure(environmentInitializerContext, configurer.propertySourceResolvers);
-        Properties additionalProperties = this.resolveAdditionalProperties(configurer, environmentInitializerContext);
-        return new EnvironmentPropertyRegistryFactory().createRegistry(propertySourceResolvers, this.resourceLookup(), additionalProperties);
-    }
-
-    private Properties resolveAdditionalProperties(Configurer configurer, SingleElementContext<ApplicationEnvironment> environmentInitializerContext) {
-        List<CustomPropertiesResolver> customPropertiesResolvers = configurer.customPropertyResolvers.initialize(environmentInitializerContext);
-        return customPropertiesResolvers.stream().map(resolver -> resolver.resolveProperties(environmentInitializerContext))
-            .reduce(new Properties(), (current, next) -> {
-                current.putAll(next);
-                return current;
-            });
+        PropertyRegistryFactory factory = configurer.propertyRegistryFactory.initialize(environmentInitializerContext);
+        return factory.createRegistry();
     }
 
     private <I, T> T configure(SingleElementContext<I> context, ContextualInitializer<I, T> initializer) {
@@ -436,17 +417,6 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<ApplicationEnvironment, PropertySourceResolver> propertySourceResolvers = LazyStreamableConfigurer.of(customizer -> {
-            customizer.add(ContextualInitializer.of(TypeDiscoveryPropertySourceResolver::new));
-            customizer.add(new PredefinedPropertySourceResolver(CollectionUtilities.sequencedSet(
-                    FileSystemLookupStrategy.NAME + ":application",
-                    ClassPathResourceLookupStrategy.NAME + ":application"
-            )));
-        });
-        private final LazyStreamableConfigurer<ApplicationEnvironment, CustomPropertiesResolver> customPropertyResolvers = LazyStreamableConfigurer.of(customizer -> {
-            customizer.add(new CommandLineArgumentsPropertiesResolver());
-        });
-
         private ContextualInitializer<PropertyRegistry, Boolean> enableBanner = PropertyInitializer.booleanProperty("hartshorn.banner.enabled")
                 .orElseGet(() -> true);
 
@@ -472,7 +442,10 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
             ApplicationEnvironment environment = context.input();
             return new TypeReferenceLookupComponentRegistry(environment.typeResolver());
         };
+
+
         private ContextualInitializer<Introspector, ? extends ProxyOrchestrator> proxyOrchestrator = DefaultProxyOrchestratorLoader.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationEnvironment, ? extends PropertyRegistryFactory> propertyRegistryFactory = EnvironmentProfilesPropertyRegistryFactory.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider = ContextualInitializer.of(PathFileSystemProvider::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler = ContextualInitializer.of(LoggingExceptionHandler::new);
         private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator = ContextualInitializer.of(ClassLoaderClasspathResourceLocator::new);
@@ -481,7 +454,7 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         private ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment = ContextualInitializer.of(environment -> BuildEnvironmentPredicate.isBuildEnvironment());
         private ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver = ContextualInitializer.defer(() -> MethodsAndFieldsInjectionPointResolver.create(Customizer.useDefaults()));
         private ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver = ContextualInitializer.of(StandardAnnotationComponentKeyResolver::new);
-        private ContextualInitializer<ApplicationEnvironment, ResourceLookup> resourceLookup = FallbackResourceLookup.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationEnvironment, ResourceLookup> resourceLookup = StrategyResourceLookup.create(Customizer.useDefaults());
         private ContextualInitializer<ApplicationEnvironment, ConditionMatcher> conditionMatcher = ContextualInitializer.of(environment -> new ConditionMatcher(environment::applicationContext));
 
         /**
@@ -755,26 +728,29 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
             return this;
         }
 
-        public Configurer propertySourceResolvers(Collection<PropertySourceResolver> resolvers) {
-            return this.propertySourceResolvers(configuration -> configuration.addAll(resolvers));
+        /**
+         * Sets the {@link PropertyRegistryFactory} to use. The {@link PropertyRegistryFactory} is responsible for
+         * creating the {@link PropertyRegistry} used by the environment. The default implementation is {@link
+         * EnvironmentProfilesPropertyRegistryFactory}.
+         *
+         * @param propertyRegistryFactory the factory to use
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer propertyRegistryFactory(PropertyRegistryFactory propertyRegistryFactory) {
+            return this.propertyRegistryFactory(ContextualInitializer.of(propertyRegistryFactory));
         }
 
-        public Configurer propertySourceResolvers(Customizer<StreamableConfigurer<ApplicationEnvironment, PropertySourceResolver>> customizer) {
-            this.propertySourceResolvers.customizer(customizer);
+        /**
+         * Sets the {@link PropertyRegistryFactory} to use. The {@link PropertyRegistryFactory} is responsible for
+         * creating the {@link PropertyRegistry} used by the environment. The default implementation is {@link
+         * EnvironmentProfilesPropertyRegistryFactory}.
+         *
+         * @param propertyRegistryFactory the factory to use
+         * @return the current {@link Configurer} instance
+         */
+        public Configurer propertyRegistryFactory(ContextualInitializer<ApplicationEnvironment, ? extends PropertyRegistryFactory> propertyRegistryFactory) {
+            this.propertyRegistryFactory = propertyRegistryFactory;
             return this;
-        }
-
-        public Configurer customPropertyResolvers(Collection<CustomPropertiesResolver> resolvers) {
-            return this.customPropertyResolvers(configuration -> configuration.addAll(resolvers));
-        }
-
-        public Configurer customPropertyResolvers(Customizer<StreamableConfigurer<ApplicationEnvironment, CustomPropertiesResolver>> customizer) {
-            this.customPropertyResolvers.customizer(customizer);
-            return this;
-        }
-
-        public Configurer customProperties(Collection<String> properties) {
-            return this.customPropertyResolvers(configuration -> configuration.add(new StringListCustomPropertiesResolver(List.copyOf(properties))));
         }
 
         /**

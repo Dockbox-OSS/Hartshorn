@@ -31,5 +31,12 @@ import java.net.URI;
  */
 public interface PropertyRegistryPathLoader {
 
+    /**
+     * Loads properties into the given {@link PropertyRegistry} from the specified path.
+     *
+     * @param registry the registry to load properties into
+     * @param path the path to load properties from
+     * @throws IOException if an I/O error occurs while loading properties
+     */
     void loadRegistry(PropertyRegistry registry, URI path) throws IOException;
 }

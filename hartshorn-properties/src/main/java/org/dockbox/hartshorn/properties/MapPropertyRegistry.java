@@ -56,9 +56,6 @@ public class MapPropertyRegistry extends MapObjectProperty implements PropertyRe
 
     @Override
     public void register(ConfiguredProperty property) {
-        if (this.contains(property.name())) {
-            throw new IllegalArgumentException("Property with name " + property.name() + " already exists. If you intended to load a property with multiple values, implement the appropriate ConfiguredProperty");
-        }
         this.properties().put(property.name(), property);
     }
 

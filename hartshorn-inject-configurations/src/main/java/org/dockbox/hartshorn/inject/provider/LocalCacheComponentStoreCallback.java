@@ -61,14 +61,11 @@ public class LocalCacheComponentStoreCallback implements ComponentStoreCallback 
             return;
         }
         switch (container.lifecycleType()) {
-            case SINGLETON:
-                singletonOperation.run();
-                break;
-            case PROTOTYPE:
+            case SINGLETON -> singletonOperation.run();
+            case PROTOTYPE -> {
                 // Do nothing, as prototypes are not stored in the cache
-                break;
-            default:
-                throw new IllegalModificationException("Unknown lifecycle type " + container.lifecycleType());
+            }
+            default -> throw new IllegalModificationException("Unknown lifecycle type " + container.lifecycleType());
         }
     }
 }

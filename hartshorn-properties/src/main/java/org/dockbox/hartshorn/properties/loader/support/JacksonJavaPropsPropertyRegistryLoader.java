@@ -35,6 +35,7 @@ import java.util.Set;
  */
 public class JacksonJavaPropsPropertyRegistryLoader extends JacksonPropertyRegistryLoader {
 
+    public static final Set<String> DEFAULT_EXTENSIONS = Set.of("properties");
     private final Customizer<JavaPropsMapper.Builder> customizer;
 
     public JacksonJavaPropsPropertyRegistryLoader() {
@@ -59,6 +60,6 @@ public class JacksonJavaPropsPropertyRegistryLoader extends JacksonPropertyRegis
 
     @Override
     protected Set<String> supportedExtensions() {
-        return Set.of("properties");
+        return DEFAULT_EXTENSIONS;
     }
 }

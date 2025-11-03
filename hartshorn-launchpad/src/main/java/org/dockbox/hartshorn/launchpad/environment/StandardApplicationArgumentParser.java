@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
+import org.dockbox.hartshorn.launchpad.properties.ApplicationArgumentParser;
+
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;

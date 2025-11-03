@@ -20,8 +20,8 @@ import org.dockbox.hartshorn.properties.ObjectProperty;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Abstract implementation of {@link ObjectProperty} that uses a map to store generic properties. It remains up to the
@@ -44,8 +44,8 @@ public abstract class AbstractMapObjectProperty<T> implements ObjectProperty {
     }
 
     @Override
-    public List<String> keys() {
-        return List.copyOf(this.properties.keySet());
+    public Set<String> keys() {
+        return Set.copyOf(this.properties.keySet());
     }
 
     @Override
