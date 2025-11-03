@@ -148,7 +148,7 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
          * @return the character that is added by this node
          */
         public TokenCharacter character() {
-            return character;
+            return this.character;
         }
 
         /**
@@ -158,7 +158,7 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
          * @return the type of the token that is represented by the characters that are added by this node and its parents
          */
         public TokenType tokenType() {
-            return tokenType;
+            return this.tokenType;
         }
 
         /**
@@ -191,7 +191,7 @@ public class TokenGraph extends SimpleGraph<TokenNode> {
 
         @Override
         public int hashCode() {
-            return Objects.hash(character, tokenType);
+            return Objects.hash(this.character, this.tokenType);
         }
 
         @Override

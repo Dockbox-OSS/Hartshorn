@@ -57,10 +57,10 @@ public record IntegrationTestApplicationFactoryCustomizer(
             environment.enableBatchMode(); // Enable batch mode, to make use of additional caching between tests. This decreases startup time after warmup (first test).
             environment.showStacktraces(); // Enable stacktraces for tests, to make debugging easier
             environment.applicationFSProvider(new TemporaryFileSystemProvider());
-            environment.applicationContext(SimpleApplicationContext.create(applicationCustomizer::customizeApplication));
+            environment.applicationContext(SimpleApplicationContext.create(this.applicationCustomizer::customizeApplication));
         };
         constructor.environment(ConfigurableApplicationEnvironment.create(
-                environmentCustomizer.compose(applicationCustomizer::customizeEnvironment)
+                environmentCustomizer.compose(this.applicationCustomizer::customizeEnvironment)
         ));
 
         for(AnnotatedElement element : this.testComponentSources) {

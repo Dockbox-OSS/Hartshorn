@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.objects.external;
 
-import java.util.List;
-import java.util.Map;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.interpreter.ExternalClassRegistry;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
@@ -33,6 +31,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a Java class that can be called from an HSL runtime. This class can be
@@ -111,7 +112,6 @@ public record ExternalClass<T>(ExternalClassRegistry registry, TypeView<T> type,
 
     @Override
     public String name() {
-        // TODO #1000: Return alias if imported with non-original name
         return this.alias();
     }
 

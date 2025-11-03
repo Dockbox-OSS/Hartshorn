@@ -27,7 +27,9 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for ternary expressions. A ternary expression is a shorthand conditional expression
+ * that evaluates to one of two values based on a condition. It follows the syntax:
+ * <code>condition ? expressionIfTrue : expressionIfFalse</code>.
  *
  * @since 0.7.0
  *

@@ -23,7 +23,8 @@ import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for binary equality comparison expressions. Handles the parsing of expressions involving
+ * equals (<code>==</code>) and not-equals (<code>!=</code>) operators.
  *
  * @since 0.7.0
  *

@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * Field member statement representing a setter method for a field.
  *
  * @since 0.7.0
  *
@@ -32,17 +32,22 @@ public class FieldSetStatement extends FieldMemberStatement {
 
     private final Parameter parameter;
 
-    public FieldSetStatement(final Token modifier, final Token set, final FieldStatement fieldStatement, final BlockStatement body, final Parameter parameter) {
+    public FieldSetStatement(Token modifier, Token set, FieldStatement fieldStatement, BlockStatement body, Parameter parameter) {
         super(modifier, set, fieldStatement, parameter == null ? List.of() : List.of(parameter), body);
         this.parameter = parameter;
     }
 
+    /**
+     * The parameter of the setter method.
+     *
+     * @return the parameter
+     */
     public Parameter parameter() {
         return this.parameter;
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

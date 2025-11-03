@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.function.Function;
 
 /**
- * TODO: #1061 Add documentation
+ * Abstract base class for expression parsers that deal with function operators.
  *
  * @since 0.7.0
  *
@@ -30,6 +30,13 @@ import java.util.function.Function;
  */
 public abstract class AbstractFunctionOperatorExpressionParser implements ExpressionParser {
 
+    /**
+     * Checks if the current parsing context is within a function context and applies the given rule to it.
+     *
+     * @param parser the token parser
+     * @param rule the rule to apply to the function context
+     * @return true if the rule applies, false otherwise
+     */
     protected boolean containedInFunctionContext(TokenParser parser, Function<FunctionParserContext, Boolean> rule) {
         Option<FunctionParserContext> context = parser.firstContext(FunctionParserContext.class);
         if (context.absent()) {

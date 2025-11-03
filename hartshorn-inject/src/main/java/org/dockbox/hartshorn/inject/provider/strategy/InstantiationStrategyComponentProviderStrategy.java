@@ -76,7 +76,7 @@ public class InstantiationStrategyComponentProviderStrategy implements Component
             ComponentProviderStrategyChain<T> chain, BindingHierarchy<T> hierarchy) throws ApplicationException {
         InstantiationStrategy<T> strategy = componentKey.selectionStrategy().selectProvider(hierarchy);
         if (strategy != null) {
-            return this.createFromInstantiationStrategy(requestContext, chain, strategy, componentKey.scope().orElse(defaultScope));
+            return this.createFromInstantiationStrategy(requestContext, chain, strategy, componentKey.scope().orElse(this.defaultScope));
         }
         return null;
     }

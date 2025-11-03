@@ -202,7 +202,7 @@ public class VirtualClass extends AbstractFinalizable implements ClassReference 
             InstanceReference virtualInstance = new VirtualInstance(this);
 
             VariableScope instanceScope = new VariableScope(this.variableScope);
-            variableScope.define(ObjectTokenType.THIS.representation(), virtualInstance);
+            this.variableScope.define(ObjectTokenType.THIS.representation(), virtualInstance);
             interpreter.enterScope(instanceScope);
 
             this.fields.forEach((field, property) -> {

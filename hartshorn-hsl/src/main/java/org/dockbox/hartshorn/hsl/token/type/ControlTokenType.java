@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,10 @@ public enum ControlTokenType implements EnumTokenType {
      */
     RETURN(true),
     /**
-     * TODO
+     * Represents the 'yield' keyword. 'yield' keywords indicate the transfer of control back to the
+     * enclosing generator function, optionally providing a value to be sent back to the caller. This is
+     * a standalone statement and is not required to be combined with other statements.
+     *
      */
     YIELD(true),
     /**
@@ -111,6 +114,6 @@ public enum ControlTokenType implements EnumTokenType {
 
     @Override
     public TokenType delegate() {
-        return metaData;
+        return this.metaData;
     }
 }

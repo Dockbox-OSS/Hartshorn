@@ -60,7 +60,7 @@ public class AtNameModule implements ExpressionModule<AtNameExpression> {
     public ResolverExtension<AtNameExpression> resolver() {
         return (node, resolver) -> {
             // This is where you would resolve the expression to a value
-            resolverAccessed.set(true);
+            this.resolverAccessed.set(true);
         };
     }
 

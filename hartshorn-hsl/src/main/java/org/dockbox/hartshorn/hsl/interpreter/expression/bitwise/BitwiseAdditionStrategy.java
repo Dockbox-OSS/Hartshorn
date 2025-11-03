@@ -17,7 +17,9 @@
 package org.dockbox.hartshorn.hsl.interpreter.expression.bitwise;
 
 /**
- * TODO: #1061 Add documentation
+ * A strategy for performing bitwise addition operations. Depending on the types of the operands,
+ * different strategies may be applied. Implementations of this interface should define the logic
+ * for determining if they support the given operand types and how to perform the addition.
  *
  * @since 0.7.0
  *
@@ -25,7 +27,21 @@ package org.dockbox.hartshorn.hsl.interpreter.expression.bitwise;
  */
 public interface BitwiseAdditionStrategy {
 
+    /**
+     * Determines if this strategy supports the given operand types.
+     *
+     * @param left the left operand
+     * @param right the right operand
+     * @return true if this strategy supports the operand types, false otherwise
+     */
     boolean supports(Object left, Object right);
 
+    /**
+     * Performs the addition operation on the given operands.
+     *
+     * @param left the left operand
+     * @param right the right operand
+     * @return the result of the addition
+     */
     Object add(Object left, Object right);
 }

@@ -72,9 +72,9 @@ public class JakartaCompatibilityTests {
     @HartshornIntegrationTest(customizers = EnableJakartaTestApplicationCustomizer.class)
     @DisplayName("Jakarta annotations are supported for field injection, if enabled")
     void testJakartaFieldInjectSupportedIfEnabled() {
-        applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
+        this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
-        FieldJakartaComponent component = applicationContext.defaultProvider().get(FieldJakartaComponent.class);
+        FieldJakartaComponent component = this.applicationContext.defaultProvider().get(FieldJakartaComponent.class);
         Assertions.assertNotNull(component);
 
         Assertions.assertEquals("Hello, World!", component.messageAsInject);

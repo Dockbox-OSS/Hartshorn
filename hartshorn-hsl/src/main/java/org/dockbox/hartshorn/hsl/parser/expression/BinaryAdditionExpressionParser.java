@@ -23,7 +23,8 @@ import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for binary addition and subtraction expressions. Handles the parsing of expressions involving
+ * addition (<code>+</code>) and subtraction (<code>-</code>) operators.
  *
  * @since 0.7.0
  *

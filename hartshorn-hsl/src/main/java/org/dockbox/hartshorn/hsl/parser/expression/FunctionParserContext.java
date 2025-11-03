@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.parser.expression;
 
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
-
 /**
- * TODO: #1061 Add documentation
+ * Context for function parsers, holding the names of registered prefix and infix functions.
  *
  * @since 0.4.13
  *
@@ -34,18 +34,34 @@ public class FunctionParserContext extends DefaultFallbackCompatibleContext {
     private final Set<String> prefixFunctions = new HashSet<>();
     private final Set<String> infixFunctions = new HashSet<>();
 
+    /**
+     * Registers a new prefix function by its name.
+     * @param name the name of the prefix function
+     */
     public void addPrefixFunction(String name) {
         this.prefixFunctions.add(name);
     }
 
+    /**
+     * Registers a new infix function by its name.
+     * @param name the name of the infix function
+     */
     public void addInfixFunction(String name) {
         this.infixFunctions.add(name);
     }
 
+    /**
+     * Retrieves an unmodifiable set of registered prefix function names.
+     * @return the set of prefix function names
+     */
     public Set<String> prefixFunctions() {
         return Collections.unmodifiableSet(this.prefixFunctions);
     }
 
+    /**
+     * Retrieves an unmodifiable set of registered infix function names.
+     * @return the set of infix function names
+     */
     public Set<String> infixFunctions() {
         return Collections.unmodifiableSet(this.infixFunctions);
     }

@@ -32,7 +32,29 @@ import org.dockbox.hartshorn.hsl.token.Token;
  */
 public interface PropertyAccessVerifier {
 
+    /**
+     * Verifies if a read access to the given property is allowed. If the access is not allowed,
+     * a {@link FormattedDiagnostic} is returned describing the error. If the access is allowed,
+     * null is returned.
+     *
+     * @param at token at which the access is made
+     * @param property the property being accessed
+     * @param instance the instance from which the property is accessed
+     * @param fromScope the scope from which the access is made
+     * @return a diagnostic if the access is not allowed, or null if it is allowed
+     */
     FormattedDiagnostic read(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
 
+    /**
+     * Verifies if a write access to the given property is allowed. If the access is not allowed,
+     * a {@link FormattedDiagnostic} is returned describing the error. If the access is allowed,
+     * null is returned.
+     *
+     * @param at token at which the access is made
+     * @param property the property being accessed
+     * @param instance the instance from which the property is accessed
+     * @param fromScope the scope from which the access is made
+     * @return a diagnostic if the access is not allowed, or null if it is allowed
+     */
     FormattedDiagnostic write(Token at, VirtualProperty property, InstanceReference instance, VariableScope fromScope);
 }

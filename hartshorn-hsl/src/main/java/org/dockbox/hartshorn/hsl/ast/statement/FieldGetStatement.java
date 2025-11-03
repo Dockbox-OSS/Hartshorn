@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * Field member statement representing a getter method for a field.
  *
  * @since 0.7.0
  *
@@ -30,12 +30,12 @@ import java.util.List;
  */
 public class FieldGetStatement extends FieldMemberStatement {
 
-    public FieldGetStatement(final Token modifier, final Token get, final FieldStatement fieldStatement, final BlockStatement body) {
+    public FieldGetStatement(Token modifier, Token get, FieldStatement fieldStatement, BlockStatement body) {
         super(modifier, get, fieldStatement, List.of(), body);
     }
 
     @Override
-    public <R> R accept(final StatementVisitor<R> visitor) {
+    public <R> R accept(StatementVisitor<R> visitor) {
         return visitor.visit(this);
     }
 }

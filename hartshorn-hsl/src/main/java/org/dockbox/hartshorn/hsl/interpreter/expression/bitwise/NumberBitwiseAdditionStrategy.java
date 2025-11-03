@@ -19,7 +19,8 @@ package org.dockbox.hartshorn.hsl.interpreter.expression.bitwise;
 import java.math.BigDecimal;
 
 /**
- * TODO: #1061 Add documentation
+ * A {@link BitwiseAdditionStrategy} that adds two {@link Number} instances by converting them to
+ * {@link BigDecimal} and returning the sum as a {@link Double}.
  *
  * @since 0.7.0
  *

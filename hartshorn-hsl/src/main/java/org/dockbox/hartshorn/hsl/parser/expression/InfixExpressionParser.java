@@ -24,7 +24,9 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for infix function (call) expressions. Infix functions are functions that
+ * are called using an operator-like syntax, such as <code>a add b</code> instead of
+ * <code>add(a, b)</code>.
  *
  * @since 0.7.0
  *

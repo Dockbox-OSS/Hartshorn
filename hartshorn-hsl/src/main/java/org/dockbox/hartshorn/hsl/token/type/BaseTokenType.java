@@ -75,6 +75,6 @@ public enum BaseTokenType implements EnumTokenType {
 
     @Override
     public TokenType delegate() {
-        return metaData;
+        return this.metaData;
     }
 }

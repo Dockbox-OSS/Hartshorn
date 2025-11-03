@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,10 +115,28 @@ public class VariableScope {
                 .build();
     }
 
+    /**
+     * Assigns the given value to a variable in a scope which is a given amount of steps
+     * up from the current scope. Every step up indicates the enclosing scope of
+     * the previous step is selected. If there is no enclosing scope matching the amount of
+     * steps, a {@link ScriptEvaluationError} is thrown.
+     *
+     * @param distance The amount of steps up.
+     * @param name The identifier for the variable.
+     * @param value The value to assign.
+     * @throws ScriptEvaluationError If there is no enclosing scope matching the amount of steps.
+     */
     public void assignAt(int distance, Token name, Object value) {
         this.ancestor(name, distance).valuesMap.put(name.lexeme(), value);
     }
 
+    /**
+     * Checks if this scope contains a variable with the given token's lexeme. This does not attempt
+     * to look up the variable in an enclosing scope.
+     *
+     * @param token The token representing the variable.
+     * @return {@code true} if the variable exists, or {@code false}.
+     */
     public boolean contains(Token token) {
         return this.contains(token.lexeme());
     }

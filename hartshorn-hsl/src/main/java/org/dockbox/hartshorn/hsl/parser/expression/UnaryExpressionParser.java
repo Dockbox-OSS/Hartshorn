@@ -26,7 +26,8 @@ import org.dockbox.hartshorn.hsl.token.type.BaseTokenType;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseTokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for unary expressions. Unary expressions are expressions that operate on a single operand,
+ * for example {@code !true} or {@code -5}.
  *
  * @since 0.7.0
  *

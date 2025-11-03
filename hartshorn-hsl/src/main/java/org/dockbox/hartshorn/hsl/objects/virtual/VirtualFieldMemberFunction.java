@@ -22,7 +22,13 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
- * TODO: #1061 Add documentation
+ * A virtual representation of a field member function. This is typically linked directly to a {@link
+ * VirtualClass}. Field members are special in the sense that they can be accessed like properties, but
+ * they are actually functions. This allows for lazy evaluation and computed properties.
+ *
+ * @see org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement
+ * @see org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement
+ * @see MemberStatement
  *
  * @since 0.7.0
  *
@@ -39,6 +45,11 @@ public class VirtualFieldMemberFunction extends VirtualFunction implements Membe
         this.modifier = declaration.modifier();
     }
 
+    /**
+     * Indicates whether this field member has a body.
+     *
+     * @return {@code true} if the field member has a body, {@code false} otherwise.
+     */
     public boolean hasBody() {
         return this.declaration().body() != null;
     }

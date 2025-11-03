@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * Simple implementation of an expression parser chain. Maintains a list of expression parsers and
+ * delegates parsing to them in order.
  *
  * @since 0.7.0
  *

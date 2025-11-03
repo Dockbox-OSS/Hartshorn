@@ -34,7 +34,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * TODO: #1061 Add documentation
+ * A simple implementation of {@link ExternalClassRegistry} that uses an internal bi-directional multi-map to track
+ * imported external classes and their names/aliases.
  *
  * @since 0.7.0
  *

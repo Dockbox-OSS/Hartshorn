@@ -34,6 +34,13 @@ import java.math.BigDecimal;
  */
 public final class InterpreterUtilities {
 
+    /**
+     * Determines the "truthiness" of an object according to HSL's rules. If a value is null or false,
+     * it is considered "falsy". All other values are considered "truthy".
+     *
+     * @param object the object to evaluate
+     * @return true if the object is "truthy", false if it is "falsy"
+     */
     public static boolean isTruthy(Object object) {
         object = InterpreterUtilities.unwrap(object);
         if (object == null) {
@@ -45,6 +52,15 @@ public final class InterpreterUtilities {
         return true;
     }
 
+    /**
+     * Compares two objects for equality according to HSL's rules. If both objects are null, or {@link
+     * Object#equals(Object)} returns true, they are considered equal. If both objects are instances of
+     * {@link Number}, they are compared numerically using {@link BigDecimal}.
+     *
+     * @param a the first object
+     * @param b the second object
+     * @return true if the objects are considered equal, false otherwise
+     */
     public static boolean isEqual(Object a, Object b) {
         if (a == null && b == null) {
             return true;
@@ -60,6 +76,13 @@ public final class InterpreterUtilities {
         return a.equals(b);
     }
 
+    /**
+     * Unwraps an object if it is an {@link ExternalInstance}, returning the underlying instance.
+     * If the object is not an {@link ExternalInstance}, it is returned as-is.
+     *
+     * @param object the object to unwrap
+     * @return the unwrapped object
+     */
     public static Object unwrap(Object object) {
         if (object instanceof ExternalInstance external) {
             return external.instance();
@@ -67,6 +90,15 @@ public final class InterpreterUtilities {
         return object;
     }
 
+    /**
+     * Checks if the given operand is a number. If it is not, a {@link ScriptEvaluationError} is thrown
+     * with a message indicating that a non-number operand was provided.
+     *
+     * @param operator the operator token
+     * @param operand the operand to check
+     *
+     * @see #checkNumberOperands(Token, Object, Object) for binary operand checking
+     */
     public static void checkNumberOperand(Token operator, Object operand) {
         if (operand instanceof Number) {
             return;
@@ -77,6 +109,16 @@ public final class InterpreterUtilities {
                 .build();
     }
 
+    /**
+     * Checks if both given operands are numbers. If either is not, a {@link ScriptEvaluationError} is
+     * thrown with a message indicating that non-number operands were provided.
+     *
+     * @param operator the operator token
+     * @param left the left operand
+     * @param right the right operand
+     *
+     * @see #checkNumberOperand(Token, Object) for unary operand checking
+     */
     public static void checkNumberOperands(Token operator, Object left, Object right) {
         if (left instanceof Number && right instanceof Number) {
             return;

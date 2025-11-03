@@ -78,7 +78,7 @@ public class ScopedInjectionTests {
     void testScopedRequestOfUnmanagedComponentWithScopeContextHasScopedContext() {
         TestScope scope = new TestScope();
         scope.addContext(new SampleContext("test"));
-        applicationContext.addContext(new SampleContext("application"));
+        this.applicationContext.addContext(new SampleContext("application"));
 
         ComponentKey<TestComponent> scopedComponentKey = ComponentKey.builder(TestComponent.class)
                 .scope(scope)
@@ -95,7 +95,7 @@ public class ScopedInjectionTests {
     @DisplayName("Scoped requests of components with context dependencies which are absent in the scope context should have global context")
     void testScopedRequestOfUnmanagedComponentWithAbsentContextHasGlobalContext() {
         TestScope scope = new TestScope();
-        applicationContext.addContext(new SampleContext("application"));
+        this.applicationContext.addContext(new SampleContext("application"));
 
         ComponentKey<TestComponent> scopedComponentKey = ComponentKey.builder(TestComponent.class)
                 .scope(scope)

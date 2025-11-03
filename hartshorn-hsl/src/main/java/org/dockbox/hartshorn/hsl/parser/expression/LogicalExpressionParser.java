@@ -24,7 +24,8 @@ import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for logical expressions. Logical expressions combine boolean values using logical
+ * operators such as AND ({@code &&}), OR ({@code ||}), and XOR ({@code ^}).
  *
  * @since 0.7.0
  *

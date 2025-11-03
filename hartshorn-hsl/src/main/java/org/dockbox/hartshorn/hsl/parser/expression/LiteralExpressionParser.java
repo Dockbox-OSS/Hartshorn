@@ -29,7 +29,8 @@ import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for literal expressions, such as boolean values, null, numbers, strings, characters,
+ * the <code>this</code> keyword, and the <code>super</code> keyword.
  *
  * @since 0.7.0
  *

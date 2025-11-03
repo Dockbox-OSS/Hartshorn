@@ -69,7 +69,7 @@ public enum StandardUtilitiesLibrary {
      * @return The {@link NativeModule} instance for this library.
      */
     public NativeModule asModule(ScriptContext context) {
-        return moduleProvider.apply(context);
+        return this.moduleProvider.apply(context);
     }
 
     /**

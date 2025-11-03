@@ -48,6 +48,8 @@ import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ContinueStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.DoWhileStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement;
+import org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForEachStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ForStatement;
@@ -321,6 +323,22 @@ public abstract class AbstractASTWalker<R> implements ExpressionVisitor<R>, Stat
         }
         if (statement.initializer() != null) {
             statement.initializer().accept(this);
+        }
+        return null;
+    }
+
+    @Override
+    public R visit(FieldGetStatement statement) {
+        if (statement.body() != null) {
+            statement.body().accept(this);
+        }
+        return null;
+    }
+
+    @Override
+    public R visit(FieldSetStatement statement) {
+        if (statement.body() != null) {
+            statement.body().accept(this);
         }
         return null;
     }

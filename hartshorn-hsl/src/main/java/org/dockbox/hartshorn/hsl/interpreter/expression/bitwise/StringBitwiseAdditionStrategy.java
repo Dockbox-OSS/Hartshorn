@@ -17,7 +17,8 @@
 package org.dockbox.hartshorn.hsl.interpreter.expression.bitwise;
 
 /**
- * TODO: #1061 Add documentation
+ * A {@link BitwiseAdditionStrategy} that supports addition of any object to a {@link String} by
+ * converting the non-string operand to a string using {@link String#valueOf(Object)}.
  *
  * @since 0.7.0
  *

@@ -112,7 +112,7 @@ public final class ObjectDescriber<T> {
         StringBuilder builder = new StringBuilder();
         this.style.describeObjectStart(builder, this.object, includeTypeName);
 
-        List<String> fieldNames = List.copyOf(fields.sequencedKeySet());
+        List<String> fieldNames = List.copyOf(this.fields.sequencedKeySet());
         for(int i = 0; i < fieldNames.size(); i++) {
             String fieldName = fieldNames.get(i);
             Object fieldValue = this.fields.get(fieldName);
@@ -144,7 +144,7 @@ public final class ObjectDescriber<T> {
     }
 
     private String describeMapLikeValue(Map<?, ?> map, boolean includeTypeName) {
-        ObjectDescriber<Map<?, ?>> describer = ObjectDescriber.of(map, style);
+        ObjectDescriber<Map<?, ?>> describer = ObjectDescriber.of(map, this.style);
         for (Map.Entry<?, ?> entry : map.entrySet()) {
             String key = describeValue(entry.getKey(), includeTypeName);
             String value = describeValue(entry.getValue(), includeTypeName);
@@ -154,7 +154,7 @@ public final class ObjectDescriber<T> {
     }
 
     private String describeMultiMapLikeValue(MultiMap<?, ?> multiMap, boolean includeTypeName) {
-        ObjectDescriber<MultiMap<?, ?>> describer = ObjectDescriber.of(multiMap, style);
+        ObjectDescriber<MultiMap<?, ?>> describer = ObjectDescriber.of(multiMap, this.style);
         for (Map.Entry<?, ? extends Collection<?>> entry : multiMap.entrySet()) {
             String key = describeValue(entry.getKey(), includeTypeName);
             String value = describeArrayLikeValue(entry.getValue(), includeTypeName);

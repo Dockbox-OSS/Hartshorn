@@ -516,11 +516,11 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
         if(!(object instanceof ReflectionTypeView<?> that)) {
             return false;
         }
-        return Objects.equals(type, that.type) && Objects.equals(parameterizedType, that.parameterizedType);
+        return Objects.equals(this.type, that.type) && Objects.equals(this.parameterizedType, that.parameterizedType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, parameterizedType);
+        return Objects.hash(this.type, this.parameterizedType);
     }
 }

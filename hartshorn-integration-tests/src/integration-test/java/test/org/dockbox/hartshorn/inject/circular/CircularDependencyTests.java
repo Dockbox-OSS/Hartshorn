@@ -203,7 +203,7 @@ public class CircularDependencyTests {
             dependencyContexts.add(dependencyContext);
         }
 
-        SimpleSingleElementContext<InjectionCapableApplication> context = SimpleSingleElementContext.create(applicationContext);
+        SimpleSingleElementContext<InjectionCapableApplication> context = SimpleSingleElementContext.create(this.applicationContext);
         DependencyResolver resolver = ApplicationDependencyResolver.create(Customizer.useDefaults()).initialize(context);
         DependencyGraphBuilder dependencyGraphBuilder = DependencyGraphBuilder.create(
                 resolver,

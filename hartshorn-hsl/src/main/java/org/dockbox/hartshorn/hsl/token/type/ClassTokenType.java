@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,8 +51,13 @@ public enum ClassTokenType implements EnumTokenType {
      * The 'implements' keyword representing an implementation of an interface.
      */
     IMPLEMENTS,
-
+    /**
+     * The 'get' keyword representing a getter member of a field or property.
+     */
     GET(builder -> builder.keyword(true).build()),
+    /**
+     * The 'set' keyword representing a setter member of a field or property.
+     */
     SET(builder -> builder.keyword(true).build()),
     ;
 
@@ -70,6 +75,6 @@ public enum ClassTokenType implements EnumTokenType {
 
     @Override
     public TokenType delegate() {
-        return metaData;
+        return this.metaData;
     }
 }

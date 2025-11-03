@@ -23,7 +23,8 @@ import org.dockbox.hartshorn.hsl.token.type.LoopTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 
 /**
- * TODO: #1061 Add documentation
+ * Parser for range expressions. Range expressions produce a sequence of values between a start and end value,
+ * denoted by the range operator (e.g., <code>1..10</code>).
  *
  * @since 0.7.0
  *

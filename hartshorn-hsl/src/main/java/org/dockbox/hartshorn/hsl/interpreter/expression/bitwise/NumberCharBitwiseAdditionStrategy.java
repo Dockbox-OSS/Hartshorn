@@ -17,7 +17,9 @@
 package org.dockbox.hartshorn.hsl.interpreter.expression.bitwise;
 
 /**
- * TODO: #1061 Add documentation
+ * A {@link BitwiseAdditionStrategy} for adding {@link Number}s and {@link Character}s. No matter
+ * the order of the operands, the result will always be a {@code double} representation of the
+ * sum of the two operands.
  *
  * @since 0.7.0
  *

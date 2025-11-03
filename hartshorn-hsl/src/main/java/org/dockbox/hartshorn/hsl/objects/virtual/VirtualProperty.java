@@ -20,7 +20,13 @@ import org.dockbox.hartshorn.hsl.ast.statement.FieldStatement;
 import org.dockbox.hartshorn.hsl.token.Token;
 
 /**
- * TODO: #1061 Add documentation
+ * A virtual property, representing a field on a virtual class.
+ *
+ * @see VirtualClass
+ * @see VirtualFieldMemberFunction
+ * @see FieldStatement
+ * @see org.dockbox.hartshorn.hsl.ast.statement.FieldGetStatement
+ * @see org.dockbox.hartshorn.hsl.ast.statement.FieldSetStatement
  *
  * @since 0.7.0
  *
@@ -42,14 +48,30 @@ public class VirtualProperty {
         this.writeModifier = fieldStatement.modifier();
     }
 
+    /**
+     * The field statement backing this property.
+     *
+     * @return the field statement
+     */
     public FieldStatement fieldStatement() {
         return this.fieldStatement;
     }
 
+    /**
+     * The getter function for this property. Getters are optional; if no getter is defined,
+     * the property is read directly.
+     *
+     * @return the getter function, or null if none is defined
+     */
     public VirtualFieldMemberFunction getter() {
         return this.getter;
     }
 
+    /**
+     * Sets the getter function for this property.
+     * @param getter the getter function
+     * @return this property
+     */
     public VirtualProperty getter(VirtualFieldMemberFunction getter) {
         this.getter = getter;
         if (getter.modifier() != null) {
@@ -58,10 +80,21 @@ public class VirtualProperty {
         return this;
     }
 
+    /**
+     * The setter function for this property. Setters are optional; if no setter is defined,
+     * the property is written directly.
+     *
+     * @return the setter function, or null if none is defined
+     */
     public VirtualFieldMemberFunction setter() {
         return this.setter;
     }
 
+    /**
+     * Sets the setter function for this property.
+     * @param setter the setter function
+     * @return this property
+     */
     public VirtualProperty setter(VirtualFieldMemberFunction setter) {
         this.setter = setter;
         if (setter.modifier() != null) {
@@ -70,21 +103,21 @@ public class VirtualProperty {
         return this;
     }
 
+    /**
+     * The read modifier for this property. This will return {@code null} if no getter is defined.
+     *
+     * @return the read modifier
+     */
     public Token readModifier() {
         return this.readModifier;
     }
 
-    public VirtualProperty readModifier(Token readModifier) {
-        this.readModifier = readModifier;
-        return this;
-    }
-
+    /**
+     * The write modifier for this property. This will return {@code null} if no setter is defined.
+     *
+     * @return the write modifier
+     */
     public Token writeModifier() {
         return this.writeModifier;
-    }
-
-    public VirtualProperty writeModifier(Token writeModifier) {
-        this.writeModifier = writeModifier;
-        return this;
     }
 }

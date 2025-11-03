@@ -24,7 +24,9 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 /**
- * TODO: #1061 Add documentation
+ * An immutable view of a mutable expression parser chain. This class is used to provide
+ * a view of the current state of the parser chain to the expression parsers, without
+ * allowing them to modify the underlying chain.
  *
  * @since 0.7.0
  *
@@ -42,9 +44,9 @@ public class ExpressionParserChainView implements ExpressionParserChain {
 
     @Override
     public Expression next(TokenParser parser, TokenStepValidator validator) {
-        if (this.index < chain.parsers().size()) {
-            ExpressionParser current = chain.parsers().get(this.index);
-            ExpressionParserChain view = new ExpressionParserChainView(chain, this.index + 1);
+        if (this.index < this.chain.parsers().size()) {
+            ExpressionParser current = this.chain.parsers().get(this.index);
+            ExpressionParserChain view = new ExpressionParserChainView(this.chain, this.index + 1);
             return current.parse(parser, validator, view);
         }
         throw ScriptEvaluationError.builder(Phase.PARSING)

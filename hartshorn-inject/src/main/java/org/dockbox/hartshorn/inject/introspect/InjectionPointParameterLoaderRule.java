@@ -46,10 +46,10 @@ public class InjectionPointParameterLoaderRule implements ParameterLoaderRule<Ap
 
     @Override
     public <T> Option<T> load(ParameterView<T> parameter, int index, ApplicationBoundParameterLoaderContext context, Object... args) {
-        if (!requestContext.isForInjectionPoint()) {
+        if (!this.requestContext.isForInjectionPoint()) {
             return Option.empty();
         }
-        InjectionPoint injectionPoint = requestContext.injectionPoint();
+        InjectionPoint injectionPoint = this.requestContext.injectionPoint();
         return Option.of(parameter.type().cast(injectionPoint));
     }
 }

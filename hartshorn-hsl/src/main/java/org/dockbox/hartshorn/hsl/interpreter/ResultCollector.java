@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,14 @@ public interface ResultCollector extends ApplicationContextCarrier {
      */
     <T> Option<T> result(Class<T> type);
 
+    /**
+     * Gets the global result from the stack. If no global result exists {@link Option#empty()}
+     * is returned.
+     *
+     * @return The result value, or {@link Option#empty()}.
+     *
+     * @see #result(Class) for type-safe retrieval.
+     */
     Option<?> result();
 
     /**
@@ -70,6 +78,15 @@ public interface ResultCollector extends ApplicationContextCarrier {
      */
     <T> Option<T> result(String id, Class<T> type);
 
+    /**
+     * Gets a result with the given ID. If no result with the given ID exists
+     * {@link Option#empty()} is returned.
+     *
+     * @param id The ID of the result.
+     * @return The result value, or {@link Option#empty()}.
+     *
+     * @see #result(String, Class) for type-safe retrieval.
+     */
     Option<?> result(String id);
 
     /**

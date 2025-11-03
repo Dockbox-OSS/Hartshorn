@@ -19,7 +19,9 @@ package org.dockbox.hartshorn.hsl.modules;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 
 /**
- * TODO: #1061 Add documentation
+ * Native module implementation for utility classes, i.e. classes that only contain static methods and
+ * fields. Since such classes cannot be instantiated, this module implementation always returns
+ * {@code null} for the instance, and simply holds a reference to the utility class itself.
  *
  * @since 0.7.0
  *
