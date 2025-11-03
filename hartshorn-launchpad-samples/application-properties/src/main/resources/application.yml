@@ -1,0 +1,5 @@
+hartshorn.profiles: demo
+
+sample:
+  greeting: Hello, Application Properties!
+  condition: true
