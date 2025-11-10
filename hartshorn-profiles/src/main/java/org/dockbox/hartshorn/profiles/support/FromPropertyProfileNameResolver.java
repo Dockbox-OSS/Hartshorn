@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.profiles.support;
 
+import java.util.LinkedHashSet;
+import java.util.SequencedSet;
+import java.util.stream.Collectors;
 import org.dockbox.hartshorn.profiles.ProfileNameResolver;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link ProfileNameResolver} that resolves profile names from a specific property
@@ -35,10 +35,10 @@ public class FromPropertyProfileNameResolver implements ProfileNameResolver {
     public static final String PROFILES_PROPERTY = "hartshorn.profiles";
 
     @Override
-    public Set<String> resolveProfileNames(PropertyRegistry rootRegistry) {
+    public SequencedSet<String> resolveProfileNames(PropertyRegistry rootRegistry) {
         return rootRegistry.list(PROFILES_PROPERTY)
                 .stream(list -> list.values().stream())
                 .flatMap(property -> property.value().stream())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.test;
 
+import java.lang.reflect.AnnotatedElement;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.SequencedSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.dockbox.hartshorn.profiles.ProfileNameResolver;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.test.annotations.TestProfiles;
-
-import java.lang.reflect.AnnotatedElement;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * A {@link ProfileNameResolver} that resolves profile names from {@link TestProfiles}
@@ -43,12 +43,12 @@ public record FromTestAnnotationProfileNameResolver(
 ) implements ProfileNameResolver {
 
     @Override
-    public Set<String> resolveProfileNames(PropertyRegistry rootRegistry) {
+    public SequencedSet<String> resolveProfileNames(PropertyRegistry rootRegistry) {
         return this.testComponentSources.stream()
                 .filter(element -> element.isAnnotationPresent(TestProfiles.class))
                 .map(element -> element.getAnnotation(TestProfiles.class))
                 .map(TestProfiles::value)
                 .flatMap(Stream::of)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.profiles.support;
 
-import org.dockbox.hartshorn.profiles.ProfileNameResolver;
-import org.dockbox.hartshorn.properties.PropertyRegistry;
-
+import java.util.LinkedHashSet;
+import java.util.SequencedSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.dockbox.hartshorn.profiles.ProfileNameResolver;
+import org.dockbox.hartshorn.properties.PropertyRegistry;
 
 /**
  * A composite implementation of {@link ProfileNameResolver} that aggregates multiple resolvers and
@@ -39,9 +40,9 @@ public record CompositeProfileNameResolver(Set<ProfileNameResolver> resolvers) i
     }
 
     @Override
-    public Set<String> resolveProfileNames(PropertyRegistry rootRegistry) {
+    public SequencedSet<String> resolveProfileNames(PropertyRegistry rootRegistry) {
         return this.resolvers.stream()
                 .flatMap(resolver -> resolver.resolveProfileNames(rootRegistry).stream())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

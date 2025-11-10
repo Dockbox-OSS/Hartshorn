@@ -56,9 +56,9 @@ public record IntegrationTestApplicationFactoryCustomizer(
     @Override
     public void configure(StandardApplicationContextFactory.Configurer constructor) {
         Customizer<ConfigurableApplicationEnvironment.Configurer> environmentCustomizer = environment -> {
-            environment.disableBanner(); // Disable banner for tests, to avoid unnecessary noise
-            environment.enableBatchMode(); // Enable batch mode, to make use of additional caching between tests. This decreases startup time after warmup (first test).
-            environment.showStacktraces(); // Enable stacktraces for tests, to make debugging easier
+            environment.disableBanner();
+            environment.enableBatchMode();
+            environment.showStacktraces();
             environment.applicationFSProvider(new TemporaryFileSystemProvider());
             environment.applicationContext(SimpleApplicationContext.create(this.applicationCustomizer::customizeApplication));
 
