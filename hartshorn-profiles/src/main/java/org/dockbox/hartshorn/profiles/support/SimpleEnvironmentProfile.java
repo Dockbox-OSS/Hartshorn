@@ -14,29 +14,22 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.properties.loader;
+package org.dockbox.hartshorn.profiles.support;
 
+import org.dockbox.hartshorn.profiles.EnvironmentProfile;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 
-import java.io.IOException;
-import java.net.URI;
-
 /**
- * A loader for {@link PropertyRegistry} instances. This loader is used to populate a registry with
- * properties from a specific source.
+ * A simple implementation of {@link EnvironmentProfile}.
+ *
+ * @param name the name of the profile
+ * @param propertyRegistry the property registry of the profile
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public interface PropertyRegistryPathLoader {
-
-    /**
-     * Loads properties into the given {@link PropertyRegistry} from the specified path.
-     *
-     * @param registry the registry to load properties into
-     * @param path the path to load properties from
-     * @throws IOException if an I/O error occurs while loading properties
-     */
-    void loadRegistry(PropertyRegistry registry, URI path) throws IOException;
-}
+public record SimpleEnvironmentProfile(
+        String name,
+        PropertyRegistry propertyRegistry
+) implements EnvironmentProfile { }

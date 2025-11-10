@@ -16,32 +16,21 @@
 
 package org.dockbox.hartshorn.launchpad.properties;
 
-import java.util.Properties;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.SequencedSet;
-
 /**
- * Factory for creating {@link PropertyRegistry} instances.
+ * Factory interface for creating instances of {@link PropertyRegistry}.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-@FunctionalInterface
 public interface PropertyRegistryFactory {
 
     /**
-     * Creates a {@link PropertyRegistry} instance based on the provided sources. Sources will be loaded into the
-     * registry in the order they are provided.
+     * Creates a new {@link PropertyRegistry}.
      *
-     * @param sources the sources to load into the registry
-     * @param additionalProperties additional properties to be included in the registry
-     *
-     * @return the created registry
-     * @throws IOException when an error occurs while loading the sources
+     * @return a new {@link PropertyRegistry} instance
      */
-    PropertyRegistry createRegistry(SequencedSet<URI> sources, Properties additionalProperties) throws IOException;
+    PropertyRegistry createRegistry();
 }

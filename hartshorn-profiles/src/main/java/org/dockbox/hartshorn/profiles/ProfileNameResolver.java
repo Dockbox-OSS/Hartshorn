@@ -14,29 +14,26 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.properties.loader;
+package org.dockbox.hartshorn.profiles;
 
+import java.util.SequencedSet;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 
-import java.io.IOException;
-import java.net.URI;
-
 /**
- * A loader for {@link PropertyRegistry} instances. This loader is used to populate a registry with
- * properties from a specific source.
+ * Resolves profile names from a given property registry. This interface can be implemented to provide
+ * custom logic for determining active profiles based on application properties or related components.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public interface PropertyRegistryPathLoader {
+public interface ProfileNameResolver {
 
     /**
-     * Loads properties into the given {@link PropertyRegistry} from the specified path.
+     * Resolves profile names from the provided root property registry.
      *
-     * @param registry the registry to load properties into
-     * @param path the path to load properties from
-     * @throws IOException if an I/O error occurs while loading properties
+     * @param rootRegistry the root property registry to resolve profile names from
+     * @return a set of resolved profile names
      */
-    void loadRegistry(PropertyRegistry registry, URI path) throws IOException;
+    SequencedSet<String> resolveProfileNames(PropertyRegistry rootRegistry);
 }

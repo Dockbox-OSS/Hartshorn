@@ -16,22 +16,26 @@
 
 package org.dockbox.hartshorn.launchpad.properties;
 
-import java.util.Collections;
-import java.util.SequencedSet;
+import org.dockbox.hartshorn.context.SingleElementContext;
+import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.launch.ApplicationBuildContext;
+
+import java.util.List;
 
 /**
- * Resolver which always returns the same set of property sources.
- *
- * @param sources the sources to return
+ * Resolves command line arguments from the {@link ApplicationBuildContext} as properties for
+ * the application environment.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public record PredefinedPropertySourceResolver(SequencedSet<String> sources) implements PropertySourceResolver {
+public class CommandLineArgumentsPropertiesResolver extends AbstractCustomPropertiesResolver {
 
     @Override
-    public SequencedSet<String> resolve() {
-        return Collections.unmodifiableSequencedSet(this.sources);
+    protected List<String> resolveStringProperties(SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
+        return initializerContext.firstContext(ApplicationBuildContext.class)
+            .map(ApplicationBuildContext::arguments)
+            .orElseGet(List::of);
     }
 }

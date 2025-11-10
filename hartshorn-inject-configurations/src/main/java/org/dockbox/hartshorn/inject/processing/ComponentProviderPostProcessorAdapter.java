@@ -78,7 +78,7 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
         Option<ComponentContainer<?>> container = this.owner.componentRegistry().container(type);
         instance = container.present()
                 ? this.processManagedComponent(componentKey, objectContainer, container, requestContext)
-                : this.processUnmanagedComponent(componentKey, objectContainer, type,requestContext);
+                : this.processUnmanagedComponent(componentKey, objectContainer, requestContext);
 
         if (instance == null && (!requestContext.isForInjectionPoint() || this.requireRule.isRequired(requestContext.injectionPoint()))) {
             componentKey.failureStrategy().onResolutionFailure(componentKey, requestContext);
@@ -94,7 +94,7 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
         return this.process(componentKey, objectContainer, container.get(), requestContext);
     }
 
-    private <T> T processUnmanagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, Class<? extends T> type, ComponentRequestContext requestContext)
+    private <T> T processUnmanagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, ComponentRequestContext requestContext)
             throws ApplicationException {
         if (ComponentCollection.class.isAssignableFrom(componentKey.type())) {
             if (ComponentCollection.class != componentKey.type()) {

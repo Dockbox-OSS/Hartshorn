@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.properties.loader.path.PropertyPathStyle;
 import org.dockbox.hartshorn.properties.parse.support.ValueConfiguredPropertyParser;
 import org.dockbox.hartshorn.properties.value.SimpleValueProperty;
 import org.dockbox.hartshorn.properties.value.StandardValuePropertyParsers;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.stream.EntryStream;
 
@@ -247,4 +248,12 @@ public abstract class AbstractMapProperty<T> {
      * @return the key for the given prefix and property
      */
     protected abstract String key(T prefix, ConfiguredProperty property);
+
+    @Override
+    public String toString() {
+        return ObjectDescriber.of(this)
+                .field("name", this.name)
+                .field("properties", this.properties)
+                .describe();
+    }
 }

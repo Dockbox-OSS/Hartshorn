@@ -53,15 +53,16 @@ import java.util.regex.Pattern;
  *
  * @author Guus Lieben
  */
-public class FallbackResourceLookup implements ResourceLookup {
+public class StrategyResourceLookup implements ResourceLookup {
 
-    private static final Pattern STRATEGY_PATTERN = Pattern.compile("(.+):(.+)");
+    public static final String STRATEGY_SEPARATOR = ":";
+    private static final Pattern STRATEGY_PATTERN = Pattern.compile("(.+)" + STRATEGY_SEPARATOR + "(.+)");
 
     private final Map<String, ResourceLookupStrategy> strategies = new ConcurrentHashMap<>();
     private final ApplicationEnvironment environment;
     private final ResourceLookupStrategy fallbackStrategy;
 
-    public FallbackResourceLookup(ApplicationEnvironment environment, ResourceLookupStrategy fallbackStrategy) {
+    public StrategyResourceLookup(ApplicationEnvironment environment, ResourceLookupStrategy fallbackStrategy) {
         this.environment = environment;
         this.fallbackStrategy = fallbackStrategy;
     }
@@ -119,7 +120,7 @@ public class FallbackResourceLookup implements ResourceLookup {
             customizer.configure(configurer);
 
             ResourceLookupStrategy fallbackStrategy = configurer.fallbackStrategy.initialize(environment);
-            FallbackResourceLookup resourceLookup = new FallbackResourceLookup(environment.input(), fallbackStrategy);
+            StrategyResourceLookup resourceLookup = new StrategyResourceLookup(environment.input(), fallbackStrategy);
 
             List<ResourceLookupStrategy> strategies = configurer.strategies.initialize(environment);
             strategies.forEach(resourceLookup::addLookupStrategy);

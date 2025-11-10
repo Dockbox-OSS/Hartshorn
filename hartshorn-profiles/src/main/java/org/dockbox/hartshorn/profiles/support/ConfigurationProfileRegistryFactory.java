@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.profiles;
+package org.dockbox.hartshorn.profiles.support;
 
+import org.dockbox.hartshorn.profiles.EnvironmentProfile;
+import org.dockbox.hartshorn.profiles.ProfileNameResolver;
+import org.dockbox.hartshorn.profiles.ProfileRegistry;
+import org.dockbox.hartshorn.profiles.ProfileRegistryFactory;
+import org.dockbox.hartshorn.profiles.ProfileResourceResolver;
+import org.dockbox.hartshorn.profiles.PropertyRegistrySupplier;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.loader.PropertyRegistryPathLoader;
-import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -28,11 +33,7 @@ import java.util.Set;
 /**
  * Standard implementation of {@link ProfileRegistryFactory} that creates a {@link ProfileRegistry} based on
  * a root {@link PropertyRegistry} and additional profiles defined in the root registry. Additional profiles
- * should be defined in a property list with the key {@value #PROFILES_PROPERTY}.
- *
- * <p>For example, if the root registry contains a property list with the key {@value #PROFILES_PROPERTY} and
- * the value {@code ["profile1", "profile2"]}, this factory will create a registry with three profiles:
- * {@value #DEFAULT_PROFILE_NAME}, {@code profile1} and {@code profile2}.
+ * are resolved using a {@link ProfileResourceResolver} and loaded using a {@link PropertyRegistryPathLoader}.
  *
  * @since 0.7.0
  *
@@ -40,21 +41,23 @@ import java.util.Set;
  */
 public class ConfigurationProfileRegistryFactory implements ProfileRegistryFactory {
 
-    private static final String PROFILES_PROPERTY = "hartshorn.profiles";
-    private static final String DEFAULT_PROFILE_NAME = "default";
+    public static final String DEFAULT_PROFILE_NAME = "default";
 
     private final PropertyRegistryPathLoader propertyRegistryLoader;
     private final ProfileResourceResolver resourceResolver;
     private final PropertyRegistrySupplier registrySupplier;
+    private final ProfileNameResolver profileNameResolver;
 
     public ConfigurationProfileRegistryFactory(
             PropertyRegistryPathLoader propertyRegistryLoader,
             ProfileResourceResolver resourceResolver,
-            PropertyRegistrySupplier registrySupplier
+            PropertyRegistrySupplier registrySupplier,
+            ProfileNameResolver profileNameResolver
     ) {
         this.propertyRegistryLoader = propertyRegistryLoader;
         this.resourceResolver = resourceResolver;
         this.registrySupplier = registrySupplier;
+        this.profileNameResolver = profileNameResolver;
     }
 
     @Override
@@ -64,9 +67,8 @@ public class ConfigurationProfileRegistryFactory implements ProfileRegistryFacto
         EnvironmentProfile defaultProfile = new SimpleEnvironmentProfile(DEFAULT_PROFILE_NAME, rootRegistry);
         profileRegistry.register(0, defaultProfile);
 
-        List<EnvironmentProfile> additionalProfiles = rootRegistry.list(PROFILES_PROPERTY)
-                .stream(list -> list.values().stream())
-                .flatMap(property -> property.value().stream())
+        List<EnvironmentProfile> additionalProfiles = this.profileNameResolver
+                .resolveProfileNames(rootRegistry).stream()
                 .map(this::resolveProfile)
                 .toList();
 
@@ -86,8 +88,7 @@ public class ConfigurationProfileRegistryFactory implements ProfileRegistryFacto
                 this.propertyRegistryLoader.loadRegistry(registry, resource);
             }
             catch(IOException e) {
-                // TODO: Better exception type
-                throw new ApplicationRuntimeException("Failed to load profile " + profileName, e);
+                throw new ProfileLoadingFailedException(profileName, resource, e);
             }
         }
         return new SimpleEnvironmentProfile(profileName, registry);

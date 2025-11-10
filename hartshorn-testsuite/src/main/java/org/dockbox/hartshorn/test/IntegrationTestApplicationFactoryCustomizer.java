@@ -22,6 +22,9 @@ import org.dockbox.hartshorn.launchpad.SimpleApplicationContext;
 import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
 import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
+import org.dockbox.hartshorn.launchpad.properties.EnvironmentProfilesPropertyRegistryFactory;
+import org.dockbox.hartshorn.profiles.support.CompositeProfileNameResolver;
+import org.dockbox.hartshorn.profiles.support.FromPropertyProfileNameResolver;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.configure.Customizer;
@@ -53,11 +56,18 @@ public record IntegrationTestApplicationFactoryCustomizer(
     @Override
     public void configure(StandardApplicationContextFactory.Configurer constructor) {
         Customizer<ConfigurableApplicationEnvironment.Configurer> environmentCustomizer = environment -> {
-            environment.disableBanner(); // Disable banner for tests, to avoid unnecessary noise
-            environment.enableBatchMode(); // Enable batch mode, to make use of additional caching between tests. This decreases startup time after warmup (first test).
-            environment.showStacktraces(); // Enable stacktraces for tests, to make debugging easier
+            environment.disableBanner();
+            environment.enableBatchMode();
+            environment.showStacktraces();
             environment.applicationFSProvider(new TemporaryFileSystemProvider());
             environment.applicationContext(SimpleApplicationContext.create(this.applicationCustomizer::customizeApplication));
+
+            environment.propertyRegistryFactory(EnvironmentProfilesPropertyRegistryFactory.create(propertyRegistryFactory -> {
+                propertyRegistryFactory.profileNameResolver(new CompositeProfileNameResolver(
+                        new FromPropertyProfileNameResolver(),
+                        new FromTestAnnotationProfileNameResolver(this.testComponentSources)
+                ));
+            }));
         };
         constructor.environment(ConfigurableApplicationEnvironment.create(
                 environmentCustomizer.compose(this.applicationCustomizer::customizeEnvironment)

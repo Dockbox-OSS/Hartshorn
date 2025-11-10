@@ -20,7 +20,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.option.Option;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -331,5 +334,94 @@ public final class StringUtilities {
             joiner.add(toStringFunction.apply(element));
         }
         return joiner.toString();
+    }
+
+    /**
+     * @return a new {@link MatrixBuilder} instance
+     *
+     * @see MatrixBuilder
+     */
+    public static MatrixBuilder matrix() {
+        return new MatrixBuilder();
+    }
+
+    /**
+     * A builder for creating a matrix of strings. The matrix is built by adding segments, where each
+     * segment is a collection of strings. The resulting matrix contains all possible combinations of
+     * the segments.
+     *
+     * <p>For example, given the segments:
+     * <ul>
+     *     <li>{@code ["a", "b"]}</li>
+     *     <li>{@code ["1", "2"]}</li>
+     *     <li>{@code ["X", "Y"]}</li>
+     * </ul>
+     * The resulting matrix will be:
+     * <ul>
+     *     <li>{@code "a1X"}</li>
+     *     <li>{@code "a1Y"}</li>
+     *     <li>{@code "a2X"}</li>
+     *     <li>{@code "a2Y"}</li>
+     *     <li>{@code "b1X"}</li>
+     *     <li>{@code "b1Y"}</li>
+     *     <li>{@code "b2X"}</li>
+     *     <li>{@code "b2Y"}</li>
+     * </ul>
+     *
+     * @since 0.7.0
+     *
+     * @author Guus Lieben
+     */
+    public static class MatrixBuilder {
+
+        private final List<Collection<String>> segments = new ArrayList<>();
+
+        /**
+         * Adds a segment to the matrix.
+         *
+         * @param segment the segment to add
+         * @return this {@link MatrixBuilder} instance
+         */
+        public MatrixBuilder segment(Collection<String> segment) {
+            this.segments.add(segment);
+            return this;
+        }
+
+        /**
+         * Adds a segment to the matrix.
+         *
+         * @param segment the segment to add
+         * @return this {@link MatrixBuilder} instance
+         */
+        public MatrixBuilder segment(String... segment) {
+            return this.segment(List.of(segment));
+        }
+
+        /**
+         * Builds the matrix and returns the resulting list of strings. Each string in the
+         * resulting list is a unique combination of the segments added to the builder.
+         *
+         * @return the resulting list of strings
+         */
+        public List<String> build() {
+            List<String> result = new ArrayList<>();
+            this.generate(result, "", 0);
+            return result;
+        }
+
+        private void generate(
+                List<String> results,
+                String current,
+                int depth
+        ) {
+            if (depth == this.segments.size()) {
+                results.add(current);
+                return;
+            }
+
+            for (String value : this.segments.get(depth)) {
+                this.generate(results, current + value, depth + 1);
+            }
+        }
     }
 }

@@ -12,6 +12,7 @@
     <modules>
         <module>application-observability</module>
         <module>application-processing</module>
+        <module>application-properties</module>
         <module>application-proxies</module>
         <module>application-reporting</module>
         <module>application-scopes</module>

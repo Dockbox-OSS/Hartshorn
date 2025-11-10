@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,15 +34,19 @@ import java.util.function.Predicate;
 public class MapPropertyRegistry extends MapObjectProperty implements PropertyRegistry {
 
     public MapPropertyRegistry() {
-        this(StandardPropertyPathStyle.INSTANCE);
+        this(Map.of(), StandardPropertyPathStyle.INSTANCE);
+    }
+
+    public MapPropertyRegistry(Map<String, ConfiguredProperty> properties) {
+        this(properties, StandardPropertyPathStyle.INSTANCE);
     }
 
     public MapPropertyRegistry(PropertyPathStyle pathStyle) {
-        this("", pathStyle);
+        this(Map.of(), pathStyle);
     }
 
-    public MapPropertyRegistry(String name, PropertyPathStyle pathStyle) {
-        super(name, Map.of(), pathStyle);
+    public MapPropertyRegistry(Map<String, ConfiguredProperty> properties, PropertyPathStyle pathStyle) {
+        super("", properties, pathStyle);
     }
 
     @Override
@@ -52,9 +56,6 @@ public class MapPropertyRegistry extends MapObjectProperty implements PropertyRe
 
     @Override
     public void register(ConfiguredProperty property) {
-        if (this.contains(property.name())) {
-            throw new IllegalArgumentException("Property with name " + property.name() + " already exists. If you intended to load a property with multiple values, implement the appropriate ConfiguredProperty");
-        }
         this.properties().put(property.name(), property);
     }
 

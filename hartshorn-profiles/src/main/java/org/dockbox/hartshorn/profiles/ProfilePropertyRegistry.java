@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,19 @@ package org.dockbox.hartshorn.profiles;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 
 /**
- * A simple implementation of {@link EnvironmentProfile}.
- *
- * @param name the name of the profile
- * @param propertyRegistry the property registry of the profile
+ * A {@link PropertyRegistry} that is aware of an associated {@link ProfileRegistry}, and therefore its
+ * {@link EnvironmentProfile}s.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public record SimpleEnvironmentProfile(
-        String name,
-        PropertyRegistry propertyRegistry
-) implements EnvironmentProfile { }
+public interface ProfilePropertyRegistry extends PropertyRegistry {
+
+    /**
+     * The associated {@link ProfileRegistry}.
+     *
+     * @return The profile registry
+     */
+    ProfileRegistry profileRegistry();
+}
