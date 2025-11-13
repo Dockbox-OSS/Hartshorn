@@ -32,6 +32,11 @@ import java.lang.annotation.Annotation;
  */
 public abstract class AnnotatedParameterLoaderRule<A extends Annotation, C extends ParameterLoaderContext> implements ParameterLoaderRule<C>{
 
+    /**
+     * The annotation that this rule accepts.
+     *
+     * @return the annotation class
+     */
     protected abstract Class<A> annotation();
 
     @Override

@@ -128,6 +128,13 @@ public class StandardConversionService implements ConversionService, ConverterRe
         return this.hasConverterForInput(source, targetType);
     }
 
+    /**
+     * Checks whether a converter exists for the given source and target types.
+     *
+     * @param source the source object
+     * @param targetType the target type
+     * @return {@code true} if a converter exists, {@code false} otherwise
+     */
     protected boolean hasConverterForInput(Object source, Class<?> targetType) {
         return this.converterCache.getConverter(source, targetType) != null;
     }
@@ -230,8 +237,20 @@ public class StandardConversionService implements ConversionService, ConverterRe
         this.defaultValueProviderCache.addConverter(new ConverterFactoryAdapter(Null.TYPE, targetType, factory));
     }
 
-    protected <T, R> Class<R> getTypeParameter(Class<T> fromType, T converterFactory, int parameterIndex) {
-        TypeParameterList typeParameters = this.introspector.introspect(converterFactory)
+    /**
+     * Resolves the type parameter at the given index for the given type.
+     *
+     * @param fromType the interface or class from which to resolve the type parameter
+     * @param source the source instance
+     * @param parameterIndex the index of the type parameter to resolve
+     * @param <T> the type of the source instance
+     * @param <R> the type of the resolved type parameter
+     * @return the resolved type parameter class
+     *
+     * @throws IllegalArgumentException if the type parameter cannot be resolved
+     */
+    protected <T, R> Class<R> getTypeParameter(Class<T> fromType, T source, int parameterIndex) {
+        TypeParameterList typeParameters = this.introspector.introspect(source)
                 .typeParameters()
                 .inputFor(fromType);
 

@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.util.introspect.convert;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMap;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.dockbox.hartshorn.util.collections.ConcurrentSetMultiMap;
-import org.dockbox.hartshorn.util.collections.MultiMap;
 
 /**
  * A {@link ConverterCache} for {@link GenericConverter}s. If a converter implements {@link ConditionalConverter},
@@ -216,7 +216,7 @@ public class GenericConverters implements ConverterCache {
     }
 
     @Nullable
-    protected GenericConverter getTypeMatchingConverter(Object source, Class<?> targetType) {
+    private GenericConverter getTypeMatchingConverter(Object source, Class<?> targetType) {
         ConvertibleTypePair pair = new ConvertibleTypePair(source == null ? null : source.getClass(), targetType);
         return this.getConverterForPair(source, targetType, pair);
     }

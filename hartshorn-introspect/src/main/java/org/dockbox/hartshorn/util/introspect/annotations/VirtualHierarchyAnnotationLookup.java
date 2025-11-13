@@ -83,6 +83,16 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
         return this.fromCache(key, () -> this.annotationsOnElement(element, annotationType));
     }
 
+    /**
+     * Retrieves a value from the cache, or computes it using the given supplier if it is not
+     * present in the cache.
+     *
+     * @param key the cache key
+     * @param supplier the supplier to compute the value if it is not present in the cache
+     * @param <T> the type of the value
+     *
+     * @return the cached or computed value
+     */
     protected <T> T fromCache(HierarchyKey key, Supplier<T> supplier) {
         Option<Object> ret = cache.get(key);
         if (ret == null) {

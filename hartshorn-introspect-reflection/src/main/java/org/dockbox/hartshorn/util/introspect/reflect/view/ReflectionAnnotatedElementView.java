@@ -43,6 +43,11 @@ public abstract class ReflectionAnnotatedElementView extends DefaultContext impl
         this.introspector = introspector;
     }
 
+    /**
+     * The annotated element that this view represents.
+     *
+     * @return the annotated element
+     */
     protected abstract AnnotatedElement annotatedElement();
 
     @Override

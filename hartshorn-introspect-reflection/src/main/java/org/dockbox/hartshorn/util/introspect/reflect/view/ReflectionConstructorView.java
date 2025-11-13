@@ -59,6 +59,12 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
         this.introspector = introspector;
     }
 
+    /**
+     * Returns the invoker for this constructor. The invoker is responsible for calling the constructor with the
+     * given arguments.
+     *
+     * @return the invoker for this constructor
+     */
     protected ReflectiveConstructorCall<T> invoker() {
         if (this.invoker == null) {
             this.invoker = args -> {

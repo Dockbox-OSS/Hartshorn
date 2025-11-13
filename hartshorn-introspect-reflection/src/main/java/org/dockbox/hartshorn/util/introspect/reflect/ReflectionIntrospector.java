@@ -16,19 +16,10 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
-import org.dockbox.hartshorn.util.types.GenericType;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.BatchCapableIntrospector;
 import org.dockbox.hartshorn.util.introspect.ConcurrentIntrospectionViewCache;
 import org.dockbox.hartshorn.util.introspect.IntrospectionEnvironment;
+import org.dockbox.hartshorn.util.introspect.IntrospectionViewCache;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
@@ -48,6 +39,16 @@ import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.GenericType;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * Introspector implementation based on the {@link java.lang.reflect} package. This implementation
@@ -103,7 +104,14 @@ public class ReflectionIntrospector implements BatchCapableIntrospector {
         this.batchModeEnabled = enable;
     }
 
-    protected ConcurrentIntrospectionViewCache viewCache() {
+    /**
+     * Returns the appropriate view cache based on whether batch mode is enabled.
+     *
+     * @return the view cache
+     *
+     * @see IntrospectionViewCache
+     */
+    protected IntrospectionViewCache viewCache() {
         return this.batchModeEnabled ? SHARED_CACHE : this.viewCache;
     }
 

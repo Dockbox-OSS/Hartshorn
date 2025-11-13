@@ -59,6 +59,12 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
         this.annotationLookup = annotationLookup;
     }
 
+    /**
+     * Returns the annotation cache, initializing it if necessary. The annotation cache is a map of annotation
+     * types to annotation instances, and is used to speed up annotation lookups.
+     *
+     * @return the annotation cache
+     */
     protected Map<Class<?>, Annotation> annotationCache() {
         if (this.annotationCache == null) {
             this.annotationCache = new ConcurrentHashMap<>();
