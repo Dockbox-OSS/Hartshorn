@@ -36,10 +36,31 @@ import org.dockbox.hartshorn.util.ApplicationException;
  */
 public interface ComponentProviderStrategyChain<T> {
 
+    /**
+     * The component provider that this strategy chain is associated with.
+     *
+     * @return the component provider
+     */
     ComponentProvider componentProvider();
 
+    /**
+     * The application in which this strategy chain operates.
+     *
+     * @return the injection-capable application
+     */
     InjectionCapableApplication application();
 
+    /**
+     * Attempts to resolve the given {@code componentKey} using the next strategy in the chain.
+     *
+     * @param componentKey the component key to resolve
+     * @param requestContext the request context for the component resolution
+     *
+     * @return the resolved object container
+     *
+     * @throws ComponentInitializationException if the component could not be initialized
+     * @throws ApplicationException if the component could not be resolved or processed
+     */
     ObjectContainer<T> get(ComponentKey<T> componentKey, ComponentRequestContext requestContext)
             throws ComponentInitializationException, ApplicationException;
 }

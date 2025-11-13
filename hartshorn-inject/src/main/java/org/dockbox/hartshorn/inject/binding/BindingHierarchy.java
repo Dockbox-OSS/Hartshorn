@@ -129,5 +129,12 @@ public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Instantiati
      */
     ComponentKey<C> key();
 
+    /**
+     * Checks whether the given {@link ComponentKey} is compatible with the current hierarchy's key.
+     *
+     * @param key The key to check compatibility for.
+     * @return Whether the given key is compatible.
+     * @param <T> The type of the key to check.
+     */
     <T> boolean isCompatible(ComponentKey<T> key);
 }

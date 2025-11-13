@@ -49,10 +49,20 @@ public class AmbiguousComponentException extends ApplicationRuntimeException {
         this.foundKeys = foundKeys;
     }
 
+    /**
+     * The lookup key that caused this exception.
+     *
+     * @return the lookup key
+     */
     public ComponentKey<?> lookupKey() {
         return this.lookupKey;
     }
 
+    /**
+     * The set of found keys that loosely matched the lookup key.
+     *
+     * @return the found keys
+     */
     public Set<ComponentKey<?>> foundKeys() {
         return this.foundKeys;
     }

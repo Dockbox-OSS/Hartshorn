@@ -32,5 +32,12 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
  */
 @Deprecated(forRemoval = true, since = "0.7.0")
 public interface ExitingComponentProcessor {
+
+    /**
+     * Invoked when all managed components have been processed, allowing the processor to perform any
+     * necessary cleanup or finalization before releasing the components.
+     *
+     * @param application the application that is exiting
+     */
     void exit(InjectionCapableApplication application);
 }

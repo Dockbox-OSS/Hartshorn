@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.inject.graph;
 
-import java.util.Set;
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMapCollector;
+
+import java.util.Set;
 
 /**
  * A holder for conditional dependency contexts, which are used to determine whether certain dependencies
@@ -40,14 +41,30 @@ public class ConditionalDependencyContextsHolder extends DefaultContext {
         this.conditionalDependencyContexts = conditionalDependencyContexts;
     }
 
+    /**
+     * Returns all conditional dependency contexts grouped by their component keys.
+     *
+     * @return a multimap of component keys to their corresponding conditional dependency contexts
+     */
     public MultiMap<ComponentKey<?>, ConditionalDependencyContext<?>> conditionalDependencyContexts() {
         return this.conditionalDependencyContexts;
     }
 
+    /**
+     * Returns the conditional dependency contexts as an unmodifiable set.
+     *
+     * @return an unmodifiable set of conditional dependency contexts
+     */
     public Set<ConditionalDependencyContext<?>> conditionalDependencyContextsAsSet() {
         return Set.copyOf(this.conditionalDependencyContexts.allValues());
     }
 
+    /**
+     * Creates a new {@link ConditionalDependencyContextsHolder} from the provided set of contexts.
+     *
+     * @param contexts the set of conditional dependency contexts
+     * @return a new holder containing the provided contexts
+     */
     public static ConditionalDependencyContextsHolder create(Set<ConditionalDependencyContext<?>> contexts) {
         MultiMap<ComponentKey<?>, ConditionalDependencyContext<?>> conditionalDependencyContexts = contexts.stream()
             .collect(MultiMapCollector.groupingBy(context -> context.dependencyContext().componentKey()));

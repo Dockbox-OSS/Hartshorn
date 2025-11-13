@@ -67,18 +67,48 @@ public class HierarchyCache {
         this.binder = binder;
     }
 
+    /**
+     * Adds the given binding hierarchy to the cache.
+     *
+     * @param hierarchy the binding hierarchy to add
+     * @param <T> the type of the component
+     */
     public <T> void put(BindingHierarchy<T> hierarchy) {
         this.put(hierarchy.key().view(), hierarchy);
     }
 
+    /**
+     * Updates the binding hierarchy for the given component key view.
+     *
+     * @param view the component key view identifying the hierarchy
+     * @param updated the updated binding hierarchy
+     * @param <T> the type of the component
+     */
     public <T> void put(ComponentKeyView<T> view, BindingHierarchy<T> updated) {
         this.hierarchies.put(view, updated);
     }
 
+    /**
+     * Returns an immutable copy of all binding hierarchies in this cache.
+     *
+     * @return all binding hierarchies
+     */
     public Set<BindingHierarchy<?>> hierarchies() {
         return Set.copyOf(this.hierarchies.values());
     }
 
+    /**
+     * Retrieves the binding hierarchy for the given component key. If no exact match is found, a compatible hierarchy
+     * is searched for. If multiple compatible hierarchies are found, an {@link AmbiguousComponentException} is thrown.
+     * If no compatible hierarchies are found either, a new hierarchy is computed or resolved from the global binder if
+     * allowed.
+     *
+     * @param key the component key
+     * @param useGlobalIfAbsent whether to use the global binder to resolve the hierarchy if no local hierarchy is found
+     * @param <T> the type of the component
+     *
+     * @return the binding hierarchy
+     */
     public <T> BindingHierarchy<?> getOrComputeHierarchy(ComponentKey<T> key, boolean useGlobalIfAbsent) {
         ComponentKeyView<T> view = key.view();
         if (this.hierarchies.containsKey(view)) {
@@ -141,6 +171,13 @@ public class HierarchyCache {
         return hierarchy;
     }
 
+    /**
+     * Determines whether the given key should be treated in strict mode. If the key has a defined strictness,
+     * that value is used. Otherwise, the global configuration is used.
+     *
+     * @param key the component key
+     * @return true if the key should be treated in strict mode, false otherwise
+     */
     protected boolean isStrict(ComponentKey<?> key) {
         Tristate strict = key.strict();
         if (strict == Tristate.UNDEFINED) {

@@ -43,6 +43,13 @@ public interface ComponentExecutableInvocationAdapter extends Context {
      */
     ComponentExecutableInvocationAdapter scope(Scope scope);
 
+    /**
+     * Returns a new {@link ComponentExecutableInvocationAdapter} instance that is bound to the given
+     * {@link ComponentRequestContext}.
+     *
+     * @param componentRequestContext the component request context to bind to
+     * @return a new {@link ComponentExecutableInvocationAdapter} instance bound to the given component request context
+     */
     ComponentExecutableInvocationAdapter requestContext(ComponentRequestContext componentRequestContext);
 
     /**

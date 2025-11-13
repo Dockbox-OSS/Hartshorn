@@ -82,6 +82,13 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
         return declaration.annotations().hasAny(this.injectAnnotations);
     }
 
+    /**
+     * Creates a {@link ContextualInitializer} for the {@link MethodsAndFieldsInjectionPointResolver}, which may be
+     * customized using the provided {@link Customizer}.
+     *
+     * @param customizer The customizer to configure the resolver
+     * @return A contextual initializer for the resolver
+     */
     public static ContextualInitializer<InjectorEnvironment, ComponentInjectionPointsResolver> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();

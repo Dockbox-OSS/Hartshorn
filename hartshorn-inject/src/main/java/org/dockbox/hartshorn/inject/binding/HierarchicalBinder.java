@@ -31,5 +31,10 @@ import org.dockbox.hartshorn.inject.scope.Scope;
  */
 public interface HierarchicalBinder extends Binder, HierarchyLookup {
 
+    /**
+     * The scope in which this binder operates.
+     *
+     * @return the scope of this binder
+     */
     Scope scope();
 }

@@ -87,6 +87,12 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
         this.bindingAliasNormalizer = bindingAliasNormalizer;
     }
 
+    /**
+     * Returns the binding hierarchy that is being configured by this binding function. If the
+     * binding has been installed to a specific scope, the hierarchy for that scope is returned.
+     *
+     * @return the binding hierarchy
+     */
     protected BindingHierarchy<T> hierarchy() {
         if (this.scopeKey != null && !this.moduleContext.isApplicationScope(this.scopeKey)) {
             return this.moduleContext.hierarchy(this.scopeKey, this.hierarchy.key());
@@ -96,10 +102,20 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
         }
     }
 
+    /**
+     * Returns the binder that owns this binding function.
+     *
+     * @return the owning binder
+     */
     protected Binder binder() {
         return this.binder;
     }
 
+    /**
+     * Returns the singleton cache used by this binding function.
+     *
+     * @return the singleton cache
+     */
     protected SingletonCache singletonCache() {
         return this.singletonCache;
     }
@@ -235,6 +251,13 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
         return this.hierarchy().key().mutable().collector().build();
     }
 
+    /**
+     * Adds the provided {@link InstantiationStrategy} to the hierarchy, preserving the configured {@link
+     * #processAfterInitialization} setting.
+     *
+     * @param strategy the instantiation strategy to add
+     * @return the binder
+     */
     protected Binder add(InstantiationStrategy<T> strategy) {
         strategy = strategy.map(new ProcessAfterInitializationFunction<>(this.processAfterInitialization));
         this.hierarchy().add(this.priority, strategy);

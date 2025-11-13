@@ -111,5 +111,10 @@ public interface ComponentProvider {
         return this.get(key, requestContext);
     }
 
+    /**
+     * Returns the scope in which this provider provides components.
+     *
+     * @return The scope of this provider.
+     */
     Scope scope();
 }

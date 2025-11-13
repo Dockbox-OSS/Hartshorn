@@ -30,5 +30,10 @@ import org.dockbox.hartshorn.inject.binding.BindingAliasNormalizer;
  */
 public interface AliasCapableComponentProviderOrchestrator extends ComponentProviderOrchestrator {
 
+    /**
+     * The alias normalizer used by this orchestrator.
+     *
+     * @return the alias normalizer
+     */
     BindingAliasNormalizer aliasNormalizer();
 }

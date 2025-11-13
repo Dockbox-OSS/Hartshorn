@@ -204,6 +204,11 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
         return describer.describe();
     }
 
+    /**
+     * Customizes the describer used in the {@link #toString()} method, allowing subclasses to add additional fields.
+     *
+     * @param describer the describer to customize
+     */
     protected void customizeDescriber(ObjectDescriber<?> describer) {
         describer.field("key", this.componentKey)
             .field("priority", this.priority)
@@ -328,8 +333,18 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
             return this.self();
         }
 
+        /**
+         * Returns the builder instance, for use in fluent APIs.
+         *
+         * @return the builder instance
+         */
         protected abstract B self();
 
+        /**
+         * Builds the {@link DependencyContext} instance.
+         *
+         * @return the built {@link DependencyContext} instance
+         */
         public abstract DependencyContext<T> build();
     }
 }

@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.inject.provider.strategy;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import java.util.SequencedCollection;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
@@ -27,6 +23,10 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.util.ApplicationException;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.SequencedCollection;
 
 /**
  * A {@link ComponentProvider} that uses a chain of {@link ComponentProviderStrategy strategies} to resolve components.
@@ -47,11 +47,21 @@ public abstract class StrategyChainComponentProvider implements ComponentProvide
         this.strategies = new LinkedList<>();
     }
 
+    /**
+     * Sets the strategies that this provider will use to resolve components. This will replace any existing strategies.
+     *
+     * @param strategies the strategies to set
+     */
     protected void strategies(SequencedCollection<ComponentProviderStrategy> strategies) {
         this.strategies.clear();
         this.strategies.addAll(strategies);
     }
 
+    /**
+     * The application that this provider is associated with.
+     *
+     * @return the injection-capable application
+     */
     public InjectionCapableApplication application() {
         return this.application;
     }
@@ -88,5 +98,19 @@ public abstract class StrategyChainComponentProvider implements ComponentProvide
         }
     }
 
+    /**
+     * Processes the given {@link ObjectContainer} before returning the instance. This method is called
+     * after the component has been resolved by the strategy chain, but before the instance is returned.
+     * This allows for additional processing of the instance, such as initialization or proxying.
+     *
+     * @param key the component key used to resolve the component
+     * @param requestContext the request context
+     * @param container the object container holding the resolved instance
+     * @param <T> the type of the component
+     *
+     * @return the processed instance
+     *
+     * @throws ApplicationException if processing fails
+     */
     protected abstract <T> T process(ComponentKey<T> key, ComponentRequestContext requestContext, ObjectContainer<T> container) throws ApplicationException;
 }

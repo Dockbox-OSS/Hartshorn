@@ -101,10 +101,18 @@ public class CompositeQualifier implements Reportable {
         return Set.copyOf(this.qualifiers.values());
     }
 
+    /**
+     * Returns whether this {@link CompositeQualifier} contains no qualifiers.
+     *
+     * @return Whether this {@link CompositeQualifier} contains no qualifiers.
+     */
     public boolean isEmpty() {
         return this.qualifiers.isEmpty();
     }
 
+    /**
+     * Clears all qualifiers from this {@link CompositeQualifier}.
+     */
     public void clear() {
         this.qualifiers.clear();
     }

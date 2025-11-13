@@ -68,9 +68,27 @@ public interface InjectorEnvironment {
      */
     ProxyOrchestrator proxyOrchestrator();
 
+    /**
+     * Gets the {@link InjectorConfiguration} for the current environment. The configuration describes how the injector
+     * should behave within the environment.
+     *
+     * @return The injector configuration
+     */
     InjectorConfiguration configuration();
 
+    /**
+     * Gets the {@link PropertyRegistry} for the current environment. The property registry is responsible for
+     * managing properties within the environment.
+     *
+     * @return The property registry
+     */
     PropertyRegistry propertyRegistry();
 
+    /**
+     * Gets the {@link ExceptionHandler} for the current environment. The exception handler is responsible for
+     * handling exceptions that occur within the environment.
+     *
+     * @return The exception handler
+     */
     ExceptionHandler exceptionHandler();
 }

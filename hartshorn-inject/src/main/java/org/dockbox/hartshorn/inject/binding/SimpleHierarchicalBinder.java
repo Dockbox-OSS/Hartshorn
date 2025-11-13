@@ -51,10 +51,19 @@ public class SimpleHierarchicalBinder implements HierarchicalAliasCapableBinder,
         this.singletonCache = singletonCache;
     }
 
+    /**
+     * Returns the application scope.
+     * @return The application scope.
+     */
     protected Scope applicationScope() {
         return this.application.defaultProvider().scope();
     }
 
+    /**
+     * Returns the hierarchy cache, initializing it if necessary.
+     *
+     * @return The hierarchy cache.
+     */
     public HierarchyCache hierarchyCache() {
         if (this.hierarchyCache == null ) {
             this.hierarchyCache = new HierarchyCache(
@@ -76,6 +85,15 @@ public class SimpleHierarchicalBinder implements HierarchicalAliasCapableBinder,
         return this.bind(componentScope, key);
     }
 
+    /**
+     * Creates a new {@link BindingFunction} for the given component key within the specified scope.
+     *
+     * @param scope The scope in which to bind the component.
+     * @param key The component key to bind.
+     * @param <C> The type of the component to bind.
+     *
+     * @return The binding function for the specified component key.
+     */
     protected <C> AliasBindingFunction<C> bind(Scope scope, ComponentKey<C> key) {
         BindingHierarchy<C> hierarchy = this.hierarchy(key);
         AliasableBindingHierarchy<C> aliasableHierarchy = hierarchy instanceof AliasableBindingHierarchy<C> aliasable
@@ -90,6 +108,10 @@ public class SimpleHierarchicalBinder implements HierarchicalAliasCapableBinder,
         );
     }
 
+    /**
+     * Resolves the {@link ScopeModuleContext} from the application, or initializes a new one if none is found.
+     * @return The resolved or newly created scope module context.
+     */
     protected Option<ScopeModuleContext> resolveScopeModuleContext() {
         ContextIdentity<ScopeModuleContext> scopeModuleContextKey = ScopeModuleContext.createKey(
                 () -> this.applicationScope().installableScopeType()
@@ -129,6 +151,11 @@ public class SimpleHierarchicalBinder implements HierarchicalAliasCapableBinder,
         return new UnmodifiableMultiMap<>(map);
     }
 
+    /**
+     * Populates the given hierarchies map with all hierarchies from the application scope.
+     *
+     * @param hierarchies The hierarchies map to populate.
+     */
     protected void populateHierarchies(MultiMap<Scope, BindingHierarchy<?>> hierarchies) {
         hierarchies.putAll(this.applicationScope(), this.hierarchyCache().hierarchies());
     }
