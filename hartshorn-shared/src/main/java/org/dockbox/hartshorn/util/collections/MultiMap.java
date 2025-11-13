@@ -16,12 +16,13 @@
 
 package org.dockbox.hartshorn.util.collections;
 
+import org.dockbox.hartshorn.util.stream.EntryStream;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
-import org.dockbox.hartshorn.util.stream.EntryStream;
 
 /**
  * A map that can contain multiple values for a single key. This allows for a more natural way of storing multiple values
@@ -211,8 +212,20 @@ public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
      */
     void forEach(BiConsumer<K, V> consumer);
 
+    /**
+     * Removes all entries in this {@link MultiMap} that match the given {@link BiPredicate}.
+     *
+     * @param predicate the {@link BiPredicate} to test
+     *
+     * @return the number of entries removed
+     */
     int removeIf(BiPredicate<K, V> predicate);
 
+    /**
+     * Creates a stream of the entries in this {@link MultiMap}.
+     *
+     * @return a stream of the entries in this {@link MultiMap}
+     */
     EntryStream<K, Collection<V>> stream();
 
     /**

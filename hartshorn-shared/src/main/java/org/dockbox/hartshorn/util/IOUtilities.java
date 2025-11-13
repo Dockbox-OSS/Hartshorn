@@ -47,6 +47,12 @@ public final class IOUtilities {
         return getFileExtension(path) != null;
     }
 
+    /**
+     * Checks if the provided URI has a file extension.
+     *
+     * @param uri the URI to check
+     * @return {@code true} if the URI has a file extension, {@code false} otherwise
+     */
     public static boolean hasFileExtension(URI uri) {
         return getFileExtension(uri) != null;
     }

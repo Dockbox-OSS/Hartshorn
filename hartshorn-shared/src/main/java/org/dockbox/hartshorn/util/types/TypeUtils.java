@@ -89,9 +89,9 @@ public class TypeUtils {
      * Converts a string value to a primitive type. If the type is an enum, the value is converted to an enum constant.
      * If the given type is not a primitive, but a primitive wrapper, the value is converted to the primitive type.
      *
-     * <p><b>Note</b>: This utility method is kept for backwards compatibility. It is recommended to use the {@code ConversionService}
-     * in {@code org.dockbox.hartshorn.util.introspect.convert} instead, as it provides a more robust and extensible way of
-     * converting values.
+     * <p><b>Note</b>: This utility method is kept for backwards compatibility. It is recommended to use the {@code
+     * ConversionService} in {@code org.dockbox.hartshorn.util.introspect.convert} instead, as it provides a more robust
+     * and extensible way of converting values.
      *
      * @param type The type to convert to
      * @param value The value to convert
@@ -106,7 +106,8 @@ public class TypeUtils {
      * release, but is no longer recommended for use.
      */
     @Deprecated(since = "0.6.0", forRemoval = false)
-    public static <T> T toPrimitive(Class<?> type, String value) throws TypeConversionException, NotPrimitiveException {
+    public static <T> T toPrimitive(Class<?> type, String value)
+            throws TypeConversionException, NotPrimitiveException {
         if (type.isEnum()) {
             String name = String.valueOf(value).toUpperCase();
             try {
@@ -161,16 +162,18 @@ public class TypeUtils {
     }
 
     /**
-     * Allows adjusting wildcard types, ensuring compatibility between object instances and a specified key type. This method is
-     * particularly useful when dealing with scenarios where the generic type information is not precisely known at compile time,
-     * but is not required to be known at runtime (either due to type erasure, or due to the use of wildcards).
+     * Allows adjusting wildcard types, ensuring compatibility between object instances and a specified key type. This
+     * method is particularly useful when dealing with scenarios where the generic type information is not precisely
+     * known at compile time, but is not required to be known at runtime (either due to type erasure, or due to the
+     * use of wildcards).
      *
-     * <p>It should be noted that this method does not perform any type conversion. It merely ensures that the given object is
-     * compatible with the given type. If the given object is not compatible with the given type, an {@link IllegalArgumentException}
-     * is thrown. Compatibility is not ensured for type parameters, but only for the raw type.
+     * <p>It should be noted that this method does not perform any type conversion. It merely ensures that the given
+     * object is compatible with the given type. If the given object is not compatible with the given type, an {@link
+     * IllegalArgumentException} is thrown. Compatibility is not ensured for type parameters, but only for the raw type.
      *
-     * <p>Due to type parameter constraints, it should never be possible to invoke this method with a raw type that is not assignable
-     * to the given type. However, this method will throw an {@link IllegalArgumentException} if this is the case.
+     * <p>Due to type parameter constraints, it should never be possible to invoke this method with a raw type that is
+     * not assignable to the given type. However, this method will throw an {@link IllegalArgumentException} if this is
+     * the case.
      *
      * <p>Taking the following example type parameters for this method:
      * <ul>
@@ -179,12 +182,13 @@ public class TypeUtils {
      *     <li>{@link AdjustedType} - List&lt;String&gt;</li>
      * </ul>
      *
-     * <p>When invoking this method with an instance of any {@link java.util.List}, the method will return the same instance, as
-     * {@link java.util.List} is assignable to {@link java.util.List}&lt;?&gt;. However, as the instance could be {@code List<Integer>}
-     * just as well as {@code List<String>}, caution should be taken before using this method.
+     * <p>When invoking this method with an instance of any {@link java.util.List}, the method will return the same
+     * instance, as {@link java.util.List} is assignable to {@link java.util.List}&lt;?&gt;. However, as the instance
+     * could be {@code List<Integer>} just as well as {@code List<String>}, caution should be taken before using this
+     * method.
      *
-     * <p>Proper usage of this method will result in a type-safe cast. For example, when invoking this method with an instance of
-     * {@code List<String>}, and the {@link AdjustedType} being {@code List<CharSequence>}.
+     * <p>Proper usage of this method will result in a type-safe cast. For example, when invoking this method with an
+     * instance of {@code List<String>}, and the {@link AdjustedType} being {@code List<CharSequence>}.
      *
      * @param obj The object to adjust
      * @param type The type to adjust to
@@ -194,7 +198,10 @@ public class TypeUtils {
      *
      * @return The adjusted object
      */
-    public static <InstanceType extends KeyType, KeyType, AdjustedType extends KeyType> AdjustedType unchecked(InstanceType obj, Class<KeyType> type) {
+    public static <InstanceType extends KeyType, KeyType, AdjustedType extends KeyType> AdjustedType unchecked(
+            InstanceType obj,
+            Class<KeyType> type
+    ) {
         if (obj == null) {
             return null;
         }
@@ -202,13 +209,16 @@ public class TypeUtils {
             //noinspection unchecked
             return (AdjustedType) obj;
         }
-        throw new IllegalArgumentException("Cannot adjust wildcards for " + obj.getClass().getName() + " to " + type.getName());
+        throw new IllegalArgumentException(
+                "Cannot adjust wildcards for " + obj.getClass().getName() + " to " + type.getName()
+        );
     }
 
     /**
-     * Creates a new instance of the given annotation type. The returned instance is a proxy that implements the given annotation
-     * type. Note that this method assumes the given annotation type only has properties with default values, or no properties at
-     * all. If this is not the case for the given annotation type, it is recommended to use {@link #annotation(Class, Map)} instead.
+     * Creates a new instance of the given annotation type. The returned instance is a proxy that implements the given
+     * annotation type. Note that this method assumes the given annotation type only has properties with default values,
+     * or no properties at all. If this is not the case for the given annotation type, it is recommended to use {@link
+     * #annotation(Class, Map)} instead.
      *
      * @param annotationType The annotation type to create an instance of
      * @param <A> The annotation type
@@ -223,10 +233,10 @@ public class TypeUtils {
     }
 
     /**
-     * Creates a new instance of the given annotation type. The returned instance is a proxy that implements the given annotation
-     * type. The given map is used to populate the properties of the annotation instance. If the given map does not contain a value
-     * for a property, the default value of that property is used, which is either the value specified in the annotation definition,
-     * or {@code null} if no value is specified.
+     * Creates a new instance of the given annotation type. The returned instance is a proxy that implements the given
+     * annotation type. The given map is used to populate the properties of the annotation instance. If the given map
+     * does not contain a value for a property, the default value of that property is used, which is either the value
+     * specified in the annotation definition, or {@code null} if no value is specified.
      *
      * @param annotationType The annotation type to create an instance of
      * @param values The values to populate the annotation instance with
@@ -237,12 +247,27 @@ public class TypeUtils {
      * @see MapBackedAnnotationInvocationHandler
      */
     public static <A extends Annotation> A annotation(Class<A> annotationType, Map<String, Object> values) {
-        Object instance = Proxy.newProxyInstance(annotationType.getClassLoader(),
+        Object instance = Proxy.newProxyInstance(
+                annotationType.getClassLoader(),
                 new Class[]{ annotationType },
-                new MapBackedAnnotationInvocationHandler(annotationType, values == null ? Collections.emptyMap() : values));
+                new MapBackedAnnotationInvocationHandler(
+                        annotationType,
+                        values == null ? Collections.emptyMap() : values
+                )
+        );
         return annotationType.cast(instance);
     }
 
+    /**
+     * Creates a new instance of the given annotation type with a single {@code value} property. The returned instance
+     * is a proxy that implements the given annotation type.
+     *
+     * @param annotationType The annotation type to create an instance of
+     * @param value The value to set for the {@code value} property
+     * @param <A> The annotation type
+     *
+     * @return A new instance of the given annotation type
+     */
     public static <A extends Annotation> A annotation(Class<A> annotationType, Object value) {
         return TypeUtils.annotation(annotationType, Map.of("value", value));
     }

@@ -116,6 +116,16 @@ public abstract class DefaultContext implements Context {
         return this.stream(key).toList();
     }
 
+    /**
+     * Streams all contexts matching the given {@link ContextIdentity}. If the name of the key is empty,
+     * only unnamed contexts will be considered. Otherwise, only named contexts with the given name will
+     * be considered.
+     *
+     * @param key The context identity to match.
+     * @param <C> The type of context to match.
+     *
+     * @return A stream of contexts matching the given identity.
+     */
     protected <C extends ContextView> Stream<C> stream(ContextIdentity<C> key) {
         Stream<ContextView> contexts = StringUtilities.empty(key.name())
                 ? this.unnamedContexts().stream()
