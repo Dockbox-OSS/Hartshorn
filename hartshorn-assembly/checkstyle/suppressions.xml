@@ -7,6 +7,6 @@
 <suppressions>
 
     <!-- Not required for test fixtures to provide Javadocs (although this is still encouraged where relevant) -->
-    <suppress checks="MissingJavadocType"
+    <suppress checks="MissingJavadocType|MissingJavadocMethod"
               files=".+test-fixtures[\\/].*.java"/>
 </suppressions>
