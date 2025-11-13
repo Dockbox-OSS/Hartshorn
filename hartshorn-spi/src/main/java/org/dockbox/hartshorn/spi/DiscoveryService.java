@@ -146,6 +146,16 @@ public final class DiscoveryService {
         throw new ServiceDiscoveryException("No implementation found for type " + type.getCanonicalName());
     }
 
+    /**
+     * Discovers all implementations of the given type. If implementations are available through overrides or SPI,
+     * they will be returned. If no implementations are available, an empty set will be returned.
+     *
+     * @param type the type to discover implementations for
+     * @param <T> the type to discover implementations for
+     *
+     * @return a set of implementations of the given type
+     * @throws ServiceDiscoveryException if an error occurs during discovery
+     */
     public <T> Set<T> discoverAll(Class<T> type) throws ServiceDiscoveryException {
         try {
             return this.tryLoadDiscoveryFile(type);
