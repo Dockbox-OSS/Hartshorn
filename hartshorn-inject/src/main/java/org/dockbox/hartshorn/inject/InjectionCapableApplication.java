@@ -30,9 +30,24 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
  */
 public interface InjectionCapableApplication extends Context {
 
+    /**
+     * Get the injector environment associated with this application.
+     *
+     * @return the injector environment
+     */
     InjectorEnvironment environment();
 
+    /**
+     * Get the default (global) component provider for this application.
+     *
+     * @return the default component provider
+     */
     ComponentProvider defaultProvider();
 
+    /**
+     * Get the default (global) hierarchical binder for this application.
+     *
+     * @return the default hierarchical binder
+     */
     HierarchicalBinder defaultBinder();
 }

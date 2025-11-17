@@ -63,6 +63,15 @@ public final class ComponentConstructorResolver {
         this.configuration = configuration;
     }
 
+    /**
+     * Creates a new {@link ComponentConstructorResolver} with the given environment and hierarchy lookup. The required
+     * {@link ComponentInjectionPointsResolver}, {@link Introspector}, and {@link InjectorConfiguration} are obtained
+     * from the provided environment.
+     *
+     * @param environment the injector environment
+     * @param hierarchyLookup the hierarchy lookup
+     * @return a new component constructor resolver
+     */
     public static ComponentConstructorResolver create(InjectorEnvironment environment, HierarchyLookup hierarchyLookup) {
         return new ComponentConstructorResolver(
                 environment.injectionPointsResolver(),
@@ -72,16 +81,49 @@ public final class ComponentConstructorResolver {
         );
     }
 
+    /**
+     * Creates a new {@link ComponentConstructorResolver} using the provided application context. The required
+     * {@link InjectorEnvironment} and {@link HierarchyLookup} are obtained from the application context.
+     *
+     * @param applicationContext the injection-capable application context
+     * @return a new component constructor resolver
+     */
     public static ComponentConstructorResolver create(InjectionCapableApplication applicationContext) {
         return create(applicationContext.environment(), applicationContext.defaultBinder());
     }
 
+    /**
+     * Finds the optimal constructor for the given component type. The optimal constructor is the one with the highest
+     * number of injectable parameters. If multiple constructors with the same number of injectable parameters exist,
+     * the first one found will be returned.
+     *
+     * @param type the component type
+     * @param <C> the component type
+     *
+     * @return an option containing the optimal constructor, or empty if no suitable constructor is found
+     *
+     * @throws MissingInjectConstructorException if no injectable constructor is found for the given type
+     * @throws NoSuchProviderException if no suitable provider is found for the given type
+     */
     public <C> Option<ConstructorView<? extends C>> findConstructor(TypeView<C> type)
             throws MissingInjectConstructorException, NoSuchProviderException {
         TypePathNode<C> node = new TypePathNode<>(type, ComponentKey.of(type), type);
         return this.findConstructor(node);
     }
 
+    /**
+     * Finds the optimal constructor for the given component type path node. The optimal constructor is the one with the
+     * highest number of injectable parameters. If multiple constructors with the same number of injectable parameters
+     * exist, the first one found will be returned.
+     *
+     * @param node the component type path node
+     * @param <C> the component type
+     *
+     * @return an option containing the optimal constructor, or empty if no suitable constructor is found
+     *
+     * @throws MissingInjectConstructorException if no injectable constructor is found for the given type
+     * @throws NoSuchProviderException if no suitable provider is found for the given type
+     */
     public <C> Option<ConstructorView<? extends C>> findConstructor(TypePathNode<C> node)
             throws MissingInjectConstructorException, NoSuchProviderException {
         BindingHierarchy<C> hierarchy = this.hierarchyLookup.hierarchy(node.componentKey());

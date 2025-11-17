@@ -34,7 +34,21 @@ import org.dockbox.hartshorn.inject.scope.Scope;
  */
 public interface HierarchicalBinderPostProcessor {
 
+    /**
+     * Process the given binder. This method will be called before the binder is released for use, allowing the post
+     * processor to modify the binder as needed.
+     *
+     * @param application the application in which the binder is being processed
+     * @param scope the scope associated with the binder
+     * @param binder the binder to process
+     */
     void process(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder);
 
+    /**
+     * The priority of this post processor. Post processors with a lower priority value will be called before
+     * post processors with a higher priority value.
+     *
+     * @return the priority of this post processor
+     */
     int priority();
 }

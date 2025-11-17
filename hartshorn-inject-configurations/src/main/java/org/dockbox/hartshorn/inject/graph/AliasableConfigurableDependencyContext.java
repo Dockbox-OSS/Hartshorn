@@ -21,10 +21,10 @@ import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.binding.AliasBindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.graph.declaration.AliasableDependencyContext;
+import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
  * A configurable dependency context that supports aliasing.
@@ -51,6 +51,14 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
         this.aliasQualifiers = Set.copyOf(builder.aliasQualifiers);
     }
 
+    /**
+     * Creates a new builder for a {@link AliasableConfigurableDependencyContext}.
+     *
+     * @param componentKey the component key of the dependency
+     * @param <T> the type of the dependency
+     *
+     * @return the builder
+     */
     public static <T> AliasableConfigurableDependencyContextBuilder<T> builder(ComponentKey<T> componentKey) {
         return new AliasableConfigurableDependencyContextBuilder<>(componentKey);
     }
@@ -111,31 +119,67 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
             super(componentKey);
         }
 
+        /**
+         * Adds a single alias type.
+         *
+         * @param aliasType the alias type to add
+         * @return the builder instance
+         */
         public AliasableConfigurableDependencyContextBuilder<T> aliasType(Class<? super T> aliasType) {
             this.aliasTypes.add(aliasType);
             return this;
         }
 
+        /**
+         * Adds multiple alias types.
+         *
+         * @param aliasTypes the alias types to add
+         * @return the builder instance
+         */
         public AliasableConfigurableDependencyContextBuilder<T> aliasTypes(Set<Class<? super T>> aliasTypes) {
             this.aliasTypes.addAll(aliasTypes);
             return this;
         }
 
+        /**
+         * Adds a single alias key.
+         *
+         * @param aliasKey the alias key to add
+         * @return the builder instance
+         */
         public AliasableConfigurableDependencyContextBuilder<T> aliasKey(ComponentKey<? super T> aliasKey) {
             this.aliasKeys.add(aliasKey);
             return this;
         }
 
+        /**
+         * Adds multiple alias keys.
+         *
+         * @param aliasKeys the alias keys to add
+         * @return the builder instance
+         */
         public AliasableConfigurableDependencyContextBuilder<T> aliasKeys(Set<ComponentKey<? super T>> aliasKeys) {
             this.aliasKeys.addAll(aliasKeys);
             return this;
         }
 
+        /**
+         * Adds a single alias qualifier.
+         *
+         * @param aliasQualifier the alias qualifier to add
+         * @return the builder instance
+         */
         public AliasableConfigurableDependencyContextBuilder<T> aliasQualifier(QualifierKey<T> aliasQualifier) {
             this.aliasQualifiers.add(aliasQualifier);
             return this;
         }
 
+        /**
+         * Adds multiple alias qualifiers.
+         *
+         * @param aliasQualifiers the alias qualifiers to add
+         * @return the builder instance
+         */
         public AliasableConfigurableDependencyContextBuilder<T> aliasQualifiers(Set<QualifierKey<T>> aliasQualifiers) {
             this.aliasQualifiers.addAll(aliasQualifiers);
             return this;

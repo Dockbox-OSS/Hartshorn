@@ -70,12 +70,49 @@ public abstract class MethodInterceptorPostProcessor extends ComponentPostProces
         }
     }
 
+    /**
+     * Returns a collection of methods that can be modified by this post-processor.
+     *
+     * @param processingContext the processing context
+     *
+     * @param <T> the type of the component being processed
+     *
+     * @return the modifiable methods
+     */
     protected abstract <T> Collection<MethodView<T, ?>> modifiableMethods(ComponentProcessingContext<T> processingContext);
 
+    /**
+     * Checks whether the preconditions for applying the interceptor are met.
+     *
+     * @param application the injection-capable application
+     * @param methodContext the method proxy context
+     * @param processingContext the component processing context
+     *
+     * @param <T> the type of the component being processed
+     *
+     * @return true if the preconditions are met, false otherwise
+     */
     public abstract <T> boolean preconditions(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext);
 
+    /**
+     * Processes the method and returns a {@link MethodInterceptor} to be applied.
+     *
+     * @param application the injection-capable application
+     * @param methodContext the method proxy context
+     * @param processingContext the component processing context
+     *
+     * @param <T> the type of the component being processed
+     * @param <R> the return type of the method being intercepted
+     *
+     * @return the method interceptor
+     */
     public abstract <T, R> MethodInterceptor<T, R> process(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext);
 
+    /**
+     * Determines whether to fail when preconditions are not met. By default, this method returns true.
+     *
+     * @return true to fail on precondition failure, false to skip silently
+     */
     public boolean failOnPrecondition() {
         return true;
     }

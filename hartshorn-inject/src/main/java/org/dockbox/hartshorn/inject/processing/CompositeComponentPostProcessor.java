@@ -16,14 +16,16 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
-import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.context.ContextView;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
+import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
 import org.dockbox.hartshorn.util.function.CheckedConsumer;
+
+import java.util.function.Supplier;
 
 /**
  * A {@link ComponentPostProcessor} which delegates to a collection of other post processors. The post processors are
@@ -74,22 +76,22 @@ import org.dockbox.hartshorn.util.function.CheckedConsumer;
  */
 public class CompositeComponentPostProcessor extends ComponentPostProcessor {
 
-    private final Supplier<MultiMap<Integer, ComponentPostProcessor>> postProcessors;
+    private final Supplier<NavigableMultiMap<Integer, ComponentPostProcessor>> postProcessors;
 
-    public CompositeComponentPostProcessor(Supplier<MultiMap<Integer, ComponentPostProcessor>> postProcessors) {
+    public CompositeComponentPostProcessor(Supplier<NavigableMultiMap<Integer, ComponentPostProcessor>> postProcessors) {
         this.postProcessors = postProcessors;
     }
 
     @Override
     public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
-        MultiMap<Integer, ComponentPostProcessor> processors = this.postProcessors.get();
+        NavigableMultiMap<Integer, ComponentPostProcessor> processors = this.postProcessors.get();
         if (processors.isEmpty()) {
             // If no processors are available, we consider this compatible, as the composite processor
             // will not perform any actions.
             return true;
         }
         // Doesn't need to be thread-safe, this will only be retained during the processing of a single component.
-        MultiMap<Integer, ComponentPostProcessor> compatibleProcessors = new ArrayListMultiMap<>();
+        NavigableMultiMap<Integer, ComponentPostProcessor> compatibleProcessors = new ConcurrentSetTreeMultiMap<>();
         for (Integer priority : processors.keySet()) {
             for (ComponentPostProcessor postProcessor : processors.get(priority)) {
                 if (postProcessor.isCompatible(processingContext)) {
@@ -142,7 +144,7 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
         });
     }
 
-    private void withProcessors(MultiMap<Integer, ComponentPostProcessor> processors, CheckedConsumer<ComponentPostProcessor> processor) throws ApplicationException {
+    private void withProcessors(NavigableMultiMap<Integer, ComponentPostProcessor> processors, CheckedConsumer<ComponentPostProcessor> processor) throws ApplicationException {
         for (Integer priority : processors.keySet()) {
             for (ComponentPostProcessor postProcessor : processors.get(priority)) {
                 processor.accept(postProcessor);
@@ -150,7 +152,7 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
         }
     }
 
-    private MultiMap<Integer, ComponentPostProcessor> resolveCompatibleProcessors(ContextView context) {
+    private NavigableMultiMap<Integer, ComponentPostProcessor> resolveCompatibleProcessors(ContextView context) {
         return context.firstContext(CompatibleProcessorsContext.class).orElseThrow(() -> {
             return new IllegalStateException("No compatible processors context found for context: " + context + ". Was the isCompatible method called?");
         }).processors();

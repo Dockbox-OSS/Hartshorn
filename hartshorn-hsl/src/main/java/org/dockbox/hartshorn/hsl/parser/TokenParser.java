@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.ast.statement.ExpressionStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.Statement;
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
-import org.dockbox.hartshorn.hsl.parser.expression.MutableExpressionParserChain;
 import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
@@ -71,8 +70,6 @@ public interface TokenParser extends Context {
      * @see org.dockbox.hartshorn.hsl.parser.TokenParser#expressionParser(ExpressionParser)
      */
     TokenParser expressionParser(ExpressionParser parser);
-
-    MutableExpressionParserChain expressionParserChain();
 
     /**
      * Parses the tokens of a script into an abstract syntax tree (AST).

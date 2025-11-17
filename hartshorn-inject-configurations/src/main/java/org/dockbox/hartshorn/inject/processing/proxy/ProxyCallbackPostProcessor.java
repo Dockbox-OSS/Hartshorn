@@ -74,11 +74,35 @@ public abstract class ProxyCallbackPostProcessor extends ComponentPostProcessor 
         }
     }
 
+    /**
+     * Processes the non-proxy component instance before method callbacks are applied.
+     *
+     * @param application the application in which the component is being processed
+     * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
+     * @param processingContext the processing context
+     * @param proxyFactory the proxy factory used to create the proxy instance
+     * @param <T> the type of the component that is being processed
+     * @return the processed instance
+     */
     protected <T> T processProxy(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext, ProxyFactory<T> proxyFactory) {
         // Left for subclasses to override if necessary
         return instance;
     }
 
+    /**
+     * Returns the methods of the component that can be modified by this post-processor. This method filters the
+     * methods of the component based on the {@link #preconditions(InjectionCapableApplication
+     * application, MethodView, ComponentKey, Object, ComponentProcessingContext) configured preconditions}.
+     *
+     * @param application the application in which the component is being processed
+     * @param key the component key of the component that is being processed
+     * @param instance the instance of the component that is being processed, or {@code null} if the component is not yet instantiated
+     * @param processingContext the processing context
+     *
+     * @param <T> the type of the component that is being processed
+     *
+     * @return the methods of the component that can be modified
+     */
     protected <T> Collection<MethodView<T, ?>> modifiableMethods(InjectionCapableApplication application, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         TypeView<T> typeView = instance == null
                 ? application.environment().introspector().introspect(key.type())

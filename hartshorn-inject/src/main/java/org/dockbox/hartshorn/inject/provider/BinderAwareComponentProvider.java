@@ -30,5 +30,10 @@ import org.dockbox.hartshorn.inject.binding.Binder;
  */
 public interface BinderAwareComponentProvider extends ComponentProvider {
 
+    /**
+     * The binder associated with this component provider.
+     *
+     * @return the associated binder
+     */
     Binder binder();
 }

@@ -92,6 +92,15 @@ public class StrategyComponentPopulator implements ComponentPopulator {
         }
     }
 
+    /**
+     * Populates the given component context using the configured population strategies. It remains up to
+     * the strategies to determine whether they are applicable to a given injection point. If multiple strategies
+     * are applicable to a given injection point, all applicable strategies will be executed in the order
+     * they were provided.
+     *
+     * @param context the component context to populate
+     * @param <T> the type of the component
+     */
     protected <T> void populate(PopulateComponentContext<T> context) {
         TypeView<T> type = context.type();
         Set<ComponentInjectionPoint<T>> injectionPoints = this.injectionPointsResolver.resolve(type);
@@ -108,6 +117,13 @@ public class StrategyComponentPopulator implements ComponentPopulator {
         }
     }
 
+    /**
+     * Creates a new {@link ContextualInitializer} for a {@link StrategyComponentPopulator}, using the given
+     * customizer to configure the populator.
+     *
+     * @param customizer the customizer to configure the populator
+     * @return a new contextual initializer for a strategy component populator
+     */
     public static ContextualInitializer<InjectionCapableApplication, ComponentPopulator> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
@@ -138,21 +154,45 @@ public class StrategyComponentPopulator implements ComponentPopulator {
             collection.add(InjectPopulationStrategy.create(Customizer.useDefaults()));
         });
 
+        /**
+         * Adds a population strategy to the populator.
+         *
+         * @param strategy the strategy to add
+         * @return this configurer
+         */
         public Configurer strategy(ComponentPopulationStrategy strategy) {
             this.strategies.customizer(collection -> collection.add(strategy));
             return this;
         }
 
+        /**
+         * Adds multiple population strategies to the populator.
+         *
+         * @param strategies the strategies to add
+         * @return this configurer
+         */
         public Configurer strategies(Iterable<ComponentPopulationStrategy> strategies) {
             this.strategies.customizer(collection -> collection.addAll(strategies));
             return this;
         }
 
+        /**
+         * Adds multiple population strategies to the populator.
+         *
+         * @param strategies the strategies to add
+         * @return this configurer
+         */
         public Configurer strategies(ComponentPopulationStrategy... strategies) {
             this.strategies.customizer(collection -> collection.addAll(strategies));
             return this;
         }
 
+        /**
+         * Configures the population strategies using the given customizer.
+         *
+         * @param customizer the customizer to use
+         * @return this configurer
+         */
         public Configurer strategies(Customizer<StreamableConfigurer<InjectionCapableApplication, ComponentPopulationStrategy>> customizer) {
             this.strategies.customizer(customizer);
             return this;

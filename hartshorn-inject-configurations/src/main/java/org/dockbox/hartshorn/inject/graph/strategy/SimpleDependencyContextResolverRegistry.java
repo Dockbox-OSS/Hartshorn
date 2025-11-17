@@ -48,6 +48,7 @@ public class SimpleDependencyContextResolverRegistry extends DefaultContext impl
 
     @Override
     public DependencyContextResolverRegistry register(DependencyContextResolver strategy) {
+        this.strategies.removeValue(strategy);
         this.strategies.put(strategy.priority(), strategy);
         return this;
     }

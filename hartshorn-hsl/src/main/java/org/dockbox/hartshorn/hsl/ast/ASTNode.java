@@ -37,10 +37,20 @@ public abstract class ASTNode {
         this.column = column;
     }
 
+    /**
+     * Get the line where this AST node starts, or -1 if unknown. Line numbers are 1-based.
+     *
+     * @return the line number
+     */
     public int line() {
         return this.line;
     }
 
+    /**
+     * Get the column where this AST node starts, or -1 if unknown. Column numbers are 0-based.
+     *
+     * @return the column number
+     */
     public int column() {
         return this.column;
     }

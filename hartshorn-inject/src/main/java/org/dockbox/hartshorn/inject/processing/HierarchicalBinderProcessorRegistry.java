@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.inject.processing;
 
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
@@ -71,5 +72,5 @@ public interface HierarchicalBinderProcessorRegistry {
      *
      * @return a {@link MultiMap} of all registered processors, grouped by priority
      */
-    MultiMap<Integer, HierarchicalBinderPostProcessor> processors();
+    NavigableMultiMap<Integer, HierarchicalBinderPostProcessor> processors();
 }

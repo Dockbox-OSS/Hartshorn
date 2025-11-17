@@ -37,10 +37,22 @@ public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
         this.contextProvider = contextProvider;
     }
 
+    /**
+     * Create a new {@link ContextModuleActivatorHolder} with the given context provider.
+     *
+     * @param contextProvider the provider of the module activator context
+     * @return the created module activator holder
+     */
     public static ContextModuleActivatorHolder of(Supplier<Option<ModuleActivatorContext>> contextProvider) {
         return new ContextModuleActivatorHolder(contextProvider);
     }
 
+    /**
+     * Create a new {@link ContextModuleActivatorHolder} with the given context.
+     *
+     * @param context the module activator context
+     * @return the created module activator holder
+     */
     public static ContextModuleActivatorHolder of(ModuleActivatorContext context) {
         return new ContextModuleActivatorHolder(() -> Option.of(context));
     }
@@ -60,8 +72,6 @@ public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
 
     @Override
     public boolean hasActivator(Class<? extends Annotation> activator) {
-        return this.contextProvider.get()
-                .map(context -> context.hasActivator(activator))
-                .orElseGet(() -> false);
+        return this.contextProvider.get().test(context -> context.hasActivator(activator));
     }
 }

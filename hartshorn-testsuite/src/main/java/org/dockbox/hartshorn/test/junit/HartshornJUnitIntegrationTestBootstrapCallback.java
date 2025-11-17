@@ -16,15 +16,15 @@
 
 package org.dockbox.hartshorn.test.junit;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.HartshornIntegrationTestInitializer;
 import org.dockbox.hartshorn.util.ApplicationException;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
 
 /**
  * A callback that initializes the Hartshorn application context before a test lifecycle has been started. This callback
@@ -58,8 +58,15 @@ public class HartshornJUnitIntegrationTestBootstrapCallback implements
         }
     }
 
-    protected void beforeLifecycle(ExtensionContext context, Class<?> testClass, Object testInstance, AnnotatedElement... testComponentSources)
-            throws ApplicationException {
+    /**
+     * Common method to initialize the Hartshorn application context before a test lifecycle has been started.
+     *
+     * @param context the extension context of the test, used to store the application context
+     * @param testClass the test class
+     * @param testInstance the test instance
+     * @param testComponentSources optional sources of test components, such as test methods
+     */
+    protected void beforeLifecycle(ExtensionContext context, Class<?> testClass, Object testInstance, AnnotatedElement... testComponentSources) {
         HartshornIntegrationTestInitializer initializer = new HartshornIntegrationTestInitializer();
         ApplicationContext applicationContext = initializer.createTestApplicationContext(testClass, testInstance, testComponentSources);
         HartshornJUnitNamespace.application(context, applicationContext);

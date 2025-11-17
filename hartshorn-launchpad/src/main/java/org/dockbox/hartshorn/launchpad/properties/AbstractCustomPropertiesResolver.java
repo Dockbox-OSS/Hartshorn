@@ -55,5 +55,12 @@ public abstract class AbstractCustomPropertiesResolver implements CustomProperti
         }
     }
 
+    /**
+     * Resolves the raw string properties, optionally using the provided initializer context for additional
+     * information about the application environment.
+     *
+     * @param initializerContext the initializer context
+     * @return a list of string properties
+     */
     protected abstract List<String> resolveStringProperties(SingleElementContext<? extends ApplicationEnvironment> initializerContext);
 }

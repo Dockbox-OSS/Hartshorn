@@ -47,7 +47,25 @@ public interface ComponentRegistry {
      */
     Option<ComponentContainer<?>> container(Class<?> type);
 
+    /**
+     * Obtains a component container which matches the provided component key. The exact matching
+     * semantics are defined by the given {@link ComponentKey}. If no component is registered for
+     * the provided key, an empty option is returned.
+     *
+     * @param key the component key
+     * @return a component container which matches the provided component key
+     */
     Option<ComponentContainer<?>> container(ComponentKey<?> key);
 
+    /**
+     * Adds a custom component container to the registry. If a container for the same {@link ComponentContainer#id() id}
+     * already exists, the existing container is replaced if the provided container has the same {@link
+     * ComponentContainer#type() type}. If the types differ, the container is not added and a {@link
+     * IllegalStateException} is thrown.
+     *
+     * @param container the container to add
+     *
+     * @return true if the container was added, false if it could not be added
+     */
     boolean addCustomContainer(ComponentContainer<?> container);
 }

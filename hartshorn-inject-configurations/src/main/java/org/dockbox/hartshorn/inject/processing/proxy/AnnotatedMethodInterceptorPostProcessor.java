@@ -35,12 +35,17 @@ import java.util.Collection;
  */
 public abstract class AnnotatedMethodInterceptorPostProcessor<M extends Annotation> extends MethodInterceptorPostProcessor {
 
+    /**
+     * Returns the annotation class that is used to identify methods for which interceptors should be applied.
+     *
+     * @return the annotation class
+     */
+    public abstract Class<M> annotation();
+
     @Override
     public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
         return !processingContext.type().methods().annotatedWith(this.annotation()).isEmpty();
     }
-
-    public abstract Class<M> annotation();
 
     @Override
     protected <T> Collection<MethodView<T, ?>> modifiableMethods(ComponentProcessingContext<T> processingContext) {

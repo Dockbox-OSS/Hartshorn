@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.ProcessableApplicationContext;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
-import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
 
 /**
  * A diagnostics reporter that reports all {@link ComponentPreProcessor pre-processors} and {@link
@@ -59,13 +59,13 @@ public class ComponentProcessorDiagnosticsReporter implements CategorizedDiagnos
 
     private void reportPreProcessors(DiagnosticsPropertyCollector collector,
             ComponentProcessorRegistry registry) {
-        MultiMap<Integer, ? extends ComponentProcessor> processors = registry.preProcessors();
+        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors = registry.preProcessors();
         collector.property("pre").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 
     private void reportPostProcessors(DiagnosticsPropertyCollector collector,
             ComponentProcessorRegistry registry) {
-        MultiMap<Integer, ? extends ComponentProcessor> processors = registry.postProcessors();
+        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors = registry.postProcessors();
         collector.property("post").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 

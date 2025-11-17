@@ -42,6 +42,11 @@ public enum BindingStrategyPriority {
         this.priority = priority;
     }
 
+    /**
+     * Get the integer value of this priority level.
+     *
+     * @return the integer value of this priority level
+     */
     public int priority() {
         return this.priority;
     }

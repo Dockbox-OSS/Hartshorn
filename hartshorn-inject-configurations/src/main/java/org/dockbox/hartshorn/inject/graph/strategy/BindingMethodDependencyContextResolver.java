@@ -158,6 +158,13 @@ public class BindingMethodDependencyContextResolver implements DependencyContext
         return BindingStrategyPriority.LOW;
     }
 
+    /**
+     * Creates a new {@link ContextualInitializer} for a {@link BindingMethodDependencyContextResolver}, which
+     * can be customized using the provided {@link Customizer}.
+     *
+     * @param customizer the customizer for the configurer
+     * @return the contextual initializer
+     */
     public static ContextualInitializer<InjectionCapableApplication, DependencyContextResolver> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
@@ -187,6 +194,12 @@ public class BindingMethodDependencyContextResolver implements DependencyContext
             resolvers.add(new BindingAfterDeclarationDependencyResolver());
         });
 
+        /**
+         * Customizer for dependency resolvers.
+         *
+         * @param customizer the customizer
+         * @return this configurer
+         */
         public Configurer declarationDependencyResolvers(Customizer<StreamableConfigurer<InjectionCapableApplication, BindingDeclarationDependencyResolver>> customizer) {
             this.declarationDependencyResolvers.customizer(customizer);
             return this;

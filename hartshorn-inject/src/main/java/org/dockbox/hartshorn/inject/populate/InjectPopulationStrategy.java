@@ -131,6 +131,14 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
         return this.conversionService;
     }
 
+    /**
+     * Creates a new {@link ContextualInitializer} for the {@link InjectPopulationStrategy}, which can be customized
+     * using the provided {@link Customizer}.
+     *
+     * @param customizer The customizer to configure the population strategy
+     *
+     * @return The contextual initializer for the population strategy
+     */
     public static ContextualInitializer<InjectionCapableApplication, ComponentPopulationStrategy> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
@@ -164,31 +172,73 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
             configurer.add(ContextualInitializer.of(application -> new InjectPropertyParameterResolver(application.defaultProvider())));
         });
 
+        /**
+         * Adds the given {@link RequireInjectionPointRule rules} which determine whether an injection point
+         * is required for a component to be considered valid.
+         *
+         * @param requiresComponentRules the rules to add
+         * @return this configurer
+         */
         public Configurer requiresComponentRules(RequireInjectionPointRule... requiresComponentRules) {
             this.requiresComponentRules.customizer(collection -> collection.addAll(requiresComponentRules));
             return this;
         }
 
+        /**
+         * Adds the given {@link RequireInjectionPointRule rules} which determine whether an injection point
+         * is required for a component to be considered valid.
+         *
+         * @param requiresComponentRules the rules to add
+         * @return this configurer
+         */
         public Configurer requiresComponentRules(Set<RequireInjectionPointRule> requiresComponentRules) {
             this.requiresComponentRules.customizer(collection -> collection.addAll(requiresComponentRules));
             return this;
         }
 
+        /**
+         * Customizes the {@link RequireInjectionPointRule rules} which determine whether an injection point
+         * is required for a component to be considered valid.
+         *
+         * @param customizer the customizer to apply
+         * @return this configurer
+         */
         public Configurer requiresComponentRules(Customizer<StreamableConfigurer<InjectionCapableApplication, RequireInjectionPointRule>> customizer) {
             this.requiresComponentRules.customizer(customizer);
             return this;
         }
 
+        /**
+         * Adds the given {@link InjectParameterResolver parameter resolvers} which determine how injection
+         * parameters are resolved for injection points.
+         *
+         * @param parameterResolvers the parameter resolvers to add
+         * @return this configurer
+         */
         public Configurer parameterResolvers(InjectParameterResolver... parameterResolvers) {
             this.parameterResolvers.customizer(collection -> collection.addAll(parameterResolvers));
             return this;
         }
 
+        /**
+         * Adds the given {@link InjectParameterResolver parameter resolvers} which determine how injection
+         * parameters are resolved for injection points.
+         *
+         * @param parameterResolvers the parameter resolvers to add
+         * @return this configurer
+         */
         public Configurer parameterResolvers(Set<InjectParameterResolver> parameterResolvers) {
             this.parameterResolvers.customizer(collection -> collection.addAll(parameterResolvers));
             return this;
         }
 
+        /**
+         * Customizes the {@link InjectParameterResolver parameter resolvers} which determine how injection
+         * parameters are resolved for injection points.
+         *
+         * @param customizer the customizer to apply
+         * @return this configurer
+         */
         public Configurer parameterResolvers(Customizer<StreamableConfigurer<InjectionCapableApplication, InjectParameterResolver>> customizer) {
             this.parameterResolvers.customizer(customizer);
             return this;

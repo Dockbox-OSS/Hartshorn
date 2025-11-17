@@ -16,15 +16,17 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
+import org.dockbox.hartshorn.util.collections.AbstractNavigableMultiMap;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
-import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.UnmodifiableMultiMap;
+import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
+import org.dockbox.hartshorn.util.collections.UnmodifiableNavigableMultiMap;
 import org.dockbox.hartshorn.util.option.Option;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Default implementation of the {@link ComponentProcessorRegistry} interface. This implementation uses {@link MultiMap}s
@@ -36,8 +38,8 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public class MultiMapComponentProcessorRegistry implements ComponentProcessorRegistry {
 
-    private final MultiMap<Integer, ComponentPostProcessor> postProcessors = new ConcurrentSetTreeMultiMap<>();
-    private final MultiMap<Integer, ComponentPreProcessor> preProcessors = new ConcurrentSetTreeMultiMap<>();
+    private final AbstractNavigableMultiMap<Integer, ComponentPostProcessor> postProcessors = new ConcurrentSetTreeMultiMap<>();
+    private final AbstractNavigableMultiMap<Integer, ComponentPreProcessor> preProcessors = new ConcurrentSetTreeMultiMap<>();
     private final Set<Class<? extends ComponentPostProcessor>> uninitializedPostProcessors = ConcurrentHashMap.newKeySet();
 
     @Override
@@ -106,8 +108,8 @@ public class MultiMapComponentProcessorRegistry implements ComponentProcessorReg
     }
 
     @Override
-    public MultiMap<Integer, ComponentPostProcessor> postProcessors() {
-        return new UnmodifiableMultiMap<>(this.postProcessors);
+    public NavigableMultiMap<Integer, ComponentPostProcessor> postProcessors() {
+        return new UnmodifiableNavigableMultiMap<>(this.postProcessors);
     }
 
     @Override
@@ -116,7 +118,7 @@ public class MultiMapComponentProcessorRegistry implements ComponentProcessorReg
     }
 
     @Override
-    public MultiMap<Integer, ComponentPreProcessor> preProcessors() {
-        return new UnmodifiableMultiMap<>(this.preProcessors);
+    public NavigableMultiMap<Integer, ComponentPreProcessor> preProcessors() {
+        return new UnmodifiableNavigableMultiMap<>(this.preProcessors);
     }
 }

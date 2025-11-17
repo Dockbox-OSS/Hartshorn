@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.inject.collection.ImmutableCompositeBindingHierarch
 import org.dockbox.hartshorn.util.Tristate;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
 import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
-import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
+import org.dockbox.hartshorn.util.collections.AbstractNavigableMultiMap;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
 import java.util.Collection;
@@ -221,7 +221,7 @@ public class HierarchyCache {
                 .collect(Collectors.toSet());
 
         // Track entire hierarchy, so potential duplicate top-priority hierarchies can be reported
-        NavigableMultiMap<Integer, BindingHierarchy<?>> providers = new ConcurrentSetTreeMultiMap<>();
+        AbstractNavigableMultiMap<Integer, BindingHierarchy<?>> providers = new ConcurrentSetTreeMultiMap<>();
         for (BindingHierarchy<?> compatibleHierarchy : compatibleHierarchies) {
             int highestPriority = compatibleHierarchy.highestPriority();
             compatibleHierarchy.get(highestPriority).peek(provider -> {

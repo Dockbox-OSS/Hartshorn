@@ -28,6 +28,11 @@ import org.slf4j.Logger;
  */
 public abstract class AbstractConsoleBanner implements Banner {
 
+    /**
+     * Returns the lines of the banner.
+     *
+     * @return the lines of the banner
+     */
     protected abstract Iterable<String> lines();
 
     @Override

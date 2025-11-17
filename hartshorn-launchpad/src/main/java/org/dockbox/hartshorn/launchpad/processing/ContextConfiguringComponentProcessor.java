@@ -64,16 +64,39 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
         }
     }
 
+    /**
+     * Determines whether this processor supports the given component processing context.
+     *
+     * @param processingContext the component processing context
+     * @return true if the processor supports the context, false otherwise
+     */
     protected abstract boolean supports(
         ComponentProcessingContext<?> processingContext
     );
 
+    /**
+     * Configures the given component context for the component being processed.
+     *
+     * @param application the injection-capable application
+     * @param componentContext the context to be configured
+     * @param processingContext the component processing context
+     * @param <T> the type of the component being processed
+     */
     protected abstract <T> void configure(
         InjectionCapableApplication application,
         C componentContext,
         ComponentProcessingContext<T> processingContext
     );
 
+    /**
+     * Creates the context to be configured. This context should be specific to the component being processed, but
+     * should not yet be populated (that is the responsibility of the {@link
+     * #configure(InjectionCapableApplication, ContextView, ComponentProcessingContext)}).
+     *
+     * @param application the injection-capable application
+     * @param processingContext the component processing context
+     * @return the created context
+     */
     protected abstract C createContext(
         InjectionCapableApplication application,
         ComponentProcessingContext<?> processingContext

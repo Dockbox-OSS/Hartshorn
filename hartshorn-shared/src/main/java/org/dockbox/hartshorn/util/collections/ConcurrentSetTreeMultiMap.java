@@ -25,7 +25,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * A {@link MultiMap} implementation that uses {@link ConcurrentHashMap#newKeySet()} as its backing
- * collection, and a {@link ConcurrentSkipListMap} as its backing map. This implementation is thread-safe.
+ * collection, and a {@link ConcurrentSkipListMap} as its backing map. This implementation is
+ * thread-safe.
  *
  * @param <K> the type of the keys
  * @param <V> the type of the values
@@ -33,13 +34,14 @@ import java.util.concurrent.ConcurrentSkipListMap;
  * @see ConcurrentHashMap#newKeySet()
  * @see ConcurrentSkipListMap
  * @see MultiMap
- * @see NavigableMultiMap
+ * @see AbstractNavigableMultiMap
  *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public class ConcurrentSetTreeMultiMap<K extends Comparable<K>, V> extends NavigableMultiMap<K, V> {
+public class ConcurrentSetTreeMultiMap<K extends Comparable<K>, V>
+        extends AbstractNavigableMultiMap<K, V> {
 
     public ConcurrentSetTreeMultiMap() {
         this(Comparator.naturalOrder());

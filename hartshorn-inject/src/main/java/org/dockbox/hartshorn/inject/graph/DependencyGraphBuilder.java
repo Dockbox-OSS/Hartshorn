@@ -130,7 +130,7 @@ public class DependencyGraphBuilder {
         }
     }
 
-    protected <T> Set<InstantiationStrategy<? extends T>> lookupImplementationProviders(DependencyContext<T> dependencyContext) {
+    private <T> Set<InstantiationStrategy<? extends T>> lookupImplementationProviders(DependencyContext<T> dependencyContext) {
         ComponentKey<T> componentKey = dependencyContext.componentKey();
         BindingHierarchy<T> hierarchy = this.binder.hierarchy(componentKey);
         int highestPriority = hierarchy.highestPriority();
@@ -181,7 +181,7 @@ public class DependencyGraphBuilder {
             .collect(Collectors.toSet());
     }
 
-    protected void visitContextForNodeMapping(
+    private void visitContextForNodeMapping(
         DependencyContext<?> dependencyContext,
         MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> nodes
     ) {

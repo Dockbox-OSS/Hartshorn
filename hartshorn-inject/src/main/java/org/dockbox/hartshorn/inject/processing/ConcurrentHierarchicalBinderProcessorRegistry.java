@@ -16,11 +16,14 @@
 
 package org.dockbox.hartshorn.inject.processing;
 
+import org.dockbox.hartshorn.util.collections.ConcurrentSetTreeMultiMap;
+import org.dockbox.hartshorn.util.collections.MultiMapCollector;
+import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import org.dockbox.hartshorn.util.collections.MultiMap;
-import org.dockbox.hartshorn.util.collections.MultiMapCollector;
-import org.dockbox.hartshorn.util.option.Option;
+import java.util.function.Function;
 
 /**
  * Basic implementation of a {@link HierarchicalBinderProcessorRegistry} that uses a {@link ConcurrentHashMap.KeySetView} to store
@@ -55,8 +58,12 @@ public class ConcurrentHierarchicalBinderProcessorRegistry implements Hierarchic
     }
 
     @Override
-    public MultiMap<Integer, HierarchicalBinderPostProcessor> processors() {
+    public NavigableMultiMap<Integer, HierarchicalBinderPostProcessor> processors() {
         return this.processors.stream()
-            .collect(MultiMapCollector.groupingBy(HierarchicalBinderPostProcessor::priority));
+            .collect(MultiMapCollector.toMultiMap(
+                    ConcurrentSetTreeMultiMap::new,
+                    HierarchicalBinderPostProcessor::priority,
+                    Function.identity()
+            ));
     }
 }

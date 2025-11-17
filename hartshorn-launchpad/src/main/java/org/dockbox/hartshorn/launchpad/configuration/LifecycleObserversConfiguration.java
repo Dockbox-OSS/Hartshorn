@@ -40,12 +40,23 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 @RequiresActivator(UseLifecycleObservers.class)
 public class LifecycleObserversConfiguration {
 
+    /**
+     * Lifecycle observer that manages runtime hooks, such as the shutdown hook to gracefully stop
+     * the application.
+     *
+     * @return the runtime hook lifecycle observer
+     */
     @Singleton
     @CompositeMember
     public LifecycleObserver runtimeHookLifecycleObserver() {
         return new RuntimeHookLifecycleObserver();
     }
 
+    /**
+     * Lifecycle observer that activates all eager singleton components upon context startup.
+     *
+     * @return the component activator observer
+     */
     @Singleton
     @CompositeMember
     public LifecycleObserver componentActivatorObserver() {

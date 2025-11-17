@@ -29,5 +29,10 @@ import org.dockbox.hartshorn.inject.component.ComponentRegistry;
  */
 public interface ComponentRegistryAwareComponentProvider extends ComponentProvider {
 
+    /**
+     * Get the component registry associated with this component provider.
+     *
+     * @return the component registry
+     */
     ComponentRegistry componentRegistry();
 }

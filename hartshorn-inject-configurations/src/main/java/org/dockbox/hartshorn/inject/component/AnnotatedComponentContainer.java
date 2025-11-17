@@ -51,10 +51,20 @@ public class AnnotatedComponentContainer<T> implements ComponentContainer<T> {
         this.annotation = annotated.get();
     }
 
+    /**
+     * Returns the {@link Component} annotation associated with this component.
+     *
+     * @return the component annotation
+     */
     public Component annotation() {
         return this.annotation;
     }
 
+    /**
+     * Returns the component's class type.
+     *
+     * @return the component class type
+     */
     public Class<?> component() {
         return this.component.type();
     }

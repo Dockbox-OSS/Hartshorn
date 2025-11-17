@@ -38,7 +38,21 @@ public abstract class AbstractScopeFilteredBinderPostProcessor implements Hierar
         }
     }
 
+    /**
+     * Processes the given binder for the given scope.
+     *
+     * @param application the application the binder belongs to
+     * @param scope the scope of the binder
+     * @param binder the binder to process
+     */
     protected abstract void processBinder(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder);
 
+    /**
+     * Determines whether this post processor supports the given scope.
+     *
+     * @param application the application the binder belongs to
+     * @param scope the scope of the binder
+     * @return true if the post processor supports the scope, false otherwise
+     */
     protected abstract boolean supportsScope(InjectionCapableApplication application, Scope scope);
 }

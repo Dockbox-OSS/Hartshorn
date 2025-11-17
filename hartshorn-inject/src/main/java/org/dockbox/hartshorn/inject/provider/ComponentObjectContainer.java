@@ -36,18 +36,50 @@ public class ComponentObjectContainer<T> extends AbstractObjectContainer<T> {
         this.lifecycleType = lifecycleType;
     }
 
+    /**
+     * Creates an empty {@link ComponentObjectContainer} with a prototype lifecycle type.
+     *
+     * @param <T> the type of the object instance
+     *
+     * @return a new empty {@link ComponentObjectContainer} with a prototype lifecycle type
+     */
     public static <T> ComponentObjectContainer<T> empty() {
         return ofLifecycleType(null, LifecycleType.PROTOTYPE);
     }
 
+    /**
+     * Creates a new {@link ComponentObjectContainer} with the given instance and a prototype lifecycle type.
+     *
+     * @param instance the object instance
+     * @param <T> the type of the object instance
+     *
+     * @return a new {@link ComponentObjectContainer} with the given instance and prototype lifecycle type
+     */
     public static <T> ComponentObjectContainer<T> ofPrototype(T instance) {
         return ofLifecycleType(instance, LifecycleType.PROTOTYPE);
     }
 
+    /**
+     * Creates a new {@link ComponentObjectContainer} with the given instance and a singleton lifecycle type.
+     *
+     * @param instance the object instance
+     * @param <T> the type of the object instance
+     *
+     * @return a new {@link ComponentObjectContainer} with the given instance and singleton lifecycle type
+     */
     public static <T> ComponentObjectContainer<T> ofSingleton(T instance) {
         return ofLifecycleType(instance, LifecycleType.SINGLETON);
     }
 
+    /**
+     * Creates a new {@link ComponentObjectContainer} with the given instance and lifecycle type.
+     *
+     * @param instance the object instance
+     * @param lifecycleType the lifecycle type of the object instance
+     * @param <T> the type of the object instance
+     *
+     * @return a new {@link ComponentObjectContainer} with the given instance and lifecycle type
+     */
     public static <T> ComponentObjectContainer<T> ofLifecycleType(T instance, LifecycleType lifecycleType) {
         return new ComponentObjectContainer<>(instance, lifecycleType);
     }

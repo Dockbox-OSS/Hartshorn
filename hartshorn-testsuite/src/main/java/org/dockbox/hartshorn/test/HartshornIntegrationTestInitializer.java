@@ -102,6 +102,12 @@ public class HartshornIntegrationTestInitializer {
         return new CompositeTestApplicationCustomizer(customizers);
     }
 
+    /**
+     * Populates the given test instance with dependencies resolved from the provided application context.
+     *
+     * @param instance the test instance to populate
+     * @param applicationContext the application context to use for population
+     */
     protected void populateTestInstance(Object instance, ApplicationContext applicationContext) {
         SimpleSingleElementContext<ApplicationContext> elementContext = SimpleSingleElementContext.create(applicationContext);
         ComponentPopulator populator = StrategyComponentPopulator.create(Customizer.useDefaults()).initialize(elementContext);

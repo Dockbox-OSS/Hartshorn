@@ -82,10 +82,20 @@ public final class PopulateComponentContext<T> extends DefaultContext {
         return this.type;
     }
 
+    /**
+     * Returns the scope in which the component is being populated.
+     *
+     * @return the scope in which the component is being populated
+     */
     public Scope scope() {
         return this.scope;
     }
 
+    /**
+     * Returns the application context that owns the component being populated.
+     *
+     * @return the application context
+     */
     public InjectionCapableApplication application() {
         return this.application;
     }

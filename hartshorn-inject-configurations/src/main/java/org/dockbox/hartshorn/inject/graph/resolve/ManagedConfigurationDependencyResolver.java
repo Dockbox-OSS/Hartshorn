@@ -80,6 +80,11 @@ public class ManagedConfigurationDependencyResolver extends AbstractContainerDep
         this.componentRegistry = componentRegistry;
     }
 
+    /**
+     * Get the registry of dependency context resolvers used by this resolver.
+     *
+     * @return the dependency context resolver registry
+     */
     public DependencyContextResolverRegistry registry() {
         return this.registry;
     }
@@ -131,6 +136,13 @@ public class ManagedConfigurationDependencyResolver extends AbstractContainerDep
         return this.registry.find(strategyContext).map(strategy -> strategy.resolveToDependency(strategyContext));
     }
 
+    /**
+     * Creates a contextual initializer for the {@link ManagedConfigurationDependencyResolver}, which can be customized
+     * through the provided customizer.
+     *
+     * @param customizer the customizer to configure the configurer
+     * @return a contextual initializer for the managed configuration dependency resolver
+     */
     public static ContextualInitializer<InjectionCapableApplication, DependencyResolver> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
@@ -175,20 +187,45 @@ public class ManagedConfigurationDependencyResolver extends AbstractContainerDep
         });
         private Function<InjectionCapableApplication, ComponentRegistry> registryLookup = new ComponentRegistryLookup();
 
+        /**
+         * Sets the {@link ConditionMatcher} used by the resolver.
+         *
+         * @param conditionMatcher the condition matcher
+         * @return the current configurer
+         */
         public Configurer conditionMatcher(ConditionMatcher conditionMatcher) {
             return this.conditionMatcher(ContextualInitializer.of(conditionMatcher));
         }
 
+        /**
+         * Sets the initializer used to create the {@link ConditionMatcher} for the resolver.
+         *
+         * @param conditionMatcher the initializer for the condition matcher
+         * @return the current configurer
+         */
         public Configurer conditionMatcher(ContextualInitializer<InjectionCapableApplication, ConditionMatcher> conditionMatcher) {
             this.conditionMatcher = conditionMatcher;
             return this;
         }
 
+        /**
+         * Customizes the binding strategies to be used by the resolver.
+         *
+         * @param customizer the customizer for the binding strategies
+         * @return the current configurer
+         */
         public Configurer bindingStrategies(Customizer<StreamableConfigurer<InjectionCapableApplication, DependencyContextResolver>> customizer) {
             this.bindingStrategies.customizer(customizer);
             return this;
         }
 
+        /**
+         * Sets the function used to look up the {@link ComponentRegistry} from the current {@link
+         * InjectionCapableApplication}.
+         *
+         * @param registryLookup the registry lookup function
+         * @return the current configurer
+         */
         public Configurer registryLookup(Function<InjectionCapableApplication, ComponentRegistry> registryLookup) {
             this.registryLookup = registryLookup;
             return this;

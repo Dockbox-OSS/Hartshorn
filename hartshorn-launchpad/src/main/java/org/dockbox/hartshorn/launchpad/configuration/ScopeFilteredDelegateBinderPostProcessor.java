@@ -45,10 +45,27 @@ public class ScopeFilteredDelegateBinderPostProcessor extends AbstractScopeFilte
         this.scopeFilter = scopeFilter;
     }
 
+    /**
+     * Creates a new {@link ScopeFilteredDelegateBinderPostProcessor} with the provided delegate processor and scope
+     * filter.
+     *
+     * @param processor the delegate processor
+     * @param scopeFilter the scope filter
+     *
+     * @return the scope-filtered delegate processor
+     */
     public static ScopeFilteredDelegateBinderPostProcessor create(HierarchicalBinderPostProcessor processor, Predicate<ScopeKey> scopeFilter) {
         return new ScopeFilteredDelegateBinderPostProcessor(processor, scopeFilter);
     }
 
+    /**
+     * Creates a new {@link ScopeFilteredDelegateBinderPostProcessor} that only permits the provided scopes.
+     *
+     * @param processor the delegate processor
+     * @param permittedScopes the permitted scopes
+     *
+     * @return the scope-filtered delegate processor
+     */
     public static ScopeFilteredDelegateBinderPostProcessor create(HierarchicalBinderPostProcessor processor, ScopeKey... permittedScopes) {
         return new ScopeFilteredDelegateBinderPostProcessor(processor, Set.of(permittedScopes)::contains);
     }

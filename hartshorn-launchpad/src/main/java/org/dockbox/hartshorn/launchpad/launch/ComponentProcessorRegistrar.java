@@ -70,6 +70,12 @@ public class ComponentProcessorRegistrar {
         this.additionalComponentProcessors.addAll(processors);
     }
 
+    /**
+     * Adds additional binder processors to the registrar. These processors will be registered to the application
+     * context when {@link #registerBinderProcessors(HierarchicalBinderProcessorRegistry, Introspector, Set)} is called.
+     *
+     * @param processors the additional processors to add
+     */
     public void withAdditionalBinderProcessors(Collection<? extends HierarchicalBinderPostProcessor> processors) {
         this.additionalBinderProcessors.addAll(processors);
     }
@@ -114,22 +120,59 @@ public class ComponentProcessorRegistrar {
         this.registerBinderPostProcessors(registry, introspector, binderPostProcessorTypes);
     }
 
+    /**
+     * Resolves binder post-processor types from the given module activators.
+     *
+     * @param moduleActivatorAnnotations the module activators to resolve binder post-processor types from
+     * @return a set of binder post-processor types
+     *
+     * @see ModuleActivator#binderPostProcessors()
+     * @see #resolveProcessorTypes(Set, Function)
+     */
     protected Set<Class<? extends HierarchicalBinderPostProcessor>> resolveBinderPostProcessorTypes(
             Set<ModuleActivator> moduleActivatorAnnotations) {
         return this.resolveProcessorTypes(moduleActivatorAnnotations, ModuleActivator::binderPostProcessors);
     }
 
+    /**
+     * Resolves component pre-processor types from the given module activators.
+     *
+     * @param moduleActivatorAnnotations the module activators to resolve pre-processor types from
+     * @return a set of component pre-processor types
+     *
+     * @see ModuleActivator#componentPreProcessors()
+     * @see #resolveProcessorTypes(Set, Function)
+     */
     protected Set<Class<? extends ComponentPreProcessor>> resolveComponentPreProcessorTypes(
             Set<ModuleActivator> moduleActivatorAnnotations) {
         return this.resolveProcessorTypes(moduleActivatorAnnotations, ModuleActivator::componentPreProcessors);
     }
 
+    /**
+     * Resolves component post-processor types from the given module activators.
+     *
+     * @param moduleActivatorAnnotations the module activators to resolve post-processor types from
+     * @return a set of component post-processor types
+     *
+     * @see ModuleActivator#componentPostProcessors()
+     * @see #resolveProcessorTypes(Set, Function)
+     */
     protected Set<Class<? extends ComponentPostProcessor>> resolveComponentPostProcessorTypes(
             Set<ModuleActivator> moduleActivatorAnnotations) {
         return this.resolveProcessorTypes(moduleActivatorAnnotations, ModuleActivator::componentPostProcessors);
     }
 
-    private <T> Set<Class<? extends T>> resolveProcessorTypes(Set<ModuleActivator> moduleActivators, Function<ModuleActivator, Class<? extends T>[]> lookup) {
+    /**
+     * Resolves processor types from the given module activators using the provided lookup function.
+     *
+     * @param moduleActivators the module activators to resolve processor types from
+     * @param lookup the function to lookup processor types from a module activator
+     *
+     * @param <T> the type of the processor
+     *
+     * @return a set of processor types
+     */
+    protected <T> Set<Class<? extends T>> resolveProcessorTypes(Set<ModuleActivator> moduleActivators, Function<ModuleActivator, Class<? extends T>[]> lookup) {
         return moduleActivators.stream()
                 .map(lookup)
                 .flatMap(Stream::of)
@@ -192,14 +235,6 @@ public class ComponentProcessorRegistrar {
         );
         processors.addAll(this.additionalBinderProcessors);
         processors.forEach(registry::register);
-    }
-
-    protected <T> Set<Class<? extends T>> extractProcessors(Collection<Class<? extends ComponentProcessor>> processorTypes, Class<T> processorClass) {
-        //noinspection unchecked
-        return processorTypes.stream()
-            .filter(processorClass::isAssignableFrom)
-            .map(type -> (Class<? extends T>) type)
-            .collect(Collectors.toSet());
     }
 
     /**

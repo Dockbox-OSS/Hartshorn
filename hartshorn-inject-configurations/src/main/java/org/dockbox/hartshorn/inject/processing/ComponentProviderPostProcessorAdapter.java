@@ -132,6 +132,18 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
         }
     }
 
+    /**
+     * Processes the given {@link LockableComponentProcessingContext} using the configured {@link
+     * ComponentPostProcessor}.
+     *
+     * @param processingContext the processing context to process
+     *
+     * @param <T> the type of the component being processed
+     *
+     * @return the processed context
+     *
+     * @throws ApplicationException if an error occurs during processing
+     */
     protected <T> LockableComponentProcessingContext<T> process(LockableComponentProcessingContext<T> processingContext) throws ApplicationException {
         // Store early, so cyclic dependencies may be resolved
         this.componentStoreCallback.store(processingContext.key(), processingContext.container());
@@ -139,6 +151,22 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
         return processingContext;
     }
 
+    /**
+     * Processes a component instance within the given {@link ObjectContainer}. If a {@link ComponentContainer}
+     * is provided, it is used to determine whether processing is permitted. If processing is not permitted,
+     * the instance is returned as-is.
+     *
+     * @param key the component key of the component being processed
+     * @param objectContainer the object container holding the instance to be processed
+     * @param container the component container describing the component, if any
+     * @param requestContext the request context for the processing operation
+     *
+     * @param <T> the type of the component being processed
+     *
+     * @return the processed instance
+     *
+     * @throws ApplicationException if an error occurs during processing
+     */
     protected <T> T process(ComponentKey<T> key, ObjectContainer<T> objectContainer, @Nullable ComponentContainer<?> container, ComponentRequestContext requestContext) throws ApplicationException {
         if (container != null && !container.permitsProcessing()) {
             return objectContainer.instance();
@@ -151,6 +179,21 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
         return processingContext.instance();
     }
 
+    /**
+     * Processes a {@link ContainerAwareComponentCollection} by processing each individual component within the
+     * collection.
+     *
+     * @param key the component key of the collection
+     * @param collection the collection to process
+     * @param requestContext the request context for the processing operation
+     *
+     * @param <E> the element type of the collection
+     * @param <T> the type of the collection
+     *
+     * @return the processed collection
+     *
+     * @throws ApplicationException if an error occurs during processing
+     */
     protected <E, T extends ContainerAwareComponentCollection<E>> T processCollection(ComponentKey<T> key, T collection, ComponentRequestContext requestContext) throws ApplicationException {
         ComponentKey<E> build = TypeUtils.unchecked(key.mutable()
                 .type(key.parameterizedType().parameters().getFirst())
@@ -162,6 +205,19 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
         return collection;
     }
 
+    /**
+     * Prepares a {@link LockableComponentProcessingContext} for processing. This includes setting up tooling
+     * which may be required during processing, such as a {@link ProxyFactory} if proxying is permitted.
+     *
+     * @param key the component key of the component being processed
+     * @param objectContainer the object container holding the instance to be processed
+     * @param componentContainer the component container describing the component, if any
+     * @param requestContext the request context for the processing operation
+     *
+     * @param <T> the type of the component being processed
+     *
+     * @return the prepared processing context
+     */
     protected <T> LockableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, ObjectContainer<T> objectContainer, @Nullable ComponentContainer<?> componentContainer, ComponentRequestContext requestContext) {
         LockableComponentProcessingContext<T> processingContext = new LockableComponentProcessingContext<>(
                 this.application, key, requestContext, objectContainer,

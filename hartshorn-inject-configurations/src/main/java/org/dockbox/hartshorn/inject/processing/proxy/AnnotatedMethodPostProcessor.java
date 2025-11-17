@@ -42,6 +42,11 @@ import java.util.Collection;
  */
 public abstract class AnnotatedMethodPostProcessor<M extends Annotation> extends ComponentPostProcessor {
 
+    /**
+     * Returns the annotation that should be present on methods to be processed by this post processor.
+     *
+     * @return the annotation class
+     */
     public abstract Class<M> annotation();
 
     @Override
@@ -58,8 +63,27 @@ public abstract class AnnotatedMethodPostProcessor<M extends Annotation> extends
         }
     }
 
+    /**
+     * Processes a method annotated with the specified annotation.
+     *
+     * @param application the injection-capable application
+     * @param key the component key
+     * @param instance the component instance, if available
+     * @param method the method to process
+     *
+     * @param <T> the type of the component
+     */
     protected abstract <T> void process(InjectionCapableApplication application, ComponentKey<T> key, @Nullable T instance, MethodView<T, ?> method);
 
+    /**
+     * Returns the methods that may be modified by this post processor.
+     *
+     * @param type the type to retrieve methods from
+     *
+     * @param <T> the type of the component
+     *
+     * @return the modifiable methods
+     */
     protected <T> Collection<MethodView<T, ?>> modifiableMethods(TypeView<T> type) {
         return type.methods().annotatedWith(this.annotation());
     }

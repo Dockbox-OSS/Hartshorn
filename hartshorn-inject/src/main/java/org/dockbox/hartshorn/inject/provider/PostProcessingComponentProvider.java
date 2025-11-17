@@ -27,5 +27,10 @@ import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
  */
 public interface PostProcessingComponentProvider extends ComponentProvider {
 
+    /**
+     * The processor registry used by this provider to post-process components.
+     *
+     * @return the processor registry
+     */
     ComponentProcessorRegistry processorRegistry();
 }

@@ -104,6 +104,17 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
         this.scope = scope;
     }
 
+    /**
+     * Creates a standard {@link ComponentProviderPostProcessor} for this provider, which combines the post-processors
+     * registered in the orchestrator, and uses a local cache for store callbacks.
+     *
+     * @param singletonCache the singleton cache to use for store callbacks
+     * @param orchestrator the orchestrator to retrieve post-processors from
+     * @param application the application this provider is part of
+     * @param postConstructor the post constructor to use
+     *
+     * @return a new component provider post-processor
+     */
     protected static ComponentProviderPostProcessor createProviderPostProcessor(
             SingletonCache singletonCache,
             ComponentRegistryAwareProviderOrchestrator orchestrator,
@@ -170,6 +181,21 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
         return this.binder.hierarchy(key);
     }
 
+    /**
+     * Creates a new {@link HierarchyAwareComponentProvider} with the given parameters. The created provider
+     * will be configured with a default set of {@link ComponentProviderStrategy strategies}, which can
+     * be customized using the provided {@link Customizer}.
+     *
+     * @param orchestrator the orchestrator this provider is part of
+     * @param postConstructor the post constructor to use for component post-construction
+     * @param bindingAliasNormalizer the binding alias normalizer to use
+     * @param application the application this provider is part of
+     * @param singletonCache the singleton cache to use
+     * @param scope the scope this provider is installed in
+     * @param strategyCustomizer a customizer to customize the default strategies
+     *
+     * @return a new hierarchy-aware component provider
+     */
     public static HierarchyAwareComponentProvider create(
             ComponentRegistryAwareProviderOrchestrator orchestrator,
             ComponentPostConstructor postConstructor,

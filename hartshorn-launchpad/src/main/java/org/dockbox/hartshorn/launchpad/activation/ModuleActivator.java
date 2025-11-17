@@ -56,9 +56,24 @@ public @interface ModuleActivator {
      */
     String[] scanPackages() default {};
 
+    /**
+     * Component pre-processors to register if this module activator is present.
+     *
+     * @return The component pre-processors to register.
+     */
     Class<? extends ComponentPreProcessor>[] componentPreProcessors() default {};
 
+    /**
+     * Component post-processors to register if this module activator is present.
+     *
+     * @return The component post-processors to register.
+     */
     Class<? extends ComponentPostProcessor>[] componentPostProcessors() default {};
 
+    /**
+     * Hierarchical binder post-processors to register if this module activator is present.
+     *
+     * @return The hierarchical binder post-processors to register.
+     */
     Class<? extends HierarchicalBinderPostProcessor>[] binderPostProcessors() default {};
 }

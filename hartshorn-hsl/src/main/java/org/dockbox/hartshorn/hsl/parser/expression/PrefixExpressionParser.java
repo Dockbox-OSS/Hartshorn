@@ -44,6 +44,14 @@ public class PrefixExpressionParser extends AbstractFunctionOperatorExpressionPa
         }
     }
 
+    /**
+     * Checks whether the given token name is a registered prefix function in the current function
+     * context.
+     *
+     * @param parser the token parser
+     * @param name the token name
+     * @return true if the name is a registered prefix function, false otherwise
+     */
     protected boolean hasPrefixFunction(TokenParser parser, Token name) {
         return this.containedInFunctionContext(parser, context -> context.prefixFunctions().contains(name.lexeme()));
     }

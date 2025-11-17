@@ -53,6 +53,11 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
         this.delegate = delegate;
     }
 
+    /**
+     * Returns the delegate binding function.
+     *
+     * @return the delegate binding function
+     */
     protected BindingFunction<T> delegate() {
         return this.delegate;
     }

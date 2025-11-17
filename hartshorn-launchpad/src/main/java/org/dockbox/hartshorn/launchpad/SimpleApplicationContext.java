@@ -38,7 +38,7 @@ import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.graph.DelegatingConfigurationDependencyVisitor;
 import org.dockbox.hartshorn.launchpad.graph.PostProcessorDependencyDeclarationContext;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.dockbox.hartshorn.util.collections.MultiMap;
+import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.graph.GraphException;
@@ -132,7 +132,7 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
      */
     protected void processComponents(Collection<ComponentContainer<?>> containers) {
         this.checkRunning();
-        MultiMap<Integer, ComponentPreProcessor> processors = this.componentProvider().processorRegistry().preProcessors();
+        NavigableMultiMap<Integer, ComponentPreProcessor> processors = this.componentProvider().processorRegistry().preProcessors();
         for(int priority : processors.keySet()) {
             for(ComponentPreProcessor processor : processors.get(priority)) {
                 LOG.debug(

@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.launchpad.configuration;
 
+import java.util.function.Supplier;
+import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.annotations.CompositeMember;
 import org.dockbox.hartshorn.inject.annotations.Fuzzy;
 import org.dockbox.hartshorn.inject.annotations.InfrastructurePriority;
@@ -29,12 +31,15 @@ import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.condition.support.RequiresAbsentBinding;
 import org.dockbox.hartshorn.inject.condition.support.RequiresProperty;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.launchpad.ApplicationStarter;
 import org.dockbox.hartshorn.launchpad.annotations.LoggerMeta;
 import org.dockbox.hartshorn.launchpad.annotations.UseLaunchpad;
 import org.dockbox.hartshorn.launchpad.condition.RequiresActivator;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObserver;
 import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.properties.convert.ValuePropertyToObjectConverterFactory;
+import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.ConversionService;
@@ -45,8 +50,6 @@ import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.function.Supplier;
 
 /**
  * Configuration for core components that are required by the framework. This includes the
@@ -60,54 +63,101 @@ import java.util.function.Supplier;
 @RequiresActivator(UseLaunchpad.class)
 public class LaunchpadSharedComponentConfiguration {
 
+    /**
+     * Provides a logger that uses the component name as logger name, if available. If not, falls
+     * back to the declaring type's name if the injection point is known, or the current thread's
+     * name otherwise.
+     *
+     * @param injectionPoint the injection point, if available
+     * @param componentRegistry the component registry, to resolve component names
+     * @param declarationResolver the injection point declaration resolver
+     *
+     * @return the logger
+     */
     @Prototype
     @InfrastructurePriority
     @RequiresProperty(name = "hartshorn.logging.naming.use-container-names", withValue = "true")
     public Logger logger(
-            @Required(false) InjectionPoint injectionPoint,
-            ComponentRegistry componentRegistry,
-            InjectionPointDeclarationResolver declarationResolver
+        @Required(false) InjectionPoint injectionPoint,
+        ComponentRegistry componentRegistry,
+        InjectionPointDeclarationResolver declarationResolver
     ) {
-        return logger(injectionPoint, () -> {
+        if (injectionPoint == null) {
+            return this.defaultLogger();
+        }
+        return this.loggerForInjectionPoint(injectionPoint, () -> {
             Class<?> declaringType = declarationResolver.resolve(injectionPoint).type();
             return componentRegistry.container(declaringType)
                     .map(ComponentContainer::name)
-                    .map(LoggerFactory::getLogger)
-                    .orElseGet(() -> LoggerFactory.getLogger(declaringType));
+                    .orElseGet(declaringType::getName);
         });
     }
 
+    /**
+     * Provides a logger that uses the declaring type's name as logger name, or the current thread's
+     * name if the injection point is not known.
+     *
+     * @param injectionPoint the injection point, if available
+     * @param declarationResolver the injection point declaration resolver
+     * @return the logger
+     */
     @Prototype
     @InfrastructurePriority
     @RequiresAbsentBinding(Logger.class)
     public Logger logger(
-            @Required(false) InjectionPoint injectionPoint,
-            InjectionPointDeclarationResolver declarationResolver
+        @Required(false) InjectionPoint injectionPoint,
+        InjectionPointDeclarationResolver declarationResolver
     ) {
-        return logger(injectionPoint, () -> {
+        if (injectionPoint == null) {
+            return this.defaultLogger();
+        }
+        return this.loggerForInjectionPoint(injectionPoint, () -> {
             Class<?> declaringType = declarationResolver.resolve(injectionPoint).type();
-            return LoggerFactory.getLogger(declaringType);
+            return declaringType.getName();
         });
     }
 
-    protected Logger logger(InjectionPoint injectionPoint, Supplier<Logger> defaultValue) {
-        if (injectionPoint == null) {
-            return defaultValue.get();
-        }
-        return injectionPoint.injectionPoint().annotations()
+    private Logger loggerForInjectionPoint(
+            InjectionPoint injectionPoint,
+            Supplier<String> defaultNameSupplier
+    ) {
+        String name = injectionPoint.injectionPoint().annotations()
                 .get(LoggerMeta.class)
                 .map(LoggerMeta::name)
                 .filter(StringUtilities::notEmpty)
-                .map(LoggerFactory::getLogger)
-                .orElseGet(defaultValue);
+                .orElseGet(defaultNameSupplier);
+        return LoggerFactory.getLogger(name);
     }
 
+    private Logger defaultLogger() {
+        Thread currentThread = Thread.currentThread();
+        return LoggerFactory.getLogger(currentThread.getName());
+    }
+
+    /**
+     * Provides the standard {@link SimpleInjectionPointDeclarationResolver} implementation of
+     * {@link InjectionPointDeclarationResolver}.
+     *
+     * @return the injection point declaration resolver
+     */
     @Singleton
     @InfrastructurePriority
     public InjectionPointDeclarationResolver injectionPointDeclarationResolver() {
         return new SimpleInjectionPointDeclarationResolver();
     }
 
+    /**
+     * Provides the standard {@link ConversionService} implementation, applying all default- and
+     * discovered converters.
+     *
+     * @param introspector the type introspector to use
+     * @param genericConverters discovered generic converters
+     * @param converterFactories discovered converter factories
+     * @param converters discovered converters
+     * @param customizers discovered customizers
+     *
+     * @return the conversion service
+     */
     @Singleton
     @InfrastructurePriority
     public ConversionService conversionService(
@@ -118,7 +168,7 @@ public class LaunchpadSharedComponentConfiguration {
             @Fuzzy ComponentCollection<ConvertersCustomizer> customizers
     ) {
         StandardConversionService service = new StandardConversionService(introspector)
-                .withDefaults();
+            .withDefaults();
 
         genericConverters.forEach(service::addConverter);
         converterFactories.forEach(service::addConverterFactory);
@@ -129,21 +179,57 @@ public class LaunchpadSharedComponentConfiguration {
         return service;
     }
 
+    /**
+     * Provides additional internal converters for the conversion service. Currently, this
+     * only includes {@link ValuePropertyToObjectConverterFactory} to convert from
+     * {@link ValueProperty} instances.
+     *
+     * @return the converters customizer
+     */
     @Singleton
     @CompositeMember
     public ConvertersCustomizer additionalInternalConvertersCustomizer() {
         return (conversionService, converterRegistry) -> {
             // From Hartshorn Properties
             converterRegistry.addConverterFactory(
-                    ValueProperty.class,
-                    new ValuePropertyToObjectConverterFactory(conversionService)
+                ValueProperty.class,
+                new ValuePropertyToObjectConverterFactory(conversionService)
             );
         };
     }
 
+    /**
+     * Provides a lifecycle observer that runs the {@link ApplicationStarter} once the application
+     * has started. The observer performs a late lookup for the {@link ApplicationStarter} to allow
+     * for maximum flexibility early in the application lifecycle.
+     *
+     * @return the lifecycle observer
+     */
     @Singleton
     @CompositeMember
     public LifecycleObserver applicationStarterLifecycleObserver() {
-        return new ApplicationStarterLifecycleObserver();
+        return new LifecycleObserver() {
+            @Override
+            public void onStarted(ApplicationContext applicationContext) {
+                // Late lookup for ApplicationStarter, to allow for maximum flexibility early in the
+                // application lifecycle.
+                ComponentKey<ApplicationStarter> componentKey = ComponentKey
+                    .builder(ApplicationStarter.class)
+                    .strict(false)
+                    .optional()
+                    .build();
+                ApplicationStarter applicationStarter = applicationContext.get(componentKey);
+                // OK to do nothing if no ApplicationStarter is present, as this is optional. Other
+                // observers may still be present, and will be invoked.
+                if (applicationStarter != null) {
+                    try {
+                        applicationStarter.run(applicationContext);
+                    }
+                    catch (ApplicationException e) {
+                        applicationContext.handle(e);
+                    }
+                }
+            }
+        };
     }
 }

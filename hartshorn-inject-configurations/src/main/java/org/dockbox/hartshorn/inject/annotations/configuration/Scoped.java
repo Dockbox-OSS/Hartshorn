@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.inject.annotations.configuration;
 
+import org.dockbox.hartshorn.inject.scope.Scope;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.dockbox.hartshorn.inject.scope.Scope;
 
 /**
  * Defines in which scope a component should be created. When defined, all scopes that are an instance
@@ -40,5 +40,11 @@ import org.dockbox.hartshorn.inject.scope.Scope;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.FIELD })
 public @interface Scoped {
+
+    /**
+     * The scope in which the component should be created.
+     *
+     * @return the scope class
+     */
     Class<? extends Scope> value();
 }

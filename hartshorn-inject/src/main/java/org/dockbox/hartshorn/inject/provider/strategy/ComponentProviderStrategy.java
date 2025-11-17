@@ -32,10 +32,23 @@ import org.dockbox.hartshorn.util.ApplicationException;
  */
 public interface ComponentProviderStrategy {
 
+    /**
+     * Attempts to provide a component for the given {@code componentKey} and {@code requestContext}. If this strategy
+     * cannot provide the component, it should delegate to the next strategy in the {@code chain}.
+     *
+     * @param componentKey the component key to resolve
+     * @param requestContext the request context for the component resolution
+     * @param chain the strategy chain to delegate to
+     * @param <T> the type of the component to resolve
+     *
+     * @return the resolved object container
+     *
+     * @throws ComponentResolutionException if the component could not be resolved
+     * @throws ApplicationException if the component could not be initialized or processed
+     */
     <T> ObjectContainer<T> get(
             ComponentKey<T> componentKey,
             ComponentRequestContext requestContext,
             ComponentProviderStrategyChain<T> chain
     ) throws ComponentResolutionException, ApplicationException;
-
 }

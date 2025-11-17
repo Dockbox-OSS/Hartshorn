@@ -121,6 +121,12 @@ public class VirtualInstance implements InstanceReference {
             .build();
     }
 
+    /**
+     * Gets the property access verifier to use for this instance. This verifier is used to verify
+     * whether a property can be accessed or modified.
+     *
+     * @return the property access verifier
+     */
     protected PropertyAccessVerifier accessVerifier() {
         return new StandardPropertyAccessVerifier();
     }

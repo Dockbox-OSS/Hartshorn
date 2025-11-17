@@ -58,6 +58,15 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
         this.view = builder.view;
     }
 
+    /**
+     * Creates a new builder for a {@link ConfigurableDependencyContext}.
+     *
+     * @param componentKey the component key of the component being auto-configured
+     *
+     * @param <T> the type of the component being auto-configured
+     *
+     * @return the builder for the configurable dependency context
+     */
     public static <T> AutoConfiguringDependencyContextBuilder<T> builder(ComponentKey<T> componentKey) {
         return new AutoConfiguringDependencyContextBuilder<>(componentKey);
     }
@@ -172,11 +181,23 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
             return this;
         }
 
+        /**
+         * The supplier that creates instances of the component.
+         *
+         * @param supplier the supplier
+         * @return the builder
+         */
         public AutoConfiguringDependencyContextBuilder<T> supplier(PrototypeInstantiationStrategy<T> supplier) {
             this.supplier = supplier;
             return this;
         }
 
+        /**
+         * The view that is the origin of this dependency context.
+         *
+         * @param view the view
+         * @return the builder
+         */
         public AutoConfiguringDependencyContextBuilder<T> view(View view) {
             this.view = view;
             return this;

@@ -665,6 +665,12 @@ public class SimpleTokenRegistryLexer implements Lexer {
         return this.tokenRegistry.literals().identifier();
     }
 
+    /**
+     * Advances to the next character in the source code. This increments the current index and
+     * the column number. The character at the new current index is returned.
+     *
+     * @return The character at the new current index.
+     */
     protected TokenCharacter pointToNextChar() {
         this.incrementCurrent();
         this.column++;
@@ -672,6 +678,12 @@ public class SimpleTokenRegistryLexer implements Lexer {
         return this.tokenRegistry.character(character);
     }
 
+    /**
+     * Adds a token to the list of tokens. The token is created based on the current
+     * state of the lexer.
+     *
+     * @param type the type of the token
+     */
     protected void addToken(TokenType type) {
         if (type.reserved()) {
             LOG.warn(
@@ -682,6 +694,13 @@ public class SimpleTokenRegistryLexer implements Lexer {
         this.addToken(type, null);
     }
 
+    /**
+     * Adds a token to the list of tokens. The token is created based on the current
+     * state of the lexer.
+     *
+     * @param type the type of the token
+     * @param literal the literal value of the token
+     */
     protected void addToken(TokenType type, Object literal) {
         String text = this.source.substring(this.start, this.current);
         Token token = Token.of(type, text)
@@ -692,10 +711,23 @@ public class SimpleTokenRegistryLexer implements Lexer {
         this.tokens.add(token);
     }
 
+    /**
+     * Checks if the lexer has reached the end of the source code.
+     *
+     * @return {@code true} if the lexer has reached the end of the source code, {@code false} otherwise.
+     */
     protected boolean isAtEnd() {
         return this.current >= this.source.length();
     }
 
+    /**
+     * Attempts to match the current character to the expected character. If the characters match,
+     * the current position is advanced and {@code true} is returned. If the characters do not match,
+     * or if the lexer has reached the end of the source code, {@code false} is returned.
+     *
+     * @param expected The expected character.
+     * @return {@code true} if the characters match, {@code false} otherwise.
+     */
     protected boolean match(TokenCharacter expected) {
         if (this.isAtEnd()) {
             return false;
@@ -708,14 +740,31 @@ public class SimpleTokenRegistryLexer implements Lexer {
         return true;
     }
 
+    /**
+     * Peeks at the current character without advancing the current position.
+     *
+     * @return The current character.
+     */
     protected TokenCharacter currentChar() {
         return this.peekChar(0);
     }
 
+    /**
+     * Peeks at the next character without advancing the current position.
+     *
+     * @return The next character.
+     */
     protected TokenCharacter nextChar() {
         return this.peekChar(1);
     }
 
+    /**
+     * Peeks at the character at the given delta from the current position. This does not
+     * advance the current position.
+     *
+     * @param delta The delta from the current position.
+     * @return The character at the given delta.
+     */
     protected TokenCharacter peekChar(int delta) {
         if (this.current + delta >= this.source.length()) {
             return this.tokenRegistry.characterList().nullCharacter();
@@ -724,6 +773,9 @@ public class SimpleTokenRegistryLexer implements Lexer {
         return this.tokenRegistry.character(character);
     }
 
+    /**
+     * Advances to the next line. This increments the line number and resets the column number.
+     */
     protected void nextLine() {
         this.line++;
         this.column = -1;

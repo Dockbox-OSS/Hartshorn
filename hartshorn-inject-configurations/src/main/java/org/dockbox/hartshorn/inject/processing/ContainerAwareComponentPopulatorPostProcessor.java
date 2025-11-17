@@ -47,6 +47,13 @@ public class ContainerAwareComponentPopulatorPostProcessor extends ComponentPopu
         return !processingContext.containsKey(ComponentContainer.class) || processingContext.get(ComponentContainer.class).permitsProxying();
     }
 
+    /**
+     * Creates a {@link ContextualInitializer} that initializes a {@link ContainerAwareComponentPopulatorPostProcessor},
+     * which can be customized using the provided {@link Customizer}.
+     *
+     * @param customizer the customizer to configure the {@link Configurer}
+     * @return a {@link ContextualInitializer} for a {@link ContainerAwareComponentPopulatorPostProcessor}
+     */
     public static ContextualInitializer<InjectionCapableApplication, ComponentPostProcessor> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();

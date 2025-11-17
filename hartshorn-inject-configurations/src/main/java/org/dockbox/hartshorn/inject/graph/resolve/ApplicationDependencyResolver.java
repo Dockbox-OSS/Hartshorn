@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.inject.graph.resolve;
 
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.annotations.configuration.Binds;
 import org.dockbox.hartshorn.inject.graph.CompositeDependencyResolver;
 import org.dockbox.hartshorn.inject.graph.DependencyResolver;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
@@ -44,6 +45,13 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
         super(resolvers);
     }
 
+    /**
+     * Creates a new {@link ContextualInitializer} for an {@link ApplicationDependencyResolver}, which can be configured
+     * using the provided {@link Customizer}.
+     *
+     * @param customizer the customizer to configure the application dependency resolver
+     * @return a new contextual initializer for an application dependency resolver
+     */
     public static ContextualInitializer<InjectionCapableApplication, DependencyResolver> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer()
@@ -69,6 +77,13 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
      */
     public static class Configurer extends StreamableConfigurer<InjectionCapableApplication, DependencyResolver> {
 
+        /**
+         * Adds a {@link ComponentDependencyResolver} to the resolver. This will enable the resolution of dependencies
+         * from managed components (through provided {@link org.dockbox.hartshorn.inject.component.ComponentContainer
+         * component containers}.
+         *
+         * @return the current configurer instance
+         */
         public Configurer withManagedComponents() {
             ContextualInitializer<InjectionCapableApplication, DependencyResolver> methodDependencyResolver = ContextualInitializer.of(application -> {
                 return new ComponentDependencyResolver(application.environment(), application.defaultBinder());
@@ -77,6 +92,13 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
             return this;
         }
 
+        /**
+         * Adds a {@link ManagedConfigurationDependencyResolver} to the resolver, configured using the provided
+         * {@link Customizer}. This will enable the resolution of dependencies from {@link Binds binding} methods.
+         *
+         * @param customizer the customizer to configure the binding method resolver
+         * @return the current configurer instance
+         */
         public Configurer withBindsMethods(Customizer<ManagedConfigurationDependencyResolver.Configurer> customizer) {
             ContextualInitializer<InjectionCapableApplication, DependencyResolver> methodDependencyResolver = ManagedConfigurationDependencyResolver.create(customizer);
             this.add(methodDependencyResolver);

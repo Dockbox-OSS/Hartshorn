@@ -223,6 +223,12 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
         return this.exceptionHandler;
     }
 
+    /**
+     * Returns the annotation lookup used by this environment. The annotation lookup is typically used to
+     * discover annotations on types and members.
+     *
+     * @return the annotation lookup
+     */
     public AnnotationLookup annotationLookup() {
         return this.annotationLookup;
     }
@@ -883,50 +889,127 @@ public final class ConfigurableApplicationEnvironment implements ObservableAppli
             return this.isBuildEnvironment(ContextualInitializer.of(isBuildEnvironment));
         }
 
+        /**
+         * Sets the {@link ComponentInjectionPointsResolver} to use. The {@link ComponentInjectionPointsResolver} is
+         * responsible for resolving injection points on components.
+         *
+         * @param injectionPointsResolver the {@link ComponentInjectionPointsResolver} to use
+         * @return the current {@link Configurer} instance
+         */
         public Configurer injectionPointsResolver(ComponentInjectionPointsResolver injectionPointsResolver) {
             return this.injectionPointsResolver(ContextualInitializer.of(() -> injectionPointsResolver));
         }
 
+        /**
+         * Sets the {@link ComponentInjectionPointsResolver} to use. The {@link ComponentInjectionPointsResolver} is
+         * responsible for resolving injection points on components.
+         *
+         * @param injectionPointsResolver the {@link ComponentInjectionPointsResolver} to use
+         * @return the current {@link Configurer} instance
+         */
         public Configurer injectionPointsResolver(ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver) {
             this.injectionPointsResolver = injectionPointsResolver;
             return this;
         }
 
+        /**
+         * Sets the {@link ComponentKeyResolver} to use. The {@link ComponentKeyResolver} is responsible for resolving
+         * component keys from types and declarations.
+         *
+         * @param componentKeyResolver the {@link ComponentKeyResolver} to use
+         * @return the current {@link Configurer} instance
+         */
         public Configurer componentKeyResolver(ComponentKeyResolver componentKeyResolver) {
             return this.componentKeyResolver(ContextualInitializer.of(componentKeyResolver));
         }
 
+        /**
+         * Sets the {@link ComponentKeyResolver} to use. The {@link ComponentKeyResolver} is responsible for resolving
+         * component keys from types and declarations.
+         *
+         * @param componentKeyResolver the {@link ComponentKeyResolver} to use
+         * @return the current {@link Configurer} instance
+         */
         public Configurer componentKeyResolver(Initializer<ComponentKeyResolver> componentKeyResolver) {
             return this.componentKeyResolver(ContextualInitializer.of(componentKeyResolver));
         }
 
+        /**
+         * Sets the {@link ComponentKeyResolver} to use. The {@link ComponentKeyResolver} is responsible for resolving
+         * component keys from types and declarations.
+         *
+         * @param componentKeyResolver the {@link ComponentKeyResolver} to use
+         * @return the current {@link Configurer} instance
+         */
         public Configurer componentKeyResolver(ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver) {
             this.componentKeyResolver = componentKeyResolver;
             return this;
         }
 
+        /**
+         * Sets the {@link EnvironmentTypeResolver} to use. The {@link EnvironmentTypeResolver} is responsible for
+         * resolving annotated types within the application environment.
+         *
+         * @param typeResolver the {@link EnvironmentTypeResolver} to use
+         * @return the current {@link Configurer} instance
+         */
         public Configurer typeResolver(EnvironmentTypeResolver typeResolver) {
             return this.typeResolver(ContextualInitializer.of(typeResolver));
         }
 
+        /**
+         * Sets the {@link EnvironmentTypeResolver} to use. The {@link EnvironmentTypeResolver} is responsible for
+         * resolving annotated types within the application environment.
+         *
+         * @param typeResolver the {@link EnvironmentTypeResolver} to use
+         * @return the current {@link Configurer} instance
+         */
         public Configurer typeResolver(ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver) {
             this.typeResolver = typeResolver;
             return this;
         }
 
+        /**
+         * Sets the {@link ResourceLookup} to use. The {@link ResourceLookup} is responsible for locating resources
+         * within the application environment.
+         *
+         * @param resourceLookup the {@link ResourceLookup} to use
+         * @return the current {@link Configurer} instance
+         */
         public Configurer resourceLookup(ResourceLookup resourceLookup) {
             return this.resourceLookup(ContextualInitializer.of(resourceLookup));
         }
 
+        /**
+         * Sets the {@link ResourceLookup} to use. The {@link ResourceLookup} is responsible for locating resources
+         * within the application environment.
+         *
+         * @param resourceLookup the {@link ResourceLookup} to use
+         * @return the current {@link Configurer} instance
+         */
         public Configurer resourceLookup(ContextualInitializer<ApplicationEnvironment, ResourceLookup> resourceLookup) {
             this.resourceLookup = resourceLookup;
             return this;
         }
 
+        /**
+         * Sets the {@link ConditionMatcher} to use. The {@link ConditionMatcher} is responsible for evaluating
+         * conditions within the application environment (e.g. on conditional bindings and components).
+         *
+         * @param conditionMatcher the {@link ConditionMatcher} to use
+         * @return the current {@link Configurer} instance
+         */
         public Configurer conditionMatcher(ConditionMatcher conditionMatcher) {
             return this.conditionMatcher(ContextualInitializer.of(conditionMatcher));
         }
 
+        /**
+         * Sets the {@link ConditionMatcher} to use. The {@link ConditionMatcher} is responsible for evaluating
+         * conditions within the application environment (e.g. on conditional bindings and components).
+         *
+         * @param conditionMatcher the {@link ConditionMatcher} to use
+         * @return the current {@link Configurer} instance
+         */
         public Configurer conditionMatcher(ContextualInitializer<ApplicationEnvironment, ConditionMatcher> conditionMatcher) {
             this.conditionMatcher = conditionMatcher;
             return this;

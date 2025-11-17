@@ -91,11 +91,38 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
         return instance;
     }
 
+    /**
+     * Determines whether proxying is permitted for the given component processing context.
+     *
+     * @param application the application that owns the context
+     * @param instance the current instance, if any
+     * @param processingContext the component processing context
+     *
+     * @param <T> the type of the instance
+     *
+     * @return true if proxying is permitted, false otherwise
+     */
     protected <T> boolean permitsProxying(InjectionCapableApplication application, @Nullable T instance,
             ComponentProcessingContext<T> processingContext) {
         return processingContext.permitsProxying();
     }
 
+    /**
+     * Creates a proxy instance using the provided {@link ProxyFactory}. If the factory requires constructor arguments,
+     * the optimal constructor is resolved through the {@link ComponentConstructorResolver}, and the required arguments
+     * are loaded using the {@link ComponentExecutableInvocationAdapter}. If no proxy can be created, the provided
+     * instance is returned as-is.
+     *
+     * @param application the application that owns the context
+     * @param factory the proxy factory
+     * @param instance the existing instance, if any
+     *
+     * @param <T> the type of the instance
+     *
+     * @return the created proxy instance, or the existing instance if no proxy could be created
+     *
+     * @throws ApplicationException if an error occurs during proxy creation
+     */
     protected <T> T createProxyInstance(InjectionCapableApplication application, ProxyFactory<T> factory, @Nullable T instance) throws ApplicationException {
         TypeView<T> factoryType = application.environment().introspector().introspect(factory.type());
         // Ensure we use a non-default constructor if there is no default constructor to use
@@ -116,6 +143,13 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
         return ProcessingPriority.LOWEST_PRECEDENCE - 128;
     }
 
+    /**
+     * Creates a {@link ContextualInitializer} for the {@link ComponentPopulatorPostProcessor}, which can be
+     * customized using the provided {@link Customizer}.
+     *
+     * @param customizer the customizer for the configurer
+     * @return the contextual initializer
+     */
     public static ContextualInitializer<InjectionCapableApplication, ComponentPostProcessor> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
@@ -139,10 +173,22 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
 
         ContextualInitializer<InjectionCapableApplication, ComponentPopulator> componentPopulator = StrategyComponentPopulator.create(Customizer.useDefaults());
 
+        /**
+         * Sets the component populator to use.
+         *
+         * @param componentPopulator the component populator
+         * @return this configurer
+         */
         public Configurer componentPopulator(ComponentPopulator componentPopulator) {
             return this.componentPopulator(ContextualInitializer.of(componentPopulator));
         }
 
+        /**
+         * Sets the component populator to use.
+         *
+         * @param componentPopulator the component populator initializer
+         * @return this configurer
+         */
         public Configurer componentPopulator(ContextualInitializer<InjectionCapableApplication, ComponentPopulator> componentPopulator) {
             this.componentPopulator = componentPopulator;
             return this;

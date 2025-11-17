@@ -79,6 +79,13 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
         return instance;
     }
 
+    /**
+     * Creates a new {@link ContextualInitializer} for the {@link AnnotatedMethodComponentPostConstructor}, which can be
+     * customized using the provided {@link Customizer}.
+     *
+     * @param customizer The customizer to configure the post-constructor
+     * @return The contextual initializer for the post-constructor
+     */
     public static ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor> create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
@@ -108,10 +115,22 @@ public class AnnotatedMethodComponentPostConstructor implements ComponentPostCon
         private ContextualInitializer<InjectionCapableApplication, ComponentExecutableInvocationAdapter> viewContextAdapter = ContextualInitializer.of(
             InjectorExecutableInvocationAdapter::new);
 
+        /**
+         * Configures the context adapter to use for invoking the annotated methods.
+         *
+         * @param lazyComponentExecutableInvocationAdapter The lazy context adapter to use
+         * @return The current configurer, for chaining
+         */
         public Configurer viewContextAdapter(ComponentExecutableInvocationAdapter lazyComponentExecutableInvocationAdapter) {
             return this.viewContextAdapter(ContextualInitializer.of(lazyComponentExecutableInvocationAdapter));
         }
 
+        /**
+         * Configures the context adapter to use for invoking the annotated methods.
+         *
+         * @param viewContextAdapter The context adapter to use
+         * @return The current configurer, for chaining
+         */
         public Configurer viewContextAdapter(ContextualInitializer<InjectionCapableApplication, ComponentExecutableInvocationAdapter> viewContextAdapter) {
             this.viewContextAdapter = viewContextAdapter;
             return this;

@@ -58,6 +58,11 @@ public abstract class ManagedComponentDependencyContext<T> implements LifecycleA
         this.constructorView = constructorView;
     }
 
+    /**
+     * The type of the managed component.
+     *
+     * @return the type view of the managed component
+     */
     protected abstract TypeView<T> type();
 
     @Override

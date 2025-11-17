@@ -192,6 +192,14 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
         return propertyRegistryLoader;
     }
 
+    /**
+     * Creates a new {@link ContextualInitializer} for an {@link EnvironmentProfilesPropertyRegistryFactory}, which can be
+     * configured using the given {@link Customizer}.
+     *
+     * @param customizer the customizer to configure the factory
+     *
+     * @return the contextual initializer for the factory
+     */
     public static ContextualInitializer<ApplicationEnvironment, ? extends PropertyRegistryFactory> create(Customizer<Configurer> customizer) {
         return environment -> {
             Configurer configurer = new Configurer();
@@ -259,32 +267,74 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
 
         private ContextualInitializer<ApplicationEnvironment, ProfileNameResolver> profileNameResolver = ContextualInitializer.of(FromPropertyProfileNameResolver::new);
 
+        /**
+         * Adds a set of property source resolvers to be included in the property registry.
+         *
+         * @param resolvers the resolvers to add
+         * @return this configurer
+         */
         public Configurer propertySourceResolvers(Collection<PropertySourceResolver> resolvers) {
             return this.propertySourceResolvers(configuration -> configuration.addAll(resolvers));
         }
 
+        /**
+         * Customizes the set of property source resolvers.
+         *
+         * @param customizer the customizer
+         * @return this configurer
+         */
         public Configurer propertySourceResolvers(Customizer<StreamableConfigurer<ApplicationEnvironment, PropertySourceResolver>> customizer) {
             this.propertySourceResolvers.customizer(customizer);
             return this;
         }
 
+        /**
+         * Adds a set of custom property resolvers to be included in the property registry.
+         *
+         * @param resolvers the resolvers to add
+         * @return this configurer
+         */
         public Configurer customPropertyResolvers(Collection<CustomPropertiesResolver> resolvers) {
             return this.customPropertyResolvers(configuration -> configuration.addAll(resolvers));
         }
 
+        /**
+         * Customizes the set of custom property resolvers.
+         *
+         * @param customizer the customizer
+         * @return this configurer
+         */
         public Configurer customPropertyResolvers(Customizer<StreamableConfigurer<ApplicationEnvironment, CustomPropertiesResolver>> customizer) {
             this.customPropertyResolvers.customizer(customizer);
             return this;
         }
 
+        /**
+         * Adds a set of custom properties to be included in the property registry.
+         *
+         * @param properties the properties to add
+         * @return this configurer
+         */
         public Configurer customProperties(Collection<String> properties) {
             return this.customPropertyResolvers(configuration -> configuration.add(new StringListCustomPropertiesResolver(List.copyOf(properties))));
         }
 
+        /**
+         * Set the profile name resolver.
+         *
+         * @param profileNameResolver the resolver
+         * @return this configurer
+         */
         public Configurer profileNameResolver(ProfileNameResolver profileNameResolver) {
             return this.profileNameResolver(ContextualInitializer.of(profileNameResolver));
         }
 
+        /**
+         * Set the profile name resolver.
+         *
+         * @param resolver the resolver
+         * @return this configurer
+         */
         public Configurer profileNameResolver(ContextualInitializer<ApplicationEnvironment, ProfileNameResolver> resolver) {
             this.profileNameResolver = resolver;
             return this;

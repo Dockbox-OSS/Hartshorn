@@ -94,6 +94,13 @@ public class HierarchicalComponentProviderOrchestrator
         this.binderProcessorRegistry = new ConcurrentHierarchicalBinderProcessorRegistry();
     }
 
+    /**
+     * Creates a new child-provider for the given scope. This method is called when a provider for the given scope
+     * does not yet exist.
+     *
+     * @param scope the scope for which to create the provider
+     * @return the created provider
+     */
     @NonNull
     protected HierarchicalAliasBinderAwareComponentProvider createComponentProvider(Scope scope) {
         HierarchicalAliasBinderAwareComponentProvider provider = HierarchyAwareComponentProvider.create(
@@ -144,6 +151,11 @@ public class HierarchicalComponentProviderOrchestrator
         }
     }
 
+    /**
+     * Gets the component post constructor used by this orchestrator.
+     *
+     * @return the component post constructor
+     */
     public ComponentPostConstructor postConstructor() {
         return this.postConstructor;
     }
@@ -213,6 +225,13 @@ public class HierarchicalComponentProviderOrchestrator
         return this.scopedProviders.containsKey(scopeKey);
     }
 
+    /**
+     * Creates a contextual initializer for a {@link HierarchicalComponentProviderOrchestrator}, which can be
+     * customized using the provided customizer.
+     *
+     * @param customizer the customizer to configure the orchestrator
+     * @return the contextual initializer
+     */
     public static ContextualInitializer<ComponentRegistry, ComponentProviderOrchestrator> create(Customizer<Configurer> customizer) {
         return context -> {
             InjectionCapableApplication application = context.firstContext(InjectionCapableApplication.class)
@@ -246,19 +265,43 @@ public class HierarchicalComponentProviderOrchestrator
         private ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor> componentPostConstructor = AnnotatedMethodComponentPostConstructor.create(Customizer.useDefaults());
         private ContextualInitializer<InjectionCapableApplication, BindingAliasNormalizer> bindingAliasNormalizer = ContextualInitializer.of(DefaultBindingAliasNormalizer::new);
 
+        /**
+         * Sets the component post constructor to use.
+         *
+         * @param componentPostConstructor the component post constructor
+         * @return this configurer
+         */
         public Configurer componentPostConstructor(ComponentPostConstructor componentPostConstructor) {
             return this.componentPostConstructor(ContextualInitializer.of(componentPostConstructor));
         }
 
+        /**
+         * Sets the component post constructor to use.
+         *
+         * @param componentPostConstructor the component post constructor initializer
+         * @return this configurer
+         */
         public Configurer componentPostConstructor(ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor> componentPostConstructor) {
             this.componentPostConstructor = componentPostConstructor;
             return this;
         }
 
+        /**
+         * Sets the binding alias normalizer to use.
+         *
+         * @param bindingAliasNormalizer the binding alias normalizer
+         * @return this configurer
+         */
         public Configurer bindingAliasNormalizer(BindingAliasNormalizer bindingAliasNormalizer) {
             return this.bindingAliasNormalizer(ContextualInitializer.of(bindingAliasNormalizer));
         }
 
+        /**
+         * Sets the binding alias normalizer to use.
+         *
+         * @param bindingAliasNormalizer the binding alias normalizer initializer
+         * @return this configurer
+         */
         public Configurer bindingAliasNormalizer(ContextualInitializer<InjectionCapableApplication, BindingAliasNormalizer> bindingAliasNormalizer) {
             this.bindingAliasNormalizer = bindingAliasNormalizer;
             return this;

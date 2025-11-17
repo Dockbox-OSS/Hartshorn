@@ -30,5 +30,12 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
  */
 public interface ComponentResolutionFailureStrategy {
 
+    /**
+     * Called when a component could not be resolved.
+     *
+     * @param componentKey the component key that could not be resolved
+     * @param requestContext the request context for the component resolution
+     * @param <T> the type of the component
+     */
     <T> void onResolutionFailure(ComponentKey<T> componentKey, ComponentRequestContext requestContext);
 }

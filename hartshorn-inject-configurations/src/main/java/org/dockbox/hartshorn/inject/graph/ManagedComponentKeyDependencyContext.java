@@ -47,6 +47,16 @@ public final class ManagedComponentKeyDependencyContext<T> extends ManagedCompon
         this.lazy = builder.lazy;
     }
 
+    /**
+     * Creates a new builder for a {@link ManagedComponentKeyDependencyContext}.
+     *
+     * @param componentKey the component key of the component
+     * @param type the type of the component
+     *
+     * @param <T> the type of the component
+     *
+     * @return the builder
+     */
     public static <T> ManagedComponentKeyDependencyContextBuilder<T> builder(ComponentKey<T> componentKey, TypeView<T> type) {
         return new ManagedComponentKeyDependencyContextBuilder<>(componentKey, type);
     }
@@ -101,31 +111,68 @@ public final class ManagedComponentKeyDependencyContext<T> extends ManagedCompon
             this.type = type;
         }
 
+        /**
+         * Sets whether to process this component after initialization.
+         *
+         * @param processAfterInitialization whether to process after initialization
+         * @return the current builder instance
+         */
         public ManagedComponentKeyDependencyContextBuilder<T> processAfterInitialization(boolean processAfterInitialization) {
             this.processAfterInitialization = processAfterInitialization;
             return this;
         }
 
+        /**
+         * Sets the lifecycle type for this context.
+         *
+         * @param lifecycleType the lifecycle type
+         * @return the current builder instance
+         */
         public ManagedComponentKeyDependencyContextBuilder<T> lifecycleType(LifecycleType lifecycleType) {
             this.lifecycleType = lifecycleType;
             return this;
         }
 
+        /**
+         * Sets whether this component is to be lazily initialized. This has no effect if {@link #lifecycleType()} is
+         * set to {@link LifecycleType#PROTOTYPE}.
+         *
+         * @param lazy whether the component is lazy
+         * @return the current builder instance
+         */
         public ManagedComponentKeyDependencyContextBuilder<T> lazy(boolean lazy) {
             this.lazy = lazy;
             return this;
         }
 
+        /**
+         * Sets the dependencies for this context.
+         *
+         * @param dependencies the dependencies
+         * @return the current builder instance
+         */
         public ManagedComponentKeyDependencyContextBuilder<T> dependencies(DependencyMap dependencies) {
             this.dependencies = dependencies;
             return this;
         }
 
+        /**
+         * Sets the constructor view for this context. The constructor view represents the constructor
+         * used to instantiate the managed component.
+         *
+         * @param constructorView the constructor view
+         * @return the current builder instance
+         */
         public ManagedComponentKeyDependencyContextBuilder<T> constructorView(ConstructorView<? extends T> constructorView) {
             this.constructorView = constructorView;
             return this;
         }
 
+        /**
+         * Builds the {@link ManagedComponentKeyDependencyContext}.
+         *
+         * @return the built context
+         */
         public ManagedComponentKeyDependencyContext<T> build() {
             return new ManagedComponentKeyDependencyContext<>(this);
         }

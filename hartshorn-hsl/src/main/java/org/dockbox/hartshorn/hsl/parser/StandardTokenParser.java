@@ -103,7 +103,11 @@ public class StandardTokenParser extends DefaultFallbackCompatibleContext implem
         return this;
     }
 
-    @Override
+    /**
+     * Returns the mutable expression parser chain used by this token parser.
+     *
+     * @return the mutable expression parser chain
+     */
     public MutableExpressionParserChain expressionParserChain() {
         return this.expressionParserChain;
     }

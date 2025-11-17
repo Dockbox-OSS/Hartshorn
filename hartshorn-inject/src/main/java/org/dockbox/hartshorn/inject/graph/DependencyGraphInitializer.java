@@ -79,7 +79,7 @@ public final class DependencyGraphInitializer {
      * anything other than validation.
      *
      * @param containers the dependency declarations
-     * @param orchestrator
+     * @param orchestrator the component provider orchestrator
      *
      * @return the initialized dependency graph
      *

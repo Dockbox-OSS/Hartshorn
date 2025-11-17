@@ -114,6 +114,14 @@ public class StrategyResourceLookup implements ResourceLookup {
         return Set.copyOf(this.strategies.values());
     }
 
+    /**
+     * Creates a new {@link ContextualInitializer} for a {@link ResourceLookup}, which can be configured using
+     * the given {@link Customizer}.
+     *
+     * @param customizer the customizer to configure the {@link ResourceLookup}
+     *
+     * @return the contextual initializer for the {@link ResourceLookup}
+     */
     public static ContextualInitializer<ApplicationEnvironment, ResourceLookup> create(Customizer<Configurer> customizer) {
         return environment -> {
             Configurer configurer = new Configurer();
@@ -145,19 +153,43 @@ public class StrategyResourceLookup implements ResourceLookup {
 
         private ContextualInitializer<ApplicationEnvironment, ResourceLookupStrategy> fallbackStrategy = ContextualInitializer.of(FileSystemLookupStrategy::new);
 
+        /**
+         * Sets the fallback strategy to use when no strategy prefix is found in the source string.
+         *
+         * @param strategy the fallback strategy
+         * @return this configurer
+         */
         public Configurer fallbackStrategy(ResourceLookupStrategy strategy) {
             return this.fallbackStrategy(ContextualInitializer.of(strategy));
         }
 
+        /**
+         * Sets the fallback strategy to use when no strategy prefix is found in the source string.
+         *
+         * @param fallbackStrategy the fallback strategy initializer
+         * @return this configurer
+         */
         public Configurer fallbackStrategy(ContextualInitializer<ApplicationEnvironment, ResourceLookupStrategy> fallbackStrategy) {
             this.fallbackStrategy = fallbackStrategy;
             return this;
         }
 
+        /**
+         * Adds the given strategies to this {@link ResourceLookup}.
+         *
+         * @param strategies the strategies to add
+         * @return this configurer
+         */
         public Configurer strategies(Collection<ResourceLookupStrategy> strategies) {
             return this.strategies(configuration -> configuration.addAll(strategies));
         }
 
+        /**
+         * Configure the strategies used by this {@link ResourceLookup}.
+         *
+         * @param customizer the customizer to configure the strategies
+         * @return this configurer
+         */
         public Configurer strategies(Customizer<StreamableConfigurer<ApplicationEnvironment, ResourceLookupStrategy>> customizer) {
             this.strategies.customizer(customizer);
             return this;
