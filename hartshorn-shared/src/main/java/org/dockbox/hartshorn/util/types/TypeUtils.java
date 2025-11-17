@@ -35,8 +35,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Utility class for functionalities related to types. Within the context of this class, types can either
- * be primitives which require (un)boxing, or {@link Class} instances.
+ * Utility class for functionalities related to types. Within the context of this class, types can
+ * either be primitives which require (un)boxing, or {@link Class} instances.
  *
  * @since 0.5.0
  *
@@ -75,7 +75,9 @@ public class TypeUtils {
                     return input.charAt(0);
                 }
                 else {
-                    throw new TypeConversionException("Invalid char value: " + input + " (length != 1)");
+                    throw new TypeConversionException(
+                            "Invalid char value: " + input + " (length != 1)"
+                    );
                 }
             }),
             Map.entry(double.class, Double::valueOf),
@@ -86,12 +88,13 @@ public class TypeUtils {
     );
 
     /**
-     * Converts a string value to a primitive type. If the type is an enum, the value is converted to an enum constant.
-     * If the given type is not a primitive, but a primitive wrapper, the value is converted to the primitive type.
+     * Converts a string value to a primitive type. If the type is an enum, the value is converted
+     * to an enum constant. If the given type is not a primitive, but a primitive wrapper, the value
+     * is converted to the primitive type.
      *
-     * <p><b>Note</b>: This utility method is kept for backwards compatibility. It is recommended to use the {@code
-     * ConversionService} in {@code org.dockbox.hartshorn.util.introspect.convert} instead, as it provides a more robust
-     * and extensible way of converting values.
+     * <p><b>Note</b>: This utility method is kept for backwards compatibility. It is recommended to
+     * use the {@code ConversionService} in {@code org.dockbox.hartshorn.util.introspect.convert}
+     * instead, as it provides a more robust and extensible way of converting values.
      *
      * @param type The type to convert to
      * @param value The value to convert
@@ -102,8 +105,8 @@ public class TypeUtils {
      * @throws TypeConversionException If the value cannot be converted to the given type
      * @throws NotPrimitiveException If the given type is not a primitive or primitive wrapper
      *
-     * @deprecated Use {@code ConversionService} instead. This method is not scheduled to be removed in a future
-     * release, but is no longer recommended for use.
+     * @deprecated Use {@code ConversionService} instead. This method is not scheduled to be removed
+     * in a future release, but is no longer recommended for use.
      */
     @Deprecated(since = "0.6.0", forRemoval = false)
     public static <T> T toPrimitive(Class<?> type, String value)
@@ -115,7 +118,9 @@ public class TypeUtils {
                 return (T) Enum.valueOf((Class<? extends Enum>) type, name);
             }
             catch (IllegalArgumentException e) {
-                throw new TypeConversionException("No enum constant " + type.getName() + "." + name);
+                throw new TypeConversionException(
+                        "No enum constant " + type.getName() + "." + name
+                );
             }
         }
         else {
@@ -147,8 +152,8 @@ public class TypeUtils {
     }
 
     /**
-     * Returns whether the given class is a primitive wrapper for the given primitive type. If the given type is not a
-     * primitive, an {@link IllegalArgumentException} is thrown.
+     * Returns whether the given class is a primitive wrapper for the given primitive type. If the
+     * given type is not a primitive, an {@link IllegalArgumentException} is thrown.
      *
      * @param targetClass The class to check
      * @param primitive The primitive type to check against
@@ -162,18 +167,19 @@ public class TypeUtils {
     }
 
     /**
-     * Allows adjusting wildcard types, ensuring compatibility between object instances and a specified key type. This
-     * method is particularly useful when dealing with scenarios where the generic type information is not precisely
-     * known at compile time, but is not required to be known at runtime (either due to type erasure, or due to the
-     * use of wildcards).
+     * Allows adjusting wildcard types, ensuring compatibility between object instances and a
+     * specified key type. This method is particularly useful when dealing with scenarios where the
+     * generic type information is not precisely known at compile time, but is not required to be
+     * known at runtime (either due to type erasure, or due to the use of wildcards).
      *
-     * <p>It should be noted that this method does not perform any type conversion. It merely ensures that the given
-     * object is compatible with the given type. If the given object is not compatible with the given type, an {@link
-     * IllegalArgumentException} is thrown. Compatibility is not ensured for type parameters, but only for the raw type.
+     * <p>It should be noted that this method does not perform any type conversion. It merely
+     * ensures that the given object is compatible with the given type. If the given object is not
+     * compatible with the given type, an {@link IllegalArgumentException} is thrown. Compatibility
+     * is not ensured for type parameters, but only for the raw type.
      *
-     * <p>Due to type parameter constraints, it should never be possible to invoke this method with a raw type that is
-     * not assignable to the given type. However, this method will throw an {@link IllegalArgumentException} if this is
-     * the case.
+     * <p>Due to type parameter constraints, it should never be possible to invoke this method with
+     * a raw type that is not assignable to the given type. However, this method will throw an
+     * {@link IllegalArgumentException} if this is the case.
      *
      * <p>Taking the following example type parameters for this method:
      * <ul>
@@ -182,13 +188,14 @@ public class TypeUtils {
      *     <li>{@link AdjustedType} - List&lt;String&gt;</li>
      * </ul>
      *
-     * <p>When invoking this method with an instance of any {@link java.util.List}, the method will return the same
-     * instance, as {@link java.util.List} is assignable to {@link java.util.List}&lt;?&gt;. However, as the instance
-     * could be {@code List<Integer>} just as well as {@code List<String>}, caution should be taken before using this
-     * method.
+     * <p>When invoking this method with an instance of any {@link java.util.List}, the method will
+     * return the same instance, as {@link java.util.List} is assignable to {@link
+     * java.util.List}&lt;?&gt;. However, as the instance could be {@code List<Integer>} just as
+     * well as {@code List<String>}, caution should be taken before using this method.
      *
-     * <p>Proper usage of this method will result in a type-safe cast. For example, when invoking this method with an
-     * instance of {@code List<String>}, and the {@link AdjustedType} being {@code List<CharSequence>}.
+     * <p>Proper usage of this method will result in a type-safe cast. For example, when invoking
+     * this method with an instance of {@code List<String>}, and the {@link AdjustedType} being
+     * {@code List<CharSequence>}.
      *
      * @param obj The object to adjust
      * @param type The type to adjust to
@@ -198,7 +205,8 @@ public class TypeUtils {
      *
      * @return The adjusted object
      */
-    public static <InstanceType extends KeyType, KeyType, AdjustedType extends KeyType> AdjustedType unchecked(
+    public static <InstanceType extends KeyType, KeyType, AdjustedType extends KeyType>
+    AdjustedType unchecked(
             InstanceType obj,
             Class<KeyType> type
     ) {
@@ -215,10 +223,10 @@ public class TypeUtils {
     }
 
     /**
-     * Creates a new instance of the given annotation type. The returned instance is a proxy that implements the given
-     * annotation type. Note that this method assumes the given annotation type only has properties with default values,
-     * or no properties at all. If this is not the case for the given annotation type, it is recommended to use {@link
-     * #annotation(Class, Map)} instead.
+     * Creates a new instance of the given annotation type. The returned instance is a proxy that
+     * implements the given annotation type. Note that this method assumes the given annotation type
+     * only has properties with default values, or no properties at all. If this is not the case for
+     * the given annotation type, it is recommended to use {@link #annotation(Class, Map)} instead.
      *
      * @param annotationType The annotation type to create an instance of
      * @param <A> The annotation type
@@ -233,10 +241,11 @@ public class TypeUtils {
     }
 
     /**
-     * Creates a new instance of the given annotation type. The returned instance is a proxy that implements the given
-     * annotation type. The given map is used to populate the properties of the annotation instance. If the given map
-     * does not contain a value for a property, the default value of that property is used, which is either the value
-     * specified in the annotation definition, or {@code null} if no value is specified.
+     * Creates a new instance of the given annotation type. The returned instance is a proxy that
+     * implements the given annotation type. The given map is used to populate the properties of the
+     * annotation instance. If the given map does not contain a value for a property, the default
+     * value of that property is used, which is either the value specified in the annotation
+     * definition, or {@code null} if no value is specified.
      *
      * @param annotationType The annotation type to create an instance of
      * @param values The values to populate the annotation instance with
@@ -246,7 +255,10 @@ public class TypeUtils {
      *
      * @see MapBackedAnnotationInvocationHandler
      */
-    public static <A extends Annotation> A annotation(Class<A> annotationType, Map<String, Object> values) {
+    public static <A extends Annotation> A annotation(
+            Class<A> annotationType,
+            Map<String, Object> values
+    ) {
         Object instance = Proxy.newProxyInstance(
                 annotationType.getClassLoader(),
                 new Class[]{ annotationType },
@@ -259,8 +271,8 @@ public class TypeUtils {
     }
 
     /**
-     * Creates a new instance of the given annotation type with a single {@code value} property. The returned instance
-     * is a proxy that implements the given annotation type.
+     * Creates a new instance of the given annotation type with a single {@code value} property. The
+     * returned instance is a proxy that implements the given annotation type.
      *
      * @param annotationType The annotation type to create an instance of
      * @param value The value to set for the {@code value} property
@@ -373,11 +385,12 @@ public class TypeUtils {
     }
 
     /**
-     * Indicates whether the given source type is assignable to the given target type. This method is similar to
-     * {@link Class#isAssignableFrom(Class)}, but also takes primitive types into account. If the given types are
-     * not directly assignable, if either type is a wrapper, and the other type is the corresponding primitive type,
-     * this method returns {@code true}. If the given types are not directly assignable, and neither type is a wrapper
-     * of the other type, this method returns {@code false}.
+     * Indicates whether the given source type is assignable to the given target type. This method
+     * is similar to {@link Class#isAssignableFrom(Class)}, but also takes primitive types into
+     * account. If the given types are not directly assignable, if either type is a wrapper, and the
+     * other type is the corresponding primitive type, this method returns {@code true}. If the
+     * given types are not directly assignable, and neither type is a wrapper of the other type,
+     * this method returns {@code false}.
      *
      * @param source The source type
      * @param target The target type
@@ -394,8 +407,8 @@ public class TypeUtils {
     }
 
     /**
-     * Returns a map of the attributes of the given annotation. The keys of the map are the names of the attributes,
-     * and the values are the values of the attributes.
+     * Returns a map of the attributes of the given annotation. The keys of the map are the names of
+     * the attributes, and the values are the values of the attributes.
      *
      * @param annotation The annotation to get the attributes of
      * @return A map of the attributes of the given annotation
@@ -421,7 +434,8 @@ public class TypeUtils {
      * Returns the class of the given instance. This method is a null-safe and type-safe alternative
      * to {@link Object#getClass()}.
      *
-     * @param instance The instance to get the class of, or {@code null} if the instance is {@code null}
+     * @param instance The instance to get the class of, or {@code null} if the instance is {@code
+     * null}
      * @param <T> The type of the instance
      *
      * @return The class of the given instance
@@ -436,11 +450,13 @@ public class TypeUtils {
     }
 
     /**
-     * Attempts to load the class with the given name. If the class cannot be found, an empty {@link Option}
-     * is returned. If the class is found, the class is returned as a non-empty {@link Option}.
+     * Attempts to load the class with the given name. If the class cannot be found, an empty {@link
+     * Option} is returned. If the class is found, the class is returned as a non-empty {@link
+     * Option}.
      *
      * @param name The fully qualified name of the class to load
-     * @return An {@link Option} containing the class with the given name, or an empty {@link Option}
+     * @return An {@link Option} containing the class with the given name, or an empty {@link
+     * Option}
      */
     public static Option<Class<?>> forName(String name) {
         try {
@@ -452,15 +468,17 @@ public class TypeUtils {
     }
 
     /**
-     * Attempts to load the class with the given name, and checks if the class is a subclass of the given parent type.
-     * If the class cannot be found, an empty {@link Option} is returned. If the class is found, and is a subclass of
-     * the given parent type, the class is returned as a non-empty {@link Option}. If the class is found, but is not a
-     * subclass of the given parent type, an empty {@link Option} is returned.
+     * Attempts to load the class with the given name, and checks if the class is a subclass of the
+     * given parent type. If the class cannot be found, an empty {@link Option} is returned. If the
+     * class is found, and is a subclass of the given parent type, the class is returned as a
+     * non-empty {@link Option}. If the class is found, but is not a subclass of the given parent
+     * type, an empty {@link Option} is returned.
      *
      * @param name The fully qualified name of the class to load
      * @param parentType The parent type to check if the loaded class is a subclass of
      * @param <T> The parent type
-     * @return An {@link Option} containing the class with the given name, or an empty {@link Option}
+     * @return An {@link Option} containing the class with the given name, or an empty {@link
+     * Option}
      */
     public static <T> Option<Class<? extends T>> forName(String name, Class<T> parentType) {
         return forName(name)
@@ -474,8 +492,8 @@ public class TypeUtils {
     }
 
     /**
-     * Returns the {@link RetentionPolicy retention policy} of the given annotation. If the given annotation does not
-     * have a {@link Retention} annotation, an empty {@link Option} is returned.
+     * Returns the {@link RetentionPolicy retention policy} of the given annotation. If the given
+     * annotation does not have a {@link Retention} annotation, an empty {@link Option} is returned.
      *
      * @param annotation The annotation to get the retention policy of
      * @return The retention policy of the given annotation
@@ -486,32 +504,39 @@ public class TypeUtils {
     }
 
     /**
-     * Returns whether the given annotation has the given retention policy. If the given annotation does not have a
-     * {@link Retention} annotation, this method returns {@code false}.
+     * Returns whether the given annotation has the given retention policy. If the given annotation
+     * does not have a {@link Retention} annotation, this method returns {@code false}.
      *
      * @param annotation The annotation to check
      * @param policy The retention policy to check for
      * @return Whether the given annotation has the given retention policy
      */
-    public static boolean hasRetentionPolicy(Class<? extends Annotation> annotation, RetentionPolicy policy) {
+    public static boolean hasRetentionPolicy(
+            Class<? extends Annotation> annotation,
+            RetentionPolicy policy
+    ) {
         return retention(annotation).test(policy::equals);
     }
 
     /**
-     * Returns whether all the given annotations have the given retention policy. If any of the given annotations
-     * do not have a {@link Retention} annotation, this method returns {@code false}.
+     * Returns whether all the given annotations have the given retention policy. If any of the
+     * given annotations do not have a {@link Retention} annotation, this method returns {@code
+     * false}.
      *
      * @param annotations The annotations to check
      * @param policy The retention policy to check for
      * @return Whether the given annotations have the given retention policy
      */
-    public static boolean hasRetentionPolicy(Set<Class<? extends Annotation>> annotations, RetentionPolicy policy) {
+    public static boolean hasRetentionPolicy(
+            Set<Class<? extends Annotation>> annotations,
+            RetentionPolicy policy
+    ) {
         return annotations.stream().allMatch(annotation -> hasRetentionPolicy(annotation, policy));
     }
 
     /**
-     * Returns the root cause of the given throwable. If the given throwable does not have a cause, the given throwable
-     * is returned.
+     * Returns the root cause of the given throwable. If the given throwable does not have a cause,
+     * the given throwable is returned.
      *
      * @param throwable The throwable to get the root cause of
      * @return The root cause of the given throwable

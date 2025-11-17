@@ -17,9 +17,9 @@
 package org.dockbox.hartshorn.util;
 
 /**
- * Thrown when an attempt is made to modify an object that is not modifiable. Unmodifiable objects do
- * not have to be immutable, but they do not allow modifications to be made to them at the time of
- * the attempted modification.
+ * Thrown when an attempt is made to modify an object that is not modifiable. Unmodifiable objects
+ * do not have to be immutable, but they do not allow modifications to be made to them at the time
+ * of the attempted modification.
  *
  * @since 0.4.12
  *

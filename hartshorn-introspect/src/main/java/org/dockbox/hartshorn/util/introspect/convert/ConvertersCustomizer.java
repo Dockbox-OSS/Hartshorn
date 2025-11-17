@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,12 @@
 package org.dockbox.hartshorn.util.introspect.convert;
 
 /**
- * Customizer for conversion services and associated registries. Implementations of this interface can be used to
- * customize the conversion process, for example by adding converters to the conversion service or registry.
+ * Customizer for conversion services and associated registries. Implementations of this interface
+ * can be used to customize the conversion process, for example by adding converters to the
+ * conversion service or registry.
  *
- * <p>This customizer is typically called immediately after the conversion service or registry is created, but before
- * it is released for general use.
+ * <p>This customizer is typically called immediately after the conversion service or registry is
+ * created, but before it is released for general use.
  *
  * @since 0.7.0
  *

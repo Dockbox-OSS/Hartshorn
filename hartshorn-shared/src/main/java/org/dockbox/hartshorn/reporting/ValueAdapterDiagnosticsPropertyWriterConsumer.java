@@ -20,15 +20,16 @@ import java.lang.annotation.Annotation;
 import java.util.stream.Stream;
 
 /**
- * Adapter type that writes a value to a {@link DiagnosticsPropertyWriter} based on the type of the value. This
- * implementation only supports a limited set of types, and will throw an {@link IllegalStateException} if an unsupported
- * type is encountered.
+ * Adapter type that writes a value to a {@link DiagnosticsPropertyWriter} based on the type of the
+ * value. This implementation only supports a limited set of types, and will throw an {@link
+ * IllegalStateException} if an unsupported type is encountered.
  *
  * @since 0.7.0
  *
  * @author Guus Lieben
  */
-public class ValueAdapterDiagnosticsPropertyWriterConsumer implements DiagnosticsPropertyWriterConsumer {
+public class ValueAdapterDiagnosticsPropertyWriterConsumer
+        implements DiagnosticsPropertyWriterConsumer {
 
     private final Object object;
 
@@ -49,7 +50,9 @@ public class ValueAdapterDiagnosticsPropertyWriterConsumer implements Diagnostic
             case Enum enumValue -> writer.writeEnum(enumValue);
             case Reportable reportable -> writer.writeDelegate(reportable);
             case Class<?> clazz -> writer.writeString(clazz.getCanonicalName());
-            case Annotation annotation -> writer.writeDelegate(new AnnotationReporter<>(annotation));
+            case Annotation annotation -> writer.writeDelegate(
+                    new AnnotationReporter<>(annotation)
+            );
             case String[] strings -> writer.writeStrings(strings);
             case int[] integers -> writer.writeInts(integers);
             case long[] longs -> writer.writeLongs(longs);

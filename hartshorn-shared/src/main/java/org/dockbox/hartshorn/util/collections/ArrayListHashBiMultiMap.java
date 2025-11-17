@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A basic implementation of {@link BiMultiMap} that uses {@link ArrayList} as its backing collection,
- * and {@link HashMap} as its backing map. This implementation is not thread-safe.
+ * A basic implementation of {@link BiMultiMap} that uses {@link ArrayList} as its backing
+ * collection, and {@link HashMap} as its backing map. This implementation is not thread-safe.
  *
  * @param <K> the type of the keys
  * @param <V> the type of the values

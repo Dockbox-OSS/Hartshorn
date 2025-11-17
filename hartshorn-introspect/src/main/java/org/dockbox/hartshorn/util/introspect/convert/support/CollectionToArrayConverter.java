@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,18 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.Set;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 
+import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.Set;
+
 /**
- * Converts any {@link Collection} to an array of the same type, containing only the objects in the collection.
+ * Converts any {@link Collection} to an array of the same type, containing only the objects in the
+ * collection.
  *
  * @since 0.5.0
  *
@@ -40,7 +41,11 @@ public class CollectionToArrayConverter implements GenericConverter {
     }
 
     @Override
-    public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
+    public @Nullable <I, O> Object convert(
+            @Nullable Object source,
+            @NonNull Class<I> sourceType,
+            @NonNull Class<O> targetType
+    ) {
         assert source != null;
         assert targetType.isArray();
 

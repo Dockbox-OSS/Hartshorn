@@ -22,11 +22,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A {@link ContextualInitializer} that caches the result of the initialization process. This is useful when the
- * initialization process is expensive and the result is expected to be reused multiple times.
+ * A {@link ContextualInitializer} that caches the result of the initialization process. This is
+ * useful when the initialization process is expensive and the result is expected to be reused
+ * multiple times.
  *
- * <p>Results are cached based on the input of the {@link SingleElementContext} that is passed to the {@link
- * #initialize(SingleElementContext)} method.
+ * <p>Results are cached based on the input of the {@link SingleElementContext} that is passed to
+ * the {@link #initialize(SingleElementContext)} method.
  *
  * @param <I> the type of the input
  * @param <T> the type of the result

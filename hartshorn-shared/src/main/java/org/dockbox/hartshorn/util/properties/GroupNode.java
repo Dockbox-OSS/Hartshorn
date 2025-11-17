@@ -46,7 +46,8 @@ public class GroupNode extends SimpleNode<List<Node<?>>> {
      * Returns whether the group contains a node with the given name.
      *
      * @param name the name to check
-     * @return {@code true} if the group contains a node with the given name, {@code false} otherwise
+     * @return {@code true} if the group contains a node with the given name, {@code false}
+     * otherwise
      */
     public boolean has(String name) {
         return this.value().stream()
@@ -54,8 +55,8 @@ public class GroupNode extends SimpleNode<List<Node<?>>> {
     }
 
     /**
-     * Returns the node with the given name, or {@code null} if no such node exists. If multiple nodes
-     * with the same name exist, the first one is returned.
+     * Returns the node with the given name, or {@code null} if no such node exists. If multiple
+     * nodes with the same name exist, the first one is returned.
      *
      * @param name the name of the node to return
      * @return the node with the given name, or {@code null} if no such node exists

@@ -205,7 +205,9 @@ public final class CollectionUtilities {
      */
     @Nullable
     public static <T> T first(Iterable<T> iterable) {
-        if (iterable == null || (iterable instanceof Collection<T> collection && collection.isEmpty())) {
+        if (iterable == null || (
+                iterable instanceof Collection<T> collection && collection.isEmpty()
+        )) {
             return null;
         }
         else if (iterable instanceof SortedSet<T> sortedSet) {
@@ -226,10 +228,10 @@ public final class CollectionUtilities {
     }
 
     /**
-     * Returns an aggregated string representation of the given collection. The string representation
-     * is created by mapping each element of the collection to a string using the given value mapper
-     * and then joining the strings using a comma and a space. If the collection is empty an empty
-     * string is returned.
+     * Returns an aggregated string representation of the given collection. The string
+     * representation is created by mapping each element of the collection to a string using the
+     * given value mapper and then joining the strings using a comma and a space. If the collection
+     * is empty an empty string is returned.
      *
      * @param collection The collection to create a string representation of
      * @param valueMapper The function to map each element to a string
@@ -246,8 +248,9 @@ public final class CollectionUtilities {
 
     /**
      * Returns a new set containing all elements of the given set. The returned set is a new set
-     * and does not modify the original set. The advantage of this compared to {@link Set#copyOf(Collection)}
-     * is that the order of the elements is preserved if the given set is a {@link SequencedSet}.
+     * and does not modify the original set. The advantage of this compared to {@link
+     * Set#copyOf(Collection)} is that the order of the elements is preserved if the given set is a
+     * {@link SequencedSet}.
      *
      * @param set The set to copy
      * @param <T> The type of the elements in the set
@@ -293,7 +296,8 @@ public final class CollectionUtilities {
     }
 
     /**
-     * Creates a new {@link SequencedSet} containing the given values, in the order they are provided.
+     * Creates a new {@link SequencedSet} containing the given values, in the order they are
+     * provided.
      *
      * @param values The values to include in the set
      * @param <T> The type of the elements in the set

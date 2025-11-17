@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import java.util.Collection;
-import java.util.function.Supplier;
-
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
@@ -27,10 +24,14 @@ import org.dockbox.hartshorn.util.introspect.convert.support.collections.SimpleC
 import org.dockbox.hartshorn.util.introspect.view.TypeParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
+import java.util.Collection;
+import java.util.function.Supplier;
+
 /**
- * A {@link DefaultValueProviderFactory} for {@link Collection}s, backed by a {@link SimpleCollectionFactory}. If
- * the requested {@link Collection} type is parameterized, this provider will attempt to retrieve its type parameter
- * for the element type. If the type parameter is not available, {@link Object} will be used as the element type.
+ * A {@link DefaultValueProviderFactory} for {@link Collection}s, backed by a {@link
+ * SimpleCollectionFactory}. If the requested {@link Collection} type is parameterized, this
+ * provider will attempt to retrieve its type parameter for the element type. If the type parameter
+ * is not available, {@link Object} will be used as the element type.
  *
  * @see SimpleCollectionFactory
  *
@@ -38,7 +39,8 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @author Guus Lieben
  */
-public class CollectionDefaultValueProviderFactory implements DefaultValueProviderFactory<Collection<?>> {
+public class CollectionDefaultValueProviderFactory
+        implements DefaultValueProviderFactory<Collection<?>> {
 
     private final Introspector introspector;
     private final SimpleCollectionFactory helperFactory;
@@ -49,9 +51,9 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
     }
 
     /**
-     * Creates a new {@link DefaultValueProvider} for the given {@link Collection} type. The given {@code elementType}
-     * will be used as the element type of the {@link Collection} if the collection requires it, in other cases this
-     * is only used for convenient type inference.
+     * Creates a new {@link DefaultValueProvider} for the given {@link Collection} type. The given
+     * {@code elementType} will be used as the element type of the {@link Collection} if the
+     * collection requires it, in other cases this is only used for convenient type inference.
      *
      * @param targetType the {@link Collection} type
      * @param elementType the element type
@@ -60,7 +62,10 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
      *
      * @return a new {@link DefaultValueProvider}
      */
-    public <E, O extends Collection<E>> DefaultValueProvider<O> create(Class<O> targetType, Class<E> elementType) {
+    public <E, O extends Collection<E>> DefaultValueProvider<O> create(
+            Class<O> targetType,
+            Class<E> elementType
+    ) {
         return () -> {
             try {
                 return this.helperFactory.createCollection(targetType, elementType);
@@ -99,8 +104,9 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
     }
 
     /**
-     * Registers a default {@link Collection} implementation for the given {@link Collection} type. The given
-     * {@code provider} will be used to create a new instance of the {@link Collection} type.
+     * Registers a default {@link Collection} implementation for the given {@link Collection} type.
+     * The given {@code provider} will be used to create a new instance of the {@link Collection}
+     * type.
      *
      * @param type the {@link Collection} type
      * @param provider the provider that creates a new instance of the {@link Collection} type
@@ -110,7 +116,10 @@ public class CollectionDefaultValueProviderFactory implements DefaultValueProvid
      *
      * @see SimpleCollectionFactory#withDefault(Class, Supplier)
      */
-    public <T extends Collection<?>> CollectionDefaultValueProviderFactory withDefault(Class<T> type, CollectionProvider<T> provider) {
+    public <T extends Collection<?>> CollectionDefaultValueProviderFactory withDefault(
+            Class<T> type,
+            CollectionProvider<T> provider
+    ) {
         this.helperFactory.withDefault(type, provider);
         return this;
     }

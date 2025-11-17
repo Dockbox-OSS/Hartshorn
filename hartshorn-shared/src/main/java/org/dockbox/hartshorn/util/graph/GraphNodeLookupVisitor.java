@@ -19,7 +19,8 @@ package org.dockbox.hartshorn.util.graph;
 import java.util.function.Predicate;
 
 /**
- * A {@link BreadthFirstGraphVisitor} that will stop when a node is found that matches the given rule.
+ * A {@link BreadthFirstGraphVisitor} that will stop when a node is found that matches the given
+ * rule.
  *
  * @param <T> the type of the node value
  *

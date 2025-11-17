@@ -25,7 +25,8 @@ import org.dockbox.hartshorn.util.option.Option;
  * such as {@link Number}.
  *
  * @param <I> the input type
- * @param <R> the parent of targeted types (e.g. {@link Number} for {@link Integer}, {@link Long}, etc.)
+ * @param <R> the parent of targeted types (e.g. {@link Number} for {@link Integer}, {@link Long},
+ *           etc.)
  *
  * @since 0.5.0
  *

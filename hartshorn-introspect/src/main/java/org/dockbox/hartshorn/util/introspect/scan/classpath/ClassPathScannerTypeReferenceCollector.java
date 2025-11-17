@@ -25,9 +25,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A {@link ClasspathTypeReferenceCollector} that collects {@link TypeReference}s from a classpath using a
- * {@link ClassPathScanner}. This automatically includes the default classpath, and filters on the configured
- * package name. Scanning does not include any non-class resources.
+ * A {@link ClasspathTypeReferenceCollector} that collects {@link TypeReference}s from a classpath
+ * using a {@link ClassPathScanner}. This automatically includes the default classpath, and filters
+ * on the configured package name. Scanning does not include any non-class resources.
  *
  * @since 0.4.13
  *
@@ -55,7 +55,10 @@ public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferen
             });
         }
         catch(ClassPathWalkingException e) {
-            throw new TypeCollectionException("Failed to collect types in package " + this.packageName(), e);
+            throw new TypeCollectionException(
+                "Failed to collect types in package " + this.packageName(),
+                e
+            );
         }
         return typeReferences;
     }

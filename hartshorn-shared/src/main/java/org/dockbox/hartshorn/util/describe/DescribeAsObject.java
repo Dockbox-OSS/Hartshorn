@@ -20,7 +20,8 @@ package org.dockbox.hartshorn.util.describe;
  * Marker interface for {@link Iterable} or {@link java.util.Map} types that should be described
  * using their object representation, rather than their individual elements.
  *
- * <p>This is a hint to the {@link ObjectDescriber}, and will be respected by all {@link ObjectDescriptionStyle}s.
+ * <p>This is a hint to the {@link ObjectDescriber}, and will be respected by all {@link
+ * ObjectDescriptionStyle}s.
  *
  * @since 0.7.0
  *

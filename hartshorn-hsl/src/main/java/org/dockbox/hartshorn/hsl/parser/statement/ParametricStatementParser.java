@@ -40,7 +40,23 @@ import java.util.List;
  */
 public interface ParametricStatementParser {
 
-    default List<Parameter> parameters(TokenParser parser, TokenStepValidator validator, String functionName, int expectedNumberOfArguments, TokenType functionType) {
+    /**
+     * TODO: #1061 Add documentation
+     *
+     * @param parser
+     * @param validator
+     * @param functionName
+     * @param expectedNumberOfArguments
+     * @param functionType
+     * @return
+     */
+    default List<Parameter> parameters(
+        TokenParser parser,
+        TokenStepValidator validator,
+        String functionName,
+        int expectedNumberOfArguments,
+        TokenType functionType
+    ) {
         TokenTypePair parameterTokens = parser.tokenRegistry().tokenPairs().parameters();
         validator.expectAfter(parameterTokens.open(), functionName);
         List<Parameter> parameters = new ArrayList<>();

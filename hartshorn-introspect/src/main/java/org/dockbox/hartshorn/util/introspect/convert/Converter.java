@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * the input object is {@code null}, the {@link #convert(Object)} method may return null, or provide
  * a default value.
  *
- * <p>Implementations of this interface are intended to be used as converters in a {@link ConversionService}
- * instance or in other contexts where a functional-style converter is required.
+ * <p>Implementations of this interface are intended to be used as converters in a {@link
+ * ConversionService} instance or in other contexts where a functional-style converter is required.
  *
  * @param <I> the input object type
  * @param <O> the output object type
@@ -52,13 +52,14 @@ public interface Converter<I, O> {
 
     /**
      * Return a composed converter that first applies this converter to its input, and then applies
-     * the {@code after} converter to the result. If evaluation of either converter throws an exception,
-     * it is relayed to the caller of the composed converter.
+     * the {@code after} converter to the result. If evaluation of either converter throws an
+     * exception, it is relayed to the caller of the composed converter.
      *
      * @param after the converter to apply after this converter is applied
      * @param <T> the type of output of the {@code after} converter, and of the composed converter
      *
-     * @return a composed converter that first applies this converter and then applies the {@code after}
+     * @return a composed converter that first applies this converter and then applies the {@code
+     * after}
      */
     default <T> Converter<I, T> andThen(Converter<O, T> after) {
         return (I input) -> {

@@ -28,14 +28,14 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A {@link ConverterCache} for {@link GenericConverter}s. If a converter implements {@link ConditionalConverter},
- * it will be used to narrow the source/target type. Otherwise, the {@link ConvertibleTypePair} will be used to
- * determine whether a converter can be used.
+ * A {@link ConverterCache} for {@link GenericConverter}s. If a converter implements {@link
+ * ConditionalConverter}, it will be used to narrow the source/target type. Otherwise, the {@link
+ * ConvertibleTypePair} will be used to determine whether a converter can be used.
  *
- * <p>It is possible for multiple {@link GenericConverter}s exist for a single {@link ConvertibleTypePair}, which
- * may be required for factory-based converters. In this case, the most specific converter will be used. In all
- * cases, if multiple converters are found, it is expected that they implement {@link ConditionalConverter} to
- * narrow the match.
+ * <p>It is possible for multiple {@link GenericConverter}s exist for a single {@link
+ * ConvertibleTypePair}, which may be required for factory-based converters. In this case, the most
+ * specific converter will be used. In all cases, if multiple converters are found, it is expected
+ * that they implement {@link ConditionalConverter} to narrow the match.
  *
  * @since 0.5.0
  *
@@ -43,8 +43,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GenericConverters implements ConverterCache {
 
+    // checkstyle:off LineLength
     private final Set<ConditionalConverter> globalConverters = ConcurrentHashMap.newKeySet();
     private final MultiMap<ConvertibleTypePair, GenericConverter> converters = new ConcurrentSetMultiMap<>();
+    // checkstyle:on LineLength
 
     @Override
     public void addConverter(GenericConverter converter) {
@@ -54,7 +56,10 @@ public class GenericConverters implements ConverterCache {
                 this.globalConverters.add(conditionalConverter);
             }
             else {
-                throw new IllegalArgumentException("Converter must implement ConditionalConverter if convertibleTypes() returns null");
+                throw new IllegalArgumentException(
+                    "Converter must implement ConditionalConverter "
+                        + "if convertibleTypes() returns null"
+                );
             }
         }
         else {
@@ -98,11 +103,12 @@ public class GenericConverters implements ConverterCache {
             }
 
             // Recursive solution to iterate super classes first, then interfaces
-            if (sourceType.isAssignableFrom(inputType) && typePair.targetType().isAssignableFrom(targetType)) {
-                // distance is the amount of classes in the hierarchy between the typePair sourceType and the source class
-                // the closer the distance, the more specific the typePair sourceType is
-                // the more specific the typePair sourceType is, the more likely it is that the converter can convert the source
-                // to the target type
+            if (sourceType.isAssignableFrom(inputType)
+                    && typePair.targetType().isAssignableFrom(targetType)) {
+                // distance is the amount of classes in the hierarchy between the typePair
+                // sourceType and the source class the closer the distance, the more specific the
+                // typePair sourceType is the more specific the typePair sourceType is, the more
+                // likely it is that the converter can convert the source to the target type
                 int distance = this.hierarchyDistance(inputType, sourceType);
                 if (distance >= 0) {
                     matchingConverters.addAll(this.converters.get(typePair));
@@ -133,11 +139,12 @@ public class GenericConverters implements ConverterCache {
             if (sourceType.isAssignableFrom(superClass)) {
                 classDistance = this.hierarchyDistance(superClass, sourceType);
                 if (superClass == Object.class) {
-                    // Object takes a penalty, so that it is only used if no other type is more specific.
+                    // Object takes a penalty, so that it is only used if no other type is more
+                    // specific.
                     //
                     // This is to avoid e.g. Converter<Object, String> from taking priority over
-                    // Converter<Option, String> when we're working with a Some<X> where Some implements
-                    // interface Option, and has no direct superclass.
+                    // Converter<Option, String> when we're working with a Some<X> where Some
+                    // implements interface Option, and has no direct superclass.
                     classDistance = 1_000;
                 }
             }
@@ -170,7 +177,11 @@ public class GenericConverters implements ConverterCache {
     }
 
     @Nullable
-    private GenericConverter findMatchingConverter(Object source, Class<?> targetType, Set<GenericConverter> candidateConverters) {
+    private GenericConverter findMatchingConverter(
+            Object source,
+            Class<?> targetType,
+            Set<GenericConverter> candidateConverters
+    ) {
         if (candidateConverters.isEmpty()) {
             return null;
         }
@@ -202,7 +213,15 @@ public class GenericConverters implements ConverterCache {
 
             if (distance >= 0) {
                 if (bestConverter != null && distance == bestDistance) {
-                    throw new AmbiguousConverterException("Ambiguous converters found for source type [" + source.getClass().getName() + "] and target type [" + targetType.getName() + "]: " + bestConverter + ", " + candidateConverter);
+                    throw new AmbiguousConverterException(
+                            "Ambiguous converters found for source type " +
+                                    "[%s] and target type [%s]: %s, %s".formatted(
+                                            source.getClass().getName(),
+                                            targetType.getName(),
+                                            bestConverter,
+                                            candidateConverter
+                                    )
+                    );
                 }
 
                 if (bestConverter == null || distance < bestDistance) {
@@ -217,12 +236,18 @@ public class GenericConverters implements ConverterCache {
 
     @Nullable
     private GenericConverter getTypeMatchingConverter(Object source, Class<?> targetType) {
-        ConvertibleTypePair pair = new ConvertibleTypePair(source == null ? null : source.getClass(), targetType);
+        ConvertibleTypePair pair = new ConvertibleTypePair(source == null
+                ? null
+                : source.getClass(), targetType);
         return this.getConverterForPair(source, targetType, pair);
     }
 
     @Nullable
-    private GenericConverter getConverterForPair(Object source, Class<?> targetType, ConvertibleTypePair pair) {
+    private GenericConverter getConverterForPair(
+            Object source,
+            Class<?> targetType,
+            ConvertibleTypePair pair
+    ) {
         List<GenericConverter> matchingConverters = new ArrayList<>();
         for (GenericConverter converter : this.converters.get(pair)) {
             if (converter instanceof ConditionalConverter conditionalConverter) {
@@ -238,7 +263,13 @@ public class GenericConverters implements ConverterCache {
             return matchingConverters.getFirst();
         }
         else if (matchingConverters.size() > 1) {
-            throw new AmbiguousConverterException("Ambiguous converters found for source type [" + source.getClass().getName() + "] and target type [" + targetType.getName() + "]: " + matchingConverters);
+            throw new AmbiguousConverterException(
+                    "Ambiguous converters found for source type [%s] and target type [%s]: %s"
+                            .formatted(
+                                    source.getClass().getName(),
+                                    targetType.getName(),
+                                    matchingConverters
+                            ));
         }
         return null;
     }

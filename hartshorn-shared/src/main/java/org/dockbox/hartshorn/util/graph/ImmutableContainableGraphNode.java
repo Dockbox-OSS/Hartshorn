@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.util.graph;
 import java.util.Set;
 
 /**
- * An immutable implementation of {@link ContainableGraphNode}. This implementation is used to prevent
- * modification of the graph structure.
+ * An immutable implementation of {@link ContainableGraphNode}. This implementation is used to
+ * prevent modification of the graph structure.
  *
  * @param <T> the type of the node
  *
@@ -28,7 +28,9 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public class ImmutableContainableGraphNode<T> extends ImmutableGraphNode<T> implements ContainableGraphNode<T> {
+public class ImmutableContainableGraphNode<T>
+        extends ImmutableGraphNode<T>
+        implements ContainableGraphNode<T> {
 
     private final Set<GraphNode<T>> parents;
 

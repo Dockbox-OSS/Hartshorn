@@ -111,7 +111,8 @@ public abstract class DataContext extends DefaultContext {
     }
 
     /**
-     * Returns the value associated with the specified type, or a default value if the type is not present.
+     * Returns the value associated with the specified type, or a default value if the type is not
+     * present.
      *
      * @param type the class type for which to retrieve the value
      * @param defaultValue the default value to return if the type is not present
@@ -170,7 +171,12 @@ public abstract class DataContext extends DefaultContext {
      *
      * @return the computed value associated with the type
      */
-    public <R> R computeIfAbsent(Class<R> type, Function<? super Class<R>, R> mappingFunction) {
-        return type.cast(this.data.computeIfAbsent(type, componentKey -> mappingFunction.apply(type)));
+    public <R> R computeIfAbsent(
+            Class<R> type,
+            Function<? super Class<R>, R> mappingFunction
+    ) {
+        return type.cast(
+                this.data.computeIfAbsent(type, componentKey -> mappingFunction.apply(type))
+        );
     }
 }

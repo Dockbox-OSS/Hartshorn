@@ -16,11 +16,11 @@
 
 package org.dockbox.hartshorn.util.configure;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import org.dockbox.hartshorn.context.SingleElementContext;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * A functional interface for initializing an {@link Option} based on an input. This interface is
@@ -85,7 +85,8 @@ public interface OptionInitializer<I, T> extends ContextualInitializer<I, Option
      * @param transformer the transformer to apply to the option
      * @param <R> the type of the transformed value
      * 
-     * @return a new {@link ContextualInitializer} that will transform the option into a different type
+     * @return a new {@link ContextualInitializer} that will transform the option into a different
+     * type
      */
     default <R> ContextualInitializer<I, R> transform(Function<Option<T>, R> transformer) {
         return input -> transformer.apply(this.initialize(input));

@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 
 /**
- * Converts a {@link String} to an {@link Enum}. The {@link Enum} constant is matched by name in a case-sensitive
- * manner. If no match is found, {@code null} is returned.
+ * Converts a {@link String} to an {@link Enum}. The {@link Enum} constant is matched by name in a
+ * case-sensitive manner. If no match is found, {@code null} is returned.
  *
  * @see Enum#valueOf(Class, String)
  *
@@ -39,8 +39,9 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
     }
 
     /**
-     * Converts a {@link String} to an {@link Enum}. The {@link Enum} constant is matched by name in a case-sensitive
-     * manner. Extraneous whitespace is trimmed. If no match is found, {@code null} is returned.
+     * Converts a {@link String} to an {@link Enum}. The {@link Enum} constant is matched by name
+     * in a case-sensitive manner. Extraneous whitespace is trimmed. If no match is found, {@code
+     * null} is returned.
      *
      * @param enumType The type of {@link Enum} to convert to
      * @param <T> The type of {@link Enum} to convert to
@@ -52,7 +53,8 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
      * @author Guus Lieben
      */
     @SuppressWarnings("unchecked")
-    private record StringToEnumConverter<T extends Enum>(Class<T> enumType) implements Converter<String, T> {
+    private record StringToEnumConverter<T extends Enum>(Class<T> enumType)
+        implements Converter<String, T> {
 
         @Override
         public @Nullable T convert(@Nullable String source) {

@@ -69,7 +69,10 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
     private static final Map<HierarchyKey, Option<Object>> cache = new ConcurrentHashMap<>();
 
     @Override
-    public <A extends Annotation> A find(AnnotatedElement element, Class<A> annotationType) throws DuplicateAnnotationCompositeException {
+    public <A extends Annotation> A find(
+            AnnotatedElement element,
+            Class<A> annotationType
+    ) throws DuplicateAnnotationCompositeException {
         List<A> allInHierarchy = this.findAll(element, annotationType);
         if (allInHierarchy.size() > 1) {
             throw new DuplicateAnnotationCompositeException(element, allInHierarchy);
@@ -78,7 +81,10 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
     }
 
     @Override
-    public <A extends Annotation> List<A> findAll(AnnotatedElement element, Class<A> annotationType) {
+    public <A extends Annotation> List<A> findAll(
+            AnnotatedElement element,
+            Class<A> annotationType
+    ) {
         HierarchyKey key = new HierarchyKey(element, annotationType);
         return this.fromCache(key, () -> this.annotationsOnElement(element, annotationType));
     }
@@ -115,7 +121,10 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
      *
      * @return All annotations compatible with the given annotation type on the given element
      */
-    protected <A extends Annotation> List<A> annotationsOnElement(AnnotatedElement element, Class<A> annotationType) {
+    protected <A extends Annotation> List<A> annotationsOnElement(
+            AnnotatedElement element,
+            Class<A> annotationType
+    ) {
         return Arrays.stream(element.getAnnotations())
                 .map(annotation -> this.examineAnnotation(annotation, annotationType))
                 .filter(Objects::nonNull)
@@ -133,16 +142,26 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
      *
      * @return A proxy that implements the given annotation type, or {@code null}
      */
-    protected <A extends Annotation> A examineAnnotation(Annotation actual, Class<A> targetAnnotationClass) {
+    protected <A extends Annotation> A examineAnnotation(
+            Annotation actual,
+            Class<A> targetAnnotationClass
+    ) {
         actual = this.unproxy(actual);
-        SequencedSet<Class<? extends Annotation>> hierarchy = this.annotationHierarchy(actual.annotationType());
+        SequencedSet<Class<? extends Annotation>> hierarchy = this.annotationHierarchy(
+                actual.annotationType()
+        );
 
         if (!hierarchy.contains(targetAnnotationClass)) {
             // Cannot safely cast the annotation to the target annotation type
             return null;
         }
 
-        InvocationHandler adapter = new AnnotationAdapterProxy<>(actual, targetAnnotationClass, hierarchy, this);
+        InvocationHandler adapter = new AnnotationAdapterProxy<>(
+                actual,
+                targetAnnotationClass,
+                hierarchy,
+                this
+        );
         Set<Class<?>> parentInterfaces = new HashSet<>(hierarchy);
         parentInterfaces.add(AnnotationAdapter.class);
 
@@ -163,7 +182,9 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
     }
 
     @Override
-    public SequencedSet<Class<? extends Annotation>> annotationHierarchy(Class<? extends Annotation> type) {
+    public SequencedSet<Class<? extends Annotation>> annotationHierarchy(
+            Class<? extends Annotation> type
+    ) {
         Class<? extends Annotation> currentClass = type;
         SequencedSet<Class<? extends Annotation>> hierarchy = new LinkedHashSet<>();
         while (currentClass != null) {
@@ -176,7 +197,9 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
         return hierarchy;
     }
 
-    private static Class<? extends Annotation> superAnnotationOrNull(Class<? extends Annotation> currentClass) {
+    private static Class<? extends Annotation> superAnnotationOrNull(
+            Class<? extends Annotation> currentClass
+    ) {
         Extends extendsAnnotation = currentClass.getAnnotation(Extends.class);
         return extendsAnnotation == null ? null : extendsAnnotation.value();
     }

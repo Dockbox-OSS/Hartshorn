@@ -71,7 +71,9 @@ public final class StringUtilities {
      *     <li>1d4m: 1 day, 4 minutes</li>
      * </ul>
      */
-    private static final Pattern DURATION_PATTERN = Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
+    private static final Pattern DURATION_PATTERN = Pattern.compile(
+            "^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$"
+    );
     private static final int SECONDS_IN_MINUTE = 60;
     private static final int SECONDS_IN_HOUR = 60 * StringUtilities.SECONDS_IN_MINUTE;
     private static final int SECONDS_IN_DAY = 24 * StringUtilities.SECONDS_IN_HOUR;
@@ -235,7 +237,9 @@ public final class StringUtilities {
         while ((currentIndex < length) && (characters[length - 1] <= trimCharacter)) {
             length--;
         }
-        return ((currentIndex > 0) || (length < value.length())) ? value.substring(currentIndex, length) : value;
+        return ((currentIndex > 0) || (length < value.length()))
+                ? value.substring(currentIndex, length)
+                : value;
     }
 
     /**
@@ -250,8 +254,14 @@ public final class StringUtilities {
      * <p>Examples:
      * <ul>
      *     <li>{@code "Hello {0}", "world"} -> {@code "Hello world"}</li>
-     *     <li>{@code "Hello {0}", "world", "!"} -> {@code "Hello world"} (ignores value {@code "!"})</li>
-     *     <li>{@code "{0} {1}", "Hello"} -> {@code "Hello {1}"} (ignores placeholder {@code {1}})</li>
+     *     <li>
+     *         {@code "Hello {0}", "world", "!"} -> {@code "Hello world"}
+     *         (ignores value {@code "!"})
+     *     </li>
+     *     <li>
+     *         {@code "{0} {1}", "Hello"} -> {@code "Hello {1}"}
+     *         (ignores placeholder {@code {1}})
+     *     </li>
      * </ul>
      *
      * @param format the string to format
@@ -280,8 +290,14 @@ public final class StringUtilities {
      * <p>Examples:
      * <ul>
      *     <li>{@code "Hello {name}", {"name", "world"}} -> {@code "Hello world"}</li>
-     *     <li>{@code "Hello {name}", {"name", "world"}, {"!", "!"}} -> {@code "Hello world"} (ignores value {@code "!"})</li>
-     *     <li>{@code "{name} {exclamation}", {"name", "Hello"}} -> {@code "Hello {exclamation}"} (ignores placeholder {@code {exclamation}})</li>
+     *     <li>
+     *         {@code "Hello {name}", {"name", "world"}, {"!", "!"}} -> {@code "Hello world"}
+     *         (ignores value {@code "!"})
+     *     </li>
+     *     <li>
+     *         {@code "{name} {exclamation}", {"name", "Hello"}} -> {@code "Hello {exclamation}"}
+     *         (ignores placeholder {@code {exclamation}})
+     *     </li>
      * </ul>
      *
      * @param string the string to format
@@ -333,8 +349,10 @@ public final class StringUtilities {
      *
      * <p>Examples:
      * <ul>
-     *     <li>{@code join(", ", Arrays.asList(1, 2, 3), String::valueOf)} -> {@code "1, 2, 3"}</li>
-     *     <li>{@code join(", ", Arrays.asList("a", "b", "c"), String::toUpperCase)} -> {@code "A, B, C"}</li>
+     *     <li>{@code join(", ", Arrays.asList(1, 2, 3), String::valueOf)}
+     *     -> {@code "1, 2, 3"}</li>
+     *     <li>{@code join(", ", Arrays.asList("a", "b", "c"), String::toUpperCase)}
+     *     -> {@code "A, B, C"}</li>
      * </ul>
      *
      * @param delimiter the delimiter to use
@@ -344,7 +362,11 @@ public final class StringUtilities {
      *
      * @return the joined string
      */
-    public static <T> String join(String delimiter, Iterable<T> elements, Function<T, String> toStringFunction) {
+    public static <T> String join(
+            String delimiter,
+            Iterable<T> elements,
+            Function<T, String> toStringFunction
+    ) {
         StringJoiner joiner = new StringJoiner(delimiter);
         for (T element : elements) {
             joiner.add(toStringFunction.apply(element));
@@ -362,9 +384,9 @@ public final class StringUtilities {
     }
 
     /**
-     * A builder for creating a matrix of strings. The matrix is built by adding segments, where each
-     * segment is a collection of strings. The resulting matrix contains all possible combinations of
-     * the segments.
+     * A builder for creating a matrix of strings. The matrix is built by adding segments, where
+     * each segment is a collection of strings. The resulting matrix contains all possible
+     * combinations of the segments.
      *
      * <p>For example, given the segments:
      * <ul>

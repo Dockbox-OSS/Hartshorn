@@ -23,14 +23,15 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * Converts an {@link Option} to an {@link Object}. If the {@link Option} is empty, {@code null} is returned.
- * Otherwise, the value of the {@link Option} is returned.
+ * Converts an {@link Option} to an {@link Object}. If the {@link Option} is empty, {@code null} is
+ * returned. Otherwise, the value of the {@link Option} is returned.
  *
  * @since 0.5.0
  *
  * @author Guus Lieben
  */
-public class OptionToObjectConverterFactory implements ConverterFactory<Option<?>, Object>, ConditionalConverter {
+public class OptionToObjectConverterFactory
+    implements ConverterFactory<Option<?>, Object>, ConditionalConverter {
 
     @Override
     public <O> Converter<Option<?>, O> create(Class<O> targetType) {

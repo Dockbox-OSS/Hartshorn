@@ -20,7 +20,8 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * A {@link SynchronizedMultiMap} implementation that uses {@link HashSet} as its backing collection.
+ * A {@link SynchronizedMultiMap} implementation that uses {@link HashSet} as its backing
+ * collection.
  *
  * @param <K> the type of the keys
  * @param <V> the type of the values

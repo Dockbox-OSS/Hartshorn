@@ -33,8 +33,8 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * Synchronization wrapper for {@link IntrospectionViewCache}. This implementation is thread-safe, but does not guarantee
- * optimal performance, especially when used in batch mode.
+ * Synchronization wrapper for {@link IntrospectionViewCache}. This implementation is thread-safe,
+ * but does not guarantee optimal performance, especially when used in batch mode.
  *
  * @since 0.5.0
  *
@@ -42,22 +42,30 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  */
 public class SynchronizedIntrospectionViewCache implements IntrospectionViewCache {
 
+    // checkstyle:off LineLength
     private final Map<Class<?>, TypeView<?>> typeViewCache = Collections.synchronizedMap(new HashMap<>());
     private final Map<Method, MethodView<?, ?>> methodViewCache = Collections.synchronizedMap(new HashMap<>());
     private final Map<Field, FieldView<?, ?>> fieldViewCache = Collections.synchronizedMap(new HashMap<>());
     private final Map<Parameter, ParameterView<?>> parameterViewCache = Collections.synchronizedMap(new HashMap<>());
     private final Map<Constructor<?>, ConstructorView<?>> constructorViewCache = Collections.synchronizedMap(new HashMap<>());
     private final Map<Package, PackageView> packageViewCache = Collections.synchronizedMap(new HashMap<>());
+    // checkstyle:on LineLength
 
     @Override
     public <T> TypeView<T> computeIfAbsent(Class<T> type, Supplier<TypeView<T>> viewSupplier) {
         synchronized(this.typeViewCache) {
-            return (TypeView<T>) this.typeViewCache.computeIfAbsent(type, key0 -> viewSupplier.get());
+            return (TypeView<T>) this.typeViewCache.computeIfAbsent(
+                type,
+                key0 -> viewSupplier.get()
+            );
         }
     }
 
     @Override
-    public MethodView<?, ?> computeIfAbsent(Method method, Supplier<MethodView<?, ?>> viewSupplier) {
+    public MethodView<?, ?> computeIfAbsent(
+        Method method,
+        Supplier<MethodView<?, ?>> viewSupplier
+    ) {
         synchronized(this.methodViewCache) {
             return this.methodViewCache.computeIfAbsent(method, key0 -> viewSupplier.get());
         }
@@ -71,16 +79,28 @@ public class SynchronizedIntrospectionViewCache implements IntrospectionViewCach
     }
 
     @Override
-    public ParameterView<?> computeIfAbsent(Parameter parameter, Supplier<ParameterView<?>> viewSupplier) {
+    public ParameterView<?> computeIfAbsent(
+        Parameter parameter,
+        Supplier<ParameterView<?>> viewSupplier
+    ) {
         synchronized(this.parameterViewCache) {
-            return this.parameterViewCache.computeIfAbsent(parameter, key0 -> viewSupplier.get());
+            return this.parameterViewCache.computeIfAbsent(
+                parameter,
+                key0 -> viewSupplier.get()
+            );
         }
     }
 
     @Override
-    public <T> ConstructorView<T> computeIfAbsent(Constructor<T> constructor, Supplier<ConstructorView<T>> viewSupplier) {
+    public <T> ConstructorView<T> computeIfAbsent(
+        Constructor<T> constructor,
+        Supplier<ConstructorView<T>> viewSupplier
+    ) {
         synchronized(this.constructorViewCache) {
-            return (ConstructorView<T>) this.constructorViewCache.computeIfAbsent(constructor, key0 -> viewSupplier.get());
+            return (ConstructorView<T>) this.constructorViewCache.computeIfAbsent(
+                constructor,
+                key0 -> viewSupplier.get()
+            );
         }
     }
 

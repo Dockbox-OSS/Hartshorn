@@ -58,7 +58,8 @@ public interface ElementAnnotationsIntrospector {
      * considered when searching for the annotation.
      *
      * @param annotation the annotation to check for
-     * @return {@code true} if the element is annotated with the provided annotation, {@code false} otherwise
+     * @return {@code true} if the element is annotated with the provided annotation, {@code false}
+     * otherwise
      */
     boolean has(Class<? extends Annotation> annotation);
 
@@ -68,7 +69,8 @@ public interface ElementAnnotationsIntrospector {
      * hierarchy is considered when searching for the annotations.
      *
      * @param annotations the annotations to check for
-     * @return {@code true} if the element is annotated with any of the provided annotations, {@code false} otherwise
+     * @return {@code true} if the element is annotated with any of the provided annotations,
+     * {@code false} otherwise
      */
     default boolean hasAny(Class<? extends Annotation>... annotations) {
         return this.hasAny(Set.of(annotations));
@@ -80,7 +82,8 @@ public interface ElementAnnotationsIntrospector {
      * hierarchy is considered when searching for the annotations.
      *
      * @param annotations the annotations to check for
-     * @return {@code true} if the element is annotated with any of the provided annotations, {@code false} otherwise
+     * @return {@code true} if the element is annotated with any of the provided annotations,
+     * {@code false} otherwise
      */
     boolean hasAny(Set<Class<? extends Annotation>> annotations);
 
@@ -90,7 +93,8 @@ public interface ElementAnnotationsIntrospector {
      * hierarchy is considered when searching for the annotations.
      *
      * @param annotations the annotations to check for
-     * @return {@code true} if the element is annotated with all the provided annotations, {@code false} otherwise
+     * @return {@code true} if the element is annotated with all the provided annotations, {@code
+     * false} otherwise
      */
     default boolean hasAll(Class<? extends Annotation>... annotations) {
         return this.hasAll(Set.of(annotations));
@@ -102,7 +106,8 @@ public interface ElementAnnotationsIntrospector {
      * hierarchy is considered when searching for the annotations.
      *
      * @param annotations the annotations to check for
-     * @return {@code true} if the element is annotated with all the provided annotations, {@code false} otherwise
+     * @return {@code true} if the element is annotated with all the provided annotations, {@code
+     * false} otherwise
      */
     boolean hasAll(Set<Class<? extends Annotation>> annotations);
 

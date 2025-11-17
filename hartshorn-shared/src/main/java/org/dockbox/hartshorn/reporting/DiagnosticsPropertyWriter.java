@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.reporting;
 
 /**
- * A writer for {@link DiagnosticsPropertyCollector} instances. Each writer is responsible for writing a specific
- * property, configured by {@link DiagnosticsPropertyCollector#property(String)}.
+ * A writer for {@link DiagnosticsPropertyCollector} instances. Each writer is responsible for
+ * writing a specific property, configured by {@link DiagnosticsPropertyCollector#property(String)}.
  *
  * @see DiagnosticsPropertyCollector
  *

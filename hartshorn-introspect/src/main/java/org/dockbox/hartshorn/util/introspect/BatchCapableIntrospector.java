@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,15 @@ package org.dockbox.hartshorn.util.introspect;
 /**
  * An {@link Introspector} that can be optimized for batch introspection. Batch mode should only be
  * enabled when working in a multi-application environment, where the same types are introspected
- * across multiple applications. In this case, implementations can share caches, or otherwise optimize
- * for batch introspection.
+ * across multiple applications. In this case, implementations can share caches, or otherwise
+ * optimize for batch introspection.
  *
- * <p>Batch optimization typically expects that the same implementation is used across all applications.
- * If this is not the case, there is no guarantee that the optimization of one application is compatible
- * with the optimization of another application.
+ * <p>Batch optimization typically expects that the same implementation is used across all
+ * applications. If this is not the case, there is no guarantee that the optimization of one
+ * application is compatible with the optimization of another application.
  *
- * <p>Batch mode is disabled by default, and should only be enabled when required. Note that batch mode
- * is not guaranteed to improve performance, and may even decrease performance in some cases.
+ * <p>Batch mode is disabled by default, and should only be enabled when required. Note that batch
+ * mode is not guaranteed to improve performance, and may even decrease performance in some cases.
  *
  * @since 0.5.0
  *
@@ -36,7 +36,8 @@ package org.dockbox.hartshorn.util.introspect;
 public interface BatchCapableIntrospector extends Introspector {
 
     /**
-     * Enables or disables batch mode. When enabled, the introspector is optimized for batch introspection.
+     * Enables or disables batch mode. When enabled, the introspector is optimized for batch
+     * introspection.
      *
      * @param enabled whether batch mode should be enabled
      */

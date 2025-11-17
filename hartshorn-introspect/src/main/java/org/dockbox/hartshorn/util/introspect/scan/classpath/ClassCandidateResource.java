@@ -20,13 +20,16 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 
 /**
- * Represents a resource on the classpath. Resources are provided by {@link ClassPathScanner}s and handed
- * over to {@link ResourceHandler}s for further processing.
+ * Represents a resource on the classpath. Resources are provided by {@link ClassPathScanner}s and
+ * handed over to {@link ResourceHandler}s for further processing.
  *
  * @param classLoader The classloader from which this resource was, or should be, loaded.
- * @param path The path to the resource. This is the path as it is found on the classpath, and may be inside
- * @param resourceName The name of the resource. For classes this is the fully qualified class name, for other
- * @param isClassResource Whether this resource is a class. If {@code true}, the resource can be loaded as a class.
+ * @param path The path to the resource. This is the path as it is found on the classpath, and may
+ * be inside JAR or similar resource.
+ * @param resourceName The name of the resource. For classes this is the fully qualified class name,
+ * for other resources this is the raw name of the resource.
+ * @param isClassResource Whether this resource is a class. If {@code true}, the resource can be
+ * loaded as a class.
  *
  * @since 0.4.13
  *

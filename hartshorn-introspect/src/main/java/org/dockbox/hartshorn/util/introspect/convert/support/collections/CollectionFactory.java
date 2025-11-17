@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support.collections;
 
-import java.util.Collection;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
+
+import java.util.Collection;
 
 /**
  * A factory for creating collections of a given type, with a given element type. This is typically
@@ -53,6 +54,9 @@ public interface CollectionFactory {
      * @param <O> The type of the collection
      * @param <E> The type of the elements in the collection
      */
-    <O extends Collection<E>, E> O createCollection(Class<O> targetType, Class<E> elementType, int length);
-
+    <O extends Collection<E>, E> O createCollection(
+            Class<O> targetType,
+            Class<E> elementType,
+            int length
+    );
 }

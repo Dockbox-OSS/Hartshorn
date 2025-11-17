@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.HashMap;
 
 /**
- * A simple implementation of {@link MultiMap} that uses {@link ArrayList} as its backing collection,
- * and {@link HashMap} as its backing map. This implementation is not thread-safe.
+ * A simple implementation of {@link MultiMap} that uses {@link ArrayList} as its backing
+ * collection, and {@link HashMap} as its backing map. This implementation is not thread-safe.
  *
  * @param <K> the type of the keys
  * @param <V> the type of the values

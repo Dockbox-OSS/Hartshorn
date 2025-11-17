@@ -29,12 +29,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * A wrapper for parameterized types that allows for the retrieval of the type and its parameters. This is a
- * simple representation of a {@link ParameterizedType} that allows for easy comparison, which is especially
- * useful for keys such as the {@code org.dockbox.hartshorn.inject.ComponentKey}.
+ * A wrapper for parameterized types that allows for the retrieval of the type and its parameters.
+ * This is a simple representation of a {@link ParameterizedType} that allows for easy comparison,
+ * which is especially useful for keys such as the {@code
+ * org.dockbox.hartshorn.inject.ComponentKey}.
  *
- * <p>{@link ParameterizableType}s can be introspected with {@link Introspector introspectors}, retaining
- * complete type information.
+ * <p>{@link ParameterizableType}s can be introspected with {@link Introspector introspectors},
+ * retaining complete type information.
  *
  * @see TypeView
  * @see Introspector
@@ -56,7 +57,8 @@ public final class ParameterizableType implements Reportable {
     }
 
     /**
-     * Creates a new {@link ParameterizableType} for the given type. The type must not be {@code null}.
+     * Creates a new {@link ParameterizableType} for the given type. The type must not be {@code
+     * null}.
      *
      * @param type the type to create a {@link ParameterizableType} for
      * @return a new {@link ParameterizableType} for the given type
@@ -66,9 +68,9 @@ public final class ParameterizableType implements Reportable {
     }
 
     /**
-     * Creates a new {@link ParameterizableType} for the given type. The type must not be {@code null}. If the
-     * type represents a {@link ParameterizedType}, the parameters of the type are used to create the parameters
-     * of the {@link ParameterizableType}.
+     * Creates a new {@link ParameterizableType} for the given type. The type must not be {@code
+     * null}. If the type represents a {@link ParameterizedType}, the parameters of the type are
+     * used to create the parameters of the {@link ParameterizableType}.
      *
      * @param type the type to create a {@link ParameterizableType} for
      * @return a new {@link ParameterizableType} for the given type
@@ -89,8 +91,8 @@ public final class ParameterizableType implements Reportable {
 
     /**
      * Creates a new {@link Builder} for the given type. The type must not be {@code null}. If the
-     * type represents a {@link ParameterizedType}, the parameters of the type are used to pre-configure
-     * the parameters of the {@link Builder}.
+     * type represents a {@link ParameterizedType}, the parameters of the type are used to
+     * pre-configure the parameters of the {@link Builder}.
      *
      * @param type the type to create a {@link Builder} for
      * @return a new {@link Builder} for the given type
@@ -117,8 +119,8 @@ public final class ParameterizableType implements Reportable {
     }
 
     /**
-     * Returns the type of this parameterized type. This is only the raw type, and does not include any
-     * type parameters.
+     * Returns the type of this parameterized type. This is only the raw type, and does not include
+     * any type parameters.
      *
      * @return the type of this parameterized type
      */
@@ -127,8 +129,8 @@ public final class ParameterizableType implements Reportable {
     }
 
     /**
-     * Returns the parameters of this parameterized type. If the type has no type parameters, this list
-     * will be empty, but never {@code null}.
+     * Returns the parameters of this parameterized type. If the type has no type parameters, this
+     * list will be empty, but never {@code null}.
      *
      * @return the parameters of this parameterized type
      */
@@ -137,8 +139,8 @@ public final class ParameterizableType implements Reportable {
     }
 
     /**
-     * Returns a {@link ParameterizedType} representation of this parameterized type. This can be used for
-     * reflective operations.
+     * Returns a {@link ParameterizedType} representation of this parameterized type. This can be
+     * used for reflective operations.
      *
      * @return a {@link ParameterizedType} representation of this parameterized type
      */
@@ -155,7 +157,8 @@ public final class ParameterizableType implements Reportable {
             return false;
         }
         ParameterizableType that = (ParameterizableType) o;
-        return Objects.equals(this.type, that.type) && Objects.equals(this.parameters, that.parameters);
+        return Objects.equals(this.type, that.type)
+            && Objects.equals(this.parameters, that.parameters);
     }
 
     @Override
@@ -164,8 +167,8 @@ public final class ParameterizableType implements Reportable {
     }
 
     /**
-     * Returns a fully qualified string representation of this type. This includes the package name of the
-     * type, and the fully qualified names of all parameters.
+     * Returns a fully qualified string representation of this type. This includes the package name
+     * of the type, and the fully qualified names of all parameters.
      *
      * @return a fully qualified string representation of this type
      */
@@ -191,8 +194,8 @@ public final class ParameterizableType implements Reportable {
     }
 
     /**
-     * A builder for {@link ParameterizableType}s. This builder allows for the creation of {@link ParameterizableType}s
-     * with parameters.
+     * A builder for {@link ParameterizableType}s. This builder allows for the creation of {@link
+     * ParameterizableType}s with parameters.
      *
      * @since 0.5.0
      *
@@ -208,33 +211,37 @@ public final class ParameterizableType implements Reportable {
         }
 
         /**
-         * Sets the parameters of this type, overriding all existing parameters. The number of parameters must
-         * match the number of type parameters of the type. If the type has no type parameters, the given
-         * parameters must be empty.
+         * Sets the parameters of this type, overriding all existing parameters. The number of
+         * parameters must match the number of type parameters of the type. If the type has no type
+         * parameters, the given parameters must be empty.
          *
          * @param parameters the new parameters
          *
          * @return Self, for chaining
          *
-         * @throws IllegalArgumentException if the number of parameters does not match the number of type parameters
+         * @throws IllegalArgumentException if the number of parameters does not match the number
+         * of type parameters
          */
         public Builder parameters(List<ParameterizableType> parameters) {
             int expectedSize = this.type.getTypeParameters().length;
             if(parameters.size() != expectedSize) {
-                throw new IllegalArgumentException("Expected " + expectedSize + " parameters, but got " + parameters.size());
+                throw new IllegalArgumentException(
+                    "Expected %d parameters, but got %d".formatted(expectedSize, parameters.size())
+                );
             }
             this.parameters = parameters;
             return this;
         }
 
         /**
-         * Sets the parameters of this type, overriding all existing parameters. The number of parameters must
-         * match the number of type parameters of the type. If the type has no type parameters, the given
-         * parameters must be empty.
+         * Sets the parameters of this type, overriding all existing parameters. The number of
+         * parameters must match the number of type parameters of the type. If the type has no type
+         * parameters, the given parameters must be empty.
          *
          * @param parameters the new parameters
          * @return Self, for chaining
-         * @throws IllegalArgumentException if the number of parameters does not match the number of type parameters
+         * @throws IllegalArgumentException if the number of parameters does not match the number
+         * of type parameters
          */
         public Builder parameters(ParameterizableType... parameters) {
             return this.parameters(List.of(parameters));

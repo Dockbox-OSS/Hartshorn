@@ -36,9 +36,10 @@ import java.util.jar.JarFile;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A classpath scanner that can be used to scan the classpath for resources. This scanner is capable of scanning both
- * directories and jar files. The scanner can be configured to scan for classes, resources, or both. The scanner can
- * also be configured to exclude inner classes and package-info classes.
+ * A classpath scanner that can be used to scan the classpath for resources. This scanner is capable
+ * of scanning both directories and jar files. The scanner can be configured to scan for classes,
+ * resources, or both. The scanner can also be configured to exclude inner classes and package-info
+ * classes.
  *
  * <p>The scanner can be configured to scan the classpath in a number of ways:
  * <ul>
@@ -48,12 +49,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *     <li>By including the default classpath</li>
  * </ul>
  *
- * <p>When the scanner is configured, it can be used to scan the classpath. The scanner will delegate the processing of
- * each file to a given {@link ResourceHandler}. The scanner will only process files that are compatible with the
- * configured scan settings.
+ * <p>When the scanner is configured, it can be used to scan the classpath. The scanner will
+ * delegate the processing of each file to a given {@link ResourceHandler}. The scanner will only
+ * process files that are compatible with the configured scan settings.
  *
- * <p>Typically, {@link ClassPathScanner} should not be used directly, but rather be used through the {@link
- * ClassPathScannerTypeReferenceCollector}.
+ * <p>Typically, {@link ClassPathScanner} should not be used directly, but rather be used through
+ * the {@link ClassPathScannerTypeReferenceCollector}.
  *
  * @since 0.4.13
  *
@@ -76,8 +77,8 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Creates a new {@link ClassPathScanner} instance. The returned instance is configured to scan for classes only,
-     * and exclude package-info.
+     * Creates a new {@link ClassPathScanner} instance. The returned instance is configured to scan
+     * for classes only, and exclude package-info.
      *
      * @return The created instance
      */
@@ -86,9 +87,10 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Adds the value of a system property to the scanner. The value of the system property is expected to be a
-     * classpath entry. The value of the system property is split on the {@link File#pathSeparatorChar} character.
-     * Each resulting path is added to the scanner if it is a valid path.
+     * Adds the value of a system property to the scanner. The value of the system property is
+     * expected to be a classpath entry. The value of the system property is split on the {@link
+     * File#pathSeparatorChar} character. Each resulting path is added to the scanner if it is a
+     * valid path.
      *
      * @param key The name of the system property
      * @return The scanner instance
@@ -120,8 +122,8 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Adds a {@link URL} to the scanner. The URL is expected to be a classpath entry. The URL is added to the scanner
-     * if it is a valid path.
+     * Adds a {@link URL} to the scanner. The URL is expected to be a classpath entry. The URL is
+     * added to the scanner if it is a valid path.
      *
      * @param url The URL to add
      * @return The scanner instance
@@ -147,14 +149,17 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Scans the classpath for resources. The scanner will delegate the processing of each file to the provided {@link
-     * ResourceHandler}. The scanner will only process files that are compatible with the configured scan settings.
+     * Scans the classpath for resources. The scanner will delegate the processing of each file to
+     * the provided {@link ResourceHandler}. The scanner will only process files that are compatible
+     * with the configured scan settings.
      *
      * @param handler The handler that will consume the file if it is compatible
      * @return The scanner instance
      * @throws ClassPathWalkingException When an error occurs while scanning the classpath
      */
-    public synchronized ClassPathScanner scan(ResourceHandler handler) throws ClassPathWalkingException {
+    public synchronized ClassPathScanner scan(
+        ResourceHandler handler
+    ) throws ClassPathWalkingException {
         this.classNames.clear();
 
         long start = System.currentTimeMillis();
@@ -167,28 +172,33 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Scans the given {@link URLClassLoader} for resources. The scanner will delegate the processing of each file to
-     * the provided {@link ResourceHandler}. The scanner will only process files that are compatible with the configured
-     * scan settings.
+     * Scans the given {@link URLClassLoader} for resources. The scanner will delegate the
+     * processing of each file to the provided {@link ResourceHandler}. The scanner will only
+     * process files that are compatible with the configured scan settings.
      *
      * @param handler The handler that will consume the file if it is compatible
      * @param classLoader The classloader to scan
      * @throws ClassPathWalkingException When an error occurs while scanning the classpath
      */
-    private void scanClassLoaderResources(ResourceHandler handler, URLClassLoader classLoader) throws ClassPathWalkingException {
+    private void scanClassLoaderResources(
+        ResourceHandler handler,
+        URLClassLoader classLoader
+    ) throws ClassPathWalkingException {
         for (URL url : classLoader.getURLs()) {
             if (url.getFile() != null && !url.getFile().isEmpty()) {
 
-                // Physical files can have escaped characters in the URL representation. The simplest form of this is
-                // %20 instead of a space. This is not valid in a URI, so we need to decode the URL to get the correct
-                // file path.
+                // Physical files can have escaped characters in the URL representation. The
+                // simplest form of this is %20 instead of a space. This is not valid in a URI, so
+                // we need to decode the URL to get the correct file path.
                 String decodedUrl = URLDecoder.decode(url.getFile(), Charset.defaultCharset());
                 File file = new File(decodedUrl);
                 if (file.exists()) {
                     if (file.isDirectory()) {
                         this.processDirectoryResource(handler, classLoader, file);
                     }
-                    else if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".jar")) {
+                    else if (file.isFile()
+                        && file.getName().toLowerCase(Locale.ROOT).endsWith(".jar")
+                    ) {
                         this.processJarFileResource(handler, classLoader, file);
                     }
                 }
@@ -200,14 +210,19 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Processes a jar file resource. This will only process files that are compatible with the configured scan
-     * settings. Any file that is compatible will be delegated to the provided {@link ResourceHandler}.
+     * Processes a jar file resource. This will only process files that are compatible with the
+     * configured scan settings. Any file that is compatible will be delegated to the provided
+     * {@link ResourceHandler}.
      *
      * @param handler The handler that will consume the file if it is compatible
      * @param classLoader The classloader to use for loading classes from the jar file
      * @param jarFile The jar file
      */
-    private void processJarFileResource(ResourceHandler handler, URLClassLoader classLoader, File jarFile) {
+    private void processJarFileResource(
+        ResourceHandler handler,
+        URLClassLoader classLoader,
+        File jarFile
+    ) {
         try(JarFile file = new JarFile(jarFile)) {
             Enumeration<JarEntry> entries = file.entries();
             while(entries.hasMoreElements()) {
@@ -224,36 +239,55 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Processes a directory resource. This delegates the file visiting to a {@link DirectoryFileTreeWalker}. The
-     * walker will delegate the processing of each file to the provided {@link ResourceHandler}. The scanner will only
-     * process files that are compatible with the configured scan settings.
+     * Processes a directory resource. This delegates the file visiting to a {@link
+     * DirectoryFileTreeWalker}. The walker will delegate the processing of each file to the
+     * provided {@link ResourceHandler}. The scanner will only process files that are compatible
+     * with the configured scan settings.
      *
      * @param handler The handler that will consume the file if it is compatible
      * @param classLoader The classloader to use for loading classes from the jar file
      * @param directory The directory to scan
      * @throws ClassPathWalkingException When an error occurs while scanning the classpath
      */
-    private void processDirectoryResource(ResourceHandler handler, URLClassLoader classLoader, File directory) throws ClassPathWalkingException {
+    private void processDirectoryResource(
+        ResourceHandler handler,
+        URLClassLoader classLoader,
+        File directory
+    ) throws ClassPathWalkingException {
         try {
             File rootDir = directory.getCanonicalFile();
             int rootDirNameLen = rootDir.getCanonicalPath().length();
-            Files.walkFileTree(rootDir.toPath(), new DirectoryFileTreeWalker(this, rootDirNameLen, handler, classLoader));
+            Files.walkFileTree(rootDir.toPath(), new DirectoryFileTreeWalker(
+                this,
+                rootDirNameLen,
+                handler,
+                classLoader
+            ));
         }
         catch (IOException e) {
-            throw new ClassPathWalkingException("Could not process directory resource " + directory.getPath(), e);
+            throw new ClassPathWalkingException(
+                "Could not process directory resource " + directory.getPath(),
+                e
+            );
         }
     }
 
     /**
-     * Processes a path resource. The scanner will only process files that are compatible with the configured scan
-     * settings. Any file that is compatible will be delegated to the provided {@link ResourceHandler}.
+     * Processes a path resource. The scanner will only process files that are compatible with the
+     * configured scan settings. Any file that is compatible will be delegated to the provided
+     * {@link ResourceHandler}.
      *
      * @param handler The handler that will consume the file if it is compatible
      * @param classLoader The classloader to use for loading classes from the jar file
      * @param resourceName The name of the resource
      * @param path The path to the resource
      */
-    void processPathResource(ResourceHandler handler, URLClassLoader classLoader, String resourceName, Path path) {
+    void processPathResource(
+        ResourceHandler handler,
+        URLClassLoader classLoader,
+        String resourceName,
+        Path path
+    ) {
         // If there's nowhere to delegate the resource to, don't process it
         if (handler == null) {
             return;
@@ -268,30 +302,36 @@ public final class ClassPathScanner {
             return;
         }
 
-        ClassPathResource resource = new ClassCandidateResource(classLoader, path, checkedResourceName, isClassResource);
+        ClassPathResource resource = new ClassCandidateResource(
+            classLoader,
+            path,
+            checkedResourceName,
+            isClassResource
+        );
         handler.handle(resource);
     }
 
     /**
-     * Determines if a resource should be processed by the scanner. The scanner will only process files that are
-     * compatible with the configured scan settings.
+     * Determines if a resource should be processed by the scanner. The scanner will only process
+     * files that are compatible with the configured scan settings.
      *
      * @param isClassResource Whether the resource is a class
-     * @param checkedResourceName The name of the resource. This should be the canonical name of the class if the
-     *                            resource is a class
+     * @param checkedResourceName The name of the resource. This should be the canonical name of the
+     * class if the resource is a class
      *
      * @return True if the resource should be processed, false otherwise
      */
     private boolean shouldProcessResource(boolean isClassResource, String checkedResourceName) {
-        // If we're filtering by prefix, and the resource name doesn't start with any of the prefixes, don't process it
+        // If we're filtering by prefix, and the resource name doesn't start with any of the
+        // prefixes, don't process it
         for (String beginFilterName : this.prefixFilters) {
             if (!checkedResourceName.startsWith(beginFilterName)) {
                 return false;
             }
         }
 
-        // If we're scanning for classes, and the resource is a class that was previously scanned, don't
-        // process it again
+        // If we're scanning for classes, and the resource is a class that was previously scanned,
+        // don't process it again
         if (isClassResource && this.classesOnly && this.classNames.contains(checkedResourceName)) {
             return false;
         }
@@ -312,7 +352,9 @@ public final class ClassPathScanner {
         }
 
         // Skip package-info classes
-        return !this.excludePackageInfo || !isClassResource || !checkedResourceName.endsWith("package-info");
+        return !this.excludePackageInfo
+            || !isClassResource
+            || !checkedResourceName.endsWith("package-info");
 
         // If none of the above conditions are met, we should process the resource
     }
@@ -325,8 +367,8 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Adds a prefix filter to the scanner. The scanner will only process files that start with any of the provided
-     * prefixes.
+     * Adds a prefix filter to the scanner. The scanner will only process files that start with any
+     * of the provided prefixes.
      *
      * @param prefix The prefix to add
      * @return The scanner instance
@@ -339,8 +381,8 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Returns the set of prefixes that are configured in the scanner. When scanning the classpath, the scanner will
-     * only process files that start with any of these prefixes.
+     * Returns the set of prefixes that are configured in the scanner. When scanning the classpath,
+     * the scanner will only process files that start with any of these prefixes.
      *
      * @return The set of prefixes
      */
@@ -349,8 +391,8 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Includes the default classpath in the scanner. The default classpath is determined by the value of the {@code
-     * java.class.path} system property.
+     * Includes the default classpath in the scanner. The default classpath is determined by the
+     * value of the {@code java.class.path} system property.
      *
      * @return The scanner instance
      */
@@ -381,8 +423,8 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Configures the scanner to exclude inner classes. This assumes that classes are otherwise included in
-     * the scan configuration.
+     * Configures the scanner to exclude inner classes. This assumes that classes are otherwise
+     * included in the scan configuration.
      *
      * @return The scanner instance
      */
@@ -392,8 +434,8 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Configures the scanner to include package-info classes. This assumes that classes are otherwise included in
-     * the scan configuration.
+     * Configures the scanner to include package-info classes. This assumes that classes are
+     * otherwise included in the scan configuration.
      *
      * @return The scanner instance
      */
@@ -403,8 +445,8 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Returns the set of {@link ClassLoader}s that are configured in the scanner. When scanning the classpath, the
-     * scanner will use these classloaders to discover resources.
+     * Returns the set of {@link ClassLoader}s that are configured in the scanner. When scanning the
+     * classpath, the scanner will use these classloaders to discover resources.
      *
      * @return The set of classloaders
      */
@@ -413,8 +455,8 @@ public final class ClassPathScanner {
     }
 
     /**
-     * Returns the set of prefixes that are configured in the scanner. When scanning the classpath, the scanner will
-     * only process files that start with any of these prefixes.
+     * Returns the set of prefixes that are configured in the scanner. When scanning the classpath,
+     * the scanner will only process files that start with any of these prefixes.
      *
      * @return The set of prefixes
      */

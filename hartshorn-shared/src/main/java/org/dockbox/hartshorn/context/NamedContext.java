@@ -27,7 +27,8 @@ package org.dockbox.hartshorn.context;
 public interface NamedContext extends Context {
 
     /**
-     * Returns the name of this context. The name is not necessarily unique, but is encouraged to be.
+     * Returns the name of this context. The name is not necessarily unique, but is encouraged to
+     * be.
      *
      * @return The name of this context.
      */

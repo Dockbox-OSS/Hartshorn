@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,8 @@ public record HierarchyKey(AnnotatedElement element, Class<? extends Annotation>
             return false;
         }
         HierarchyKey key = (HierarchyKey) other;
-        return Objects.equals(this.element, key.element) && Objects.equals(this.annotationType, key.annotationType);
+        return Objects.equals(this.element, key.element)
+                && Objects.equals(this.annotationType, key.annotationType);
     }
 
 }

@@ -31,8 +31,9 @@ public interface IntrospectionEnvironment {
      *
      * @return {@code true} if parameter names are available, {@code false} otherwise
      *
-     * @see <a href="https://docs.oracle.com/javase%2Ftutorial%2F/reflect/member/methodparameterreflection.html">Obtaining Names of Method Parameters</a>
+     * @see <a href="https://docs.oracle.com/javase%2Ftutorial%2F/reflect/member/methodparameterreflection.html">
+     *     Obtaining Names of Method Parameters
+     *     </a>
      */
     boolean parameterNamesAvailable();
-
 }

@@ -22,8 +22,8 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 
 /**
- * A {@link Reportable} implementation for {@link Annotation} instances. This will report the annotation type and all
- * attributes of the annotation.
+ * A {@link Reportable} implementation for {@link Annotation} instances. This will report the
+ * annotation type and all attributes of the annotation.
  *
  * @param <A> the type of the annotation
  *
@@ -46,7 +46,7 @@ public class AnnotationReporter<A extends Annotation> implements Reportable {
         collector.property("annotationType").writeString(annotationType.getCanonicalName());
         for (String attributeKey : attributes.keySet()) {
             Object attributeValue = attributes.get(attributeKey);
-            DiagnosticsPropertyWriterConsumer consumer = new ValueAdapterDiagnosticsPropertyWriterConsumer(attributeValue);
+            var consumer = new ValueAdapterDiagnosticsPropertyWriterConsumer(attributeValue);
             consumer.writeTo(collector.property(attributeKey));
         }
     }

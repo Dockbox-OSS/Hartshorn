@@ -76,8 +76,9 @@ public final class CollectorUtilities {
     }
 
     /**
-     * A collector that collects entries into an {@link EntryStream}. The given supplier is used to create the map
-     * that is used to collect the entries in intermediate steps. The map is discarded once the collector is finished.
+     * A collector that collects entries into an {@link EntryStream}. The given supplier is used to
+     * create the map that is used to collect the entries in intermediate steps. The map is
+     * discarded once the collector is finished.
      *
      * @param mapSupplier the supplier to create the map
      * @param keyMapper the function to map the key
@@ -107,8 +108,8 @@ public final class CollectorUtilities {
     }
 
     /**
-     * A collector that collects a single element into an {@link Option}. If multiple elements are encountered, an
-     * {@link IllegalStateException} is thrown.
+     * A collector that collects a single element into an {@link Option}. If multiple elements are
+     * encountered, an {@link IllegalStateException} is thrown.
      *
      * @param <T> the type of the stream
      *
@@ -122,13 +123,17 @@ public final class CollectorUtilities {
                 IntermediateHolder::new,
                 (holder, item) -> {
                     if (holder.value.present()) {
-                        throw new IllegalStateException("Multiple elements encountered when only one was expected");
+                        throw new IllegalStateException(
+                                "Multiple elements encountered when only one was expected"
+                        );
                     }
                     holder.value = Option.of(item);
                 },
                 (current, next) -> {
                     if (current.value.present() && next.value.present()) {
-                        throw new IllegalStateException("Multiple elements encountered when only one was expected");
+                        throw new IllegalStateException(
+                                "Multiple elements encountered when only one was expected"
+                        );
                     }
                     return current.value.present() ? current : next;
                 },

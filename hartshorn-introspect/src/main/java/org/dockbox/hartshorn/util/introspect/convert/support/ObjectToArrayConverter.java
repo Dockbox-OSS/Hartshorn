@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,17 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import java.lang.reflect.Array;
-import java.util.Set;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 
+import java.lang.reflect.Array;
+import java.util.Set;
+
 /**
- * Converts any object to an array of the same type, containing only the object. If the given object is a primitive,
- * an array of the primitive type is returned.
+ * Converts any object to an array of the same type, containing only the object. If the given object
+ * is a primitive, an array of the primitive type is returned.
  *
  * @since 0.5.0
  *
@@ -41,7 +41,11 @@ public class ObjectToArrayConverter implements GenericConverter {
 
     @SuppressWarnings("unchecked")
     @Override
-    public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
+    public @Nullable <I, O> Object convert(
+            @Nullable Object source,
+            @NonNull Class<I> sourceType,
+            @NonNull Class<O> targetType
+    ) {
         if (sourceType.isPrimitive()) {
             return this.convertPrimitive(source, sourceType);
         }
@@ -93,7 +97,9 @@ public class ObjectToArrayConverter implements GenericConverter {
                 doubleArray[0] = (double) source;
                 return doubleArray;
             }
-            default -> throw new IllegalArgumentException("Unsupported primitive type: " + sourceType.getName());
+            default -> throw new IllegalArgumentException(
+                    "Unsupported primitive type: " + sourceType.getName()
+            );
         }
     }
 }

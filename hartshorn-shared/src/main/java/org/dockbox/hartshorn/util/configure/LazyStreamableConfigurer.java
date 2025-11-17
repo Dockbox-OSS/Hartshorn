@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.context.SingleElementContext;
 import java.util.List;
 
 /**
- * A wrapper around {@link StreamableConfigurer} which allows for lazy configuration of the
- * {@link StreamableConfigurer} instance. This is useful when the configuration of the
- * {@link StreamableConfigurer} is dependent on the input of the {@link ContextualInitializer}.
+ * A wrapper around {@link StreamableConfigurer} which allows for lazy configuration of the {@link
+ * StreamableConfigurer} instance. This is useful when the configuration of the {@link
+ * StreamableConfigurer} is dependent on the input of the {@link ContextualInitializer}.
  *
  * @param <I> the type of the input
  * @param <O> the type of the output
@@ -51,14 +51,17 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
     }
 
     /**
-     * Adds a customizer to the {@link StreamableConfigurer} instance. The customizer is applied when the
-     * {@link #initialize(SingleElementContext)} method is invoked.
+     * Adds a customizer to the {@link StreamableConfigurer} instance. The customizer is applied
+     * when the {@link #initialize(SingleElementContext)} method is invoked.
      *
      * @param customizer the customizer to apply
      * @return this instance
      */
-    public LazyStreamableConfigurer<I, O> customizer(Customizer<StreamableConfigurer<I, O>> customizer) {
-        // Note order, existing customizer is applied first, so the new customizer can override it if needed
+    public LazyStreamableConfigurer<I, O> customizer(
+            Customizer<StreamableConfigurer<I, O>> customizer
+    ) {
+        // Note order, existing customizer is applied first, so the new customizer can override
+        // it if needed
         this.customizer = customizer.compose(this.customizer);
         return this;
     }
@@ -70,7 +73,8 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
     }
 
     /**
-     * Creates a new {@link LazyStreamableConfigurer} instance with an empty {@link StreamableConfigurer}.
+     * Creates a new {@link LazyStreamableConfigurer} instance with an empty {@link
+     * StreamableConfigurer}.
      *
      * @param <I> the type of the input
      * @param <O> the type of the output
@@ -82,9 +86,9 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
     }
 
     /**
-     * Creates a new {@link LazyStreamableConfigurer} instance with the given {@link Customizer}. The customizer is
-     * applied when the {@link #initialize(SingleElementContext)} method is invoked. The initial {@link
-     * StreamableConfigurer} instance is empty.
+     * Creates a new {@link LazyStreamableConfigurer} instance with the given {@link Customizer}.
+     * The customizer is applied when the {@link #initialize(SingleElementContext)} method is
+     * invoked. The initial {@link StreamableConfigurer} instance is empty.
      *
      * @param customizer the customizer to apply
      * @param <I> the type of the input
@@ -92,13 +96,16 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
      *
      * @return the new instance
      */
-    public static <I, O> LazyStreamableConfigurer<I, O> of(Customizer<StreamableConfigurer<I, O>> customizer) {
-        return new LazyStreamableConfigurer<I, O>(StreamableConfigurer.empty()).customizer(customizer);
+    public static <I, O> LazyStreamableConfigurer<I, O> of(
+            Customizer<StreamableConfigurer<I, O>> customizer
+    ) {
+        return new LazyStreamableConfigurer<I, O>(StreamableConfigurer.empty())
+                .customizer(customizer);
     }
 
     /**
-     * Creates a new {@link LazyStreamableConfigurer} instance with a {@link StreamableConfigurer} initialized with the
-     * given {@link ContextualInitializer}.
+     * Creates a new {@link LazyStreamableConfigurer} instance with a {@link StreamableConfigurer}
+     * initialized with the given {@link ContextualInitializer}.
      *
      * @param initializer the initializer to use
      * @param <I> the type of the input
@@ -106,13 +113,15 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
      *
      * @return the new instance
      */
-    public static <I, O> LazyStreamableConfigurer<I, O> ofInitializer(ContextualInitializer<I, O> initializer) {
+    public static <I, O> LazyStreamableConfigurer<I, O> ofInitializer(
+            ContextualInitializer<I, O> initializer
+    ) {
         return new LazyStreamableConfigurer<>(StreamableConfigurer.ofInitializer(initializer));
     }
 
     /**
-     * Creates a new {@link LazyStreamableConfigurer} instance with a {@link StreamableConfigurer} initialized with the
-     * given objects.
+     * Creates a new {@link LazyStreamableConfigurer} instance with a {@link StreamableConfigurer}
+     * initialized with the given objects.
      *
      * @param objects the objects to use
      * @param <I> the type of the input
@@ -126,8 +135,8 @@ public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, 
     }
 
     /**
-     * Creates a new {@link LazyStreamableConfigurer} instance with a {@link StreamableConfigurer} initialized with the
-     * given objects.
+     * Creates a new {@link LazyStreamableConfigurer} instance with a {@link StreamableConfigurer}
+     * initialized with the given objects.
      *
      * @param objects the objects to use
      * @param <I> the type of the input

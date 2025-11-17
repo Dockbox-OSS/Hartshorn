@@ -45,10 +45,10 @@ public class MultiMapBuilder<K, V> {
     private boolean makeConcurrent = false;
 
     /**
-     * Configures the {@link Map} implementation that is used by the {@link MultiMap} that is built. If
-     * the created {@link MultiMap} is first accessed, this supplier is invoked to create a new {@link
-     * Map} instance. This supplier is expected to return a new, empty {@link Map} instance on each
-     * invocation.
+     * Configures the {@link Map} implementation that is used by the {@link MultiMap} that is built.
+     * If the created {@link MultiMap} is first accessed, this supplier is invoked to create a new
+     * {@link Map} instance. This supplier is expected to return a new, empty {@link Map} instance
+     * on each invocation.
      *
      * @param mapSupplier the supplier of the {@link Map} implementation
      * @return this builder
@@ -73,13 +73,15 @@ public class MultiMapBuilder<K, V> {
     }
 
     /**
-     * Configures the {@link MultiMap} that is built to be synchronized. This means that all access to
-     * the {@link MultiMap} is synchronized. This is useful when the {@link MultiMap} is accessed
-     * concurrently by multiple threads, and it is not possible to synchronize the access externally.
+     * Configures the {@link MultiMap} that is built to be synchronized. This means that all access
+     * to the {@link MultiMap} is synchronized. This is useful when the {@link MultiMap} is accessed
+     * concurrently by multiple threads, and it is not possible to synchronize the access
+     * externally.
      *
      * <p>Note that the backing {@link Map} is expected to be compatible with synchronization.
      *
-     * @param makeSynchronized {@code true} to make the {@link MultiMap} synchronized, else {@code false}
+     * @param makeSynchronized {@code true} to make the {@link MultiMap} synchronized, else {@code
+     * false}
      * @return this builder
      */
     public MultiMapBuilder<K, V> makeSynchronized(boolean makeSynchronized) {
@@ -88,10 +90,11 @@ public class MultiMapBuilder<K, V> {
     }
 
     /**
-     * Indicates that the {@link MultiMap} that is built should be concurrent. This means that the backing
-     * {@link Map} is expected to be a {@link ConcurrentMap}.
+     * Indicates that the {@link MultiMap} that is built should be concurrent. This means that the
+     * backing {@link Map} is expected to be a {@link ConcurrentMap}.
      *
-     * @param makeConcurrent {@code true} to make the {@link MultiMap} concurrent, else {@code false}
+     * @param makeConcurrent {@code true} to make the {@link MultiMap} concurrent, else {@code
+     * false}
      * @return this builder
      */
     public MultiMapBuilder<K, V> makeConcurrent(boolean makeConcurrent) {
@@ -106,13 +109,19 @@ public class MultiMapBuilder<K, V> {
      */
     public MultiMap<K, V> build() {
         if (this.mapSupplier == null) {
-            throw new IllegalArgumentException("Cannot build new MultiMap without configuring Map<K, V> supplier.");
+            throw new IllegalArgumentException(
+                    "Cannot build new MultiMap without configuring Map<K, V> supplier."
+            );
         }
         if (this.collectionSupplier == null) {
-            throw new IllegalArgumentException("Cannot build new MultiMap without configuring Collection<V> supplier.");
+            throw new IllegalArgumentException(
+                    "Cannot build new MultiMap without configuring Collection<V> supplier."
+            );
         }
         if (this.makeSynchronized && this.makeConcurrent) {
-            throw new IllegalArgumentException("Cannot build new MultiMap with both synchronized and concurrent capabilities.");
+            throw new IllegalArgumentException(
+                    "Cannot build new MultiMap with both synchronized and concurrent capabilities."
+            );
         }
 
         Map<K, Collection<V>> baseMap = this.mapSupplier.get();
@@ -130,7 +139,10 @@ public class MultiMapBuilder<K, V> {
             };
         } else if (this.makeConcurrent) {
             if (!(baseMap instanceof ConcurrentMap)) {
-                throw new IllegalArgumentException("Cannot build new ConcurrentMultiMap with base map that is not a ConcurrentMap.");
+                throw new IllegalArgumentException(
+                        "Cannot build new ConcurrentMultiMap with base map " +
+                                "that is not a ConcurrentMap."
+                );
             }
             return new StandardMultiMap<>() {
                 @Override

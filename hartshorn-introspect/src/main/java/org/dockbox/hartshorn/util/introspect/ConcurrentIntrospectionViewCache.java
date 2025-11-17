@@ -16,6 +16,14 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.introspect.view.FieldView;
+import org.dockbox.hartshorn.util.introspect.view.MethodView;
+import org.dockbox.hartshorn.util.introspect.view.PackageView;
+import org.dockbox.hartshorn.util.introspect.view.ParameterView;
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+import org.dockbox.hartshorn.util.types.TypeUtils;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -24,22 +32,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.introspect.view.FieldView;
-import org.dockbox.hartshorn.util.introspect.view.MethodView;
-import org.dockbox.hartshorn.util.introspect.view.PackageView;
-import org.dockbox.hartshorn.util.introspect.view.ParameterView;
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 /**
- * Concurrent implementation of {@link IntrospectionViewCache}. This implementation is thread-safe and performs well in
- * batch mode. It is recommended to use this implementation in multi-threaded environments, or when batch mode is enabled.
+ * Concurrent implementation of {@link IntrospectionViewCache}. This implementation is thread-safe
+ * and performs well in batch mode. It is recommended to use this implementation in multi-threaded
+ * environments, or when batch mode is enabled.
  *
- * <p>Note that it is not guaranteed that the same instance is returned for concurrent calls to the same method. This is
- * because the cache is not synchronized, and the cache may be overwritten by concurrent calls. This is typically not an
- * issue, as the cache is populated with the same effective value. If this is not the case, it is recommended to use a
- * synchronized cache.
+ * <p>Note that it is not guaranteed that the same instance is returned for concurrent calls to the
+ * same method. This is because the cache is not synchronized, and the cache may be overwritten by
+ * concurrent calls. This is typically not an issue, as the cache is populated with the same
+ * effective value. If this is not the case, it is recommended to use a synchronized cache.
  *
  * @since 0.5.0
  *
@@ -47,20 +48,28 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  */
 public class ConcurrentIntrospectionViewCache implements IntrospectionViewCache {
 
+    // checkstyle:off LineLength
     private final Map<Class<?>, TypeView<?>> typeViewCache = new ConcurrentHashMap<>();
     private final Map<Method, MethodView<?, ?>> methodViewCache = new ConcurrentHashMap<>();
     private final Map<Field, FieldView<?, ?>> fieldViewCache = new ConcurrentHashMap<>();
     private final Map<Parameter, ParameterView<?>> parameterViewCache = new ConcurrentHashMap<>();
     private final Map<Constructor<?>, ConstructorView<?>> constructorViewCache = new ConcurrentHashMap<>();
     private final Map<Package, PackageView> packageViewCache = new ConcurrentHashMap<>();
+    // checkstyle:on LineLength
 
     @Override
     public <T> TypeView<T> computeIfAbsent(Class<T> type, Supplier<TypeView<T>> viewSupplier) {
-        return TypeUtils.unchecked(this.typeViewCache.computeIfAbsent(type, key0 -> viewSupplier.get()), TypeView.class);
+        return TypeUtils.unchecked(
+                this.typeViewCache.computeIfAbsent(type, key0 -> viewSupplier.get()),
+                TypeView.class
+        );
     }
 
     @Override
-    public MethodView<?, ?> computeIfAbsent(Method method, Supplier<MethodView<?, ?>> viewSupplier) {
+    public MethodView<?, ?> computeIfAbsent(
+        Method method,
+        Supplier<MethodView<?, ?>> viewSupplier
+    ) {
         return this.methodViewCache.computeIfAbsent(method, key0 -> viewSupplier.get());
     }
 
@@ -70,13 +79,22 @@ public class ConcurrentIntrospectionViewCache implements IntrospectionViewCache 
     }
 
     @Override
-    public ParameterView<?> computeIfAbsent(Parameter parameter, Supplier<ParameterView<?>> viewSupplier) {
+    public ParameterView<?> computeIfAbsent(
+            Parameter parameter,
+            Supplier<ParameterView<?>> viewSupplier
+    ) {
         return this.parameterViewCache.computeIfAbsent(parameter, key0 -> viewSupplier.get());
     }
 
     @Override
-    public <T> ConstructorView<T> computeIfAbsent(Constructor<T> constructor, Supplier<ConstructorView<T>> viewSupplier) {
-        return TypeUtils.unchecked(this.constructorViewCache.computeIfAbsent(constructor, key0 -> viewSupplier.get()), ConstructorView.class);
+    public <T> ConstructorView<T> computeIfAbsent(
+            Constructor<T> constructor,
+            Supplier<ConstructorView<T>> viewSupplier
+    ) {
+        return TypeUtils.unchecked(this.constructorViewCache.computeIfAbsent(
+                constructor,
+                key0 -> viewSupplier.get()
+        ), ConstructorView.class);
     }
 
     @Override

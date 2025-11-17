@@ -33,7 +33,9 @@ import java.util.Set;
  *
  * @author Guus Lieben
  */
-public abstract class AbstractBiMultiMap<K, V> extends StandardMultiMap<K, V> implements BiMultiMap<K, V> {
+public abstract class AbstractBiMultiMap<K, V>
+        extends StandardMultiMap<K, V>
+        implements BiMultiMap<K, V> {
 
     protected AbstractBiMultiMap() {
     }
@@ -56,7 +58,8 @@ public abstract class AbstractBiMultiMap<K, V> extends StandardMultiMap<K, V> im
 
     /**
      * Creates an empty inverse map. This method is invoked by {@link #inverse()}. The returned map
-     * is populated with the inverse mappings of the current instance, and thus expected to be empty.
+     * is populated with the inverse mappings of the current instance, and thus expected to be
+     * empty.
      *
      * @return An empty inverse map.
      */

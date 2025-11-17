@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import java.util.Set;
  * A generic converter that delegates to a {@link Converter} instance. This is useful when a
  * {@link ConverterCache} is used to access or implement a {@link ConverterRegistry}.
  *
- * <p>This converter is conditional and only matches if the {@link #convertibleTypes() convertible types}
- * match the source and target types. If the {@link Converter} instance also implements
+ * <p>This converter is conditional and only matches if the {@link #convertibleTypes() convertible
+ * types} match the source and target types. If the {@link Converter} instance also implements
  * {@link ConditionalConverter}, then the {@link ConditionalConverter#canConvert(Object, Class)}
  * method is used to further narrow the match.
  *
@@ -39,7 +39,11 @@ public class ConverterAdapter implements GenericConverter, ConditionalConverter 
     private final Converter<?, ?> converter;
     private final ConvertibleTypePair typePair;
 
-    public <I, O> ConverterAdapter(Class<I> sourceType, Class<O> targetType, Converter<I, O> converter) {
+    public <I, O> ConverterAdapter(
+            Class<I> sourceType,
+            Class<O> targetType,
+            Converter<I, O> converter
+    ) {
         this.converter = converter;
         this.typePair = ConvertibleTypePair.of(sourceType, targetType);
     }
@@ -68,7 +72,11 @@ public class ConverterAdapter implements GenericConverter, ConditionalConverter 
 
     @SuppressWarnings("unchecked")
     @Override
-    public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
+    public @Nullable <I, O> Object convert(
+            @Nullable Object source,
+            @NonNull Class<I> sourceType,
+            @NonNull Class<O> targetType
+    ) {
         Converter<I, O> ioConverter = (Converter<I, O>) this.converter;
         return ioConverter.convert(sourceType.cast(source));
     }

@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support;
 
-import java.util.Collection;
-import java.util.Set;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
@@ -26,9 +23,12 @@ import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 
+import java.util.Collection;
+import java.util.Set;
+
 /**
- * Converts any {@link Collection} to an {@link Object} by returning the first and only element of the
- * collection. The collection must have exactly one element.
+ * Converts any {@link Collection} to an {@link Object} by returning the first and only element of
+ * the collection. The collection must have exactly one element.
  *
  * @since 0.5.0
  *
@@ -49,7 +49,11 @@ public class CollectionToObjectConverter implements GenericConverter, Conditiona
     }
 
     @Override
-    public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
+    public @Nullable <I, O> Object convert(
+            @Nullable Object source,
+            @NonNull Class<I> sourceType,
+            @NonNull Class<O> targetType
+    ) {
         assert source != null;
         Collection<?> collection = (Collection<?>) source;
         return CollectionUtilities.first(collection);

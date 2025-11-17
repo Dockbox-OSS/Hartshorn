@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.util.introspect;
 
+import org.dockbox.hartshorn.util.introspect.view.ModifierCarrierView;
+
 import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -23,13 +25,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.dockbox.hartshorn.util.introspect.view.ModifierCarrierView;
-
 /**
- * The access modifier of a class, method, or other {@link ModifierCarrierView}. This is a basic mirror
- * of the {@link Modifier} constants. This enum and its contents serve as a way to easily interact with
- * the {@link Modifier} constants through {@link ModifierCarrierView views}, without directly interacting
- * with JDK reflections.
+ * The access modifier of a class, method, or other {@link ModifierCarrierView}. This is a basic
+ * mirror of the {@link Modifier} constants. This enum and its contents serve as a way to easily
+ * interact with the {@link Modifier} constants through {@link ModifierCarrierView views}, without
+ * directly interacting with JDK reflections.
  *
  * @see Modifier
  * @see ModifierCarrierView

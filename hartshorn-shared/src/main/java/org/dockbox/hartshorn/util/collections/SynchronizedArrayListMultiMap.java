@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * A {@link SynchronizedMultiMap} implementation that uses {@link ArrayList} as its backing collection.
+ * A {@link SynchronizedMultiMap} implementation that uses {@link ArrayList} as its backing
+ * collection.
  *
  * @param <K> the type of the keys
  * @param <V> the type of the values

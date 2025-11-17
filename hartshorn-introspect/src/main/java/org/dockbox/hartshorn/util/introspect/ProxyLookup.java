@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.util.introspect;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * Proxy lookups are used to obtain the real type of a proxy, and identify potential proxy types and instances.
- * Direct use of an implementation of this interface is not guaranteed to be accurate, and should be used with
- * caution.
+ * Proxy lookups are used to obtain the real type of a proxy, and identify potential proxy types and
+ * instances. Direct use of an implementation of this interface is not guaranteed to be accurate,
+ * and should be used with caution.
  *
  * @since 0.4.9
  *
@@ -30,7 +30,8 @@ import org.dockbox.hartshorn.util.option.Option;
 public interface ProxyLookup {
 
     /**
-     * Get the real type of the given proxy. If the given instance is not a proxy, the given type is returned.
+     * Get the real type of the given proxy. If the given instance is not a proxy, the given type is
+     * returned.
      *
      * @param instance the instance to get the real type of
      * @param <T> the type of the instance
@@ -56,8 +57,8 @@ public interface ProxyLookup {
     boolean isProxy(Class<?> candidate);
 
     /**
-     * Returns a proxy introspector for the given instance. If the given instance is not a proxy, or is not
-     * supported by this lookup implementation, an empty {@link Option} is returned.
+     * Returns a proxy introspector for the given instance. If the given instance is not a proxy,
+     * or is not supported by this lookup implementation, an empty {@link Option} is returned.
      *
      * @param instance the instance to introspect
      * @return a proxy introspector for the given instance

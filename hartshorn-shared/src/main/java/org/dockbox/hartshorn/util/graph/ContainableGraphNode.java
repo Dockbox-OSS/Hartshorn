@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.util.graph;
 import java.util.Set;
 
 /**
- * A {@link GraphNode} that is aware of its parents. This can be used to resolve a graph in a bottom-up manner, for
- * example to reverse a graph.
+ * A {@link GraphNode} that is aware of its parents. This can be used to resolve a graph in a
+ * bottom-up manner, for example to reverse a graph.
  *
  * @param <T> the type of the value of the node
  *

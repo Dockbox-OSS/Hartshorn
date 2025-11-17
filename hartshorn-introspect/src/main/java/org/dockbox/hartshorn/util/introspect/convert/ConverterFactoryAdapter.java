@@ -26,15 +26,15 @@ import java.util.Set;
  * {@link ConverterFactory} needs to be used in a place where a {@link GenericConverter} is
  * expected, such as in a {@link ConverterCache}.
  *
- * <p>This converter is conditional and only matches if the {@link #convertibleTypes() convertible types}
- * match the source and target types. The target type matches if it is assignable to the target type
- * of the factory.
+ * <p>This converter is conditional and only matches if the {@link #convertibleTypes() convertible
+ * types} match the source and target types. The target type matches if it is assignable to the
+ * target type of the factory.
  *
- * <p>If the {@link ConverterFactory} instance also implements {@link ConditionalConverter}, then the
- * {@link ConditionalConverter#canConvert(Object, Class)} method is used to further narrow the match. If
- * the {@link Converter} instance created by the factory also implements {@link ConditionalConverter},
- * then the {@link ConditionalConverter#canConvert(Object, Class)} method is again used to further narrow
- * the match.
+ * <p>If the {@link ConverterFactory} instance also implements {@link ConditionalConverter}, then
+ * the {@link ConditionalConverter#canConvert(Object, Class)} method is used to further narrow the
+ * match. If the {@link Converter} instance created by the factory also implements {@link
+ * ConditionalConverter}, then the {@link ConditionalConverter#canConvert(Object, Class)} method is
+ * again used to further narrow the match.
  *
  * @since 0.5.0
  *
@@ -45,17 +45,21 @@ public class ConverterFactoryAdapter implements GenericConverter, ConditionalCon
     private final ConverterFactory<Object, Object> converterFactory;
     private final ConvertibleTypePair typePair;
 
-    public <I, O> ConverterFactoryAdapter(Class<I> sourceType, Class<O> targetType, ConverterFactory<I, O> converterFactory) {
+    public <I, O> ConverterFactoryAdapter(
+            Class<I> sourceType,
+            Class<O> targetType,
+            ConverterFactory<I, O> converterFactory
+    ) {
         this.converterFactory = (ConverterFactory<Object, Object>) converterFactory;
         this.typePair = ConvertibleTypePair.of(sourceType, targetType);
     }
 
     /**
-     * Returns the underlying {@link ConvertibleTypePair} that this converter can convert between. This
-     * represents the higher-level target type, not the source-to-target type actually handled by the
-     * underlying {@link ConverterFactory}. For example, for a {@link ConverterFactory} which handles
-     * {@link String} to {@link Number} conversions, this method would return {@link String} to
-     * {@link Number}, but never {@link String} to {@link Integer}.
+     * Returns the underlying {@link ConvertibleTypePair} that this converter can convert between.
+     * This represents the higher-level target type, not the source-to-target type actually handled
+     * by the underlying {@link ConverterFactory}. For example, for a {@link ConverterFactory} which
+     * handles {@link String} to {@link Number} conversions, this method would return {@link String}
+     * to {@link Number}, but never {@link String} to {@link Integer}.
      *
      * @return the convertible type pair
      */
@@ -75,17 +79,20 @@ public class ConverterFactoryAdapter implements GenericConverter, ConditionalCon
             return false;
         }
         else if (!this.typePair.targetType().isAssignableFrom(targetType)) {
-            // If a factory declares a primitive target, it should only match if the target is declared as a generic Object.
+            // If a factory declares a primitive target, it should only match if the target is
+            // declared as a generic Object.
             matches = targetType.isPrimitive() && this.typePair.targetType().equals(Object.class);
         }
 
         if (matches) {
-            if (this.converterFactory instanceof ConditionalConverter conditionalConverter && !conditionalConverter.canConvert(source, targetType)) {
+            if (this.converterFactory instanceof ConditionalConverter conditionalConverter
+                    && !conditionalConverter.canConvert(source, targetType)) {
                 return false;
             }
 
             Converter<?, ?> converter = this.converterFactory.create(targetType);
-            if (converter instanceof ConditionalConverter conditionalConverter && !conditionalConverter.canConvert(source, targetType)) {
+            if (converter instanceof ConditionalConverter conditionalConverter
+                    && !conditionalConverter.canConvert(source, targetType)) {
                 return false;
             }
         }
@@ -93,7 +100,11 @@ public class ConverterFactoryAdapter implements GenericConverter, ConditionalCon
     }
 
     @Override
-    public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
+    public @Nullable <I, O> Object convert(
+            @Nullable Object source,
+            @NonNull Class<I> sourceType,
+            @NonNull Class<O> targetType
+    ) {
         return this.converterFactory.create(targetType).convert(sourceType.cast(source));
     }
 }

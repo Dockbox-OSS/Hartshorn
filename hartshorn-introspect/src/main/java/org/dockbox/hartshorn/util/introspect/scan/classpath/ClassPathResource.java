@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.util.introspect.scan.classpath;
 import java.nio.file.Path;
 
 /**
- * Represents a resource on the classpath. Resources are provided by {@link ClassPathScanner}s and handed
- * over to {@link ResourceHandler}s for further processing.
+ * Represents a resource on the classpath. Resources are provided by {@link ClassPathScanner}s and
+ * handed over to {@link ResourceHandler}s for further processing.
  *
  * @see ClassPathScanner
  * @see ResourceHandler

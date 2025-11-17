@@ -38,7 +38,9 @@ public abstract class GenericType<T> {
     protected GenericType() {
         Type superClass = this.getClass().getGenericSuperclass();
         if (superClass instanceof Class<?>) {
-            throw new IllegalArgumentException("GenericType constructed without actual type information");
+            throw new IllegalArgumentException(
+                    "GenericType constructed without actual type information"
+            );
         }
         this.type = ((ParameterizedType) superClass).getActualTypeArguments()[0];
     }

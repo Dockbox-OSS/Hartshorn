@@ -4,6 +4,21 @@
         "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
+    <module name="LineLength">
+        <property name="max" value="100"/>
+         <!--
+         Ignore {@link ...} and <a href="..."> elements, as these are sometimes unavoidable. Note
+         however that if these elements are followed by other text, they are still invalid. E.g.
+         '<a href="example.com">Link here</a>' should have 'Link here' on the next line.
+         -->
+        <property name="ignorePattern" value="^\s*\*.*(\&lt;a href\=.+\&gt;|\{\@link.+\})$"/>
+    </module>
+    <module name="SuppressWithPlainTextCommentFilter">
+        <property name="offCommentFormat" value="checkstyle\:off ([\w\|]+)"/>
+        <property name="onCommentFormat" value="checkstyle\:on ([\w\|]+)"/>
+        <property name="checkFormat" value="$1"/>
+    </module>
+
     <module name="TreeWalker">
         <!-- Import rules -->
         <module name="AvoidStarImport">

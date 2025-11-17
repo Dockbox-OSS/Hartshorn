@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,12 @@
 
 package org.dockbox.hartshorn.util.introspect.convert.support.collections;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.util.introspect.Introspector;
+import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
+import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
+import org.dockbox.hartshorn.util.option.Option;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
@@ -31,16 +37,11 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.util.introspect.Introspector;
-import org.dockbox.hartshorn.util.introspect.TypeConstructorsIntrospector;
-import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
-import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * Simple implementation of {@link CollectionFactory} that uses {@link CollectionProvider}s if possible, and
- * otherwise will attempt to create collections using the default constructor or a constructor with a single
- * int parameter (for capacity).
+ * Simple implementation of {@link CollectionFactory} that uses {@link CollectionProvider}s if
+ * possible, and otherwise will attempt to create collections using the default constructor or a
+ * constructor with a single int parameter (for capacity).
  *
  * @since 0.5.0
  *
@@ -50,10 +51,11 @@ import org.dockbox.hartshorn.util.option.Option;
 public class SimpleCollectionFactory implements CollectionFactory {
 
     /**
-     * A constant that can be used to indicate that the default capacity should be used when creating a collection.
-     * This is useful when a collection is created without a specific capacity requirement. Zero is used, as it is
-     * a logical choice to call {@link #createCollection(Class, Class, int)} with length zero if not aware of the
-     * {@link #createCollection(Class, Class)} method, so this covers some risks.
+     * A constant that can be used to indicate that the default capacity should be used when
+     * creating a collection. This is useful when a collection is created without a specific
+     * capacity requirement. Zero is used, as it is a logical choice to call {@link
+     * #createCollection(Class, Class, int)} with length zero if not aware of the {@link
+     * #createCollection(Class, Class)} method, so this covers some risks.
      */
     private static final int USE_COLLECTION_DEFAULT_CAPACITY = 0;
 
@@ -65,8 +67,8 @@ public class SimpleCollectionFactory implements CollectionFactory {
     }
 
     /**
-     * Registers a default {@link CollectionProvider} for the provided type. If a collection of the provided
-     * type is requested, the provider will be used to create the collection.
+     * Registers a default {@link CollectionProvider} for the provided type. If a collection of the
+     * provided type is requested, the provider will be used to create the collection.
      *
      * @param type the type of collection to register the provider for
      * @param provider the provider to register
@@ -74,17 +76,21 @@ public class SimpleCollectionFactory implements CollectionFactory {
      *
      * @return the current instance
      */
-    public <T extends Collection<?>> SimpleCollectionFactory withDefault(Class<T> type, CollectionProvider<T> provider) {
+    public <T extends Collection<?>> SimpleCollectionFactory withDefault(
+            Class<T> type,
+            CollectionProvider<T> provider
+    ) {
         this.defaults.put(type, provider);
         return this;
     }
 
     /**
-     * Registers a default {@link CollectionProvider} for the provided type. If a collection of the provided
-     * type is requested, the provider will be used to create the collection. As the provided supplier is used
-     * for both non-capacity and capacity-based creation of collections, it is recommended to only use this
-     * method for collections that do not support capacity-based creation. For collections that do support
-     * capacity-based creation, use {@link #withDefault(Class, Supplier, IntFunction)} or {@link
+     * Registers a default {@link CollectionProvider} for the provided type. If a collection of the
+     * provided type is requested, the provider will be used to create the collection. As the
+     * provided supplier is used for both non-capacity and capacity-based creation of collections,
+     * it is recommended to only use this method for collections that do not support capacity-based
+     * creation. For collections that do support capacity-based creation, use {@link
+     * #withDefault(Class, Supplier, IntFunction)} or {@link
      * #withDefault(Class, CollectionProvider)}.
      *
      * @param type the type of collection to register the provider for
@@ -93,16 +99,22 @@ public class SimpleCollectionFactory implements CollectionFactory {
      *
      * @return the current instance
      */
-    public <T extends Collection<?>> SimpleCollectionFactory withDefault(Class<T> type, Supplier<T> supplier) {
-        this.defaults.put(type, new SupplierCollectionProvider<>(supplier, capacity -> supplier.get()));
+    public <T extends Collection<?>> SimpleCollectionFactory withDefault(
+            Class<T> type,
+            Supplier<T> supplier
+    ) {
+        this.defaults.put(type, new SupplierCollectionProvider<>(
+                supplier,
+                capacity -> supplier.get()
+        ));
         return this;
     }
 
     /**
-     * Registers a default {@link CollectionProvider} for the provided type. If a collection of the provided
-     * type is requested, the provider will be used to create the collection. The provided supplier is used
-     * for non-capacity creation of collections, and the provided capacity constructor is used for
-     * capacity-based creation of collections.
+     * Registers a default {@link CollectionProvider} for the provided type. If a collection of the
+     * provided type is requested, the provider will be used to create the collection. The provided
+     * supplier is used for non-capacity creation of collections, and the provided capacity
+     * constructor is used for capacity-based creation of collections.
      *
      * @param type the type of collection to register the provider for
      * @param supplier the supplier to register
@@ -111,7 +123,11 @@ public class SimpleCollectionFactory implements CollectionFactory {
      *
      * @return the current instance
      */
-    public <T extends Collection<?>> SimpleCollectionFactory withDefault(Class<T> type, Supplier<T> supplier, IntFunction<T> capacityConstructor) {
+    public <T extends Collection<?>> SimpleCollectionFactory withDefault(
+            Class<T> type,
+            Supplier<T> supplier,
+            IntFunction<T> capacityConstructor
+    ) {
         this.defaults.put(type, new SupplierCollectionProvider<>(supplier, capacityConstructor));
         return this;
     }
@@ -141,12 +157,19 @@ public class SimpleCollectionFactory implements CollectionFactory {
     }
 
     @Override
-    public <O extends Collection<E>, E> O createCollection(Class<O> targetType, Class<E> elementType) {
+    public <O extends Collection<E>, E> O createCollection(
+            Class<O> targetType,
+            Class<E> elementType
+    ) {
         return this.createCollection(targetType, elementType, USE_COLLECTION_DEFAULT_CAPACITY);
     }
 
     @Override
-    public <O extends Collection<E>, E> O createCollection(Class<O> targetType, Class<E> elementType, int length) {
+    public <O extends Collection<E>, E> O createCollection(
+            Class<O> targetType,
+            Class<E> elementType,
+            int length
+    ) {
         O collection = this.maybeCreateCollectionFromDefaults(targetType, elementType, length);
         if (collection != null) {
             return collection;
@@ -161,39 +184,59 @@ public class SimpleCollectionFactory implements CollectionFactory {
         if(collection != null) {
             return collection;
         }
-        throw new IllegalArgumentException("Unsupported Collection implementation: " + targetType.getName());
+        throw new IllegalArgumentException(
+                "Unsupported Collection implementation: " + targetType.getName()
+        );
     }
 
-    private <O extends Collection> @Nullable O createCollectionWithCapacity(Class<O> targetType, int length) {
-        TypeConstructorsIntrospector<O> constructors = this.introspector.introspect(targetType).constructors();
-        Option<ConstructorView<O>> defaultCapacityConstructor = constructors.withParameters(int.class);
+    private <O extends Collection> @Nullable O createCollectionWithCapacity(
+            Class<O> targetType,
+            int length
+    ) {
+        TypeConstructorsIntrospector<O> constructors = this.introspector.introspect(targetType)
+                .constructors();
+        Option<ConstructorView<O>> defaultCapacityConstructor = constructors
+                .withParameters(int.class);
         if (defaultCapacityConstructor.present()) {
             try {
                 return defaultCapacityConstructor.get().create(length);
             }
             catch (Throwable e) {
-                throw new IllegalArgumentException("Failed to create collection of type " + targetType.getName(), e);
+                throw new IllegalArgumentException(
+                        "Failed to create collection of type " + targetType.getName(),
+                        e
+                );
             }
         }
         return null;
     }
 
-    private <O extends Collection> @Nullable O createCollectionWithDefaultConstructor(Class<O> targetType) {
-        TypeConstructorsIntrospector<O> constructors = this.introspector.introspect(targetType).constructors();
+    private <O extends Collection> @Nullable O createCollectionWithDefaultConstructor(
+            Class<O> targetType
+    ) {
+        TypeConstructorsIntrospector<O> constructors = this.introspector.introspect(targetType)
+                .constructors();
         Option<ConstructorView<O>> defaultConstructor = constructors.defaultConstructor();
         if (defaultConstructor.present()) {
             try {
                 return defaultConstructor.get().create();
             }
             catch (Throwable e) {
-                throw new IllegalArgumentException("Failed to create collection of type " + targetType.getName(), e);
+                throw new IllegalArgumentException(
+                        "Failed to create collection of type " + targetType.getName(),
+                        e
+                );
             }
         }
         return null;
     }
 
     @SuppressWarnings("unchecked")
-    private <O extends Collection> @Nullable O maybeCreateCollectionFromDefaults(Class<O> targetType, Class<?> elementType, int length) {
+    private <O extends Collection> @Nullable O maybeCreateCollectionFromDefaults(
+            Class<O> targetType,
+            Class<?> elementType,
+            int length
+    ) {
         CollectionProvider<?> supplier = this.defaults.get(targetType);
         if (supplier != null) {
             return length != USE_COLLECTION_DEFAULT_CAPACITY

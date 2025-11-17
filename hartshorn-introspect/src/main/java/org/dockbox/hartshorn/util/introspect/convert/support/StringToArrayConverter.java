@@ -25,8 +25,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * Converts a {@link String} to a {@link String} array, splitting the input string by a delimiter. By
- * default, the delimiter is a comma (',').
+ * Converts a {@link String} to a {@link String} array, splitting the input string by a delimiter.
+ * By default, the delimiter is a comma (',').
  *
  * @see String#split(String)
  *
@@ -52,7 +52,11 @@ public class StringToArrayConverter implements GenericConverter {
     }
 
     @Override
-    public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
+    public @Nullable <I, O> Object convert(
+        @Nullable Object source,
+        @NonNull Class<I> sourceType,
+        @NonNull Class<O> targetType
+    ) {
         if (source instanceof String charSequence) {
             return charSequence.split(this.delimiter.pattern());
         }

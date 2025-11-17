@@ -78,7 +78,9 @@ public class Some<T> extends DefaultContext implements Option<T> {
     }
 
     @Override
-    public <E extends Throwable> @NonNull T orElseThrow(@NonNull Supplier<@NonNull E> supplier) throws E {
+    public <E extends Throwable> @NonNull T orElseThrow(
+            @NonNull Supplier<@NonNull E> supplier
+    ) throws E {
         return this.value;
     }
 
@@ -113,7 +115,9 @@ public class Some<T> extends DefaultContext implements Option<T> {
     }
 
     @Override
-    public @NonNull <U> Option<U> flatMap(@NonNull Function<@NonNull T, @NonNull Option<U>> function) {
+    public @NonNull <U> Option<U> flatMap(
+            @NonNull Function<@NonNull T, @NonNull Option<U>> function
+    ) {
         return function.apply(this.value);
     }
 

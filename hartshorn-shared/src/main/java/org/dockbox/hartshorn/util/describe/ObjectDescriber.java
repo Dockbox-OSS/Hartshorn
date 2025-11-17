@@ -103,8 +103,8 @@ public final class ObjectDescriber<T> {
      * Describes the object using the style and fields that have been added to this {@link
      * ObjectDescriber}.
      *
-     * @param includeTypeName whether the type of the described object should be included in
-     * the description
+     * @param includeTypeName whether the type of the described object should be included in the
+     *                       description
      *
      * @return the description of the object
      */
@@ -116,7 +116,12 @@ public final class ObjectDescriber<T> {
         for(int i = 0; i < fieldNames.size(); i++) {
             String fieldName = fieldNames.get(i);
             Object fieldValue = this.fields.get(fieldName);
-            this.style.describeField(builder, this.object, fieldName, describeValue(fieldValue, includeTypeName));
+            this.style.describeField(
+                    builder,
+                    this.object,
+                    fieldName,
+                    describeValue(fieldValue, includeTypeName)
+            );
 
             if(i < fieldNames.size() - 1) {
                 this.style.describeFieldSeparator(builder, this.object);
@@ -166,13 +171,16 @@ public final class ObjectDescriber<T> {
     private String describeValue(Object value, boolean includeTypeName) {
         return switch (value) {
             case null -> "null";
-            // DescribeAsObject is a marker interface for objects that should be described using their own
-            // toString() method, rather than a custom case below. E.g. BindingHierarchy is an Iterable,
-            // but should be described using its own toString() method.
+            // DescribeAsObject is a marker interface for objects that should be described using
+            // their own toString() method, rather than a custom case below. E.g. BindingHierarchy
+            // is an Iterable, but should be described using its own toString() method.
             case DescribeAsObject describeAsObject -> String.valueOf(describeAsObject);
             case Map<?, ?> map -> this.describeMapLikeValue(map, includeTypeName);
             // MultiMap does not extend Map, so we need to handle it separately
-            case MultiMap<?, ?> multiMap -> this.describeMultiMapLikeValue(multiMap, includeTypeName);
+            case MultiMap<?, ?> multiMap -> this.describeMultiMapLikeValue(
+                    multiMap,
+                    includeTypeName
+            );
             case Iterable<?> iterable -> {
                 List<?> elements = StreamSupport.stream(iterable.spliterator(), false).toList();
                 yield this.describeArrayLikeValue(elements, includeTypeName);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,8 +42,8 @@ import java.lang.annotation.Target;
  * }</pre>
  *
  * <p>If {@code Bar} extends other annotations with an attribute called {@code baz}, then the alias
- * will be the default alias for all annotations in the hierarchy. If you want to alias for a specific
- * annotation, then you can use the {@link AttributeAlias#target()} attribute.
+ * will be the default alias for all annotations in the hierarchy. If you want to alias for a
+ * specific annotation, then you can use the {@link AttributeAlias#target()} attribute.
  *
  * @author Guus Lieben
  * @since 0.5.0

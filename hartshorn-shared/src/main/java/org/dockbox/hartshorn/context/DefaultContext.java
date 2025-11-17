@@ -29,8 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 /**
- * The default implementation of {@link Context}. This implementation uses a {@link SynchronizedHashSetMultiMap} to store the
- * contexts.
+ * The default implementation of {@link Context}. This implementation uses a {@link
+ * SynchronizedHashSetMultiMap} to store the contexts.
  *
  * @since 0.4.1
  *
@@ -54,8 +54,8 @@ public abstract class DefaultContext implements Context {
     }
 
     /**
-     * Returns all contexts that are named. This does not guarantee that the contexts are unique, or that
-     * they are an instance of {@link NamedContext}.
+     * Returns all contexts that are named. This does not guarantee that the contexts are unique, or
+     * that they are an instance of {@link NamedContext}.
      *
      * @return All contexts that are named.
      */
@@ -80,8 +80,8 @@ public abstract class DefaultContext implements Context {
     public <C extends ContextView> void addContext(String name, C context) {
         if (context instanceof NamedContext named && !named.name().equals(name)) {
             throw new IllegalArgumentException(("Context name does not match the provided name. " +
-                    "Context name: %s, provided name: %s. Either use only the name of the context, " +
-                    "or encapsulate the context so the appropriate name is used."
+                    "Context name: %s, provided name: %s. Either use only the name of the " +
+                    "context, or encapsulate the context so the appropriate name is used."
             ).formatted(named.name(), name));
         }
         else if (context != null) {
@@ -117,9 +117,9 @@ public abstract class DefaultContext implements Context {
     }
 
     /**
-     * Streams all contexts matching the given {@link ContextIdentity}. If the name of the key is empty,
-     * only unnamed contexts will be considered. Otherwise, only named contexts with the given name will
-     * be considered.
+     * Streams all contexts matching the given {@link ContextIdentity}. If the name of the key is
+     * empty, only unnamed contexts will be considered. Otherwise, only named contexts with the
+     * given name will be considered.
      *
      * @param key The context identity to match.
      * @param <C> The type of context to match.

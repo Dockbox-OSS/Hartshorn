@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import java.util.Objects;
 
 /**
- * A {@link TypeReference} that references a class by its fully qualified name. This reference can be used to
- * load the class, or to obtain information about the class.
+ * A {@link TypeReference} that references a class by its fully qualified name. This reference can
+ * be used to load the class, or to obtain information about the class.
  *
  * @since 0.4.13
  *

@@ -17,8 +17,9 @@
 package org.dockbox.hartshorn.context;
 
 /**
- * A simple implementation of {@link ContextIdentity}. This implementation does not provide a factory
- * implementation, and will throw an {@link IllegalStateException} when {@link #create()} is invoked.
+ * A simple implementation of {@link ContextIdentity}. This implementation does not provide a
+ * factory implementation, and will throw an {@link IllegalStateException} when {@link #create()} is
+ * invoked.
  *
  * @param <T> The type of context that is identified by this instance.
  *
@@ -52,6 +53,8 @@ public class SimpleContextIdentity<T extends ContextView> implements ContextIden
 
     @Override
     public T create() {
-        throw new IllegalStateException("No fallback defined for context " + this.type.getSimpleName());
+        throw new IllegalStateException(
+                "No fallback defined for context " + this.type.getSimpleName()
+        );
     }
 }

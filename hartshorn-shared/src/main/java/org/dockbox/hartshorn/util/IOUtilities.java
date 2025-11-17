@@ -58,22 +58,24 @@ public final class IOUtilities {
     }
 
     /**
-     * Returns the file extension of the provided path. If the path does not have a file extension, {@code null} is
-     * returned.
+     * Returns the file extension of the provided path. If the path does not have a file extension,
+     * {@code null} is returned.
      *
      * @param path the path to check
-     * @return the file extension of the provided path, or {@code null} if the path does not have a file extension
+     * @return the file extension of the provided path, or {@code null} if the path does not have a
+     * file extension
      */
     public static String getFileExtension(Path path) {
         return getFileExtension(path.toUri());
     }
 
     /**
-     * Returns the file extension of the provided URI. If the URI does not have a file extension, {@code null} is
-     * returned.
+     * Returns the file extension of the provided URI. If the URI does not have a file extension,
+     * {@code null} is returned.
      *
      * @param uri the URI to check
-     * @return the file extension of the provided URI, or {@code null} if the URI does not have a file extension
+     * @return the file extension of the provided URI, or {@code null} if the URI does not have a
+     * file extension
      */
     public static String getFileExtension(URI uri) {
         String path = uri.getPath();
@@ -95,9 +97,10 @@ public final class IOUtilities {
     }
 
     /**
-     * Checks if the provided URI exists. For URIs with the "file" scheme, this method will check if the file exists.
-     * For URIs with the "jar" scheme, this method will check if the entry exists in the JAR file. For other schemes,
-     * this method will always return {@code true}, as we cannot determine if the resource exists.
+     * Checks if the provided URI exists. For URIs with the "file" scheme, this method will check if
+     * the file exists. For URIs with the "jar" scheme, this method will check if the entry exists
+     * in the JAR file. For other schemes, this method will always return {@code true}, as we cannot
+     * determine if the resource exists.
      *
      * @param uri the URI to check
      * @return {@code true} if the URI exists, {@code false} otherwise
@@ -130,12 +133,12 @@ public final class IOUtilities {
     }
 
     /**
-     * Opens an {@link InputStream} for the provided URI. If the stream cannot be opened, an empty {@link Option} is
-     * returned.
+     * Opens an {@link InputStream} for the provided URI. If the stream cannot be opened, an empty
+     * {@link Option} is returned.
      *
      * @param uri the URI to open the stream for
-     * @return an {@link Option} containing the opened {@link InputStream}, or an empty {@link Option} if the stream
-     *         could not be opened
+     * @return an {@link Option} containing the opened {@link InputStream}, or an empty {@link
+     * Option} if the stream could not be opened
      */
     public static Option<InputStream> openStream(URI uri) {
         try {
@@ -146,12 +149,12 @@ public final class IOUtilities {
     }
 
     /**
-     * Opens a {@link BufferedInputStream} for the provided URI. If the stream cannot be opened, an empty
-     * {@link Option} is returned.
+     * Opens a {@link BufferedInputStream} for the provided URI. If the stream cannot be opened, an
+     * empty {@link Option} is returned.
      *
      * @param uri the URI to open the stream for
-     * @return an {@link Option} containing the opened {@link BufferedInputStream}, or an empty {@link Option} if the
-     *         stream could not be opened
+     * @return an {@link Option} containing the opened {@link BufferedInputStream}, or an empty
+     * {@link Option} if the stream could not be opened
      */
     public static Option<BufferedInputStream> openBufferedStream(URI uri) {
         return openStream(uri).map(BufferedInputStream::new);

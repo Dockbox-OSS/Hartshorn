@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 import java.util.Set;
 
 /**
- * A {@link TypeReferenceCollector} that caches the result of a delegate collector. The cache is populated on the
- * first invocation of {@link #collect()}, and is reused for all subsequent invocations.
+ * A {@link TypeReferenceCollector} that caches the result of a delegate collector. The cache is
+ * populated on the first invocation of {@link #collect()}, and is reused for all subsequent
+ * invocations.
  *
  * @since 0.4.13
  *

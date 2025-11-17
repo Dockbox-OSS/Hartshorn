@@ -38,9 +38,10 @@ public interface ContextIdentity<T extends ContextView> {
     Class<T> type();
 
     /**
-     * Gets the name of the context represented by this identity. This is null if no name was defined.
-     * If the context represented by this identity is a {@link NamedContext}, it is not ensured that
-     * the name of the context is equal to the name of the identity. This is only a recommendation.
+     * Gets the name of the context represented by this identity. This is null if no name was
+     * defined. If the context represented by this identity is a {@link NamedContext}, it is not
+     * ensured that the name of the context is equal to the name of the identity. This is only a
+     * recommendation.
      *
      * @return The name of the context represented by this identity.
      */

@@ -26,8 +26,8 @@ import java.util.stream.Stream;
 
 /**
  * A {@link Configurer} that can be used to configure a collection of objects. Each object is
- * represented by a {@link ContextualInitializer} that can be used to initialize the object
- * with a given input.
+ * represented by a {@link ContextualInitializer} that can be used to initialize the object with a
+ * given input.
  *
  * @param <I> the type of the input
  * @param <T> the type of the output
@@ -41,8 +41,8 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
     private final List<ContextualInitializer<I, T>> objects = new CopyOnWriteArrayList<>();
 
     /**
-     * Creates a new {@link StreamableConfigurer} instance. Protected to prevent direct instantiation
-     * outside of extending classes and static factory methods.
+     * Creates a new {@link StreamableConfigurer} instance. Protected to prevent direct
+     * instantiation outside of extending classes and static factory methods.
      */
     protected StreamableConfigurer() {
     }
@@ -93,8 +93,8 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
     }
 
     /**
-     * Creates a new {@link StreamableConfigurer} instance with the given initializer. The initializer
-     * will be added as the only initializer to the configurer.
+     * Creates a new {@link StreamableConfigurer} instance with the given initializer. The
+     * initializer will be added as the only initializer to the configurer.
      *
      * @param initializer the initializer to add
      * @param <I> the type of the input
@@ -102,7 +102,9 @@ public class StreamableConfigurer<I, T> extends DefaultContext implements Config
      *
      * @return the new instance
      */
-    public static <I, O> StreamableConfigurer<I, O> ofInitializer(ContextualInitializer<I, O> initializer) {
+    public static <I, O> StreamableConfigurer<I, O> ofInitializer(
+            ContextualInitializer<I, O> initializer
+    ) {
         StreamableConfigurer<I, O> configurer = StreamableConfigurer.empty();
         return configurer.add(initializer);
     }

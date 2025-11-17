@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.util.collections;
 
-import java.util.function.BiPredicate;
 import org.dockbox.hartshorn.util.stream.EntryStream;
 
 import java.util.Collection;
@@ -25,11 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 
 /**
  * A base implementation of {@link MultiMap} that provides default implementations for most methods.
- * Implementations only have to provide a backing map and a method to create an empty collection, which
- * will be used to store the values.
+ * Implementations only have to provide a backing map and a method to create an empty collection,
+ * which will be used to store the values.
  *
  * @param <K> the type of the keys
  * @param <V> the type of the values
@@ -164,7 +164,9 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     @Override
     public int removeValue(V processor) {
         return this.entrySet().stream()
-            .reduce(0, (count, entry) -> count + (entry.getValue().remove(processor) ? 1 : 0), Integer::sum);
+            .reduce(0, (count, entry) -> {
+                return count + (entry.getValue().remove(processor) ? 1 : 0);
+            }, Integer::sum);
     }
 
     @Override
@@ -185,7 +187,11 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     @Override
     public int removeIf(BiPredicate<K, V> predicate) {
         return this.entrySet().stream()
-            .reduce(0, (count, entry) -> count + (entry.getValue().removeIf(value -> predicate.test(entry.getKey(), value)) ? 1 : 0), Integer::sum);
+            .reduce(0, (count, entry) -> {
+                return count + (entry.getValue().removeIf(value -> {
+                    return predicate.test(entry.getKey(), value);
+                }) ? 1 : 0);
+            }, Integer::sum);
     }
 
     @Override

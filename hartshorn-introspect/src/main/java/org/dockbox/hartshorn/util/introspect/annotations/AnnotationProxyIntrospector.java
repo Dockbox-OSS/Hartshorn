@@ -25,7 +25,8 @@ import java.lang.annotation.Annotation;
 /**
  * An introspector for {@link Annotation} instances that are proxied, but do not have a known
  * {@link java.lang.reflect.InvocationHandler}. Such proxies are recognized by the fact that the
- * result of {@link Object#getClass()} is not equal to the result of {@link Annotation#annotationType()}.
+ * result of {@link Object#getClass()} is not equal to the result of {@link
+ * Annotation#annotationType()}.
  *
  * @param <T> The type of annotation that is proxied
  *

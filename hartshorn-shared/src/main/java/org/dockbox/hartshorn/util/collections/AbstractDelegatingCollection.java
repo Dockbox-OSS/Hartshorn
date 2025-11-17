@@ -16,14 +16,15 @@
 
 package org.dockbox.hartshorn.util.collections;
 
-import java.util.Collection;
-import java.util.Iterator;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 /**
- * A basic implementation of {@link Collection} that delegates all operations to a backing {@link Collection} instance.
- * This class is intended to be extended by classes that need to implement {@link Collection}, but do not need to
- * implement all methods.
+ * A basic implementation of {@link Collection} that delegates all operations to a backing {@link
+ * Collection} instance. This class is intended to be extended by classes that need to implement
+ * {@link Collection}, but do not need to implement all methods.
  *
  * @param <E> the type of elements in this collection
  *
