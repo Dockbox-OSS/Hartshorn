@@ -82,6 +82,6 @@ public class ComposedCollectionInstantiationStrategy<T> implements NonTypeAwareI
     public String toString() {
         return ObjectDescriber.of(this)
                 .field("strategies", this.strategies)
-                .toString();
+                .describe();
     }
 }

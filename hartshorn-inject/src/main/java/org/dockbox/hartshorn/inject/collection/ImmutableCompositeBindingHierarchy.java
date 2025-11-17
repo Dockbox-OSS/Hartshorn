@@ -125,7 +125,7 @@ public class ImmutableCompositeBindingHierarchy<T> implements BindingHierarchy<C
     }
 
     @Override
-    public <T> boolean isCompatible(ComponentKey<T> key) {
+    public <N> boolean isCompatible(ComponentKey<N> key) {
         return this.key().equals(key);
     }
 
