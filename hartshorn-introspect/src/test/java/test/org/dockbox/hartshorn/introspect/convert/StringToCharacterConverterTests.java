@@ -17,30 +17,32 @@
 package test.org.dockbox.hartshorn.introspect.convert;
 
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToCharacterConverter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class StringToCharacterConverterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class StringToCharacterConverterTests {
 
     @Test
-    void testCanConvertLengthOne() {
+    void canConvertLengthOne() {
         StringToCharacterConverter converter = new StringToCharacterConverter();
         Character character = converter.convert("a");
-        Assertions.assertNotNull(character);
-        Assertions.assertEquals('a', character);
+        assertThat(character)
+                .isNotNull()
+                .isEqualTo('a');
     }
 
     @Test
-    void testCanNotConvertLengthZero() {
+    void canNotConvertLengthZero() {
         StringToCharacterConverter converter = new StringToCharacterConverter();
         Character character = converter.convert("");
-        Assertions.assertNull(character);
+        assertThat(character).isNull();
     }
 
     @Test
-    void testNullConvertsToNull() {
+    void nullConvertsToNull() {
         StringToCharacterConverter converter = new StringToCharacterConverter();
         Character character = converter.convert(null);
-        Assertions.assertNull(character);
+        assertThat(character).isNull();
     }
 }

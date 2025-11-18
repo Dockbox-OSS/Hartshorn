@@ -24,26 +24,27 @@ import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class ParameterLoaderTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class ParameterLoaderTests {
 
     @Test
-    void testRuleBasedParameterLoadersCannotHaveDuplicateRules() {
+    void ruleBasedParameterLoadersCannotHaveDuplicateRules() {
         RuleBasedParameterLoader<?> parameterLoader = RuleBasedParameterLoader.createDefault();
         ParameterLoaderRule<ParameterLoaderContext> stringRule = new StringParameterRule();
         parameterLoader.add(stringRule);
         parameterLoader.add(stringRule);
-        Assertions.assertEquals(1, parameterLoader.rules().size());
+        assertThat(parameterLoader.rules()).hasSize(1);
     }
 
     @Test
-    void testRuleBasedParameterLoaderReturnsCorrectObjectsOrDefault() {
+    void ruleBasedParameterLoaderReturnsCorrectObjectsOrDefault() {
         RuleBasedParameterLoader<?> parameterLoader = RuleBasedParameterLoader.createDefault();
         parameterLoader.add(new StringParameterRule());
 
@@ -79,9 +80,9 @@ public class ParameterLoaderTests {
         ParameterLoaderContext loaderContext = new ParameterLoaderContext(methodContext, new Object());
         List<Object> objects = parameterLoader.loadArguments(loaderContext);
 
-        Assertions.assertNotNull(objects);
-        Assertions.assertEquals(2, objects.size());
-        Assertions.assertEquals("JUnit", objects.get(0));
-        Assertions.assertEquals(0, objects.get(1)); // Default value for 'int', instead of the value being null
+        assertThat(objects)
+                .hasSize(2);
+        assertThat(objects.get(0)).isEqualTo("JUnit");
+        assertThat(objects.get(1)).isEqualTo(0); // Default value for 'int', instead of the value being null
     }
 }

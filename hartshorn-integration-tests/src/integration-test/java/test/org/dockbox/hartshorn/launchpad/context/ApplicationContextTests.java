@@ -19,17 +19,18 @@ package test.org.dockbox.hartshorn.launchpad.context;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ApplicationContextTests {
+class ApplicationContextTests {
 
     @Inject
     private ApplicationContext applicationContext;
 
     @Test
-    void testContextLoads() {
-        Assertions.assertNotNull(this.applicationContext);
+    void contextLoads() {
+        assertThat(this.applicationContext).isNotNull();
     }
 }

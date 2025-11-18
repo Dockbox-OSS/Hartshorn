@@ -19,17 +19,18 @@ package test.org.dockbox.hartshorn.inject.processing;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false, componentPostProcessors = NonProcessableTypeProcessor.class)
-public class ComponentProcessorTests {
+class ComponentProcessorTests {
 
     @Test
     @TestComponents(NonProcessableType.class)
-    void testNonProcessableComponent(@Inject NonProcessableType nonProcessableType) {
-        Assertions.assertNotNull(nonProcessableType);
-        Assertions.assertNull(nonProcessableType.nonNullIfProcessed());
+    void nonProcessableComponent(@Inject NonProcessableType nonProcessableType) {
+        assertThat(nonProcessableType).isNotNull();
+        assertThat(nonProcessableType.nonNullIfProcessed()).isNull();
     }
 
 }

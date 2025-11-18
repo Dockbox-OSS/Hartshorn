@@ -18,27 +18,29 @@ package test.org.dockbox.hartshorn.introspect.convert;
 
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionalToObjectConverter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-public class OptionalToObjectConverterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class OptionalToObjectConverterTests {
 
     @Test
-    void testPresentOptionalConvertsToObject() {
+    void presentOptionalConvertsToObject() {
         Converter<Optional<?>, Object> converter = new OptionalToObjectConverter();
         Optional<String> option = Optional.of("test");
         Object converted = converter.convert(option);
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals("test", converted);
+        assertThat(converted)
+                .isNotNull()
+                .isEqualTo("test");
     }
 
     @Test
-    void testEmptyOptionalConvertsToNull() {
+    void emptyOptionalConvertsToNull() {
         Converter<Optional<?>, Object> converter = new OptionalToObjectConverter();
         Optional<String> option = Optional.empty();
         Object converted = converter.convert(option);
-        Assertions.assertNull(converted);
+        assertThat(converted).isNull();
     }
 }

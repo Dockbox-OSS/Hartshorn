@@ -18,152 +18,153 @@ package test.org.dockbox.hartshorn.introspect.convert;
 
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.PrimitiveWrapperConverter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class PrimitiveWrapperConverterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class PrimitiveWrapperConverterTests {
 
     @Test
-    void testIntToWrapperCanConvert() {
+    void intToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert(1, int.class, Integer.class);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Integer);
-        Assertions.assertEquals(1, converted);
+        assertThat(converted).isNotNull();
+        assertThat(converted).isInstanceOf(Integer.class);
+        assertThat(converted).isEqualTo(1);
     }
 
     @Test
-    void testLongToWrapperCanConvert() {
+    void longToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert(1L, long.class, Long.class);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Long);
-        Assertions.assertEquals(1L, converted);
+        assertThat(converted).isNotNull();
+        assertThat(converted).isInstanceOf(Long.class);
+        assertThat(converted).isEqualTo(1L);
     }
 
     @Test
-    void testDoubleToWrapperCanConvert() {
+    void doubleToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert(1.0D, double.class, Double.class);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Double);
-        Assertions.assertEquals(1.0D, converted);
+        assertThat(converted).isNotNull();
+        assertThat(converted).isInstanceOf(Double.class);
+        assertThat(converted).isEqualTo(1.0D);
     }
 
     @Test
-    void testFloatToWrapperCanConvert() {
+    void floatToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert(1.0F, float.class, Float.class);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Float);
-        Assertions.assertEquals(1.0F, converted);
+        assertThat(converted).isNotNull();
+        assertThat(converted).isInstanceOf(Float.class);
+        assertThat(converted).isEqualTo(1.0F);
     }
 
     @Test
-    void testShortToWrapperCanConvert() {
+    void shortToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert((short) 1, short.class, Short.class);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Short);
-        Assertions.assertEquals((short) 1, converted);
+        assertThat(converted).isNotNull();
+        assertThat(converted).isInstanceOf(Short.class);
+        assertThat(converted).isEqualTo((short) 1);
     }
 
     @Test
-    void testByteToWrapperCanConvert() {
+    void byteToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert((byte) 1, byte.class, Byte.class);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Byte);
-        Assertions.assertEquals((byte) 1, converted);
+        assertThat(converted).isNotNull();
+        assertThat(converted).isInstanceOf(Byte.class);
+        assertThat(converted).isEqualTo((byte) 1);
     }
 
     @Test
-    void testBooleanToWrapperCanConvert() {
+    void booleanToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert(true, boolean.class, Boolean.class);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Boolean);
-        Assertions.assertEquals(true, converted);
+        assertThat(converted).isNotNull();
+        assertThat(converted).isInstanceOf(Boolean.class);
+        assertThat(converted).isEqualTo(true);
     }
 
     @Test
-    void testCharToWrapperCanConvert() {
+    void charToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert('a', char.class, Character.class);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Character);
-        Assertions.assertEquals('a', converted);
+        assertThat(converted).isNotNull();
+        assertThat(converted).isInstanceOf(Character.class);
+        assertThat(converted).isEqualTo('a');
     }
 
     @Test
-    void testWrapperToIntCanConvert() {
+    void wrapperToIntCanConvert() {
         PrimitiveWrapperConverter converter = new PrimitiveWrapperConverter();
-        Assertions.assertTrue(converter.canConvert(Integer.valueOf(1), int.class));
+        assertThat(converter.canConvert(Integer.valueOf(1), int.class)).isTrue();
 
         int converted = (int) converter.convert(Integer.valueOf(1), Integer.class, int.class);
-        Assertions.assertEquals(1, converted);
+        assertThat(converted).isOne();
     }
 
     @Test
-    void testWrapperToLongCanConvert() {
+    void wrapperToLongCanConvert() {
         PrimitiveWrapperConverter converter = new PrimitiveWrapperConverter();
-        Assertions.assertTrue(converter.canConvert(Long.valueOf(1L), long.class));
+        assertThat(converter.canConvert(Long.valueOf(1L), long.class)).isTrue();
 
         long converted = (long) converter.convert(Long.valueOf(1L), Long.class, long.class);
-        Assertions.assertEquals(1L, converted);
+        assertThat(converted).isOne();
     }
 
     @Test
-    void testWrapperToDoubleCanConvert() {
+    void wrapperToDoubleCanConvert() {
         PrimitiveWrapperConverter converter = new PrimitiveWrapperConverter();
-        Assertions.assertTrue(converter.canConvert(Double.valueOf(1.0D), double.class));
+        assertThat(converter.canConvert(Double.valueOf(1.0D), double.class)).isTrue();
 
         double converted = (double) converter.convert(Double.valueOf(1.0D), Double.class, double.class);
-        Assertions.assertEquals(1.0D, converted);
+        assertThat(converted).isOne();
     }
 
     @Test
-    void testWrapperToFloatCanConvert() {
+    void wrapperToFloatCanConvert() {
         PrimitiveWrapperConverter converter = new PrimitiveWrapperConverter();
-        Assertions.assertTrue(converter.canConvert(Float.valueOf(1.0F), float.class));
+        assertThat(converter.canConvert(Float.valueOf(1.0F), float.class)).isTrue();
 
         float converted = (float) converter.convert(Float.valueOf(1.0F), Float.class, float.class);
-        Assertions.assertEquals(1.0F, converted);
+        assertThat(converted).isOne();
     }
 
     @Test
-    void testWrapperToShortCanConvert() {
+    void wrapperToShortCanConvert() {
         PrimitiveWrapperConverter converter = new PrimitiveWrapperConverter();
-        Assertions.assertTrue(converter.canConvert(Short.valueOf((short) 1), short.class));
+        assertThat(converter.canConvert(Short.valueOf((short) 1), short.class)).isTrue();
 
         short converted = (short) converter.convert(Short.valueOf((short) 1), Short.class, short.class);
-        Assertions.assertEquals((short) 1, converted);
+        assertThat(converted).isOne();
     }
 
     @Test
-    void testWrapperToByteCanConvert() {
+    void wrapperToByteCanConvert() {
         PrimitiveWrapperConverter converter = new PrimitiveWrapperConverter();
-        Assertions.assertTrue(converter.canConvert(Byte.valueOf((byte) 1), byte.class));
+        assertThat(converter.canConvert(Byte.valueOf((byte) 1), byte.class)).isTrue();
 
         byte converted = (byte) converter.convert(Byte.valueOf((byte) 1), Byte.class, byte.class);
-        Assertions.assertEquals((byte) 1, converted);
+        assertThat(converted).isOne();
     }
 
     @Test
-    void testWrapperToBooleanCanConvert() {
+    void wrapperToBooleanCanConvert() {
         PrimitiveWrapperConverter converter = new PrimitiveWrapperConverter();
-        Assertions.assertTrue(converter.canConvert(Boolean.TRUE, boolean.class));
+        assertThat(converter.canConvert(Boolean.TRUE, boolean.class)).isTrue();
 
         boolean converted = (boolean) converter.convert(Boolean.TRUE, Boolean.class, boolean.class);
-        Assertions.assertTrue(converted);
+        assertThat(converted).isTrue();
     }
 
     @Test
-    void testWrapperToCharCanConvert() {
+    void wrapperToCharCanConvert() {
         PrimitiveWrapperConverter converter = new PrimitiveWrapperConverter();
-        Assertions.assertTrue(converter.canConvert(Character.valueOf('a'), char.class));
+        assertThat(converter.canConvert(Character.valueOf('a'), char.class)).isTrue();
 
         char converted = (char) converter.convert(Character.valueOf('a'), Character.class, char.class);
-        Assertions.assertEquals('a', converted);
+        assertThat(converted).isEqualTo('a');
     }
 }

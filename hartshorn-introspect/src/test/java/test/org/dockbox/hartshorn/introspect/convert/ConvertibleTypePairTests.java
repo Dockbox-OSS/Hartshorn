@@ -18,33 +18,36 @@ package test.org.dockbox.hartshorn.introspect.convert;
 
 import org.dockbox.hartshorn.util.introspect.convert.ConvertibleTypePair;
 import org.dockbox.hartshorn.util.introspect.convert.Null;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class ConvertibleTypePairTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+class ConvertibleTypePairTests {
 
     @Test
-    void testNullTargetTypeIsRejected() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> ConvertibleTypePair.of(String.class, null));
+    void nullTargetTypeIsRejected() {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> ConvertibleTypePair.of(String.class, null));
     }
 
     @Test
-    void testNonNullTypesAreAccepted() {
-        Assertions.assertDoesNotThrow(() -> ConvertibleTypePair.of(String.class, String.class));
+    void nonNullTypesAreAccepted() {
+        assertThatCode(() -> ConvertibleTypePair.of(String.class, String.class)).doesNotThrowAnyException();
     }
 
     @Test
-    void testNullSourceTypeIsNullableType() {
+    void nullSourceTypeIsNullableType() {
         // Separate test, as annotations cannot supply null values
-        this.testSourceTypeIsNullableType(null);
+        this.sourceTypeIsNullableType(null);
     }
 
     @ParameterizedTest
     @ValueSource(classes = {void.class, Void.class})
-    void testSourceTypeIsNullableType(Class<?> type) {
+    void sourceTypeIsNullableType(Class<?> type) {
         ConvertibleTypePair typePair = ConvertibleTypePair.of(type, String.class);
-        Assertions.assertSame(Null.TYPE, typePair.sourceType());
+        assertThat(typePair.sourceType()).isSameAs(Null.TYPE);
     }
 }

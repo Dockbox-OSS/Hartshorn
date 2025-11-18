@@ -17,12 +17,13 @@
 package test.org.dockbox.hartshorn.util;
 
 import org.dockbox.hartshorn.util.types.TypeUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TypeUtilitiesTests {
 
@@ -41,8 +42,8 @@ public class TypeUtilitiesTests {
 
     @ParameterizedTest
     @MethodSource("primitiveStrings")
-    void testPrimitivesFromString(Class<?> primitive, String value, Object real) {
+    void primitivesFromString(Class<?> primitive, String value, Object real) {
         Object out = TypeUtils.toPrimitive(primitive, value);
-        Assertions.assertEquals(real, out);
+        assertThat(out).isEqualTo(real);
     }
 }

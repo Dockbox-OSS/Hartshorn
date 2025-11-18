@@ -15,6 +15,8 @@
  */
 package test.org.dockbox.hartshorn.core.application
 
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.dockbox.hartshorn.inject.ExceptionHandler
 import org.dockbox.hartshorn.inject.binding.Binder
 import org.dockbox.hartshorn.inject.binding.DefaultBindingConfigurer
@@ -45,7 +47,6 @@ import org.dockbox.hartshorn.util.configure.Customizer
 import org.dockbox.hartshorn.util.configure.Initializer
 import org.dockbox.hartshorn.util.configure.StreamableConfigurer
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.function.BiFunction
 import java.util.function.Function
@@ -54,7 +55,7 @@ import java.util.stream.Stream
 class BootstrapConfigurationContractTests {
 
     @Test
-    fun testApplicationBuilderContract() {
+    fun applicationBuilderContract() {
         val instance = StandardApplicationBuilder.Configurer()
 
         assertDeferred(instance) { configurer, deferred: ApplicationContextFactory? -> configurer.applicationContextFactory(deferred) }
@@ -71,7 +72,7 @@ class BootstrapConfigurationContractTests {
     }
 
     @Test
-    fun testApplicationConstructorContract() {
+    fun applicationConstructorContract() {
         val instance = StandardApplicationContextFactory.Configurer()
 
         assertCustomizer(instance) { configurer, customizer -> configurer.moduleActivators(customizer) }
@@ -88,7 +89,7 @@ class BootstrapConfigurationContractTests {
     }
 
     @Test
-    fun testContextualEnvironmentContract() {
+    fun contextualEnvironmentContract() {
         val instance = ConfigurableApplicationEnvironment.Configurer()
 
         assertContextInitializer(instance) { configurer, initializer -> configurer.enableBanner(initializer) }
@@ -127,7 +128,7 @@ class BootstrapConfigurationContractTests {
     }
 
     @Test
-    fun testSimpleApplicationContextContract() {
+    fun simpleApplicationContextContract() {
         val instance = SimpleApplicationContext.Configurer()
 
         assertDeferred(instance) { configurer, deferred: org.dockbox.hartshorn.inject.graph.DependencyGraphInitializer? -> configurer.dependencyGraphInitializer(deferred) }
@@ -135,7 +136,7 @@ class BootstrapConfigurationContractTests {
     }
 
     @Test
-    fun testDelegatingApplicationContextContract() {
+    fun delegatingApplicationContextContract() {
         val instance = DelegatingApplicationContext.Configurer()
 
         assertDeferred(instance) { configurer, deferred: ComponentProviderOrchestrator? -> configurer.componentProvider(deferred) }
@@ -145,11 +146,11 @@ class BootstrapConfigurationContractTests {
         assertContextInitializer(instance) { configurer, initializer -> configurer.defaultBindings(initializer) }
 
         val biConsumerDefaultBindingsResult = instance.defaultBindings { _: ApplicationContext, _: Binder -> }
-        Assertions.assertSame(instance, biConsumerDefaultBindingsResult)
+        assertThat(biConsumerDefaultBindingsResult).isSameAs(instance)
     }
 
     @Test
-    fun testScopeAwareComponentProviderContract() {
+    fun scopeAwareComponentProviderContract() {
         val instance = HierarchicalComponentProviderOrchestrator.Configurer()
 
         assertDeferred(instance) { configurer, deferred: ComponentPostConstructor? -> configurer.componentPostConstructor(deferred) }
@@ -157,7 +158,7 @@ class BootstrapConfigurationContractTests {
     }
 
     @Test
-    fun testComponentPostConstructorImplContract() {
+    fun componentPostConstructorImplContract() {
         val instance = AnnotatedMethodComponentPostConstructor.Configurer()
 
         assertDeferred(instance) { configurer, deferred: ComponentExecutableInvocationAdapter? -> configurer.viewContextAdapter(deferred) }
@@ -165,7 +166,7 @@ class BootstrapConfigurationContractTests {
     }
 
     @Test
-    fun testDependencyGraphInitializerContract() {
+    fun dependencyGraphInitializerContract() {
         val instance = org.dockbox.hartshorn.inject.graph.DependencyGraphInitializer.Configurer()
 
         assertDeferred(instance) { configurer, deferred: DependencyResolver? -> configurer.dependencyResolver(deferred) }
@@ -179,7 +180,7 @@ class BootstrapConfigurationContractTests {
     }
 
     @Test
-    fun testApplicationDependencyResolverContract() {
+    fun applicationDependencyResolverContract() {
         val instance = ManagedConfigurationDependencyResolver.Configurer()
 
         assertDeferred(instance) { configurer, deferred: ConditionMatcher? -> configurer.conditionMatcher(deferred) }
@@ -187,62 +188,62 @@ class BootstrapConfigurationContractTests {
     }
 
     @Test
-    fun testStreamableConfigurerContract() {
+    fun streamableConfigurerContract() {
         val instance = StreamableConfigurer.empty<Any, Any>()
 
         var result: StreamableConfigurer<Any, Any>? = instance.add(null as Any?)
-        Assertions.assertSame(instance, result)
+        assertThat(result).isSameAs(instance)
 
         result = instance.add(Initializer.of(null))
-        Assertions.assertSame(instance, result)
+        assertThat(result).isSameAs(instance)
 
         result = instance.add(ContextualInitializer.of(null as Any?))
-        Assertions.assertSame(instance, result)
+        assertThat(result).isSameAs(instance)
 
         result = instance.addAll(listOf(null as Any?))
-        Assertions.assertSame(instance, result)
+        assertThat(result).isSameAs(instance)
 
         result = instance.addAll(*arrayOf(null as Any?))
-        Assertions.assertSame(instance, result)
+        assertThat(result).isSameAs(instance)
 
         result = instance.addAll(listOf(Initializer.of(null)))
-        Assertions.assertSame(instance, result)
+        assertThat(result).isSameAs(instance)
 
         result = instance.addAll(*arrayOf(ContextualInitializer.of(null as Any?)))
-        Assertions.assertSame(instance, result)
+        assertThat(result).isSameAs(instance)
 
         result = instance.remove(ContextualInitializer.of(null as Any?))
-        Assertions.assertSame(instance, result)
+        assertThat(result).isSameAs(instance)
 
         result = instance.clear()
-        Assertions.assertSame(instance, result)
+        assertThat(result).isSameAs(instance)
 
         val stream: Stream<*> = instance.stream()
-        Assertions.assertNotNull(stream)
+        assertThat(stream).isNotNull()
     }
 
     fun <T> assertCustom(configurer: T, deferredFunction: Function<T, T>) {
         val result = deferredFunction.apply(configurer)
-        Assertions.assertSame(configurer, result)
+        assertThat(result).isSameAs(configurer)
     }
 
     fun <T, C> assertDeferred(configurer: T, deferredFunction: BiFunction<T, C?, T>) {
         val result = deferredFunction.apply(configurer, null)
-        Assertions.assertSame(configurer, result)
+        assertThat(result).isSameAs(configurer)
     }
 
     fun <T, I, C> assertContextInitializer(configurer: T, initializerFunction: BiFunction<T, ContextualInitializer<I, C?>, T>) {
         val result = initializerFunction.apply(configurer) { _ -> null }
-        Assertions.assertSame(configurer, result)
+        assertThat(result).isSameAs(configurer)
     }
 
     fun <T, C> assertInitializer(configurer: T, initializerFunction: BiFunction<T, Initializer<C?>, T>) {
         val result = initializerFunction.apply(configurer) { null }
-        Assertions.assertSame(configurer, result)
+        assertThat(result).isSameAs(configurer)
     }
 
     fun <T, C> assertCustomizer(configurer: T, customizableFunction: BiFunction<T, Customizer<C>, T>) {
         val result = customizableFunction.apply(configurer) { _: C -> }
-        Assertions.assertSame(configurer, result)
+        assertThat(result).isSameAs(configurer)
     }
 }

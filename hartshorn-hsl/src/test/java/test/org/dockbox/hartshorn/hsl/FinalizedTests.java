@@ -24,12 +24,14 @@ import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
-public class FinalizedTests {
+class FinalizedTests {
 
     @Inject
     private ApplicationContext applicationContext;
@@ -52,7 +54,7 @@ public class FinalizedTests {
                 class Admin extends User { }
                 """);
         script.runtime().imports(User.class);
-        Assertions.assertDoesNotThrow(script::evaluate);
+        assertThatCode(script::evaluate).doesNotThrowAnyException();
     }
 
     @Test
@@ -68,7 +70,7 @@ public class FinalizedTests {
     }
 
     @Test
-    void testCannotReassignFinalVariables() {
+    void cannotReassignFinalVariables() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 final var x = 1;
                 x = 2;
@@ -81,7 +83,7 @@ public class FinalizedTests {
     }
 
     @Test
-    void testCannotReassignFinalFunctions() {
+    void cannotReassignFinalFunctions() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 final function x() { }
                 function x() { }
@@ -94,7 +96,7 @@ public class FinalizedTests {
     }
 
     @Test
-    void testCannotReassignFinalClasses() {
+    void cannotReassignFinalClasses() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 final class User { }
                 class User { }
@@ -107,13 +109,13 @@ public class FinalizedTests {
     }
 
     @Test
-    void testCannotReassignFinalNativeFunctions() {
+    void cannotReassignFinalNativeFunctions() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 final native function a:x();
                 function x() { }
                 """);
         // Do not evaluate, as the native function does not exist in the current environment.
-        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::resolve);
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(script::resolve).actual();
         HSLTestUtilities.assertEvaluationError(error, FormattedDiagnostic.builder()
                         .message(DiagnosticMessage.ILLEGAL_FINAL_X_REASSIGNMENT)
                         .argument("native function")

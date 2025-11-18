@@ -21,49 +21,50 @@ import java.util.Collection;
 import java.util.List;
 
 import org.dockbox.hartshorn.util.collections.CollectionUtilities;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.ArrayToCollectionConverterFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("rawtypes")
-public class ArrayToCollectionConverterFactoryTests {
+class ArrayToCollectionConverterFactoryTests {
 
     @Test
-    void testFactoryCreatesConverterForConcreteCollectionTarget() {
+    void factoryCreatesConverterForConcreteCollectionTarget() {
         Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(ArrayList.class, ArrayList::new);
 
         ConverterFactory<Object[], Collection<?>> factory = new ArrayToCollectionConverterFactory(introspector);
         Converter<Object[], ArrayList> converter = factory.create(ArrayList.class);
-        Assertions.assertNotNull(converter);
+        assertThat(converter).isNotNull();
 
         List<?> list = converter.convert(new Object[]{ "test" });
-        Assertions.assertNotNull(list);
-        Assertions.assertEquals(1, list.size());
-        Assertions.assertEquals("test", list.get(0));
+        assertThat(list)
+                .hasSize(1);
+        assertThat(list.get(0)).isEqualTo("test");
     }
 
     @Test
-    void testFactoryCreatesConverterForInterfaceCollectionTarget() {
+    void factoryCreatesConverterForInterfaceCollectionTarget() {
         Converter<Object[], Collection<String>> converter = createConverter();
-        Assertions.assertNotNull(converter);
+        assertThat(converter).isNotNull();
 
         Collection<String> list = converter.convert(new Object[]{ "test" });
-        Assertions.assertNotNull(list);
-        Assertions.assertEquals(1, list.size());
-        Assertions.assertEquals("test", CollectionUtilities.first(list));
+        assertThat(list)
+                .hasSize(1);
+        assertThat(CollectionUtilities.first(list)).isEqualTo("test");
     }
 
     @Test
-    void testFactoryCreatesEmptyCollectionIfArrayEmpty() {
+    void factoryCreatesEmptyCollectionIfArrayEmpty() {
         Converter<Object[], Collection<String>> converter = createConverter();
 
         Collection list = converter.convert(new Object[0]);
-        Assertions.assertNotNull(list);
-        Assertions.assertEquals(0, list.size());
+        assertThat(list).isNotNull();
+        assertThat(list).isEmpty();
     }
 
     private static Converter<Object[], Collection<String>> createConverter() {
@@ -71,7 +72,7 @@ public class ArrayToCollectionConverterFactoryTests {
         ConverterFactory<Object[], Collection<?>> factory = new ArrayToCollectionConverterFactory(introspector);
 
         Converter<Object[], Collection<String>> converter = TypeUtils.unchecked(factory.create(Collection.class), Converter.class);
-        Assertions.assertNotNull(converter);
+        assertThat(converter).isNotNull();
 
         return converter;
     }

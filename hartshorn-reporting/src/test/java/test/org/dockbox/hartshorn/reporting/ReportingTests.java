@@ -19,26 +19,26 @@ package test.org.dockbox.hartshorn.reporting;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.reporting.DiagnosticsReport;
 import org.dockbox.hartshorn.reporting.DiagnosticsReportCollector;
-import org.dockbox.hartshorn.reporting.ReportSerializationException;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.UseReporting;
 import org.dockbox.hartshorn.reporting.serialize.ObjectMapperReportSerializer.JsonReportSerializer;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.properties.Node;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @UseReporting
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ReportingTests {
+class ReportingTests {
 
     @Inject
     private ApplicationContext applicationContext;
 
     @Test
-    void testSystemReporterCreatesNonNullReport() {
+    void systemReporterCreatesNonNullReport() {
         // Given
         Reportable configurable = this.applicationContext.get(Reportable.class);
         DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
@@ -48,11 +48,11 @@ public class ReportingTests {
         Node<?> root = report.root();
 
         // Then
-        Assertions.assertNotNull(root);
+        assertThat(root).isNotNull();
     }
 
     @Test
-    void testSystemReporterCreatesNonNullReportWithCustomReportable() throws ReportSerializationException {
+    void systemReporterCreatesNonNullReportWithCustomReportable() throws Exception {
         // Given
         Reportable configurable = this.applicationContext.get(Reportable.class);
         DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
@@ -61,8 +61,7 @@ public class ReportingTests {
         DiagnosticsReport report = collector.report(configurable);
         String serialized = report.serialize(new JsonReportSerializer());
 
-        // Then
-        Assertions.assertNotNull(serialized);
-        Assertions.assertFalse(serialized.isEmpty());
+        assertThat(serialized)
+                .isNotEmpty();
     }
 }

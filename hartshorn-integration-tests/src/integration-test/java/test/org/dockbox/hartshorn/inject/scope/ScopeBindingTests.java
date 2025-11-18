@@ -23,20 +23,21 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.introspect.ParameterizableType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import test.org.dockbox.hartshorn.inject.scope.ScopedBindingConfiguration.SampleScope;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ScopeBindingTests {
+class ScopeBindingTests {
 
     @Inject
     private ApplicationContext applicationContext;
 
     @Test
-    void testScopeBindingIsNotAccessibleFromApplication() {
+    void scopeBindingIsNotAccessibleFromApplication() {
         Scope scope = ScopeAdapter.of(new Object(), ParameterizableType.create(Object.class));
         ComponentKey<String> key = ComponentKey.builder(String.class)
                 .scope(scope)
@@ -44,16 +45,16 @@ public class ScopeBindingTests {
 
         this.applicationContext.bind(key).singleton("test");
         String value = this.applicationContext.get(key);
-        Assertions.assertEquals("test", value);
+        assertThat(value).isEqualTo("test");
 
         ComponentKey<String> componentKeyNoScope = ComponentKey.of(String.class);
 
         String valueNoScope = this.applicationContext.get(componentKeyNoScope);
-        Assertions.assertEquals("", valueNoScope); // Default value for primitives
+        assertThat(valueNoScope).isEmpty(); // Default value for primitives
     }
 
     @Test
-    void testApplicationBindingIsAccessibleFromScope() {
+    void applicationBindingIsAccessibleFromScope() {
         this.applicationContext.bind(String.class).singleton("test");
 
         Scope scope = ScopeAdapter.of(new Object(), ParameterizableType.create(Object.class));
@@ -62,15 +63,15 @@ public class ScopeBindingTests {
                 .build();
 
         String value = this.applicationContext.get(key);
-        Assertions.assertEquals("test", value);
+        assertThat(value).isEqualTo("test");
     }
 
     @Test
     @TestComponents(ScopedBindingConfiguration.class)
-    void testConfigurationScopedValuesAreInstalled() {
+    void configurationScopedValuesAreInstalled() {
         String applicationScope = this.applicationContext.get(String.class);
         String scopedValue = this.applicationContext.get(ComponentKey.builder(String.class).scope(new SampleScope()).build());
-        Assertions.assertEquals("", applicationScope);
-        Assertions.assertEquals("test", scopedValue);
+        assertThat(applicationScope).isEmpty();
+        assertThat(scopedValue).isEqualTo("test");
     }
 }

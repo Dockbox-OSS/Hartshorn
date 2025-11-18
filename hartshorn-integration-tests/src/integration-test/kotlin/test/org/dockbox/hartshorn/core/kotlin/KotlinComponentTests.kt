@@ -15,12 +15,14 @@
  */
 package test.org.dockbox.hartshorn.core.kotlin
 
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.dockbox.hartshorn.inject.annotations.Inject
 import org.dockbox.hartshorn.launchpad.ApplicationContext
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment
 import org.dockbox.hartshorn.inject.component.ComponentRegistry
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -46,20 +48,20 @@ class KotlinComponentTests {
 
     @ParameterizedTest
     @MethodSource("components")
-    fun <T> testComponent(componentType: Class<T>, applicationContextFunction: ((T) -> ApplicationContext)?, applicationManagerFunction: ((T) -> ApplicationEnvironment)?) {
+    fun <T> component(componentType: Class<T>, applicationContextFunction: ((T) -> ApplicationContext)?, applicationManagerFunction: ((T) -> ApplicationEnvironment)?) {
         val component: T = this.applicationContext.get(componentType)
-        Assertions.assertNotNull(component)
+        assertThat(component).isNotNull()
 
         val container = this.componentRegistry.container(componentType)
-        Assertions.assertNotNull(container)
-        Assertions.assertTrue(container.present())
+        assertThat(container).isNotNull()
+        assertTrue(container.present())
 
         if (applicationContextFunction != null) {
-            Assertions.assertSame(this.applicationContext, applicationContextFunction(component))
+            assertThat(applicationContextFunction(component)).isSameAs(this.applicationContext)
         }
 
         if (applicationManagerFunction != null) {
-            Assertions.assertSame(this.applicationContext.environment(), applicationManagerFunction(component))
+            assertThat(applicationManagerFunction(component)).isSameAs(this.applicationContext.environment())
         }
 
     }

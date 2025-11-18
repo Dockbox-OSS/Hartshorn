@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Prototype;
 import org.dockbox.hartshorn.inject.annotations.Priority;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class PriorityBindingTests {
@@ -38,42 +39,42 @@ public class PriorityBindingTests {
 
     @Test
     @TestComponents({ ZeroAndDefaultPriorityConfiguration.class, ImplicitPriorityConfiguration.class})
-    void testProvisionWithImplicitPriority() {
+    void provisionWithImplicitPriority() {
         TestPriorityComponent component = this.applicationContext.get(TestPriorityComponent.class);
-        Assertions.assertEquals(PRIORITY_ZERO + PRIORITY_ONE, component.name());
+        assertThat(component.name()).isEqualTo(PRIORITY_ZERO + PRIORITY_ONE);
     }
 
     @Test
     @TestComponents({ ZeroAndDefaultPriorityConfiguration.class, ExplicitPriorityConfiguration.class})
-    void testProvisionWithExplicitPriority() {
+    void provisionWithExplicitPriority() {
         TestPriorityComponent component = this.applicationContext.get(TestPriorityComponent.class);
-        Assertions.assertEquals(PRIORITY_DEFAULT + PRIORITY_ONE, component.name());
+        assertThat(component.name()).isEqualTo(PRIORITY_DEFAULT + PRIORITY_ONE);
     }
 
     @Test
-    void testPrioritySingletonBinding() {
+    void prioritySingletonBinding() {
         this.applicationContext.bind(String.class).singleton("Hello world!");
         this.applicationContext.bind(String.class).priority(0).singleton("Hello modified world!");
 
         String binding = this.applicationContext.get(String.class);
-        Assertions.assertEquals("Hello modified world!", binding);
+        assertThat(binding).isEqualTo("Hello modified world!");
 
         this.applicationContext.bind(String.class).priority(-2).singleton("Hello low priority world!");
         String binding2 = this.applicationContext.get(String.class);
-        Assertions.assertEquals("Hello modified world!", binding2);
+        assertThat(binding2).isEqualTo("Hello modified world!");
     }
 
     @Test
-    void testPrioritySupplierBinding() {
+    void prioritySupplierBinding() {
         this.applicationContext.bind(String.class).to(() -> "Hello world!");
         this.applicationContext.bind(String.class).priority(0).to(() -> "Hello modified world!");
 
         String binding = this.applicationContext.get(String.class);
-        Assertions.assertEquals("Hello modified world!", binding);
+        assertThat(binding).isEqualTo("Hello modified world!");
 
         this.applicationContext.bind(String.class).priority(-2).to(() -> "Hello low priority world!");
         String binding2 = this.applicationContext.get(String.class);
-        Assertions.assertEquals("Hello modified world!", binding2);
+        assertThat(binding2).isEqualTo("Hello modified world!");
     }
 
     @Configuration

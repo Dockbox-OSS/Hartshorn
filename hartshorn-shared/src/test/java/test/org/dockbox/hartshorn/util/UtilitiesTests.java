@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.types.TypeConversionException;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -36,6 +35,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 public class UtilitiesTests {
 
@@ -111,151 +114,159 @@ public class UtilitiesTests {
 
     @ParameterizedTest
     @MethodSource("capitalizeValues")
-    void testCapitalizeChangesOnlyFirstCharacter(String input, String expected) {
+    void capitalizeChangesOnlyFirstCharacter(String input, String expected) {
         String value = StringUtilities.capitalize(input);
-        Assertions.assertNotNull(value);
-        Assertions.assertEquals(expected, value);
+        assertThat(value)
+                .isNotNull()
+                .isEqualTo(expected);
     }
 
     @Test
-    void testCapitalizeAcceptsEmptyValue() {
-        String value = Assertions.assertDoesNotThrow(() -> StringUtilities.capitalize(""));
-        Assertions.assertNotNull(value);
-        Assertions.assertEquals("", value);
+    void capitalizeAcceptsEmptyValue() {
+        String value = assertThatCode(() -> StringUtilities.capitalize("")).doesNotThrowAnyException();
+        assertThat(value).isNotNull();
+        assertThat(value).isEmpty();
     }
 
     @Test
-    void testIsEmptyStringTrueIfNull() {
-        Assertions.assertTrue(StringUtilities.empty(null));
+    void isEmptyStringTrueIfNull() {
+        assertThat(StringUtilities.empty(null)).isTrue();
     }
 
     @Test
-    void testIsEmptyStringTrueIfEmpty() {
-        Assertions.assertTrue(StringUtilities.empty(""));
+    void isEmptyStringTrueIfEmpty() {
+        assertThat(StringUtilities.empty("")).isTrue();
     }
 
     @Test
-    void testIsEmptyStringFalseIfContent() {
-        Assertions.assertFalse(StringUtilities.empty("value"));
+    void isEmptyStringFalseIfContent() {
+        assertThat(StringUtilities.empty("value")).isFalse();
     }
 
     @Test
-    void testIsNotEmptyStringFalseIfNull() {
-        Assertions.assertFalse(StringUtilities.notEmpty(null));
+    void isNotEmptyStringFalseIfNull() {
+        assertThat(StringUtilities.notEmpty(null)).isFalse();
     }
 
     @Test
-    void testIsNotEmptyStringFalseIfEmpty() {
-        Assertions.assertFalse(StringUtilities.notEmpty(""));
+    void isNotEmptyStringFalseIfEmpty() {
+        assertThat(StringUtilities.notEmpty("")).isFalse();
     }
 
     @Test
-    void testIsNotEmptyStringTrueIfContent() {
-        Assertions.assertTrue(StringUtilities.notEmpty("value"));
+    void isNotEmptyStringTrueIfContent() {
+        assertThat(StringUtilities.notEmpty("value")).isTrue();
     }
 
     @Test
-    void testStripReplacesAllSpaces() {
+    void stripReplacesAllSpaces() {
         String stripped = StringUtilities.strip(" val ue  ");
-        Assertions.assertNotNull(stripped);
-        Assertions.assertEquals("value", stripped);
+        assertThat(stripped)
+                .isNotNull()
+                .isEqualTo("value");
     }
 
     @Test
-    void testStripReplacesAllTabs() {
+    void stripReplacesAllTabs() {
         String stripped = StringUtilities.strip("\tval\tue\t\t");
-        Assertions.assertNotNull(stripped);
-        Assertions.assertEquals("value", stripped);
+        assertThat(stripped)
+                .isNotNull()
+                .isEqualTo("value");
     }
 
     @Test
-    void testStripReplacesAllNewLines() {
+    void stripReplacesAllNewLines() {
         String stripped = StringUtilities.strip("\nval\nue\n\n");
-        Assertions.assertNotNull(stripped);
-        Assertions.assertEquals("value", stripped);
+        assertThat(stripped)
+                .isNotNull()
+                .isEqualTo("value");
     }
 
     @Test
-    void testStripReplacesAllCarriageReturns() {
+    void stripReplacesAllCarriageReturns() {
         String stripped = StringUtilities.strip("\rval\rue\r\r");
-        Assertions.assertNotNull(stripped);
-        Assertions.assertEquals("value", stripped);
+        assertThat(stripped)
+                .isNotNull()
+                .isEqualTo("value");
     }
 
     @Test
-    void testTrimWithSpaces() {
+    void trimWithSpaces() {
         String trimmed = StringUtilities.trimWith(' ', " value  ");
-        Assertions.assertNotNull(trimmed);
-        Assertions.assertEquals("value", trimmed);
+        assertThat(trimmed)
+                .isNotNull()
+                .isEqualTo("value");
     }
 
     @Test
-    void testTrimWithRegExCharacter() {
+    void trimWithRegExCharacter() {
         String trimmed = StringUtilities.trimWith('$', "$value$$");
-        Assertions.assertNotNull(trimmed);
-        Assertions.assertEquals("value", trimmed);
+        assertThat(trimmed)
+                .isNotNull()
+                .isEqualTo("value");
     }
 
     @Test
-    void testCollectionMerge() {
+    void collectionMerge() {
         Collection<Integer> col1 = Arrays.asList(1, 2, 3);
         Collection<Integer> col2 = Arrays.asList(4, 5, 6);
         Collection<Integer> merged = CollectionUtilities.merge(col1, col2);
 
-        Assertions.assertEquals(6, merged.size());
-        Assertions.assertTrue(merged.containsAll(Arrays.asList(1, 2, 3, 4, 5, 6)));
+        assertThat(merged)
+                .hasSize(6)
+                .containsAll(Arrays.asList(1, 2, 3, 4, 5, 6));
     }
 
     @ParameterizedTest
     @MethodSource("durations")
-    void testDurationOf(String in, long expected) {
+    void durationOf(String in, long expected) {
         Option<Duration> duration = StringUtilities.durationOf(in);
-        Assertions.assertTrue(duration.present());
-        Assertions.assertEquals(expected, duration.get().getSeconds());
+        assertThat(duration.present()).isTrue();
+        assertThat(duration.get()).hasSeconds(expected);
     }
 
     @Test
-    void testDurationOfWithInvalidValue() {
+    void durationOfWithInvalidValue() {
         Option<Duration> duration = StringUtilities.durationOf("NotAValidDurationString");
-        Assertions.assertFalse(duration.present());
+        assertThat(duration.present()).isFalse();
     }
 
     @ParameterizedTest
     @MethodSource("differences")
-    void testDifferenceInCollections(Collection<String> collectionOne, Collection<String> collectionTwo, Collection<String> expected) {
+    void differenceInCollections(Collection<String> collectionOne, Collection<String> collectionTwo, Collection<String> expected) {
         Set<String> difference = CollectionUtilities.difference(collectionOne, collectionTwo);
-        Assertions.assertEquals(difference.size(), expected.size());
-        Assertions.assertTrue(difference.containsAll(expected));
-        Assertions.assertTrue(expected.containsAll(difference));
+        assertThat(expected).hasSameSizeAs(difference);
+        assertThat(difference).containsAll(expected);
+        assertThat(expected).containsAll(difference);
     }
 
     @Test
-    void testSplitCapitals() {
+    void splitCapitals() {
         String input = "ThisIsAString";
         String[] expected = { "This", "Is", "A", "String" };
         String[] actual = StringUtilities.splitCapitals(input);
-        Assertions.assertArrayEquals(expected, actual);
+        assertThat(actual).containsExactly(expected);
     }
 
     @ParameterizedTest
     @MethodSource("stringFormats")
-    void testFormat(String format, String expected, Object... args) {
+    void format(String format, String expected, Object... args) {
         String actual = StringUtilities.format(format, args);
-        Assertions.assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @ParameterizedTest
     @MethodSource("stringMapFormats")
-    void testMapFormat(String format, String expected, Map<String, String> replacements) {
+    void mapFormat(String format, String expected, Map<String, String> replacements) {
         String actual = StringUtilities.format(format, replacements);
-        Assertions.assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @ParameterizedTest
     @MethodSource("stringJoinValues")
-    <T> void testJoin(String delimiter, Iterable<T> elements, Function<T, String> toStringFunction, String expected) {
+    <T> void join(String delimiter, Iterable<T> elements, Function<T, String> toStringFunction, String expected) {
         String joined = StringUtilities.join(delimiter, elements, toStringFunction);
-        Assertions.assertEquals(expected, joined);
+        assertThat(joined).isEqualTo(expected);
     }
 
     public static Stream<Arguments> stringsToPrimitives() {
@@ -292,54 +303,56 @@ public class UtilitiesTests {
     @MethodSource("stringsToPrimitives")
     <T> void testToPrimitive(String input, Class<T> type, T expected) {
         T actual = TypeUtils.toPrimitive(type, input);
-        Assertions.assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
-    void testToPrimitiveDoesNotAcceptObjects() {
-        Assertions.assertThrows(NotPrimitiveException.class, () -> TypeUtils.toPrimitive(Object.class, "value"));
-        Assertions.assertThrows(NotPrimitiveException.class, () -> TypeUtils.toPrimitive(String.class, "value"));
-        Assertions.assertThrows(NotPrimitiveException.class, () -> TypeUtils.toPrimitive(List.class, "value"));
+    void toPrimitiveDoesNotAcceptObjects() {
+        assertThatExceptionOfType(NotPrimitiveException.class).isThrownBy(() -> TypeUtils.toPrimitive(Object.class, "value"));
+        assertThatExceptionOfType(NotPrimitiveException.class).isThrownBy(() -> TypeUtils.toPrimitive(String.class, "value"));
+        assertThatExceptionOfType(NotPrimitiveException.class).isThrownBy(() -> TypeUtils.toPrimitive(List.class, "value"));
     }
 
     @ParameterizedTest
     @MethodSource("invalidStringsToPrimitives")
-    <T> void testToPrimitiveThrowsOnInvalidInput(String input, Class<T> type) {
-        Assertions.assertThrows(TypeConversionException.class, () -> TypeUtils.toPrimitive(type, input));
+    <T> void toPrimitiveThrowsOnInvalidInput(String input, Class<T> type) {
+        assertThatExceptionOfType(TypeConversionException.class).isThrownBy(() -> TypeUtils.toPrimitive(type, input));
     }
 
     @Test
-    void testValidWildcardAdjustment() {
+    void validWildcardAdjustment() {
         List<?> list = Arrays.asList("one", "two", "three");
-        List<String> adjusted = Assertions.assertDoesNotThrow(() -> TypeUtils.unchecked(list, List.class));
-        Assertions.assertNotNull(adjusted);
-        Assertions.assertSame(list, adjusted);
+        List<String> adjusted = assertThatCode(() -> TypeUtils.unchecked(list, List.class)).doesNotThrowAnyException();
+        assertThat(adjusted)
+                .isNotNull()
+                .isSameAs(list);
     }
 
     @Test
-    void testWildcardAdjustmentDoesAdjustParent() {
+    void wildcardAdjustmentDoesAdjustParent() {
         List<?> list = Arrays.asList("one", "two", "three");
-        List<String> adjusted = Assertions.assertDoesNotThrow(() -> TypeUtils.unchecked(list, Collection.class));
-        Assertions.assertNotNull(adjusted);
-        Assertions.assertSame(list, adjusted);
+        List<String> adjusted = assertThatCode(() -> TypeUtils.unchecked(list, Collection.class)).doesNotThrowAnyException();
+        assertThat(adjusted)
+                .isNotNull()
+                .isSameAs(list);
     }
 
     @Test
-    void testAnnotationCreatesEmptyAnnotation() {
+    void annotationCreatesEmptyAnnotation() {
         TestAnnotation annotation = TypeUtils.annotation(TestAnnotation.class);
-        Assertions.assertNotNull(annotation);
+        assertThat(annotation).isNotNull();
     }
 
     @Test
-    void testAnnotationCreatesAnnotationWithValues() {
+    void annotationCreatesAnnotationWithValues() {
         TestAnnotationWithValue annotation = TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", "test"));
-        Assertions.assertNotNull(annotation);
-        Assertions.assertEquals("test", annotation.value());
+        assertThat(annotation).isNotNull();
+        assertThat(annotation.value()).isEqualTo("test");
     }
 
     @Test
-    void testAnnotationValidatesValues() {
-        Assertions.assertThrows(IllegalStateException.class, () -> TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", 1)));
+    void annotationValidatesValues() {
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> TypeUtils.annotation(TestAnnotationWithValue.class, Map.of("value", 1)));
     }
 
     private @interface TestAnnotation {

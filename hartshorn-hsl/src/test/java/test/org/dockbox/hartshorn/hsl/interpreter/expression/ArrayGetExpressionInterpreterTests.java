@@ -24,15 +24,17 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.expression.ArrayGetExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
 
-public class ArrayGetExpressionInterpreterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+class ArrayGetExpressionInterpreterTests {
 
     @Test
-    void testArrayGetExpressionCanGetIfInRange() {
+    void arrayGetExpressionCanGetIfInRange() {
         Object[] realArray = { "test" };
         int targetIndex = 0;
 
@@ -47,11 +49,11 @@ public class ArrayGetExpressionInterpreterTests {
         ArrayGetExpression getExpression = new ArrayGetExpression(arrayIdentifier, index);
 
         Object interpretedValue = expressionInterpreter.interpret(getExpression, interpreter);
-        Assertions.assertEquals(realArray[targetIndex], interpretedValue);
+        assertThat(interpretedValue).isEqualTo(realArray[targetIndex]);
     }
 
     @Test
-    void testArrayGetExpressionThrowsIfOutOfRange() {
+    void arrayGetExpressionThrowsIfOutOfRange() {
         Object[] realArray = { "test" };
         int targetIndex = 1;
 
@@ -65,6 +67,6 @@ public class ArrayGetExpressionInterpreterTests {
         ASTNodeInterpreter<Object, ArrayGetExpression> expressionInterpreter = new ArrayGetExpressionInterpreter();
         ArrayGetExpression getExpression = new ArrayGetExpression(arrayIdentifier, index);
 
-        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> expressionInterpreter.interpret(getExpression, interpreter));
+        assertThatExceptionOfType(ArrayIndexOutOfBoundsException.class).isThrownBy(() -> expressionInterpreter.interpret(getExpression, interpreter));
     }
 }

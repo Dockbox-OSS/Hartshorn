@@ -22,6 +22,10 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.lexer.SimpleTokenRegistryLexer;
@@ -37,7 +41,6 @@ import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
 import org.dockbox.hartshorn.hsl.token.type.EnumTokenType;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -50,9 +53,7 @@ public class LexerTests {
     public static Stream<Arguments> tokens() {
         final List<Arguments> arguments = new ArrayList<>();
         DefaultTokenRegistry tokenRegistry = DefaultTokenRegistry.createDefault();
-        Set<TokenType> nonLiteralTokens = tokenRegistry.tokenTypes(type -> {
-            return !(type instanceof LiteralTokenType || tokenRegistry.comments().resolveFromOpenToken(type).present());
-        });
+        Set<TokenType> nonLiteralTokens = tokenRegistry.tokenTypes(type -> !(type instanceof LiteralTokenType || tokenRegistry.comments().resolveFromOpenToken(type).present()));
         for (TokenType type : nonLiteralTokens) {
             arguments.add(Arguments.of(type.representation(), type));
         }
@@ -65,57 +66,57 @@ public class LexerTests {
 
     @ParameterizedTest
     @MethodSource("tokens")
-    void testCorrectToken(String text, TokenType expected) {
+    void correctToken(String text, TokenType expected) {
         Lexer lexer = new SimpleTokenRegistryLexer(text, InterpreterTestHelper.defaultTokenRegistry());
         List<Token> tokens = lexer.scanTokens();
 
-        Assertions.assertNotNull(tokens);
-        Assertions.assertEquals(2, tokens.size());
+        assertThat(tokens).isNotNull();
+        assertThat(tokens).hasSize(2);
 
         Token token = tokens.getFirst();
-        Assertions.assertEquals(expected, token.type());
-        Assertions.assertEquals(1, token.line());
+        assertThat(token.type()).isEqualTo(expected);
+        assertThat(token.line()).isOne();
 
         Token eof = tokens.get(1);
-        Assertions.assertEquals(LiteralTokenType.EOF, eof.type());
+        assertThat(eof.type()).isEqualTo(LiteralTokenType.EOF);
     }
 
     @Test
-    void testSingleLineComment() {
+    void singleLineComment() {
         Lexer lexer = new SimpleTokenRegistryLexer("# Comment", InterpreterTestHelper.defaultTokenRegistry());
         List<Token> tokens = lexer.scanTokens();
 
-        Assertions.assertNotNull(tokens);
-        Assertions.assertEquals(1, tokens.size());
+        assertThat(tokens).isNotNull();
+        assertThat(tokens).hasSize(1);
 
         Token token = tokens.getFirst();
-        Assertions.assertEquals(LiteralTokenType.EOF, token.type());
+        assertThat(token.type()).isEqualTo(LiteralTokenType.EOF);
 
         List<Comment> comments = lexer.comments();
-        Assertions.assertNotNull(comments);
-        Assertions.assertEquals(1, comments.size());
+        assertThat(comments).isNotNull();
+        assertThat(comments).hasSize(1);
 
         Comment comment = comments.getFirst();
         // Comments are not trimmed, include whitespace
-        Assertions.assertEquals(" Comment", comment.text());
+        assertThat(comment.text()).isEqualTo(" Comment");
     }
 
     @Test
-    void testCombinedOperatorsAreParsedCorrectly() {
+    void combinedOperatorsAreParsedCorrectly() {
         // No such operator (logical shift left), so should be parsed as '1 << < 2' (1 shift left, less than 2).
         // While this isn't valid code for HSL, it's a good test to see if the lexer is working as expected.
         final Lexer lexer = new SimpleTokenRegistryLexer("1 <<< 2", InterpreterTestHelper.defaultTokenRegistry());
         List<Token> tokens = lexer.scanTokens();
-        Assertions.assertSame(5, tokens.size());
-        Assertions.assertEquals(LiteralTokenType.NUMBER, tokens.get(0).type());
-        Assertions.assertEquals(BitwiseTokenType.SHIFT_LEFT, tokens.get(1).type());
-        Assertions.assertEquals(ConditionTokenType.LESS, tokens.get(2).type());
-        Assertions.assertEquals(LiteralTokenType.NUMBER, tokens.get(3).type());
-        Assertions.assertEquals(LiteralTokenType.EOF, tokens.get(4).type());
+        assertThat(tokens).size().isSameAs(5);
+        assertThat(tokens.get(0).type()).isEqualTo(LiteralTokenType.NUMBER);
+        assertThat(tokens.get(1).type()).isEqualTo(BitwiseTokenType.SHIFT_LEFT);
+        assertThat(tokens.get(2).type()).isEqualTo(ConditionTokenType.LESS);
+        assertThat(tokens.get(3).type()).isEqualTo(LiteralTokenType.NUMBER);
+        assertThat(tokens.get(4).type()).isEqualTo(LiteralTokenType.EOF);
     }
 
     @Test
-    void testIncompleteTokenStepsBackToParent() {
+    void incompleteTokenStepsBackToParent() {
         DefaultTokenRegistry registry = DefaultTokenRegistry.createDefault();
         registry.addTokens(QuadrupleToken.QUADRUPLE_DASH);
 
@@ -125,19 +126,19 @@ public class LexerTests {
         final Lexer lexer = new SimpleTokenRegistryLexer("---", registry);
         List<Token> tokens = lexer.scanTokens();
 
-        Assertions.assertSame(3, tokens.size());
-        Assertions.assertEquals(ArithmeticTokenType.MINUS_MINUS, tokens.get(0).type());
-        Assertions.assertEquals(ArithmeticTokenType.MINUS, tokens.get(1).type());
-        Assertions.assertEquals(LiteralTokenType.EOF, tokens.get(2).type());
+        assertThat(tokens).size().isSameAs(3);
+        assertThat(tokens.get(0).type()).isEqualTo(ArithmeticTokenType.MINUS_MINUS);
+        assertThat(tokens.get(1).type()).isEqualTo(ArithmeticTokenType.MINUS);
+        assertThat(tokens.get(2).type()).isEqualTo(LiteralTokenType.EOF);
     }
 
     @Test
-    void testIncompleteInvalidTokenFails() {
+    void incompleteInvalidTokenFails() {
         DefaultTokenRegistry registry = DefaultTokenRegistry.createDefault();
         registry.addTokens(QuadrupleToken.QUADRUPLE_AT);
 
         final Lexer lexer = new SimpleTokenRegistryLexer("@@@", registry);
-        Assertions.assertThrows(ScriptEvaluationError.class, lexer::scanTokens);
+        assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(lexer::scanTokens);
     }
 
     enum QuadrupleToken implements EnumTokenType {

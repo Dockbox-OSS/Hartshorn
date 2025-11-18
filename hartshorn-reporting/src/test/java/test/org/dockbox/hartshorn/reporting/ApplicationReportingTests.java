@@ -29,43 +29,44 @@ import org.dockbox.hartshorn.reporting.system.SystemDiagnosticsReporter;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.properties.GroupNode;
 import org.dockbox.hartshorn.util.properties.Node;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @UseReporting
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ApplicationReportingTests {
+class ApplicationReportingTests {
 
     @Inject
     private ApplicationContext applicationContext;
 
     @Test
-    void testApplicationDiagnosticsReportingPasses() {
+    void applicationDiagnosticsReportingPasses() {
         Reportable configurable = this.applicationContext.get(Reportable.class);
         DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
 
         DiagnosticsReport report = collector.report(configurable);
-        Assertions.assertNotNull(report);
+        assertThat(report).isNotNull();
     }
 
     @Test
-    void testApplicationDiagnosticsIncludeRequiredDiagnostics() {
+    void applicationDiagnosticsIncludeRequiredDiagnostics() {
         Reportable configurable = this.applicationContext.get(Reportable.class);
         DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
 
         DiagnosticsReport report = collector.report(configurable);
         Node<?> root = report.root();
 
-        Assertions.assertNotNull(report);
-        Assertions.assertNotNull(root);
-        Assertions.assertTrue(root instanceof GroupNode);
+        assertThat(report).isNotNull();
+        assertThat(root).isNotNull();
+        assertThat(root).isInstanceOf(GroupNode.class);
 
         GroupNode group = (GroupNode) root;
-        Assertions.assertFalse(group.value().isEmpty());
+        assertThat(group.value()).isNotEmpty();
 
-        Assertions.assertTrue(group.has(ApplicationDiagnosticsReporter.APPLICATION_CATEGORY));
-        Assertions.assertTrue(group.has(ComponentDiagnosticsReporter.COMPONENTS_CATEGORY));
-        Assertions.assertTrue(group.has(ComponentProcessorDiagnosticsReporter.COMPONENT_PROCESSORS_CATEGORY));
-        Assertions.assertTrue(group.has(SystemDiagnosticsReporter.SYSTEM_CATEGORY));
+        assertThat(group.has(ApplicationDiagnosticsReporter.APPLICATION_CATEGORY)).isTrue();
+        assertThat(group.has(ComponentDiagnosticsReporter.COMPONENTS_CATEGORY)).isTrue();
+        assertThat(group.has(ComponentProcessorDiagnosticsReporter.COMPONENT_PROCESSORS_CATEGORY)).isTrue();
+        assertThat(group.has(SystemDiagnosticsReporter.SYSTEM_CATEGORY)).isTrue();
     }
 }

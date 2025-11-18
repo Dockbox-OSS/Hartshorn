@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
-import org.dockbox.hartshorn.util.introspect.Parameter;
 
 import java.util.List;
 

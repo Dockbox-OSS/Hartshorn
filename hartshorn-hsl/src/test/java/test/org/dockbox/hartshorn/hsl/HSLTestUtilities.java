@@ -19,9 +19,11 @@ package test.org.dockbox.hartshorn.hsl;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
-import org.junit.jupiter.api.Assertions;
 
 import java.util.Locale;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 public class HSLTestUtilities {
 
@@ -29,7 +31,7 @@ public class HSLTestUtilities {
             ExecutableScript executableScript,
             FormattedDiagnostic diagnosticMessage
     ) {
-        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, executableScript::evaluate);
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(executableScript::evaluate).actual();
         assertEvaluationError(error, diagnosticMessage);
     }
 
@@ -40,11 +42,11 @@ public class HSLTestUtilities {
         String phase = error.phase().name().toLowerCase(Locale.ROOT);
         String expectedMessageStart = diagnosticMessage.format();
         String actualMessageStart = error.getMessage().split("While " + phase)[0].trim();
-        Assertions.assertEquals(expectedMessageStart, actualMessageStart);
+        assertThat(actualMessageStart).isEqualTo(expectedMessageStart);
     }
 
     public static void assertEvaluationFailedAtPosition(ScriptEvaluationError error, int line, int column) {
-        Assertions.assertEquals(line, error.line());
-        Assertions.assertEquals(column, error.column());
+        assertThat(error.line()).isEqualTo(line);
+        assertThat(error.column()).isEqualTo(column);
     }
 }

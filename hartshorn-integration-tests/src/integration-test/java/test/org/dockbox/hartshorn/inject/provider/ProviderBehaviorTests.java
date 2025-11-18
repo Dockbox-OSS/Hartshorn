@@ -25,7 +25,6 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.ApplicationException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -34,109 +33,112 @@ import test.org.dockbox.hartshorn.inject.populate.PopulatedType;
 
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ProviderBehaviorTests {
+class ProviderBehaviorTests {
 
     @Inject
     private ApplicationContext applicationContext;
 
     @Test
-    public void testStaticBindingCanBeProvided() {
+    void staticBindingCanBeProvided() {
         this.applicationContext.bind(SampleInterface.class).to(SampleImplementation.class);
         SampleInterface provided = this.applicationContext.get(SampleInterface.class);
-        Assertions.assertNotNull(provided);
+        assertThat(provided).isNotNull();
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertSame(SampleImplementation.class, providedClass);
+        assertThat(providedClass).isSameAs(SampleImplementation.class);
 
-        Assertions.assertEquals(SampleImplementation.NAME, provided.name());
+        assertThat(provided.name()).isEqualTo(SampleImplementation.NAME);
     }
 
     @Test
-    public void testStaticBindingWithMetaCanBeProvided() {
+    void staticBindingWithMetaCanBeProvided() {
         ComponentKey<SampleInterface> key = ComponentKey.of(SampleInterface.class, "demo");
         this.applicationContext.bind(key).to(SampleImplementation.class);
         SampleInterface provided = this.applicationContext.get(key);
-        Assertions.assertNotNull(provided);
+        assertThat(provided).isNotNull();
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertSame(SampleImplementation.class, providedClass);
+        assertThat(providedClass).isSameAs(SampleImplementation.class);
 
-        Assertions.assertEquals(SampleImplementation.NAME, provided.name());
+        assertThat(provided.name()).isEqualTo(SampleImplementation.NAME);
     }
 
     @Test
-    public void testInstanceBindingCanBeProvided() {
+    void instanceBindingCanBeProvided() {
         this.applicationContext.bind(SampleInterface.class).singleton(new SampleImplementation());
         SampleInterface provided = this.applicationContext.get(SampleInterface.class);
-        Assertions.assertNotNull(provided);
+        assertThat(provided).isNotNull();
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertSame(SampleImplementation.class, providedClass);
+        assertThat(providedClass).isSameAs(SampleImplementation.class);
 
-        Assertions.assertEquals(SampleImplementation.NAME, provided.name());
+        assertThat(provided.name()).isEqualTo(SampleImplementation.NAME);
     }
 
     @Test
-    public void testInstanceBindingWithMetaCanBeProvided() {
+    void instanceBindingWithMetaCanBeProvided() {
         ComponentKey<SampleInterface> key = ComponentKey.of(SampleInterface.class, "demo");
         this.applicationContext.bind(key).singleton(new SampleImplementation());
         SampleInterface provided = this.applicationContext.get(key);
-        Assertions.assertNotNull(provided);
+        assertThat(provided).isNotNull();
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertSame(SampleImplementation.class, providedClass);
+        assertThat(providedClass).isSameAs(SampleImplementation.class);
 
-        Assertions.assertEquals(SampleImplementation.NAME, provided.name());
+        assertThat(provided.name()).isEqualTo(SampleImplementation.NAME);
     }
 
     @Test
-    public void testProviderBindingCanBeProvided() {
+    void providerBindingCanBeProvided() {
         this.applicationContext.bind(SampleInterface.class).to(SampleImplementation::new);
         SampleInterface provided = this.applicationContext.get(SampleInterface.class);
-        Assertions.assertNotNull(provided);
+        assertThat(provided).isNotNull();
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertSame(SampleImplementation.class, providedClass);
+        assertThat(providedClass).isSameAs(SampleImplementation.class);
 
-        Assertions.assertEquals(SampleImplementation.NAME, provided.name());
+        assertThat(provided.name()).isEqualTo(SampleImplementation.NAME);
     }
 
     @Test
-    public void testProviderBindingWithMetaCanBeProvided() {
+    void providerBindingWithMetaCanBeProvided() {
         ComponentKey<SampleInterface> key = ComponentKey.of(SampleInterface.class, "demo");
         this.applicationContext.bind(key).to(SampleImplementation::new);
         SampleInterface provided = this.applicationContext.get(key);
-        Assertions.assertNotNull(provided);
+        assertThat(provided).isNotNull();
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertSame(SampleImplementation.class, providedClass);
+        assertThat(providedClass).isSameAs(SampleImplementation.class);
 
-        Assertions.assertEquals(SampleImplementation.NAME, provided.name());
+        assertThat(provided.name()).isEqualTo(SampleImplementation.NAME);
     }
 
     @Test
     @TestComponents(SampleNamedConfiguration.class)
-    public void testScannedMetaBindingsCanBeProvided() {
+    void scannedMetaBindingsCanBeProvided() {
 
         // Ensure that the binding is not bound to the default name
-        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(SampleInterface.class));
+        assertThatExceptionOfType(ComponentResolutionException.class).isThrownBy(() -> this.applicationContext.get(SampleInterface.class));
 
         SampleInterface provided = this.applicationContext.get(ComponentKey.of(SampleInterface.class, "meta"));
-        Assertions.assertNotNull(provided);
+        assertThat(provided).isNotNull();
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertSame(SampleMetaAnnotatedImplementation.class, providedClass);
+        assertThat(providedClass).isSameAs(SampleMetaAnnotatedImplementation.class);
 
-        Assertions.assertEquals("MetaAnnotatedHartshorn", provided.name());
+        assertThat(provided.name()).isEqualTo("MetaAnnotatedHartshorn");
     }
 
     @Test
     @TestComponents({PopulatedType.class, SampleConfiguration.class})
-    public void unboundTypesCanBeProvided() {
+    void unboundTypesCanBeProvided() {
         PopulatedType provided = this.applicationContext.get(PopulatedType.class);
-        Assertions.assertNotNull(provided);
-        Assertions.assertNotNull(provided.sampleInterface());
+        assertThat(provided).isNotNull();
+        assertThat(provided.sampleInterface()).isNotNull();
     }
 
     @Configuration
@@ -149,42 +151,42 @@ public class ProviderBehaviorTests {
     }
 
     @Test
-    void testFailureInComponentConstructorYieldsInitializationException() {
-        ComponentResolutionException exception = Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(
-                ErrorInConstructorObject.class));
+    void failureInComponentConstructorYieldsInitializationException() {
+        ComponentResolutionException exception = assertThatExceptionOfType(ComponentResolutionException.class).isThrownBy(() -> this.applicationContext.get(
+                ErrorInConstructorObject.class)).actual();
         Throwable cause = exception.getCause();
-        Assertions.assertNotNull(cause);
-        Assertions.assertTrue(cause instanceof ApplicationException);
+        assertThat(cause).isNotNull();
+        assertThat(cause).isInstanceOf(ApplicationException.class);
 
         ApplicationException applicationException = (ApplicationException) cause;
-        Assertions.assertEquals("Failed to create instance of type " + ErrorInConstructorObject.class.getName(), applicationException.getMessage());
+        assertThat(applicationException.getMessage()).isEqualTo("Failed to create instance of type " + ErrorInConstructorObject.class.getName());
     }
 
     @Test
-    void testFailingConstructorIsRethrown() {
-        ComponentResolutionException exception = Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(
-                TypeWithFailingConstructor.class));
-        Assertions.assertTrue(exception.getCause() instanceof ApplicationException);
+    void failingConstructorIsRethrown() {
+        ComponentResolutionException exception = assertThatExceptionOfType(ComponentResolutionException.class).isThrownBy(() -> this.applicationContext.get(
+                TypeWithFailingConstructor.class)).actual();
+        assertThat(exception.getCause()).isInstanceOf(ApplicationException.class);
 
         ApplicationException applicationException = (ApplicationException) exception.getCause();
-        Assertions.assertTrue(applicationException.getCause() instanceof IllegalStateException);
+        assertThat(applicationException.getCause()).isInstanceOf(IllegalStateException.class);
 
         IllegalStateException illegalStateException = (IllegalStateException) applicationException.getCause();
-        Assertions.assertEquals(TypeWithFailingConstructor.ERROR_MESSAGE, illegalStateException.getMessage());
+        assertThat(illegalStateException.getMessage()).isEqualTo(TypeWithFailingConstructor.ERROR_MESSAGE);
     }
 
     @Test
-    void testStringProvision() {
+    void stringProvision() {
         ComponentKey<String> key = ComponentKey.of(String.class, "license");
         this.applicationContext.bind(key).singleton("MIT");
         String license = this.applicationContext.get(key);
-        Assertions.assertEquals("MIT", license);
+        assertThat(license).isEqualTo("MIT");
     }
 
     @ParameterizedTest
     @MethodSource("providers")
     @TestComponents({ SampleFieldImplementation.class, SampleProviderConfiguration.class})
-    void testProvidersCanApply(String meta, String name, boolean field, String fieldMeta, boolean singleton) {
+    void providersCanApply(String meta, String name, boolean field, String fieldMeta, boolean singleton) {
         if (field) {
             if (fieldMeta == null) {this.applicationContext.bind(SampleField.class).to(SampleFieldImplementation.class);}
             else {
@@ -199,11 +201,11 @@ public class ProviderBehaviorTests {
         else {
             provided = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, meta));
         }
-        Assertions.assertNotNull(provided);
+        assertThat(provided).isNotNull();
 
         String actual = provided.name();
-        Assertions.assertNotNull(name);
-        Assertions.assertEquals(name, actual);
+        assertThat(name).isNotNull();
+        assertThat(actual).isEqualTo(name);
 
         if (singleton) {
             ProvidedInterface second;
@@ -213,8 +215,8 @@ public class ProviderBehaviorTests {
             else {
                 second = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, meta));
             }
-            Assertions.assertNotNull(second);
-            Assertions.assertSame(provided, second);
+            assertThat(second).isNotNull();
+            assertThat(second).isSameAs(provided);
         }
     }
 

@@ -22,241 +22,243 @@ import org.dockbox.hartshorn.util.properties.GroupNode;
 import org.dockbox.hartshorn.util.properties.Node;
 import org.dockbox.hartshorn.util.properties.SimpleNode;
 import org.dockbox.hartshorn.reporting.collect.StandardDiagnosticsPropertyWriter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class DiagnosticsPropertyWriterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+class DiagnosticsPropertyWriterTests {
 
     protected DiagnosticsPropertyWriter writer(GroupNode group) {
         return new StandardDiagnosticsPropertyWriter("test", null, group);
     }
 
     @Test
-    void testWriterClosingRejectsFurtherChanges() {
+    void writerClosingRejectsFurtherChanges() {
         DiagnosticsPropertyWriter writer = this.writer(new GroupNode(""));
         writer.writeString("test"); // Expecting auto-close
-        Assertions.assertThrows(IllegalStateException.class, () -> writer.writeString("test"));
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> writer.writeString("test"));
     }
 
     @Test
-    void testIntegerPropertyWritingCreatesSimpleNode() {
+    void integerPropertyWritingCreatesSimpleNode() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeInt(1);
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof SimpleNode);
-        Assertions.assertEquals(node.value(), 1);
+        assertThat(node).isInstanceOf(SimpleNode.class);
+        assertThat(node.value()).isEqualTo(1);
     }
 
     @Test
-    void testLongPropertyWritingCreatesSimpleNode() {
+    void longPropertyWritingCreatesSimpleNode() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeLong(2L);
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof SimpleNode);
-        Assertions.assertEquals(node.value(), 2L);
+        assertThat(node).isInstanceOf(SimpleNode.class);
+        assertThat(node.value()).isEqualTo(2L);
     }
 
     @Test
-    void testFloatPropertyWritingCreatesSimpleNode() {
+    void floatPropertyWritingCreatesSimpleNode() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeFloat(3.0f);
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof SimpleNode);
-        Assertions.assertEquals(node.value(), 3.0f);
+        assertThat(node).isInstanceOf(SimpleNode.class);
+        assertThat(node.value()).isEqualTo(3.0f);
     }
 
     @Test
-    void testDoublePropertyWritingCreatesSimpleNode() {
+    void doublePropertyWritingCreatesSimpleNode() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeDouble(4.0d);
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof SimpleNode);
-        Assertions.assertEquals(node.value(), 4.0d);
+        assertThat(node).isInstanceOf(SimpleNode.class);
+        assertThat(node.value()).isEqualTo(4.0d);
     }
 
     @Test
-    void testBooleanPropertyWritingCreatesSimpleNode() {
+    void booleanPropertyWritingCreatesSimpleNode() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeBoolean(true);
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof SimpleNode);
-        Assertions.assertEquals(node.value(), true);
+        assertThat(node).isInstanceOf(SimpleNode.class);
+        assertThat(node.value()).isEqualTo(true);
     }
 
     @Test
-    void testStringPropertyWritingCreatesSimpleNode() {
+    void stringPropertyWritingCreatesSimpleNode() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeString("test");
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof SimpleNode);
-        Assertions.assertEquals(node.value(), "test");
+        assertThat(node).isInstanceOf(SimpleNode.class);
+        assertThat(node.value()).isEqualTo("test");
     }
 
     @Test
-    void testIntegerArrayPropertyWritingCreatesArrayNode() {
+    void integerArrayPropertyWritingCreatesArrayNode() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeInts(1, 2, 3);
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof ArrayNode);
+        assertThat(node).isInstanceOf(ArrayNode.class);
         ArrayNode<?> arrayNode = (ArrayNode<?>) node;
         List<?> values = arrayNode.value();
-        Assertions.assertEquals(values.size(), 3);
-        Assertions.assertEquals(values.get(0), 1);
-        Assertions.assertEquals(values.get(1), 2);
-        Assertions.assertEquals(values.get(2), 3);
+        assertThat(values).hasSize(3);
+        assertThat(values.get(0)).isEqualTo(1);
+        assertThat(values.get(1)).isEqualTo(2);
+        assertThat(values.get(2)).isEqualTo(3);
     }
 
     @Test
-    void testLongArrayPropertyWritingCreatesArrayNode() {
+    void longArrayPropertyWritingCreatesArrayNode() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeLongs(1L, 2L, 3L);
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof ArrayNode);
+        assertThat(node).isInstanceOf(ArrayNode.class);
         ArrayNode<?> arrayNode = (ArrayNode<?>) node;
         List<?> values = arrayNode.value();
-        Assertions.assertEquals(values.size(), 3);
-        Assertions.assertEquals(values.get(0), 1L);
-        Assertions.assertEquals(values.get(1), 2L);
-        Assertions.assertEquals(values.get(2), 3L);
+        assertThat(values).hasSize(3);
+        assertThat(values.get(0)).isEqualTo(1L);
+        assertThat(values.get(1)).isEqualTo(2L);
+        assertThat(values.get(2)).isEqualTo(3L);
     }
 
     @Test
-    void testFloatArrayPropertyWritingCreatesArrayNode() {
+    void floatArrayPropertyWritingCreatesArrayNode() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeFloats(1.0f, 2.0f, 3.0f);
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof ArrayNode);
+        assertThat(node).isInstanceOf(ArrayNode.class);
         ArrayNode<?> arrayNode = (ArrayNode<?>) node;
         List<?> values = arrayNode.value();
-        Assertions.assertEquals(values.size(), 3);
-        Assertions.assertEquals(values.get(0), 1.0f);
-        Assertions.assertEquals(values.get(1), 2.0f);
-        Assertions.assertEquals(values.get(2), 3.0f);
+        assertThat(values).hasSize(3);
+        assertThat(values.get(0)).isEqualTo(1.0f);
+        assertThat(values.get(1)).isEqualTo(2.0f);
+        assertThat(values.get(2)).isEqualTo(3.0f);
     }
 
     @Test
-    void testDoubleArrayPropertyWritingCreatesArrayNode() {
+    void doubleArrayPropertyWritingCreatesArrayNode() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeDoubles(1.0d, 2.0d, 3.0d);
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof ArrayNode);
+        assertThat(node).isInstanceOf(ArrayNode.class);
         ArrayNode<?> arrayNode = (ArrayNode<?>) node;
         List<?> values = arrayNode.value();
-        Assertions.assertEquals(values.size(), 3);
-        Assertions.assertEquals(values.get(0), 1.0d);
-        Assertions.assertEquals(values.get(1), 2.0d);
-        Assertions.assertEquals(values.get(2), 3.0d);
+        assertThat(values).hasSize(3);
+        assertThat(values.get(0)).isEqualTo(1.0d);
+        assertThat(values.get(1)).isEqualTo(2.0d);
+        assertThat(values.get(2)).isEqualTo(3.0d);
     }
 
     @Test
-    void testBooleanArrayPropertyWritingCreatesArrayNode() {
+    void booleanArrayPropertyWritingCreatesArrayNode() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeBooleans(true, false, true);
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof ArrayNode);
+        assertThat(node).isInstanceOf(ArrayNode.class);
         ArrayNode<?> arrayNode = (ArrayNode<?>) node;
         List<?> values = arrayNode.value();
-        Assertions.assertEquals(values.size(), 3);
-        Assertions.assertEquals(values.get(0), true);
-        Assertions.assertEquals(values.get(1), false);
-        Assertions.assertEquals(values.get(2), true);
+        assertThat(values).hasSize(3);
+        assertThat(values.get(0)).isEqualTo(true);
+        assertThat(values.get(1)).isEqualTo(false);
+        assertThat(values.get(2)).isEqualTo(true);
     }
 
     @Test
-    void testStringArrayPropertyWritingCreatesArrayNode() {
+    void stringArrayPropertyWritingCreatesArrayNode() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeStrings("test1", "test2", "test3");
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof ArrayNode);
+        assertThat(node).isInstanceOf(ArrayNode.class);
         ArrayNode<?> arrayNode = (ArrayNode<?>) node;
         List<?> values = arrayNode.value();
-        Assertions.assertEquals(values.size(), 3);
-        Assertions.assertEquals(values.get(0), "test1");
-        Assertions.assertEquals(values.get(1), "test2");
-        Assertions.assertEquals(values.get(2), "test3");
+        assertThat(values).hasSize(3);
+        assertThat(values.get(0)).isEqualTo("test1");
+        assertThat(values.get(1)).isEqualTo("test2");
+        assertThat(values.get(2)).isEqualTo("test3");
     }
 
     @Test
-    void testReportablePropertyWritingCreatesGroupNode() {
+    void reportablePropertyWritingCreatesGroupNode() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
 
         writer.writeDelegate(collector -> collector.property("test2").writeString("test2"));
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof GroupNode);
+        assertThat(node).isInstanceOf(GroupNode.class);
 
         GroupNode groupNode = (GroupNode) node;
-        Assertions.assertTrue(groupNode.has("test2"));
-        Assertions.assertEquals(groupNode.get("test2").value(), "test2");
+        assertThat(groupNode.has("test2")).isTrue();
+        assertThat(groupNode.get("test2").value()).isEqualTo("test2");
     }
 
     @Test
-    void testReportableArrayPropertyWritingCreatesArrayNodeOfGroups() {
+    void reportableArrayPropertyWritingCreatesArrayNodeOfGroups() {
         String propertyName = "test";
         GroupNode group = new GroupNode("test");
         DiagnosticsPropertyWriter writer = this.writer(group);
@@ -265,23 +267,23 @@ public class DiagnosticsPropertyWriterTests {
                 collector -> collector.property("test2").writeString("test2"),
                 collector -> collector.property("test3").writeString("test3")
         );
-        Assertions.assertTrue(group.has(propertyName));
+        assertThat(group.has(propertyName)).isTrue();
 
         Node<?> node = group.get(propertyName);
-        Assertions.assertTrue(node instanceof ArrayNode<?>);
+        assertThat(node).isInstanceOf(ArrayNode.class);
 
         ArrayNode<?> arrayNode = (ArrayNode<?>) node;
 
-        Assertions.assertEquals(arrayNode.value().size(), 2);
-        Assertions.assertTrue(arrayNode.value().get(0) instanceof GroupNode);
-        Assertions.assertTrue(arrayNode.value().get(1) instanceof GroupNode);
+        assertThat(arrayNode.value()).hasSize(2);
+        assertThat(arrayNode.value().get(0)).isInstanceOf(GroupNode.class);
+        assertThat(arrayNode.value().get(1)).isInstanceOf(GroupNode.class);
 
         GroupNode groupNode1 = (GroupNode) arrayNode.value().get(0);
-        Assertions.assertTrue(groupNode1.has("test2"));
-        Assertions.assertEquals(groupNode1.get("test2").value(), "test2");
+        assertThat(groupNode1.has("test2")).isTrue();
+        assertThat(groupNode1.get("test2").value()).isEqualTo("test2");
 
         GroupNode groupNode2 = (GroupNode) arrayNode.value().get(1);
-        Assertions.assertTrue(groupNode2.has("test3"));
-        Assertions.assertEquals(groupNode2.get("test3").value(), "test3");
+        assertThat(groupNode2.has("test3")).isTrue();
+        assertThat(groupNode2.get("test3").value()).isEqualTo("test3");
     }
 }

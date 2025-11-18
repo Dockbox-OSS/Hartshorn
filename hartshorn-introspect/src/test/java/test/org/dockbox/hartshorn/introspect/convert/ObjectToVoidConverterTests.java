@@ -19,40 +19,41 @@ package test.org.dockbox.hartshorn.introspect.convert;
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToVoidConverter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ObjectToVoidConverterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class ObjectToVoidConverterTests {
 
     @Test
-    void testCanConvertPrimitive() {
+    void canConvertPrimitive() {
         ConditionalConverter converter = new ObjectToVoidConverter();
-        Assertions.assertTrue(converter.canConvert(null, void.class));
+        assertThat(converter.canConvert(null, void.class)).isTrue();
     }
 
     @Test
-    void testCanConvertPrimitiveWrapper() {
+    void canConvertPrimitiveWrapper() {
         ConditionalConverter converter = new ObjectToVoidConverter();
-        Assertions.assertTrue(converter.canConvert(null, Void.class));
+        assertThat(converter.canConvert(null, Void.class)).isTrue();
     }
 
     @Test
-    void testCanConvertPrimitiveType() {
+    void canConvertPrimitiveType() {
         ConditionalConverter converter = new ObjectToVoidConverter();
-        Assertions.assertTrue(converter.canConvert(null, Void.TYPE));
+        assertThat(converter.canConvert(null, Void.TYPE)).isTrue();
     }
 
     @Test
-    void testVoidIsAlwaysNull() {
+    void voidIsAlwaysNull() {
         GenericConverter converter = new ObjectToVoidConverter();
 
-        Assertions.assertNull(converter.convert(null, Object.class, void.class));
-        Assertions.assertNull(converter.convert("test", Object.class, void.class));
+        assertThat(converter.convert(null, Object.class, void.class)).isNull();
+        assertThat(converter.convert("test", Object.class, void.class)).isNull();
 
-        Assertions.assertNull(converter.convert(null, Object.class, Void.class));
-        Assertions.assertNull(converter.convert("test", Object.class, Void.class));
+        assertThat(converter.convert(null, Object.class, Void.class)).isNull();
+        assertThat(converter.convert("test", Object.class, Void.class)).isNull();
 
-        Assertions.assertNull(converter.convert(null, Object.class, Void.TYPE));
-        Assertions.assertNull(converter.convert("test", Object.class, Void.TYPE));
+        assertThat(converter.convert(null, Object.class, Void.TYPE)).isNull();
+        assertThat(converter.convert("test", Object.class, Void.TYPE)).isNull();
     }
 }

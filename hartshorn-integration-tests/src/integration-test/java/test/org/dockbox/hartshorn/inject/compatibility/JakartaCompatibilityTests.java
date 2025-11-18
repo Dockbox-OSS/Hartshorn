@@ -30,15 +30,17 @@ import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnviro
 import org.dockbox.hartshorn.test.TestApplicationCustomizer;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.configure.ContextualInitializer;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @HartshornIntegrationTest(
         includeBasePackages = false,
         customizers = DisableSingleConstructorFallbackTestCustomizer.class
 )
-public class JakartaCompatibilityTests {
+class JakartaCompatibilityTests {
 
     /**
      * Test application customizer that enables support for Jakarta annotations in the test application. Note that
@@ -47,11 +49,10 @@ public class JakartaCompatibilityTests {
     public static class EnableJakartaTestApplicationCustomizer implements TestApplicationCustomizer {
         @Override
         public void customizeApplication(SimpleApplicationContext.Configurer configurer) {
-            configurer.componentProvider(HierarchicalComponentProviderOrchestrator.create(orchestrator -> {
+            configurer.componentProvider(HierarchicalComponentProviderOrchestrator.create(orchestrator ->
                 orchestrator.componentPostConstructor(AnnotatedMethodComponentPostConstructor.create(
                         AnnotatedMethodComponentPostConstructor.Configurer::withJakartaAnnotations
-                ));
-            }));
+                ))));
         }
 
         @Override
@@ -71,81 +72,73 @@ public class JakartaCompatibilityTests {
     @Test
     @HartshornIntegrationTest(customizers = EnableJakartaTestApplicationCustomizer.class)
     @DisplayName("Jakarta annotations are supported for field injection, if enabled")
-    void testJakartaFieldInjectSupportedIfEnabled() {
+    void jakartaFieldInjectSupportedIfEnabled() {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         FieldJakartaComponent component = this.applicationContext.defaultProvider().get(FieldJakartaComponent.class);
-        Assertions.assertNotNull(component);
+        assertThat(component).isNotNull();
 
-        Assertions.assertEquals("Hello, World!", component.messageAsInject);
-        Assertions.assertEquals("Hello, World!", component.messageAsResource);
+        assertThat(component.messageAsInject).isEqualTo("Hello, World!");
+        assertThat(component.messageAsResource).isEqualTo("Hello, World!");
     }
 
     @Test
     @DisplayName("Jakarta annotations are not supported for field injection, if disabled")
-    void testJakartaFieldInjectFailsIfDisabled() {
+    void jakartaFieldInjectFailsIfDisabled() {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         FieldJakartaComponent component = this.applicationContext.defaultProvider().get(FieldJakartaComponent.class);
-        Assertions.assertNotNull(component);
+        assertThat(component).isNotNull();
 
-        Assertions.assertNull(component.messageAsInject, "Field injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled");
-        Assertions.assertNull(component.messageAsResource, "Field injection with @jakarta.annotation.Resource should not be supported when Jakarta compatibility is disabled");
+        assertThat(component.messageAsInject).as("Field injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled").isNull();
+        assertThat(component.messageAsResource).as("Field injection with @jakarta.annotation.Resource should not be supported when Jakarta compatibility is disabled").isNull();
     }
 
     @Test
     @HartshornIntegrationTest(customizers = EnableJakartaTestApplicationCustomizer.class)
     @DisplayName("Jakarta annotations are supported for constructor injection, if enabled")
-    void testJakartaConstructorInjectSupportedIfEnabled() {
+    void jakartaConstructorInjectSupportedIfEnabled() {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         ConstructorJakartaComponent component = this.applicationContext.defaultProvider().get(ConstructorJakartaComponent.class);
-        Assertions.assertNotNull(component);
+        assertThat(component).isNotNull();
 
-        Assertions.assertEquals("Hello, World!", component.messageAsInject);
+        assertThat(component.messageAsInject).isEqualTo("Hello, World!");
     }
 
     @Test
     @DisplayName("Jakarta annotations are not supported for constructor injection, if disabled")
-    void testJakartaConstructorInjectFailsIfDisabled() {
+    void jakartaConstructorInjectFailsIfDisabled() {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         // No compatible constructor should be found, as Jakarta compatibility is disabled
-        ComponentResolutionException componentResolutionException = Assertions.assertThrows(
-                ComponentResolutionException.class,
-                () -> this.applicationContext.defaultProvider().get(ConstructorJakartaComponent.class),
-                "Constructor injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled"
-        );
-        Assertions.assertInstanceOf(
-                MissingInjectConstructorException.class,
-                componentResolutionException.getCause(),
-                "Constructor injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled"
-        );
+        ComponentResolutionException componentResolutionException = assertThatExceptionOfType(ComponentResolutionException.class).as("Constructor injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled").isThrownBy(() -> this.applicationContext.defaultProvider().get(ConstructorJakartaComponent.class)).actual();
+        assertThat(componentResolutionException.getCause()).as("Constructor injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled").isInstanceOf(MissingInjectConstructorException.class);
     }
 
     @Test
     @HartshornIntegrationTest(customizers = EnableJakartaTestApplicationCustomizer.class)
     @DisplayName("Jakarta annotations are supported for method injection, if enabled")
-    void testJakartaMethodInjectSupportedIfEnabled() {
+    void jakartaMethodInjectSupportedIfEnabled() {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         MethodJakartaComponent component = this.applicationContext.defaultProvider().get(MethodJakartaComponent.class);
-        Assertions.assertNotNull(component);
+        assertThat(component).isNotNull();
 
-        Assertions.assertEquals("Hello, World!", component.messageAsInject);
-        Assertions.assertEquals("Hello, World!", component.messageAsResource);
+        assertThat(component.messageAsInject).isEqualTo("Hello, World!");
+        assertThat(component.messageAsResource).isEqualTo("Hello, World!");
     }
 
     @Test
     @DisplayName("Jakarta annotations are not supported for method injection, if disabled")
-    void testJakartaMethodInjectFailsIfDisabled() {
+    void jakartaMethodInjectFailsIfDisabled() {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
         MethodJakartaComponent component = this.applicationContext.defaultProvider().get(MethodJakartaComponent.class);
-        Assertions.assertNotNull(component);
+        assertThat(component).isNotNull();
 
-        Assertions.assertNull(component.messageAsInject, "Method injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled");
-        Assertions.assertNull(component.messageAsResource, "Method injection with @jakarta.annotation.Resource should not be supported when Jakarta compatibility is disabled");
+        assertThat(component.messageAsInject).as("Method injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled").isNull();
+        assertThat(component.messageAsResource).as("Method injection with @jakarta.annotation.Resource should not be supported when Jakarta compatibility is disabled").isNull();
     }
 
     private static class FieldJakartaComponent {

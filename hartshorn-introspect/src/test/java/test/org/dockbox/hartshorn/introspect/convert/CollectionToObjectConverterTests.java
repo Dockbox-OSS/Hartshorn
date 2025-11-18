@@ -18,43 +18,45 @@ package test.org.dockbox.hartshorn.introspect.convert;
 
 import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.support.CollectionToObjectConverter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Set;
 
-public class CollectionToObjectConverterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class CollectionToObjectConverterTests {
 
     @Test
-    void testSingleElementCollectionOfTargetTypeCanConvert() {
+    void singleElementCollectionOfTargetTypeCanConvert() {
         Set<String> collection = Collections.singleton("test");
         CollectionToObjectConverter converter = new CollectionToObjectConverter();
-        Assertions.assertTrue(converter.canConvert(collection, String.class));
+        assertThat(converter.canConvert(collection, String.class)).isTrue();
 
         Object converted = converter.convert(collection, Set.class, String.class);
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals("test", converted);
+        assertThat(converted)
+                .isNotNull()
+                .isEqualTo("test");
     }
 
     @Test
-    void testSingleElementCollectionOfDifferentTypeCannotConvert() {
+    void singleElementCollectionOfDifferentTypeCannotConvert() {
         Set<Integer> collection = Collections.singleton(1);
         ConditionalConverter converter = new CollectionToObjectConverter();
-        Assertions.assertFalse(converter.canConvert(collection, String.class));
+        assertThat(converter.canConvert(collection, String.class)).isFalse();
     }
 
     @Test
-    void testEmptyCollectionCannotConvert() {
+    void emptyCollectionCannotConvert() {
         Set<String> collection = Collections.emptySet();
         ConditionalConverter converter = new CollectionToObjectConverter();
-        Assertions.assertFalse(converter.canConvert(collection, String.class));
+        assertThat(converter.canConvert(collection, String.class)).isFalse();
     }
 
     @Test
-    void testMultiElementCollectionCannotConvert() {
+    void multiElementCollectionCannotConvert() {
         Set<String> collection = Set.of("test", "test2");
         ConditionalConverter converter = new CollectionToObjectConverter();
-        Assertions.assertFalse(converter.canConvert(collection, String.class));
+        assertThat(converter.canConvert(collection, String.class)).isFalse();
     }
 }

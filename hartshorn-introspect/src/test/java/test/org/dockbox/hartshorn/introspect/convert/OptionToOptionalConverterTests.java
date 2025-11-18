@@ -19,28 +19,30 @@ package test.org.dockbox.hartshorn.introspect.convert;
 import java.util.Optional;
 
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionToOptionalConverter;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class OptionToOptionalConverterTests {
+class OptionToOptionalConverterTests {
 
     @Test
-    void testPresentOptionConvertsToPresentOptional() {
+    void presentOptionConvertsToPresentOptional() {
         OptionToOptionalConverter converter = new OptionToOptionalConverter();
         Option<String> option = Option.of("test");
         Optional<?> optional = converter.convert(option);
-        Assertions.assertNotNull(optional);
-        Assertions.assertTrue(optional.isPresent());
-        Assertions.assertEquals("test", optional.get());
+        assertThat(optional)
+                .isPresent();
+        assertThat(optional).contains("test");
     }
 
     @Test
-    void testEmptyOptionConvertsToEmptyOptional() {
+    void emptyOptionConvertsToEmptyOptional() {
         OptionToOptionalConverter converter = new OptionToOptionalConverter();
         Option<String> option = Option.empty();
         Optional<?> optional = converter.convert(option);
-        Assertions.assertNotNull(optional);
-        Assertions.assertFalse(optional.isPresent());
+        assertThat(optional).isNotNull();
+        assertThat(optional).isEmpty();
     }
 }

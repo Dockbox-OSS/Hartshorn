@@ -19,30 +19,31 @@ package test.org.dockbox.hartshorn.introspect.convert;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToOptionConverter;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SuppressWarnings("rawtypes")
-public class ObjectToOptionConverterTests {
+class ObjectToOptionConverterTests {
 
     @Test
-    void testNonNullElementConvertsToPresentOption() {
+    void nonNullElementConvertsToPresentOption() {
         String element = "test";
         Converter<Object, Option<?>> converter = new ObjectToOptionConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Option);
-        Assertions.assertTrue(((Option) converted).present());
-        Assertions.assertEquals(element, ((Option) converted).get());
+        assertThat(converted).isNotNull();
+        assertThat(converted).isInstanceOf(Option.class);
+        assertThat(((Option) converted).present()).isTrue();
+        assertThat(((Option) converted).get()).isEqualTo(element);
     }
 
     @Test
-    void testNullElementConvertsToEmptyOption() {
+    void nullElementConvertsToEmptyOption() {
         Object element = null;
         Converter<Object, Option<?>> converter = new ObjectToOptionConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Option);
-        Assertions.assertFalse(((Option) converted).present());
+        assertThat(converted).isNotNull();
+        assertThat(converted).isInstanceOf(Option.class);
+        assertThat(((Option) converted).present()).isFalse();
     }
 }

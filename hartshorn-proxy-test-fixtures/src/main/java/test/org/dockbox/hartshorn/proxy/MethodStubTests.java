@@ -22,11 +22,9 @@ import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.proxy.ProxyOrchestratorLoader;
 import org.dockbox.hartshorn.proxy.advice.stub.DefaultValueResponseMethodStub;
 import org.dockbox.hartshorn.proxy.advice.stub.MethodStub;
-import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -34,6 +32,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import test.org.dockbox.hartshorn.proxy.support.standard.InterfaceProxyTarget;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
  * Tests for the default behavior of method stubs.
@@ -49,26 +51,26 @@ public abstract class MethodStubTests {
     protected abstract Introspector introspector();
 
     @Test
-    void testDefaultBehaviorIsDefaultOrNull() throws ApplicationException {
+    void defaultBehaviorIsDefaultOrNull() throws Exception {
         ProxyOrchestrator orchestrator = this.orchestratorLoader().create(this.introspector());
         ProxyFactory<InterfaceProxyTarget> proxyFactory = orchestrator.factory(InterfaceProxyTarget.class);
         InterfaceProxyTarget proxy = proxyFactory.proxy().get();
 
         Option<ProxyManager<InterfaceProxyTarget>> manager = orchestrator.manager(proxy);
-        Assertions.assertTrue(manager.present());
+        assertThat(manager.present()).isTrue();
 
         MethodStub<InterfaceProxyTarget> methodStub = manager.get().advisor().resolver().defaultStub().get();
-        Assertions.assertTrue(methodStub instanceof DefaultValueResponseMethodStub<InterfaceProxyTarget>);
+        assertThat(methodStub).isInstanceOf(DefaultValueResponseMethodStub.class);
 
-        String stringValue = Assertions.assertDoesNotThrow(proxy::stringTest);
-        Assertions.assertNull(stringValue);
+        String stringValue = assertThatCode(proxy::stringTest).doesNotThrowAnyException();
+        assertThat(stringValue).isNull();
 
-        int intValue = Assertions.assertDoesNotThrow(proxy::integerTest);
-        Assertions.assertEquals(0, intValue);
+        int intValue = assertThatCode(proxy::integerTest).doesNotThrowAnyException();
+        assertThat(intValue).isZero();
     }
 
     @Test
-    void testStubBehaviorCanBeChanged() throws ApplicationException {
+    void stubBehaviorCanBeChanged() throws Exception {
         ProxyFactory<InterfaceProxyTarget> proxyFactory = this.orchestratorLoader().create(this.introspector()).factory(
             InterfaceProxyTarget.class);
 
@@ -78,15 +80,15 @@ public abstract class MethodStubTests {
 
         InterfaceProxyTarget proxy = proxyFactory.proxy().get();
 
-        int one = Assertions.<Integer>assertDoesNotThrow(proxy::integerTest);
-        Assertions.assertEquals(1, one);
+        int one = assertThatCode(proxy::integerTest).doesNotThrowAnyException();
+        assertThat(one).isOne();
 
-        int two = Assertions.<Integer>assertDoesNotThrow(proxy::integerTest);
-        Assertions.assertEquals(2, two);
+        int two = assertThatCode(proxy::integerTest).doesNotThrowAnyException();
+        assertThat(two).isEqualTo(2);
     }
 
     @Test
-    void testStubsAreObserved() throws ApplicationException, NoSuchMethodException {
+    void stubsAreObserved() throws Exception {
         ProxyFactory<InterfaceProxyTarget> proxyFactory = this.orchestratorLoader().create(this.introspector()).factory(
             InterfaceProxyTarget.class);
 
@@ -111,21 +113,21 @@ public abstract class MethodStubTests {
                 });
 
         InterfaceProxyTarget proxy = proxyFactory.proxy().get();
-        Assertions.assertDoesNotThrow(proxy::stringTest);
+        assertThatCode(proxy::stringTest).doesNotThrowAnyException();
 
-        Assertions.assertTrue(beforeObserved.get());
-        Assertions.assertTrue(afterObserved.get());
-        Assertions.assertFalse(errorObserved.get());
+        assertThat(beforeObserved.get()).isTrue();
+        assertThat(afterObserved.get()).isTrue();
+        assertThat(errorObserved.get()).isFalse();
 
         beforeObserved.set(false);
         afterObserved.set(false);
         errorObserved.set(false);
         shouldThrow.set(true);
 
-        Assertions.assertThrows(ApplicationRuntimeException.class, proxy::stringTest);
+        assertThatExceptionOfType(ApplicationRuntimeException.class).isThrownBy(proxy::stringTest);
 
-        Assertions.assertTrue(beforeObserved.get());
-        Assertions.assertFalse(afterObserved.get());
-        Assertions.assertTrue(errorObserved.get());
+        assertThat(beforeObserved.get()).isTrue();
+        assertThat(afterObserved.get()).isFalse();
+        assertThat(errorObserved.get()).isTrue();
     }
 }

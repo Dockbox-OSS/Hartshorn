@@ -24,9 +24,10 @@ import org.dockbox.hartshorn.hsl.token.SimpleTokenCharacter;
 import org.dockbox.hartshorn.hsl.token.type.SimpleTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
-import org.junit.jupiter.api.Assertions;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.assertj.core.api.Assertions.fail;
 
 public class AtNameModule implements ExpressionModule<AtNameExpression> {
 
@@ -72,6 +73,6 @@ public class AtNameModule implements ExpressionModule<AtNameExpression> {
         // Other visitors should not be in the default runtime, so we fail the test if
         // one is encountered. In regular implementations this method should be overridden
         // to handle visitor delegation.
-        return Assertions.fail("Expression should not be visited by default runtime");
+        return fail("Expression should not be visited by default runtime");
     }
 }

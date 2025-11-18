@@ -21,55 +21,57 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LifecycleObserverTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+
+class LifecycleObserverTests {
 
     @Test
-    void testServiceLifecycleObserverIsPresentAndObserving() {
+    void serviceLifecycleObserverIsPresentAndObserving() {
         ApplicationContext applicationContext = HartshornApplication.create();
         TestLifecycleObserver observer = applicationContext.get(TestLifecycleObserver.class);
-        Assertions.assertTrue(observer.started());
+        assertThat(observer.started()).isTrue();
 
-        Assertions.assertDoesNotThrow(applicationContext::close);
-        Assertions.assertTrue(observer.stopped());
+        assertThatCode(applicationContext::close).doesNotThrowAnyException();
+        assertThat(observer.stopped()).isTrue();
     }
 
     @Test
-    void testNonRegisteredObserverIsNotPresentOnStart() {
+    void nonRegisteredObserverIsNotPresentOnStart() {
         ApplicationContext applicationContext = HartshornApplication.create();
         NonRegisteredObserver observer = applicationContext.get(NonRegisteredObserver.class);
-        Assertions.assertFalse(observer.started());
-        Assertions.assertFalse(observer.stopped());
+        assertThat(observer.started()).isFalse();
+        assertThat(observer.stopped()).isFalse();
 
         ApplicationEnvironment environment = applicationContext.environment();
-        Assertions.assertTrue(environment instanceof ObservableApplicationEnvironment);
+        assertThat(environment).isInstanceOf(ObservableApplicationEnvironment.class);
 
         ((LifecycleObservable) environment).register(observer);
-        Assertions.assertDoesNotThrow(applicationContext::close);
+        assertThatCode(applicationContext::close).doesNotThrowAnyException();
 
         // Do not late-fire events
-        Assertions.assertFalse(observer.started());
-        Assertions.assertTrue(observer.stopped());
+        assertThat(observer.started()).isFalse();
+        assertThat(observer.stopped()).isTrue();
     }
 
     @Test
-    void testRegistrationFromClassIsValid() {
+    void registrationFromClassIsValid() {
         ApplicationContext applicationContext = HartshornApplication.create();
         // Static as observer instance is lazily created by the observable, so we cannot
         // access it directly.
-        Assertions.assertFalse(StaticNonRegisteredObserver.started());
-        Assertions.assertFalse(StaticNonRegisteredObserver.stopped());
+        assertThat(StaticNonRegisteredObserver.started()).isFalse();
+        assertThat(StaticNonRegisteredObserver.stopped()).isFalse();
 
         ApplicationEnvironment environment = applicationContext.environment();
-        Assertions.assertTrue(environment instanceof ObservableApplicationEnvironment);
+        assertThat(environment).isInstanceOf(ObservableApplicationEnvironment.class);
 
         ((LifecycleObservable) environment).register(StaticNonRegisteredObserver.class);
-        Assertions.assertDoesNotThrow(applicationContext::close);
+        assertThatCode(applicationContext::close).doesNotThrowAnyException();
 
         // Do not late-fire events
-        Assertions.assertFalse(StaticNonRegisteredObserver.started());
-        Assertions.assertTrue(StaticNonRegisteredObserver.stopped());
+        assertThat(StaticNonRegisteredObserver.started()).isFalse();
+        assertThat(StaticNonRegisteredObserver.stopped()).isTrue();
     }
 }

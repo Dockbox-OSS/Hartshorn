@@ -19,23 +19,25 @@ package test.org.dockbox.hartshorn.inject.collection;
 import java.util.Set;
 
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
 
 @HartshornIntegrationTest(includeBasePackages = false)
-public class ComponentCollectionTests {
+class ComponentCollectionTests {
 
     @Inject
     private ApplicationContext applicationContext;
 
     @Test
-    void testPriority() {
+    void priority() {
         Set<String> strings = Set.of("Hello", "World", "!");
         this.applicationContext.bind(String.class).collect(collector -> {
             for(String string : strings) {
@@ -46,19 +48,19 @@ public class ComponentCollectionTests {
         this.applicationContext.bind(String.class).singleton("Hello world!");
 
         ComponentCollection<String> collection = this.applicationContext.get(ComponentKey.collect(String.class));
-        Assertions.assertEquals(3, collection.size());
-        Assertions.assertTrue(collection.containsAll(strings));
+        assertThat(collection).hasSize(3);
+        assertThat(collection).containsAll(strings);
 
         String hello = this.applicationContext.get(String.class);
-        Assertions.assertEquals("Hello world!", hello);
+        assertThat(hello).isEqualTo("Hello world!");
     }
 
     @Test
     @TestComponents(CollectionConfiguration.class)
-    void testConfigurationLoadsWithDependencies() {
+    void configurationLoadsWithDependencies() {
         ComponentCollection<String> collection = this.applicationContext.get(ComponentKey.collect(String.class));
-        Assertions.assertEquals(2, collection.size());
-        Assertions.assertTrue(collection.contains("Hello"));
-        Assertions.assertTrue(collection.contains("World"));
+        assertThat(collection).hasSize(2);
+        assertThat(collection).contains("Hello");
+        assertThat(collection).contains("World");
     }
 }

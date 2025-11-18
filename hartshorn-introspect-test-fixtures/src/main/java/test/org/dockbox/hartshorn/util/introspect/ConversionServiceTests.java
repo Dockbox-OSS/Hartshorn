@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.util.introspect.convert.GenericConverters;
 import org.dockbox.hartshorn.util.introspect.convert.NullAccess;
 import org.dockbox.hartshorn.util.introspect.convert.StandardConversionService;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.util.introspect.support.basic.TestEnumType;
 
@@ -37,6 +36,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
  * Tests for the {@link ConversionService} interface, driven by configurable {@link Introspector}
@@ -55,171 +57,173 @@ public abstract class ConversionServiceTests {
     }
 
     @Test
-    void testPrimitiveWrapperFromEmptyString() {
+    void primitiveWrapperFromEmptyString() {
         ConversionService conversionService = this.conversionService();
         Integer empty = conversionService.convert("", Integer.class);
-        Assertions.assertNotNull(empty);
-        Assertions.assertEquals(0, empty);
+        assertThat(empty)
+                .isZero();
     }
 
     @Test
-    void testNumberFromString() {
+    void numberFromString() {
         ConversionService conversionService = this.conversionService();
         Integer valid = conversionService.convert("12", Integer.class);
-        Assertions.assertNotNull(valid);
-        Assertions.assertEquals(12, valid);
+        assertThat(valid)
+                .isNotNull()
+                .isEqualTo(12);
     }
 
     @Test
-    void testPrimitiveFromString() {
+    void primitiveFromString() {
         ConversionService conversionService = this.conversionService();
         int primitive = conversionService.convert("12", int.class);
-        Assertions.assertEquals(12, primitive);
+        assertThat(primitive).isEqualTo(12);
     }
 
     @Test
-    void testEnumFromString() {
+    void enumFromString() {
         ConversionService conversionService = this.conversionService();
         TestEnumType a = conversionService.convert("A", TestEnumType.class);
-        Assertions.assertNotNull(a);
-        Assertions.assertSame(TestEnumType.A, a);
+        assertThat(a).isNotNull();
+        assertThat(a).isSameAs(TestEnumType.A);
 
         TestEnumType d = conversionService.convert("D", TestEnumType.class);
-        Assertions.assertNull(d);
+        assertThat(d).isNull();
     }
 
     @Test
-    void testOptionFromObject() {
+    void optionFromObject() {
         ConversionService conversionService = this.conversionService();
         Option<?> option = conversionService.convert("test", Option.class);
-        Assertions.assertNotNull(option);
-        Assertions.assertTrue(option.present());
-        Assertions.assertEquals("test", option.get());
+        assertThat(option).isNotNull();
+        assertThat(option.present()).isTrue();
+        assertThat(option.get()).isEqualTo("test");
     }
 
     @Test
-    void testObjectFromOption() {
+    void objectFromOption() {
         ConversionService conversionService = this.conversionService();
         String converted = conversionService.convert(Option.of("test"), String.class);
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals("test", converted);
+        assertThat(converted)
+                .isNotNull()
+                .isEqualTo("test");
     }
 
     @Test
-    void testOptionDefaultValue() {
+    void optionDefaultValue() {
         ConversionService conversionService = this.conversionService();
         Option<?> optionFromNull = conversionService.convert(null, Option.class);
-        Assertions.assertNotNull(optionFromNull);
-        Assertions.assertFalse(optionFromNull.present());
+        assertThat(optionFromNull).isNotNull();
+        assertThat(optionFromNull.present()).isFalse();
     }
 
     @Test
-    void testStringDefaultValue() {
+    void stringDefaultValue() {
         ConversionService conversionService = this.conversionService();
         String stringFromNull = conversionService.convert(null, String.class);
-        Assertions.assertNotNull(stringFromNull);
-        Assertions.assertEquals("", stringFromNull);
+        assertThat(stringFromNull).isNotNull();
+        assertThat(stringFromNull).isEmpty();
     }
 
     @Test
-    void testPrimitiveDefaultValue() {
+    void primitiveDefaultValue() {
         ConversionService conversionService = this.conversionService();
         int intFromNull = conversionService.convert(null, int.class);
-        Assertions.assertEquals(0, intFromNull);
+        assertThat(intFromNull).isZero();
     }
 
     @Test
-    void testPrimitiveWrapperDefaultValue() {
+    void primitiveWrapperDefaultValue() {
         ConversionService conversionService = this.conversionService();
         Integer integerFromNull = conversionService.convert(null, Integer.class);
-        Assertions.assertNotNull(integerFromNull);
-        Assertions.assertEquals(0, integerFromNull);
+        assertThat(integerFromNull)
+                .isZero();
     }
 
     @Test
-    void testConcreteSetDefaultValue() {
+    void concreteSetDefaultValue() {
         ConversionService conversionService = this.conversionService();
         Set<?> hashSet = conversionService.convert(null, TreeSet.class);
-        Assertions.assertNotNull(hashSet);
-        Assertions.assertTrue(hashSet.isEmpty());
-        Assertions.assertTrue(hashSet instanceof TreeSet);
+        assertThat(hashSet).isNotNull();
+        assertThat(hashSet).isEmpty();
+        assertThat(hashSet).isInstanceOf(TreeSet.class);
     }
 
     @Test
-    void testSetDefaultValue() {
+    void setDefaultValue() {
         ConversionService conversionService = this.conversionService();
         Set<?> set = conversionService.convert(null, Set.class);
-        Assertions.assertNotNull(set);
-        Assertions.assertTrue(set.isEmpty());
+        assertThat(set).isNotNull();
+        assertThat(set).isEmpty();
     }
 
     @Test
-    void testListDefaultValue() {
+    void listDefaultValue() {
         ConversionService conversionService = this.conversionService();
         List<?> list = conversionService.convert(null, List.class);
-        Assertions.assertNotNull(list);
-        Assertions.assertTrue(list.isEmpty());
+        assertThat(list).isNotNull();
+        assertThat(list).isEmpty();
     }
 
     @Test
-    void testConcreteListDefaultValue() {
+    void concreteListDefaultValue() {
         ConversionService conversionService = this.conversionService();
         List<?> arrayList = conversionService.convert(null, CopyOnWriteArrayList.class);
-        Assertions.assertNotNull(arrayList);
-        Assertions.assertTrue(arrayList.isEmpty());
-        Assertions.assertTrue(arrayList instanceof CopyOnWriteArrayList);
+        assertThat(arrayList).isNotNull();
+        assertThat(arrayList).isEmpty();
+        assertThat(arrayList).isInstanceOf(CopyOnWriteArrayList.class);
     }
 
     @Test
-    void testCollectionFromObject() {
+    void collectionFromObject() {
         ConversionService conversionService = this.conversionService();
         List<?> linkedList = conversionService.convert("test", LinkedList.class);
-        Assertions.assertNotNull(linkedList);
-        Assertions.assertFalse(linkedList.isEmpty());
-        Assertions.assertEquals("test", linkedList.get(0));
+        assertThat(linkedList)
+                .isNotEmpty();
+        assertThat(linkedList.get(0)).isEqualTo("test");
     }
 
     @Test
-    void testCollectionFromCollection() {
+    void collectionFromCollection() {
         ConversionService conversionService = this.conversionService();
         Set<?> setFromList = conversionService.convert(List.of(1, 2, 3), Set.class);
-        Assertions.assertNotNull(setFromList);
-        Assertions.assertFalse(setFromList.isEmpty());
-        Assertions.assertEquals(3, setFromList.size());
+        assertThat(setFromList)
+                .isNotEmpty()
+                .hasSize(3);
     }
 
     @Test
-    public void testCollectionFromOption() {
+    public void collectionFromOption() {
         ConversionService conversionService = this.conversionService();
         List<?> listFromOption = conversionService.convert(Option.of("123"), List.class);
-        Assertions.assertNotNull(listFromOption);
-        Assertions.assertFalse(listFromOption.isEmpty());
-        Assertions.assertEquals(1, listFromOption.size());
-        Assertions.assertEquals("123", listFromOption.get(0));
+        assertThat(listFromOption)
+                .isNotEmpty()
+                .hasSize(1);
+        assertThat(listFromOption.get(0)).isEqualTo("123");
     }
 
     @Test
-    void testArrayFromCollection() {
+    void arrayFromCollection() {
         ConversionService conversionService = this.conversionService();
         String[] array = conversionService.convert(List.of("1", "2", "3"), String[].class);
-        Assertions.assertNotNull(array);
-        Assertions.assertEquals(3, array.length);
-        Assertions.assertEquals("1", array[0]);
-        Assertions.assertEquals("2", array[1]);
-        Assertions.assertEquals("3", array[2]);
+        assertThat(array).isNotNull();
+        assertThat(array.length).isEqualTo(3);
+        assertThat(array[0]).isEqualTo("1");
+        assertThat(array[1]).isEqualTo("2");
+        assertThat(array[2]).isEqualTo("3");
     }
 
     @Test
-    void testArrayFromObject() {
+    void arrayFromObject() {
         ConversionService conversionService = this.conversionService();
         String[] array = conversionService.convert("test", String[].class);
-        Assertions.assertNotNull(array);
-        Assertions.assertEquals(1, array.length);
-        Assertions.assertEquals("test", array[0]);
+        assertThat(array).isNotNull();
+        assertThat(array.length).isOne();
+        assertThat(array[0]).isEqualTo("test");
     }
 
     @Test
-    void testImplicitlyTypedConverterIsAdaptedCorrectly() {
+    void implicitlyTypedConverterIsAdaptedCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
                 registry -> registry.addConverter(new SimpleConverter()),
                 "1", Integer.class,
@@ -228,16 +232,16 @@ public abstract class ConversionServiceTests {
     }
 
     @Test
-    void testLambdaConverterWithoutExplicitTypesIsRejected() {
+    void lambdaConverterWithoutExplicitTypesIsRejected() {
         ConverterCache converterCache = new GenericConverters();
         ConverterCache defaultValueProviderCache = new GenericConverters();
         ConverterRegistry registry = new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
         // Not allowed because the source and target types cannot practically be determined due to type erasure
-        Assertions.assertThrows(IllegalArgumentException.class, () -> registry.addConverter((Converter<String, Integer>) source -> Integer.parseInt(source)));
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> registry.addConverter((Converter<String, Integer>) source -> Integer.parseInt(source)));
     }
 
     @Test
-    void testLambdaConverterWithExplicitTypesIsAdaptedCorrectly() {
+    void lambdaConverterWithExplicitTypesIsAdaptedCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
                 registry -> registry.addConverter(String.class, Integer.class, source -> Integer.parseInt(source)),
                 "1", Integer.class,
@@ -246,7 +250,7 @@ public abstract class ConversionServiceTests {
     }
 
     @Test
-    void testExplicitlyTypedConverterIsAdapterCorrectly() {
+    void explicitlyTypedConverterIsAdapterCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
                 registry -> registry.addConverter(String.class, Integer.class, new SimpleConverter()),
                 "1", Integer.class,
@@ -255,7 +259,7 @@ public abstract class ConversionServiceTests {
     }
 
     @Test
-    void testImplicitDefaultValueProviderIsAdaptedCorrectly() {
+    void implicitDefaultValueProviderIsAdaptedCorrectly() {
         // Lambdas are not supported in this context due to the absence of sufficient type hints. Though, using
         // #addDefaultValueProvider(Class, DefaultValueProvider) it would be supported in any practical scenario.
         //noinspection Convert2Lambda
@@ -272,7 +276,7 @@ public abstract class ConversionServiceTests {
     }
 
     @Test
-    void testExplicitDefaultValueProviderIsAdaptedCorrectly() {
+    void explicitDefaultValueProviderIsAdaptedCorrectly() {
         this.testConverterTypeIsAdaptedCorrectly(
                 registry -> registry.addDefaultValueProvider(String.class, () -> ""),
                 NullAccess.getInstance(), String.class,
@@ -284,20 +288,20 @@ public abstract class ConversionServiceTests {
         ConverterCache converterCache = new GenericConverters();
         ConverterCache defaultValueProviderCache = new GenericConverters();
         ConverterRegistry registry = new StandardConversionService(this.introspector(), converterCache, defaultValueProviderCache);
-        Assertions.assertTrue(converterCache.converters().isEmpty());
-        Assertions.assertTrue(defaultValueProviderCache.converters().isEmpty());
+        assertThat(converterCache.converters()).isEmpty();
+        assertThat(defaultValueProviderCache.converters()).isEmpty();
 
         registerAction.accept(registry);
 
         ConverterCache shouldBeEmpty = converterType == ConverterType.CONVERTER ? defaultValueProviderCache : converterCache;
         ConverterCache shouldBePopulated = converterType == ConverterType.CONVERTER ? converterCache : defaultValueProviderCache;
 
-        Assertions.assertTrue(shouldBeEmpty.converters().isEmpty());
-        Assertions.assertFalse(shouldBePopulated.converters().isEmpty());
-        Assertions.assertEquals(1, shouldBePopulated.converters().size());
+        assertThat(shouldBeEmpty.converters()).isEmpty();
+        assertThat(shouldBePopulated.converters()).isNotEmpty();
+        assertThat(shouldBePopulated.converters()).hasSize(1);
 
         GenericConverter converter = shouldBePopulated.getConverter(source, targetType);
-        Assertions.assertNotNull(converter);
+        assertThat(converter).isNotNull();
     }
 
     private enum ConverterType {

@@ -24,33 +24,34 @@ import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.properties.value.StandardValuePropertyParsers;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @PropertiesSource("classpath:it-additional-config.yml")
 @HartshornIntegrationTest(includeBasePackages = false)
-public class PropertiesBootstrapTests {
+class PropertiesBootstrapTests {
 
     @Test
-    void testConfigurationValueWasLoaded_AccessedByRegistry(@Inject PropertyRegistry propertyRegistry) {
+    void configurationValueWasLoadedAccessedByRegistry(@Inject PropertyRegistry propertyRegistry) {
         Option<Boolean> isAdditionalConfigPresent = propertyRegistry.value(
                 "hartshorn.test.additional-config",
                 StandardValuePropertyParsers.BOOLEAN
         );
-        Assertions.assertTrue(isAdditionalConfigPresent.test(Boolean::booleanValue));
+        assertThat(isAdditionalConfigPresent.test(Boolean::booleanValue)).isTrue();
     }
 
     @Test
-    void testConfigurationValueWasLoaded_AccessedByInjector(@PropertyValue(name = "hartshorn.test.additional-config") boolean additionalConfig) {
-        Assertions.assertTrue(additionalConfig);
+    void configurationValueWasLoadedAccessedByInjector(@PropertyValue(name = "hartshorn.test.additional-config") boolean additionalConfig) {
+        assertThat(additionalConfig).isTrue();
     }
 
     @Test
-    void testConfigurationPropertyWasLoaded_AccessedByInjector(@PropertyValue(name = "hartshorn.test.additional-config") ValueProperty property) {
-        Assertions.assertNotNull(property);
+    void configurationPropertyWasLoadedAccessedByInjector(@PropertyValue(name = "hartshorn.test.additional-config") ValueProperty property) {
+        assertThat(property).isNotNull();
 
         Option<String> value = property.value();
-        Assertions.assertTrue(value.present());
-        Assertions.assertEquals("true", value.get());
+        assertThat(value.present()).isTrue();
+        assertThat(value.get()).isEqualTo("true");
     }
 }

@@ -19,39 +19,41 @@ package test.org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.inject.CompositeQualifier;
 import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.annotations.Named;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-public class QualifierKeyTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+class QualifierKeyTests {
 
     @Test
-    void testQualifierKeysWithoutMetaEqual() {
+    void qualifierKeysWithoutMetaEqual() {
         QualifierKey<SampleQualifier> expected = QualifierKey.of(SampleQualifier.class);
         QualifierKey<SampleQualifier> actual = QualifierKey.of(SampleQualifier.class);
-        Assertions.assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
-    void testQualifierKeysWithMetaEqual() {
+    void qualifierKeysWithMetaEqual() {
         QualifierKey<Named> expected = QualifierKey.of(Named.class, Map.of("value", "sample"));
         QualifierKey<Named> actual = QualifierKey.of(Named.class, Map.of("value", "sample"));
-        Assertions.assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
-    void testQualifierWithoutMetaFailsIfTypeRequiresMeta() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> QualifierKey.of(Named.class));
+    void qualifierWithoutMetaFailsIfTypeRequiresMeta() {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> QualifierKey.of(Named.class));
     }
 
     @Test
-    void testQualifierWithMetaFailsIfTypeDoesNotRequireMeta() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> QualifierKey.of(SampleQualifier.class, Map.of("value", "sample")));
+    void qualifierWithMetaFailsIfTypeDoesNotRequireMeta() {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> QualifierKey.of(SampleQualifier.class, Map.of("value", "sample")));
     }
 
     @Test
-    void testCompositeKeyEqualsIfKeysEqual() {
+    void compositeKeyEqualsIfKeysEqual() {
         QualifierKey<Named> namedQualifierOneA = QualifierKey.of(Named.class, Map.of("value", "sampleA"));
         QualifierKey<Named> namedQualifierOneB = QualifierKey.of(Named.class, Map.of("value", "sampleB"));
         CompositeQualifier compositeQualifierOne = new CompositeQualifier();
@@ -64,11 +66,11 @@ public class QualifierKeyTests {
         compositeQualifierTwo.add(namedQualifierTwoA);
         compositeQualifierTwo.add(namedQualifierTwoB);
 
-        Assertions.assertEquals(compositeQualifierOne, compositeQualifierTwo);
+        assertThat(compositeQualifierTwo).isEqualTo(compositeQualifierOne);
     }
 
     @Test
-    void testCompositeKeyDoesNotEqualIfOneKeyDoesNotEqual() {
+    void compositeKeyDoesNotEqualIfOneKeyDoesNotEqual() {
         QualifierKey<Named> namedQualifierOneA = QualifierKey.of(Named.class, Map.of("value", "sampleA"));
         CompositeQualifier compositeQualifierOne = new CompositeQualifier();
         compositeQualifierOne.add(namedQualifierOneA);
@@ -77,7 +79,7 @@ public class QualifierKeyTests {
         CompositeQualifier compositeQualifierTwo = new CompositeQualifier();
         compositeQualifierTwo.add(namedQualifierTwoB);
 
-        Assertions.assertNotEquals(compositeQualifierOne, compositeQualifierTwo);
+        assertThat(compositeQualifierTwo).isNotEqualTo(compositeQualifierOne);
     }
 
     public @interface SampleQualifier {}

@@ -17,41 +17,42 @@
 package test.org.dockbox.hartshorn.introspect.convert;
 
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToUUIDConverter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-public class StringToUUIDConverterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class StringToUUIDConverterTests {
 
     @Test
-    void testValidUUIDFormatCanConvert() {
+    void validUUIDFormatCanConvert() {
         StringToUUIDConverter converter = new StringToUUIDConverter();
         UUID uuid = converter.convert("123e4567-e89b-12d3-a456-426655440000");
-        Assertions.assertNotNull(uuid);
-        Assertions.assertEquals("123e4567-e89b-12d3-a456-426655440000", uuid.toString());
+        assertThat(uuid)
+                .hasToString("123e4567-e89b-12d3-a456-426655440000");
     }
 
     @Test
-    void testShortUUIDCanConvert() {
+    void shortUUIDCanConvert() {
         StringToUUIDConverter converter = new StringToUUIDConverter();
         UUID uuid = converter.convert("1-2-3-4-5");
-        Assertions.assertNotNull(uuid);
-        Assertions.assertEquals("00000001-0002-0003-0004-000000000005", uuid.toString());
+        assertThat(uuid)
+                .hasToString("00000001-0002-0003-0004-000000000005");
     }
 
     @Test
-    void testInvalidUUIDFormatCannotConvert() {
+    void invalidUUIDFormatCannotConvert() {
         StringToUUIDConverter converter = new StringToUUIDConverter();
         UUID uuid = converter.convert("-123e4567-e89b-12d3-a456-426655440000");
-        Assertions.assertNull(uuid);
+        assertThat(uuid).isNull();
     }
 
     @Test
-    void testNullIsNotParsed() {
+    void nullIsNotParsed() {
         StringToUUIDConverter converter = new StringToUUIDConverter();
         UUID uuid = converter.convert(null);
-        Assertions.assertNull(uuid);
+        assertThat(uuid).isNull();
     }
 
 }

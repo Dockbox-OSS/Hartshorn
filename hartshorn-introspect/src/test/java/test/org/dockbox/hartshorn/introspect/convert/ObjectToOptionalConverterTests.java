@@ -18,32 +18,33 @@ package test.org.dockbox.hartshorn.introspect.convert;
 
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.support.ObjectToOptionalConverter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SuppressWarnings("rawtypes")
-public class ObjectToOptionalConverterTests {
+class ObjectToOptionalConverterTests {
 
     @Test
-    void testNonNullElementConvertsToPresentOptional() {
+    void nonNullElementConvertsToPresentOptional() {
         String element = "test";
         Converter<Object, Optional<?>> converter = new ObjectToOptionalConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Optional);
-        Assertions.assertTrue(((Optional) converted).isPresent());
-        Assertions.assertEquals(element, ((Optional) converted).get());
+        assertThat(converted).isNotNull();
+        assertThat(converted).isInstanceOf(Optional.class);
+        assertThat(((Optional) converted)).isPresent();
+        assertThat(((Optional) converted)).contains(element);
     }
 
     @Test
-    void testNullElementConvertsToEmptyOptional() {
+    void nullElementConvertsToEmptyOptional() {
         Object element = null;
         Converter<Object, Optional<?>> converter = new ObjectToOptionalConverter();
         Object converted = converter.convert(element);
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted instanceof Optional);
-        Assertions.assertFalse(((Optional) converted).isPresent());
+        assertThat(converted).isNotNull();
+        assertThat(converted).isInstanceOf(Optional.class);
+        assertThat(((Optional) converted)).isNotPresent();
     }
 }

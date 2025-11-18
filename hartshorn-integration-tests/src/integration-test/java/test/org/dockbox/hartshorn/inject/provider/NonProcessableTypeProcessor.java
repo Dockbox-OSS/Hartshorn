@@ -20,20 +20,17 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
-import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
-import org.junit.jupiter.api.Assertions;
+
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 public class NonProcessableTypeProcessor extends ComponentPostProcessor {
 
     @Override
     public <T> void postConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
         if (instance instanceof NonProcessableType) {
-            try {
+            assertThatCode(() -> {
                 processingContext.type().fields().named("nonNullIfProcessed").get().set(instance, "processed");
-            }
-            catch(Throwable throwable) {
-                Assertions.fail(throwable);
-            }
+            }).doesNotThrowAnyException();
         }
     }
 }

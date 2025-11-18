@@ -20,27 +20,29 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionToObjectConverterFactory;
 import org.dockbox.hartshorn.util.option.Option;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class OptionToObjectConverterFactoryTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class OptionToObjectConverterFactoryTests {
 
     @Test
-    void testPresentOptionConvertsToObject() {
+    void presentOptionConvertsToObject() {
         ConverterFactory<Option<?>, Object> factory = new OptionToObjectConverterFactory();
         Converter<Option<?>, String> converter = factory.create(String.class);
         Option<String> option = Option.of("test");
         String converted = converter.convert(option);
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals("test", converted);
+        assertThat(converted)
+                .isNotNull()
+                .isEqualTo("test");
     }
 
     @Test
-    void testEmptyOptionConvertsToNull() {
+    void emptyOptionConvertsToNull() {
         ConverterFactory<Option<?>, Object> factory = new OptionToObjectConverterFactory();
         Converter<Option<?>, String> converter = factory.create(String.class);
         Option<String> option = Option.empty();
         String converted = converter.convert(option);
-        Assertions.assertNull(converted);
+        assertThat(converted).isNull();
     }
 }

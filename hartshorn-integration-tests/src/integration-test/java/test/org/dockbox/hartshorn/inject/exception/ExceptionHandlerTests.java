@@ -22,14 +22,15 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
 import org.dockbox.hartshorn.test.TestApplicationCustomizer;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @HartshornIntegrationTest(
         includeBasePackages = false,
         customizers = ExceptionHandlerTests.ExceptionHandlerTestsCustomizer.class
 )
-public class ExceptionHandlerTests {
+class ExceptionHandlerTests {
 
     public static class ExceptionHandlerTestsCustomizer implements TestApplicationCustomizer {
         @Override
@@ -44,53 +45,53 @@ public class ExceptionHandlerTests {
     private static CachingExceptionHandler HANDLE;
 
     @Test
-    public void testExceptKeepsPreferences() {
+    void exceptKeepsPreferences() {
         this.applicationContext.environment().printStackTraces(true);
 
         Throwable throwable = new Exception("Test");
         this.applicationContext.handle("Test", throwable);
 
-        Assertions.assertTrue(HANDLE.stacktrace());
-        Assertions.assertEquals("Test", HANDLE.message());
-        Assertions.assertSame(throwable, HANDLE.exception());
+        assertThat(HANDLE.stacktrace()).isTrue();
+        assertThat(HANDLE.message()).isEqualTo("Test");
+        assertThat(HANDLE.exception()).isSameAs(throwable);
     }
 
     @Test
-    public void testExceptUsesExceptionMessageIfNoneProvided() {
+    void exceptUsesExceptionMessageIfNoneProvided() {
         Exception throwable = new Exception("Something broke!");
         this.applicationContext.handle(throwable);
 
-        Assertions.assertSame(throwable, HANDLE.exception());
-        Assertions.assertEquals("Something broke!", HANDLE.message());
+        assertThat(HANDLE.exception()).isSameAs(throwable);
+        assertThat(HANDLE.message()).isEqualTo("Something broke!");
     }
 
     @Test
-    public void testExceptUsesFirstExceptionMessageIfNoneProvided() {
+    void exceptUsesFirstExceptionMessageIfNoneProvided() {
         Exception cause = new Exception("I caused it!");
         Exception throwable = new Exception("Something broke!", cause);
         this.applicationContext.handle(throwable);
 
-        Assertions.assertSame(throwable, HANDLE.exception());
-        Assertions.assertEquals("Something broke!", HANDLE.message());
+        assertThat(HANDLE.exception()).isSameAs(throwable);
+        assertThat(HANDLE.message()).isEqualTo("Something broke!");
     }
 
     @Test
-    public void testGetFirstUsesParentFirst() {
+    void getFirstUsesParentFirst() {
         Exception cause = new Exception("I caused it!");
         Exception throwable = new Exception("Something broke!", cause);
 
         String message = LoggingExceptionHandler.firstMessage(throwable);
 
-        Assertions.assertEquals("Something broke!", message);
+        assertThat(message).isEqualTo("Something broke!");
     }
 
     @Test
-    public void testGetFirstUsesCauseIfParentMessageAbsent() {
+    void getFirstUsesCauseIfParentMessageAbsent() {
         Exception cause = new Exception("I caused it!");
         Exception throwable = new Exception(null, cause);
 
         String message = LoggingExceptionHandler.firstMessage(throwable);
 
-        Assertions.assertEquals("I caused it!", message);
+        assertThat(message).isEqualTo("I caused it!");
     }
 }

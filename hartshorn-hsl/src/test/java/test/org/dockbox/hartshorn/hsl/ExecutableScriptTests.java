@@ -21,33 +21,35 @@ import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
-public class ExecutableScriptTests {
+class ExecutableScriptTests {
 
     @Inject
     private ApplicationContext context;
 
     @Test
-    void testHslScriptCanEvaluate() {
+    void hslScriptCanEvaluate() {
         String expression = "var a = 1";
         ExecutableScript script = ExecutableScript.of(this.context, expression);
-        ScriptContext scriptContext = Assertions.assertDoesNotThrow(script::evaluate);
+        ScriptContext scriptContext = assertThatCode(script::evaluate).doesNotThrowAnyException();
         Object result = scriptContext.interpreter().global().values().get("a");
-        Assertions.assertNotNull(result);
+        assertThat(result).isNotNull();
     }
 
     @Test
-    void testHslScriptCanResolveWithoutEvaluate() {
+    void hslScriptCanResolveWithoutEvaluate() {
         String expression = "var a = 1";
         ExecutableScript script = ExecutableScript.of(this.context, expression);
-        ScriptContext scriptContext = Assertions.assertDoesNotThrow(script::resolve);
+        ScriptContext scriptContext = assertThatCode(script::resolve).doesNotThrowAnyException();
         Object result = scriptContext.interpreter().global().values().get("a");
-        Assertions.assertNull(result);
+        assertThat(result).isNull();
     }
 }

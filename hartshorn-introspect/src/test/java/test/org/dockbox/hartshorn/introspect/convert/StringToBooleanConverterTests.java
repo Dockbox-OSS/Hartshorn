@@ -17,32 +17,33 @@
 package test.org.dockbox.hartshorn.introspect.convert;
 
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToBooleanConverter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class StringToBooleanConverterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class StringToBooleanConverterTests {
 
     @Test
-    void testTrueCanConvert() {
+    void trueCanConvert() {
         StringToBooleanConverter converter = new StringToBooleanConverter();
         Boolean converted = converter.convert("true");
-        Assertions.assertNotNull(converted);
-        Assertions.assertTrue(converted);
+        assertThat(converted)
+                .isTrue();
     }
 
     @Test
-    void testFalseCanConvert() {
+    void falseCanConvert() {
         StringToBooleanConverter converter = new StringToBooleanConverter();
         Boolean converted = converter.convert("false");
-        Assertions.assertNotNull(converted);
-        Assertions.assertFalse(converted);
+        assertThat(converted)
+                .isFalse();
     }
 
     @Test
-    void testNonDefinedValuesConvertToFalse() {
+    void nonDefinedValuesConvertToFalse() {
         StringToBooleanConverter converter = new StringToBooleanConverter();
         Boolean converted = converter.convert("test");
-        Assertions.assertNotNull(converted);
-        Assertions.assertFalse(converted);
+        assertThat(converted)
+                .isFalse();
     }
 }

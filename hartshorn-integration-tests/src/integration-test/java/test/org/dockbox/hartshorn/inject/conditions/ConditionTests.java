@@ -35,13 +35,14 @@ import org.dockbox.hartshorn.test.annotations.TestProperties;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("unused")
 @HartshornIntegrationTest(includeBasePackages = false)
@@ -71,23 +72,23 @@ public class ConditionTests {
     @ParameterizedTest
     @MethodSource("properties")
     @TestComponents(ConditionalConfiguration.class)
-    void testPropertyConditions(String name, boolean present) {
+    void propertyConditions(String name, boolean present) {
         ComponentKey<String> key = ComponentKey.builder(String.class).name(name).build();
         BindingHierarchy<String> hierarchy = this.applicationContext.hierarchy(key);
-        Assertions.assertEquals(present ? 1 : 0, hierarchy.size());
+        assertThat(hierarchy.size()).isEqualTo(present ? 1 : 0);
 
         String value = this.applicationContext.get(key);
         if (present) {
-            Assertions.assertEquals(name, value);
+            assertThat(value).isEqualTo(name);
         }
         else {
-            Assertions.assertEquals("", value); // Default value, not null
+            assertThat(value).isEmpty(); // Default value, not null
         }
     }
 
     @Test
-    void testActivatorConditions() {
-        Assertions.assertTrue(this.applicationContext.activators().hasActivator(DemoActivator.class));
+    void activatorConditions() {
+        assertThat(this.applicationContext.activators().hasActivator(DemoActivator.class)).isTrue();
 
         MethodView<ConditionTests, ?> method = this.applicationContext.environment()
                 .introspector()
@@ -101,26 +102,26 @@ public class ConditionTests {
         Condition condition = new ActivatorCondition();
 
         ConditionResult result = condition.matches(context);
-        Assertions.assertTrue(result.matches());
+        assertThat(result.matches()).isTrue();
     }
 
     @RequiresActivator(DemoActivator.class)
     private void requiresActivator() {}
 
     @Test
-    void testClassConditions() {
+    void classConditions() {
         TypeView<ConditionTests> type = this.applicationContext.environment().introspector().introspect(ConditionTests.class);
         Condition condition = new ClassCondition();
 
         MethodView<ConditionTests, ?> requiresClass = type.methods().named("requiresClass").get();
         RequiresCondition annotationForPresent = requiresClass.annotations().get(RequiresCondition.class).get();
         ConditionContext contextForPresent = new ConditionContext(this.applicationContext, requiresClass, new AnnotationConditionDeclaration(annotationForPresent));
-        Assertions.assertTrue(condition.matches(contextForPresent).matches());
+        assertThat(condition.matches(contextForPresent).matches()).isTrue();
 
         MethodView<ConditionTests, ?> requiresAbsentClass = type.methods().named("requiresAbsentClass").get();
         RequiresCondition annotationForAbsent = requiresAbsentClass.annotations().get(RequiresCondition.class).get();
         ConditionContext contextForAbsent = new ConditionContext(this.applicationContext, requiresAbsentClass, new AnnotationConditionDeclaration(annotationForAbsent));
-        Assertions.assertFalse(condition.matches(contextForAbsent).matches());
+        assertThat(condition.matches(contextForAbsent).matches()).isFalse();
     }
 
     @RequiresClass("java.lang.String")
@@ -130,17 +131,17 @@ public class ConditionTests {
     private void requiresAbsentClass() {}
 
     @Test
-    void testEnclosedViewsIncludeParentCondition() {
+    void enclosedViewsIncludeParentCondition() {
         TypeView<ParentClass> type = this.applicationContext.environment().introspector().introspect(ParentClass.class);
         ConditionMatcher matcher = new ConditionMatcher(() -> this.applicationContext);
-        Assertions.assertFalse(matcher.match(type));
+        assertThat(matcher.match(type)).isFalse();
 
         MethodView<ParentClass, ?> methodView = type.methods().named("requiresClass").get();
         matcher.includeEnclosingConditions(false);
-        Assertions.assertTrue(matcher.match(methodView));
+        assertThat(matcher.match(methodView)).isTrue();
 
         matcher.includeEnclosingConditions(true);
-        Assertions.assertFalse(matcher.match(methodView));
+        assertThat(matcher.match(methodView)).isFalse();
     }
 
     @RequiresClass("java.gnal.String")

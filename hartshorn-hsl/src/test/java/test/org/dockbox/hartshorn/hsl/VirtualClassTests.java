@@ -17,7 +17,11 @@
 package test.org.dockbox.hartshorn.hsl;
 
 import java.util.stream.Stream;
+
 import org.dockbox.hartshorn.hsl.ExecutableScript;
+
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
@@ -25,7 +29,6 @@ import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -110,10 +113,10 @@ public class VirtualClassTests {
 
         // If an error message is expected, assert that the script evaluation fails with the expected message
         if (message != null) {
-            ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
+            ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(script::evaluate).actual();
             HSLTestUtilities.assertEvaluationError(error, message);
         } else {
-            Assertions.assertDoesNotThrow(script::evaluate);
+            assertThatCode(script::evaluate).doesNotThrowAnyException();
         }
     }
 }

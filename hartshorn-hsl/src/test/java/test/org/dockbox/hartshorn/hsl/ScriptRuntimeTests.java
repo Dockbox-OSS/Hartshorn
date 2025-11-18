@@ -30,7 +30,6 @@ import org.dockbox.hartshorn.hsl.token.type.TokenType;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -47,6 +46,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -79,37 +81,37 @@ public class ScriptRuntimeTests {
 
     @ParameterizedTest
     @MethodSource("scripts")
-    void testPredefinedScript(Path path) throws IOException {
+    void predefinedScript(Path path) throws Exception {
         this.assertNoErrorsReported(ExecutableScript.of(this.applicationContext, path));
     }
 
     @ParameterizedTest
     @MethodSource("scripts")
-    void testPredefinedScriptWithOptionalSemicolons(Path path) throws IOException {
+    void predefinedScriptWithOptionalSemicolons(Path path) throws Exception {
         String source = ExecutableScript.sourceFromPath(path).replaceAll(";", "");
         this.assertNoErrorsReported(source);
     }
 
     @Test
-    void testExpression() {
+    void expression() {
         this.assertValid("1 == 1");
     }
 
     @Test
-    void testComplexExpression() {
+    void complexExpression() {
         String expression = "1 + 3 == 4 && 2 + 2 == 4 && 2 - 2 == 0";
         this.assertValid(expression);
     }
 
     @Test
-    void testExpressionWithGlobal() {
+    void expressionWithGlobal() {
         ExpressionScript expression = ExpressionScript.of(this.applicationContext, "a == 12");
         expression.runtime().global("a", 12);
         this.assertValid(expression);
     }
 
     @Test
-    void testExpressionWithGlobalFunctionAccess() {
+    void expressionWithGlobalFunctionAccess() {
         String expression = "context != null && context.environment() != null";
         ExpressionScript script = ExpressionScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
@@ -117,7 +119,7 @@ public class ScriptRuntimeTests {
     }
 
     @Test
-    void testScriptWithGlobalFunctionAccess() {
+    void scriptWithGlobalFunctionAccess() {
         String expression = "context.environment().isBatchMode()";
         ExecutableScript script = ExecutableScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
@@ -125,14 +127,14 @@ public class ScriptRuntimeTests {
     }
 
     @Test
-    void testExpressionWithNativeAccess() {
+    void expressionWithNativeAccess() {
         ExpressionScript expression = ExpressionScript.of(this.applicationContext, "isClosed() == false");
         expression.runtime().module("application", new InstanceNativeModule(this.applicationContext, this.applicationContext));
         this.assertValid(expression);
     }
 
     @Test
-    void testMultilineWithComments() {
+    void multilineWithComments() {
         String expression = """
                 print("Hello world!");
                 
@@ -150,24 +152,24 @@ public class ScriptRuntimeTests {
         ScriptContext context = this.assertNoErrorsReported(expression);
 
         List<Comment> comments = context.comments();
-        Assertions.assertEquals(3, comments.size());
+        assertThat(comments).hasSize(3);
 
         // Comments are not trimmed, so we need to include spaces in the expected result
         Comment commentOne = comments.getFirst();
-        Assertions.assertEquals(" This is a comment", commentOne.text());
-        Assertions.assertEquals(3, commentOne.line());
+        assertThat(commentOne.text()).isEqualTo(" This is a comment");
+        assertThat(commentOne.line()).isEqualTo(3);
 
         Comment commentTwo = comments.get(1);
-        Assertions.assertEquals(" This is also a comment, print(\"Hello world 3!\");", commentTwo.text());
-        Assertions.assertEquals(6, commentTwo.line());
+        assertThat(commentTwo.text()).isEqualTo(" This is also a comment, print(\"Hello world 3!\");");
+        assertThat(commentTwo.line()).isEqualTo(6);
 
         Comment commentThree = comments.get(2);
-        Assertions.assertEquals(" This is a multi-line comment\nsee?!\n", commentThree.text());
-        Assertions.assertEquals(9, commentThree.line());
+        assertThat(commentThree.text()).isEqualTo(" This is a multi-line comment\nsee?!\n");
+        assertThat(commentThree.line()).isEqualTo(9);
     }
 
     @Test
-    void testGlobalResultTracking() {
+    void globalResultTracking() {
         String expression = """
                 var a = 12;
                 var b = 13;
@@ -176,15 +178,15 @@ public class ScriptRuntimeTests {
         ScriptContext context = this.assertNoErrorsReported(expression);
 
         Map<String, Object> results = context.interpreter().global().values();
-        Assertions.assertFalse(results.isEmpty());
-        Assertions.assertEquals(12.0d, results.get("a"));
-        Assertions.assertEquals(13.0d, results.get("b"));
-        Assertions.assertEquals(25.0d, results.get("c"));
+        assertThat(results)
+                .containsEntry("a", 12.0d)
+                .containsEntry("b", 13.0d)
+                .containsEntry("c", 25.0d);
     }
 
     @ParameterizedTest
     @MethodSource("phases")
-    void testPhaseCustomizers(Phase phase) {
+    void phaseCustomizers(Phase phase) {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, "1 == 1");
 
         AtomicBoolean called = new AtomicBoolean(false);
@@ -196,33 +198,34 @@ public class ScriptRuntimeTests {
         };
         script.runtime().customizer(customizer);
         script.evaluate();
-        Assertions.assertTrue(called.get());
+        assertThat(called.get()).isTrue();
     }
 
     @ParameterizedTest
     @MethodSource("bitwise")
-    void testBitwiseOperator(TokenType token, int left, int right, int expected) {
+    void bitwiseOperator(TokenType token, int left, int right, int expected) {
         String expression = "var result = %s %s %s".formatted(left, token.representation(), right);
         ScriptContext context = this.assertNoErrorsReported(expression);
         Object result = context.interpreter().global().values().get("result");
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(expected, result);
+        assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
     }
 
     @Test
-    void testNegativeNumbers() {
+    void negativeNumbers() {
         this.assertValid("-1 == -1");
     }
 
     @Test
-    void testComplement() {
+    void complement() {
         int expected = ~35; // -36
         String expression = "~35 == %s".formatted(expected);
         this.assertValid(expression);
     }
 
     @Test
-    void testInterpreterCanBeReused() {
+    void interpreterCanBeReused() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, """
                 var x = 1;
                 test ("Variable has not been modified") {
@@ -240,8 +243,8 @@ public class ScriptRuntimeTests {
     }
 
     ScriptContext assertValid(ExpressionScript expression) {
-        ScriptContext context = Assertions.assertDoesNotThrow(expression::evaluate);
-        Assertions.assertTrue(ExpressionScript.valid(context));
+        ScriptContext context = assertThatCode(expression::evaluate).doesNotThrowAnyException();
+        assertThat(ExpressionScript.valid(context)).isTrue();
         return context;
     }
 
@@ -251,6 +254,6 @@ public class ScriptRuntimeTests {
     }
 
     ScriptContext assertNoErrorsReported(ExecutableScript script) {
-        return Assertions.assertDoesNotThrow(script::evaluate);
+        return assertThatCode(script::evaluate).doesNotThrowAnyException();
     }
 }

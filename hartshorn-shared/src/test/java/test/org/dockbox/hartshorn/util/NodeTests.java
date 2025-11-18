@@ -21,119 +21,121 @@ import org.dockbox.hartshorn.util.properties.GroupNode;
 import org.dockbox.hartshorn.util.properties.Node;
 import org.dockbox.hartshorn.util.properties.NodeVisitor;
 import org.dockbox.hartshorn.util.properties.SimpleNode;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class NodeTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
+class NodeTests {
 
     @Test
-    void testSimpleNodeCanHaveNullValue() {
+    void simpleNodeCanHaveNullValue() {
         Node<Object> node = new SimpleNode<>("node", null);
-        Assertions.assertNull(node.value());
+        assertThat(node.value()).isNull();
     }
 
     @Test
-    void testArrayNodeIsNonNull() {
+    void arrayNodeIsNonNull() {
         Node<List<Object>> node = new ArrayNode<>("node");
-        Assertions.assertNotNull(node.value());
-        Assertions.assertTrue(node.value().isEmpty());
+        assertThat(node.value()).isNotNull();
+        assertThat(node.value()).isEmpty();
     }
 
     @Test
-    void testArrayNodeUsesInsertionOrder() {
+    void arrayNodeUsesInsertionOrder() {
         Node<List<Object>> node = new ArrayNode<>("node", "a", "b", "c");
-        Assertions.assertEquals("a", node.value().get(0));
-        Assertions.assertEquals("b", node.value().get(1));
-        Assertions.assertEquals("c", node.value().get(2));
+        assertThat(node.value().get(0)).isEqualTo("a");
+        assertThat(node.value().get(1)).isEqualTo("b");
+        assertThat(node.value().get(2)).isEqualTo("c");
     }
 
     @Test
-    void testGroupNodeIsNonNull() {
+    void groupNodeIsNonNull() {
         Node<List<Node<?>>> node = new GroupNode("node");
-        Assertions.assertNotNull(node.value());
-        Assertions.assertTrue(node.value().isEmpty());
+        assertThat(node.value()).isNotNull();
+        assertThat(node.value()).isEmpty();
     }
 
     @Test
-    void testGroupNodeUsesInsertionOrder() {
+    void groupNodeUsesInsertionOrder() {
         GroupNode node = new GroupNode("node");
         node.add(new SimpleNode<>("a", "a"));
         node.add(new SimpleNode<>("b", "b"));
         node.add(new SimpleNode<>("c", "c"));
-        Assertions.assertEquals("a", node.value().get(0).value());
-        Assertions.assertEquals("b", node.value().get(1).value());
-        Assertions.assertEquals("c", node.value().get(2).value());
+        assertThat(node.value().get(0).value()).isEqualTo("a");
+        assertThat(node.value().get(1).value()).isEqualTo("b");
+        assertThat(node.value().get(2).value()).isEqualTo("c");
     }
 
     @Test
-    void testSimpleNodeValueVisitor() {
+    void simpleNodeValueVisitor() {
         Node<Integer> node = new SimpleNode<>("node", 12);
         node.accept(new NodeVisitor<Void>() {
             @Override
             public Void visit(Node<?> node) {
-                Assertions.assertEquals(12, node.value());
+                assertThat(node.value()).isEqualTo(12);
                 return null;
             }
 
             @Override
             public Void visit(GroupNode node) {
-                Assertions.fail("GroupNode should not be visited");
+                fail("GroupNode should not be visited");
                 return null;
             }
 
             @Override
             public Void visit(ArrayNode<?> node) {
-                Assertions.fail("ArrayNode should not be visited");
+                fail("ArrayNode should not be visited");
                 return null;
             }
         });
     }
 
     @Test
-    void testGroupNodeValueVisitor() {
+    void groupNodeValueVisitor() {
         GroupNode node = new GroupNode("node");
         node.accept(new NodeVisitor<Void>() {
             @Override
             public Void visit(Node<?> node) {
-                Assertions.fail("Node should not be visited");
+                fail("Node should not be visited");
                 return null;
             }
 
             @Override
             public Void visit(GroupNode node) {
-                Assertions.assertEquals("node", node.name());
+                assertThat(node.name()).isEqualTo("node");
                 return null;
             }
 
             @Override
             public Void visit(ArrayNode<?> node) {
-                Assertions.fail("ArrayNode should not be visited");
+                fail("ArrayNode should not be visited");
                 return null;
             }
         });
     }
 
     @Test
-    void testArrayNodeValueVisitor() {
+    void arrayNodeValueVisitor() {
         ArrayNode<Integer> node = new ArrayNode<>("node");
         node.accept(new NodeVisitor<Void>() {
             @Override
             public Void visit(Node<?> node) {
-                Assertions.fail("Node should not be visited");
+                fail("Node should not be visited");
                 return null;
             }
 
             @Override
             public Void visit(GroupNode node) {
-                Assertions.fail("GroupNode should not be visited");
+                fail("GroupNode should not be visited");
                 return null;
             }
 
             @Override
             public Void visit(ArrayNode<?> node) {
-                Assertions.assertEquals("node", node.name());
+                assertThat(node.name()).isEqualTo("node");
                 return null;
             }
         });

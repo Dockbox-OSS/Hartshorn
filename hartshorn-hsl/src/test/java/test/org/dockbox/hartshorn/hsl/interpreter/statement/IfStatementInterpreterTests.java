@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.statement.IfStatementInterpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.interpreter.ExecutionCheckStatement;
 import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
@@ -37,14 +36,17 @@ import test.org.dockbox.hartshorn.hsl.interpreter.JavaStatement;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class IfStatementInterpreterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+
+class IfStatementInterpreterTests {
 
     private static final Token BODY_START_TOKEN = Token.of(InterpreterTestHelper.defaultTokenPairs().block().open()).build();
 
     @Test
-    void testIfStatementEvaluatesIfConditionIsTrue() {
+    void ifStatementEvaluatesIfConditionIsTrue() {
         boolean literalValue = true;
-        Assertions.assertTrue(InterpreterUtilities.isTruthy(literalValue));
+        assertThat(InterpreterUtilities.isTruthy(literalValue)).isTrue();
 
         Token conditionToken = Token.of(LiteralTokenType.TRUE).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, true);
@@ -53,9 +55,9 @@ public class IfStatementInterpreterTests {
     }
 
     @Test
-    void testIfStatementEvaluatesIfConditionIsTruthy() {
+    void ifStatementEvaluatesIfConditionIsTruthy() {
         int literalValue = 1;
-        Assertions.assertTrue(InterpreterUtilities.isTruthy(literalValue));
+        assertThat(InterpreterUtilities.isTruthy(literalValue)).isTrue();
 
         Token conditionToken = Token.of(LiteralTokenType.NUMBER).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, literalValue);
@@ -64,9 +66,9 @@ public class IfStatementInterpreterTests {
     }
 
     @Test
-    void testIfStatementDoesNotEvaluateIfConditionIsFalse() {
+    void ifStatementDoesNotEvaluateIfConditionIsFalse() {
         boolean literalValue = false;
-        Assertions.assertFalse(InterpreterUtilities.isTruthy(literalValue));
+        assertThat(InterpreterUtilities.isTruthy(literalValue)).isFalse();
 
         Token conditionToken = Token.of(LiteralTokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, false);
@@ -75,9 +77,9 @@ public class IfStatementInterpreterTests {
     }
 
     @Test
-    void testIfStatementDoesNotEvaluateIfConditionIsFalsy() {
+    void ifStatementDoesNotEvaluateIfConditionIsFalsy() {
         Object literalValue = null;
-        Assertions.assertFalse(InterpreterUtilities.isTruthy(null));
+        assertThat(InterpreterUtilities.isTruthy(null)).isFalse();
 
         Token conditionToken = Token.of(LiteralTokenType.NUMBER).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, literalValue);
@@ -86,12 +88,12 @@ public class IfStatementInterpreterTests {
     }
 
     @Test
-    void testIfStatementDoesNotEvaluateOrFailIfElseBranchAbsent() {
+    void ifStatementDoesNotEvaluateOrFailIfElseBranchAbsent() {
         ExecutionCheckStatement trueExecutionCheck = new ExecutionCheckStatement();
         BlockStatement ifTrue = new BlockStatement(BODY_START_TOKEN, List.of(trueExecutionCheck));
 
         boolean literalValue = false;
-        Assertions.assertFalse(InterpreterUtilities.isTruthy(literalValue));
+        assertThat(InterpreterUtilities.isTruthy(literalValue)).isFalse();
 
         Token conditionToken = Token.of(LiteralTokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, false);
@@ -99,29 +101,29 @@ public class IfStatementInterpreterTests {
         IfStatement ifStatement = new IfStatement(conditionExpression, ifTrue, null);
         ASTNodeInterpreter<Void, IfStatement> statementInterpreter = new IfStatementInterpreter();
         Interpreter interpreter = InterpreterTestHelper.createInterpreter();
-        Assertions.assertDoesNotThrow(() -> statementInterpreter.interpret(ifStatement, interpreter));
+        assertThatCode(() -> statementInterpreter.interpret(ifStatement, interpreter)).doesNotThrowAnyException();
 
-        Assertions.assertFalse(trueExecutionCheck.executed());
+        assertThat(trueExecutionCheck.executed()).isFalse();
     }
 
     @Test
-    void testIfStatementUpdatesScopeInThenBranch() {
+    void ifStatementUpdatesScopeInThenBranch() {
         Interpreter interpreter = InterpreterTestHelper.createInterpreter();
         AtomicBoolean executed = new AtomicBoolean(false);
         JavaStatement trueExecutionCheck = new JavaStatement(visitor -> {
             executed.set(true);
-            Assertions.assertInstanceOf(DelegatingInterpreterVisitor.class, visitor);
+            assertThat(visitor).isInstanceOf(DelegatingInterpreterVisitor.class);
 
             DelegatingInterpreterVisitor interpreterVisitor = (DelegatingInterpreterVisitor) visitor;
             Interpreter visitorInterpreter = interpreterVisitor.interpreter();
             VariableScope currentScope = visitorInterpreter.visitingScope();
             VariableScope globalScope = visitorInterpreter.global();
-            Assertions.assertNotSame(globalScope, currentScope);
+            assertThat(currentScope).isNotSameAs(globalScope);
         });
         BlockStatement ifTrue = new BlockStatement(BODY_START_TOKEN, List.of(trueExecutionCheck));
 
         boolean literalValue = true;
-        Assertions.assertTrue(InterpreterUtilities.isTruthy(literalValue));
+        assertThat(InterpreterUtilities.isTruthy(literalValue)).isTrue();
 
         Token conditionToken = Token.of(LiteralTokenType.TRUE).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, true);
@@ -129,22 +131,22 @@ public class IfStatementInterpreterTests {
         IfStatement ifStatement = new IfStatement(conditionExpression, ifTrue, null);
         ASTNodeInterpreter<Void, IfStatement> statementInterpreter = new IfStatementInterpreter();
         statementInterpreter.interpret(ifStatement, interpreter);
-        Assertions.assertTrue(executed.get());
+        assertThat(executed.get()).isTrue();
     }
 
     @Test
-    void testIfStatementUpdatesScopeInElseBranch() {
+    void ifStatementUpdatesScopeInElseBranch() {
         Interpreter interpreter = InterpreterTestHelper.createInterpreter();
         AtomicBoolean executed = new AtomicBoolean(false);
         JavaStatement falseExecutionCheck = new JavaStatement(visitor -> {
             executed.set(true);
-            Assertions.assertTrue(visitor instanceof DelegatingInterpreterVisitor);
+            assertThat(visitor).isInstanceOf(DelegatingInterpreterVisitor.class);
 
             DelegatingInterpreterVisitor interpreterVisitor = (DelegatingInterpreterVisitor) visitor;
             Interpreter visitorInterpreter = interpreterVisitor.interpreter();
             VariableScope currentScope = visitorInterpreter.visitingScope();
             VariableScope globalScope = visitorInterpreter.global();
-            Assertions.assertNotSame(globalScope, currentScope);
+            assertThat(currentScope).isNotSameAs(globalScope);
         });
         BlockStatement ifFalse = new BlockStatement(BODY_START_TOKEN, List.of(falseExecutionCheck));
 
@@ -152,7 +154,7 @@ public class IfStatementInterpreterTests {
         BlockStatement ifTrue = new BlockStatement(BODY_START_TOKEN, List.of(trueExecutionCheck));
 
         boolean literalValue = false;
-        Assertions.assertFalse(InterpreterUtilities.isTruthy(literalValue));
+        assertThat(InterpreterUtilities.isTruthy(literalValue)).isFalse();
 
         Token conditionToken = Token.of(LiteralTokenType.FALSE).lexeme(String.valueOf(literalValue)).build();
         Expression conditionExpression = new LiteralExpression(conditionToken, false);
@@ -160,8 +162,8 @@ public class IfStatementInterpreterTests {
         IfStatement ifStatement = new IfStatement(conditionExpression, ifTrue, ifFalse);
         ASTNodeInterpreter<Void, IfStatement> statementInterpreter = new IfStatementInterpreter();
         statementInterpreter.interpret(ifStatement, interpreter);
-        Assertions.assertFalse(trueExecutionCheck.executed());
-        Assertions.assertTrue(executed.get());
+        assertThat(trueExecutionCheck.executed()).isFalse();
+        assertThat(executed.get()).isTrue();
     }
 
     private void assertEvaluatesToTrue(Expression expression) {
@@ -184,7 +186,7 @@ public class IfStatementInterpreterTests {
         Interpreter interpreter = InterpreterTestHelper.createInterpreter();
         statementInterpreter.interpret(ifStatement, interpreter);
 
-        Assertions.assertEquals(evaluatesTo, trueExecutionCheck.executed());
-        Assertions.assertNotEquals(evaluatesTo, falseExecutionCheck.executed());
+        assertThat(trueExecutionCheck.executed()).isEqualTo(evaluatesTo);
+        assertThat(falseExecutionCheck.executed()).isNotEqualTo(evaluatesTo);
     }
 }

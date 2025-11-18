@@ -21,37 +21,39 @@ import org.dockbox.hartshorn.launchpad.HartshornApplication;
 import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.launchpad.environment.ConfigurableApplicationEnvironment;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+
 @Execution(ExecutionMode.CONCURRENT)
-public class ApplicationBatchingTest {
+class ApplicationBatchingTest {
 
     /**
      * Test that multiple applications can be created and be active at the same time without interfering with each other.
      */
     @Disabled("Only for manual testing")
     @RepeatedTest(100)
-    void testApplicationContextBatching() {
-        ApplicationContext applicationContext = Assertions.assertDoesNotThrow(() ->
+    void applicationContextBatching() {
+        ApplicationContext applicationContext = assertThatCode(() ->
                 HartshornApplication.create(ApplicationBatchingTest.class, builder ->
                         builder.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
-                                    constructor.includeBasePackages(false);
-                                    constructor.standaloneComponents(components -> components.add(SimpleComponent.class));
-                                    constructor.environment(
-                                            ConfigurableApplicationEnvironment.create(ConfigurableApplicationEnvironment.Configurer::enableBatchMode)
-                                    );
-                                })
-                        )));
+                            constructor.includeBasePackages(false);
+                            constructor.standaloneComponents(components -> components.add(SimpleComponent.class));
+                            constructor.environment(
+                                    ConfigurableApplicationEnvironment.create(ConfigurableApplicationEnvironment.Configurer::enableBatchMode)
+                            );
+                        })
+                        ))).doesNotThrowAnyException();
 
-        Assertions.assertNotNull(applicationContext);
+        assertThat(applicationContext).isNotNull();
 
         SimpleComponent component = applicationContext.get(SimpleComponent.class);
-        Assertions.assertNotNull(component);
-        Assertions.assertSame(applicationContext, component.applicationContext());
+        assertThat(component).isNotNull();
+        assertThat(component.applicationContext()).isSameAs(applicationContext);
     }
 
     public record SimpleComponent(ApplicationContext applicationContext) {

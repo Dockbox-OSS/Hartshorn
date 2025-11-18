@@ -22,39 +22,41 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.modules.InstanceNativeModule;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.dockbox.hartshorn.inject.annotations.Inject;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
-public class InterpreterTests {
+class InterpreterTests {
 
     @Inject
     private ApplicationContext applicationContext;
 
     @Test
-    void testAmbiguousExternalFunctionsAreAllowedByDefault() {
+    void ambiguousExternalFunctionsAreAllowedByDefault() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
         script.runtime().module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
-        Assertions.assertDoesNotThrow(script::evaluate);
+        assertThatCode(script::evaluate).doesNotThrowAnyException();
     }
 
     @Test
-    void testAmbiguousExternalFunctionsAreAllowedWhenEnabled() {
+    void ambiguousExternalFunctionsAreAllowedWhenEnabled() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
         script.runtime().module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.runtime().interpreterOptions().permitAmbiguousExternalFunctions(true);
-        Assertions.assertDoesNotThrow(script::evaluate);
+        assertThatCode(script::evaluate).doesNotThrowAnyException();
     }
 
     @Test
-    void testAmbiguousExternalFunctionsAreNotAllowedWhenDisabled() {
+    void ambiguousExternalFunctionsAreNotAllowedWhenDisabled() {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, "ambiguousCall()");
         script.runtime().module("ambiguous", new InstanceNativeModule(this.applicationContext, new AmbiguousExternalModule()));
         script.runtime().interpreterOptions().permitAmbiguousExternalFunctions(false);
-        Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
+        assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(script::evaluate);
     }
 
     public static class AmbiguousExternalModule {

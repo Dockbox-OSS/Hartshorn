@@ -19,42 +19,45 @@ package test.org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.context.ContextIdentity;
 import org.dockbox.hartshorn.inject.ContextKey;
 import org.dockbox.hartshorn.context.ContextView;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ContextKeyTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+class ContextKeyTests {
 
     @Test
-    void testContextKeyNameIsNullIfUndefined() {
+    void contextKeyNameIsNullIfUndefined() {
         ContextIdentity<ContextView> undefinedNameKey = ContextKey.builder(ContextView.class).build();
-        Assertions.assertNull(undefinedNameKey.name());
+        assertThat(undefinedNameKey.name()).isNull();
     }
 
     @Test
-    void testContextKeyNameIsNullIfEmpty() {
+    void contextKeyNameIsNullIfEmpty() {
         ContextIdentity<ContextView> emptyNameKey = ContextKey.builder(ContextView.class).name("").build();
-        Assertions.assertNull(emptyNameKey.name());
+        assertThat(emptyNameKey.name()).isNull();
     }
 
     @Test
-    void testContextKeyNameIsNullIfNull() {
-        ContextIdentity<ContextView> nullNameKey = Assertions.assertDoesNotThrow(() -> ContextKey.builder(ContextView.class).name(null).build());
+    void contextKeyNameIsNullIfNull() {
+        ContextIdentity<ContextView> nullNameKey = assertThatCode(() -> ContextKey.builder(ContextView.class).name(null).build()).doesNotThrowAnyException();
         // Ensure no NPE is thrown
-        Assertions.assertNull(nullNameKey.name());
+        assertThat(nullNameKey.name()).isNull();
     }
 
     @Test
-    void testCreateYieldsExceptionIfNoFallbackAndApplication() {
+    void createYieldsExceptionIfNoFallbackAndApplication() {
         ContextKey<ContextView> key = ContextKey.builder(ContextView.class).build();
-        Assertions.assertThrows(IllegalStateException.class, key::create);
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(key::create);
     }
 
     @Test
-    void testMutableKeyCreatesClone() {
+    void mutableKeyCreatesClone() {
         ContextKey<ContextView> key = ContextKey.builder(ContextView.class).build();
         ContextIdentity<ContextView> mutableKey = key.mutable().name("mutable").build();
-        Assertions.assertNotSame(key, mutableKey);
-        Assertions.assertNull(key.name());
-        Assertions.assertEquals("mutable", mutableKey.name());
+        assertThat(mutableKey).isNotSameAs(key);
+        assertThat(key.name()).isNull();
+        assertThat(mutableKey.name()).isEqualTo("mutable");
     }
 }

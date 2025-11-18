@@ -24,15 +24,17 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.expression.ArraySetExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
 
-public class ArraySetExpressionInterpreterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
+class ArraySetExpressionInterpreterTests {
 
     @Test
-    void testSetWithinArrayRange() {
+    void setWithinArrayRange() {
         Object[] realArray = { "test" };
         int targetIndex = 0;
 
@@ -51,12 +53,12 @@ public class ArraySetExpressionInterpreterTests {
         ArraySetExpression setExpression = new ArraySetExpression(arrayIdentifier, index, literalExpression);
 
         Object interpreted = expressionInterpreter.interpret(setExpression, interpreter);
-        Assertions.assertEquals(literalExpression.value(), interpreted);
-        Assertions.assertEquals(literalExpression.value(), hslArray.value(targetIndex));
+        assertThat(interpreted).isEqualTo(literalExpression.value());
+        assertThat(hslArray.value(targetIndex)).isEqualTo(literalExpression.value());
     }
 
     @Test
-    void testSetOutsideRangeThrowsOutOfBounds() {
+    void setOutsideRangeThrowsOutOfBounds() {
         Object[] realArray = { "test" };
         int targetIndex = 1;
 
@@ -74,6 +76,6 @@ public class ArraySetExpressionInterpreterTests {
         ASTNodeInterpreter<Object, ArraySetExpression> expressionInterpreter = new ArraySetExpressionInterpreter();
         ArraySetExpression setExpression = new ArraySetExpression(arrayIdentifier, index, literalExpression);
 
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> expressionInterpreter.interpret(setExpression, interpreter));
+        assertThatExceptionOfType(IndexOutOfBoundsException.class).isThrownBy(() -> expressionInterpreter.interpret(setExpression, interpreter));
     }
 }

@@ -17,42 +17,43 @@
 package test.org.dockbox.hartshorn.introspect.convert;
 
 import org.dockbox.hartshorn.util.introspect.convert.support.CollectionToArrayConverter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class CollectionToArrayConverterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class CollectionToArrayConverterTests {
 
     @Test
-    void testConversionKeepsOrderAndElements() {
+    void conversionKeepsOrderAndElements() {
         List<Object> list = List.of("test", 1, 2.0, true, new Object());
 
         Object converted = new CollectionToArrayConverter().convert(list, List.class, Object[].class);
-        Assertions.assertNotNull(converted);
+        assertThat(converted).isNotNull();
 
-        Assertions.assertTrue(converted instanceof Object[]);
+        assertThat(converted).isInstanceOf(Object[].class);
         Object[] array = (Object[]) converted;
 
-        Assertions.assertEquals(list.size(), array.length);
+        assertThat(array.length).isEqualTo(list.size());
         for (int i = 0; i < list.size(); i++) {
-            Assertions.assertSame(list.get(i), array[i]);
+            assertThat(array[i]).isSameAs(list.get(i));
         }
     }
 
     @Test
-    void testComponentTypeIsRetained() {
+    void componentTypeIsRetained() {
         List<String> list = List.of("test", "test2", "test3");
 
         Object converted = new CollectionToArrayConverter().convert(list, List.class, String[].class);
-        Assertions.assertNotNull(converted);
+        assertThat(converted).isNotNull();
 
-        Assertions.assertTrue(converted instanceof String[]);
+        assertThat(converted).isInstanceOf(String[].class);
         String[] array = (String[]) converted;
 
-        Assertions.assertEquals(list.size(), array.length);
+        assertThat(array.length).isEqualTo(list.size());
         for (int i = 0; i < list.size(); i++) {
-            Assertions.assertEquals(list.get(i), array[i]);
+            assertThat(array[i]).isEqualTo(list.get(i));
         }
     }
 }

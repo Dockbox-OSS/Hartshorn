@@ -30,18 +30,19 @@ import org.dockbox.hartshorn.util.introspect.NativeProxyLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
 
-public class SetExpressionInterpreterTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class SetExpressionInterpreterTests {
 
     public static class TestClass {
         public String value;
     }
 
     @Test
-    void testSetExpressionCanSetIfDefined() {
+    void setExpressionCanSetIfDefined() {
         Interpreter interpreter = InterpreterTestHelper.createInterpreter();
         TestClass reference = new TestClass();
 
@@ -64,9 +65,9 @@ public class SetExpressionInterpreterTests {
         SetExpressionInterpreter expressionInterpreter = new SetExpressionInterpreter();
 
         Object interpretedValue = expressionInterpreter.interpret(setExpression, interpreter);
-        Assertions.assertEquals(literalValue.value(), interpretedValue);
+        assertThat(interpretedValue).isEqualTo(literalValue.value());
 
         Object value = reference.value;
-        Assertions.assertEquals(literalValue.value(), value);
+        assertThat(value).isEqualTo(literalValue.value());
     }
 }

@@ -45,7 +45,6 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.introspect.view.View;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -64,6 +63,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+
 @HartshornIntegrationTest(includeBasePackages = false)
 public class CircularDependencyTests {
 
@@ -72,15 +74,15 @@ public class CircularDependencyTests {
 
     @Test
     @TestComponents({ CircularDependencyA.class, CircularDependencyB.class})
-    void testCircularDependenciesAreCorrectOnFieldInject() {
-        CircularDependencyA a = Assertions.assertDoesNotThrow(() -> this.applicationContext.get(CircularDependencyA.class));
-        CircularDependencyB b = Assertions.assertDoesNotThrow(() -> this.applicationContext.get(CircularDependencyB.class));
+    void circularDependenciesAreCorrectOnFieldInject() {
+        CircularDependencyA a = assertThatCode(() -> this.applicationContext.get(CircularDependencyA.class)).doesNotThrowAnyException();
+        CircularDependencyB b = assertThatCode(() -> this.applicationContext.get(CircularDependencyB.class)).doesNotThrowAnyException();
 
-        Assertions.assertNotNull(a);
-        Assertions.assertNotNull(b);
+        assertThat(a).isNotNull();
+        assertThat(b).isNotNull();
 
-        Assertions.assertSame(a, b.a());
-        Assertions.assertSame(b, a.b());
+        assertThat(b.a()).isSameAs(a);
+        assertThat(a.b()).isSameAs(b);
     }
 
     public static Stream<Arguments> circularDelayedResolution() {
@@ -106,15 +108,15 @@ public class CircularDependencyTests {
 
     @ParameterizedTest
     @MethodSource("circularImmediateResolution")
-    void testImmediateCircularDependencyPathCanBeDetermined(List<Class<?>> path) {
+    void immediateCircularDependencyPathCanBeDetermined(List<Class<?>> path) {
         DependencyGraph dependencyGraph = this.buildDependencyGraph(path);
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
         Set<GraphNode<DependencyContext<?>>> roots = dependencyGraph.roots();
-        Assertions.assertEquals(0, roots.size()); // Cyclic, thus no roots
+        assertThat(roots).hasSize(0); // Cyclic, thus no roots
 
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
-        Assertions.assertEquals(path.size(), nodes.size()); // N nodes, no duplicates, but does contain all nodes
+        assertThat(nodes).hasSize(path.size()); // N nodes, no duplicates, but does contain all nodes
 
         Map<? extends Class<?>, GraphNode<DependencyContext<?>>> nodesByType = nodes.stream()
                 .collect(Collectors.toMap(node -> node.value().componentKey().type(), Function.identity()));
@@ -122,10 +124,10 @@ public class CircularDependencyTests {
 
         List<GraphNode<DependencyContext<?>>> recursivePath = validator.checkNodeNotCyclicRecursive(firstNode, new ArrayList<>());
         ComponentDiscoveryList discoveryList = validator.createDiscoveryList(recursivePath, this.applicationContext.environment().introspector());
-        Assertions.assertNotNull(discoveryList);
+        assertThat(discoveryList).isNotNull();
 
         List<DiscoveredComponent> discoveredComponents = discoveryList.discoveredComponents();
-        Assertions.assertEquals(path.size(), discoveredComponents.size());
+        assertThat(discoveredComponents).hasSize(path.size());
 
         List<? extends Class<?>> discoveredTypes = discoveredComponents.stream()
                 .map(DiscoveredComponent::node)
@@ -135,21 +137,21 @@ public class CircularDependencyTests {
         int startIndex = discoveredTypes.indexOf(path.get(0));
 
         for (int i = 0; i < path.size(); i++) {
-            Assertions.assertSame(path.get(i), discoveredTypes.get((startIndex + i) % path.size()));
+            assertThat(discoveredTypes.get((startIndex + i) % path.size())).isSameAs(path.get(i));
         }
     }
 
     @ParameterizedTest
     @MethodSource("circularDelayedResolution")
-    void testDelayedCircularDependencyPathIsEmpty(List<Class<?>> path) {
+    void delayedCircularDependencyPathIsEmpty(List<Class<?>> path) {
         DependencyGraph dependencyGraph = this.buildDependencyGraph(path);
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
         Set<GraphNode<DependencyContext<?>>> roots = dependencyGraph.roots();
-        Assertions.assertEquals(0, roots.size()); // Cyclic, thus no roots
+        assertThat(roots).hasSize(0); // Cyclic, thus no roots
 
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
-        Assertions.assertEquals(path.size(), nodes.size()); // N nodes, no duplicates, but does contain all nodes
+        assertThat(nodes).hasSize(path.size()); // N nodes, no duplicates, but does contain all nodes
 
         Map<? extends Class<?>, GraphNode<DependencyContext<?>>> nodesByType = nodes.stream()
                 .collect(Collectors.toMap(node -> node.value().componentKey().type(), Function.identity()));
@@ -157,10 +159,10 @@ public class CircularDependencyTests {
 
         List<GraphNode<DependencyContext<?>>> recursivePath = validator.checkNodeNotCyclicRecursive(firstNode, new ArrayList<>());
         ComponentDiscoveryList discoveryList = validator.createDiscoveryList(recursivePath, this.applicationContext.environment().introspector());
-        Assertions.assertNotNull(discoveryList);
+        assertThat(discoveryList).isNotNull();
 
         List<DiscoveredComponent> discoveredComponents = discoveryList.discoveredComponents();
-        Assertions.assertTrue(discoveredComponents.isEmpty());
+        assertThat(discoveredComponents).isEmpty();
     }
 
     private DependencyGraph buildDependencyGraph(List<Class<?>> components) {
@@ -184,7 +186,7 @@ public class CircularDependencyTests {
                         .filter(environment.injectionPointsResolver()::isInjectable)
                         .toList();
                 if (!constructorViews.isEmpty()) {
-                    Assertions.assertEquals(1, constructorViews.size());
+                    assertThat(constructorViews).hasSize(1);
                     ConstructorView<?> constructorView = constructorViews.get(0);
                     origin = constructorView;
                     // Constructors are always immediate, as they are required to instantiate the component
@@ -210,11 +212,11 @@ public class CircularDependencyTests {
                 this.applicationContext.defaultBinder(),
                 this.applicationContext.environment().introspector()
         );
-        return Assertions.assertDoesNotThrow(() -> dependencyGraphBuilder.buildDependencyGraph(dependencyContexts));
+        return assertThatCode(() -> dependencyGraphBuilder.buildDependencyGraph(dependencyContexts)).doesNotThrowAnyException();
     }
 
     @Test
-    void testCircularDependencyPathOnBoundTypeCanBeDetermined() {
+    void circularDependencyPathOnBoundTypeCanBeDetermined() {
         // Bindings should be resolved during graph construction.
         this.applicationContext
                 .bind(InterfaceCircularDependencyA.class).to(BoundCircularDependencyA.class)
@@ -224,10 +226,10 @@ public class CircularDependencyTests {
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
         Set<GraphNode<DependencyContext<?>>> roots = dependencyGraph.roots();
-        Assertions.assertEquals(0, roots.size()); // Cyclic, so no roots
+        assertThat(roots).hasSize(0); // Cyclic, so no roots
 
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
-        Assertions.assertEquals(4, nodes.size()); // 4 nodes, 2 interfaces, 2 implementations
+        assertThat(nodes).hasSize(4); // 4 nodes, 2 interfaces, 2 implementations
 
         Map<? extends Class<?>, GraphNode<DependencyContext<?>>> nodesByType = nodes.stream()
                 .collect(Collectors.toMap(node -> node.value().componentKey().type(), Function.identity()));
@@ -237,23 +239,23 @@ public class CircularDependencyTests {
 
         ComponentDiscoveryList discoveryList = validator.createDiscoveryList(recursivePath, this.applicationContext.environment().introspector());
         List<DiscoveredComponent> discoveredComponentsNonCyclic = discoveryList.discoveredComponents();
-        Assertions.assertEquals(2, discoveredComponentsNonCyclic.size());
+        assertThat(discoveredComponentsNonCyclic).hasSize(2);
 
         List<DiscoveredComponent> discoveredComponents = discoveryList.discoveredComponentsCyclic();
-        Assertions.assertEquals(3, discoveredComponents.size());
+        assertThat(discoveredComponents).hasSize(3);
 
         DiscoveredComponent discoveredComponentA1 = discoveredComponents.get(0);
-        Assertions.assertSame(InterfaceCircularDependencyA.class, discoveredComponentA1.node().type().type());
-        Assertions.assertSame(BoundCircularDependencyA.class, discoveredComponentA1.actualType().type());
+        assertThat(discoveredComponentA1.node().type().type()).isSameAs(InterfaceCircularDependencyA.class);
+        assertThat(discoveredComponentA1.actualType().type()).isSameAs(BoundCircularDependencyA.class);
 
         DiscoveredComponent discoveredComponentB = discoveredComponents.get(1);
-        Assertions.assertSame(InterfaceCircularDependencyB.class, discoveredComponentB.node().type().type());
-        Assertions.assertSame(BoundCircularDependencyB.class, discoveredComponentB.actualType().type());
+        assertThat(discoveredComponentB.node().type().type()).isSameAs(InterfaceCircularDependencyB.class);
+        assertThat(discoveredComponentB.actualType().type()).isSameAs(BoundCircularDependencyB.class);
 
         DiscoveredComponent discoveredComponentA2 = discoveredComponents.get(2);
-        Assertions.assertSame(InterfaceCircularDependencyA.class, discoveredComponentA2.node().type().type());
-        Assertions.assertSame(BoundCircularDependencyA.class, discoveredComponentA2.actualType().type());
+        assertThat(discoveredComponentA2.node().type().type()).isSameAs(InterfaceCircularDependencyA.class);
+        assertThat(discoveredComponentA2.actualType().type()).isSameAs(BoundCircularDependencyA.class);
 
-        Assertions.assertEquals(discoveredComponentA1, discoveredComponentA2);
+        assertThat(discoveredComponentA2).isEqualTo(discoveredComponentA1);
     }
 }

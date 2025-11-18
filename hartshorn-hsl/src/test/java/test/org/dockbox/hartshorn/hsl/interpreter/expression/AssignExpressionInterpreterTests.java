@@ -20,6 +20,11 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
@@ -28,7 +33,6 @@ import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.interpreter.expression.AssignExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -47,7 +51,7 @@ public class AssignExpressionInterpreterTests {
 
     @ParameterizedTest
     @MethodSource("variableDefinitionScopes")
-    void testAssignmentToDefinedVariable(Function<Interpreter, VariableScope> variableScopeFunction) {
+    void assignmentToDefinedVariable(Function<Interpreter, VariableScope> variableScopeFunction) {
         Token variableName = Token.of(LiteralTokenType.IDENTIFIER)
                 .lexeme("test")
                 .build();
@@ -63,12 +67,12 @@ public class AssignExpressionInterpreterTests {
         Interpreter interpreter = InterpreterTestHelper.createInterpreter();
         variableScopeFunction.apply(interpreter).define(variableName.lexeme(), "test");
 
-        Object interpreted = Assertions.assertDoesNotThrow(() -> expressionInterpreter.interpret(expression, interpreter));
-        Assertions.assertEquals(literalExpression.value(), interpreted);
+        Object interpreted = assertThatCode(() -> expressionInterpreter.interpret(expression, interpreter)).doesNotThrowAnyException();
+        assertThat(interpreted).isEqualTo(literalExpression.value());
     }
 
     @Test
-    void testAssignmentToUndefinedVariable() {
+    void assignmentToUndefinedVariable() {
         Token variableName = Token.of(LiteralTokenType.IDENTIFIER)
                 .lexeme("test")
                 .build();
@@ -83,7 +87,7 @@ public class AssignExpressionInterpreterTests {
 
         Interpreter interpreter = InterpreterTestHelper.createInterpreter();
 
-        ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, () -> expressionInterpreter.interpret(expression, interpreter));
-        Assertions.assertSame(variableName, error.at());
+        ScriptEvaluationError error = assertThatExceptionOfType(ScriptEvaluationError.class).isThrownBy(() -> expressionInterpreter.interpret(expression, interpreter)).actual();
+        assertThat(error.at()).isSameAs(variableName);
     }
 }

@@ -19,272 +19,297 @@ package test.org.dockbox.hartshorn.introspect.convert;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToNumberConverterFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class StringToNumberConverterFactoryTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class StringToNumberConverterFactoryTests {
 
     @Test
-    void testValidStringToInteger() {
+    void validStringToInteger() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Integer> converter = factory.create(Integer.class);
         Integer converted = converter.convert("1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testValidStringToLong() {
+    void validStringToLong() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Long> converter = factory.create(Long.class);
         Long converted = converter.convert("1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1L, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testValidStringToFloat() {
+    void validStringToFloat() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Float> converter = factory.create(Float.class);
         Float converted = converter.convert("1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1.0F, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testValidStringToDouble() {
+    void validStringToDouble() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Double> converter = factory.create(Double.class);
         Double converted = converter.convert("1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1.0D, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testValidStringToShort() {
+    void validStringToShort() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Short> converter = factory.create(Short.class);
         Short converted = converter.convert("1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals((short) 1, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testValidStringToByte() {
+    void validStringToByte() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Byte> converter = factory.create(Byte.class);
         Byte converted = converter.convert("1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals((byte) 1, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testNegativeStringToInteger() {
+    void negativeStringToInteger() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Integer> converter = factory.create(Integer.class);
         Integer converted = converter.convert("-1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(-1, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isEqualTo(-1);
     }
 
     @Test
-    void testNegativeStringToLong() {
+    void negativeStringToLong() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Long> converter = factory.create(Long.class);
         Long converted = converter.convert("-1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(-1L, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isEqualTo(-1L);
     }
 
     @Test
-    void testNegativeStringToFloat() {
+    void negativeStringToFloat() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Float> converter = factory.create(Float.class);
         Float converted = converter.convert("-1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(-1.0F, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isEqualTo(-1.0F);
     }
 
     @Test
-    void testNegativeStringToDouble() {
+    void negativeStringToDouble() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Double> converter = factory.create(Double.class);
         Double converted = converter.convert("-1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(-1.0D, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isEqualTo(-1.0D);
     }
 
     @Test
-    void testNegativeStringToShort() {
+    void negativeStringToShort() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Short> converter = factory.create(Short.class);
         Short converted = converter.convert("-1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals((short) -1, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isEqualTo((short) -1);
     }
 
     @Test
-    void testNegativeStringToByte() {
+    void negativeStringToByte() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Byte> converter = factory.create(Byte.class);
         Byte converted = converter.convert("-1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals((byte) -1, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isEqualTo((byte) -1);
     }
 
     @Test
-    void testInvalidStringToInteger() {
+    void invalidStringToInteger() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Integer> converter = factory.create(Integer.class);
         Integer converted = converter.convert("a");
-        Assertions.assertNull(converted);
+        assertThat(converted).isNull();
     }
 
     @Test
-    void testInvalidStringToLong() {
+    void invalidStringToLong() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Long> converter = factory.create(Long.class);
         Long converted = converter.convert("a");
-        Assertions.assertNull(converted);
+        assertThat(converted).isNull();
     }
 
     @Test
-    void testInvalidStringToFloat() {
+    void invalidStringToFloat() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Float> converter = factory.create(Float.class);
         Float converted = converter.convert("a");
-        Assertions.assertNull(converted);
+        assertThat(converted).isNull();
     }
 
     @Test
-    void testInvalidStringToDouble() {
+    void invalidStringToDouble() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Double> converter = factory.create(Double.class);
         Double converted = converter.convert("a");
-        Assertions.assertNull(converted);
+        assertThat(converted).isNull();
     }
 
     @Test
-    void testInvalidStringToShort() {
+    void invalidStringToShort() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Short> converter = factory.create(Short.class);
         Short converted = converter.convert("a");
-        Assertions.assertNull(converted);
+        assertThat(converted).isNull();
     }
 
     @Test
-    void testInvalidStringToByte() {
+    void invalidStringToByte() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Byte> converter = factory.create(Byte.class);
         Byte converted = converter.convert("a");
-        Assertions.assertNull(converted);
+        assertThat(converted).isNull();
     }
 
     @Test
-    void testHexadecimalStringToInteger() {
+    void hexadecimalStringToInteger() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Integer> converter = factory.create(Integer.class);
         Integer converted = converter.convert("0x1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testHexadecimalStringToLong() {
+    void hexadecimalStringToLong() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Long> converter = factory.create(Long.class);
         Long converted = converter.convert("0x1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1L, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testHexadecimalStringToFloat() {
+    void hexadecimalStringToFloat() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Float> converter = factory.create(Float.class);
         Float converted = converter.convert("0x1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1.0F, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testHexadecimalStringToDouble() {
+    void hexadecimalStringToDouble() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Double> converter = factory.create(Double.class);
         Double converted = converter.convert("0x1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1.0D, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testHexadecimalStringToShort() {
+    void hexadecimalStringToShort() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Short> converter = factory.create(Short.class);
         Short converted = converter.convert("0x1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals((short) 1, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testHexadecimalStringToByte() {
+    void hexadecimalStringToByte() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Byte> converter = factory.create(Byte.class);
         Byte converted = converter.convert("0x1");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals((byte) 1, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testOctalStringToInteger() {
+    void octalStringToInteger() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Integer> converter = factory.create(Integer.class);
         Integer converted = converter.convert("01");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testOctalStringToLong() {
+    void octalStringToLong() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Long> converter = factory.create(Long.class);
         Long converted = converter.convert("01");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1L, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testOctalStringToFloat() {
+    void octalStringToFloat() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Float> converter = factory.create(Float.class);
         Float converted = converter.convert("01");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1.0F, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testOctalStringToDouble() {
+    void octalStringToDouble() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Double> converter = factory.create(Double.class);
         Double converted = converter.convert("01");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals(1.0D, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testOctalStringToShort() {
+    void octalStringToShort() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Short> converter = factory.create(Short.class);
         Short converted = converter.convert("01");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals((short) 1, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 
     @Test
-    void testOctalStringToByte() {
+    void octalStringToByte() {
         ConverterFactory<String, Number> factory = new StringToNumberConverterFactory();
         Converter<String, Byte> converter = factory.create(Byte.class);
         Byte converted = converter.convert("01");
-        Assertions.assertNotNull(converted);
-        Assertions.assertEquals((byte) 1, converted);
+        assertThat(converted)
+                .isNotNull()
+                .isOne();
     }
 }

@@ -17,54 +17,54 @@
 package test.org.dockbox.hartshorn.util;
 
 import org.dockbox.hartshorn.util.IOUtilities;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
-public class IOUtilitiesTests {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class IOUtilitiesTests {
 
     @TempDir
     private Path testDirectory;
 
     @Test
-    void testHasFileExtensionForPresentExtension() {
+    void hasFileExtensionForPresentExtension() {
         Path path = this.testDirectory.resolve("file.txt");
-        Assertions.assertTrue(IOUtilities.hasFileExtension(path));
+        assertThat(IOUtilities.hasFileExtension(path)).isTrue();
     }
 
     @Test
-    void testHasFileExtensionForAbsentExtension() {
+    void hasFileExtensionForAbsentExtension() {
         Path path = this.testDirectory.resolve("file");
-        Assertions.assertFalse(IOUtilities.hasFileExtension(path));
+        assertThat(IOUtilities.hasFileExtension(path)).isFalse();
     }
 
     @Test
-    void testGetFileExtensionForPresentExtension() {
+    void getFileExtensionForPresentExtension() {
         Path path = this.testDirectory.resolve("file.txt");
         String extension = IOUtilities.getFileExtension(path);
-        Assertions.assertEquals("txt", extension);
+        assertThat(extension).isEqualTo("txt");
     }
 
     @Test
-    void testGetFileExtensionForAbsentExtension() {
+    void getFileExtensionForAbsentExtension() {
         Path path = this.testDirectory.resolve("file");
         String extension = IOUtilities.getFileExtension(path);
-        Assertions.assertNull(extension);
+        assertThat(extension).isNull();
     }
 
     @Test
-    void testExistsForExistingFile() throws IOException {
+    void existsForExistingFile() throws Exception {
         Path path = this.testDirectory.resolve("file");
-        Assertions.assertTrue(path.toFile().createNewFile());
-        Assertions.assertTrue(IOUtilities.exists(path));
+        assertThat(path.toFile().createNewFile()).isTrue();
+        assertThat(IOUtilities.exists(path)).isTrue();
     }
 
     @Test
-    void testExistsForNotExistingFile() {
+    void existsForNotExistingFile() {
         Path path = this.testDirectory.resolve("doesnotexist");
-        Assertions.assertFalse(IOUtilities.exists(path));
+        assertThat(IOUtilities.exists(path)).isFalse();
     }
 }

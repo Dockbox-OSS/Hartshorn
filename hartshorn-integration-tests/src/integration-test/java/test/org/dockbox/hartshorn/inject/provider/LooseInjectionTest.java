@@ -27,45 +27,47 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.Tristate;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class LooseInjectionTest {
 
     @Test
-    void testNonStrictModeMatchesCompatibleBinding(@Inject ApplicationContext context) {
+    void nonStrictModeMatchesCompatibleBinding(@Inject ApplicationContext context) {
         context.bind(String.class).singleton("Hello World");
         ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class)
                 .strict(false)
                 .build();
         CharSequence sequence = context.get(key);
-        Assertions.assertEquals("Hello World", sequence);
+        assertThat(sequence).isEqualTo("Hello World");
     }
 
     @Test
-    void testStrictModeOnlyMatchesExactBinding(@Inject ApplicationContext context) {
+    void strictModeOnlyMatchesExactBinding(@Inject ApplicationContext context) {
         context.bind(String.class).singleton("Hello World");
         ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class)
                 .strict(true)
                 .build();
-        Assertions.assertThrows(ComponentResolutionException.class, () -> context.get(key));
+        assertThatExceptionOfType(ComponentResolutionException.class).isThrownBy(() -> context.get(key));
     }
 
     @Test
-    void testStrictModeIsUndefinedByDefault() {
+    void strictModeIsUndefinedByDefault() {
         ComponentKey<CharSequence> componentKey = ComponentKey.of(CharSequence.class);
-        Assertions.assertSame(Tristate.UNDEFINED, componentKey.strict());
+        assertThat(componentKey.strict()).isSameAs(Tristate.UNDEFINED);
     }
 
     @Test
-    void testEnvironmentStrictModeIsEnabledByDefault() {
+    void environmentStrictModeIsEnabledByDefault() {
         ApplicationEnvironment environment = HartshornApplication.create(LooseInjectionTest.class, application -> {
             application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
                 constructor.includeBasePackages(false);
             }));
         }).environment();
-        Assertions.assertTrue(environment.isStrictMode());
+        assertThat(environment.isStrictMode()).isTrue();
     }
 
     public static void main(String[] args) {
@@ -78,7 +80,7 @@ public class LooseInjectionTest {
 
 
     @Test
-    void testCustomizingEnvironmentStrictModeAffectsLookup() {
+    void customizingEnvironmentStrictModeAffectsLookup() {
         ApplicationContext applicationContext = HartshornApplication.create(LooseInjectionTest.class, application -> {
             application.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
                 constructor.includeBasePackages(false);
@@ -86,13 +88,13 @@ public class LooseInjectionTest {
             }));
         });
         ApplicationEnvironment environment = applicationContext.environment();
-        Assertions.assertFalse(environment.isStrictMode());
+        assertThat(environment.isStrictMode()).isFalse();
 
         applicationContext.bind(String.class).singleton("Hello World");
         ComponentKey<CharSequence> key = ComponentKey.builder(CharSequence.class).build();
-        Assertions.assertSame(Tristate.UNDEFINED, key.strict());
+        assertThat(key.strict()).isSameAs(Tristate.UNDEFINED);
 
         CharSequence sequence = applicationContext.get(key);
-        Assertions.assertEquals("Hello World", sequence);
+        assertThat(sequence).isEqualTo("Hello World");
     }
 }
