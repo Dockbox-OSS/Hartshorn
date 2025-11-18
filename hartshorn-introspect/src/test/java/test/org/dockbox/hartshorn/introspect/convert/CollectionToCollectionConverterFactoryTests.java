@@ -73,8 +73,9 @@ class CollectionToCollectionConverterFactoryTests {
         Converter<Collection<?>, LinkedHashSet> converter = new CollectionToCollectionConverterFactory(introspector).create(LinkedHashSet.class);
         Set<?> output = converter.convert(input);
 
-        assertThat(output).isInstanceOf(LinkedHashSet.class);
-        assertThat(output).hasSameSizeAs(expectedOutput);
+        assertThat(output)
+                .isInstanceOf(LinkedHashSet.class)
+                .hasSameSizeAs(expectedOutput);
 
         // Assert order is preserved
         List<?> outputList = new ArrayList<>(output);

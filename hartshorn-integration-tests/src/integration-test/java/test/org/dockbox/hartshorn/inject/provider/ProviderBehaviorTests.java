@@ -155,8 +155,8 @@ class ProviderBehaviorTests {
         ComponentResolutionException exception = assertThatExceptionOfType(ComponentResolutionException.class).isThrownBy(() -> this.applicationContext.get(
                 ErrorInConstructorObject.class)).actual();
         Throwable cause = exception.getCause();
-        assertThat(cause).isNotNull();
-        assertThat(cause).isInstanceOf(ApplicationException.class);
+        assertThat(cause)
+                .isInstanceOf(ApplicationException.class);
 
         ApplicationException applicationException = (ApplicationException) cause;
         assertThat(applicationException.getMessage()).isEqualTo("Failed to create instance of type " + ErrorInConstructorObject.class.getName());
@@ -215,8 +215,9 @@ class ProviderBehaviorTests {
             else {
                 second = this.applicationContext.get(ComponentKey.of(ProvidedInterface.class, meta));
             }
-            assertThat(second).isNotNull();
-            assertThat(second).isSameAs(provided);
+            assertThat(second)
+                    .isNotNull()
+                    .isSameAs(provided);
         }
     }
 

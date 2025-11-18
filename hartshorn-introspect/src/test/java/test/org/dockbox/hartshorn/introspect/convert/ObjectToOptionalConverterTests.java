@@ -32,8 +32,8 @@ class ObjectToOptionalConverterTests {
         String element = "test";
         Converter<Object, Optional<?>> converter = new ObjectToOptionalConverter();
         Object converted = converter.convert(element);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Optional.class);
+        assertThat(converted)
+                .isInstanceOf(Optional.class);
         assertThat(((Optional) converted)).isPresent();
         assertThat(((Optional) converted)).contains(element);
     }
@@ -43,8 +43,8 @@ class ObjectToOptionalConverterTests {
         Object element = null;
         Converter<Object, Optional<?>> converter = new ObjectToOptionalConverter();
         Object converted = converter.convert(element);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Optional.class);
+        assertThat(converted)
+                .isInstanceOf(Optional.class);
         assertThat(((Optional) converted)).isNotPresent();
     }
 }

@@ -38,8 +38,8 @@ class ObjectToCollectionConverterFactoryTests {
         String element = "test";
         Converter<Object, Set<String>> converter = createConverter();
         Object converted = converter.convert(element);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Set.class);
+        assertThat(converted)
+                .isInstanceOf(Set.class);
         assertThat(((Collection) converted)).hasSize(1);
         assertThat(CollectionUtilities.first((Iterable) converted)).isEqualTo(element);
     }
@@ -49,8 +49,8 @@ class ObjectToCollectionConverterFactoryTests {
         int element = 1;
         Converter<Object, Set<String>> converter = createConverter();
         Object converted = converter.convert(element);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Set.class);
+        assertThat(converted)
+                .isInstanceOf(Set.class);
         assertThat(((Collection) converted)).hasSize(1);
         assertThat(CollectionUtilities.first((Iterable) converted)).isEqualTo(element);
     }

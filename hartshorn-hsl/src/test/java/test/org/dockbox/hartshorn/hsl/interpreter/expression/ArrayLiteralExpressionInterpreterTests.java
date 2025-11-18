@@ -39,8 +39,8 @@ class ArrayLiteralExpressionInterpreterTests {
         ArrayLiteralExpression expression = createExpression(List.of());
 
         Object interpreted = InterpreterTestHelper.interpret(expression, new ArrayLiteralExpressionInterpreter());
-        assertThat(interpreted).isNotNull();
-        assertThat(interpreted).isInstanceOf(Array.class);
+        assertThat(interpreted)
+                .isInstanceOf(Array.class);
 
         Array array = (Array) interpreted;
         assertThat(array.length()).isZero();
@@ -53,8 +53,8 @@ class ArrayLiteralExpressionInterpreterTests {
         ArrayLiteralExpression expression = createExpression(List.of(literalExpression));
 
         Object interpreted = InterpreterTestHelper.interpret(expression, new ArrayLiteralExpressionInterpreter());
-        assertThat(interpreted).isNotNull();
-        assertThat(interpreted).isInstanceOf(Array.class);
+        assertThat(interpreted)
+                .isInstanceOf(Array.class);
 
         Array array = (Array) interpreted;
         assertThat(array.length()).isOne();

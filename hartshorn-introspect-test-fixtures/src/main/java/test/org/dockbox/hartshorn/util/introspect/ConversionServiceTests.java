@@ -84,8 +84,9 @@ public abstract class ConversionServiceTests {
     void enumFromString() {
         ConversionService conversionService = this.conversionService();
         TestEnumType a = conversionService.convert("A", TestEnumType.class);
-        assertThat(a).isNotNull();
-        assertThat(a).isSameAs(TestEnumType.A);
+        assertThat(a)
+                .isNotNull()
+                .isSameAs(TestEnumType.A);
 
         TestEnumType d = conversionService.convert("D", TestEnumType.class);
         assertThat(d).isNull();

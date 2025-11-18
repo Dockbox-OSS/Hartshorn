@@ -199,7 +199,6 @@
                     <exportDatatables>true</exportDatatables>
                     <activeRecipes>
                         <recipe>org.openrewrite.java.testing.assertj.Assertj</recipe>
-                        <recipe>org.openrewrite.java.jspecify.JSpecifyBestPractices</recipe>
                     </activeRecipes>
                 </configuration>
                 <dependencies>
@@ -207,11 +206,6 @@
                         <groupId>org.openrewrite.recipe</groupId>
                         <artifactId>rewrite-testing-frameworks</artifactId>
                         <version>3.21.3</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.openrewrite.recipe</groupId>
-                        <artifactId>rewrite-migrate-java</artifactId>
-                        <version>3.21.2</version>
                     </dependency>
                 </dependencies>
             </plugin>

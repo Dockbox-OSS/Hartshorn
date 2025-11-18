@@ -30,9 +30,8 @@ class CollectionToArrayConverterTests {
         List<Object> list = List.of("test", 1, 2.0, true, new Object());
 
         Object converted = new CollectionToArrayConverter().convert(list, List.class, Object[].class);
-        assertThat(converted).isNotNull();
-
-        assertThat(converted).isInstanceOf(Object[].class);
+        assertThat(converted)
+                .isInstanceOf(Object[].class);
         Object[] array = (Object[]) converted;
 
         assertThat(array.length).isEqualTo(list.size());
@@ -46,9 +45,8 @@ class CollectionToArrayConverterTests {
         List<String> list = List.of("test", "test2", "test3");
 
         Object converted = new CollectionToArrayConverter().convert(list, List.class, String[].class);
-        assertThat(converted).isNotNull();
-
-        assertThat(converted).isInstanceOf(String[].class);
+        assertThat(converted)
+                .isInstanceOf(String[].class);
         String[] array = (String[]) converted;
 
         assertThat(array.length).isEqualTo(list.size());

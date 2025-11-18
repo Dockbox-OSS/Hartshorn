@@ -29,9 +29,9 @@ class ObjectToStringConverterTests {
         Object element = null;
         Converter<Object, String> converter = new ObjectToStringConverter();
         Object converted = converter.convert(element);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(String.class);
-        assertThat(converted).isEqualTo("null");
+        assertThat(converted)
+                .isInstanceOf(String.class)
+                .isEqualTo("null");
     }
 
     @Test
@@ -39,9 +39,9 @@ class ObjectToStringConverterTests {
         String element = "test";
         Converter<Object, String> converter = new ObjectToStringConverter();
         Object converted = converter.convert(element);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(String.class);
-        assertThat(converted).isEqualTo(element);
+        assertThat(converted)
+                .isInstanceOf(String.class)
+                .isEqualTo(element);
     }
 
     @Test
@@ -49,9 +49,9 @@ class ObjectToStringConverterTests {
         Object element = new Object();
         Converter<Object, String> converter = new ObjectToStringConverter();
         Object converted = converter.convert(element);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(String.class);
-        assertThat(converted).isEqualTo(element.toString());
+        assertThat(converted)
+                .isInstanceOf(String.class)
+                .isEqualTo(element.toString());
     }
 
     @Test
@@ -59,9 +59,9 @@ class ObjectToStringConverterTests {
         Object element = new TestClass("test");
         Converter<Object, String> converter = new ObjectToStringConverter();
         Object converted = converter.convert(element);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(String.class);
-        assertThat(converted).isEqualTo("{toStringResult:test}");
+        assertThat(converted)
+                .isInstanceOf(String.class)
+                .isEqualTo("{toStringResult:test}");
     }
 
     private record TestClass(String test) {

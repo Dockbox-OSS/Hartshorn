@@ -81,10 +81,11 @@ class CollectionScopeTests {
         ComponentKey<ComponentCollection<String>> collectionKey = nameKey.mutable().collector().build();
         ComponentCollection<String> nameCollection = this.applicationContext.get(collectionKey);
 
-        assertThat(nameCollection).hasSize(3);
-        assertThat(nameCollection).contains("John");
-        assertThat(nameCollection).contains("Jane");
-        assertThat(nameCollection).contains("Joe");
+        assertThat(nameCollection)
+                .hasSize(3)
+                .contains("John")
+                .contains("Jane")
+                .contains("Joe");
     }
 
     @Test
@@ -119,8 +120,8 @@ class CollectionScopeTests {
         ComponentWithCollectionDependencies component = this.applicationContext.get(ComponentWithCollectionDependencies.class);
         Set<Integer> ages = component.ages();
 
-        assertThat(ages).isNotNull();
-        assertThat(ages).isInstanceOf(TreeSet.class);
+        assertThat(ages)
+                .isInstanceOf(TreeSet.class);
         assertThat(ages)
                 .hasSize(2)
                 .contains(1)
@@ -135,7 +136,7 @@ class CollectionScopeTests {
         ComponentCollection<StaticComponent> collection = this.applicationContext.get(componentKey);
         // Even if no bindings are present, the collection should be created
         assertThat(collection).isNotNull();
-        assertThat(collection).hasSize(0);
+        assertThat(collection).isEmpty();
 
         String[] names = {
                 CompositeMembersConfiguration.USER,

@@ -33,7 +33,7 @@ class OptionToOptionalConverterTests {
         Optional<String> optional = (Optional<String>) converter.convert(option);
         assertThat(optional)
                 .isPresent();
-        assertThat(optional).contains("test");
+        assertThat(optional).hasValue("test");
     }
 
     @Test
@@ -41,7 +41,7 @@ class OptionToOptionalConverterTests {
         OptionToOptionalConverter converter = new OptionToOptionalConverter();
         Option<String> option = Option.empty();
         Optional<?> optional = converter.convert(option);
-        assertThat(optional).isNotNull();
-        assertThat(optional).isEmpty();
+        assertThat(optional)
+                .isEmpty();
     }
 }

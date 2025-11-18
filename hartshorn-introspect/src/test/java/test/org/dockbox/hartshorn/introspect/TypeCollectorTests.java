@@ -57,13 +57,14 @@ class TypeCollectorTests {
             }
         }).collect(Collectors.toSet());
 
-        assertThat(types).contains(ScanAnnotation.class);
-        assertThat(types).contains(ScanClass.class);
-        assertThat(types).contains(NonStaticInnerClass.class);
-        assertThat(types).contains(StaticInnerClass.class);
-        assertThat(types).contains(ScanEnum.class);
-        assertThat(types).contains(ScanInterface.class);
-        assertThat(types).contains(ScanRecord.class);
+        assertThat(types)
+                .contains(ScanAnnotation.class)
+                .contains(ScanClass.class)
+                .contains(NonStaticInnerClass.class)
+                .contains(StaticInnerClass.class)
+                .contains(ScanEnum.class)
+                .contains(ScanInterface.class)
+                .contains(ScanRecord.class);
     }
 
     @Test
@@ -98,9 +99,10 @@ class TypeCollectorTests {
             }
         }).collect(Collectors.toSet());
 
-        assertThat(types).contains(ScanEnum.class);
-        assertThat(types).contains(ScanClass.class);
-        assertThat(types).contains(ScanInterface.class);
+        assertThat(types)
+                .contains(ScanEnum.class)
+                .contains(ScanClass.class)
+                .contains(ScanInterface.class);
     }
 
 }

@@ -108,15 +108,15 @@ public class CircularDependencyTests {
 
     @ParameterizedTest
     @MethodSource("circularImmediateResolution")
-    void immediateCircularDependencyPathCanBeDetermined(List<Class<?>> path) throws DependencyResolutionException {
+    void immediateCircularDependencyPathCanBeDetermined(List<Class<?>> path) throws Exception {
         DependencyGraph dependencyGraph = this.buildDependencyGraph(path);
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
         Set<GraphNode<DependencyContext<?>>> roots = dependencyGraph.roots();
-        assertThat(roots).hasSize(0); // Cyclic, thus no roots
+        assertThat(roots).isEmpty(); // Cyclic, thus no roots
 
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
-        assertThat(nodes).hasSize(path.size()); // N nodes, no duplicates, but does contain all nodes
+        assertThat(nodes).hasSameSizeAs(path); // N nodes, no duplicates, but does contain all nodes
 
         Map<? extends Class<?>, GraphNode<DependencyContext<?>>> nodesByType = nodes.stream()
                 .collect(Collectors.toMap(node -> node.value().componentKey().type(), Function.identity()));
@@ -127,7 +127,7 @@ public class CircularDependencyTests {
         assertThat(discoveryList).isNotNull();
 
         List<DiscoveredComponent> discoveredComponents = discoveryList.discoveredComponents();
-        assertThat(discoveredComponents).hasSize(path.size());
+        assertThat(discoveredComponents).hasSameSizeAs(path);
 
         List<? extends Class<?>> discoveredTypes = discoveredComponents.stream()
                 .map(DiscoveredComponent::node)
@@ -143,15 +143,15 @@ public class CircularDependencyTests {
 
     @ParameterizedTest
     @MethodSource("circularDelayedResolution")
-    void delayedCircularDependencyPathIsEmpty(List<Class<?>> path) throws DependencyResolutionException {
+    void delayedCircularDependencyPathIsEmpty(List<Class<?>> path) throws Exception {
         DependencyGraph dependencyGraph = this.buildDependencyGraph(path);
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
         Set<GraphNode<DependencyContext<?>>> roots = dependencyGraph.roots();
-        assertThat(roots).hasSize(0); // Cyclic, thus no roots
+        assertThat(roots).isEmpty(); // Cyclic, thus no roots
 
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
-        assertThat(nodes).hasSize(path.size()); // N nodes, no duplicates, but does contain all nodes
+        assertThat(nodes).hasSameSizeAs(path); // N nodes, no duplicates, but does contain all nodes
 
         Map<? extends Class<?>, GraphNode<DependencyContext<?>>> nodesByType = nodes.stream()
                 .collect(Collectors.toMap(node -> node.value().componentKey().type(), Function.identity()));
@@ -216,7 +216,7 @@ public class CircularDependencyTests {
     }
 
     @Test
-    void circularDependencyPathOnBoundTypeCanBeDetermined() throws DependencyResolutionException {
+    void circularDependencyPathOnBoundTypeCanBeDetermined() throws Exception {
         // Bindings should be resolved during graph construction.
         this.applicationContext
                 .bind(InterfaceCircularDependencyA.class).to(BoundCircularDependencyA.class)
@@ -226,7 +226,7 @@ public class CircularDependencyTests {
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
         Set<GraphNode<DependencyContext<?>>> roots = dependencyGraph.roots();
-        assertThat(roots).hasSize(0); // Cyclic, so no roots
+        assertThat(roots).isEmpty(); // Cyclic, so no roots
 
         Set<GraphNode<DependencyContext<?>>> nodes = dependencyGraph.nodes();
         assertThat(nodes).hasSize(4); // 4 nodes, 2 interfaces, 2 implementations

@@ -31,8 +31,8 @@ class ObjectToOptionConverterTests {
         String element = "test";
         Converter<Object, Option<?>> converter = new ObjectToOptionConverter();
         Object converted = converter.convert(element);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Option.class);
+        assertThat(converted)
+                .isInstanceOf(Option.class);
         assertThat(((Option) converted).present()).isTrue();
         assertThat(((Option) converted).get()).isEqualTo(element);
     }
@@ -42,8 +42,8 @@ class ObjectToOptionConverterTests {
         Object element = null;
         Converter<Object, Option<?>> converter = new ObjectToOptionConverter();
         Object converted = converter.convert(element);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Option.class);
+        assertThat(converted)
+                .isInstanceOf(Option.class);
         assertThat(((Option) converted).present()).isFalse();
     }
 }

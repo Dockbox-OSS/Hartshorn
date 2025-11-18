@@ -58,8 +58,8 @@ class ApplicationReportingTests {
         Node<?> root = report.root();
 
         assertThat(report).isNotNull();
-        assertThat(root).isNotNull();
-        assertThat(root).isInstanceOf(GroupNode.class);
+        assertThat(root)
+                .isInstanceOf(GroupNode.class);
 
         GroupNode group = (GroupNode) root;
         assertThat(group.value()).isNotEmpty();

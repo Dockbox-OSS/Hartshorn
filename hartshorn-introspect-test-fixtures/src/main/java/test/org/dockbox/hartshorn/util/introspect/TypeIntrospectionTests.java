@@ -198,7 +198,7 @@ public abstract class TypeIntrospectionTests {
     @Test
     public void enumConstantsCanBeObtained() {
         TypeView<TestEnumType> enumContext = this.introspector().introspect(TestEnumType.class);
-        assertThat(enumContext.enumConstants()).hasSize(TestEnumType.values().length);
+        assertThat(enumContext.enumConstants()).hasSameSizeAs(TestEnumType.values());
     }
 
     @Test

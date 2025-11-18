@@ -60,8 +60,9 @@ class ComponentPopulationTests {
                 .initialize(SimpleSingleElementContext.create(this.applicationContext));
 
         PopulationTestComponent component = this.createAndPopulateComponent(strategy, type -> createFieldInjectionPoint("context", type));
-        assertThat(component.context).isNotNull();
-        assertThat(component.context).isSameAs(sampleContext);
+        assertThat(component.context)
+                .isNotNull()
+                .isSameAs(sampleContext);
     }
 
     @Test
@@ -71,8 +72,9 @@ class ComponentPopulationTests {
 
         PopulationTestComponent component =
             this.createAndPopulateComponent(strategy, type -> createFieldInjectionPoint("applicationContext", type));
-        assertThat(component.applicationContext).isNotNull();
-        assertThat(component.applicationContext).isSameAs(this.applicationContext);
+        assertThat(component.applicationContext)
+                .isNotNull()
+                .isSameAs(this.applicationContext);
     }
 
     @Test
@@ -81,8 +83,9 @@ class ComponentPopulationTests {
                 .initialize(SimpleSingleElementContext.create(this.applicationContext));
 
         PopulationTestComponent component = this.createAndPopulateComponent(strategy, type -> createMethodInjectionPoint("setApplicationContext", List.of(ApplicationContext.class), type));
-        assertThat(component.applicationContext).isNotNull();
-        assertThat(component.applicationContext).isSameAs(this.applicationContext);
+        assertThat(component.applicationContext)
+                .isNotNull()
+                .isSameAs(this.applicationContext);
     }
 
     @Test
@@ -94,11 +97,13 @@ class ComponentPopulationTests {
                 .initialize(SimpleSingleElementContext.create(this.applicationContext));
 
         PopulationTestComponent component = this.createAndPopulateComponent(strategy, type -> createMethodInjectionPoint("setContexts", List.of(ApplicationContext.class, SampleContext.class), type));
-        assertThat(component.applicationContext).isNotNull();
-        assertThat(component.applicationContext).isSameAs(this.applicationContext);
+        assertThat(component.applicationContext)
+                .isNotNull()
+                .isSameAs(this.applicationContext);
 
-        assertThat(component.context).isNotNull();
-        assertThat(component.context).isSameAs(sampleContext);
+        assertThat(component.context)
+                .isNotNull()
+                .isSameAs(sampleContext);
     }
 
     @Test

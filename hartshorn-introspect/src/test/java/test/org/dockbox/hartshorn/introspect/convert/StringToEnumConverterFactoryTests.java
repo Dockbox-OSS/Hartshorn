@@ -29,8 +29,9 @@ class StringToEnumConverterFactoryTests {
     void matchingNameCanConvert() {
         Converter<String, Color> converter = createConverter();
         Color red = converter.convert("RED");
-        assertThat(red).isNotNull();
-        assertThat(red).isSameAs(Color.RED);
+        assertThat(red)
+                .isNotNull()
+                .isSameAs(Color.RED);
     }
 
     @Test

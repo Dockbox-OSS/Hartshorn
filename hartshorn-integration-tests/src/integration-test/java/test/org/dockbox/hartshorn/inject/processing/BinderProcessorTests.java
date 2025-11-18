@@ -32,7 +32,7 @@ class BinderProcessorTests {
     @Test
     void binderPostProcessorIsCalled(@Inject HierarchicalBinder binder, @Inject ComponentProvider provider) {
         BindingHierarchy<String> hierarchy = binder.hierarchy(ComponentKey.of(String.class));
-        assertThat(hierarchy.size()).isGreaterThan(0);
+        assertThat(hierarchy.size()).isPositive();
 
         String message = provider.get(String.class);
         assertThat(message).isEqualTo(SampleBinderPostProcessor.HELLO_WORLD);

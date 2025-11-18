@@ -192,8 +192,9 @@ class OptionTests {
     void toOptionalWhenPresent() {
         Option<String> option = Option.of("test");
         Optional<String> optional = option.optional();
-        assertThat(optional).isPresent();
-        assertThat(optional).hasValue("test");
+        assertThat(optional)
+                .isPresent()
+                .hasValue("test");
     }
 
     @Test
@@ -208,8 +209,9 @@ class OptionTests {
         Option<String> option = Option.of("test");
         assertThat(option.stream().count()).isOne();
         Optional<String> optional = option.stream().findFirst();
-        assertThat(optional).isPresent();
-        assertThat(optional).hasValue("test");
+        assertThat(optional)
+                .isPresent()
+                .hasValue("test");
     }
 
     @Test

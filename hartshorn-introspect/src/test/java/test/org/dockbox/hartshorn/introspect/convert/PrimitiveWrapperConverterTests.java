@@ -28,72 +28,72 @@ class PrimitiveWrapperConverterTests {
     void intToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert(1, int.class, Integer.class);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Integer.class);
-        assertThat(converted).isEqualTo(1);
+        assertThat(converted)
+                .isInstanceOf(Integer.class)
+                .isEqualTo(1);
     }
 
     @Test
     void longToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert(1L, long.class, Long.class);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Long.class);
-        assertThat(converted).isEqualTo(1L);
+        assertThat(converted)
+                .isInstanceOf(Long.class)
+                .isEqualTo(1L);
     }
 
     @Test
     void doubleToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert(1.0D, double.class, Double.class);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Double.class);
-        assertThat(converted).isEqualTo(1.0D);
+        assertThat(converted)
+                .isInstanceOf(Double.class)
+                .isEqualTo(1.0D);
     }
 
     @Test
     void floatToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert(1.0F, float.class, Float.class);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Float.class);
-        assertThat(converted).isEqualTo(1.0F);
+        assertThat(converted)
+                .isInstanceOf(Float.class)
+                .isEqualTo(1.0F);
     }
 
     @Test
     void shortToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert((short) 1, short.class, Short.class);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Short.class);
-        assertThat(converted).isEqualTo((short) 1);
+        assertThat(converted)
+                .isInstanceOf(Short.class)
+                .isEqualTo((short) 1);
     }
 
     @Test
     void byteToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert((byte) 1, byte.class, Byte.class);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Byte.class);
-        assertThat(converted).isEqualTo((byte) 1);
+        assertThat(converted)
+                .isInstanceOf(Byte.class)
+                .isEqualTo((byte) 1);
     }
 
     @Test
     void booleanToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert(true, boolean.class, Boolean.class);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Boolean.class);
-        assertThat(converted).isEqualTo(true);
+        assertThat(converted)
+                .isInstanceOf(Boolean.class)
+                .isEqualTo(true);
     }
 
     @Test
     void charToWrapperCanConvert() {
         GenericConverter converter = new PrimitiveWrapperConverter();
         Object converted = converter.convert('a', char.class, Character.class);
-        assertThat(converted).isNotNull();
-        assertThat(converted).isInstanceOf(Character.class);
-        assertThat(converted).isEqualTo('a');
+        assertThat(converted)
+                .isInstanceOf(Character.class)
+                .isEqualTo('a');
     }
 
     @Test

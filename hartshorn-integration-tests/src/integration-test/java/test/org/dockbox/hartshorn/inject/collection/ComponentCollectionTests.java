@@ -48,8 +48,9 @@ class ComponentCollectionTests {
         this.applicationContext.bind(String.class).singleton("Hello world!");
 
         ComponentCollection<String> collection = this.applicationContext.get(ComponentKey.collect(String.class));
-        assertThat(collection).hasSize(3);
-        assertThat(collection).containsAll(strings);
+        assertThat(collection)
+                .hasSize(3)
+                .containsAll(strings);
 
         String hello = this.applicationContext.get(String.class);
         assertThat(hello).isEqualTo("Hello world!");
@@ -59,8 +60,9 @@ class ComponentCollectionTests {
     @TestComponents(CollectionConfiguration.class)
     void configurationLoadsWithDependencies() {
         ComponentCollection<String> collection = this.applicationContext.get(ComponentKey.collect(String.class));
-        assertThat(collection).hasSize(2);
-        assertThat(collection).contains("Hello");
-        assertThat(collection).contains("World");
+        assertThat(collection)
+                .hasSize(2)
+                .contains("Hello")
+                .contains("World");
     }
 }

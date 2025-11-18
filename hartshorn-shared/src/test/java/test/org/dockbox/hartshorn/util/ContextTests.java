@@ -53,8 +53,8 @@ class ContextTests {
 
         ContextIdentity<TestContext> key = new SimpleContextIdentity<>(TestContext.class);
         List<TestContext> all = context.contexts(key);
-        assertThat(all).isNotNull();
-        assertThat(all).hasSize(1);
+        assertThat(all)
+                .hasSize(1);
     }
 
     @Test
@@ -105,8 +105,8 @@ class ContextTests {
 
         ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
         List<ContextView> all = context.contexts(key);
-        assertThat(all).isNotNull();
-        assertThat(all).hasSize(1);
+        assertThat(all)
+                .hasSize(1);
     }
 
     @Test
@@ -118,8 +118,8 @@ class ContextTests {
 
         ContextIdentity<NamedTestContext> key = new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
         List<NamedTestContext> all = context.contexts(key);
-        assertThat(all).isNotNull();
-        assertThat(all).hasSize(1);
+        assertThat(all)
+                .hasSize(1);
     }
 
     @Test
@@ -131,8 +131,8 @@ class ContextTests {
 
         ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
         List<ContextView> all = context.contexts(key);
-        assertThat(all).isNotNull();
-        assertThat(all).hasSize(1);
+        assertThat(all)
+                .hasSize(1);
     }
 
     public static class TestContext extends DefaultContext { }

@@ -33,8 +33,9 @@ class GenericTypeTests {
     void genericTypeOfSimpleTypeIsCorrect() {
         GenericType<String> genericType = new GenericType<>() {};
         Type type = genericType.type();
-        assertThat(type).isInstanceOf(Class.class);
-        assertThat(type).isEqualTo(String.class);
+        assertThat(type)
+                .isInstanceOf(Class.class)
+                .isEqualTo(String.class);
 
         Option<Class<String>> classOption = genericType.asClass();
         assertThat(classOption.present()).isTrue();
@@ -61,8 +62,9 @@ class GenericTypeTests {
     void wildcardTypeYieldsObject() {
         GenericType<?> genericType = new GenericType<>() {};
         Type type = genericType.type();
-        assertThat(type).isInstanceOf(Class.class);
-        assertThat(type).isEqualTo(Object.class);
+        assertThat(type)
+                .isInstanceOf(Class.class)
+                .isEqualTo(Object.class);
 
         Option<? extends Class<?>> classOption = genericType.asClass();
         assertThat(classOption.present()).isTrue();

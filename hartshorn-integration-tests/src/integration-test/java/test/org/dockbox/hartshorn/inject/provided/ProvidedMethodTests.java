@@ -41,8 +41,8 @@ class ProvidedMethodTests {
     void providerWithoutQualifiers() {
         this.binder.bind(String.class).singleton("Hello World");
 
-        assertThat(this.providerComponent).isNotNull();
-        assertThat(this.providerComponent).isInstanceOf(Proxy.class);
+        assertThat(this.providerComponent)
+                .isInstanceOf(Proxy.class);
 
         String message = this.providerComponent.get();
         assertThat(message)
@@ -55,8 +55,8 @@ class ProvidedMethodTests {
         this.binder.bind(String.class).singleton("Hello World");
         this.binder.bind(ComponentKey.of(String.class, "test")).singleton("Hello Test World");
 
-        assertThat(this.providerComponent).isNotNull();
-        assertThat(this.providerComponent).isInstanceOf(Proxy.class);
+        assertThat(this.providerComponent)
+                .isInstanceOf(Proxy.class);
 
         String message = this.providerComponent.getNamed();
         assertThat(message)
@@ -76,8 +76,8 @@ class ProvidedMethodTests {
                 .build()
         ).singleton("Hello Blue World");
 
-        assertThat(this.providerComponent).isNotNull();
-        assertThat(this.providerComponent).isInstanceOf(Proxy.class);
+        assertThat(this.providerComponent)
+                .isInstanceOf(Proxy.class);
 
         String redMessage = this.providerComponent.getRed();
         assertThat(redMessage)

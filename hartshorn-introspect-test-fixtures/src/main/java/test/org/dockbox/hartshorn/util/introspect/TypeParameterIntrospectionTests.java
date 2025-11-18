@@ -87,7 +87,7 @@ public abstract class TypeParameterIntrospectionTests {
         assertThat(parameterView.isVariable()).isTrue();
 
         Set<TypeView<?>> upperBounds = parameterView.upperBounds();
-        assertThat(upperBounds).hasSize(expectedBounds.length);
+        assertThat(upperBounds).hasSameSizeAs(expectedBounds);
         for (Class<?> expectedBound : expectedBounds) {
             assertThat(upperBounds.stream().anyMatch(typeView -> typeView.type().equals(expectedBound))).isTrue();
         }
@@ -170,8 +170,9 @@ public abstract class TypeParameterIntrospectionTests {
 
         Map<Class<?>, List<TypeParameterView>> representationsByType = represents.stream()
                 .collect(Collectors.groupingBy(typeParameterView -> typeParameterView.consumedBy().type()));
-        assertThat(representationsByType).containsKey(Function.class);
-        assertThat(representationsByType).containsKey(Predicate.class);
+        assertThat(representationsByType)
+                .containsKey(Function.class)
+                .containsKey(Predicate.class);
 
         List<TypeParameterView> functionRepresentations = representationsByType.get(Function.class);
         assertThat(functionRepresentations).hasSize(2);
@@ -341,11 +342,11 @@ public abstract class TypeParameterIntrospectionTests {
 
         BiMultiMap<TypeParameterView, TypeParameterView> multiMap = inputParameters.asMap();
         Set<TypeParameterView> keys = multiMap.keySet();
-        // Note: unlike output parameters, I -> O mappings are not 1:1, but are 1:n (where n is the number of
-        // output parameters), so the size of the map will be different, but the keys should be the same
-        assertThat(keys).hasSize(inputParameters.count());
-
-        assertThat(keys).hasSize(1);
+        assertThat(keys)
+                // Note: unlike output parameters, I -> O mappings are not 1:1, but are 1:n (where n is the number of
+                // output parameters), so the size of the map will be different, but the keys should be the same
+                .hasSize(inputParameters.count())
+                .hasSize(1);
         Collection<TypeParameterView> values = multiMap.get(CollectionUtilities.first(keys));
         TypeParameterList outputParameters = typeParameters.allOutput();
         assertThat(values).hasSize(outputParameters.count());

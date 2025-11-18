@@ -143,10 +143,9 @@ class ScopedInjectionTests {
         TestComponent scopedComponent2 = this.applicationContext.get(scopedComponentKey2);
 
         assertThat(scopedComponent1).isNotNull();
-        assertThat(scopedComponent2).isNotNull();
-
-        // Each scoped component should have its own instance, even if they are of the same type
-        assertThat(scopedComponent2).isNotSameAs(scopedComponent1);
+        assertThat(scopedComponent2)
+                // Each scoped component should have its own instance, even if they are of the same type
+                .isNotSameAs(scopedComponent1);
 
         // Each component should have its own context
         assertThat(scopedComponent1.context).isNotNull();

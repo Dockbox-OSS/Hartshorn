@@ -70,8 +70,8 @@ public class LexerTests {
         Lexer lexer = new SimpleTokenRegistryLexer(text, InterpreterTestHelper.defaultTokenRegistry());
         List<Token> tokens = lexer.scanTokens();
 
-        assertThat(tokens).isNotNull();
-        assertThat(tokens).hasSize(2);
+        assertThat(tokens)
+                .hasSize(2);
 
         Token token = tokens.getFirst();
         assertThat(token.type()).isEqualTo(expected);
@@ -86,15 +86,15 @@ public class LexerTests {
         Lexer lexer = new SimpleTokenRegistryLexer("# Comment", InterpreterTestHelper.defaultTokenRegistry());
         List<Token> tokens = lexer.scanTokens();
 
-        assertThat(tokens).isNotNull();
-        assertThat(tokens).hasSize(1);
+        assertThat(tokens)
+                .hasSize(1);
 
         Token token = tokens.getFirst();
         assertThat(token.type()).isEqualTo(LiteralTokenType.EOF);
 
         List<Comment> comments = lexer.comments();
-        assertThat(comments).isNotNull();
-        assertThat(comments).hasSize(1);
+        assertThat(comments)
+                .hasSize(1);
 
         Comment comment = comments.getFirst();
         // Comments are not trimmed, include whitespace

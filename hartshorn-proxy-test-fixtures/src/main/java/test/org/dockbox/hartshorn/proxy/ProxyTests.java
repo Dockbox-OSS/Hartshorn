@@ -255,8 +255,8 @@ public abstract class ProxyTests {
             @Override
             public void acceptError(ProxyCallbackContext<InterfaceProxy> context) {
                 Throwable error = context.error();
-                assertThat(error).isNotNull();
-                assertThat(error).isInstanceOf(IllegalStateException.class);
+                assertThat(error)
+                        .isInstanceOf(IllegalStateException.class);
                 assertThat(error.getMessage()).isEqualTo("not done");
                 assertThat(count.getAndIncrement()).isOne();
             }
@@ -356,8 +356,9 @@ public abstract class ProxyTests {
         DemoServiceA serviceA1 = this.createProxy(DemoServiceA.class);
         DemoServiceA serviceA2 = this.createProxy(DemoServiceA.class);
 
-        assertThat(serviceA2).isNotSameAs(serviceA1);
-        assertThat(serviceA2).isNotEqualTo(serviceA1);
+        assertThat(serviceA2)
+                .isNotSameAs(serviceA1)
+                .isNotEqualTo(serviceA1);
     }
 
     @Test
@@ -365,8 +366,9 @@ public abstract class ProxyTests {
         DemoServiceB serviceC1 = this.createProxy(DemoServiceB.class);
         DemoServiceB serviceC2 = this.createProxy(DemoServiceB.class);
 
-        assertThat(serviceC2).isNotSameAs(serviceC1);
-        assertThat(serviceC2).isNotEqualTo(serviceC1);
+        assertThat(serviceC2)
+                .isNotSameAs(serviceC1)
+                .isNotEqualTo(serviceC1);
     }
 
     @Test
@@ -374,8 +376,9 @@ public abstract class ProxyTests {
         DemoServiceC serviceB1 = this.createProxy(DemoServiceC.class);
         DemoServiceC serviceB2 = this.createProxy(DemoServiceC.class);
 
-        assertThat(serviceB2).isNotSameAs(serviceB1);
-        assertThat(serviceB2).isNotEqualTo(serviceB1);
+        assertThat(serviceB2)
+                .isNotSameAs(serviceB1)
+                .isNotEqualTo(serviceB1);
     }
 
     @Test
@@ -389,8 +392,9 @@ public abstract class ProxyTests {
         DemoServiceC serviceC3 = supplier.get();
         DemoServiceC serviceC4 = supplier.get();
 
-        assertThat(serviceC4).isNotSameAs(serviceC3);
-        assertThat(serviceC4).isNotEqualTo(serviceC3);
+        assertThat(serviceC4)
+                .isNotSameAs(serviceC3)
+                .isNotEqualTo(serviceC3);
     }
 
     @Test
@@ -404,8 +408,9 @@ public abstract class ProxyTests {
         DemoServiceD serviceD1 = supplier.get();
         DemoServiceD serviceD2 = supplier.get();
 
-        assertThat(serviceD2).isNotSameAs(serviceD1);
-        assertThat(serviceD2).isEqualTo(serviceD1);
+        assertThat(serviceD2)
+                .isNotSameAs(serviceD1)
+                .isEqualTo(serviceD1);
     }
 
     private <T> T createProxy(Class<T> type) throws ApplicationException {

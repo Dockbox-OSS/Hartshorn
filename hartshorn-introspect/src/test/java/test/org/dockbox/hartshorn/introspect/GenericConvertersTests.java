@@ -40,8 +40,9 @@ class GenericConvertersTests {
         converters.addConverter(converter);
 
         GenericConverter locatedConverter = converters.getConverter(new Object(), String.class);
-        assertThat(locatedConverter).isNotNull();
-        assertThat(locatedConverter).isSameAs(converter);
+        assertThat(locatedConverter)
+                .isNotNull()
+                .isSameAs(converter);
     }
 
     @Test
@@ -54,12 +55,14 @@ class GenericConvertersTests {
         converters.addConverter(converter);
 
         GenericConverter locatedStringConverter = converters.getConverter(new Object(), String.class);
-        assertThat(locatedStringConverter).isNotNull();
-        assertThat(locatedStringConverter).isSameAs(converter);
+        assertThat(locatedStringConverter)
+                .isNotNull()
+                .isSameAs(converter);
 
         GenericConverter locatedIntegerConverter = converters.getConverter(new Object(), Integer.class);
-        assertThat(locatedIntegerConverter).isNotNull();
-        assertThat(locatedIntegerConverter).isSameAs(converter);
+        assertThat(locatedIntegerConverter)
+                .isNotNull()
+                .isSameAs(converter);
     }
 
     @Test

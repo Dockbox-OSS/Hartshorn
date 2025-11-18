@@ -19,6 +19,7 @@ package test.org.dockbox.hartshorn.introspect;
 
 import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 import org.dockbox.hartshorn.util.introspect.annotations.VirtualHierarchyAnnotationLookup;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -136,7 +137,7 @@ class AnnotationLookupTests {
     @Test
     void jointAnnotationsAreStrictlyOrdered() {
         List<Route> routes = this.annotationLookup().findAll(TestClassWithJointAnnotation2.class, Route.class);
-        assertThat(routes.stream().map(Route::method).collect(Collectors.toList())).isEqualTo(Arrays.asList(HttpMethod.POST, HttpMethod.GET));
+        assertThat(routes.stream().map(Route::method)).containsExactlyElementsOf(Arrays.asList(HttpMethod.POST, HttpMethod.GET));
         assertThat(routes.stream().map(Route::path)).containsExactlyElementsOf(Arrays.asList("abc", ""));
         assertThat(routes.stream().map(Route::regex)).containsExactlyElementsOf(Arrays.asList("", "jointRegex"));
     }
