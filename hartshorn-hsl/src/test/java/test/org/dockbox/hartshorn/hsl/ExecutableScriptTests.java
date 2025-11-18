@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,15 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Test;
 
-import org.dockbox.hartshorn.inject.annotations.Inject;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -39,7 +37,7 @@ class ExecutableScriptTests {
     void hslScriptCanEvaluate() {
         String expression = "var a = 1";
         ExecutableScript script = ExecutableScript.of(this.context, expression);
-        ScriptContext scriptContext = assertThatCode(script::evaluate).doesNotThrowAnyException();
+        ScriptContext scriptContext = script.evaluate();
         Object result = scriptContext.interpreter().global().values().get("a");
         assertThat(result).isNotNull();
     }
@@ -48,7 +46,7 @@ class ExecutableScriptTests {
     void hslScriptCanResolveWithoutEvaluate() {
         String expression = "var a = 1";
         ExecutableScript script = ExecutableScript.of(this.context, expression);
-        ScriptContext scriptContext = assertThatCode(script::resolve).doesNotThrowAnyException();
+        ScriptContext scriptContext = script.evaluate();
         Object result = scriptContext.interpreter().global().values().get("a");
         assertThat(result).isNull();
     }

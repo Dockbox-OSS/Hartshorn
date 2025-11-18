@@ -62,10 +62,14 @@ class LanguageExtensionTests {
         assertThat(statements).hasSize(1);
 
         Statement statement = statements.getFirst();
-        ReturnStatement returnStatement = assertThat(statement).isInstanceOf(ReturnStatement.class);
+        ReturnStatement returnStatement = assertThat(statement).isInstanceOf(ReturnStatement.class)
+                .extracting(ReturnStatement.class::cast)
+                .actual();
         Expression expression = returnStatement.expression();
 
-        LogicalExpression logicalExpression = assertThat(expression).isInstanceOf(LogicalExpression.class);
+        LogicalExpression logicalExpression = assertThat(expression).isInstanceOf(LogicalExpression.class)
+                .extracting(LogicalExpression.class::cast)
+                .actual();
         Expression helloExpression = logicalExpression.leftExpression();
         Expression worldExpression = logicalExpression.rightExpression();
 
@@ -74,8 +78,12 @@ class LanguageExtensionTests {
     }
 
     private static void assertExpressionContainsAtName(Expression expression) {
-        GroupingExpression groupingExpression = assertThat(expression).isInstanceOf(GroupingExpression.class);
-        BinaryExpression binaryExpression = assertThat(groupingExpression.expression()).isInstanceOf(BinaryExpression.class);
+        GroupingExpression groupingExpression = assertThat(expression).isInstanceOf(GroupingExpression.class)
+                .extracting(GroupingExpression.class::cast)
+                .actual();
+        BinaryExpression binaryExpression = assertThat(groupingExpression.expression()).isInstanceOf(BinaryExpression.class)
+                .extracting(BinaryExpression.class::cast)
+                .actual();
 
         Expression leftExpression = binaryExpression.leftExpression();
         Expression rightExpression = binaryExpression.rightExpression();

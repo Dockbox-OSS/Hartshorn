@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.inject.graph.ConfigurableDependencyContext;
 import org.dockbox.hartshorn.inject.graph.DependencyGraph;
 import org.dockbox.hartshorn.inject.graph.DependencyGraphBuilder;
 import org.dockbox.hartshorn.inject.graph.DependencyMap;
+import org.dockbox.hartshorn.inject.graph.DependencyResolutionException;
 import org.dockbox.hartshorn.inject.graph.DependencyResolutionType;
 import org.dockbox.hartshorn.inject.graph.DependencyResolver;
 import org.dockbox.hartshorn.inject.graph.TypePathNode;
@@ -64,7 +65,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 public class CircularDependencyTests {
@@ -75,8 +75,8 @@ public class CircularDependencyTests {
     @Test
     @TestComponents({ CircularDependencyA.class, CircularDependencyB.class})
     void circularDependenciesAreCorrectOnFieldInject() {
-        CircularDependencyA a = assertThatCode(() -> this.applicationContext.get(CircularDependencyA.class)).doesNotThrowAnyException();
-        CircularDependencyB b = assertThatCode(() -> this.applicationContext.get(CircularDependencyB.class)).doesNotThrowAnyException();
+        CircularDependencyA a = this.applicationContext.get(CircularDependencyA.class);
+        CircularDependencyB b = this.applicationContext.get(CircularDependencyB.class);
 
         assertThat(a).isNotNull();
         assertThat(b).isNotNull();
@@ -108,7 +108,7 @@ public class CircularDependencyTests {
 
     @ParameterizedTest
     @MethodSource("circularImmediateResolution")
-    void immediateCircularDependencyPathCanBeDetermined(List<Class<?>> path) {
+    void immediateCircularDependencyPathCanBeDetermined(List<Class<?>> path) throws DependencyResolutionException {
         DependencyGraph dependencyGraph = this.buildDependencyGraph(path);
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
@@ -143,7 +143,7 @@ public class CircularDependencyTests {
 
     @ParameterizedTest
     @MethodSource("circularDelayedResolution")
-    void delayedCircularDependencyPathIsEmpty(List<Class<?>> path) {
+    void delayedCircularDependencyPathIsEmpty(List<Class<?>> path) throws DependencyResolutionException {
         DependencyGraph dependencyGraph = this.buildDependencyGraph(path);
         CyclicDependencyGraphValidator validator = new CyclicDependencyGraphValidator();
 
@@ -165,7 +165,7 @@ public class CircularDependencyTests {
         assertThat(discoveredComponents).isEmpty();
     }
 
-    private DependencyGraph buildDependencyGraph(List<Class<?>> components) {
+    private DependencyGraph buildDependencyGraph(List<Class<?>> components) throws DependencyResolutionException {
         Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
         ApplicationEnvironment environment = this.applicationContext.environment();
         IntrospectionDependencyResolver dependencyResolver = new IntrospectionDependencyResolver(
@@ -212,11 +212,11 @@ public class CircularDependencyTests {
                 this.applicationContext.defaultBinder(),
                 this.applicationContext.environment().introspector()
         );
-        return assertThatCode(() -> dependencyGraphBuilder.buildDependencyGraph(dependencyContexts)).doesNotThrowAnyException();
+        return dependencyGraphBuilder.buildDependencyGraph(dependencyContexts);
     }
 
     @Test
-    void circularDependencyPathOnBoundTypeCanBeDetermined() {
+    void circularDependencyPathOnBoundTypeCanBeDetermined() throws DependencyResolutionException {
         // Bindings should be resolved during graph construction.
         this.applicationContext
                 .bind(InterfaceCircularDependencyA.class).to(BoundCircularDependencyA.class)

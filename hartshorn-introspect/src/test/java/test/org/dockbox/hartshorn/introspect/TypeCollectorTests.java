@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,7 @@
 
 package test.org.dockbox.hartshorn.introspect;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.dockbox.hartshorn.util.introspect.scan.AggregateTypeReferenceCollector;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
 import org.dockbox.hartshorn.util.introspect.scan.CachedTypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.ClassReferenceLoadException;
 import org.dockbox.hartshorn.util.introspect.scan.PredefinedSetTypeReferenceCollector;
@@ -31,7 +24,6 @@ import org.dockbox.hartshorn.util.introspect.scan.TypeReference;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollector;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClassPathScannerTypeReferenceCollector;
 import org.junit.jupiter.api.Test;
-
 import test.org.dockbox.hartshorn.introspect.types.ScanAnnotation;
 import test.org.dockbox.hartshorn.introspect.types.ScanClass;
 import test.org.dockbox.hartshorn.introspect.types.ScanClass.NonStaticInnerClass;
@@ -39,6 +31,12 @@ import test.org.dockbox.hartshorn.introspect.types.ScanClass.StaticInnerClass;
 import test.org.dockbox.hartshorn.introspect.types.ScanEnum;
 import test.org.dockbox.hartshorn.introspect.types.ScanInterface;
 import test.org.dockbox.hartshorn.introspect.types.ScanRecord;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 class TypeCollectorTests {
 
@@ -50,7 +48,7 @@ class TypeCollectorTests {
         assertThat(typeReferences).hasSize(7);
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        Set<? extends Class<?>> types = typeReferences.stream().map(typeReference -> {
+        Set<Class<?>> types = typeReferences.stream().map(typeReference -> {
             try {
                 return typeReference.getOrLoad(classLoader);
             }
@@ -91,7 +89,7 @@ class TypeCollectorTests {
         assertThat(typeReferences).hasSize(3);
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        Set<? extends Class<?>> types = typeReferences.stream().map(typeReference -> {
+        Set<Class<?>> types = typeReferences.stream().map(typeReference -> {
             try {
                 return typeReference.getOrLoad(classLoader);
             }

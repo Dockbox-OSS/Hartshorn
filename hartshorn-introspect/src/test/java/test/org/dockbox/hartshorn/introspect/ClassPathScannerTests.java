@@ -67,8 +67,10 @@ class ClassPathScannerTests {
         dummyFolder.toFile().deleteOnExit();
         URL url = dummyFolder.toUri().toURL();
 
-        ClassPathScanner scanner = assertThatCode(() -> ClassPathScanner.create().addUrlForScanning(url)).doesNotThrowAnyException();
-        scanner.scan(resource -> fail("Should not have found any resources"));
+        assertThatCode(() -> {
+            ClassPathScanner scanner = ClassPathScanner.create().addUrlForScanning(url);
+            scanner.scan(resource -> fail("Should not have found any resources"));
+        }).doesNotThrowAnyException();
     }
 
     private String resourceNameFromCanonicalName(String canonicalName) {

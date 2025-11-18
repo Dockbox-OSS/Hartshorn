@@ -38,9 +38,11 @@ class ProfileAggregationTests {
     void aggregationWithoutProfiles() {
         ProfilePropertyRegistryAggregator aggregator = new SimpleProfilePropertyRegistryAggregator();
         ProfileRegistry profileRegistry = new ConcurrentProfileRegistry();
-        ProfilePropertyRegistry profilePropertyRegistry = assertThatCode(() -> aggregator.aggregate(profileRegistry)).doesNotThrowAnyException();
-        assertThat(profilePropertyRegistry.keys()).isEmpty();
-        assertThat(profilePropertyRegistry.profileRegistry().profiles()).isEmpty();
+         assertThatCode(() -> {
+             ProfilePropertyRegistry profilePropertyRegistry = aggregator.aggregate(profileRegistry);
+             assertThat(profilePropertyRegistry.keys()).isEmpty();
+             assertThat(profilePropertyRegistry.profileRegistry().profiles()).isEmpty();
+        }).doesNotThrowAnyException();
     }
 
     @Test
@@ -51,12 +53,14 @@ class ProfileAggregationTests {
         profile1.propertyRegistry().register(new SingleConfiguredProperty("key", "value1"));
         profileRegistry.register(0, profile1);
 
-        ProfilePropertyRegistry profilePropertyRegistry = assertThatCode(() -> aggregator.aggregate(profileRegistry)).doesNotThrowAnyException();
-        assertThat(profilePropertyRegistry.keys()).hasSize(1);
-        assertThat(profilePropertyRegistry.contains("key")).isTrue();
+        assertThatCode(() -> {
+            ProfilePropertyRegistry profilePropertyRegistry = aggregator.aggregate(profileRegistry);
+            assertThat(profilePropertyRegistry.keys()).hasSize(1);
+            assertThat(profilePropertyRegistry.contains("key")).isTrue();
 
-        assertThat(profilePropertyRegistry.profileRegistry().profiles()).hasSize(1);
-        assertThat(profilePropertyRegistry.profileRegistry().profile("profile1").present()).isTrue();
+            assertThat(profilePropertyRegistry.profileRegistry().profiles()).hasSize(1);
+            assertThat(profilePropertyRegistry.profileRegistry().profile("profile1").present()).isTrue();
+        }).doesNotThrowAnyException();
     }
 
     @Test
@@ -72,17 +76,19 @@ class ProfileAggregationTests {
         profile2.propertyRegistry().register(new SingleConfiguredProperty("key", "value2"));
         profileRegistry.register(1, profile2);
 
-        ProfilePropertyRegistry profilePropertyRegistry = assertThatCode(() -> aggregator.aggregate(profileRegistry)).doesNotThrowAnyException();
-        assertThat(profilePropertyRegistry.keys()).hasSize(1);
-        assertThat(profilePropertyRegistry.contains("key")).isTrue();
+        assertThatCode(() -> {
+            ProfilePropertyRegistry profilePropertyRegistry = aggregator.aggregate(profileRegistry);
+            assertThat(profilePropertyRegistry.keys()).hasSize(1);
+            assertThat(profilePropertyRegistry.contains("key")).isTrue();
 
-        Option<ValueProperty> valueProperty = profilePropertyRegistry.get("key");
-        assertThat(valueProperty.present()).isTrue();
-        // profile2 has a higher priority, thus after aggregation the value from profile2 should be used
-        assertThat(valueProperty.get().value().contains("value2")).isTrue();
+            Option<ValueProperty> valueProperty = profilePropertyRegistry.get("key");
+            assertThat(valueProperty.present()).isTrue();
+            // profile2 has a higher priority, thus after aggregation the value from profile2 should be used
+            assertThat(valueProperty.get().value().contains("value2")).isTrue();
 
-        assertThat(profilePropertyRegistry.profileRegistry().profiles()).hasSize(2);
-        assertThat(profilePropertyRegistry.profileRegistry().profile("profile1").present()).isTrue();
-        assertThat(profilePropertyRegistry.profileRegistry().profile("profile2").present()).isTrue();
+            assertThat(profilePropertyRegistry.profileRegistry().profiles()).hasSize(2);
+            assertThat(profilePropertyRegistry.profileRegistry().profile("profile1").present()).isTrue();
+            assertThat(profilePropertyRegistry.profileRegistry().profile("profile2").present()).isTrue();
+        }).doesNotThrowAnyException();
     }
 }

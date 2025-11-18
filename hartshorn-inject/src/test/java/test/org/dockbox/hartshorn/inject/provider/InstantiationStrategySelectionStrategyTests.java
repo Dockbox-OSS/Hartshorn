@@ -135,14 +135,14 @@ public class InstantiationStrategySelectionStrategyTests {
             assertThat(provider).isNotNull();
 
             // Don't need to provide application, all bindings are contextless singletons
-            Option<? extends ObjectContainer<?>> value = assertThatCode(() -> {
-                return provider.provide(null, ComponentRequestContext.createForComponent(), null);
-            }).doesNotThrowAnyException();
-            assertThat(value.present()).isTrue();
+            assertThatCode(() -> {
+                Option<? extends ObjectContainer<?>> value = provider.provide(null, ComponentRequestContext.createForComponent(), null);
+                assertThat(value.present()).isTrue();
 
-            ObjectContainer<?> container = value.get();
-            Object instance = container.instance();
-            assertThat(instance).isEqualTo(expected);
+                ObjectContainer<?> container = value.get();
+                Object instance = container.instance();
+                assertThat(instance).isEqualTo(expected);
+            }).doesNotThrowAnyException();
         }
     }
 }

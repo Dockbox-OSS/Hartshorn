@@ -78,7 +78,9 @@ class ProfileNameResolverTests {
     void fromPropertyProfileNameResolverSupportsAbsentProperty() {
         PropertyRegistry registry = new MapPropertyRegistry();
         ProfileNameResolver resolver = new FromPropertyProfileNameResolver();
-        Set<String> profileNames = assertThatCode(() -> resolver.resolveProfileNames(registry)).doesNotThrowAnyException();
-        assertThat(profileNames).isEmpty();
+        assertThatCode(() -> {
+            Set<String> profileNames = resolver.resolveProfileNames(registry);
+            assertThat(profileNames).isEmpty();
+        }).doesNotThrowAnyException();
     }
 }

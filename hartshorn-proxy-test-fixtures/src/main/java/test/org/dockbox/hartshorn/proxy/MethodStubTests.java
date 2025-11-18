@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,11 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
+import test.org.dockbox.hartshorn.proxy.support.standard.InterfaceProxyTarget;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import test.org.dockbox.hartshorn.proxy.support.standard.InterfaceProxyTarget;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -62,11 +61,15 @@ public abstract class MethodStubTests {
         MethodStub<InterfaceProxyTarget> methodStub = manager.get().advisor().resolver().defaultStub().get();
         assertThat(methodStub).isInstanceOf(DefaultValueResponseMethodStub.class);
 
-        String stringValue = assertThatCode(proxy::stringTest).doesNotThrowAnyException();
-        assertThat(stringValue).isNull();
+        assertThatCode(() -> {
+            String stringValue = proxy.stringTest();
+            assertThat(stringValue).isNull();
+        }).doesNotThrowAnyException();
 
-        int intValue = assertThatCode(proxy::integerTest).doesNotThrowAnyException();
-        assertThat(intValue).isZero();
+        assertThatCode(() -> {
+            int intValue = proxy.integerTest();
+            assertThat(intValue).isZero();
+        }).doesNotThrowAnyException();
     }
 
     @Test
@@ -80,11 +83,15 @@ public abstract class MethodStubTests {
 
         InterfaceProxyTarget proxy = proxyFactory.proxy().get();
 
-        int one = assertThatCode(proxy::integerTest).doesNotThrowAnyException();
-        assertThat(one).isOne();
+        assertThatCode(() -> {
+            int one = proxy.integerTest();
+            assertThat(one).isOne();
+        }).doesNotThrowAnyException();
 
-        int two = assertThatCode(proxy::integerTest).doesNotThrowAnyException();
-        assertThat(two).isEqualTo(2);
+        assertThatCode(() -> {
+            int two = proxy.integerTest();
+            assertThat(two).isEqualTo(2);
+        }).doesNotThrowAnyException();
     }
 
     @Test

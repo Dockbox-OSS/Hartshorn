@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package test.org.dockbox.hartshorn.introspect.convert;
 
-import java.util.Optional;
-
 import org.dockbox.hartshorn.util.introspect.convert.support.OptionToOptionalConverter;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class OptionToOptionalConverterTests {
 
@@ -31,7 +30,7 @@ class OptionToOptionalConverterTests {
     void presentOptionConvertsToPresentOptional() {
         OptionToOptionalConverter converter = new OptionToOptionalConverter();
         Option<String> option = Option.of("test");
-        Optional<?> optional = converter.convert(option);
+        Optional<String> optional = (Optional<String>) converter.convert(option);
         assertThat(optional)
                 .isPresent();
         assertThat(optional).contains("test");

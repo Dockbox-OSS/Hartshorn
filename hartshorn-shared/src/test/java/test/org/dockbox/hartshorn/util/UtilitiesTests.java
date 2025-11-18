@@ -123,9 +123,11 @@ public class UtilitiesTests {
 
     @Test
     void capitalizeAcceptsEmptyValue() {
-        String value = assertThatCode(() -> StringUtilities.capitalize("")).doesNotThrowAnyException();
-        assertThat(value).isNotNull();
-        assertThat(value).isEmpty();
+        assertThatCode(() -> {
+            String value = StringUtilities.capitalize("");
+            assertThat(value).isNotNull();
+            assertThat(value).isEmpty();
+        }).doesNotThrowAnyException();
     }
 
     @Test
@@ -322,19 +324,23 @@ public class UtilitiesTests {
     @Test
     void validWildcardAdjustment() {
         List<?> list = Arrays.asList("one", "two", "three");
-        List<String> adjusted = assertThatCode(() -> TypeUtils.unchecked(list, List.class)).doesNotThrowAnyException();
-        assertThat(adjusted)
-                .isNotNull()
-                .isSameAs(list);
+        assertThatCode(() -> {
+            List<String> adjusted = TypeUtils.unchecked(list, List.class);
+            assertThat(adjusted)
+                    .isNotNull()
+                    .isSameAs(list);
+        }).doesNotThrowAnyException();
     }
 
     @Test
     void wildcardAdjustmentDoesAdjustParent() {
         List<?> list = Arrays.asList("one", "two", "three");
-        List<String> adjusted = assertThatCode(() -> TypeUtils.unchecked(list, Collection.class)).doesNotThrowAnyException();
-        assertThat(adjusted)
-                .isNotNull()
-                .isSameAs(list);
+        assertThatCode(() -> {
+            List<String> adjusted = TypeUtils.unchecked(list, Collection.class);
+            assertThat(adjusted)
+                    .isNotNull()
+                    .isSameAs(list);
+        }).doesNotThrowAnyException();
     }
 
     @Test

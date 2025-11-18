@@ -38,7 +38,9 @@ class ProfilePropertiesTests {
 
     @Test
     void propertyRegistryHasProfilesInIntegrationTest() {
-        ProfilePropertyRegistry registry = assertThat(propertyRegistry).isInstanceOf(ProfilePropertyRegistry.class);
+        ProfilePropertyRegistry registry = assertThat(propertyRegistry).isInstanceOf(ProfilePropertyRegistry.class)
+                .extracting(ProfilePropertyRegistry.class::cast)
+                .actual();
         ProfileRegistry profileRegistry = registry.profileRegistry();
         assertThat(profileRegistry.profiles()).hasSize(2);
 

@@ -96,7 +96,9 @@ class ApplicationConfigurerTests {
             });
         });
         ProcessableApplicationContext processableApplicationContext =
-                assertThat(applicationContext).isInstanceOf(ProcessableApplicationContext.class);
+                assertThat(applicationContext).isInstanceOf(ProcessableApplicationContext.class)
+                        .extracting(ProcessableApplicationContext.class::cast)
+                        .actual();
         MultiMap<Integer, ComponentPreProcessor> processors = processableApplicationContext.defaultProvider()
                 .processorRegistry().preProcessors();
         assertThat(processors.containsValue(processor)).isTrue();
@@ -112,10 +114,14 @@ class ApplicationConfigurerTests {
             });
         });
         DelegatingApplicationContext processableApplicationContext =
-                assertThat(applicationContext).isInstanceOf(DelegatingApplicationContext.class);
+                assertThat(applicationContext).isInstanceOf(DelegatingApplicationContext.class)
+                        .extracting(DelegatingApplicationContext.class::cast)
+                        .actual();
         ComponentProvider componentProvider = processableApplicationContext.componentProvider();
         PostProcessingComponentProvider postProcessingComponentProvider =
-                assertThat(componentProvider).isInstanceOf(PostProcessingComponentProvider.class);
+                assertThat(componentProvider).isInstanceOf(PostProcessingComponentProvider.class)
+                        .extracting(PostProcessingComponentProvider.class::cast)
+                        .actual();
         MultiMap<Integer, ComponentPostProcessor> processors = postProcessingComponentProvider.processorRegistry().postProcessors();
         assertThat(processors.containsValue(processor)).isTrue();
     }
@@ -226,9 +232,13 @@ class ApplicationConfigurerTests {
     void showStacktracesCustomizer() {
         ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::showStacktraces);
         ConfigurableApplicationEnvironment configurableApplicationEnvironment =
-                assertThat(applicationContext.environment()).isInstanceOf(ConfigurableApplicationEnvironment.class);
+                assertThat(applicationContext.environment()).isInstanceOf(ConfigurableApplicationEnvironment.class)
+                        .extracting(ConfigurableApplicationEnvironment.class::cast)
+                        .actual();
         LoggingExceptionHandler exceptionHandler =
-                assertThat(configurableApplicationEnvironment.exceptionHandler()).isInstanceOf(LoggingExceptionHandler.class);
+                assertThat(configurableApplicationEnvironment.exceptionHandler()).isInstanceOf(LoggingExceptionHandler.class)
+                        .extracting(LoggingExceptionHandler.class::cast)
+                        .actual();
         assertThat(exceptionHandler.printStackTraces()).isTrue();
     }
 
@@ -237,9 +247,13 @@ class ApplicationConfigurerTests {
     void hideStacktracesCustomizer() {
         ApplicationContext applicationContext = createApplication(HartshornApplicationConfigurer::hideStacktraces);
         ConfigurableApplicationEnvironment configurableApplicationEnvironment =
-                assertThat(applicationContext.environment()).isInstanceOf(ConfigurableApplicationEnvironment.class);
+                assertThat(applicationContext.environment()).isInstanceOf(ConfigurableApplicationEnvironment.class)
+                        .extracting(ConfigurableApplicationEnvironment.class::cast)
+                        .actual();
         LoggingExceptionHandler exceptionHandler =
-                assertThat(configurableApplicationEnvironment.exceptionHandler()).isInstanceOf(LoggingExceptionHandler.class);
+                assertThat(configurableApplicationEnvironment.exceptionHandler()).isInstanceOf(LoggingExceptionHandler.class)
+                        .extracting(LoggingExceptionHandler.class::cast)
+                        .actual();
         assertThat(exceptionHandler.printStackTraces()).isFalse();
     }
 

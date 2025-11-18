@@ -38,22 +38,22 @@ class ApplicationBatchingTest {
     @Disabled("Only for manual testing")
     @RepeatedTest(100)
     void applicationContextBatching() {
-        ApplicationContext applicationContext = assertThatCode(() ->
-                HartshornApplication.create(ApplicationBatchingTest.class, builder ->
-                        builder.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
-                            constructor.includeBasePackages(false);
-                            constructor.standaloneComponents(components -> components.add(SimpleComponent.class));
-                            constructor.environment(
-                                    ConfigurableApplicationEnvironment.create(ConfigurableApplicationEnvironment.Configurer::enableBatchMode)
-                            );
-                        })
-                        ))).doesNotThrowAnyException();
+        assertThatCode(() -> {
+            ApplicationContext applicationContext = HartshornApplication.create(ApplicationBatchingTest.class, builder ->
+                    builder.applicationContextFactory(StandardApplicationContextFactory.create(constructor -> {
+                                constructor.includeBasePackages(false);
+                                constructor.standaloneComponents(components -> components.add(SimpleComponent.class));
+                                constructor.environment(
+                                        ConfigurableApplicationEnvironment.create(ConfigurableApplicationEnvironment.Configurer::enableBatchMode)
+                                );
+                            })
+                    ));
+            assertThat(applicationContext).isNotNull();
 
-        assertThat(applicationContext).isNotNull();
-
-        SimpleComponent component = applicationContext.get(SimpleComponent.class);
-        assertThat(component).isNotNull();
-        assertThat(component.applicationContext()).isSameAs(applicationContext);
+            SimpleComponent component = applicationContext.get(SimpleComponent.class);
+            assertThat(component).isNotNull();
+            assertThat(component.applicationContext()).isSameAs(applicationContext);
+        }).doesNotThrowAnyException();
     }
 
     public record SimpleComponent(ApplicationContext applicationContext) {

@@ -53,9 +53,11 @@ class SetterInjectionTests {
     @Test
     @TestComponents(SetterInjectedComponentWithNonRequiredAbsentBinding.class)
     void setterInjectionWithAbsentComponent() {
-        var component = assertThatCode(() -> this.applicationContext.get(SetterInjectedComponentWithNonRequiredAbsentBinding.class)).doesNotThrowAnyException();
-        assertThat(component).isNotNull();
-        assertThat(component.object()).isNull();
+        assertThatCode(() -> {
+            var component = this.applicationContext.get(SetterInjectedComponentWithNonRequiredAbsentBinding.class);
+            assertThat(component).isNotNull();
+            assertThat(component.object()).isNull();
+        }).doesNotThrowAnyException();
     }
 
     @Test

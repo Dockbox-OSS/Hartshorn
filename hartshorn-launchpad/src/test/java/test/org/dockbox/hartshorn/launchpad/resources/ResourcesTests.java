@@ -33,8 +33,10 @@ class ResourcesTests {
 
     @Test
     void getResourceURLReturnsValidURL() {
-        URL url = assertThatCode(() -> Resources.getResourceURL("sample.txt")).doesNotThrowAnyException();
-        assertThat(url).isNotNull();
+        assertThatCode(() -> {
+            URL url = Resources.getResourceURL("sample.txt");
+            assertThat(url).isNotNull();
+        }).doesNotThrowAnyException();
     }
 
     @Test
@@ -45,8 +47,10 @@ class ResourcesTests {
 
     @Test
     void getResourceAsFileReturnsValidStream() {
-        InputStream file = assertThatCode(() -> Resources.getResourceAsInputStream("sample.txt")).doesNotThrowAnyException();
-        assertThat(file).isNotNull();
+        assertThatCode(() -> {
+            InputStream file = Resources.getResourceAsInputStream("sample.txt");
+            assertThat(file).isNotNull();
+        }).doesNotThrowAnyException();
     }
 
     @Test
@@ -57,37 +61,45 @@ class ResourcesTests {
 
     @Test
     void getResourceURLsReturnsValidURLs() {
-        Set<URL> urls = assertThatCode(() -> Resources.getResourceURLs("sample.txt")).doesNotThrowAnyException();
-        assertThat(urls)
-                .isNotEmpty()
-                .hasSize(1);
+        assertThatCode(() -> {
+            Set<URL> urls = Resources.getResourceURLs("sample.txt");
+            assertThat(urls)
+                    .isNotEmpty()
+                    .hasSize(1);
 
-        URL url = CollectionUtilities.first(urls);
-        assertThat(url).isNotNull();
+            URL url = CollectionUtilities.first(urls);
+            assertThat(url).isNotNull();
+        }).doesNotThrowAnyException();
     }
 
     @Test
     void getResourceURLsReturnsEmptyWhenResourceNotExists() {
-        Set<URL> urls = assertThatCode(() -> Resources.getResourceURLs("not-exists.txt")).doesNotThrowAnyException();
-        assertThat(urls).isNotNull();
-        assertThat(urls).isEmpty();
+        assertThatCode(() -> {
+            Set<URL> urls = Resources.getResourceURLs("not-exists.txt");
+            assertThat(urls).isNotNull();
+            assertThat(urls).isEmpty();
+        }).doesNotThrowAnyException();
     }
 
     @Test
     void getResourceAsFilesReturnsValidFiles() {
-        Set<InputStream> files = assertThatCode(() -> Resources.getResourcesAsInputStreams("sample.txt")).doesNotThrowAnyException();
-        assertThat(files)
-                .isNotEmpty()
-                .hasSize(1);
+        assertThatCode(() -> {
+            Set<InputStream> files = Resources.getResourcesAsInputStreams("sample.txt");
+            assertThat(files)
+                    .isNotEmpty()
+                    .hasSize(1);
 
-        InputStream file = CollectionUtilities.first(files);
-        assertThat(file).isNotNull();
+            InputStream file = CollectionUtilities.first(files);
+            assertThat(file).isNotNull();
+        }).doesNotThrowAnyException();
     }
 
     @Test
     void getResourceAsFilesReturnsEmptyWhenResourceNotExists() {
-        Set<InputStream> files = assertThatCode(() -> Resources.getResourcesAsInputStreams("not-exists.txt")).doesNotThrowAnyException();
-        assertThat(files).isNotNull();
-        assertThat(files).isEmpty();
+        assertThatCode(() -> {
+            Set<InputStream> files = Resources.getResourcesAsInputStreams("not-exists.txt");
+            assertThat(files).isNotNull();
+            assertThat(files).isEmpty();
+        }).doesNotThrowAnyException();
     }
 }

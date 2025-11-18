@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,19 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-
 import test.org.dockbox.hartshorn.proxy.support.basic.ConcreteProxyWithNonDefaultConstructor;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.fail;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 import test.org.dockbox.hartshorn.proxy.support.basic.DescribedProxy;
 import test.org.dockbox.hartshorn.proxy.support.equals.AbstractEqualProxy;
 import test.org.dockbox.hartshorn.proxy.support.equals.EqualInterfaceProxy;
@@ -64,6 +52,16 @@ import test.org.dockbox.hartshorn.proxy.support.standard.FinalClassProxyTarget;
 import test.org.dockbox.hartshorn.proxy.support.standard.FinalMethodProxyTarget;
 import test.org.dockbox.hartshorn.proxy.support.standard.RecordProxy;
 import test.org.dockbox.hartshorn.proxy.support.standard.SealedProxy;
+
+import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
  * Tests for the default behavior of proxies of various types.
@@ -157,11 +155,13 @@ public abstract class ProxyTests {
 
         TypeView<ConcreteProxyWithNonDefaultConstructor> typeView = this.introspector().introspect(ConcreteProxyWithNonDefaultConstructor.class);
         ConstructorView<ConcreteProxyWithNonDefaultConstructor> constructor = typeView.constructors().all().get(0);
-        Option<ConcreteProxyWithNonDefaultConstructor> proxy = assertThatCode(() -> factory.proxy(constructor, new Object[]{"Hello world"})).doesNotThrowAnyException();
-        assertThat(proxy.present()).isTrue();
+        assertThatCode(() -> {
+            Option<ConcreteProxyWithNonDefaultConstructor> proxy = factory.proxy(constructor, new Object[]{"Hello world"});
+            assertThat(proxy.present()).isTrue();
 
-        ConcreteProxyWithNonDefaultConstructor proxyInstance = proxy.get();
-        assertThat(proxyInstance.message()).isEqualTo("Hello world");
+            ConcreteProxyWithNonDefaultConstructor proxyInstance = proxy.get();
+            assertThat(proxyInstance.message()).isEqualTo("Hello world");
+        }).doesNotThrowAnyException();
     }
 
     @ParameterizedTest

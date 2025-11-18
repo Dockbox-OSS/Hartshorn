@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,9 +41,10 @@ class ContextKeyTests {
 
     @Test
     void contextKeyNameIsNullIfNull() {
-        ContextIdentity<ContextView> nullNameKey = assertThatCode(() -> ContextKey.builder(ContextView.class).name(null).build()).doesNotThrowAnyException();
-        // Ensure no NPE is thrown
-        assertThat(nullNameKey.name()).isNull();
+        assertThatCode(() -> {
+            ContextIdentity<ContextView> nullNameKey = ContextKey.builder(ContextView.class).name(null).build();
+            assertThat(nullNameKey.name()).isNull();
+        }).doesNotThrowAnyException();
     }
 
     @Test

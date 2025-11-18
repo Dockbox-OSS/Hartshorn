@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,7 @@
 
 package test.org.dockbox.hartshorn.hsl.interpreter.expression;
 
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-
 import org.dockbox.hartshorn.hsl.ast.expression.AssignExpression;
 import org.dockbox.hartshorn.hsl.ast.expression.LiteralExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
@@ -37,8 +29,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
+
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 public class AssignExpressionInterpreterTests {
 
@@ -67,8 +65,10 @@ public class AssignExpressionInterpreterTests {
         Interpreter interpreter = InterpreterTestHelper.createInterpreter();
         variableScopeFunction.apply(interpreter).define(variableName.lexeme(), "test");
 
-        Object interpreted = assertThatCode(() -> expressionInterpreter.interpret(expression, interpreter)).doesNotThrowAnyException();
-        assertThat(interpreted).isEqualTo(literalExpression.value());
+        assertThatCode(() -> {
+            Object interpreted = expressionInterpreter.interpret(expression, interpreter);
+            assertThat(interpreted).isEqualTo(literalExpression.value());
+        }).doesNotThrowAnyException();
     }
 
     @Test

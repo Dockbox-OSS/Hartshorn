@@ -48,7 +48,6 @@ import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -82,7 +81,7 @@ public class ScriptRuntimeTests {
     @ParameterizedTest
     @MethodSource("scripts")
     void predefinedScript(Path path) throws Exception {
-        this.assertNoErrorsReported(ExecutableScript.of(this.applicationContext, path));
+        ExecutableScript.of(this.applicationContext, path).evaluate();
     }
 
     @ParameterizedTest
@@ -123,7 +122,7 @@ public class ScriptRuntimeTests {
         String expression = "context.environment().isBatchMode()";
         ExecutableScript script = ExecutableScript.of(this.applicationContext, expression);
         script.runtime().global("context", this.applicationContext);
-        this.assertNoErrorsReported(script);
+        script.evaluate();
     }
 
     @Test
@@ -243,17 +242,13 @@ public class ScriptRuntimeTests {
     }
 
     ScriptContext assertValid(ExpressionScript expression) {
-        ScriptContext context = assertThatCode(expression::evaluate).doesNotThrowAnyException();
+        ScriptContext context = expression.evaluate();
         assertThat(ExpressionScript.valid(context)).isTrue();
         return context;
     }
 
     ScriptContext assertNoErrorsReported(String expression) {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, expression);
-        return this.assertNoErrorsReported(script);
-    }
-
-    ScriptContext assertNoErrorsReported(ExecutableScript script) {
-        return assertThatCode(script::evaluate).doesNotThrowAnyException();
+        return script.evaluate();
     }
 }
