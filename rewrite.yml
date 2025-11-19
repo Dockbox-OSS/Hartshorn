@@ -1,0 +1,35 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.dockbox.hartshorn.HartshornMain
+displayName: "Hartshorn main configuration"
+description: "Configuration for Hartshorn standard conventions."
+recipeList:
+  - org.openrewrite.java.RemoveUnusedImports
+  - org.openrewrite.staticanalysis.MissingOverrideAnnotation
+  - org.openrewrite.java.format.EmptyNewlineAtEndOfFile
+  - org.openrewrite.java.format.RemoveTrailingWhitespace
+  - org.openrewrite.java.format.SingleLineComments
+  - org.openrewrite.java.jspecify.JSpecifyBestPractices
+  - org.openrewrite.java.migrate.util.IteratorNext
+  - org.openrewrite.java.migrate.util.JavaUtilAPIs
+  - org.openrewrite.java.migrate.util.SequencedCollection
+  - org.openrewrite.java.OrderImports
+  - org.openrewrite.staticanalysis.CodeCleanup
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.dockbox.hartshorn.HartshornTests
+displayName: "Hartshorn test configuration"
+description: "Configuration for Hartshorn testing conventions. Codestyle is complemented by Checkstyle rules."
+recipeList:
+  - org.openrewrite.java.testing.assertj.Assertj
+  - org.openrewrite.java.testing.junit.JupiterBestPractices
+
+---
+type: specs.openrewrite.org/v1beta/style
+name: org.dockbox.hartshorn.HartshornStyle
+displayName: "Hartshorn code style"
+description: "Code style conventions for Hartshorn projects."
+styleConfigs:
+  - org.openrewrite.java.style.ImportLayoutStyle:
+      classCountToUseStarImport: 9999

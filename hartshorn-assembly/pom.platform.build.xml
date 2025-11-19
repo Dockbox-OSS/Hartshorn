@@ -197,15 +197,30 @@
                 <version>6.23.0</version>
                 <configuration>
                     <exportDatatables>true</exportDatatables>
+                    <configLocation>${maven.multiModuleProjectDirectory}/rewrite.yml</configLocation>
                     <activeRecipes>
-                        <recipe>org.openrewrite.java.testing.assertj.Assertj</recipe>
+                        <recipe>org.dockbox.hartshorn.HartshornMain</recipe>
+                        <recipe>org.dockbox.hartshorn.HartshornTests</recipe>
                     </activeRecipes>
+                    <activeStyles>
+                        <style>org.dockbox.hartshorn.HartshornStyle</style>
+                    </activeStyles>
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.openrewrite.recipe</groupId>
                         <artifactId>rewrite-testing-frameworks</artifactId>
                         <version>3.21.3</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-static-analysis</artifactId>
+                        <version>2.21.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-migrate-java</artifactId>
+                        <version>3.21.2</version>
                     </dependency>
                 </dependencies>
             </plugin>

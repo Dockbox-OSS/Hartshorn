@@ -41,8 +41,6 @@
         <module>hartshorn-hsl</module>
         <module>hartshorn-testsuite</module>
         <module>hartshorn-launchpad-kotlin-extensions</module>
-<!--        <module>hartshorn-launchpad-starter</module>-->
-<!--        <module>hartshorn-launchpad-samples</module>-->
 
         <!-- Assembly modules -->
         <module>hartshorn-assembly/pom.assembly.xml</module>
@@ -52,4 +50,17 @@
         <!-- Project version, keep in sync with build support POM -->
         <revision>0.7.0</revision>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>include-samples</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>hartshorn-launchpad-starter</module>
+                <module>hartshorn-launchpad-samples</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

@@ -5,15 +5,12 @@
 
 <module name="Checker">
     <module name="TreeWalker">
-        <!-- Import rules -->
-        <module name="AvoidStarImport">
-            <property name="allowStaticMemberImports" value="true"/>
-        </module>
-        <module name="UnusedImports"/>
         <module name="IllegalImport">
-            <!-- Should use Checker framework annotations -->
-            <property name="illegalPkgs" value="org.jetbrains.annotations"/>
-            <property name="illegalClasses" value="jakarta.annotation.Nonnull,jakarta.annotation.Nullable"/>
+            <!-- Should use JSpecify framework annotations -->
+            <property name="illegalPkgs"
+                      value="org.jetbrains.annotations,org.checkerframework.checker.nullness.qual"/>
+            <property name="illegalClasses"
+                      value="jakarta.annotation.Nonnull,jakarta.annotation.Nullable"/>
         </module>
 
         <!-- General Javadoc rules -->
@@ -25,18 +22,22 @@
              - Javadoc references (see, since, author)
              - Deprecation notices
             -->
-            <property name="tagOrder" value="@param, @return, @throws,
-                                             @see, @since, @author,
-                                             @deprecated"/>
+            <property name="tagOrder"
+                      value="@param, @return, @throws,
+                             @see, @since, @author,
+                             @deprecated"/>
         </module>
 
         <!-- Javadoc type rules -->
         <module name="MissingJavadocType">
-            <property name="scope" value="protected"/>
+            <property name="scope"
+                      value="protected"/>
         </module>
         <module name="JavadocType">
-            <property name="allowMissingParamTags" value="false"/>
-            <property name="allowUnknownTags" value="true"/>
+            <property name="allowMissingParamTags"
+                      value="false"/>
+            <property name="allowUnknownTags"
+                      value="true"/>
         </module>
 
         <!-- Javadoc method rules -->
@@ -48,9 +49,12 @@
         </module>
         -->
         <module name="JavadocMethod">
-            <property name="accessModifiers" value="public,protected,package"/>
-            <property name="allowMissingParamTags" value="false"/>
-            <property name="allowMissingReturnTag" value="false"/>
+            <property name="accessModifiers"
+                      value="public,protected,package"/>
+            <property name="allowMissingParamTags"
+                      value="false"/>
+            <property name="allowMissingReturnTag"
+                      value="false"/>
         </module>
     </module>
 </module>
