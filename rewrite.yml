@@ -4,17 +4,21 @@ name: org.dockbox.hartshorn.HartshornMain
 displayName: "Hartshorn main configuration"
 description: "Configuration for Hartshorn standard conventions."
 recipeList:
+  # Import rules
   - org.openrewrite.java.RemoveUnusedImports
-  - org.openrewrite.staticanalysis.MissingOverrideAnnotation
+  - org.openrewrite.java.OrderImports
+  # Whitespace and formatting
   - org.openrewrite.java.format.EmptyNewlineAtEndOfFile
   - org.openrewrite.java.format.RemoveTrailingWhitespace
   - org.openrewrite.java.format.SingleLineComments
+  - org.openrewrite.staticanalysis.CodeCleanup
+  # Annotations
+  - org.openrewrite.staticanalysis.MissingOverrideAnnotation
   - org.openrewrite.java.jspecify.JSpecifyBestPractices
+  # Code improvements
   - org.openrewrite.java.migrate.util.IteratorNext
   - org.openrewrite.java.migrate.util.JavaUtilAPIs
   - org.openrewrite.java.migrate.util.SequencedCollection
-  - org.openrewrite.java.OrderImports
-  - org.openrewrite.staticanalysis.CodeCleanup
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
