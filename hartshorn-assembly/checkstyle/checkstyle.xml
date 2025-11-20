@@ -5,10 +5,15 @@
 
 <module name="Checker">
     <module name="TreeWalker">
+        <!-- Import rules -->
+        <module name="AvoidStarImport">
+            <property name="allowStaticMemberImports" value="true"/>
+        </module>
+        <module name="UnusedImports"/>
         <module name="IllegalImport">
             <!-- Should use JSpecify framework annotations -->
             <property name="illegalPkgs"
-                      value="org.jetbrains.annotations,org.checkerframework.checker.nullness.qual"/>
+                      value="org.jetbrains.annotations"/>
             <property name="illegalClasses"
                       value="jakarta.annotation.Nonnull,jakarta.annotation.Nullable"/>
         </module>
