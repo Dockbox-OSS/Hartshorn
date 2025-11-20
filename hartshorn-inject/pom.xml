@@ -1,60 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.dockbox.hartshorn</groupId>
-        <artifactId>hartshorn-platform-support</artifactId>
-        <version>${revision}</version>
-        <relativePath>../hartshorn-assembly/pom.platform.support.xml</relativePath>
-    </parent>
+  <parent>
+    <groupId>org.dockbox.hartshorn</groupId>
+    <artifactId>hartshorn-platform-support</artifactId>
+    <version>${revision}</version>
+    <relativePath>../hartshorn-assembly/pom.platform.support.xml</relativePath>
+  </parent>
 
-    <name>Hartshorn Inject</name>
-    <artifactId>hartshorn-inject</artifactId>
-    <packaging>jar</packaging>
+  <name>Hartshorn Inject</name>
+  <artifactId>hartshorn-inject</artifactId>
+  <packaging>jar</packaging>
 
-    <properties>
-        <!--
-        TODO: Remove once coverage target of 80% is reached.
-         In meantime, increase coverage target whenever possible (to avoid regression).
-        -->
-        <coverage.target>16%</coverage.target>
-    </properties>
+  <properties>
+    <!--
+    TODO: Remove once coverage target of 80% is reached.
+     In meantime, increase coverage target whenever possible (to avoid regression).
+    -->
+    <coverage.target>16%</coverage.target>
+  </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-introspect</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-proxy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-spi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-properties</artifactId>
-        </dependency>
+  <dependencies>
+    <dependency>
+      <groupId>org.dockbox.hartshorn</groupId>
+      <artifactId>hartshorn-introspect</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.dockbox.hartshorn</groupId>
+      <artifactId>hartshorn-proxy</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.dockbox.hartshorn</groupId>
+      <artifactId>hartshorn-spi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.dockbox.hartshorn</groupId>
+      <artifactId>hartshorn-properties</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-introspect-reflection</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.dockbox.hartshorn</groupId>
-            <artifactId>hartshorn-proxy-javassist</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <dependency>
+      <groupId>org.dockbox.hartshorn</groupId>
+      <artifactId>hartshorn-introspect-reflection</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.dockbox.hartshorn</groupId>
+      <artifactId>hartshorn-proxy-javassist</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>

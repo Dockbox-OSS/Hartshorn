@@ -1,6 +1,6 @@
 name: 'Bug report'
 description: 'If you found a bug in the project, please create an issue here.'
-labels: ['type: bug']
+labels: [ 'type: bug' ]
 body:
   - type: textarea
     id: description

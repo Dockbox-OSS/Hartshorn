@@ -21,7 +21,7 @@ jobs:
         -Djacoco.skip=false 
         -Dcoverage.skip=false"
   testSourceCompat:
-    needs: [coverage]
+    needs: [ coverage ]
     strategy:
       fail-fast: false
       matrix:

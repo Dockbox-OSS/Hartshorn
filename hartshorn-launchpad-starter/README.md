@@ -1,8 +1,13 @@
 # Hartshorn Launchpad
-Launchpad is a pre-configured application starter for Hartshorn. It provides a simple way to bootstrap your application with Maven, and get started with Hartshorn.
+
+Launchpad is a pre-configured application starter for Hartshorn. It provides a simple way to
+bootstrap your application with Maven, and get started with Hartshorn.
 
 ## Getting started
-To get started, all you need to do is use the `hartshorn-launchpad` parent POM in your Maven project. This will automatically configure your project to use Hartshorn, and provide you with a simple application starter.
+
+To get started, all you need to do is use the `hartshorn-launchpad` parent POM in your Maven
+project. This will automatically configure your project to use Hartshorn, and provide you with a
+simple application starter.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -23,7 +28,11 @@ To get started, all you need to do is use the `hartshorn-launchpad` parent POM i
 ```
 
 ## Using implementation-specific modules
-Hartshorn provides a set of modules that are not included by default. These modules are implementation-specific, and are not required for the core functionality of Hartshorn. To use these modules, you need to add the corresponding dependency to your project. The following table lists the included modules, which do not need to be added manually.
+
+Hartshorn provides a set of modules that are not included by default. These modules are
+implementation-specific, and are not required for the core functionality of Hartshorn. To use these
+modules, you need to add the corresponding dependency to your project. The following table lists the
+included modules, which do not need to be added manually.
 
 | Module                 | Description                                                        | Default implementation            |
 |------------------------|--------------------------------------------------------------------|-----------------------------------|
@@ -31,7 +40,10 @@ Hartshorn provides a set of modules that are not included by default. These modu
 | `hartshorn-proxy`      | Provides the ability to create proxies for classes and interfaces. | `hartshorn-proxy-javassist`       |
 
 ## Using Launchpad with Gradle
-Launchpad is not currently available for Gradle. However, you can still use Hartshorn with Gradle by using the [Spring Dependency Management plugin](https://spring.io/blog/2015/02/23/better-dependency-management-for-gradle).
+
+Launchpad is not currently available for Gradle. However, you can still use Hartshorn with Gradle by
+using
+the [Spring Dependency Management plugin](https://spring.io/blog/2015/02/23/better-dependency-management-for-gradle).
 
 ```groovy
 buildscript {

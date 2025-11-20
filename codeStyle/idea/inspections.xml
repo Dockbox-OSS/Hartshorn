@@ -6,6 +6,10 @@
     <option name="DONT_REPORT_TRUE_ASSERT_STATEMENTS" value="false" />
   </inspection_tool>
   <inspection_tool class="ConstantValueMerged" />
+  <inspection_tool class="DataFlowIssue" enabled="false" level="WARNING" enabled_by_default="false">
+    <option name="SUGGEST_NULLABLE_ANNOTATIONS" value="true" />
+    <option name="DONT_REPORT_TRUE_ASSERT_STATEMENTS" value="false" />
+  </inspection_tool>
   <inspection_tool class="FallthruInSwitchStatement" enabled="true" level="ERROR" enabled_by_default="true" />
   <inspection_tool class="LiteralAsArgToStringEquals" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="MissortedModifiers" enabled="true" level="WARNING" enabled_by_default="true">
@@ -18,6 +22,7 @@
     <option name="useParameterizedTypeForCollectionMethods" value="true" />
     <option name="doNotWeakenToJavaLangObject" value="true" />
     <option name="onlyWeakentoInterface" value="true" />
+    <stopClasses>java.util.SequencedCollection,java.util.Set</stopClasses>
   </inspection_tool>
   <inspection_tool class="UnnecessarySemicolon" enabled="true" level="ERROR" enabled_by_default="true" />
   <inspection_tool class="UnqualifiedFieldAccess" enabled="true" level="WARNING" enabled_by_default="true" />
