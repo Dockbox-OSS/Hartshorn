@@ -36,8 +36,9 @@ import java.util.Set;
  * Additional profiles are resolved using a {@link ProfileResourceResolver} and loaded using a
  * {@link PropertyRegistryPathLoader}.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ConfigurationProfileRegistryFactory implements ProfileRegistryFactory {
 

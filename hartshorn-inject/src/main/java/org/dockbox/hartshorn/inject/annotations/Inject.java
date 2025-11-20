@@ -28,9 +28,11 @@ import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
  * {@link ComponentInjectionPointsResolver} to determine which elements of a component should be
  * populated.
  *
- * @author Guus Lieben
  * @see ComponentInjectionPointsResolver
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 @Target({
     ElementType.FIELD,

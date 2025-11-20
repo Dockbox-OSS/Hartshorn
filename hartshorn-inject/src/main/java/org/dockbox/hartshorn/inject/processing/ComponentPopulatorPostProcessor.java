@@ -41,8 +41,9 @@ import java.util.Collection;
  * using the {@link ProxyFactory} stored in the
  * {@link ComponentProcessingContext processing context}.
  *
- * @author Guus Lieben
  * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
 public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
 
@@ -83,11 +84,13 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
             }
 
             if (finalizingInstance == null) {
-                // If no instance is available, we cannot proceed with population, as there's nothing to populate
+                // If no instance is available, we cannot proceed with population, as there's
+                // nothing to populate
                 return null;
             }
 
-            if (processingContext instanceof LockableComponentProcessingContext<T> lockableComponentProcessingContext) {
+            if (processingContext instanceof LockableComponentProcessingContext<T>
+                lockableComponentProcessingContext) {
                 lockableComponentProcessingContext.instance(finalizingInstance);
                 lockableComponentProcessingContext.requestInstanceLock();
             }
@@ -159,7 +162,8 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
 
     @Override
     public int priority() {
-        // Run after all other core post processors, but permit external post processors to run after this one
+        // Run after all other core post processors, but permit external post processors to run
+        // after this one
         return ProcessingPriority.LOWEST_PRECEDENCE - 128;
     }
 
@@ -188,8 +192,9 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
     /**
      * Configurer for the {@link ComponentPopulatorPostProcessor}.
      *
-     * @author Guus Lieben
      * @since 0.6.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer {
 
@@ -214,7 +219,10 @@ public class ComponentPopulatorPostProcessor extends ComponentPostProcessor {
          *
          * @return this configurer
          */
-        public Configurer componentPopulator(ContextualInitializer<InjectionCapableApplication, ComponentPopulator> componentPopulator) {
+        public Configurer componentPopulator(
+            ContextualInitializer<InjectionCapableApplication, ComponentPopulator>
+                componentPopulator
+        ) {
             this.componentPopulator = componentPopulator;
             return this;
         }

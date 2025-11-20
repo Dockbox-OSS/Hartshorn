@@ -34,8 +34,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link ProxyLookup}s, and allows for registration of additional lookups. Lookup operations are
  * performed with the assumption that Hartshorn's own {@link Proxy} implementation is used.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
 

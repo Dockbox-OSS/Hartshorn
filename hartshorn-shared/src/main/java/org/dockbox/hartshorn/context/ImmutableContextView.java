@@ -26,8 +26,9 @@ import java.util.Set;
 /**
  * Immutable wrapper for {@link Context contexts}.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ImmutableContextView implements ContextView {
 

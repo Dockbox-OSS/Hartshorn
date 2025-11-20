@@ -30,8 +30,9 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
  * not processed by pre-processors, as bindings can be defined at any point in the application's
  * lifecycle.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public abstract non-sealed class ComponentPreProcessor implements ComponentProcessor {
 

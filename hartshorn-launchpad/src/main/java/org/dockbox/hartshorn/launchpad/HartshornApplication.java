@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.util.configure.Customizer;
  * Application starter for Hartshorn applications. This takes a single type which provides
  * application metadata, and a set of command line arguments.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public final class HartshornApplication {
 
@@ -131,8 +132,9 @@ public final class HartshornApplication {
      * high-level {@link HartshornApplicationConfigurer}, rather than the low-level
      * {@link StandardApplicationBuilder.Configurer}.
      *
-     * @author Guus Lieben
      * @since 0.6.0
+     *
+     * @author Guus Lieben
      */
     public interface ApplicationBootstrap {
 

@@ -32,10 +32,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * A singleton cache implementation that uses a {@link ConcurrentHashMap} to store instances. This
  * implementation is thread-safe.
  *
- * @author Guus Lieben
  * @see SingletonCache
  * @see ConcurrentHashMap
+ * 
  * @since 0.4.11
+ * 
+ * @author Guus Lieben
  */
 public class ConcurrentHashSingletonCache implements SingletonCache {
 

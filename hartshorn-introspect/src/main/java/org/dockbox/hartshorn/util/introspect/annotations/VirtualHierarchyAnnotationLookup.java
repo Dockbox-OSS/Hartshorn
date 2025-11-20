@@ -60,8 +60,9 @@ import java.util.function.Supplier;
  * requested attributes. In this example, the {@code name} attribute will be resolved to
  * {@code "meta"}, and the {@code id} attribute will be resolved to {@code "foo"}.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
 

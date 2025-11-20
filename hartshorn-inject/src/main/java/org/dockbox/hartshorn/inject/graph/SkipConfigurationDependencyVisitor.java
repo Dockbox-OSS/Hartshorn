@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
  * A {@link ConfigurationDependencyVisitor} that skips the registration of providers. Effectively
  * this is a no-op implementation of the visitor.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class SkipConfigurationDependencyVisitor extends AbstractConfigurationDependencyVisitor {
 

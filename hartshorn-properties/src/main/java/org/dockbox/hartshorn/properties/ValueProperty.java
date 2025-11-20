@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * Represents a property that holds a single value. This is the most basic form of a property.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public non-sealed interface ValueProperty extends Property {
 

@@ -32,9 +32,11 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * assumed that all singletons stored in the {@link SingletonCache} have already been processed, and
  * do not require further enhancement.
  *
- * @author Guus Lieben
  * @see SingletonCacheComponentProvider#singletonCache()
+ * 
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public class SingletonCacheComponentProviderStrategy implements ComponentProviderStrategy {
 
@@ -44,7 +46,8 @@ public class SingletonCacheComponentProviderStrategy implements ComponentProvide
         ComponentRequestContext requestContext,
         ComponentProviderStrategyChain<T> chain
     ) throws ComponentResolutionException, ApplicationException {
-        if (chain.componentProvider() instanceof SingletonCacheComponentProvider singletonCacheComponentProvider) {
+        if (chain.componentProvider() instanceof SingletonCacheComponentProvider
+            singletonCacheComponentProvider) {
             SingletonCache singletonCache = singletonCacheComponentProvider.singletonCache();
             if (singletonCache.contains(componentKey)) {
                 T instance = singletonCache.get(componentKey)

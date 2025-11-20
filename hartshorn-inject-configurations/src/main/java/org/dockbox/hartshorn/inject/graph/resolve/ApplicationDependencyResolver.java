@@ -37,8 +37,9 @@ import java.util.stream.Collectors;
  * recommended to use a separate {@link DependencyResolver} for custom resolvers, as this resolver
  * is intended to be used for standard application dependencies.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ApplicationDependencyResolver extends CompositeDependencyResolver {
 
@@ -75,8 +76,9 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
     /**
      * Configurer for the {@link ApplicationDependencyResolver}.
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer
         extends StreamableConfigurer<InjectionCapableApplication, DependencyResolver> {
@@ -107,7 +109,9 @@ public class ApplicationDependencyResolver extends CompositeDependencyResolver {
          *
          * @return the current configurer instance
          */
-        public Configurer withBindsMethods(Customizer<ManagedConfigurationDependencyResolver.Configurer> customizer) {
+        public Configurer withBindsMethods(
+            Customizer<ManagedConfigurationDependencyResolver.Configurer> customizer
+        ) {
             ContextualInitializer<InjectionCapableApplication, DependencyResolver>
                 methodDependencyResolver =
                 ManagedConfigurationDependencyResolver.create(customizer);

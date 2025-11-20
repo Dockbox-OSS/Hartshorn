@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * A simple {@link ConfiguredProperty} implementation that holds a single name-value pair.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class SingleConfiguredProperty implements ConfiguredProperty {
 

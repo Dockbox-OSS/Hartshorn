@@ -28,8 +28,9 @@ import java.util.List;
  * An {@link TypeParametersIntrospector} that does not provide access to any type parameters. This
  * introspector is commonly used for wildcard types.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class WildcardTypeParametersIntrospector implements TypeParametersIntrospector {
 

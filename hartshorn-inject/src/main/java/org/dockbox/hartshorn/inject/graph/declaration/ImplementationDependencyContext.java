@@ -35,11 +35,13 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  * @param <T> the type of the component that is implemented
  * @param <I> the type of the component that is the implementation
  *
- * @author Guus Lieben
  * @see DependencyContext
  * @see TypeAwareInstantiationStrategy
  * @see BindingHierarchy
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ImplementationDependencyContext<T, I extends T> extends AbstractDependencyContext<I> {
 

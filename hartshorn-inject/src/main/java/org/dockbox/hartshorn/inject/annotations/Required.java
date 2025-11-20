@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.inject.populate.ComponentRequiredException;
  * a {@link ComponentPopulator} has attempted to populate it, a {@link ComponentRequiredException}
  * will be thrown.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER, ElementType.FIELD})

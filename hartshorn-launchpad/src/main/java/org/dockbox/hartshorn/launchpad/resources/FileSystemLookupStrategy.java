@@ -30,8 +30,9 @@ import java.util.stream.Collectors;
  * configuration path of the path representation, typically this will be similar to
  * {@code /config/{owner-id}/}.
  *
- * @author Guus Lieben
  * @since 0.4.7
+ *
+ * @author Guus Lieben
  */
 public class FileSystemLookupStrategy implements ResourceLookupStrategy {
 

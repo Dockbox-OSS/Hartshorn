@@ -22,8 +22,9 @@ import java.util.regex.Pattern;
  * Standard implementation of {@link PropertyPathStyle} that uses a dot as field separator and
  * square brackets for indices.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class StandardPropertyPathStyle implements PropertyPathStyle {
 

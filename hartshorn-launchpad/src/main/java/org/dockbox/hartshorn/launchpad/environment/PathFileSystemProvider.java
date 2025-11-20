@@ -22,8 +22,9 @@ import java.nio.file.Paths;
 /**
  * A {@link PathFileSystemProvider} that uses the current working directory as the root.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ * 
+ * @author Guus Lieben
  */
 public class PathFileSystemProvider implements FileSystemProvider {
 

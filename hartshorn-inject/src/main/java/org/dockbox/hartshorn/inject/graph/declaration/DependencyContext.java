@@ -37,8 +37,9 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> the type of the dependency
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface DependencyContext<T> {
 

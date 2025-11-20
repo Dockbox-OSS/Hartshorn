@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * @param container the container in which the component is managed
  * @param <T> the type of the component managed by the container
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public record ComponentContainerDependencyDeclarationContext<T>(ComponentContainer<T> container)
     implements DependencyDeclarationContext<T> {

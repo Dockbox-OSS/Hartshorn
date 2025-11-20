@@ -31,8 +31,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  *
  * @param <T> the type of the component to resolve
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface ComponentProviderStrategyChain<T> {
 

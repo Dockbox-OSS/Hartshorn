@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.properties.loader.path;
  * Represents a style for formatting property paths. This can be used to customize the way fields
  * and indices are formatted in a property path.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public interface PropertyPathStyle {
 

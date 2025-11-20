@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 /**
  * A proxy orchestrator loader that creates {@link JavassistProxyOrchestrator} instances.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class JavassistProxyOrchestratorLoader implements ProxyOrchestratorLoader {
 

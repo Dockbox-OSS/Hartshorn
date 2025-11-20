@@ -38,8 +38,9 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
  *     <li>Memory usage, through {@link MemoryUsageDiagnosticsReporter}</li>
  * </ul>
  *
- * @author Guus Lieben
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class SystemDiagnosticsReporter
     implements ConfigurableDiagnosticsReporter<SystemReportingConfiguration>,

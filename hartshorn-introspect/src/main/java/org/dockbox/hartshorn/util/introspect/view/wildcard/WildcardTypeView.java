@@ -40,8 +40,9 @@ import java.util.List;
  * the type it represents. It does, however, provide empty introspectors for e.g. annotations and
  * type parameters.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class WildcardTypeView extends DefaultContext implements TypeView<Object> {
 

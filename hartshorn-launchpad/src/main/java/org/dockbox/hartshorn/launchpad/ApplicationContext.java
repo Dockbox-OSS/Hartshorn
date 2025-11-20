@@ -39,8 +39,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * its components. The implementation may choose to perform specific actions based on available
  * activators and properties.
  *
- * @author Guus Lieben
  * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
 public interface ApplicationContext extends
     ConfigurableActivationInjectionCapableApplication,

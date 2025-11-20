@@ -24,9 +24,11 @@ import java.util.Set;
 /**
  * Represents a property that contains other properties, accessed by a key.
  *
- * @author Guus Lieben
  * @see Property
+ *
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public non-sealed interface ObjectProperty extends Property {
 

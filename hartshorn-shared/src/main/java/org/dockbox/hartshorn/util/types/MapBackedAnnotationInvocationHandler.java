@@ -32,10 +32,12 @@ import java.util.stream.Collectors;
  * {@link Object#hashCode()} and {@link Object#equals(Object)} are also supported.
  * {@link Annotation#annotationType()} will use the type provided in the constructor.
  *
- * @author Guus Lieben
  * @see TypeUtils#annotation(Class)
  * @see TypeUtils#annotation(Class, Map)
+ *
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class MapBackedAnnotationInvocationHandler implements InvocationHandler {
 

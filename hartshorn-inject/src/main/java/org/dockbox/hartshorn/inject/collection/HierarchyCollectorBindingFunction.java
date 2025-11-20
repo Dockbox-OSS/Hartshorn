@@ -36,8 +36,9 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
  *
  * @param <T> The type of the component that is bound.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFunction<T> {
 

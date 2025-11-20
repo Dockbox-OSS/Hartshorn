@@ -40,17 +40,21 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  * active {@link RequireInjectionPointRule}s, then a {@link ComponentRequiredException} will be
  * thrown.
  *
- * @author Guus Lieben
  * @see RequireInjectionPointRule
  * @see ComponentRequiredException
  * @see ComponentPopulationStrategy
+ *
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractComponentPopulationStrategy implements ComponentPopulationStrategy {
 
     private final Set<RequireInjectionPointRule> requiresComponentRules;
 
-    protected AbstractComponentPopulationStrategy(Set<RequireInjectionPointRule> requiresComponentRules) {
+    protected AbstractComponentPopulationStrategy(
+        Set<RequireInjectionPointRule> requiresComponentRules
+    ) {
         this.requiresComponentRules = requiresComponentRules;
     }
 

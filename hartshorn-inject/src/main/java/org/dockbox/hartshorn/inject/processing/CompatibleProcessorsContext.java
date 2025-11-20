@@ -23,14 +23,17 @@ import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
  * Intermediate context used by {@link CompositeComponentPostProcessor} to store compatible
  * {@link ComponentPostProcessor} between phases of post-processing.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class CompatibleProcessorsContext extends DefaultContext {
 
     private final NavigableMultiMap<Integer, ComponentPostProcessor> processors;
 
-    public CompatibleProcessorsContext(NavigableMultiMap<Integer, ComponentPostProcessor> processors) {
+    public CompatibleProcessorsContext(
+        NavigableMultiMap<Integer, ComponentPostProcessor> processors
+    ) {
         this.processors = processors;
     }
 

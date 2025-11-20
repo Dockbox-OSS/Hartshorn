@@ -28,8 +28,9 @@ import org.dockbox.hartshorn.inject.provider.ObjectContainer;
  *
  * @param <E> The type of the elements in the collection
  *
- * @author Guus Lieben
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class CollectionObjectContainer<E> extends AbstractObjectContainer<ComponentCollection<E>> {
 

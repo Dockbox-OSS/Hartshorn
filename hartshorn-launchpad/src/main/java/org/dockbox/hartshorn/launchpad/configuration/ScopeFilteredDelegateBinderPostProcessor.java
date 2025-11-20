@@ -32,8 +32,9 @@ import java.util.function.Predicate;
  * and is effectively equal to extending {@link AbstractScopeFilteredBinderPostProcessor} in the
  * delegate processor.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ScopeFilteredDelegateBinderPostProcessor
     extends AbstractScopeFilteredBinderPostProcessor {

@@ -22,8 +22,9 @@ package org.dockbox.hartshorn.inject.provider;
  *
  * @param <T> The type instance to provide.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public non-sealed interface NonTypeAwareInstantiationStrategy<T> extends InstantiationStrategy<T> {
 }

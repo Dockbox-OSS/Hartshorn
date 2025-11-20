@@ -31,11 +31,13 @@ import java.util.function.Predicate;
  * interact with the {@link Modifier} constants through {@link ModifierCarrierView views}, without
  * directly interacting with JDK reflections.
  *
- * @author Guus Lieben
  * @see Modifier
  * @see ModifierCarrierView
  * @see Member#getModifiers()
+ *
  * @since 0.4.4
+ *
+ * @author Guus Lieben
  */
 public enum AccessModifier {
     /**

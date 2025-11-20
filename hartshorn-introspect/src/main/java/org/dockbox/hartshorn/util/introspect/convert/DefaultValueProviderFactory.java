@@ -23,10 +23,12 @@ package org.dockbox.hartshorn.util.introspect.convert;
  *
  * @param <T> the target type
  *
- * @author Guus Lieben
  * @see DefaultValueProvider
  * @see ConverterFactory
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public interface DefaultValueProviderFactory<T> extends ConverterFactory<Null, T> {
 

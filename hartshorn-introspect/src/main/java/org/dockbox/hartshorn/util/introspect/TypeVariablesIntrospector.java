@@ -32,9 +32,11 @@ import java.util.List;
  * }
  * }</pre>
  *
- * @author Guus Lieben
  * @see ExecutableElementView#typeVariables()
+ *
  * @since 0.4.10
+ * 
+ * @author Guus Lieben
  */
 public interface TypeVariablesIntrospector {
 

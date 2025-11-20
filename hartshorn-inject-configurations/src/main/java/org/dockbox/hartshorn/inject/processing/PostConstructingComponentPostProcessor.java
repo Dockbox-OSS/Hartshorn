@@ -31,9 +31,11 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * is performed by a {@link ComponentPostConstructor}, which typically invokes all
  * {@link OnInitialized} methods on the component, though specific implementations may vary.
  *
- * @author Guus Lieben
  * @see ComponentPostConstructor
+ * 
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public class PostConstructingComponentPostProcessor implements ComponentProviderPostProcessor {
 

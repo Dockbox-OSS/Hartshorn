@@ -27,11 +27,14 @@ import java.lang.annotation.Annotation;
  * @param <A> the annotation type
  * @param <C> the context type
  *
- * @author Guus Lieben
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
-public abstract class AnnotatedParameterLoaderRule<A extends Annotation, C extends ParameterLoaderContext>
-    implements ParameterLoaderRule<C> {
+public abstract class AnnotatedParameterLoaderRule<
+    A extends Annotation,
+    C extends ParameterLoaderContext
+    > implements ParameterLoaderRule<C> {
 
     /**
      * The annotation that this rule accepts.

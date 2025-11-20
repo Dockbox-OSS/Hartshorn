@@ -24,8 +24,9 @@ import java.lang.annotation.Target;
 /**
  * Annotation which can only be applied to types.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

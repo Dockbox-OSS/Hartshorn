@@ -26,9 +26,11 @@ import org.dockbox.hartshorn.util.introspect.convert.support.StringToEnumConvert
  *
  * @param <E> the enum type to convert to
  *
- * @author Guus Lieben
  * @see StringToEnumConverterFactory
+ * 
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public class EnumValuePropertyParser<E extends Enum<E>> extends ConverterValuePropertyParser<E> {
 

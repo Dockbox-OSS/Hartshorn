@@ -36,10 +36,12 @@ import java.util.function.Function;
  *
  * @param <T> The type instance to provide.
  *
- * @author Guus Lieben
  * @see InstantiationStrategy
  * @see ObjectContainer
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public final class CompositeInstantiationStrategy<T> implements InstantiationStrategy<T> {
 
@@ -94,7 +96,9 @@ public final class CompositeInstantiationStrategy<T> implements InstantiationStr
     }
 
     @Override
-    public InstantiationStrategy<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
+    public InstantiationStrategy<T> map(
+        Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction
+    ) {
         this.functions.add(mappingFunction);
         return this;
     }

@@ -36,8 +36,9 @@ import java.util.List;
  *
  * @param <T> the type of the type
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public interface TypeView<T> extends AnnotatedElementView, ModifierCarrierView {
 

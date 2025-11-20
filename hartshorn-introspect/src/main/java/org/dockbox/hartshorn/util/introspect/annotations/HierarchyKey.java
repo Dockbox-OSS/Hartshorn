@@ -27,8 +27,9 @@ import java.util.Objects;
  * @param element The element on which the annotation is present
  * @param annotationType The type of annotation that is present on the element
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public record HierarchyKey(AnnotatedElement element, Class<? extends Annotation> annotationType) {
 

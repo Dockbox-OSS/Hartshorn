@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.util;
  * Represents a simple tristate, which is either {@code true}, {@code false}, or {@code undefined}
  * (indicating the value isn't present, either as a boolean or at all)
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public enum Tristate {
 

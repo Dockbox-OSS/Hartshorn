@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * A {@link TypeMethodsIntrospector} implementation for wildcard types.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class WildcardTypeMethodsIntrospector implements TypeMethodsIntrospector<Object> {
 
@@ -55,12 +56,16 @@ public class WildcardTypeMethodsIntrospector implements TypeMethodsIntrospector<
     }
 
     @Override
-    public List<MethodView<Object, ?>> annotatedWithAny(Set<Class<? extends Annotation>> annotations) {
+    public List<MethodView<Object, ?>> annotatedWithAny(
+        Set<Class<? extends Annotation>> annotations
+    ) {
         return Collections.emptyList();
     }
 
     @Override
-    public List<MethodView<Object, ?>> annotatedWithAll(Set<Class<? extends Annotation>> annotations) {
+    public List<MethodView<Object, ?>> annotatedWithAll(
+        Set<Class<? extends Annotation>> annotations
+    ) {
         return Collections.emptyList();
     }
 

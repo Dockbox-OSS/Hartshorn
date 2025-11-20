@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * {@link ComponentProvider component provider}, allowing for additional processing of the component
  * instance before it is returned.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public interface ComponentProviderPostProcessor {
 

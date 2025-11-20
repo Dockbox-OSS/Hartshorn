@@ -24,8 +24,9 @@ import org.slf4j.LoggerFactory;
  * implementation of the {@link ExceptionHandler} interface logs the exception to the {@link Logger}
  * and is able to correctly display stacktraces when {@link #printStackTraces()} is {@code true}.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public class LoggingExceptionHandler implements ExceptionHandler {
 

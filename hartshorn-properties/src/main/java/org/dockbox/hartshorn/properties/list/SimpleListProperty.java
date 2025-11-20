@@ -33,8 +33,9 @@ import java.util.List;
  * @param name the name of the property
  * @param elements the elements of the list
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public record SimpleListProperty(String name, List<Property> elements) implements ListProperty {
 

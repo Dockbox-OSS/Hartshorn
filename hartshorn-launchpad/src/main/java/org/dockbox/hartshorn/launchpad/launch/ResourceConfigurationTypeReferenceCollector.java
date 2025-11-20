@@ -41,8 +41,9 @@ import java.util.stream.Collectors;
  * configurations
  * without requiring classpath scanning, which can be costly in terms of performance.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ResourceConfigurationTypeReferenceCollector implements TypeReferenceCollector {
 

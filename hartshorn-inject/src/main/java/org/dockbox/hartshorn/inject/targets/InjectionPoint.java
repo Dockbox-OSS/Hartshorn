@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * Typically, the annotated element is a field or parameter, and the type is the type of the field
  * or parameter.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public final class InjectionPoint {
 

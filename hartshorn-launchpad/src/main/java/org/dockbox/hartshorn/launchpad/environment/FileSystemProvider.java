@@ -22,8 +22,9 @@ import java.nio.file.Path;
  * A {@link FileSystemProvider} is responsible for providing the base- or working directory of an
  * application.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface FileSystemProvider {

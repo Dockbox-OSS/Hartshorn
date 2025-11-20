@@ -27,8 +27,9 @@ import java.util.Objects;
  * Simple implementation of a {@link ScopeKey}, to be used for direct implementations of
  * {@link Scope}. For {@link ScopeAdapter}s, use {@link ScopeAdapterKey} instead.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class DirectScopeKey implements ScopeKey {
 

@@ -32,8 +32,9 @@ import java.util.function.BiPredicate;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
 

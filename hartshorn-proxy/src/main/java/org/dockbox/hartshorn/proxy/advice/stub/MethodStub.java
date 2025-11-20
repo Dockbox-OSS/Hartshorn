@@ -26,8 +26,9 @@ import java.util.function.Consumer;
  * @param <T> The type of the proxy instance as defined by the owning
  * {@link org.dockbox.hartshorn.proxy.ProxyFactory}
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface MethodStub<T> {

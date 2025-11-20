@@ -28,8 +28,9 @@ import java.util.stream.Stream;
  * provided set is returned on every invocation of {@link #collect()}. This is useful when classpath
  * scanning is not desired, but standalone components are to be used.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public final class PredefinedSetTypeReferenceCollector implements TypeReferenceCollector {
 

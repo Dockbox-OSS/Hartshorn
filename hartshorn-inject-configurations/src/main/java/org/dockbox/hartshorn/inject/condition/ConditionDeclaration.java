@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
  * element in the application. This may be used to enforce certain conditions, such as the presence
  * of a module activator, or the presence and value of a certain property.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public interface ConditionDeclaration {
 

@@ -32,8 +32,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * Default implementation of the {@link ComponentProcessorRegistry} interface. This implementation
  * uses {@link MultiMap}s to store the registered processors.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public class MultiMapComponentProcessorRegistry implements ComponentProcessorRegistry {
 

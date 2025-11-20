@@ -28,8 +28,9 @@ package org.dockbox.hartshorn.reporting;
  * by calling {@link #visit(CategorizedDiagnosticsReporter)}. The category of the reporter is used
  * as the name of the node in the report.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface DiagnosticsReportCollector extends DiagnosticsPropertyCollector {
 

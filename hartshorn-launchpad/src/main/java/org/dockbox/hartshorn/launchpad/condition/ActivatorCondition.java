@@ -27,16 +27,19 @@ import org.dockbox.hartshorn.launchpad.activation.ModuleActivatorHolder;
 /**
  * A condition that matches when an activator is present.
  *
- * @author Guus Lieben
  * @see RequiresActivator
  * @see ModuleActivatorHolder#hasActivator(Class)
+ * 
  * @since 0.4.12
+ * 
+ * @author Guus Lieben
  */
 public class ActivatorCondition implements Condition {
 
     @Override
     public ConditionResult matches(ConditionContext context) {
-        if (!(context.application() instanceof ConfigurableActivationInjectionCapableApplication configurableInjectionCapableApplication)) {
+        if (!(context.application() instanceof ConfigurableActivationInjectionCapableApplication
+            configurableInjectionCapableApplication)) {
             return ConditionResult.notMatched("Application is not compatible with activators");
         }
         return context.annotatedElement()

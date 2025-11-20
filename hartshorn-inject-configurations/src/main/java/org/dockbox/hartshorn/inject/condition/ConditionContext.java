@@ -26,9 +26,11 @@ import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
  * the condition. Note that this annotation is not necessarily present on the annotated element, but
  * may be composed from extending annotations.
  *
- * @author Guus Lieben
  * @see RequiresCondition
+ *
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class ConditionContext extends DefaultInjectionApplicationAwareContext {
 

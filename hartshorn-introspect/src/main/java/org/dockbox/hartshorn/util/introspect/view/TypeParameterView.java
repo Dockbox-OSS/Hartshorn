@@ -78,8 +78,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * parameter <code>T</code> has no annotations, as the annotation is declared on the upper bound,
  * and not on the type parameter itself.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface TypeParameterView extends AnnotatedElementView {
 

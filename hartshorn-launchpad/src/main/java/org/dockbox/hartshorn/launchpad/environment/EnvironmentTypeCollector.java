@@ -42,10 +42,12 @@ import java.util.stream.Collectors;
  * {@link org.dockbox.hartshorn.util.introspect.Introspector}. Note that while classes are loaded,
  * it is not ensured they are immediately initialized.
  *
- * @author Guus Lieben
  * @see TypeReferenceCollector
  * @see TypeReferenceCollectorContext
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class EnvironmentTypeCollector {
 

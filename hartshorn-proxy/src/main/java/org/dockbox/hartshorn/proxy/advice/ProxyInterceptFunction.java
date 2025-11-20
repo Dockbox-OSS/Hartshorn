@@ -23,8 +23,9 @@ package org.dockbox.hartshorn.proxy.advice;
  *
  * @param <T> The type of the proxy instance on which the method is invoked.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ProxyInterceptFunction<T> {

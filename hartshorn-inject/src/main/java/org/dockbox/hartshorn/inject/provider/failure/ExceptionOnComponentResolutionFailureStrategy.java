@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.inject.ComponentResolutionException;
 /**
  * Standard implementation of {@link ComponentResolutionFailureStrategy} for required components.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ExceptionOnComponentResolutionFailureStrategy
     implements ComponentResolutionFailureStrategy {

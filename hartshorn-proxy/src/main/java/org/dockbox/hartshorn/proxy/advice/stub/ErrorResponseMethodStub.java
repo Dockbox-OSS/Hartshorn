@@ -22,8 +22,9 @@ package org.dockbox.hartshorn.proxy.advice.stub;
  *
  * @param <T> The type of the proxy instance
  *
- * @author Guus Lieben
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ErrorResponseMethodStub<T> implements MethodStub<T> {
 
@@ -35,6 +36,7 @@ public class ErrorResponseMethodStub<T> implements MethodStub<T> {
         throw new AbstractMethodError("Cannot invoke method '"
             + className
             + name
-            + "' because it is abstract. This type is proxied, but no advisor was found for the method.");
+            + "' because it is abstract. "
+            + "This type is proxied, but no advisor was found for the method.");
     }
 }

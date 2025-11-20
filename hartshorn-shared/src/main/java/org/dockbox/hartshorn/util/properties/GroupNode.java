@@ -23,8 +23,9 @@ import java.util.List;
  * A complex node that can contain multiple other nodes. This does not constrain the present names
  * to be unique, but it is recommended to ensure that they are.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class GroupNode extends SimpleNode<List<Node<?>>> {
 

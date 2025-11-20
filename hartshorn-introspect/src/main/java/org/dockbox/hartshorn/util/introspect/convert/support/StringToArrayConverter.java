@@ -28,9 +28,11 @@ import java.util.regex.Pattern;
  * Converts a {@link String} to a {@link String} array, splitting the input string by a delimiter.
  * By default, the delimiter is a comma (',').
  *
- * @author Guus Lieben
  * @see String#split(String)
+ *
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public class StringToArrayConverter implements GenericConverter {
 

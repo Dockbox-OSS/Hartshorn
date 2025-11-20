@@ -39,10 +39,12 @@ import java.util.Set;
  *
  * @param <T> the type of the component that is managed
  *
- * @author Guus Lieben
  * @see DependencyContext
  * @see ComponentRegistry
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public abstract class ManagedComponentDependencyContext<T>
     implements LifecycleAwareDependencyContext<T> {
@@ -113,8 +115,8 @@ public abstract class ManagedComponentDependencyContext<T>
         Class<T> componentType = this.type().type();
         LifecycleType lifecycleType = this.lifecycleType();
         switch (lifecycleType) {
-            // At this point we ignore the ComponentContainer#lazy() property. This will later be handled
-            // by the context constructor when the application is ready for initialization.
+            // At this point we ignore the ComponentContainer#lazy() property. This will later be
+            // handled by the context constructor when the application is ready for initialization.
             case SINGLETON -> function.lazySingleton(componentType);
             case PROTOTYPE -> function.to(componentType);
             default -> throw new ComponentConfigurationException("Unsupported lifecycle: "

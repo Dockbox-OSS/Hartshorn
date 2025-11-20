@@ -29,9 +29,11 @@ import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
  * Converts primitive wrapper types to their corresponding primitive types and vice versa. For
  * example, converts {@link Integer} to {@code int} and {@code int} to {@link Integer}.
  *
- * @author Guus Lieben
  * @see TypeUtils#isPrimitiveWrapper(Class, Class)
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class PrimitiveWrapperConverter implements GenericConverter, ConditionalConverter {
 

@@ -51,10 +51,12 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  * depends on component C, and component C depends on component A, a cyclic dependency is detected.
  * This is true even if component A does not directly depend on component C.
  *
- * @author Guus Lieben
  * @see CyclicComponentException
  * @see ComponentDiscoveryList
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class CyclicDependencyGraphValidator implements DependencyGraphValidator {
 
@@ -68,8 +70,8 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
             if (node.isLeaf()) {
                 continue;
             }
-            if (node instanceof ContainableGraphNode<DependencyContext<?>> contextContainableGraphNode
-                && contextContainableGraphNode.isRoot()) {
+            if (node instanceof ContainableGraphNode<DependencyContext<?>>
+                contextContainableGraphNode && contextContainableGraphNode.isRoot()) {
                 continue;
             }
             List<GraphNode<DependencyContext<?>>> graphNodes =
@@ -100,17 +102,20 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
             return List.of(node);
         }
 
-        // Defaults to true, as we should assume that the node needs immediate resolution unless proven otherwise.
+        // Defaults to true, as we should assume that the node needs immediate resolution unless
+        // proven otherwise.
         boolean needsImmediateResolution = true;
         if (node instanceof ContainableGraphNode<DependencyContext<?>> containableGraphNode) {
             ComponentKey<?> dependencyCandidate = node.value().componentKey();
-            // If none of the parents need immediate resolution, then we can cut potential cyclic graphs short.
+            // If none of the parents need immediate resolution, then we can cut potential cyclic
+            // graphs short.
             needsImmediateResolution = containableGraphNode.children().stream()
                 .anyMatch(parent -> parent.value().needsImmediateResolution(dependencyCandidate));
         }
 
-        // If the node doesn't need immediate resolution, then we can skip it. Note that this does not affect potential grandchild
-        // dependencies, as this validator goes over all nodes in the graph, and not just the roots.
+        // If the node doesn't need immediate resolution, then we can skip it. Note that this does
+        // not affect potential grandchild dependencies, as this validator goes over all nodes in
+        // the graph, and not just the roots.
         if (!needsImmediateResolution) {
             return List.of();
         }
@@ -147,7 +152,8 @@ public class CyclicDependencyGraphValidator implements DependencyGraphValidator 
         ComponentDiscoveryList discoveryList = new ComponentDiscoveryList();
         for (GraphNode<DependencyContext<?>> node : path) {
             DependencyContext<?> dependencyContext = node.value();
-            if (dependencyContext instanceof ImplementationDependencyContext<?, ?> implementationDependencyContext) {
+            if (dependencyContext instanceof ImplementationDependencyContext<?, ?>
+                implementationDependencyContext) {
                 ComponentKey<?> componentKey =
                     implementationDependencyContext.declarationContext().componentKey();
                 TypePathNode<?> typePathNode = this.createTypePathNode(componentKey,

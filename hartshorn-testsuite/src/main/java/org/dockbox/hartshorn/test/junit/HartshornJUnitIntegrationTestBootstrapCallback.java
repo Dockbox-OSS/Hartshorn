@@ -32,9 +32,11 @@ import java.lang.reflect.Method;
  * the extension context. The application context is created by a
  * {@link HartshornIntegrationTestInitializer}.
  *
- * @author Guus Lieben
  * @see HartshornIntegrationTestInitializer
+ * 
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public class HartshornJUnitIntegrationTestBootstrapCallback implements
     BeforeAllCallback,

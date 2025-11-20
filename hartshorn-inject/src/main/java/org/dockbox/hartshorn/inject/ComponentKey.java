@@ -53,11 +53,13 @@ import java.util.Set;
  *
  * @param <T> the type of the component
  *
- * @author Guus Lieben
  * @see ComponentProvider#get(ComponentKey)
  * @see ComponentProvider#get(ComponentKey, ComponentRequestContext)
  * @see ComponentKey#builder(Class)
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public final class ComponentKey<T> implements Reportable {
 
@@ -397,10 +399,12 @@ public final class ComponentKey<T> implements Reportable {
      *
      * @param <T> the type of the component
      *
-     * @author Guus Lieben
      * @see ComponentKey
      * @see ComponentKey#builder(Class)
+     *
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static final class Builder<T> {
 

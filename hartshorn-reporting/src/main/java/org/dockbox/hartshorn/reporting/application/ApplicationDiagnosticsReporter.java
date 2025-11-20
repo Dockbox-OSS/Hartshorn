@@ -47,11 +47,12 @@ import java.util.stream.Collectors;
  *     <li>Application-level contexts</li>
  * </ul>
  *
- * <p>Each of these can be enabled or disabled individually, using the {@link ApplicationReportingConfiguration} that
- * is provided by this reporter.
+ * <p>Each of these can be enabled or disabled individually, using the
+ * {@link ApplicationReportingConfiguration} that is provided by this reporter.
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
- * @since 0.5.0
  */
 public class ApplicationDiagnosticsReporter
     implements ConfigurableDiagnosticsReporter<ApplicationReportingConfiguration>,

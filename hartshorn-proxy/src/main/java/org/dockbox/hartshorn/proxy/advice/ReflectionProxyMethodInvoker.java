@@ -45,8 +45,9 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
  *
  * @param <T> the type of the target instance
  *
- * @author Guus Lieben
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
 
@@ -171,13 +172,15 @@ public class ReflectionProxyMethodInvoker<T> implements ProxyMethodInvoker<T> {
                 return this.invokeDelegate(this.manager.delegate().get(), target, args);
             }
 
-            // If the method is default inside an interface, we cannot invoke it directly using a proxy instance. Instead, we
-            // need to look up the method on the class and invoke it through the method handle directly.
+            // If the method is default inside an interface, we cannot invoke it directly using a
+            // proxy instance. Instead, we need to look up the method on the class and invoke it
+            // through the method handle directly.
             else if (source.isDefault()) {
                 return this.invokeDefault(self, source, args, targetClass);
             }
 
-            // If the current target instance (self) is not a proxy, we can invoke the method directly using reflections.
+            // If the current target instance (self) is not a proxy, we can invoke the method
+            // directly using reflections.
             else if (!(self instanceof Proxy || Proxy.isProxyClass(self.getClass()))) {
                 return this.invokeSelf(self, target, args);
             }

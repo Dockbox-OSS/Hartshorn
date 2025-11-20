@@ -28,8 +28,9 @@ import java.lang.annotation.Target;
  * {@link #fallbackToProxy()} is set to {@code true}, in which case the proxy instance will be
  * provided to the method.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.PARAMETER})

@@ -28,8 +28,9 @@ import java.util.Set;
  * A {@link JacksonPropertyRegistryLoader} that loads properties from YAML files. This loader uses a
  * {@link YAMLMapper} to read the properties from the file.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class JacksonYamlPropertyRegistryLoader extends JacksonPropertyRegistryLoader {
 

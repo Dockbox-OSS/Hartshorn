@@ -23,8 +23,9 @@ import java.util.Set;
  * Resolver to obtain resources for a specific profile. This can be used to load configuration
  * files, for example.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ProfileResourceResolver {

@@ -42,10 +42,12 @@ import java.util.List;
  * @param <Parent> The type of the class that the field belongs to
  * @param <FieldType> The type of the field
  *
- * @author Guus Lieben
  * @see ReflectiveFieldAccess
  * @see ReflectiveFieldWriter
+ * 
  * @since 0.4.13
+ * 
+ * @author Guus Lieben
  */
 public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedElementView
     implements FieldView<Parent, FieldType> {
@@ -64,8 +66,8 @@ public class ReflectionFieldView<Parent, FieldType> extends ReflectionAnnotatedE
         super(introspector);
         this.field = field;
         this.introspector = introspector;
-        // Acceptable if the field is not accessible. If the field cannot be accessed, it is assumed this is valid
-        // and the field will only be used for introspection purposes.
+        // Acceptable if the field is not accessible. If the field cannot be accessed, it is assumed
+        // this is valid and the field will only be used for introspection purposes.
         field.trySetAccessible();
     }
 

@@ -23,9 +23,11 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * A simple implementation of a {@link ValueProperty}.
  *
- * @author Guus Lieben
  * @see ValueProperty
+ *
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public class SimpleValueProperty implements ValueProperty {
 

@@ -36,8 +36,9 @@ import java.util.Set;
  * {@link ConditionalConverter}, then the {@link ConditionalConverter#canConvert(Object, Class)}
  * method is again used to further narrow the match.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ConverterFactoryAdapter implements GenericConverter, ConditionalConverter {
 

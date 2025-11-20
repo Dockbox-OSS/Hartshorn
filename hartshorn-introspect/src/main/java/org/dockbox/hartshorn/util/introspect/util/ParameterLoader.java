@@ -23,8 +23,9 @@ import java.util.List;
  * based on a method or constructor. This serves as a standardized way to load arguments for various
  * use-cases, such as component injection, or event handling.
  *
- * @author Guus Lieben
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public interface ParameterLoader {
 

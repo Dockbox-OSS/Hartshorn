@@ -27,8 +27,9 @@ import java.util.List;
  * Composite implementation of {@link TestApplicationCustomizer}, executing the given customizers in
  * the order they were provided.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class CompositeTestApplicationCustomizer implements TestApplicationCustomizer {
 

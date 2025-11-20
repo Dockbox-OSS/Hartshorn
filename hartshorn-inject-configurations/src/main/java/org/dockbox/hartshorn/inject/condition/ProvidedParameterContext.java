@@ -30,8 +30,9 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
  * may be used by {@link Condition}s to provide additional information about the context in which
  * the condition is evaluated.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public final class ProvidedParameterContext extends DefaultFallbackCompatibleContext {
 

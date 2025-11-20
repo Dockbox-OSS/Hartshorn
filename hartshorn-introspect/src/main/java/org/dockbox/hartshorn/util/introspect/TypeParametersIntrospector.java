@@ -43,8 +43,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * parameterized as {@code Foo<Integer>}, the input parameters will include {@code Integer} as the
  * {@link TypeParameterView#resolvedType() resolved type} of {@code T}.
  *
- * @author Guus Lieben
  * @since 0.4.7
+ *
+ * @author Guus Lieben
  */
 public interface TypeParametersIntrospector {
 

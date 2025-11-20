@@ -40,10 +40,12 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <C> The type of the class to create.
  *
- * @author Guus Lieben
  * @see InstantiationStrategy
  * @see SupplierInstantiationStrategy
+ * 
  * @since 0.4.4
+ * 
+ * @author Guus Lieben
  */
 public final class PrototypeConstructorInstantiationStrategy<C>
     implements TypeAwareInstantiationStrategy<C> {
@@ -71,7 +73,9 @@ public final class PrototypeConstructorInstantiationStrategy<C>
      *
      * @return a new {@link PrototypeConstructorInstantiationStrategy} for the given type
      */
-    public static <T> PrototypeConstructorInstantiationStrategy<T> forPrototype(ComponentKey<? extends T> type) {
+    public static <T> PrototypeConstructorInstantiationStrategy<T> forPrototype(
+        ComponentKey<? extends T> type
+    ) {
         return new PrototypeConstructorInstantiationStrategy<>(type, LifecycleType.PROTOTYPE);
     }
 
@@ -84,7 +88,9 @@ public final class PrototypeConstructorInstantiationStrategy<C>
      *
      * @return a new {@link PrototypeConstructorInstantiationStrategy} for the given type
      */
-    public static <T> PrototypeConstructorInstantiationStrategy<T> forSingleton(ComponentKey<? extends T> type) {
+    public static <T> PrototypeConstructorInstantiationStrategy<T> forSingleton(
+        ComponentKey<? extends T> type
+    ) {
         return new PrototypeConstructorInstantiationStrategy<>(type, LifecycleType.SINGLETON);
     }
 
@@ -118,7 +124,8 @@ public final class PrototypeConstructorInstantiationStrategy<C>
             ComponentExecutableInvocationAdapter contextAdapter =
                 new InjectorExecutableInvocationAdapter(application)
                     .requestContext(requestContext)
-                    // Prefer component scope, but fall back to the given scope (which may be null, for global)
+                    // Prefer component scope, but fall back to the given scope (which may be null,
+                    // for global)
                     .scope(this.componentKey.scope().orElse(scope));
             return contextAdapter.create(constructor.get())
                 .cast(this.type())

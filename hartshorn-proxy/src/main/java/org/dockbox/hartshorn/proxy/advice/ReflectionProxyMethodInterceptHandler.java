@@ -36,8 +36,9 @@ import java.lang.invoke.MethodHandle;
  *
  * @param <T> the type of the target instance
  *
- * @author Guus Lieben
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ReflectionProxyMethodInterceptHandler<T>
     implements ProxyMethodInterceptHandler<T>, ProxyObject<T> {

@@ -21,8 +21,9 @@ import test.org.dockbox.hartshorn.proxy.support.inheritance.single.InterfaceProx
 /**
  * Simple record used to verify records cannot be proxied (as they are inherently final).
  *
- * @author Guus Lieben
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public record RecordProxy() implements InterfaceProxy {
     @Override

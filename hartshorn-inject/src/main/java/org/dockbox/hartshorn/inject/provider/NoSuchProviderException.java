@@ -22,16 +22,18 @@ import org.dockbox.hartshorn.util.ApplicationException;
 /**
  * Thrown when a provider cannot be found for a given component key.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class NoSuchProviderException extends ApplicationException {
 
     /**
      * The type of provider that was requested.
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public enum ProviderType {
 

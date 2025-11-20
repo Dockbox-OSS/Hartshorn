@@ -30,9 +30,11 @@ import java.util.Objects;
  * collection to the target collection. The target collection is created using the
  * {@link DefaultValueProvider} of the target type.
  *
- * @author Guus Lieben
  * @see CollectionDefaultValueProviderFactory
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class CollectionToCollectionConverterFactory
     implements ConverterFactory<Collection<?>, Collection<?>> {
@@ -64,8 +66,9 @@ public class CollectionToCollectionConverterFactory
      *
      * @param <O> the target type
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class CollectionToCollectionConverter<O extends Collection<?>>
         implements Converter<Collection<?>, O> {

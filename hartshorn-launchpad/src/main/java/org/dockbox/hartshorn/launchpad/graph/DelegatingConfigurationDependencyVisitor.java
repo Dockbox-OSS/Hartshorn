@@ -35,8 +35,9 @@ import org.dockbox.hartshorn.inject.binding.BindingFunction;
  * {@link ComponentProcessorRegistry}
  * immediately after they have been configured.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class DelegatingConfigurationDependencyVisitor
     extends AbstractConfigurationDependencyVisitor {

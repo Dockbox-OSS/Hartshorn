@@ -26,8 +26,9 @@ import java.lang.reflect.Method;
  * method is annotated with a specific annotation that does not allow the method to return values,
  * yet the method does have a non-void return signature.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public class ProxyMethodBindingException extends RuntimeException {
 

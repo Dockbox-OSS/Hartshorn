@@ -28,10 +28,12 @@ import org.dockbox.hartshorn.inject.targets.InjectionPoint;
  * describe
  * the use case of a component in other scenarios through custom context implementations.
  *
- * @author Guus Lieben
  * @see InjectionPoint
  * @see ComponentKey
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public final class ComponentRequestContext extends DefaultContext {
 

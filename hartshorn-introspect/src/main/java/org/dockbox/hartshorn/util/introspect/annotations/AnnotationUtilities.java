@@ -21,8 +21,9 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * Utility class for working with annotations.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public class AnnotationUtilities {
 

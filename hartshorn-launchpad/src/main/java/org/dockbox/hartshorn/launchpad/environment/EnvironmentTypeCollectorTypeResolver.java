@@ -25,8 +25,9 @@ import java.util.Collection;
  * A {@link EnvironmentTypeResolver} that uses an {@link EnvironmentTypeCollector} to resolve
  * types.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class EnvironmentTypeCollectorTypeResolver implements EnvironmentTypeResolver {
 

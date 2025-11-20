@@ -26,8 +26,9 @@ import java.util.SequencedSet;
  * environment. Observable events may be triggered by the environment, or by components within the
  * environment.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public interface ObservableApplicationEnvironment
     extends ApplicationEnvironment, LifecycleObservable {

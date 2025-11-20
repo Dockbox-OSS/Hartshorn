@@ -32,8 +32,9 @@ import java.util.stream.StreamSupport;
  *
  * @param <T> the type of the object to describe
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public final class ObjectDescriber<T> {
 

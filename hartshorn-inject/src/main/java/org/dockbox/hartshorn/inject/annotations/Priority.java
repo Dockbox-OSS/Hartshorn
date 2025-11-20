@@ -59,8 +59,9 @@ import org.dockbox.hartshorn.inject.provider.selection.HighestPriorityProviderSe
  * }
  * }</pre>
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

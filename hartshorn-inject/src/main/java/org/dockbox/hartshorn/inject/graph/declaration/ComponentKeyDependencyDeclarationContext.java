@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @param <T> the type of the dependency being declared
  *
- * @author Guus Lieben
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ComponentKeyDependencyDeclarationContext<T>
     implements DependencyDeclarationContext<T> {

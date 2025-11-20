@@ -26,8 +26,9 @@ import java.util.Properties;
  * mechanism for resolving properties that do not reside in a specific resource or file, which would
  * otherwise be resolved through {@link PropertySourceResolver}s.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface CustomPropertiesResolver {

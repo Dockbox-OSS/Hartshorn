@@ -28,8 +28,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @param <T> the type of the component
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class ComponentContainerDependencyContext<T> extends ManagedComponentDependencyContext<T> {
 

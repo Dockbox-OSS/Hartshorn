@@ -21,8 +21,9 @@ import org.dockbox.hartshorn.context.Context;
 /**
  * A context that is aware of the application in which it is contained.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface InjectionApplicationAwareContext extends Context {
 

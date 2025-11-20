@@ -32,8 +32,9 @@ import java.lang.annotation.Target;
  * ({@link StandardApplicationContextFactory}), this activator is automatically registered and used
  * to activate components.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

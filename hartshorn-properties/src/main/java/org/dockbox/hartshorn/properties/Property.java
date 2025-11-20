@@ -25,11 +25,13 @@ package org.dockbox.hartshorn.properties;
  * different way, there is no value in using this interface directly. Instead, use one of the three
  * sub-interfaces.
  *
- * @author Guus Lieben
  * @see ValueProperty
  * @see ListProperty
  * @see ObjectProperty
+ *
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public sealed interface Property permits ValueProperty, ListProperty, ObjectProperty {
 

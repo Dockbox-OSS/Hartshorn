@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 /**
  * Thrown when no injectable constructors are found for a given type.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class MissingInjectConstructorException extends ApplicationException {
     public MissingInjectConstructorException(TypeView<?> type) {

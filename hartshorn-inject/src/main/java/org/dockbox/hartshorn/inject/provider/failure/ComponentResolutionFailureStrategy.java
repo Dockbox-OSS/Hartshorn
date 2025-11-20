@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
  * where a component could not be resolved. This is typically provided as a hint through a
  * {@link ComponentKey}.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface ComponentResolutionFailureStrategy {
 

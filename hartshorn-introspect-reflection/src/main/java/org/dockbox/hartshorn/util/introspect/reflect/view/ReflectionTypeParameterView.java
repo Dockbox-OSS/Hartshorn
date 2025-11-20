@@ -43,8 +43,9 @@ import java.util.stream.Collectors;
  * view provides information about the type parameter, such as its bounds, the type that it
  * represents, and the type that it is declared by.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
     implements TypeParameterView {
@@ -158,8 +159,9 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
                     .collect(Collectors.toSet());
             }
             else if (this.type instanceof Class<?>) {
-                // A concrete type represents itself, as it is not provided by an input parameter. However, a
-                // self-representing type is not a type parameter, so it represents nothing in this context.
+                // A concrete type represents itself, as it is not provided by an input parameter.
+                // However, a self-representing type is not a type parameter, so it represents
+                // nothing in this context.
                 this.represents = Set.of();
             }
         }
@@ -204,9 +206,9 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
                 case Class<?> clazz -> Option.of(this.introspector().introspect(clazz));
                 case ParameterizedType parameterizedType ->
                     Option.of(this.introspector().introspect(parameterizedType));
-                // Note that upper bounds may be present, but the resolved type itself is still a wildcard,
-                // so we return a wildcard type view here. The upper bounds can be resolved separately if
-                // needed.
+                // Note that upper bounds may be present, but the resolved type itself is still a
+                // wildcard, so we return a wildcard type view here. The upper bounds can be
+                // resolved separately if needed.
                 case WildcardType ignored -> Option.of(new WildcardTypeView());
                 case null, default -> Option.empty();
             };

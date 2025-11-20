@@ -32,8 +32,9 @@ import java.util.stream.Stream;
  * @param <I> the type of the input
  * @param <T> the type of the output
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class StreamableConfigurer<I, T> extends DefaultContext implements Configurer {
 

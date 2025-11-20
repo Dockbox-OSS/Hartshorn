@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
  * five distinct priority levels, which are used to determine the order in which binding strategies
  * are applied to a component graph.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public enum BindingStrategyPriority {
     LOWEST(-256),

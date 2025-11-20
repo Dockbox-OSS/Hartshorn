@@ -60,8 +60,9 @@ import java.util.stream.Collectors;
  * Binding methods are only allowed to be declared in managed {@link Configuration configuration}
  * components, and are allowed to be conditional through the use of the {@link ConditionMatcher}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ManagedConfigurationDependencyResolver extends AbstractContainerDependencyResolver {
 
@@ -96,7 +97,9 @@ public class ManagedConfigurationDependencyResolver extends AbstractContainerDep
     }
 
     @Override
-    protected <T> Set<ConditionalDependencyContext<?>> resolveSingle(DependencyDeclarationContext<T> declarationContext) {
+    protected <T> Set<ConditionalDependencyContext<?>> resolveSingle(
+        DependencyDeclarationContext<T> declarationContext
+    ) {
         TypeView<T> componentType = declarationContext.type();
         List<? extends MethodView<T, ?>> bindsMethods =
             componentType.methods().annotatedWith(Binds.class);
@@ -113,8 +116,9 @@ public class ManagedConfigurationDependencyResolver extends AbstractContainerDep
         DependencyDeclarationContext<T> declarationContext,
         TypeView<T> componentType, List<? extends MethodView<T, ?>> bindsMethods
     ) {
-        // Binds methods are only processed on managed components. If the component container is not present, there is nothing to do but check that there
-        // is no incorrect usage of the @Binds annotation.
+        // Binds methods are only processed on managed components. If the component container is not
+        // present, there is nothing to do but check that there is no incorrect usage of the @Binds
+        // annotation.
         Option<ComponentContainer<?>> container =
             this.componentRegistry.container(componentType.type());
         if (container.absent()) {
@@ -126,12 +130,13 @@ public class ManagedConfigurationDependencyResolver extends AbstractContainerDep
         else {
             if (!componentType.annotations().has(Configuration.class)) {
                 ComponentContainer<?> componentContainer = container.get();
-                // Main class is allowed to have @Binds methods, as it is an implicit configuration component.
+                // Main class is allowed to have @Binds methods, as it is an implicit configuration
+                // component.
                 if (!(componentContainer instanceof ApplicationMainComponentContainer)) {
                     throw new IllegalStateException(
-                        "Component "
-                            + componentType.type().getName()
-                            + " is not a configuration component, but contains binding declarations.");
+                        ("Component %s is not a configuration component, "
+                            + "but contains binding declarations.").formatted(
+                            componentType.type().getName()));
                 }
             }
             return bindsMethods.stream()
@@ -198,26 +203,32 @@ public class ManagedConfigurationDependencyResolver extends AbstractContainerDep
     /**
      * Configurer for the {@link ManagedConfigurationDependencyResolver}.
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<InjectionCapableApplication, DependencyContextResolver>
-            bindingStrategies = LazyStreamableConfigurer.ofInitializer(
-            BindingMethodDependencyContextResolver.create(Customizer.useDefaults())
-        );
-        private ContextualInitializer<InjectionCapableApplication, ConditionMatcher>
-            conditionMatcher = ContextualInitializer.of(application -> {
-            InjectorEnvironment environment = application.environment();
-            if (environment instanceof ManagedComponentEnvironment managedEnvironment) {
-                return managedEnvironment.conditionMatcher();
-            }
-            throw new ComponentConfigurationException(
-                "Could not resolve condition matcher from current application environment");
-        });
+        // checkstyle:off LineLength
+        private final LazyStreamableConfigurer<InjectionCapableApplication, DependencyContextResolver> bindingStrategies =
+            LazyStreamableConfigurer.ofInitializer(
+                BindingMethodDependencyContextResolver.create(Customizer.useDefaults())
+            );
+
+        private ContextualInitializer<InjectionCapableApplication, ConditionMatcher> conditionMatcher =
+            ContextualInitializer.of(application -> {
+                InjectorEnvironment environment = application.environment();
+                if (environment instanceof ManagedComponentEnvironment managedEnvironment) {
+                    return managedEnvironment.conditionMatcher();
+                }
+                throw new ComponentConfigurationException(
+                    "Could not resolve condition matcher from current application environment"
+                );
+            });
+
         private Function<InjectionCapableApplication, ComponentRegistry> registryLookup =
             new ComponentRegistryLookup();
+        // checkstyle:on LineLength
 
         /**
          * Sets the {@link ConditionMatcher} used by the resolver.
@@ -237,7 +248,9 @@ public class ManagedConfigurationDependencyResolver extends AbstractContainerDep
          *
          * @return the current configurer
          */
-        public Configurer conditionMatcher(ContextualInitializer<InjectionCapableApplication, ConditionMatcher> conditionMatcher) {
+        public Configurer conditionMatcher(
+            ContextualInitializer<InjectionCapableApplication, ConditionMatcher> conditionMatcher
+        ) {
             this.conditionMatcher = conditionMatcher;
             return this;
         }
@@ -249,7 +262,10 @@ public class ManagedConfigurationDependencyResolver extends AbstractContainerDep
          *
          * @return the current configurer
          */
-        public Configurer bindingStrategies(Customizer<StreamableConfigurer<InjectionCapableApplication, DependencyContextResolver>> customizer) {
+        public Configurer bindingStrategies(
+            Customizer<StreamableConfigurer<InjectionCapableApplication, DependencyContextResolver>>
+                customizer
+        ) {
             this.bindingStrategies.customizer(customizer);
             return this;
         }
@@ -262,7 +278,9 @@ public class ManagedConfigurationDependencyResolver extends AbstractContainerDep
          *
          * @return the current configurer
          */
-        public Configurer registryLookup(Function<InjectionCapableApplication, ComponentRegistry> registryLookup) {
+        public Configurer registryLookup(
+            Function<InjectionCapableApplication, ComponentRegistry> registryLookup
+        ) {
             this.registryLookup = registryLookup;
             return this;
         }
@@ -271,15 +289,23 @@ public class ManagedConfigurationDependencyResolver extends AbstractContainerDep
          * Default implementation of the {@link ComponentRegistry} lookup function. By default two
          * main components expose the component registry:
          * <ul>
-         *     <li>{@link InjectorEnvironment} exposes the registry if it is a {@link ManagedComponentEnvironment}</li>
-         *     <li>{@link ComponentProvider} exposes the registry if it is a {@link ComponentRegistryAwareComponentProvider}</li>
+         *     <li>
+         *         {@link InjectorEnvironment} exposes the registry if it is a
+         *         {@link ManagedComponentEnvironment}
+         *     </li>
+         *     <li>
+         *         {@link ComponentProvider} exposes the registry if it is a
+         *         {@link ComponentRegistryAwareComponentProvider}
+         *     </li>
          * </ul>
          *
-         * @author Guus Lieben
          * @see ComponentRegistry
          * @see ManagedComponentEnvironment#componentRegistry()
          * @see ComponentRegistryAwareComponentProvider#componentRegistry()
+         *
          * @since 0.7.0
+         *
+         * @author Guus Lieben
          */
         public static class ComponentRegistryLookup
             implements Function<InjectionCapableApplication, ComponentRegistry> {
@@ -290,7 +316,8 @@ public class ManagedConfigurationDependencyResolver extends AbstractContainerDep
                 if (application.environment() instanceof ManagedComponentEnvironment environment) {
                     return environment.componentRegistry();
                 }
-                else if (application.defaultProvider() instanceof ComponentRegistryAwareComponentProvider orchestrator) {
+                else if (application.defaultProvider() instanceof
+                    ComponentRegistryAwareComponentProvider orchestrator) {
                     return orchestrator.componentRegistry();
                 }
                 else {

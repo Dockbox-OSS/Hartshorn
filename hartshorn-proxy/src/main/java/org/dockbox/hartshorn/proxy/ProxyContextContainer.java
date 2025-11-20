@@ -28,8 +28,9 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
  * for contexts which are later used to create a proxy. This container is used to store the contexts
  * that are created during the proxy creation process.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class ProxyContextContainer extends DefaultContext {
 

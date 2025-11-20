@@ -32,8 +32,9 @@ import java.util.stream.Collectors;
  *
  * @param <T> the type for which constructors are introspected
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ReflectionTypeConstructorsIntrospector<T> implements TypeConstructorsIntrospector<T> {
 

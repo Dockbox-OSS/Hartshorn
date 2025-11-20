@@ -20,9 +20,11 @@ package org.dockbox.hartshorn.spi;
  * Thrown when no implementation is available for a service. This may indicate the absence of a
  * service provider, or that the service provider is not able to provide an implementation.
  *
- * @author Guus Lieben
  * @see DiscoveryService
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class NoAvailableImplementationException extends ServiceDiscoveryException {
 

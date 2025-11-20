@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.reporting.Reportable;
 /**
  * A {@link Reportable} that reports information about the operating system.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class OSDiagnosticsReporter implements Reportable {
 

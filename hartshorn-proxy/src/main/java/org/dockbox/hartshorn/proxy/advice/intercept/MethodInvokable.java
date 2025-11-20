@@ -25,8 +25,9 @@ import java.lang.reflect.Method;
  * Implementation of {@link Invokable} that is backed by a {@link Method}. Invoking the method is
  * delegated to the {@link Method#invoke(Object, Object...)} method.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class MethodInvokable implements Invokable {
 

@@ -19,10 +19,12 @@ package org.dockbox.hartshorn.inject.binding;
 /**
  * Compatability interface to combine {@link HierarchicalBinder} and {@link AliasCapableBinder}.
  *
- * @author Guus Lieben
  * @see HierarchicalBinder
  * @see AliasCapableBinder
+ *
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public interface HierarchicalAliasCapableBinder extends HierarchicalBinder, AliasCapableBinder {
 }

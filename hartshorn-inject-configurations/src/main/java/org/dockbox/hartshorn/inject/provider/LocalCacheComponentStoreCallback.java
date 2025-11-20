@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.util.IllegalModificationException;
  * A {@link ComponentStoreCallback} implementation that stores components in a local
  * {@link SingletonCache singleton cache}.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class LocalCacheComponentStoreCallback implements ComponentStoreCallback {
 

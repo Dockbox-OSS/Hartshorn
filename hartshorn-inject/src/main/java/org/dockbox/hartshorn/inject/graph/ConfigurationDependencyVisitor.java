@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.util.graph.GraphIterator;
  * A visitor that visits all {@link DependencyContext}s in a {@link DependencyGraph}, allowing them
  * to be configured or registered in the owning context.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ConfigurationDependencyVisitor extends GraphIterator<DependencyContext<?>> {
 

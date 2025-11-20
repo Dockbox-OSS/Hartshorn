@@ -28,8 +28,9 @@ import java.util.Objects;
  *
  * @param <T> the type of the adaptee
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ScopeAdapter<T> implements Scope {
 

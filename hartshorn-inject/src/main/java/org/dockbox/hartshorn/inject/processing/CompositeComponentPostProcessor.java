@@ -53,8 +53,8 @@ import java.util.function.Supplier;
  *     <li>{@code B.postConfigureComponent()} will be called</li>
  * </ol>
  *
- * <p>Comparing this to the alternative, where each post processor calls its own lifecycle phases, the following would
- * occur:
+ * <p>Comparing this to the alternative, where each post processor calls its own lifecycle phases,
+ * the following would occur:
  *
  * <ol>
  *     <li>{@code A.preConfigureComponent()} will be called</li>
@@ -65,21 +65,28 @@ import java.util.function.Supplier;
  *     <li>{@code B.postConfigureComponent()} will be called</li>
  * </ol>
  *
- * <p>If no processors are provided, the {@link #preConfigureComponent(InjectionCapableApplication, Object, ComponentProcessingContext)}
- * and {@link #postConfigureComponent(InjectionCapableApplication, Object, ComponentProcessingContext)} methods are effectively no-ops,
- * and the {@link #initializeComponent(InjectionCapableApplication, Object, ComponentProcessingContext)} method will simply return the
- * provided instance. This is to ensure that the composite processor can be used in place of a {@link ComponentPostProcessor} without any
- * unexpected side effects.
+ * <p>If no processors are provided,
+ * {@link #preConfigureComponent(InjectionCapableApplication, Object, ComponentProcessingContext)}
+ * and
+ * {@link #postConfigureComponent(InjectionCapableApplication, Object, ComponentProcessingContext)}
+ * are effectively no-ops, and
+ * {@link #initializeComponent(InjectionCapableApplication, Object, ComponentProcessingContext)}
+ * will simply return the provided instance. This is to ensure that the composite processor can be
+ * used in place of a {@link ComponentPostProcessor} without any unexpected side effects.
  *
- * @author Guus Lieben
  * @see ComponentPostProcessor
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class CompositeComponentPostProcessor extends ComponentPostProcessor {
 
     private final Supplier<NavigableMultiMap<Integer, ComponentPostProcessor>> postProcessors;
 
-    public CompositeComponentPostProcessor(Supplier<NavigableMultiMap<Integer, ComponentPostProcessor>> postProcessors) {
+    public CompositeComponentPostProcessor(
+        Supplier<NavigableMultiMap<Integer, ComponentPostProcessor>> postProcessors
+    ) {
         this.postProcessors = postProcessors;
     }
 
@@ -87,11 +94,12 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
     public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
         NavigableMultiMap<Integer, ComponentPostProcessor> processors = this.postProcessors.get();
         if (processors.isEmpty()) {
-            // If no processors are available, we consider this compatible, as the composite processor
-            // will not perform any actions.
+            // If no processors are available, we consider this compatible, as the composite
+            // processor will not perform any actions.
             return true;
         }
-        // Doesn't need to be thread-safe, this will only be retained during the processing of a single component.
+        // Doesn't need to be thread-safe, this will only be retained during the processing of a
+        // single component.
         NavigableMultiMap<Integer, ComponentPostProcessor> compatibleProcessors =
             new ConcurrentSetTreeMultiMap<>();
         for (Integer priority : processors.keySet()) {

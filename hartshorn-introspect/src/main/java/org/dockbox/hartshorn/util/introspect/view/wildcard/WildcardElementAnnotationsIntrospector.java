@@ -27,8 +27,9 @@ import java.util.Set;
  * An {@link ElementAnnotationsIntrospector} that does not provide access to any annotations. This
  * introspector is commonly used for wildcard types.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class WildcardElementAnnotationsIntrospector implements ElementAnnotationsIntrospector {
 

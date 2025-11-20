@@ -55,7 +55,7 @@ import java.util.Set;
  * instance.
  *
  * @see ApplicationContextFactory
- *
+ * 
  * @since 0.4.13
  *
  * @author Guus Lieben
@@ -216,15 +216,17 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
      */
     public static class Configurer {
 
-        private ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextFactory>
-            applicationContextFactory = StandardApplicationContextFactory.create(
-            Customizer.useDefaults());
-        private ContextualInitializer<ApplicationBuildContext, ApplicationStartupLogger>
-            startupLogger = ApplicationStartupLogger.create(Customizer.useDefaults());
+        // checkstyle:off LineLength
+        private ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextFactory> applicationContextFactory =
+            StandardApplicationContextFactory.create(Customizer.useDefaults());
+
         private final LazyStreamableConfigurer<Class<?>, String> arguments =
             LazyStreamableConfigurer.empty();
+
         private ContextualInitializer<Class<?>, String> applicationName =
             ContextualInitializer.of(Class::getSimpleName);
+        // checkstyle:on LineLength
+
         private Initializer<Class<?>> mainClass;
 
         /**

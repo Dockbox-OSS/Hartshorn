@@ -26,14 +26,17 @@ import java.util.Collection;
 /**
  * A {@link Reportable} that reports all provided {@link ComponentProcessor}s.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ComponentProcessorsReportable implements Reportable {
 
     private final NavigableMultiMap<Integer, ? extends ComponentProcessor> processors;
 
-    public ComponentProcessorsReportable(NavigableMultiMap<Integer, ? extends ComponentProcessor> processors) {
+    public ComponentProcessorsReportable(
+        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors
+    ) {
         this.processors = processors;
     }
 

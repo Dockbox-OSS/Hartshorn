@@ -32,8 +32,9 @@ import org.dockbox.hartshorn.inject.QualifierKey;
  * will retain all other
  * information.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class DefaultBindingAliasNormalizer implements BindingAliasNormalizer {
 

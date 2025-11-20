@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.launchpad.context.ConcreteApplicationContextCarrier
  * Provides default bindings for the framework. These bindings are not required for the framework to
  * function, but are provided for convenience.
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 @Configuration
 @RequiresActivator(UseProxying.class)

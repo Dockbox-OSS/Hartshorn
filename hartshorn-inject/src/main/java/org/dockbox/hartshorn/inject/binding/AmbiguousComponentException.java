@@ -27,10 +27,12 @@ import java.util.stream.Collectors;
  * qualified components are compatible with the lookup key, and that there is no strict binding for
  * the lookup key.
  *
- * @author Guus Lieben
  * @see org.dockbox.hartshorn.inject.InjectorConfiguration#isStrictMode()
  * @see ComponentKey
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class AmbiguousComponentException extends ApplicationRuntimeException {
 

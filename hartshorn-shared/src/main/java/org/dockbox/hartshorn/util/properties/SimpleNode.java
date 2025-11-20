@@ -21,8 +21,9 @@ package org.dockbox.hartshorn.util.properties;
  *
  * @param <T> the type of the node's value
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class SimpleNode<T> implements Node<T> {
 

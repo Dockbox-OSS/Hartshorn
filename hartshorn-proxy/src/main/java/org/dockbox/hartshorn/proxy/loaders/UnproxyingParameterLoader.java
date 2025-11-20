@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
  * is used by default by the {@link ProxyAdvisorMethodInterceptor} and can be used as a reference
  * for custom implementations.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class UnproxyingParameterLoader
     extends RuleBasedParameterLoader<ProxyParameterLoaderContext> {

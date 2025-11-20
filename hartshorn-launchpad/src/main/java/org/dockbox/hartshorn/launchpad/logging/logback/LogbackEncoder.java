@@ -23,9 +23,11 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
  * A custom {@link PatternLayoutEncoder} that allows for the use of the active process ID in the
  * logback configuration, using the syntax {@code %process_id}.
  *
- * @author Guus Lieben
  * @see LogbackPIDConverter
+ * 
  * @since 0.4.8
+ * 
+ * @author Guus Lieben
  */
 public class LogbackEncoder extends PatternLayoutEncoder {
 

@@ -21,8 +21,9 @@ package test.org.dockbox.hartshorn.util.introspect.support.bridge;
  *
  * @param <R> The return type of the bridge method.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface BridgeParent<R> {
     R bridgeMethod();

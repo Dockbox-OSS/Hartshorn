@@ -30,8 +30,9 @@ import java.util.Objects;
  *
  * @param <T> the type of the component
  *
- * @author Guus Lieben
  * @since 0.4.1
+ * 
+ * @author Guus Lieben
  */
 public class AnnotatedComponentContainer<T> implements ComponentContainer<T> {
 
@@ -49,7 +50,8 @@ public class AnnotatedComponentContainer<T> implements ComponentContainer<T> {
         if (component.isAnnotation()) {
             throw new InvalidComponentException("Provided component candidate ("
                 + component.qualifiedName()
-                + ") is an annotation and cannot be used as a component, is it a component stereotype?");
+                + ") is an annotation and cannot be used as a component, "
+                + "is it a component stereotype?");
         }
 
         this.component = component;

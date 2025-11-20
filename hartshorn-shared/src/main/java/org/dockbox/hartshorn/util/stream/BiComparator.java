@@ -27,10 +27,12 @@ import java.util.Map.Entry;
  * @param <K> the key type
  * @param <V> the value type
  *
- * @author Guus Lieben
  * @see Comparator
  * @see Map.Entry
+ *
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface BiComparator<K, V> extends Comparator<Map.Entry<K, V>> {

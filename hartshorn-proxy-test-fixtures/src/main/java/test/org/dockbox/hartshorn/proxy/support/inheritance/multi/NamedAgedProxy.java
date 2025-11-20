@@ -19,8 +19,9 @@ package test.org.dockbox.hartshorn.proxy.support.inheritance.multi;
 /**
  * Proxy interface that extends from multiple other interfaces.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface NamedAgedProxy extends NamedProxy, AgedProxy {
 }

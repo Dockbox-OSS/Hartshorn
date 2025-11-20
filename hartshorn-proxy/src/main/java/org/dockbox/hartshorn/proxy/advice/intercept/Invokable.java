@@ -21,8 +21,9 @@ package org.dockbox.hartshorn.proxy.advice.intercept;
  * the {@link MethodInterceptor} from the underlying implementation of the method, allowing for
  * different implementations to be used.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface Invokable {
 

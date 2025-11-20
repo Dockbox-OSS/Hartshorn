@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @param <T> ...
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface DependencyDeclarationContext<T> {
 

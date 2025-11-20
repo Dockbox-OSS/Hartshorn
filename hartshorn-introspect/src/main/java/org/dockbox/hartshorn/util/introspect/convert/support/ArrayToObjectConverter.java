@@ -30,8 +30,9 @@ import java.util.Set;
  * Converts any array to an {@link Object} by returning the first and only element of the array. The
  * array must have exactly one element.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ArrayToObjectConverter implements GenericConverter, ConditionalConverter {
 

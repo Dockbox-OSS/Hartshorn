@@ -29,8 +29,9 @@ import java.util.Set;
  * determine if all dependencies in a graph are present, and if not, which dependencies are
  * missing.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class DependencyPresenceValidationVisitor
     implements BreadthFirstGraphVisitor<DependencyContext<?>> {
@@ -38,7 +39,9 @@ public class DependencyPresenceValidationVisitor
     private final Set<GraphNode<DependencyContext<?>>> missingDependencies = new HashSet<>();
     private final Set<GraphNode<DependencyContext<?>>> visitedDependencies;
 
-    public DependencyPresenceValidationVisitor(Set<GraphNode<DependencyContext<?>>> visitedDependencies) {
+    public DependencyPresenceValidationVisitor(
+        Set<GraphNode<DependencyContext<?>>> visitedDependencies
+    ) {
         this.visitedDependencies = visitedDependencies;
     }
 

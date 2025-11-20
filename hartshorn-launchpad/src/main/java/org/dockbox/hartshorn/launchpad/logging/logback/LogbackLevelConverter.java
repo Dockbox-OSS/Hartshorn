@@ -25,8 +25,9 @@ import ch.qos.logback.core.pattern.color.ForegroundCompositeConverterBase;
  * A logback converter that converts the log level to a color. This affects output for any known log
  * level. This is mostly for 'at a glance' readability of log lines in a console.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class LogbackLevelConverter extends ForegroundCompositeConverterBase<ILoggingEvent> {
 

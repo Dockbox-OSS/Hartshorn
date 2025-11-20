@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
  * A marker interface for observers. Observers are notified of events within their associated
  * {@link LifecycleObservable}.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public interface Observer {
 

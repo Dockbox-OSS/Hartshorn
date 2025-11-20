@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.inject.binding.HierarchicalAliasCapableBinder;
  * Compatibility interface for {@link HierarchicalBinderAwareComponentProvider} that provides access
  * to the {@link HierarchicalAliasCapableBinder}.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface HierarchicalAliasBinderAwareComponentProvider
     extends HierarchicalBinderAwareComponentProvider {

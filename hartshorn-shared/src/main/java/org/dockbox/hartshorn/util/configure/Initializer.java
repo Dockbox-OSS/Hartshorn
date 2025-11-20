@@ -24,8 +24,9 @@ import java.util.function.Supplier;
  *
  * @param <T> The type of object to initialize.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface Initializer<T> {

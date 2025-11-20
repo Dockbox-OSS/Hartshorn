@@ -28,8 +28,9 @@ import java.util.Set;
  *
  * @param <T> The type of the component that this context is for.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface AliasableDependencyContext<T> extends DependencyContext<T> {
 

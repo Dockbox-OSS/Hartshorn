@@ -22,8 +22,9 @@ package org.dockbox.hartshorn.proxy.advice.registry;
  * created. If the registry was never modified then the proxy is not required, and the original
  * instance can be returned by the caller of the {@link org.dockbox.hartshorn.proxy.ProxyFactory}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface AdvisorRegistryState {
 

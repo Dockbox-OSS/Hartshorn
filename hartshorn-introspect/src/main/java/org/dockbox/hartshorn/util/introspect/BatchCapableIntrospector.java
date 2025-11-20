@@ -29,8 +29,9 @@ package org.dockbox.hartshorn.util.introspect;
  * <p>Batch mode is disabled by default, and should only be enabled when required. Note that batch
  * mode is not guaranteed to improve performance, and may even decrease performance in some cases.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface BatchCapableIntrospector extends Introspector {
 

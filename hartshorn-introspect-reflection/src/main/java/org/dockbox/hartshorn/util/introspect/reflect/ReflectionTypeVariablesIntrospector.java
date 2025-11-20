@@ -29,8 +29,9 @@ import java.util.stream.Collectors;
 /**
  * Reflection-based implementation of {@link TypeVariablesIntrospector}.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ReflectionTypeVariablesIntrospector implements TypeVariablesIntrospector {
 

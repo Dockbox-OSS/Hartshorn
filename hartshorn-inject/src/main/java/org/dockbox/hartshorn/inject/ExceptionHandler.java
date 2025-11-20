@@ -19,8 +19,9 @@ package org.dockbox.hartshorn.inject;
 /**
  * The exception handler is used to handle exceptions that occur during the application lifecycle.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public interface ExceptionHandler {
 

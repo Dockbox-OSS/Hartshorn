@@ -33,9 +33,11 @@ import org.dockbox.hartshorn.test.annotations.TestProfiles;
  * @param testComponentSources the list of annotated elements to scan for {@link TestProfiles}
  * annotations
  *
- * @author Guus Lieben
  * @see TestProfiles
+ *
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public record FromTestAnnotationProfileNameResolver(
     List<AnnotatedElement> testComponentSources

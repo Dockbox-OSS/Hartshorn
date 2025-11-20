@@ -43,10 +43,12 @@ import java.util.Set;
  * {@link ObjectMapper}. Depending on the implementation of the {@link ObjectMapper}, different file
  * formats can be supported.
  *
- * @author Guus Lieben
  * @see JacksonJavaPropsPropertyRegistryLoader
  * @see JacksonYamlPropertyRegistryLoader
+ *
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public abstract class JacksonPropertyRegistryLoader implements PredicatePropertyRegistryLoader {
 

@@ -30,8 +30,9 @@ import java.util.Set;
  * A simple implementation of the {@link DependencyContextResolverRegistry} interface, which allows
  * multiple strategies to be registered on the same priority level.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class SimpleDependencyContextResolverRegistry extends DefaultContext
     implements DependencyContextResolverRegistry {

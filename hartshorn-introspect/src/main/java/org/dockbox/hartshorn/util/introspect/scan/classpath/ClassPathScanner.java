@@ -56,8 +56,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * <p>Typically, {@link ClassPathScanner} should not be used directly, but rather be used through
  * the {@link ClassPathScannerTypeReferenceCollector}.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public final class ClassPathScanner {
 

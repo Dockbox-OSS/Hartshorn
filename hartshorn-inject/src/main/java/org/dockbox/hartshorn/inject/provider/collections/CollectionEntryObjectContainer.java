@@ -26,8 +26,9 @@ import org.dockbox.hartshorn.inject.provider.ObjectContainer;
  *
  * @param <T> the type of the object contained in this container
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class CollectionEntryObjectContainer<T> extends AbstractObjectContainer<T> {
 

@@ -34,8 +34,9 @@ import java.util.function.BiPredicate;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @author Guus Lieben
  * @since 0.4.7
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
 

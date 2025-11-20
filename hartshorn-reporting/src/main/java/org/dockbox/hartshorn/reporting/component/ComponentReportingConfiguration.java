@@ -20,9 +20,11 @@ package org.dockbox.hartshorn.reporting.component;
  * General configuration for the {@link ComponentDiagnosticsReporter} that allows for fine-grained
  * control over the information that is reported.
  *
- * @author Guus Lieben
  * @see ComponentDiagnosticsReporter
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ComponentReportingConfiguration {
 
@@ -93,7 +95,9 @@ public class ComponentReportingConfiguration {
      *
      * @return this configuration object
      */
-    public ComponentReportingConfiguration includeRequiredConditions(boolean includeRequiredConditions) {
+    public ComponentReportingConfiguration includeRequiredConditions(
+        boolean includeRequiredConditions
+    ) {
         this.includeRequiredConditions = includeRequiredConditions;
         return this;
     }

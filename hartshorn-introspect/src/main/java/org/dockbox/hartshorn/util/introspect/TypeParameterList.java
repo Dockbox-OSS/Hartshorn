@@ -27,9 +27,11 @@ import java.util.stream.Stream;
  * Represents a list of type parameters. This is used to represent the type parameters of a type, or
  * a method.
  *
- * @author Guus Lieben
  * @see TypeParameterView
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public interface TypeParameterList extends Iterable<TypeParameterView> {
 

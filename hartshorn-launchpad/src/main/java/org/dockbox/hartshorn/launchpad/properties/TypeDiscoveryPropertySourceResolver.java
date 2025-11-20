@@ -32,9 +32,11 @@ import java.util.stream.Stream;
  * @param environment The application environment to inspect for components with the
  * {@link PropertiesSource} annotation.
  *
- * @author Guus Lieben
  * @see PropertiesSource
+ * 
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public record TypeDiscoveryPropertySourceResolver(
     ApplicationEnvironment environment

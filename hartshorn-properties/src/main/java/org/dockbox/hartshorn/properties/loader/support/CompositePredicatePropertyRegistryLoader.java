@@ -28,8 +28,9 @@ import java.util.Set;
  * A {@link PredicatePropertyRegistryLoader} that delegates to multiple other loaders. This loader
  * will delegate the loading of a registry to all loaders that are compatible with the given path.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class CompositePredicatePropertyRegistryLoader implements PredicatePropertyRegistryLoader {
 

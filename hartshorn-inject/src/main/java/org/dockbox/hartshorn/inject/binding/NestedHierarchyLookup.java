@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.inject.ComponentKey;
  * {@link NestedHierarchyLookup} to look up bindings in the parent {@link HierarchyLookup} if the
  * binding is not found in the {@link NestedHierarchyLookup}.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface NestedHierarchyLookup extends HierarchyLookup {
 

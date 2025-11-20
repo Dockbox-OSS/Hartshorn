@@ -30,9 +30,11 @@ import java.util.List;
 /**
  * Reflection-based introspector for class type parameters.
  *
- * @author Guus Lieben
  * @see Class#getTypeParameters()
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ReflectionClassTypeParametersIntrospector
     extends AbstractReflectionTypeParametersIntrospector {

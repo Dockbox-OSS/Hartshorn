@@ -26,8 +26,9 @@ import java.util.Set;
  * populated on the first invocation of {@link #collect()}, and is reused for all subsequent
  * invocations.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class CachedTypeReferenceCollector implements TypeReferenceCollector {
 

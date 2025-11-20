@@ -28,8 +28,9 @@ import java.util.function.Predicate;
  * A simple implementation of a {@link PropertyRegistry} that uses a {@link Map} to store the
  * properties.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class MapPropertyRegistry extends MapObjectProperty implements PropertyRegistry {
 

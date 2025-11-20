@@ -26,9 +26,11 @@ import org.dockbox.hartshorn.util.option.Option;
  * A parser to convert single-value {@link ConfiguredProperty} instances to {@link ValueProperty}
  * instances.
  *
- * @author Guus Lieben
  * @see ValueProperty
+ *
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public class ValueConfiguredPropertyParser implements ConfiguredPropertyParser<ValueProperty> {
 

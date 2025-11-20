@@ -29,8 +29,9 @@ import java.util.Set;
  * Converts any {@link Collection} to an array of the same type, containing only the objects in the
  * collection.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class CollectionToArrayConverter implements GenericConverter {
 

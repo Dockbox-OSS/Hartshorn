@@ -38,8 +38,9 @@ import java.lang.reflect.InvocationHandler;
  *
  * @param <T> The type of the proxy to create
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T> {
 
@@ -81,8 +82,9 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      *
      * @throws ApplicationException When the proxy cannot be created
      */
-    protected Option<T> createProxy(CheckedFunction<ProxyMethodInterceptor<T>, Option<T>> instantiate)
-        throws ApplicationException {
+    protected Option<T> createProxy(
+        CheckedFunction<ProxyMethodInterceptor<T>, Option<T>> instantiate
+    ) throws ApplicationException {
         LazyProxyManager<T> manager = new LazyProxyManager<>(this);
 
         this.contextContainer().contexts().forEach(manager::addContext);
@@ -122,7 +124,9 @@ public abstract class JDKInterfaceProxyFactory<T> extends DefaultProxyFactory<T>
      *
      * @return The constructor function
      */
-    protected abstract ProxyConstructorFunction<T> concreteOrAbstractEnhancer(ProxyMethodInterceptor<T> interceptor);
+    protected abstract ProxyConstructorFunction<T> concreteOrAbstractEnhancer(
+        ProxyMethodInterceptor<T> interceptor
+    );
 
     /**
      * Creates a proxy if the type is a concrete or abstract class. This will attempt to use the

@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * declaration type of an injection point based on its specific type (executable element, field, or
  * parameter).
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class SimpleInjectionPointDeclarationResolver implements InjectionPointDeclarationResolver {
 

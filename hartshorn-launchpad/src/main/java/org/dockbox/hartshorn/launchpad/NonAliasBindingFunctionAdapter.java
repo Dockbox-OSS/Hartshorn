@@ -38,8 +38,9 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
  *
  * @param <T> the type of the binding
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class NonAliasBindingFunctionAdapter<T> implements AliasBindingFunction<T> {
 

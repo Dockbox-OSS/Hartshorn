@@ -30,8 +30,9 @@ import java.util.Set;
  *
  * @param <T> the type of the content of the graph
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class SimpleContentAwareGraph<T>
     extends SimpleGraph<T>

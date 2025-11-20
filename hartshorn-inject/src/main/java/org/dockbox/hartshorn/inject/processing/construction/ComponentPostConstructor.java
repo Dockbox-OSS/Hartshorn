@@ -30,8 +30,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * post-constructors are for component-level post-construction tasks, while post-processors are for
  * cross-cutting concerns that (potentially) apply to multiple components.
  *
- * @author Guus Lieben
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public interface ComponentPostConstructor {
 

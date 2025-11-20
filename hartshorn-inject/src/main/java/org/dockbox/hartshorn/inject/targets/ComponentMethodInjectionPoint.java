@@ -31,8 +31,9 @@ import java.util.SequencedCollection;
  *
  * @param <T> the type of the component that this injection point is for
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class ComponentMethodInjectionPoint<T> implements ComponentInjectionPoint<T> {
 

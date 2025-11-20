@@ -28,8 +28,9 @@ import java.util.Map;
  * A {@link MapPropertyRegistry} that is also a {@link ProfilePropertyRegistry}, meaning it is aware
  * of an associated {@link ProfileRegistry}.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ProfileMapPropertyRegistry extends MapPropertyRegistry
     implements ProfilePropertyRegistry {

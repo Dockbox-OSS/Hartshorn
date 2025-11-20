@@ -28,8 +28,9 @@ import java.lang.reflect.AnnotatedElement;
 /**
  * A view that provides access to a package. This view is backed by a {@link Package} instance.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ReflectionPackageView extends ReflectionAnnotatedElementView implements PackageView {
 

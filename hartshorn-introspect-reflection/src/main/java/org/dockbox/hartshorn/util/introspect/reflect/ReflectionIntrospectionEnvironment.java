@@ -26,8 +26,9 @@ import java.lang.reflect.Parameter;
  * An introspection environment that uses reflection to determine whether parameter names are
  * available.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ReflectionIntrospectionEnvironment implements IntrospectionEnvironment {
 

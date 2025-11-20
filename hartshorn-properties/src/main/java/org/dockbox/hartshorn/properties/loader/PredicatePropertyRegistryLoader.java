@@ -22,8 +22,9 @@ import java.net.URI;
  * A {@link PropertyRegistryPathLoader} that can be tested for compatibility with a given path
  * before loading the registry.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface PredicatePropertyRegistryLoader extends PropertyRegistryPathLoader {
 

@@ -32,8 +32,9 @@ import java.util.Set;
  * is merely a storage
  * mechanism for processors.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface ComponentProcessorRegistry {
 

@@ -22,9 +22,11 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * Thrown when an error occurs during service discovery. This may indicate the absence of a service
  * provider, or an error during the discovery process.
  *
- * @author Guus Lieben
  * @see DiscoveryService
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ServiceDiscoveryException extends ApplicationException {
 

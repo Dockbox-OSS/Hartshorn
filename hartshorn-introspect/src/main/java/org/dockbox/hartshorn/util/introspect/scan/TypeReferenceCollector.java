@@ -25,8 +25,9 @@ import java.util.Set;
  * of a collection is a {@link Set} of {@link TypeReference}s. Type collecting is often used by
  * application environments to discover types that are available on the classpath.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public interface TypeReferenceCollector extends Reportable {
 

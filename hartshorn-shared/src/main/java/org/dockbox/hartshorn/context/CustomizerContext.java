@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.util.configure.Customizer;
  *
  * @param <T> The type of the object that is being customized
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class CustomizerContext<T> extends DefaultContext {
 

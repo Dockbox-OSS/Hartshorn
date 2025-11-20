@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
  * provide custom logic for determining active profiles based on application properties or related
  * components.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface ProfileNameResolver {
 

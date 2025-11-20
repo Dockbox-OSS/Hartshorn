@@ -26,9 +26,11 @@ import org.dockbox.hartshorn.inject.processing.proxy.ProxyDelegationPostProcesso
  * {@link ApplicationContextCarrier} methods. This only applies to methods which lack a concrete
  * implementation in the target class.
  *
- * @author Guus Lieben
  * @see ApplicationContextCarrierConfiguration#contextCarrier(ApplicationContext)
+ * 
  * @since 0.4.9
+ * 
+ * @author Guus Lieben
  */
 public class ContextCarrierDelegationPostProcessor
     extends ProxyDelegationPostProcessor<ApplicationContextCarrier> {

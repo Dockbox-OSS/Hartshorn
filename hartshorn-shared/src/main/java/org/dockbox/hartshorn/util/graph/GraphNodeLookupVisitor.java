@@ -24,8 +24,9 @@ import java.util.function.Predicate;
  *
  * @param <T> the type of the node value
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class GraphNodeLookupVisitor<T> implements BreadthFirstGraphVisitor<T> {
 

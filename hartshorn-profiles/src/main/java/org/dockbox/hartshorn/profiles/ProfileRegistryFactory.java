@@ -21,8 +21,9 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
 /**
  * Factory for creating {@link ProfileRegistry} instances.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ProfileRegistryFactory {

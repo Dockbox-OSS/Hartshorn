@@ -45,9 +45,11 @@ import java.util.stream.Collectors;
  * any custom test environment modifiers, preparing the application factory and creating the
  * application context, and performing additional injection on the test instance if necessary.
  *
- * @author Guus Lieben
  * @see HartshornJUnitIntegrationTestBootstrapCallback
+ * 
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public class HartshornIntegrationTestInitializer {
 
@@ -132,11 +134,14 @@ public class HartshornIntegrationTestInitializer {
                 new IntegrationTestApplicationFactoryCustomizer(testClass,
                     testComponentSources,
                     applicationCustomizer);
-            builder.applicationContextFactory(StandardApplicationContextFactory.create(customizer.compose(
-                applicationCustomizer::customizeFactory)));
+            builder.applicationContextFactory(StandardApplicationContextFactory.create(
+                customizer.compose(applicationCustomizer::customizeFactory)
+            ));
         });
 
-        return StandardApplicationBuilder.create(builderCustomizer.compose(applicationCustomizer::customizeBuilder));
+        return StandardApplicationBuilder.create(builderCustomizer.compose(
+            applicationCustomizer::customizeBuilder
+        ));
     }
 
     private void customizeBuilderWithTestSources(
@@ -144,7 +149,8 @@ public class HartshornIntegrationTestInitializer {
         SequencedCollection<AnnotatedElement> testComponentSources,
         StandardApplicationBuilder.Configurer builder
     ) {
-        // Note: initial default, may be overwritten by either the test decorator, or test customizers
+        // Note: initial default, may be overwritten by either the test decorator, or test
+        // customizers
         builder.mainClass(testClass);
 
         for (AnnotatedElement element : testComponentSources) {

@@ -39,8 +39,9 @@ import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstru
  * enabled. If the value is {@code false}, the annotated element will be not be enabled
  * automatically.
  *
- * @author Guus Lieben
  * @since 0.4.3
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})

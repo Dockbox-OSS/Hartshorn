@@ -26,8 +26,9 @@ import java.lang.reflect.Constructor;
  *
  * @param <T> The type of the proxy
  *
- * @author Guus Lieben
  * @since 0.4.9
+ * 
+ * @author Guus Lieben
  */
 public interface ProxyConstructorFunction<T> {
 

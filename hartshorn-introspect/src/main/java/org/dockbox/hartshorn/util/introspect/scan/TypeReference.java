@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.util.introspect.scan;
  * A reference to a {@link Class} that can be used to load the class, or to obtain information about
  * the class. Implementations of this interface are expected to be immutable.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public interface TypeReference {
 

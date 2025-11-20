@@ -36,8 +36,9 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  * <p>Note that specific {@link ApplicationBuilder} implementations
  * may have additional requirements for valid activator classes.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class InvalidActivationSourceException extends ApplicationRuntimeException {
 

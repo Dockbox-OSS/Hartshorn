@@ -28,9 +28,11 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 /**
  * A condition that requires classes to be present in the classpath.
  *
- * @author Guus Lieben
  * @see ClassCondition
+ * 
  * @since 0.4.12
+ * 
+ * @author Guus Lieben
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

@@ -36,11 +36,13 @@ import org.dockbox.hartshorn.util.graph.SimpleContentAwareGraph;
  * a dependency graph from a collection of {@link DependencyContext} instances. This will ensure the
  * graph contains valid references internally.
  *
- * @author Guus Lieben
  * @see DependencyContext
  * @see DependencyGraphValidator
  * @see DependencyGraphBuilder
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class DependencyGraph extends SimpleContentAwareGraph<DependencyContext<?>> {
 

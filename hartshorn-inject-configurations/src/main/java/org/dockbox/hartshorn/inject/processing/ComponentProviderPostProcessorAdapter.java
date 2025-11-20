@@ -46,8 +46,9 @@ import java.util.Set;
  * the instance is sufficiently prepared for processing, and that the component store is updated
  * accordingly.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class ComponentProviderPostProcessorAdapter implements ComponentProviderPostProcessor {
 
@@ -112,7 +113,9 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
         if (ComponentCollection.class.isAssignableFrom(componentKey.type())) {
             if (ComponentCollection.class != componentKey.type()) {
                 throw new IllegalArgumentException(
-                    "Component collection key must be of type ComponentCollection, specific implementations are not supported");
+                    "Component collection key must be of type ComponentCollection, "
+                        + "specific implementations are not supported"
+                );
             }
             ComponentCollection<Object> collection = this.processComponentCollection(
                 TypeUtils.unchecked(componentKey, ComponentKey.class),
@@ -133,7 +136,8 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
         if (objectContainer.instance() == null) {
             return new ContainerAwareComponentCollection<>(Set.of());
         }
-        else if (objectContainer.instance() instanceof ContainerAwareComponentCollection<?> containerAwareComponentCollection) {
+        else if (objectContainer.instance() instanceof ContainerAwareComponentCollection<?>
+            containerAwareComponentCollection) {
 
             ContainerAwareComponentCollection<E> collection = TypeUtils.unchecked(
                 containerAwareComponentCollection,
@@ -147,7 +151,9 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
         }
         else {
             throw new IllegalArgumentException(
-                "Component collection from provider must be of type ContainerAwareComponentCollection");
+                "Component collection from provider must be of type"
+                    + " ContainerAwareComponentCollection"
+            );
         }
     }
 
@@ -162,8 +168,9 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
      *
      * @throws ApplicationException if an error occurs during processing
      */
-    protected <T> LockableComponentProcessingContext<T> process(LockableComponentProcessingContext<T> processingContext)
-        throws ApplicationException {
+    protected <T> LockableComponentProcessingContext<T> process(
+        LockableComponentProcessingContext<T> processingContext
+    ) throws ApplicationException {
         // Store early, so cyclic dependencies may be resolved
         this.componentStoreCallback.store(processingContext.key(), processingContext.container());
         this.processor.process(processingContext);
@@ -261,8 +268,8 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
             processingContext.put(ComponentContainer.class, componentContainer);
             if (componentContainer.permitsProxying()) {
                 boolean hasObjectInstance = objectContainer.instance() != null;
-                // Always attempt to use the most detailed proxy factory available, as this allows for
-                // more advanced proxying capabilities.
+                // Always attempt to use the most detailed proxy factory available, as this allows
+                // for more advanced proxying capabilities.
                 Class<?> proxyBaseType = hasObjectInstance
                     ? objectContainer.instance().getClass()
                     : key.type();

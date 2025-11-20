@@ -42,10 +42,12 @@ import java.util.stream.StreamSupport;
  * @param <K> the key type
  * @param <V> the value type
  *
- * @author Guus Lieben
  * @see Stream
  * @see Map.Entry
+ *
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
 

@@ -27,12 +27,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @author Guus Lieben
  * @see ConcurrentHashMap
  * @see MultiMap
  * @see StandardMultiMap
  * @see ConcurrentMultiMap
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ConcurrentSetMultiMap<K, V> extends ConcurrentMultiMap<K, V> {
 

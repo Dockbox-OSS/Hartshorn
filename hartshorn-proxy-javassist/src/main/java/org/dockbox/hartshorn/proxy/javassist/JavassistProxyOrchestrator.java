@@ -25,10 +25,12 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
  * {@link JavassistProxyLookup}s, and uses {@link JavassistProxyFactory} to construct new proxy
  * instances.
  *
- * @author Guus Lieben
  * @see JavassistProxyLookup
  * @see JavassistProxyFactory
+ * 
  * @since 0.4.12
+ * 
+ * @author Guus Lieben
  */
 public class JavassistProxyOrchestrator extends AbstractProxyOrchestrator {
 

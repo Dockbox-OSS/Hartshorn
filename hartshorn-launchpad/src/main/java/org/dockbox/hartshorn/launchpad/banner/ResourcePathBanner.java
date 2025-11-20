@@ -23,8 +23,9 @@ import java.nio.charset.StandardCharsets;
  * Prints a banner from a given resource path. The resource path is expected to be a (plain) text
  * file.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ResourcePathBanner extends AbstractConsoleBanner {
 

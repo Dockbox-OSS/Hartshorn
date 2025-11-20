@@ -27,8 +27,9 @@ import java.util.Arrays;
  *
  * @param <T> the type of the proxy object
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ProxyObject<T> {

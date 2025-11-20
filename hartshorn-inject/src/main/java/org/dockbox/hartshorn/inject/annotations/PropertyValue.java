@@ -55,8 +55,9 @@ import java.lang.annotation.Target;
  *    private SampleEnum enumValue;
  * }}</pre>
  *
- * @author Guus Lieben
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})

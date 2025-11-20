@@ -31,8 +31,9 @@ import java.util.Collection;
  * @param <Parent> the type of the method's parent
  * @param <ReturnType> the type of the method's return type
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public interface MethodView<Parent, ReturnType>
     extends ExecutableElementView<Parent>, AnnotatedGenericTypeView<ReturnType> {

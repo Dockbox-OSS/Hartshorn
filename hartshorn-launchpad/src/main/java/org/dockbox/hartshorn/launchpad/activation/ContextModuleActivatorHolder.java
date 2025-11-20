@@ -26,14 +26,17 @@ import java.util.function.Supplier;
  * A lazy {@link ModuleActivatorHolder} that provides activators from a
  * {@link ModuleActivatorContext} when needed.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
 
     private final Supplier<Option<ModuleActivatorContext>> contextProvider;
 
-    protected ContextModuleActivatorHolder(Supplier<Option<ModuleActivatorContext>> contextProvider) {
+    protected ContextModuleActivatorHolder(
+        Supplier<Option<ModuleActivatorContext>> contextProvider
+    ) {
         this.contextProvider = contextProvider;
     }
 
@@ -44,7 +47,9 @@ public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
      *
      * @return the created module activator holder
      */
-    public static ContextModuleActivatorHolder of(Supplier<Option<ModuleActivatorContext>> contextProvider) {
+    public static ContextModuleActivatorHolder of(
+        Supplier<Option<ModuleActivatorContext>> contextProvider
+    ) {
         return new ContextModuleActivatorHolder(contextProvider);
     }
 

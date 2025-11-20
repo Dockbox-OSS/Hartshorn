@@ -24,8 +24,9 @@ import java.util.SequencedSet;
  *
  * @param sources the sources to return
  *
- * @author Guus Lieben
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public record PredefinedPropertySourceResolver(SequencedSet<String> sources)
     implements PropertySourceResolver {

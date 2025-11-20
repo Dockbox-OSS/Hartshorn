@@ -27,9 +27,11 @@ import java.util.Set;
  * recommended to use the strategy name as a prefix to the resource path, e.g.
  * {@code classpath:my/resource/path}.
  *
- * @author Guus Lieben
  * @see ResourceLookup
+ * 
  * @since 0.4.7
+ * 
+ * @author Guus Lieben
  */
 public interface ResourceLookupStrategy {
 

@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * instances. Direct use of an implementation of this interface is not guaranteed to be accurate,
  * and should be used with caution.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public interface ProxyLookup {
 

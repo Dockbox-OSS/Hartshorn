@@ -25,8 +25,9 @@ import java.net.URI;
  * typically indicates issues such as missing files, inaccessible resources, or parsing errors
  * during profile loading.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ProfileLoadingFailedException extends ApplicationRuntimeException {
     public ProfileLoadingFailedException(String profile, URI resource, Throwable cause) {

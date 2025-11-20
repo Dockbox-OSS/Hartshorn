@@ -40,8 +40,9 @@ import java.util.function.Predicate;
  * A collection of utility methods for working with collections. This class is not meant to be
  * instantiated.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public final class CollectionUtilities {
 

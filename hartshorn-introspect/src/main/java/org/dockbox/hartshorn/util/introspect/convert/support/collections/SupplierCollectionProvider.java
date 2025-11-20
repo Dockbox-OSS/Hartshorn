@@ -29,8 +29,9 @@ import java.util.function.Supplier;
  * @param capacityConstructor The constructor to create collections with a given capacity
  * @param <T> The type of the collection
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public record SupplierCollectionProvider<T extends Collection<?>>(
     Supplier<T> supplier,

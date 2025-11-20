@@ -28,8 +28,9 @@ import java.lang.annotation.Annotation;
  *
  * @param <T> ...
  *
- * @author Guus Lieben
  * @since 0.4.1
+ * 
+ * @author Guus Lieben
  */
 public class SimpleMethodProxyContext<T> extends DefaultInjectionApplicationAwareContext
     implements MethodProxyContext<T> {

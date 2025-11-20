@@ -34,8 +34,9 @@ package org.dockbox.hartshorn.launchpad.logging;
  * @param color the color of the message
  * @param style the style of the message
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public record AnsiMessage(String message, AnsiColor color, AnsiStyle style) {
 

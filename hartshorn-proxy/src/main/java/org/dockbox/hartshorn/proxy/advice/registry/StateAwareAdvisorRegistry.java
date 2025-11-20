@@ -32,8 +32,9 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of the target object
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface StateAwareAdvisorRegistry<T> extends AdvisorRegistry<T>, ProxyAdvisorResolver<T> {
 

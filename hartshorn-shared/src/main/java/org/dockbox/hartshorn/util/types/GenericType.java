@@ -27,8 +27,9 @@ import java.lang.reflect.Type;
  *
  * @param <T> The generic type
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public abstract class GenericType<T> {
 

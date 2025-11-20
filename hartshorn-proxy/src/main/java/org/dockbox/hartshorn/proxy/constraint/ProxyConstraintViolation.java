@@ -22,8 +22,9 @@ package org.dockbox.hartshorn.proxy.constraint;
  *
  * @param message the message
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public record ProxyConstraintViolation(String message) {
 }

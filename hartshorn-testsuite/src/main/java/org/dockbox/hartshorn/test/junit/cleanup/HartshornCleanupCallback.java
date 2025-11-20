@@ -21,8 +21,9 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 /**
  * A callback that cleans up resources after a test lifecycle has been completed.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public interface HartshornCleanupCallback {
 

@@ -40,8 +40,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @param <T> the type of the advised object
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistry<T> {
 
@@ -73,7 +74,9 @@ public class ConfigurationAdvisorRegistry<T> implements StateAwareAdvisorRegistr
     public <R> StateAwareMethodAdvisorRegistryStep<T, R> method(MethodView<T, R> method) {
         StateAwareMethodAdvisorRegistryStep<T, ?> advisorStep = method.method()
             .map(this::method)
-            .orElseThrow(() -> new IllegalArgumentException("Method view does not contain a method"));
+            .orElseThrow(() -> new IllegalArgumentException(
+                "Method view does not contain a method"
+            ));
 
         return TypeUtils.unchecked(advisorStep, StateAwareMethodAdvisorRegistryStep.class);
     }

@@ -23,9 +23,11 @@ import org.dockbox.hartshorn.inject.binding.Binder;
  * Typically the associated binder is the sole binder that is used to bind components to the
  * provider.
  *
- * @author Guus Lieben
  * @see Binder
+ * 
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public interface BinderAwareComponentProvider extends ComponentProvider {
 

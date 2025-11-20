@@ -19,8 +19,9 @@ package test.org.dockbox.hartshorn.proxy.support.inheritance.multi;
 /**
  * Parent interface for {@link NamedAgedProxy}.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface NamedProxy {
     String name();

@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 /**
  * Functional interface for resolving the declaration type of an injection point.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface InjectionPointDeclarationResolver {
 

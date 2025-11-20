@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.inject.collection.ComponentCollection;
  * The type of binding provider. This is used to indicate whether the binding provider is a
  * standalone component, or a part of a collection.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public enum ComponentMemberType {
 

@@ -54,8 +54,9 @@ import test.org.dockbox.hartshorn.util.introspect.support.bridge.BridgeElement;
  * focuses more on the complex implementations of the {@link Introspector} interface, rather than
  * basic type information.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public abstract class IntrospectorTests {
 

@@ -34,9 +34,11 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> the type of the element
  *
- * @author Guus Lieben
  * @see org.dockbox.hartshorn.util.introspect.view.TypeView#fields()
+ *
  * @since 0.4.13
+ * 
+ * @author Guus Lieben
  */
 public interface TypeFieldsIntrospector<T> {
 

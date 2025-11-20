@@ -30,8 +30,9 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
  * throw an exception. This validator is intended to be used after the configuration phase, so it
  * can check that all dependencies have been configured correctly.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class DependenciesVisitedGraphValidator implements DependencyGraphValidator {
 
@@ -48,8 +49,9 @@ public class DependenciesVisitedGraphValidator implements DependencyGraphValidat
         Set<GraphNode<DependencyContext<?>>> missingDependencies =
             validationVisitor.missingDependencies();
         if (!missingDependencies.isEmpty()) {
-            throw new ComponentInitializationException("Failed to resolve dependencies: %s".formatted(
-                missingDependencies));
+            throw new ComponentInitializationException(
+                "Failed to resolve dependencies: %s".formatted(missingDependencies)
+            );
         }
     }
 }

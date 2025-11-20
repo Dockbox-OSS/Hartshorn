@@ -30,9 +30,11 @@ import javassist.util.proxy.ProxyFactory;
  *
  * @param <T> the type of the proxy
  *
- * @author Guus Lieben
  * @see ProxyFactory
+ * 
  * @since 0.4.13
+ * 
+ * @author Guus Lieben
  */
 public class JavassistProxyConstructorFunction<T> implements ProxyConstructorFunction<T> {
 

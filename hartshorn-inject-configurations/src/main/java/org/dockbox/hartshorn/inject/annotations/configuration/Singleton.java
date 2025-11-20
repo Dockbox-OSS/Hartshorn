@@ -33,10 +33,12 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
  * for bindings that
  * are stateless or immutable, or for bindings that are expensive to create.
  *
- * @author Guus Lieben
  * @see Binds
  * @see LifecycleType#SINGLETON
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD})

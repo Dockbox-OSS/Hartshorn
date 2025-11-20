@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
  * diagnostics at once. Delegate reporters are expected to be
  * {@link CategorizedDiagnosticsReporter categorized}, so that they can be grouped by category.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class AggregateDiagnosticsReporter
     implements ConfigurableDiagnosticsReporter<AggregateReporterConfiguration> {

@@ -19,8 +19,9 @@ package test.org.dockbox.hartshorn.proxy.support.basic;
 /**
  * A concrete class with a non-default constructor.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @SuppressWarnings("ClassCanBeRecord") // Intended for proxy testing
 public class ConcreteProxyWithNonDefaultConstructor {

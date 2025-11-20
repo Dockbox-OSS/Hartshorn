@@ -24,10 +24,12 @@ import org.dockbox.hartshorn.util.properties.Node;
  * provide any serialization functionality, but does provide a method to serialize itself using a
  * {@link ReportSerializer}.
  *
- * @author Guus Lieben
  * @see ReportSerializer
  * @see DiagnosticsPropertyCollector
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface DiagnosticsReport {

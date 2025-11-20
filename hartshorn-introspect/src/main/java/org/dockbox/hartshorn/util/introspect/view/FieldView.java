@@ -29,8 +29,9 @@ import java.lang.reflect.Field;
  * @param <Parent> The type of the field's declaring class
  * @param <FieldType> The type of the field
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public interface FieldView<Parent, FieldType>
     extends ModifierCarrierView, AnnotatedGenericTypeView<FieldType> {

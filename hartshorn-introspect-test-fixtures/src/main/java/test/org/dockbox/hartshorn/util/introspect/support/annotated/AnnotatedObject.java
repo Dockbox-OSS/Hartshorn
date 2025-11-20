@@ -21,8 +21,9 @@ import test.org.dockbox.hartshorn.util.introspect.support.annotations.AnyElement
 /**
  * Annotated class that implements an interface with the same annotation.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 @AnyElementAnnotation("impl")
 public class AnnotatedObject implements AnnotatedParent {

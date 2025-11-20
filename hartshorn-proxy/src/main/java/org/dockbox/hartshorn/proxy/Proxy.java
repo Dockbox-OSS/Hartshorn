@@ -23,8 +23,9 @@ package org.dockbox.hartshorn.proxy;
  *
  * @param <T> the type of the proxied object
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface Proxy<T> {

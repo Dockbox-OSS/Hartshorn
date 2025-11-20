@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.util.IllegalModificationException;
  * A callback interface for storing and locking components in a component store. Typically, such a
  * store is used to retain component instances during the processing of components.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public interface ComponentStoreCallback {
 

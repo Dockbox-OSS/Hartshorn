@@ -42,8 +42,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @param <A> The type of annotation this proxy represents
  *
- * @author Guus Lieben
  * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
 public class AnnotationAdapterProxy<A extends Annotation> implements
     InvocationHandler,

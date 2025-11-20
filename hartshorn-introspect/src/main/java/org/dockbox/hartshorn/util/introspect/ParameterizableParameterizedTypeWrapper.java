@@ -25,9 +25,11 @@ import java.util.Objects;
  *
  * @param type the parameterized type to wrap
  *
- * @author Guus Lieben
  * @see ParameterizableType
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 record ParameterizableParameterizedTypeWrapper(ParameterizableType type)
     implements ParameterizedType {

@@ -48,10 +48,12 @@ import java.util.regex.Pattern;
  *
  * <p>If no strategies are registered, the fallback strategy is used for all source strings.
  *
- * @author Guus Lieben
  * @see ResourceLookup
  * @see ResourceLookupStrategy
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class StrategyResourceLookup implements ResourceLookup {
 
@@ -129,7 +131,9 @@ public class StrategyResourceLookup implements ResourceLookup {
      *
      * @return the contextual initializer for the {@link ResourceLookup}
      */
-    public static ContextualInitializer<ApplicationEnvironment, ResourceLookup> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<ApplicationEnvironment, ResourceLookup> create(
+        Customizer<Configurer> customizer
+    ) {
         return environment -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -149,8 +153,9 @@ public class StrategyResourceLookup implements ResourceLookup {
     /**
      * A {@link Configurer} that allows for the configuration of the strategies used by the lookup.
      *
-     * @author Guus Lieben
      * @since 0.7.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer {
 
@@ -181,7 +186,9 @@ public class StrategyResourceLookup implements ResourceLookup {
          *
          * @return this configurer
          */
-        public Configurer fallbackStrategy(ContextualInitializer<ApplicationEnvironment, ResourceLookupStrategy> fallbackStrategy) {
+        public Configurer fallbackStrategy(
+            ContextualInitializer<ApplicationEnvironment, ResourceLookupStrategy> fallbackStrategy
+        ) {
             this.fallbackStrategy = fallbackStrategy;
             return this;
         }
@@ -204,7 +211,10 @@ public class StrategyResourceLookup implements ResourceLookup {
          *
          * @return this configurer
          */
-        public Configurer strategies(Customizer<StreamableConfigurer<ApplicationEnvironment, ResourceLookupStrategy>> customizer) {
+        public Configurer strategies(
+            Customizer<StreamableConfigurer<ApplicationEnvironment, ResourceLookupStrategy>>
+                customizer
+        ) {
             this.strategies.customizer(customizer);
             return this;
         }

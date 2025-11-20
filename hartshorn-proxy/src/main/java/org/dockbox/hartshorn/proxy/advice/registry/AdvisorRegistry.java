@@ -34,14 +34,16 @@ import java.util.function.Supplier;
  *     <li>{@link MethodStub}</li>
  * </ul>
  *
- * <p>Note that the registry should only be mutable during the creation of a proxy instance. After the proxy instance
- * has been created, the configured advisors are transferred to the {@link org.dockbox.hartshorn.proxy.ProxyManager}
- * where they may be resolved through a {@link org.dockbox.hartshorn.proxy.advice.ProxyAdvisorResolver}.
+ * <p>Note that the registry should only be mutable during the creation of a proxy instance. After
+ * the proxy instance has been created, the configured advisors are transferred to the
+ * {@link org.dockbox.hartshorn.proxy.ProxyManager} where they may be resolved through a
+ * {@link org.dockbox.hartshorn.proxy.advice.ProxyAdvisorResolver}.
  *
  * @param <T> the type of the proxy instance
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface AdvisorRegistry<T> {
 

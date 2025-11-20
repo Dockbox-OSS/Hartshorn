@@ -25,8 +25,9 @@ import java.util.Collection;
  *
  * @param <T> the type of the value of the node
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface MutableContainableGraphNode<T> extends
     MutableGraphNode<T>,

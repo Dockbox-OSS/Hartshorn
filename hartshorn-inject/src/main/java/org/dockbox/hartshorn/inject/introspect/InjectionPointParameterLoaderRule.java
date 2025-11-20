@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * type {@link InjectionPoint}. If the current request context is not for an injection point, it
  * will return an empty value.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class InjectionPointParameterLoaderRule
     implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {

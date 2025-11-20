@@ -26,10 +26,12 @@ import java.util.Set;
  * A holder for {@link ModuleActivator} meta-{@link Annotation}s that may be used to activate
  * components or configurations.
  *
- * @author Guus Lieben
  * @see ModuleActivator
  * @see RequiresActivator
+ * 
  * @since 0.4.9
+ * 
+ * @author Guus Lieben
  */
 public interface ModuleActivatorHolder {
 

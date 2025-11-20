@@ -19,8 +19,9 @@ package test.org.dockbox.hartshorn.proxy.support.equals;
 /**
  * A simple interface to test equality of interface proxies.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface EqualInterfaceProxy {
     default boolean test(EqualInterfaceProxy proxy) {

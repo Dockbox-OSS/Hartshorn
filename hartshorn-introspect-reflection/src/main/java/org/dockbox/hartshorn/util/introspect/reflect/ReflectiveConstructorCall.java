@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionConstructorV
  *
  * @param <T> the type of the constructor
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ReflectiveConstructorCall<T> {

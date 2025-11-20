@@ -32,8 +32,9 @@ import java.util.Objects;
  * array. The {@link Collection} is created using a {@link CollectionDefaultValueProviderFactory}
  * and supports any {@link Collection} implementation that has a default constructor.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ArrayToCollectionConverterFactory
     implements ConverterFactory<Object[], Collection<?>> {
@@ -59,8 +60,9 @@ public class ArrayToCollectionConverterFactory
      * {@link Collection}
      * @param <O> the type of the {@link Collection}
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     private record ArrayToCollectionConverter<O extends Collection<?>>(
         DefaultValueProvider<O> helperProvider

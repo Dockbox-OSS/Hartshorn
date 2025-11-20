@@ -35,9 +35,11 @@ import java.util.function.Supplier;
  * @param supplier The {@link Supplier} that is able to provide instances.
  * @param <C> The type to be provided.
  *
- * @author Guus Lieben
  * @see InstantiationStrategy
+ * 
  * @since 0.4.3
+ * 
+ * @author Guus Lieben
  */
 public record SupplierInstantiationStrategy<C>(CheckedSupplier<C> supplier)
     implements NonTypeAwareInstantiationStrategy<C> {

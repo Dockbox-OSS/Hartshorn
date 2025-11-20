@@ -31,9 +31,11 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 /**
  * A post-processor for methods annotated with {@link Provided}.
  *
- * @author Guus Lieben
  * @see Provided
+ *
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public class AnnotatedProviderMethodInterceptorPostProcessor
     extends AnnotatedMethodInterceptorPostProcessor<Provided> {

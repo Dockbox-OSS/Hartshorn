@@ -22,9 +22,11 @@ import org.dockbox.hartshorn.inject.component.ComponentRegistry;
  * Represents a {@link ComponentProvider} that is aware of the {@link ComponentRegistry} that is
  * used to locate managed components.
  *
- * @author Guus Lieben
  * @see ComponentRegistry
+ * 
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public interface ComponentRegistryAwareComponentProvider extends ComponentProvider {
 

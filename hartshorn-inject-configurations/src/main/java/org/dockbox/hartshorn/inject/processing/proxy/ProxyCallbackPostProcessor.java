@@ -36,10 +36,12 @@ import java.util.Collection;
  * monitoring. Method wrappers are generated based on the created {@link ProxyCallback}s, and are
  * then applied to the {@link AdvisorRegistry} of the proxy factory.
  *
- * @author Guus Lieben
  * @see ProxyCallback
  * @see ProxyFactory
+ * 
  * @since 0.4.9
+ * 
+ * @author Guus Lieben
  */
 public abstract class ProxyCallbackPostProcessor extends ComponentPostProcessor {
 

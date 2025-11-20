@@ -25,8 +25,9 @@ import java.util.Optional;
  * Converts any object to an {@link Optional} by wrapping the object in an
  * {@link Optional#of(Object)}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ObjectToOptionalConverter implements Converter<Object, Optional<?>> {
 

@@ -42,8 +42,9 @@ import java.util.function.Consumer;
  * Tests for the {@link ConversionService} interface, driven by configurable {@link Introspector}
  * implementations.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public abstract class ConversionServiceTests {
 
@@ -188,7 +189,7 @@ public abstract class ConversionServiceTests {
     }
 
     @Test
-    public void testCollectionFromOption() {
+    void testCollectionFromOption() {
         ConversionService conversionService = this.conversionService();
         List<?> listFromOption = conversionService.convert(Option.of("123"), List.class);
         Assertions.assertNotNull(listFromOption);
@@ -233,10 +234,14 @@ public abstract class ConversionServiceTests {
         ConverterRegistry registry = new StandardConversionService(this.introspector(),
             converterCache,
             defaultValueProviderCache);
-        // Not allowed because the source and target types cannot practically be determined due to type erasure
-        Assertions.assertThrows(IllegalArgumentException.class,
-            () -> registry.addConverter((Converter<String, Integer>) source -> Integer.parseInt(
-                source)));
+        // Not allowed because the source and target types cannot practically be determined due to
+        // type erasure
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> registry.addConverter((Converter<String, Integer>) source -> {
+                //noinspection Convert2MethodRef
+                return Integer.parseInt(source);
+            }));
     }
 
     @Test
@@ -261,8 +266,9 @@ public abstract class ConversionServiceTests {
 
     @Test
     void testImplicitDefaultValueProviderIsAdaptedCorrectly() {
-        // Lambdas are not supported in this context due to the absence of sufficient type hints. Though, using
-        // #addDefaultValueProvider(Class, DefaultValueProvider) it would be supported in any practical scenario.
+        // Lambdas are not supported in this context due to the absence of sufficient type hints.
+        // Though, using #addDefaultValueProvider(Class, DefaultValueProvider) it would be
+        // supported in any practical scenario.
         //noinspection Convert2Lambda
         this.testConverterTypeIsAdaptedCorrectly(
             registry -> registry.addDefaultValueProvider(new DefaultValueProvider<String>() {

@@ -31,8 +31,9 @@ import java.lang.reflect.Modifier;
  * @param <S> the advised type, which is assignable to the registry's advised type
  * @param <T> the type of the proxy object
  *
- * @author Guus Lieben
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ConfigurationStateAwareTypeAdvisorRegistryStep<S, T>
     implements StateAwareTypeAdvisorRegistryStep<S, T> {

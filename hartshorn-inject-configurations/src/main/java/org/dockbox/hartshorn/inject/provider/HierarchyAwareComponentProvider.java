@@ -59,10 +59,12 @@ import java.util.List;
  * {@link ComponentProviderOrchestrator}. This orchestrator is responsible for providing the
  * {@link Scope} in which this provider is installed.
  *
- * @author Guus Lieben
  * @see ComponentProviderOrchestrator
  * @see HierarchicalComponentProvider
+ * 
  * @since 0.4.10
+ * 
+ * @author Guus Lieben
  */
 public class HierarchyAwareComponentProvider extends StrategyChainComponentProvider
     implements HierarchicalAliasBinderAwareComponentProvider, SingletonCacheComponentProvider,
@@ -217,7 +219,9 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
         InjectionCapableApplication application,
         SingletonCache singletonCache,
         Scope scope,
+        // checkstyle:off LineLength
         Customizer<StreamableConfigurer<InjectionCapableApplication, ComponentProviderStrategy>> strategyCustomizer
+        // checkstyle:on LineLength
     ) {
         LazyStreamableConfigurer<InjectionCapableApplication, ComponentProviderStrategy>
             strategyConfigurer = LazyStreamableConfigurer.of(

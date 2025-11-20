@@ -35,8 +35,9 @@ import java.util.function.Consumer;
  * interceptor to be generic.
  * @param <R> the return type of the method call
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface MethodInterceptor<T, R> {
@@ -82,7 +83,9 @@ public interface MethodInterceptor<T, R> {
      *
      * @return a method interceptor wrapping the given consumer.
      */
-    static <T, R> MethodInterceptor<T, R> withoutReturnValue(Consumer<MethodInterceptorContext<T, R>> interceptor) {
+    static <T, R> MethodInterceptor<T, R> withoutReturnValue(
+        Consumer<MethodInterceptorContext<T, R>> interceptor
+    ) {
         return context -> {
             interceptor.accept(context);
             return null;

@@ -19,8 +19,9 @@ package org.dockbox.hartshorn.launchpad.logging;
 /**
  * An enum that represents the ANSI style codes for console output.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public enum AnsiStyle {
     BOLD("1"),

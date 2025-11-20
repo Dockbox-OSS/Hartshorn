@@ -28,8 +28,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * {@link SimpleContextIdentity simple identities}. This allows for more flexibility in the
  * retrieval of values, as context keys support fallback functions.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface FallbackCompatibleContext extends Context {
 

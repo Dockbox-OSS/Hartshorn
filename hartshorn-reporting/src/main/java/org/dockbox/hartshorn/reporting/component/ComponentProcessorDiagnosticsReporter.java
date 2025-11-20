@@ -36,8 +36,9 @@ import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
  * post-processors are only reported if the application context has a
  * {@link PostProcessingComponentProvider}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ComponentProcessorDiagnosticsReporter implements CategorizedDiagnosticsReporter {
 
@@ -51,7 +52,9 @@ public class ComponentProcessorDiagnosticsReporter implements CategorizedDiagnos
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        if (this.applicationContext instanceof ProcessableApplicationContext processableApplicationContext) {
+        if (this.applicationContext instanceof ProcessableApplicationContext
+            processableApplicationContext
+        ) {
             ComponentProcessorRegistry registry =
                 processableApplicationContext.defaultProvider().processorRegistry();
             this.reportPreProcessors(collector, registry);

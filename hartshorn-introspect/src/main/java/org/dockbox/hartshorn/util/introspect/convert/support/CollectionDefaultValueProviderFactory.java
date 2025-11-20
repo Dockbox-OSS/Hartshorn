@@ -33,9 +33,11 @@ import java.util.function.Supplier;
  * provider will attempt to retrieve its type parameter for the element type. If the type parameter
  * is not available, {@link Object} will be used as the element type.
  *
- * @author Guus Lieben
  * @see SimpleCollectionFactory
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class CollectionDefaultValueProviderFactory
     implements DefaultValueProviderFactory<Collection<?>> {

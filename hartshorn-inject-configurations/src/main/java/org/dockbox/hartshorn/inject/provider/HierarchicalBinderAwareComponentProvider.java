@@ -23,10 +23,12 @@ import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
  * {@link HierarchicalComponentProvider}, expanding the
  * {@link BinderAwareComponentProvider#binder()} method to return a {@link HierarchicalBinder}.
  *
- * @author Guus Lieben
  * @see BinderAwareComponentProvider
  * @see HierarchicalComponentProvider
+ * 
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public interface HierarchicalBinderAwareComponentProvider
     extends BinderAwareComponentProvider, HierarchicalComponentProvider {

@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.inject.provider.LifecycleType;
  *
  * @param <T> the type of the dependency represented by this context
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public interface LifecycleAwareDependencyContext<T> extends DependencyContext<T> {
 

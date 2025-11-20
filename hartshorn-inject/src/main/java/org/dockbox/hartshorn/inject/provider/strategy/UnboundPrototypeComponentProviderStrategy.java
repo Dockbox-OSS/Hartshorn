@@ -30,9 +30,11 @@ import org.dockbox.hartshorn.util.option.Option;
  * {@link InstantiationStrategy prototype instantiation strategy}. If the strategy is unable to
  * provide an instance, the chain is continued.
  *
- * @author Guus Lieben
  * @see PrototypeConstructorInstantiationStrategy#forPrototype(ComponentKey)
+ * 
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public class UnboundPrototypeComponentProviderStrategy implements ComponentProviderStrategy {
 

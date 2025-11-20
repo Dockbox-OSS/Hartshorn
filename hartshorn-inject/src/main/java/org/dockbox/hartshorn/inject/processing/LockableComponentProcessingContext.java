@@ -30,8 +30,9 @@ import org.dockbox.hartshorn.util.IllegalModificationException;
  *
  * @param <T> the type of the component being processed
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class LockableComponentProcessingContext<T> extends ComponentProcessingContext<T> {
 

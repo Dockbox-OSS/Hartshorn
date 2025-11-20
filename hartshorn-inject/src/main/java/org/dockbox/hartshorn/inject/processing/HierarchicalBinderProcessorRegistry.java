@@ -26,9 +26,11 @@ import org.dockbox.hartshorn.util.option.Option;
  * by {@link ComponentProvider}s to track and manage post processors that apply to instance provided
  * by the provider.
  *
- * @author Guus Lieben
  * @see HierarchicalBinderPostProcessor
+ *
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface HierarchicalBinderProcessorRegistry {
 

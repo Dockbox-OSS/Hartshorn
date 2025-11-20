@@ -37,8 +37,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * specific converter will be used. In all cases, if multiple converters are found, it is expected
  * that they implement {@link ConditionalConverter} to narrow the match.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class GenericConverters implements ConverterCache {
 

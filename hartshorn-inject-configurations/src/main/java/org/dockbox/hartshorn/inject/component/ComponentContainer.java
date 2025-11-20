@@ -27,9 +27,11 @@ import java.util.Comparator;
  *
  * @param <T> the type of the component
  *
- * @author Guus Lieben
  * @see ComponentRegistry
+ * 
  * @since 0.4.1
+ * 
+ * @author Guus Lieben
  */
 public interface ComponentContainer<T> {
 

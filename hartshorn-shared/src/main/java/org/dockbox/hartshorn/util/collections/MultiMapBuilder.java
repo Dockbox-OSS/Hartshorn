@@ -34,8 +34,9 @@ import java.util.function.Supplier;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class MultiMapBuilder<K, V> {
 

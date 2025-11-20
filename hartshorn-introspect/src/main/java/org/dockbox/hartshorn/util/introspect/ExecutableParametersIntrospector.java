@@ -26,8 +26,9 @@ import java.util.List;
 /**
  * Provides information about the parameters of a method or constructor.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public interface ExecutableParametersIntrospector {
 

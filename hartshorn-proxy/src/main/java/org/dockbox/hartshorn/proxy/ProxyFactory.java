@@ -80,17 +80,30 @@ import java.util.function.Consumer;
  * <pre>{@code
  * public class UserMethodExecutionLogger implements MethodWrapper<User> {
  *     @Override
- *     public void acceptBefore(MethodView<?, User> method, User instance, Object[] args) {
+ *     public void acceptBefore(
+ *          MethodView<?, User> method,
+ *          User instance,
+ *          Object[] args
+ *     ) {
  *         System.out.println("Before method!");
  *     }
  *
  *     @Override
- *     public void acceptAfter(MethodView<?, User> method, User instance, Object[] args) {
+ *     public void acceptAfter(
+ *          MethodView<?, User> method,
+ *          User instance,
+ *          Object[] args
+ *     ) {
  *         System.out.println("After method!");
  *     }
  *
  *     @Override
- *     public void acceptError(MethodView<?, User> method, User instance, Object[] args, Throwable error) {
+ *     public void acceptError(
+ *          MethodView<?, User> method,
+ *          User instance,
+ *          Object[] args,
+ *          Throwable error
+ *     ) {
  *         System.out.println("Method caused an exception: " + error.getMessage());
  *     }
  * }
@@ -109,13 +122,15 @@ import java.util.function.Consumer;
  * }</pre>
  *
  * <p><b>Delegation</b>
- * <p>Like interception, delegation replaces the implementation of a proxy object. However, it does not carry the proxy's
- * context down to the implementation. Instead, it redirects the method call to another object. Delegation knows two different
- * delegate types; original instance, and backing implementations.
+ * <p>Like interception, delegation replaces the implementation of a proxy object. However, it does
+ * not carry the proxy's context down to the implementation. Instead, it redirects the method call
+ * to another object. Delegation knows two different delegate types; original instance, and backing
+ * implementations.
  *
  * <p><b>Original instance delegation</b>
- * <p>Original instance delegation indicates that the delegate is of the exact same type as the proxy type, or a sub-type of that
- * type. This allows all functionality to be delegated to this instance.
+ * <p>Original instance delegation indicates that the delegate is of the exact same type as the
+ * proxy type, or a sub-type of that type. This allows all functionality to be delegated to this
+ * instance.
  *
  * <pre>{@code
  * public interface User {
@@ -136,8 +151,9 @@ import java.util.function.Consumer;
  * }</pre>
  *
  * <p><b>Backing implementation delegation</b>
- * <p>Backing implementations follow the opposite rule of original instance delegation. Instead of requiring the exact type or a subtype to
- * be implemented, backing implementations delegate the behavior of a given parent of the type. This allows types like {@code JpaRepository}
+ * <p>Backing implementations follow the opposite rule of original instance delegation. Instead of
+ * requiring the exact type or a subtype to be implemented, backing implementations delegate the
+ * behavior of a given parent of the type. This allows types like {@code JpaRepository}
  * implementations to specifically delegate to e.g. {@code HibernateJpaRepository}.
  *
  * <pre>{@code
@@ -155,12 +171,17 @@ import java.util.function.Consumer;
  * StateAwareProxyFactory<User, ?> factory = applicationManager.factory(User.class);
  * factory.delegate(ContextCarrier.class, new ConcreteContextCarrier());
  * User user = factory.proxy().get();
- * user.applicationContext(); // Returns a valid application context
- * user.greeting(); // Yields an exception as no implementation is assigned and the method is abstract
+ *
+ * // Returns a valid application context
+ * user.applicationContext();
+ *
+ * // Yields an exception as no implementation is assigned and the method is abstract
+ * user.greeting();
  * }</pre>
  *
- * <p>However, it is not unlikely a delegate returns itself in chained method calls. To avoid leaking the delegate, method handles always check if
- * the returned object is the delegate, and will replace it with the proxy instance if it is so.
+ * <p>However, it is not unlikely a delegate returns itself in chained method calls. To avoid
+ * leaking the delegate, method handles always check if the returned object is the delegate, and
+ * will replace it with the proxy instance if it is so.
  *
  * <pre>{@code
  * public interface Returner {
@@ -185,8 +206,9 @@ import java.util.function.Consumer;
  *
  * @param <T> The type of the proxy
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public interface ProxyFactory<T> {
 

@@ -58,7 +58,7 @@ public class ScopeAwareHierarchicalBinder extends SimpleHierarchicalBinder {
         // Strict, so new hierarchies are created if needed, rather than using fuzzy search
         ComponentKey<C> componentKey = ComponentKey.builder(type)
             .strict()
-            .scope(this.scope) // No explicit scope provided, so expected to use the current scope instead
+            .scope(this.scope) // No explicit scope provided, so expected to use the current scope
             .build();
         return this.bind(componentKey);
     }
@@ -67,9 +67,11 @@ public class ScopeAwareHierarchicalBinder extends SimpleHierarchicalBinder {
     protected <C> AliasBindingFunction<C> bind(Scope scope, ComponentKey<C> key) {
         if (scope != this.scope() && scope != this.applicationScope()) {
             throw new IllegalArgumentException(
-                "Cannot bind to a different scope. Expected %s, got %s for key %s".formatted(this.scope(),
+                "Cannot bind to a different scope. Expected %s, got %s for key %s".formatted(
+                    this.scope(),
                     scope,
-                    key));
+                    key
+                ));
         }
         return super.bind(this.scope(), key);
     }

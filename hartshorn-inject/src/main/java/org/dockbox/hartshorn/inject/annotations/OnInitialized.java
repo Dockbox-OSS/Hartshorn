@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
  * applicable {@link ComponentPostProcessor}s The method may have any parameters which match
  * injectable components that can be provided through the current {@link ComponentProvider}.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

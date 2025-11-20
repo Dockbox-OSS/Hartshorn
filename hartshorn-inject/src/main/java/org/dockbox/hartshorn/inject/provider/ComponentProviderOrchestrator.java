@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.inject.scope.Scope;
  * within various scopes. Alongside additional scopes, there is always a global scope available, for
  * which the provider is exposed through {@link #applicationProvider()}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ComponentProviderOrchestrator extends PostProcessingComponentProvider {
 

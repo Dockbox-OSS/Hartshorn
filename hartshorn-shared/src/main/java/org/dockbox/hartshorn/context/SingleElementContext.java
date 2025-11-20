@@ -25,8 +25,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param <I> the type of the input object
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface SingleElementContext<I> extends Context {
 

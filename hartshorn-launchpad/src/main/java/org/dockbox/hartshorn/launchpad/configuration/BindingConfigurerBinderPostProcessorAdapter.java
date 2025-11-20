@@ -29,9 +29,11 @@ import org.dockbox.hartshorn.inject.scope.Scope;
  *
  * @param configurer the {@link DefaultBindingConfigurer} to use for configuration
  *
- * @author Guus Lieben
  * @see DefaultBindingConfigurer
+ * 
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public record BindingConfigurerBinderPostProcessorAdapter(
     DefaultBindingConfigurer configurer

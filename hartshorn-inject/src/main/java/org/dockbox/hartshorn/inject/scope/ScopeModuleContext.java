@@ -35,8 +35,9 @@ import java.util.function.Supplier;
  * based on their scope keys, allowing them to be re-used for different instances of the same
  * scope.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ScopeModuleContext extends DefaultContext {
 

@@ -23,8 +23,9 @@ import java.util.Set;
  * A resource lookup is responsible for finding resources based on a given path. This may be a file,
  * a classpath resource or any other type of resource.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ResourceLookup {

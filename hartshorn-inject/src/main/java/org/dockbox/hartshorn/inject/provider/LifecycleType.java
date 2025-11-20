@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.inject.provider;
  * Represents the lifecycle type of a component. This is used to indicate whether a component should
  * be created as a singleton or prototype.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public enum LifecycleType {
     /**

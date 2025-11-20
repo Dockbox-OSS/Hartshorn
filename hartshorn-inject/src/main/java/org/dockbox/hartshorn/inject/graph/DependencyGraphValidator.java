@@ -31,10 +31,12 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
  * validate the graph both before and after the
  * {@link DependencyContext#configure(BindingFunction) dependency configuration phase}.
  *
- * @author Guus Lieben
  * @see DependencyGraph
  * @see DependencyGraphInitializer.Configurer#graphValidator(Customizer)
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public interface DependencyGraphValidator {
 

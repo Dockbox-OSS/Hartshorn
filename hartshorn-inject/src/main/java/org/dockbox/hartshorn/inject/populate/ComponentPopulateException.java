@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  * is being populated with values but the values are not compatible with the component's fields, or
  * a value cannot be resolved.
  *
- * @author Guus Lieben
  * @since 0.4.8
+ * 
+ * @author Guus Lieben
  */
 public class ComponentPopulateException extends ApplicationRuntimeException {
 

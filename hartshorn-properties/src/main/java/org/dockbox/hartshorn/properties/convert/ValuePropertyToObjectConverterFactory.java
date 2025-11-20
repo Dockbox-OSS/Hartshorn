@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * contain a value, {@code null} is returned. Otherwise, the value of the {@link ValueProperty} is
  * converted to the target type.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ValuePropertyToObjectConverterFactory
     implements ConverterFactory<ValueProperty, Object>, ConditionalConverter {

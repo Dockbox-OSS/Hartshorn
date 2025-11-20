@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
  * A lifecycle observer is notified when the application state changes. This can be used to
  * implement application-wide logic that needs to be executed when the application starts or stops.
  *
- * @author Guus Lieben
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public interface LifecycleObserver extends Observer {
     /**

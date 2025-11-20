@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  * Exception to indicate that a component could not be resolved. This can be caused by a number of
  * reasons, such as missing dependencies, invalid constructors, or absent bindings.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ComponentResolutionException extends ApplicationRuntimeException {
 

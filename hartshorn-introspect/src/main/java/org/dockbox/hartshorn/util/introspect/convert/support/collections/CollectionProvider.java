@@ -24,9 +24,11 @@ import java.util.Collection;
  *
  * @param <T> The type of the collection
  *
- * @author Guus Lieben
  * @see CollectionFactory
+ *
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public interface CollectionProvider<T extends Collection<?>> {
 

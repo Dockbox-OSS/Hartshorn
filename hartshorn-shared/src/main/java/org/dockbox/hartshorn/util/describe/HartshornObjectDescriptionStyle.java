@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.util.describe;
  * Standard implementation of {@link ObjectDescriptionStyle} that describes objects in a style
  * similar to standard Java object descriptions.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public final class HartshornObjectDescriptionStyle implements ObjectDescriptionStyle {
 

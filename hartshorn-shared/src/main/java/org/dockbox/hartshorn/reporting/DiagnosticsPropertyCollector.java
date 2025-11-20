@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.reporting;
  * A collector for {@link Reportable} instances. This is used to collect properties of a
  * {@link Reportable} instance.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface DiagnosticsPropertyCollector {

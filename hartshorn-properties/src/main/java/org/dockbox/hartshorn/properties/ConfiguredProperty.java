@@ -25,9 +25,11 @@ import org.dockbox.hartshorn.util.option.Option;
  * {@link PropertyRegistry property registries}, which can be used to retrieve the properties as any
  * supported {@link Property} type.
  *
- * @author Guus Lieben
  * @see Property
+ *
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public interface ConfiguredProperty {
 

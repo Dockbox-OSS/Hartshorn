@@ -31,8 +31,9 @@ import java.util.Set;
  * The default implementation of {@link ClasspathResourceLocator}. This implementation will copy the
  * resource to a temporary location and return the path to the temporary location.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLocator {
 

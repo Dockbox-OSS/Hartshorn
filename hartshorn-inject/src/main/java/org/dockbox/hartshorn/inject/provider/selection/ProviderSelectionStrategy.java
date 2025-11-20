@@ -31,14 +31,16 @@ import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
  * A strategy may only contain state that is provided to it at construction time, like a priority
  * filter.
  *
- * @author Guus Lieben
  * @see MaximumPriorityProviderSelectionStrategy
  * @see MinimumPriorityProviderSelectionStrategy
  * @see HighestPriorityProviderSelectionStrategy
  * @see ExactPriorityProviderSelectionStrategy
  * @see ComponentKey#selectionStrategy()
  * @see ComponentKey.Builder#selectionStrategy(ProviderSelectionStrategy)
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ProviderSelectionStrategy {

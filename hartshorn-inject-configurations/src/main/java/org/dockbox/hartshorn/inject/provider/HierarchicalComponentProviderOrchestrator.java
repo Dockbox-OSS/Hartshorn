@@ -60,8 +60,9 @@ import java.util.function.Function;
  * the full range of features within the Hartshorn framework, including hierarchical binding and
  * aliasing.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class HierarchicalComponentProviderOrchestrator
     extends DefaultFallbackCompatibleContext
@@ -134,7 +135,9 @@ public class HierarchicalComponentProviderOrchestrator
         this.scopedProviders.put(scope, provider);
 
         HierarchicalBinderPostProcessor binderPostProcessor =
-            new CompositeHierarchicalBinderPostProcessor(this.binderProcessorRegistry()::processors);
+            new CompositeHierarchicalBinderPostProcessor(
+                this.binderProcessorRegistry()::processors
+            );
         binderPostProcessor.process(this.application, provider.scope(), provider.binder());
         return provider;
     }
@@ -278,16 +281,19 @@ public class HierarchicalComponentProviderOrchestrator
     /**
      * Configurer for the {@link HierarchicalComponentProviderOrchestrator}.
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer {
 
-        private ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor>
-            componentPostConstructor =
+        // checkstyle:off LineLength
+        private ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor> componentPostConstructor =
             AnnotatedMethodComponentPostConstructor.create(Customizer.useDefaults());
-        private ContextualInitializer<InjectionCapableApplication, BindingAliasNormalizer>
-            bindingAliasNormalizer = ContextualInitializer.of(DefaultBindingAliasNormalizer::new);
+
+        private ContextualInitializer<InjectionCapableApplication, BindingAliasNormalizer> bindingAliasNormalizer =
+            ContextualInitializer.of(DefaultBindingAliasNormalizer::new);
+        // checkstyle:on LineLength
 
         /**
          * Sets the component post constructor to use.
@@ -296,8 +302,12 @@ public class HierarchicalComponentProviderOrchestrator
          *
          * @return this configurer
          */
-        public Configurer componentPostConstructor(ComponentPostConstructor componentPostConstructor) {
-            return this.componentPostConstructor(ContextualInitializer.of(componentPostConstructor));
+        public Configurer componentPostConstructor(
+            ComponentPostConstructor componentPostConstructor
+        ) {
+            return this.componentPostConstructor(
+                ContextualInitializer.of(componentPostConstructor)
+            );
         }
 
         /**
@@ -307,7 +317,10 @@ public class HierarchicalComponentProviderOrchestrator
          *
          * @return this configurer
          */
-        public Configurer componentPostConstructor(ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor> componentPostConstructor) {
+        public Configurer componentPostConstructor(
+            ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor>
+                componentPostConstructor
+        ) {
             this.componentPostConstructor = componentPostConstructor;
             return this;
         }
@@ -330,7 +343,10 @@ public class HierarchicalComponentProviderOrchestrator
          *
          * @return this configurer
          */
-        public Configurer bindingAliasNormalizer(ContextualInitializer<InjectionCapableApplication, BindingAliasNormalizer> bindingAliasNormalizer) {
+        public Configurer bindingAliasNormalizer(
+            ContextualInitializer<InjectionCapableApplication, BindingAliasNormalizer>
+                bindingAliasNormalizer
+        ) {
             this.bindingAliasNormalizer = bindingAliasNormalizer;
             return this;
         }

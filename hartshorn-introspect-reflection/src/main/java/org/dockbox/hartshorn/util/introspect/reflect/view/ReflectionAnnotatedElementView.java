@@ -31,8 +31,9 @@ import java.lang.reflect.AnnotatedElement;
  * backed by a {@link ReflectionElementAnnotationsIntrospector} that is created based on the
  * provided {@link Introspector}.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ * 
+ * @author Guus Lieben
  */
 public abstract class ReflectionAnnotatedElementView extends DefaultContext
     implements AnnotatedElementView, IntrospectorAwareView {

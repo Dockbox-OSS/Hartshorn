@@ -74,13 +74,15 @@ import java.util.function.BiConsumer;
  * configuration will
  * be activated only for the global {@link HierarchicalBinder}, and not for any scoped binders.
  *
- * @author Guus Lieben
  * @see ApplicationContext
  * @see ComponentRegistry
  * @see ComponentProvider
  * @see ApplicationEnvironment
  * @see DelegatingApplicationContext.Configurer
+ *
  * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
 public abstract class DelegatingApplicationContext
     extends DefaultFallbackCompatibleContext
@@ -100,7 +102,9 @@ public abstract class DelegatingApplicationContext
     ) {
         this.environment = initializerContext.input();
 
-        if (this.environment instanceof ModifiableApplicationContextCarrier modifiableApplicationContextCarrier) {
+        if (this.environment instanceof ModifiableApplicationContextCarrier
+            modifiableApplicationContextCarrier
+        ) {
             modifiableApplicationContextCarrier.applicationContext(this);
         }
 
@@ -108,16 +112,18 @@ public abstract class DelegatingApplicationContext
 
         SingleElementContext<ApplicationContext> applicationInitializerContext =
             initializerContext.transform(this);
-        // Expose current context to allow initializers to resolve the application, even if the content of the element context
-        // is not the application itself
+        // Expose current context to allow initializers to resolve the application, even if the
+        // content of the element context is not the application itself
         applicationInitializerContext.addContext(this);
 
-        this.componentProvider =
-            configurer.componentProvider.initialize(applicationInitializerContext.transform(this.environment()
-                .componentRegistry()));
+        this.componentProvider = configurer.componentProvider
+            .initialize(applicationInitializerContext.transform(
+                this.environment().componentRegistry()
+            ));
 
-        DefaultBindingConfigurer bindingConfigurer =
-            configurer.defaultBindings.initialize(applicationInitializerContext);
+        DefaultBindingConfigurer bindingConfigurer = configurer.defaultBindings
+            .initialize(applicationInitializerContext);
+
         this.componentProvider.binderProcessorRegistry()
             .register(new BindingConfigurerBinderPostProcessorAdapter(bindingConfigurer));
     }
@@ -129,7 +135,9 @@ public abstract class DelegatingApplicationContext
      *
      * @param initializerContext the context in which the initialization is taking place
      */
-    protected void prepareInitialization(SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
+    protected void prepareInitialization(
+        SingleElementContext<? extends ApplicationEnvironment> initializerContext
+    ) {
         // Nothing by default
     }
 
@@ -163,7 +171,9 @@ public abstract class DelegatingApplicationContext
 
     @Override
     public ModuleActivatorHolder activators() {
-        return ContextModuleActivatorHolder.of(() -> this.firstContext(ModuleActivatorContext.class));
+        return ContextModuleActivatorHolder.of(() -> {
+            return this.firstContext(ModuleActivatorContext.class);
+        });
     }
 
     @Override
@@ -276,8 +286,9 @@ public abstract class DelegatingApplicationContext
      * configure the various components required by the {@link DelegatingApplicationContext} to
      * function.
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer {
 
@@ -307,7 +318,10 @@ public abstract class DelegatingApplicationContext
          *
          * @return the current instance
          */
-        public Configurer componentProvider(ContextualInitializer<ComponentRegistry, ? extends ComponentProviderOrchestrator> componentProvider) {
+        public Configurer componentProvider(
+            ContextualInitializer<ComponentRegistry, ? extends ComponentProviderOrchestrator>
+                componentProvider
+        ) {
             this.componentProvider = componentProvider;
             return this;
         }
@@ -348,7 +362,10 @@ public abstract class DelegatingApplicationContext
          *
          * @return the current instance
          */
-        public Configurer defaultBindings(ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings) {
+        public Configurer defaultBindings(
+            ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer>
+                defaultBindings
+        ) {
             this.defaultBindings = defaultBindings;
             return this;
         }

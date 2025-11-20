@@ -26,8 +26,9 @@ import org.dockbox.hartshorn.proxy.advice.TypeAdvisorResolver;
  * @param <S> The type of the type being advised
  * @param <T> The type of the proxy instance as defined by the owning {@link AdvisorRegistry}
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface StateAwareTypeAdvisorRegistryStep<S, T>
     extends TypeAdvisorRegistryStep<S, T>, TypeAdvisorResolver<S> {

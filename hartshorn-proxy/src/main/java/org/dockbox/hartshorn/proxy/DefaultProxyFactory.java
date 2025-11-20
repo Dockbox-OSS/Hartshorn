@@ -47,8 +47,9 @@ import java.util.function.Consumer;
  *
  * @param <T> The parent type of the proxy.
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public abstract class DefaultProxyFactory<T>
     implements StateAwareProxyFactory<T>, ValidatorProxyFactory<T> {
@@ -95,7 +96,9 @@ public abstract class DefaultProxyFactory<T>
     }
 
     @Override
-    public StateAwareProxyFactory<T> advisors(Consumer<? super AdvisorRegistry<T>> registryConsumer) {
+    public StateAwareProxyFactory<T> advisors(
+        Consumer<? super AdvisorRegistry<T>> registryConsumer
+    ) {
         registryConsumer.accept(this.advisorRegistry);
         return this;
     }

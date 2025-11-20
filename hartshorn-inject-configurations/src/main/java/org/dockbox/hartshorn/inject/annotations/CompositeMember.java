@@ -52,9 +52,11 @@ import java.lang.annotation.Target;
  * <p>Note that the example consumer above does not consider {@link Strict strictness} of the
  * collection.
  *
- * @author Guus Lieben
  * @see ComponentCollection
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.FIELD})

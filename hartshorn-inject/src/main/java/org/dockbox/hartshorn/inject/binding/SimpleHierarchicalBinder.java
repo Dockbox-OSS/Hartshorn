@@ -33,8 +33,9 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
  * Standard implementation of {@link HierarchicalBinder}, with additional support for aliasing and
  * complex hierarchy lookups. By default, this binder solely supports the global application scope.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class SimpleHierarchicalBinder
     implements HierarchicalAliasCapableBinder, NestedHierarchyLookup {

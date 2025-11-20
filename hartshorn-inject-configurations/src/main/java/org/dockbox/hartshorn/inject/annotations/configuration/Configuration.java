@@ -51,8 +51,9 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
  * }
  * }</pre>
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

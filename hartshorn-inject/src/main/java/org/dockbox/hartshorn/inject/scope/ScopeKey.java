@@ -34,10 +34,12 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
  * factories,
  * but should never allow the final {@link ScopeKey} to be mutable.
  *
- * @author Guus Lieben
  * @see ComponentProvider#scope()
  * @see Scope
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public interface ScopeKey extends Reportable {
 

@@ -29,8 +29,9 @@ import java.util.Set;
  * A {@link JacksonPropertyRegistryLoader} that loads properties from Java properties files. This
  * loader uses a {@link JavaPropsMapper} to read the properties from the file.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class JacksonJavaPropsPropertyRegistryLoader extends JacksonPropertyRegistryLoader {
 

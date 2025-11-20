@@ -72,8 +72,9 @@ import java.lang.reflect.Type;
  * {@link ProxyLookup}. Note that {@link #introspect(Type)} and {@link #introspect(Class)} will
  * return the proxy type, to allow for introspection of proxy types.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ReflectionIntrospector implements BatchCapableIntrospector {
 

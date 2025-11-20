@@ -30,8 +30,9 @@ import java.util.Collection;
  *
  * @param <T> the type to convert the value to
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ValueListPropertyParser<T> implements ListPropertyParser<T> {
 

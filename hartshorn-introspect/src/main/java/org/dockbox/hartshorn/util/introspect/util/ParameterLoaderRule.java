@@ -25,9 +25,11 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <C> the context type
  *
- * @author Guus Lieben
  * @see RuleBasedParameterLoader
+ *
  * @since 0.4.8
+ * 
+ * @author Guus Lieben
  */
 public interface ParameterLoaderRule<C extends ParameterLoaderContext> {
 

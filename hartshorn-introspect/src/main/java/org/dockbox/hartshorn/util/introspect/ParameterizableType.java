@@ -37,12 +37,14 @@ import java.util.stream.Collectors;
  * <p>{@link ParameterizableType}s can be introspected with {@link Introspector introspectors},
  * retaining complete type information.
  *
- * @author Guus Lieben
  * @see TypeView
  * @see Introspector
  * @see ParameterizedType
  * @see ParameterizableParameterizedTypeWrapper
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public final class ParameterizableType implements Reportable {
 
@@ -199,8 +201,9 @@ public final class ParameterizableType implements Reportable {
      * A builder for {@link ParameterizableType}s. This builder allows for the creation of
      * {@link ParameterizableType}s with parameters.
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class Builder {
 

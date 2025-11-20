@@ -25,8 +25,9 @@ package org.dockbox.hartshorn.util.introspect.reflect;
  * @param <T> the type of the field
  * @param <P> the type of the instance
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ReflectiveFieldWriter<T, P> {

@@ -27,8 +27,9 @@ import java.util.concurrent.Callable;
  *
  * @param <T> the return type of the invocation
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface CustomInvocation<T> {

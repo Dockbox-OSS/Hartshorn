@@ -24,9 +24,11 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
  *
  * @param applicationContext the application context to carry
  *
- * @author Guus Lieben
  * @see org.dockbox.hartshorn.launchpad.processing.ContextCarrierDelegationPostProcessor
+ * 
  * @since 0.4.8
+ * 
+ * @author Guus Lieben
  */
 public record ConcreteApplicationContextCarrier(ApplicationContext applicationContext)
     implements ApplicationContextCarrier {

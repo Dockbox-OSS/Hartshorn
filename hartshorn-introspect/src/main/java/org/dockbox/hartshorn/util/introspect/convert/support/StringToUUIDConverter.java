@@ -24,9 +24,11 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 /**
  * Converts a {@link String} to a {@link UUID}.
  *
- * @author Guus Lieben
  * @see UUID#fromString(String)
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class StringToUUIDConverter implements Converter<String, UUID> {
 

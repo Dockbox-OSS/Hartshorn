@@ -37,8 +37,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * resolved directly from the registry. Otherwise, the raw value is resolved and attempted to be
  * converted to the target type.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class InjectPropertyParameterResolver implements InjectParameterResolver {
 

@@ -32,10 +32,12 @@ import org.dockbox.hartshorn.inject.scope.ScopeKey;
  *
  * @param <T> the type of the binding
  *
- * @author Guus Lieben
  * @see ApplicationContext
  * @see BindingFunction
+ * 
  * @since 0.4.11
+ * 
+ * @author Guus Lieben
  */
 public class DelegatingApplicationAliasBindingFunction<T>
     extends DelegatingApplicationBindingFunction<T> implements AliasBindingFunction<T> {
@@ -79,6 +81,8 @@ public class DelegatingApplicationAliasBindingFunction<T>
 
     @Override
     public AliasBindingFunction<T> processAfterInitialization(boolean processAfterInitialization) {
-        return (AliasBindingFunction<T>) super.processAfterInitialization(processAfterInitialization);
+        return (AliasBindingFunction<T>) super.processAfterInitialization(
+            processAfterInitialization
+        );
     }
 }

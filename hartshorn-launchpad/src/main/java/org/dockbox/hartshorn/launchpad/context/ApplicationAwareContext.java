@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
  * A {@link Context} which is aware of the {@link ApplicationContext} it is contained within. This
  * is only a marker interface, and does not provide any additional functionality.
  *
- * @author Guus Lieben
  * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
 public interface ApplicationAwareContext extends Context, ApplicationContextCarrier {
 }

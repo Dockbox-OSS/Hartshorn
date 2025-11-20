@@ -34,11 +34,13 @@ import java.util.stream.Collector.Characteristics;
 /**
  * A utility class for custom collectors which target custom collection types.
  *
- * @author Guus Lieben
  * @see Collector
  * @see MultiMap
  * @see EntryStream
+ *
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public final class CollectorUtilities {
 
@@ -150,9 +152,11 @@ public final class CollectorUtilities {
      * @param <A> the type of the accumulator
      * @param <R> the type of the result
      *
-     * @author Guus Lieben
      * @see Collector
+     *
      * @since 0.7.0
+     *
+     * @author Guus Lieben
      */
     public record RecordCollector<T, A, R>(
         Supplier<A> supplier,

@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.util.describe;
  * A style definition for describing objects. This interface is used by {@link ObjectDescriber} to
  * determine how to describe objects.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public interface ObjectDescriptionStyle {
 

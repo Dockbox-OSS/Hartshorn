@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
  *
  * @param <T> the type of the object instance
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public interface ObjectContainer<T> {
 

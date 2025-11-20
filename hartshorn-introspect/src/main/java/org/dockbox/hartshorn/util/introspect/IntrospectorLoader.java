@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
  * A loader for {@link Introspector} instances. This may be registered to a SPI registry to allow
  * for custom introspectors to be used.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface IntrospectorLoader {

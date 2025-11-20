@@ -28,10 +28,12 @@ import java.util.List;
  * @param <I> the type of the input
  * @param <O> the type of the output
  *
- * @author Guus Lieben
  * @see StreamableConfigurer
  * @see ContextualInitializer
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class LazyStreamableConfigurer<I, O> implements ContextualInitializer<I, List<O>> {
 

@@ -25,8 +25,9 @@ import java.lang.annotation.Target;
  * Configuration annotation for logger types (e.g. {@link org.slf4j.Logger}. This allows for further
  * customization of the logger.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)

@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * beginning of the application's lifecycle, for example to initialize resources, perform
  * configuration, or trigger other startup processes.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ApplicationStarter {

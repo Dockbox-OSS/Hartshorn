@@ -63,8 +63,9 @@ import test.org.dockbox.hartshorn.proxy.support.standard.SealedProxy;
 /**
  * Tests for the default behavior of proxies of various types.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @SuppressWarnings("unchecked")
 public abstract class ProxyTests {
@@ -209,7 +210,8 @@ public abstract class ProxyTests {
 
     @Test
     void testTypesCanBeDelegated() throws ApplicationException {
-        // Use a custom interface for this type of delegation, as the other proxy types override methods from their parent
+        // Use a custom interface for this type of delegation, as the other proxy types override
+        // methods from their parent
         ProxyFactory<NamedAgedProxy> factory =
             this.orchestratorLoader().create(this.introspector()).factory(NamedAgedProxy.class);
         factory.advisors().type(AgedProxy.class).delegate(() -> 12);
@@ -479,8 +481,8 @@ public abstract class ProxyTests {
 
         @SuppressWarnings("unused")
         public DemoServiceD() {
-            // Default constructor for proxying. Note that this is typically handled by providing a constructor to the
-            // proxy factory, but this is a test, so we're not doing that.
+            // Default constructor for proxying. Note that this is typically handled by providing a
+            // constructor to the proxy factory, but this is a test, so we're not doing that.
         }
 
         @Override

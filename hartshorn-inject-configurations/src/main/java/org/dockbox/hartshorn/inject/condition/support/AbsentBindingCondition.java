@@ -30,10 +30,12 @@ import org.dockbox.hartshorn.inject.graph.ConditionalDependencyContextsHolder;
  * A condition that matches when a binding is absent. This does not require an instance of the
  * binding to be present, but only that a binding is defined in a {@link BindingHierarchy}.
  *
- * @author Guus Lieben
  * @see RequiresAbsentBinding
  * @see BindingHierarchy
+ * 
  * @since 0.4.12
+ * 
+ * @author Guus Lieben
  */
 public class AbsentBindingCondition implements Condition {
 
@@ -71,10 +73,14 @@ public class AbsentBindingCondition implements Condition {
         ConditionContext context, ComponentKey<?> key
     ) {
         return contextsHolder.conditionalDependencyContexts().get(key).stream()
-            .filter(conditionalDependencyContext -> !conditionalDependencyContext.dependencyContext()
+            .filter(conditionalDependencyContext -> !conditionalDependencyContext
+                .dependencyContext()
                 .origin()
-                .equals(context.annotatedElement()))
-            .filter(conditionalDependencyContext -> conditionalDependencyContext.conditionsMatched()
-                .test(contextsHolder));
+                .equals(context.annotatedElement())
+            )
+            .filter(conditionalDependencyContext -> conditionalDependencyContext
+                .conditionsMatched()
+                .test(contextsHolder)
+            );
     }
 }

@@ -30,8 +30,9 @@ import java.util.Collection;
  * @param <M> the type of the annotation that is used to identify methods for which interceptors
  * should be applied
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public abstract class AnnotatedMethodInterceptorPostProcessor<M extends Annotation>
     extends MethodInterceptorPostProcessor {
@@ -50,7 +51,9 @@ public abstract class AnnotatedMethodInterceptorPostProcessor<M extends Annotati
     }
 
     @Override
-    protected <T> Collection<MethodView<T, ?>> modifiableMethods(ComponentProcessingContext<T> processingContext) {
+    protected <T> Collection<MethodView<T, ?>> modifiableMethods(
+        ComponentProcessingContext<T> processingContext
+    ) {
         return processingContext.type().methods().annotatedWith(this.annotation());
     }
 }

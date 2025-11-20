@@ -38,8 +38,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @param <C> the context type that is used to provide context to the rules
  *
- * @author Guus Lieben
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implements ParameterLoader {
 
@@ -68,7 +69,9 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implemen
      *
      * @return a new instance of {@link RuleBasedParameterLoader} with the provided context type
      */
-    public static <C extends ParameterLoaderContext> RuleBasedParameterLoader<C> create(Class<C> contextType) {
+    public static <C extends ParameterLoaderContext> RuleBasedParameterLoader<C> create(
+        Class<C> contextType
+    ) {
         return new RuleBasedParameterLoader<>(contextType);
     }
 

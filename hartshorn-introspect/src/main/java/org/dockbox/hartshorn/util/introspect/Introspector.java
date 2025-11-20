@@ -49,8 +49,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * always possible, as some elements may not be accessible to the application. In such cases, the
  * implementation may decide how to proceed.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public interface Introspector extends ReferenceIntrospector {
 

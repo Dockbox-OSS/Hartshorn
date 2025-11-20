@@ -21,8 +21,9 @@ import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
 /**
  * A provider that supports post-processing of components after they have been created.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public interface PostProcessingComponentProvider extends ComponentProvider {
 

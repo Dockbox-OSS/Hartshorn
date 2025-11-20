@@ -19,8 +19,9 @@ package test.org.dockbox.hartshorn.proxy.support.standard;
 /**
  * A simple interface to be used as a target for proxying.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface InterfaceProxyTarget {
 

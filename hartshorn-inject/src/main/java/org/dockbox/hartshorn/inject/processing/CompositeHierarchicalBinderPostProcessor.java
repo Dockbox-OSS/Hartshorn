@@ -31,15 +31,18 @@ import java.util.function.Supplier;
  * ordering may behave differently than expected if the composite is part of a list of processors
  * itself.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public class CompositeHierarchicalBinderPostProcessor implements HierarchicalBinderPostProcessor {
 
     private final Supplier<NavigableMultiMap<Integer, HierarchicalBinderPostProcessor>>
         postProcessors;
 
-    public CompositeHierarchicalBinderPostProcessor(Supplier<NavigableMultiMap<Integer, HierarchicalBinderPostProcessor>> postProcessors) {
+    public CompositeHierarchicalBinderPostProcessor(
+        Supplier<NavigableMultiMap<Integer, HierarchicalBinderPostProcessor>> postProcessors
+    ) {
         this.postProcessors = postProcessors;
     }
 

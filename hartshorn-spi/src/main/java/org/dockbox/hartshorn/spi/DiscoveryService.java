@@ -55,9 +55,11 @@ import java.util.stream.Collectors;
  *
  * <p>Implementations are cached, and will only be released if an override is modified.
  *
- * @author Guus Lieben
  * @see ServiceLoader
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public final class DiscoveryService {
 

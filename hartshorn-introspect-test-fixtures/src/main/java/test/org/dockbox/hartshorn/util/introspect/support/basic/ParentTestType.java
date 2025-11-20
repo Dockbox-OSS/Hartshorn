@@ -21,8 +21,9 @@ import test.org.dockbox.hartshorn.util.introspect.support.annotations.MultipleEl
 /**
  * Parent class for {@link ConcreteTestType}.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @SuppressWarnings("unused")
 public abstract class ParentTestType {

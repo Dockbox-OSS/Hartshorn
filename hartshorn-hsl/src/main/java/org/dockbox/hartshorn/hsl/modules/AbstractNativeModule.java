@@ -100,8 +100,8 @@ public abstract class AbstractNativeModule implements NativeModule {
         }
 
         if (this.supportedFunctions.stream().anyMatch(sf -> {
-            // Method is not yet derived if the function is resolved from a script statement (compared to
-            // a pre-registered external module). In that case, we only check the name.
+            // Method is not yet derived if the function is resolved from a script statement
+            // (compared to a pre-registered external module). In that case, we only check the name.
             if (function.method() == null) {
                 return sf.name().lexeme().equals(function.name().lexeme());
             }

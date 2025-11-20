@@ -21,8 +21,9 @@ package org.dockbox.hartshorn.context;
  * the application. This is the interface for any context which is capable of storing other
  * contexts.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public interface Context extends ContextView {
 

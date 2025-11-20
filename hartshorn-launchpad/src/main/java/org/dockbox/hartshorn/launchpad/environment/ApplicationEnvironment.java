@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
  * The environment of an active application. The environment can only be responsible for one
  * {@link ApplicationContext}, and will never be bound to multiple contexts at the same time.
  *
- * @author Guus Lieben
  * @since 0.4.4
+ *
+ * @author Guus Lieben
  */
 public interface ApplicationEnvironment
     extends ApplicationContextCarrier, ExceptionHandler, ManagedComponentEnvironment {

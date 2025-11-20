@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.inject.QualifierKey;
  * typically only used directly by {@link AliasBindingFunction} implementations, or early in the
  * binding process when a binding is not yet finalized.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface BindingAliasNormalizer {
 

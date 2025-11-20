@@ -37,9 +37,11 @@ import java.util.Set;
  *
  * @param <T> the type of the component
  *
- * @author Guus Lieben
  * @see DependencyContext
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public abstract class AbstractDependencyContext<T> implements DependencyContext<T> {
 
@@ -128,7 +130,9 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
      *
      * @return this context
      */
-    public AbstractDependencyContext<T> processAfterInitialization(boolean processAfterInitialization) {
+    public AbstractDependencyContext<T> processAfterInitialization(
+        boolean processAfterInitialization
+    ) {
         this.processAfterInitialization = processAfterInitialization;
         return this;
     }
@@ -234,12 +238,17 @@ public abstract class AbstractDependencyContext<T> implements DependencyContext<
      * @param <T> the type of the component
      * @param <B> the type of the builder
      *
-     * @author Guus Lieben
      * @see AbstractDependencyContext
      * @see DependencyContext
+     *
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
-    public abstract static class AbstractDependencyContextBuilder<T, B extends AbstractDependencyContextBuilder<T, B>> {
+    public abstract static class AbstractDependencyContextBuilder<
+        T,
+        B extends AbstractDependencyContextBuilder<T, B>
+        > {
 
         private final ComponentKey<T> componentKey;
 

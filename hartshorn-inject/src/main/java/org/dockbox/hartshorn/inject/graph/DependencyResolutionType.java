@@ -24,10 +24,12 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
  * Resolution strategy for dependencies. This can be used to determine how to proceed when a
  * circular dependency is detected.
  *
- * @author Guus Lieben
  * @see DependencyContext#needsImmediateResolution(ComponentKey)
  * @see DependencyContext#dependencies(DependencyResolutionType)
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public enum DependencyResolutionType {
 

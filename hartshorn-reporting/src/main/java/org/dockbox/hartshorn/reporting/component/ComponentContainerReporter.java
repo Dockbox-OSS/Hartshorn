@@ -38,18 +38,28 @@ import org.dockbox.hartshorn.reporting.AnnotationReporter;
  *     <li>Component name, {@link ComponentContainer#name()}</li>
  *     <li>Component lifecycle type, {@link ComponentContainer#lifecycle()}</li>
  *     <li>Component lazy status, {@link ComponentContainer#lazy()}</li>
- *     <li>Whether the component permits proxying, {@link ComponentContainer#permitsProxying()}</li>
- *     <li>Whether the component permits processing, {@link ComponentContainer#permitsProcessing()}</li>
- *     <li>Component stereotype, {@link ComponentDiagnosticsReporter#stereotype(ComponentContainer)}</li>
+ *     <li>
+ *         Whether the component permits proxying, {@link ComponentContainer#permitsProxying()}
+ *     </li>
+ *     <li>
+ *         Whether the component permits processing, {@link ComponentContainer#permitsProcessing()}
+ *     </li>
+ *     <li>
+ *         Component stereotype, {@link ComponentDiagnosticsReporter#stereotype(ComponentContainer)}
+ *     </li>
  *     <li>Conditions that are required for the component to be active</li>
- *     <li>Dependencies of the component. Dependencies are resolved according to the rules defined by the active environment.</li>
+ *     <li>
+ *         Dependencies of the component. Dependencies are resolved according to the rules defined
+ *         by the active environment.
+ *     </li>
  * </ul>
  *
- * <p>Each of these can be enabled or disabled individually, using the {@link ComponentReportingConfiguration} that
- * is provided by this reporter.
+ * <p>Each of these can be enabled or disabled individually, using the
+ * {@link ComponentReportingConfiguration} that is provided by this reporter.
+ *
+ * @since 0.5.0
  *
  * @author Guus Lieben
- * @since 0.5.0
  */
 class ComponentContainerReporter implements Reportable {
 

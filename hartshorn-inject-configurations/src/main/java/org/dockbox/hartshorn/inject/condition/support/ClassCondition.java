@@ -24,10 +24,12 @@ import org.dockbox.hartshorn.inject.condition.ConditionResult;
  * A condition that matches when a class is present on the classpath. Due to the nature of this
  * condition, it is required to provide the class name as a string.
  *
- * @author Guus Lieben
  * @see RequiresClass
  * @see Class#forName(String)
+ * 
  * @since 0.4.12
+ * 
+ * @author Guus Lieben
  */
 public class ClassCondition implements Condition {
 

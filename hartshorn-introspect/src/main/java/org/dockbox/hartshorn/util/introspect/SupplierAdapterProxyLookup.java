@@ -25,8 +25,9 @@ import java.util.function.Supplier;
  * when the {@link ProxyLookup} is not available at the time of construction, but is available at
  * the time of use.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class SupplierAdapterProxyLookup implements ProxyLookup {
 

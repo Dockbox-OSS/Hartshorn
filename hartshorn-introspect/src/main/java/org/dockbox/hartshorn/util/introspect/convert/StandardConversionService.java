@@ -78,8 +78,9 @@ import java.util.UUID;
  *     <li>{@link #registerDefaultProviders(ConverterRegistry, Introspector)}</li>
  * </ul>
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class StandardConversionService implements ConversionService, ConverterRegistry {
 

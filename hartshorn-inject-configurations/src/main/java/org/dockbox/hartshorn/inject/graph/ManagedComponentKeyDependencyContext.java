@@ -28,8 +28,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @param <T> the type of the component
  *
- * @author Guus Lieben
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public final class ManagedComponentKeyDependencyContext<T>
     extends ManagedComponentDependencyContext<T> {
@@ -39,7 +40,9 @@ public final class ManagedComponentKeyDependencyContext<T>
     private final LifecycleType lifecycleType;
     private final boolean lazy;
 
-    private ManagedComponentKeyDependencyContext(ManagedComponentKeyDependencyContextBuilder<T> builder) {
+    private ManagedComponentKeyDependencyContext(
+        ManagedComponentKeyDependencyContextBuilder<T> builder
+    ) {
         super(builder.componentKey, builder.dependencies, builder.constructorView);
         this.type = builder.type;
         this.processAfterInitialization = builder.processAfterInitialization;
@@ -93,8 +96,9 @@ public final class ManagedComponentKeyDependencyContext<T>
      *
      * @param <T> the type of the component
      *
-     * @author Guus Lieben
      * @since 0.6.0
+     *
+     * @author Guus Lieben
      */
     public static final class ManagedComponentKeyDependencyContextBuilder<T> {
 
@@ -122,7 +126,9 @@ public final class ManagedComponentKeyDependencyContext<T>
          *
          * @return the current builder instance
          */
-        public ManagedComponentKeyDependencyContextBuilder<T> processAfterInitialization(boolean processAfterInitialization) {
+        public ManagedComponentKeyDependencyContextBuilder<T> processAfterInitialization(
+            boolean processAfterInitialization
+        ) {
             this.processAfterInitialization = processAfterInitialization;
             return this;
         }
@@ -134,7 +140,9 @@ public final class ManagedComponentKeyDependencyContext<T>
          *
          * @return the current builder instance
          */
-        public ManagedComponentKeyDependencyContextBuilder<T> lifecycleType(LifecycleType lifecycleType) {
+        public ManagedComponentKeyDependencyContextBuilder<T> lifecycleType(
+            LifecycleType lifecycleType
+        ) {
             this.lifecycleType = lifecycleType;
             return this;
         }
@@ -159,7 +167,9 @@ public final class ManagedComponentKeyDependencyContext<T>
          *
          * @return the current builder instance
          */
-        public ManagedComponentKeyDependencyContextBuilder<T> dependencies(DependencyMap dependencies) {
+        public ManagedComponentKeyDependencyContextBuilder<T> dependencies(
+            DependencyMap dependencies
+        ) {
             this.dependencies = dependencies;
             return this;
         }
@@ -172,7 +182,9 @@ public final class ManagedComponentKeyDependencyContext<T>
          *
          * @return the current builder instance
          */
-        public ManagedComponentKeyDependencyContextBuilder<T> constructorView(ConstructorView<? extends T> constructorView) {
+        public ManagedComponentKeyDependencyContextBuilder<T> constructorView(
+            ConstructorView<? extends T> constructorView
+        ) {
             this.constructorView = constructorView;
             return this;
         }

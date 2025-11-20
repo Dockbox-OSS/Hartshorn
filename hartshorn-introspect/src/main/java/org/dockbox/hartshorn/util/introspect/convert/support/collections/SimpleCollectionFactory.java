@@ -43,8 +43,9 @@ import java.util.function.Supplier;
  * possible, and otherwise will attempt to create collections using the default constructor or a
  * constructor with a single int parameter (for capacity).
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @SuppressWarnings("rawtypes")
 public class SimpleCollectionFactory implements CollectionFactory {

@@ -23,8 +23,9 @@ import java.util.List;
 /**
  * Immutable view of a {@link Context}, providing read-only access to the contexts stored within.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public interface ContextView {
 

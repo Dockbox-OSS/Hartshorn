@@ -27,8 +27,9 @@ import java.util.jar.JarFile;
 /**
  * Utility class for IO operations.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public final class IOUtilities {
 

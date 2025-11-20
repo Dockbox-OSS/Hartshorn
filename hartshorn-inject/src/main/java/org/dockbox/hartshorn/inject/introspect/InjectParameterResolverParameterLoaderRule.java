@@ -34,8 +34,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * throws a {@link ComponentRequiredException} if the parameter is required but could not be
  * resolved.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class InjectParameterResolverParameterLoaderRule
     implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {
@@ -58,7 +59,9 @@ public class InjectParameterResolverParameterLoaderRule
             this.createContext(context));
     }
 
-    private PopulateComponentContext<?> createContext(ApplicationBoundParameterLoaderContext context) {
+    private PopulateComponentContext<?> createContext(
+        ApplicationBoundParameterLoaderContext context
+    ) {
         Object instance = context.instance();
         TypeView<?> type = context.executable().declaredBy();
         return new PopulateComponentContext<>(

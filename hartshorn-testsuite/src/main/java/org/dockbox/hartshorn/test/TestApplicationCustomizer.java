@@ -26,8 +26,9 @@ import org.dockbox.hartshorn.launchpad.launch.StandardApplicationContextFactory;
  * practically a composed {@link org.dockbox.hartshorn.util.configure.Customizer} for the various
  * predictable components of the application context.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface TestApplicationCustomizer {
 

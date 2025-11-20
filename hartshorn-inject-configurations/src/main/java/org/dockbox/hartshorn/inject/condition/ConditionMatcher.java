@@ -43,12 +43,14 @@ import java.util.stream.Collectors;
  * a component should be registered, a binding method should be invoked, or an event should be
  * dispatched.
  *
- * @author Guus Lieben
  * @see RequiresCondition
  * @see Condition
  * @see ConditionContext
  * @see ConditionResult
+ *
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public final class ConditionMatcher extends DefaultContext
     implements InjectionApplicationAwareContext {
@@ -201,7 +203,9 @@ public final class ConditionMatcher extends DefaultContext
      *
      * @return a collection of enclosed views, ordered from least to most enclosed
      */
-    private SequencedCollection<AnnotatedElementView> collectEnclosedViews(AnnotatedElementView element) {
+    private SequencedCollection<AnnotatedElementView> collectEnclosedViews(
+        AnnotatedElementView element
+    ) {
         List<AnnotatedElementView> elements = new LinkedList<>();
         elements.add(element);
 

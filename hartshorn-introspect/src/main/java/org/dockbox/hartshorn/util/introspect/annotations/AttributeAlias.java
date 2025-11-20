@@ -45,9 +45,11 @@ import java.lang.annotation.Target;
  * will be the default alias for all annotations in the hierarchy. If you want to alias for a
  * specific annotation, then you can use the {@link AttributeAlias#target()} attribute.
  *
- * @author Guus Lieben
  * @see Extends
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

@@ -31,9 +31,11 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 /**
  * A condition that requires an activator to be present in the {@link ModuleActivatorHolder}.
  *
- * @author Guus Lieben
  * @see ActivatorCondition
+ * 
  * @since 0.4.12
+ * 
+ * @author Guus Lieben
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

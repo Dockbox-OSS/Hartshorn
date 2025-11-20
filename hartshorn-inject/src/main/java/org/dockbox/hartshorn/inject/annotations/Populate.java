@@ -32,8 +32,9 @@ import java.lang.annotation.Target;
  * <p>Population targets can be specified by using the {@link Populate#value()} attribute. By
  * default, nothing is populated. All targets are therefore opt-in when using this annotation.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -49,8 +50,9 @@ public @interface Populate {
     /**
      * Types of elements that can be populated. Used as a value for {@link Populate#value()}.
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     enum Type {
         /**

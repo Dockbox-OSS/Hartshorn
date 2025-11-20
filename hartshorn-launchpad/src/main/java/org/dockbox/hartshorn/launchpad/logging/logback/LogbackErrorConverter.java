@@ -25,8 +25,9 @@ import ch.qos.logback.core.pattern.color.ForegroundCompositeConverterBase;
  * A logback converter that converts the log level to a color. This only affects error output with
  * the {@link Level#ERROR} level.
  *
- * @author Guus Lieben
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public class LogbackErrorConverter extends ForegroundCompositeConverterBase<ILoggingEvent> {
 

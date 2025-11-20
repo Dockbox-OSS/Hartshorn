@@ -29,9 +29,11 @@ import java.util.Set;
  * <p>Injection points typically don't require any filtering in this stage, as the {@link
  * ComponentPopulator} is expected to filter injection points based on available metadata.
  *
- * @author Guus Lieben
  * @see ComponentPopulator
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public interface ComponentInjectionPointsResolver {
 

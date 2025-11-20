@@ -32,10 +32,12 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
  * dependencies of the declarations that were passed to the resolver, but also dependencies of those
  * dependencies.
  *
- * @author Guus Lieben
  * @see DependencyDeclarationContext
  * @see DependencyContext
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface DependencyResolver {

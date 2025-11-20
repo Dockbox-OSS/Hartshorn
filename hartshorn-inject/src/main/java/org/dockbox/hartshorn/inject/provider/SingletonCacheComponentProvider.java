@@ -23,9 +23,11 @@ import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
  * Typically the provider itself should not determine what is a singleton and what is not, but
  * rather any backing {@link InstantiationStrategy} or similar component should indicate this.
  *
- * @author Guus Lieben
  * @see SingletonCache
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public interface SingletonCacheComponentProvider extends ComponentProvider {
 

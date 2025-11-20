@@ -21,9 +21,11 @@ package org.dockbox.hartshorn.launchpad.environment;
  * is respected by the {@link ApplicationEnvironment}, which will set itself as the component's
  * environment when the component is used by the environment.
  *
- * @author Guus Lieben
  * @see ApplicationEnvironment
+ * 
  * @since 0.4.8
+ * 
+ * @author Guus Lieben
  */
 public interface ApplicationManaged {
 

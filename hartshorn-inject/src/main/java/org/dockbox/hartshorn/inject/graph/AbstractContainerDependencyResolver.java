@@ -29,11 +29,13 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
  * {@link #resolveSingle(DependencyDeclarationContext) resolution method}. This method is called for
  * each {@link DependencyDeclarationContext} that is passed to {@link #resolve(Collection)}.
  *
- * @author Guus Lieben
  * @see DependencyResolver
  * @see DependencyDeclarationContext
  * @see DependencyContext
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractContainerDependencyResolver implements DependencyResolver {
 

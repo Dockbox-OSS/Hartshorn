@@ -28,8 +28,9 @@ import java.util.stream.Collectors;
  * This is not allowed as it would make it impossible to determine which binding should be used when
  * resolving the alias.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class AmbiguousAliasException extends ApplicationException {
 

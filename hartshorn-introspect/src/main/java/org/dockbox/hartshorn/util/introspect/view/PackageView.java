@@ -26,8 +26,9 @@ package org.dockbox.hartshorn.util.introspect.view;
  * title, version, and vendor (indicating the owner/maintainer of the specification) of both the
  * specification and implementation are available via this interface.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface PackageView extends AnnotatedElementView {
 

@@ -56,8 +56,9 @@ import java.util.stream.Collectors;
  * Depending on how the {@link DependencyResolver} is configured, this builder can support different
  * types of dependencies, as long as no duplicate contexts are present for the same dependency.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class DependencyGraphBuilder {
 
@@ -126,8 +127,9 @@ public class DependencyGraphBuilder {
         MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> nodes =
             this.computeNodeMap(contexts);
         DependencyGraph graph = new DependencyGraph();
-        // Don't use inflated contexts here, as we want to keep the original context for the graph. If the inflated contexts are relevant,
-        // they've already been attached to the component key of the original context.
+        // Don't use inflated contexts here, as we want to keep the original context for the graph.
+        // If the inflated contexts are relevant, they've already been attached to the component
+        // key of the original context.
         this.buildDependencyNodes(dependencyContexts, nodes, graph);
         return graph;
     }
@@ -159,8 +161,9 @@ public class DependencyGraphBuilder {
             .collect(Collectors.toSet());
     }
 
-    private Set<DependencyContext<?>> inflateDependencyContexts(Iterable<DependencyContext<?>> dependencyContexts)
-        throws DependencyResolutionException {
+    private Set<DependencyContext<?>> inflateDependencyContexts(
+        Iterable<DependencyContext<?>> dependencyContexts
+    ) throws DependencyResolutionException {
         Set<DependencyContext<?>> contexts = new HashSet<>();
         for (DependencyContext<?> dependencyContext : dependencyContexts) {
             contexts.add(dependencyContext);
@@ -181,7 +184,9 @@ public class DependencyGraphBuilder {
     }
 
     @NonNull
-    private <T> Set<DependencyDeclarationContext<?>> getImplementationContexts(DependencyContext<T> dependencyContext) {
+    private <T> Set<DependencyDeclarationContext<?>> getImplementationContexts(
+        DependencyContext<T> dependencyContext
+    ) {
         Set<InstantiationStrategy<? extends T>> strategies =
             this.lookupImplementationProviders(dependencyContext);
         return strategies.stream()
@@ -205,7 +210,8 @@ public class DependencyGraphBuilder {
     ) {
         MutableContainableGraphNode<DependencyContext<?>> node =
             new SimpleGraphNode<>(dependencyContext);
-        if (dependencyContext instanceof ImplementationDependencyContext<?, ?> implementationDependencyContext) {
+        if (dependencyContext instanceof ImplementationDependencyContext<?, ?>
+            implementationDependencyContext) {
             ComponentKey<?> componentKey =
                 implementationDependencyContext.declarationContext().componentKey();
             PriorityComponentKey key =
@@ -271,7 +277,7 @@ public class DependencyGraphBuilder {
                     .mapToInt(node -> node.value().priority())
                     .max()
                     .orElseThrow();
-                for (MutableContainableGraphNode<DependencyContext<?>> componentNode : componentNodes) {
+                for (var componentNode : componentNodes) {
                     if (componentNode.value().priority() == highestPriority) {
                         highestPriorityNodes.add(componentNode);
                     }
@@ -336,7 +342,8 @@ public class DependencyGraphBuilder {
             .map(View::qualifiedName)
             .collect(Collectors.joining(",\n"));
         throw new IllegalStateException(
-            "Multiple nodes found for dependency %s at priority %d in scope %s but not all are collections. Defined by: %s".formatted(
+            ("Multiple nodes found for dependency %s at priority %d in scope %s but not all are "
+                + "collections. Defined by: %s").formatted(
                 dependency,
                 priority,
                 scope.name(),
@@ -345,7 +352,8 @@ public class DependencyGraphBuilder {
     }
 
     @NonNull
-    private static Collection<MutableContainableGraphNode<DependencyContext<?>>> collectDependencyContexts(
+    private static Collection<MutableContainableGraphNode<DependencyContext<?>>>
+    collectDependencyContexts(
         MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> nodes,
         DependencyContext<?> dependencyContext
     ) {
@@ -365,9 +373,8 @@ public class DependencyGraphBuilder {
     }
 
     @NonNull
-    private MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> computeNodeMap(
-        Iterable<DependencyContext<?>> allDependencyContexts
-    ) {
+    private MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>>
+    computeNodeMap(Iterable<DependencyContext<?>> allDependencyContexts) {
         MultiMap<PriorityComponentKey, MutableContainableGraphNode<DependencyContext<?>>> nodes =
             new ArrayListMultiMap<>();
         for (DependencyContext<?> dependencyContext : allDependencyContexts) {

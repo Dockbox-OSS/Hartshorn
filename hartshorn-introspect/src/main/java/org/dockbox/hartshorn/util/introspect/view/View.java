@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.reporting.Reportable;
  * to extract information about the element. Views are also {@link Context}s, which allows for the
  * element to be enhanced with custom data if required.
  *
- * @author Guus Lieben
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public interface View extends Reportable, Context {
 

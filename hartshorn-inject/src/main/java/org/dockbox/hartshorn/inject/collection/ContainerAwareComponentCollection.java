@@ -32,10 +32,12 @@ import org.dockbox.hartshorn.util.collections.AbstractDelegatingCollection;
  *
  * @param <T> the type of the components
  *
- * @author Guus Lieben
  * @see CollectionBindingHierarchy
  * @see CollectionInstantiationStrategy
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ContainerAwareComponentCollection<T> extends AbstractDelegatingCollection<T>
     implements ComponentCollection<T> {

@@ -31,10 +31,12 @@ import java.util.Set;
  *
  * @param <T> the type of the dependency
  *
- * @author Guus Lieben
  * @see AliasableDependencyContext
  * @see ConfigurableDependencyContext
+ * 
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public class AliasableConfigurableDependencyContext<T> extends ConfigurableDependencyContext<T>
     implements AliasableDependencyContext<T> {
@@ -43,7 +45,9 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
     private final Set<ComponentKey<? super T>> aliasKeys;
     private final Set<QualifierKey<T>> aliasQualifiers;
 
-    protected AliasableConfigurableDependencyContext(AliasableConfigurableDependencyContextBuilder<T> builder) {
+    protected AliasableConfigurableDependencyContext(
+        AliasableConfigurableDependencyContextBuilder<T> builder
+    ) {
         super(builder);
         this.aliasTypes = Set.copyOf(builder.aliasTypes);
         this.aliasKeys = Set.copyOf(builder.aliasKeys);
@@ -58,7 +62,9 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
      *
      * @return the builder
      */
-    public static <T> AliasableConfigurableDependencyContextBuilder<T> builder(ComponentKey<T> componentKey) {
+    public static <T> AliasableConfigurableDependencyContextBuilder<T> builder(
+        ComponentKey<T> componentKey
+    ) {
         return new AliasableConfigurableDependencyContextBuilder<>(componentKey);
     }
 
@@ -106,8 +112,9 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
      *
      * @param <T> the type of the component that is auto-configured
      *
-     * @author Guus Lieben
      * @since 0.7.0
+     *
+     * @author Guus Lieben
      */
     public static class AliasableConfigurableDependencyContextBuilder<T>
         extends AutoConfiguringDependencyContextBuilder<T> {
@@ -127,7 +134,9 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
          *
          * @return the builder instance
          */
-        public AliasableConfigurableDependencyContextBuilder<T> aliasType(Class<? super T> aliasType) {
+        public AliasableConfigurableDependencyContextBuilder<T> aliasType(
+            Class<? super T> aliasType
+        ) {
             this.aliasTypes.add(aliasType);
             return this;
         }
@@ -139,7 +148,9 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
          *
          * @return the builder instance
          */
-        public AliasableConfigurableDependencyContextBuilder<T> aliasTypes(Set<Class<? super T>> aliasTypes) {
+        public AliasableConfigurableDependencyContextBuilder<T> aliasTypes(
+            Set<Class<? super T>> aliasTypes
+        ) {
             this.aliasTypes.addAll(aliasTypes);
             return this;
         }
@@ -151,7 +162,9 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
          *
          * @return the builder instance
          */
-        public AliasableConfigurableDependencyContextBuilder<T> aliasKey(ComponentKey<? super T> aliasKey) {
+        public AliasableConfigurableDependencyContextBuilder<T> aliasKey(
+            ComponentKey<? super T> aliasKey
+        ) {
             this.aliasKeys.add(aliasKey);
             return this;
         }
@@ -163,7 +176,9 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
          *
          * @return the builder instance
          */
-        public AliasableConfigurableDependencyContextBuilder<T> aliasKeys(Set<ComponentKey<? super T>> aliasKeys) {
+        public AliasableConfigurableDependencyContextBuilder<T> aliasKeys(
+            Set<ComponentKey<? super T>> aliasKeys
+        ) {
             this.aliasKeys.addAll(aliasKeys);
             return this;
         }
@@ -175,7 +190,9 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
          *
          * @return the builder instance
          */
-        public AliasableConfigurableDependencyContextBuilder<T> aliasQualifier(QualifierKey<T> aliasQualifier) {
+        public AliasableConfigurableDependencyContextBuilder<T> aliasQualifier(
+            QualifierKey<T> aliasQualifier
+        ) {
             this.aliasQualifiers.add(aliasQualifier);
             return this;
         }
@@ -187,7 +204,9 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
          *
          * @return the builder instance
          */
-        public AliasableConfigurableDependencyContextBuilder<T> aliasQualifiers(Set<QualifierKey<T>> aliasQualifiers) {
+        public AliasableConfigurableDependencyContextBuilder<T> aliasQualifiers(
+            Set<QualifierKey<T>> aliasQualifiers
+        ) {
             this.aliasQualifiers.addAll(aliasQualifiers);
             return this;
         }

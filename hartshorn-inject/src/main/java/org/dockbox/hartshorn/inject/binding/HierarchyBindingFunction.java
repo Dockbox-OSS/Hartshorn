@@ -51,7 +51,7 @@ import java.util.function.Function;
  *
  * @see Binder
  * @see BindingHierarchy
- *
+ * 
  * @since 0.4.11
  *
  * @author Guus Lieben
@@ -154,7 +154,8 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
                 + " as the binding is already installed to child scope "
                 + this.scope.installableScopeType().name());
         }
-        // Permitted, as default application scope may be expanded. Defined child scopes can not be expanded, so this is a safe check
+        // Permitted, as default application scope may be expanded. Defined child scopes can not be
+        // expanded, so this is a safe check
         if (!this.moduleContext.isApplicationScope(scopeKey)) {
             this.scope = null;
         }
@@ -178,7 +179,8 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     public Binder to(Class<? extends T> type) {
         if (this.singletonCache.contains(this.hierarchy().key())) {
             throw new IllegalModificationException(
-                "Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(
+                ("Cannot overwrite singleton binding for %s in a hierarchy, "
+                    + "ensure the new binding is a singleton").formatted(
                     this.hierarchy().key()));
         }
         ComponentKey<? extends T> key = this.buildComponentKey(type);
@@ -194,7 +196,8 @@ public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
     public Binder to(CheckedSupplier<T> supplier) {
         if (this.singletonCache.contains(this.hierarchy().key())) {
             throw new IllegalModificationException(
-                "Cannot overwrite singleton binding for %s in a hierarchy, ensure the new binding is a singleton".formatted(
+                ("Cannot overwrite singleton binding for %s in a hierarchy, "
+                    + "ensure the new binding is a singleton").formatted(
                     this.hierarchy().key()));
         }
         return this.add(new SupplierInstantiationStrategy<>(supplier));

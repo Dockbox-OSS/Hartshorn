@@ -30,8 +30,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * Basic implementation of {@link ComponentExecutableInvocationAdapter} using the
  * {@link InjectionCapableApplication} to load parameters.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class InjectorExecutableInvocationAdapter extends DefaultContext
     implements ComponentExecutableInvocationAdapter {
@@ -66,7 +67,9 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext
     }
 
     @Override
-    public ComponentExecutableInvocationAdapter requestContext(ComponentRequestContext componentRequestContext) {
+    public ComponentExecutableInvocationAdapter requestContext(
+        ComponentRequestContext componentRequestContext
+    ) {
         return new InjectorExecutableInvocationAdapter(this, componentRequestContext, this.scope);
     }
 

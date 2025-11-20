@@ -22,8 +22,9 @@ import java.lang.annotation.Annotation;
  * An adapter for {@link Annotation} instances that allows for easy unproxying of annotation
  * proxies.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface AnnotationAdapter {

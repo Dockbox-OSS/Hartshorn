@@ -28,8 +28,9 @@ import java.util.Collection;
  *
  * @param <T> the type of the class that declares the constructor
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public interface ConstructorView<T> extends ExecutableElementView<T>, AnnotatedGenericTypeView<T> {
 

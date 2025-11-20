@@ -36,8 +36,9 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <C> The type of the wrapped {@link BindingHierarchy}.
  *
- * @author Guus Lieben
  * @since 0.4.3
+ *
+ * @author Guus Lieben
  */
 public class SubscribableBindingHierarchy<C>
     implements PrunableBindingHierarchy<C>, AliasableBindingHierarchy<C> {
@@ -155,7 +156,8 @@ public class SubscribableBindingHierarchy<C>
 
     @Override
     public boolean prune(int priority) {
-        if (((BindingHierarchy<C>) this.real()) instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
+        if (((BindingHierarchy<C>) this.real()) instanceof PrunableBindingHierarchy<C>
+            prunableBindingHierarchy) {
             return prunableBindingHierarchy.prune(priority);
         }
         return false;
@@ -163,7 +165,8 @@ public class SubscribableBindingHierarchy<C>
 
     @Override
     public int pruneAbove(int priority) {
-        if (((BindingHierarchy<C>) this.real()) instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
+        if (((BindingHierarchy<C>) this.real()) instanceof PrunableBindingHierarchy<C>
+            prunableBindingHierarchy) {
             return prunableBindingHierarchy.pruneAbove(priority);
         }
         return 0;
@@ -171,7 +174,8 @@ public class SubscribableBindingHierarchy<C>
 
     @Override
     public int pruneBelow(int priority) {
-        if (((BindingHierarchy<C>) this.real()) instanceof PrunableBindingHierarchy<C> prunableBindingHierarchy) {
+        if (((BindingHierarchy<C>) this.real()) instanceof PrunableBindingHierarchy<C>
+            prunableBindingHierarchy) {
             return prunableBindingHierarchy.pruneBelow(priority);
         }
         return 0;

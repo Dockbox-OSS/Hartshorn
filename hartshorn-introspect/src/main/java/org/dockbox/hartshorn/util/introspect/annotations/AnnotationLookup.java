@@ -30,9 +30,11 @@ import java.util.SequencedSet;
  * commonly used for component stereotypes, where a stereotype is defined as an annotation that
  * extends another annotation.
  *
- * @author Guus Lieben
  * @see Extends
+ *
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public interface AnnotationLookup {
 

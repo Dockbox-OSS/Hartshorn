@@ -31,9 +31,11 @@ import org.dockbox.hartshorn.util.option.Option;
  * {@link DependencyResolutionType}. If multiple dependencies are defined for the same resolution
  * type, they are all added to the same collection.
  *
- * @author Guus Lieben
  * @see DependencyResolutionType
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public final class DependencyMap
     extends StandardMultiMap<DependencyResolutionType, ComponentKey<?>> {

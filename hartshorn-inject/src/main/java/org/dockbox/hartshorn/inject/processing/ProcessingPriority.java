@@ -24,8 +24,9 @@ package org.dockbox.hartshorn.inject.processing;
  * <p>These constants are commonly used in {@link ComponentPreProcessor} and
  * {@link ComponentPostProcessor} implementations.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ProcessingPriority {
 

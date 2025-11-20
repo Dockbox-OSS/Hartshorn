@@ -36,8 +36,9 @@ import java.util.Set;
  * hierarchy of a base type, and resolve the input type parameters for a given parent type, even if
  * the concrete types are scattered across multiple levels of the hierarchy.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class TypeParameterResolver {
 
@@ -103,14 +104,16 @@ public class TypeParameterResolver {
                 + roots.size());
         }
         GraphNode<TypeView<?>> root = CollectionUtilities.first(roots);
-        // Compare type, not view, as the view is likely parameterized and thus a different non-equal instance
+        // Compare type, not view, as the view is likely parameterized and thus a different
+        // non-equal instance
         if (root.value().type() != parent.type()) {
             throw new TypeParameterResolutionException("Expected root node to be " + parent.type()
                 .getName() + ", found " + root.value().type().getName());
         }
 
         this.visit(root, parameters);
-        // Do not use List.of, as it will throw an exception if the array contains nulls (unresolved parameters)
+        // Do not use List.of, as it will throw an exception if the array contains nulls
+        // (unresolved parameters)
         return Arrays.asList(parameters);
     }
 
@@ -132,21 +135,23 @@ public class TypeParameterResolver {
         Class<?> type = typeView.type();
         Set<GraphNode<TypeView<?>>> children = node.children();
 
-        // If no definition exists, and we're at the end of the hierarchy, we can only attempt to resolve the
-        // parameter from the generic parent.
+        // If no definition exists, and we're at the end of the hierarchy, we can only attempt to
+        // resolve the parameter from the generic parent.
         if (children.isEmpty() && parameter.definition().absent()) {
-            // Only attempt to resolve from the generic parent if the type is parameterized, and it is actually
-            // the parent of the type we're currently at.
+            // Only attempt to resolve from the generic parent if the type is parameterized, and it
+            // is actually the parent of the type we're currently at.
             if (typeView.isParameterized() && parameter.declaredBy().is(typeView.type())) {
                 return this.resolveFromGenericParent(parameter, typeView);
             }
         }
         else {
-            // Definition is available, so we can resolve the parameter from the type definition. This may still be
-            // a type variable, but we can recursively resolve it further down the hierarchy.
+            // Definition is available, so we can resolve the parameter from the type definition.
+            // This may still be a type variable, but we can recursively resolve it further down
+            // the hierarchy.
             return this.resolveFromTypeDefinition(index, type, children);
         }
-        // If we reach this point, it means we couldn't resolve the parameter by any means, so we return null.
+        // If we reach this point, it means we couldn't resolve the parameter by any means, so we
+        // return null.
         return null;
     }
 
@@ -172,7 +177,8 @@ public class TypeParameterResolver {
     ) {
         for (GraphNode<TypeView<?>> child : children) {
             TypeParameterList outputParameters = child.value().typeParameters().outputFor(type);
-            // If there are no output parameters for the given type, we don't have anything to resolve for this child.
+            // If there are no output parameters for the given type, we don't have anything to
+            // resolve for this child.
             if (outputParameters.isEmpty()) {
                 continue;
             }
@@ -184,7 +190,8 @@ public class TypeParameterResolver {
                     return parameterView;
                 }
                 else {
-                    // If the parameter is a variable, we need to resolve it further down the hierarchy.
+                    // If the parameter is a variable, we need to resolve it further down the
+                    // hierarchy.
                     Option<TypeParameterView> definition = parameterView.definition();
                     if (definition.present()) {
                         TypeParameterView resolved = this.resolveParameter(child, definition.get());
@@ -195,12 +202,13 @@ public class TypeParameterResolver {
                 }
             }
         }
-        // No definition found for the parameter at the given index, return null. This typically indicates there's
-        // no non-variable type parameter defined for the given index, anywhere in the hierarchy.
-        // This is not an error, as the type parameter may simply not be defined for the given type. However, it also
-        // means we cannot assume a concrete type for the parameter. In simple cases, there'd only be one variable in
-        // the hierarchy, but in more complex cases, there may be overlapping type parameters at different parallel
-        // levels.
+        // No definition found for the parameter at the given index, return null. This typically
+        // indicates there's no non-variable type parameter defined for the given index, anywhere
+        // in the hierarchy.
+        // This is not an error, as the type parameter may simply not be defined for the given type.
+        // However, it also means we cannot assume a concrete type for the parameter. In simple
+        // cases, there'd only be one variable in the hierarchy, but in more complex cases, there
+        // may be overlapping type parameters at different parallel levels.
         return null;
     }
 }

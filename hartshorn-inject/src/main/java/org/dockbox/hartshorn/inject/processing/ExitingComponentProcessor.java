@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
  * A component processor that allows invoking a method when processing of managed components has
  * completed, and the application is about to release.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  * @deprecated Due to the limitation of this interface only applying to managed components, and its
  * inherent coupling to the application lifecycle, this interface is deprecated and will be removed
  * in a future version.

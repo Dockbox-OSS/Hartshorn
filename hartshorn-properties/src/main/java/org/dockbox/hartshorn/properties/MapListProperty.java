@@ -29,8 +29,9 @@ import java.util.Map;
  * A {@link MapListProperty} is a {@link AbstractMapProperty} that represents a list of properties.
  * The keys of the properties are formatted indexes.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class MapListProperty extends AbstractMapProperty<Integer> implements ListProperty {
 

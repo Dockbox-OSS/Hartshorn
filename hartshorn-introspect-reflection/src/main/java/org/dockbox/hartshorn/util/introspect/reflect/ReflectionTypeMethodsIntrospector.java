@@ -37,8 +37,9 @@ import java.util.stream.Collectors;
  *
  * @param <T> the type for which methods are introspected
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ReflectionTypeMethodsIntrospector<T> implements TypeMethodsIntrospector<T> {
 
@@ -94,8 +95,9 @@ public class ReflectionTypeMethodsIntrospector<T> implements TypeMethodsIntrospe
     @Override
     public Option<MethodView<T, ?>> named(String name, Collection<Class<?>> parameterTypes) {
         if (this.methods == null) {
-            // Organizing the methods by name and arguments isn't worth the additional overhead for list comparisons,
-            // so instead we only link it by name and perform the list comparison on request.
+            // Organizing the methods by name and arguments isn't worth the additional overhead for
+            // list comparisons, so instead we only link it by name and perform the list comparison
+            // on request.
             this.methods = new SynchronizedArrayListMultiMap<>();
             for (MethodView<T, ?> method : this.all()) {
                 this.methods.put(method.name(), method);

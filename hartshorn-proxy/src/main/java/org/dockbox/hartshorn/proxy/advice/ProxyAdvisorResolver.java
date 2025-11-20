@@ -33,8 +33,9 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of the proxy instance
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ProxyAdvisorResolver<T> {
 

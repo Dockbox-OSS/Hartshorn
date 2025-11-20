@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
  *
  * @param resolvers The resolvers to combine
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public record CompositeBindingDependencyResolver(
     Set<BindingDeclarationDependencyResolver> resolvers)

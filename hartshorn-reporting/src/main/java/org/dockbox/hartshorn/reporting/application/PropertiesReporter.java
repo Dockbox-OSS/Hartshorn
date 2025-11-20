@@ -27,9 +27,11 @@ import org.dockbox.hartshorn.reporting.Reportable;
  * properties are used as property names, and the values of the properties are used as property
  * values.
  *
- * @author Guus Lieben
  * @see Properties
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class PropertiesReporter implements Reportable {
 

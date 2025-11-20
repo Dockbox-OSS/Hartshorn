@@ -31,10 +31,12 @@ import org.dockbox.hartshorn.util.ApplicationException;
  *
  * <p>Strategies are expected to be stateless, and may be reused for multiple injection points.
  *
- * @author Guus Lieben
  * @see StrategyComponentPopulator
  * @see PopulateComponentContext
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public interface ComponentPopulationStrategy {
 

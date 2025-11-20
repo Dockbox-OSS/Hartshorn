@@ -40,8 +40,9 @@ import java.util.stream.Collectors;
  *
  * @param <T> the type of the key used to access the map
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractMapProperty<T> {
 

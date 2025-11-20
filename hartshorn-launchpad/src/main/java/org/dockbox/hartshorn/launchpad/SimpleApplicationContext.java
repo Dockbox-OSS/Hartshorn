@@ -120,8 +120,12 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
 
     private void initializePostProcessors() {
         ComponentProcessorRegistry registry = this.componentProvider().processorRegistry();
-        for (Class<? extends ComponentPostProcessor> uninitializedPostProcessor : registry.uninitializedPostProcessors()) {
-            ComponentPostProcessor processor = this.componentProvider().get(uninitializedPostProcessor);
+        for (
+            Class<? extends ComponentPostProcessor> uninitializedPostProcessor
+            : registry.uninitializedPostProcessors()
+        ) {
+            ComponentPostProcessor processor =
+                this.componentProvider().get(uninitializedPostProcessor);
             registry.register(processor);
         }
     }
@@ -195,11 +199,15 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
         private ContextualInitializer<ApplicationContext, ? extends DependencyGraphInitializer> dependencyGraphInitializer = ContextualInitializer.defer(() -> {
             return DependencyGraphInitializer.create(graph -> {
                 // Support @Binds methods
-                graph.dependencyResolver(ApplicationDependencyResolver.create(Customizer.useDefaults()));
+                graph.dependencyResolver(
+                    ApplicationDependencyResolver.create(Customizer.useDefaults())
+                );
 
                 // If context is processable, ensure processors are registered as components
                 graph.dependencyVisitor(ContextualInitializer.of(context -> {
-                    if (context instanceof ProcessableApplicationContext processableApplicationContext) {
+                    if (context instanceof ProcessableApplicationContext
+                        processableApplicationContext
+                    ) {
                         return new DelegatingConfigurationDependencyVisitor(
                                 context.defaultBinder(),
                                 context.defaultProvider(),
@@ -217,8 +225,12 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
          * @param dependencyGraphInitializer the dependency graph initializer
          * @return the current instance
          */
-        public Configurer dependencyGraphInitializer(DependencyGraphInitializer dependencyGraphInitializer) {
-            return this.dependencyGraphInitializer(ContextualInitializer.of(dependencyGraphInitializer));
+        public Configurer dependencyGraphInitializer(
+            DependencyGraphInitializer dependencyGraphInitializer
+        ) {
+            return this.dependencyGraphInitializer(
+                ContextualInitializer.of(dependencyGraphInitializer)
+            );
         }
 
         /**
@@ -227,7 +239,10 @@ public class SimpleApplicationContext extends DelegatingApplicationContext {
          * @param dependencyGraphInitializer the initializer of the dependency graph initializer
          * @return the current instance
          */
-        public Configurer dependencyGraphInitializer(ContextualInitializer<ApplicationContext, DependencyGraphInitializer> dependencyGraphInitializer) {
+        public Configurer dependencyGraphInitializer(
+            ContextualInitializer<ApplicationContext, DependencyGraphInitializer>
+                dependencyGraphInitializer
+        ) {
             this.dependencyGraphInitializer = dependencyGraphInitializer;
             return this;
         }

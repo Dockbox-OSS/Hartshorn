@@ -30,8 +30,9 @@ import java.util.concurrent.Callable;
  * @param <T> the type of the proxy object
  * @param <R> the return type of the method
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public final class MethodInterceptorContext<T, R> extends DefaultContext {
 

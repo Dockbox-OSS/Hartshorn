@@ -27,8 +27,9 @@ import java.util.Set;
 /**
  * A converter which converts any object to 'void', returning {@code null} as the result.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ObjectToVoidConverter implements GenericConverter, ConditionalConverter {
 

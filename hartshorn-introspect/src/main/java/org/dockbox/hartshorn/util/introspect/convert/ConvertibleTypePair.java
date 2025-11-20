@@ -22,9 +22,11 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * @param sourceType the source type
  * @param targetType the target type
  *
- * @author Guus Lieben
  * @see GenericConverter#convertibleTypes()
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public record ConvertibleTypePair(Class<?> sourceType, Class<?> targetType) {
 

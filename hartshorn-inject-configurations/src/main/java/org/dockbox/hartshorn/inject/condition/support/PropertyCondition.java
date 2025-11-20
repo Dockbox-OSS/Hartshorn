@@ -28,10 +28,12 @@ import org.dockbox.hartshorn.util.option.Option;
  * configured value. If the property is not present, the condition will check if the
  * {@link RequiresProperty#matchIfMissing()} is set to {@code true}.
  *
- * @author Guus Lieben
  * @see RequiresProperty
  * @see Condition
+ * 
  * @since 0.4.12
+ * 
+ * @author Guus Lieben
  */
 public class PropertyCondition implements Condition {
 

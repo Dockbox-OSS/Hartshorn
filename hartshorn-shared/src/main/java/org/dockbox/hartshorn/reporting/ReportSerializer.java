@@ -22,8 +22,9 @@ package org.dockbox.hartshorn.reporting;
  *
  * @param <T> the type of the serialized report
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ReportSerializer<T> {

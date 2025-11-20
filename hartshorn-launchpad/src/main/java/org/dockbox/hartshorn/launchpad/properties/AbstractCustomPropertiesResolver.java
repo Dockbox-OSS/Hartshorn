@@ -29,13 +29,16 @@ import java.util.stream.Collectors;
 /**
  * Abstract base class for resolving custom properties.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractCustomPropertiesResolver implements CustomPropertiesResolver {
 
     @Override
-    public Properties resolveProperties(SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
+    public Properties resolveProperties(
+        SingleElementContext<? extends ApplicationEnvironment> initializerContext
+    ) {
         Properties properties = new Properties();
         String propertyString = this.resolveStringProperties(initializerContext).stream()
             .filter(StringUtilities::notEmpty)
@@ -64,5 +67,7 @@ public abstract class AbstractCustomPropertiesResolver implements CustomProperti
      *
      * @return a list of string properties
      */
-    protected abstract List<String> resolveStringProperties(SingleElementContext<? extends ApplicationEnvironment> initializerContext);
+    protected abstract List<String> resolveStringProperties(
+        SingleElementContext<? extends ApplicationEnvironment> initializerContext
+    );
 }

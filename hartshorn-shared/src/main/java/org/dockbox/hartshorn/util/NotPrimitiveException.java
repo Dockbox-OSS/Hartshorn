@@ -19,8 +19,9 @@ package org.dockbox.hartshorn.util;
 /**
  * Thrown when a primitive type is expected but the given type is not a primitive type.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public class NotPrimitiveException extends ApplicationRuntimeException {
 

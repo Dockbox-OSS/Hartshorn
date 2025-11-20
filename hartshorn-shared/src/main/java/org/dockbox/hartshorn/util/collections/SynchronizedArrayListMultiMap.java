@@ -26,8 +26,9 @@ import java.util.Collection;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @author Guus Lieben
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class SynchronizedArrayListMultiMap<K, V> extends SynchronizedMultiMap<K, V> {
 

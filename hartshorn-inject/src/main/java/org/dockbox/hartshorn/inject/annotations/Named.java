@@ -24,9 +24,11 @@ import java.lang.annotation.Target;
 /**
  * Standard string qualifier annotation.
  *
- * @author Guus Lieben
  * @see Qualifier
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({

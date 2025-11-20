@@ -32,8 +32,9 @@ import org.dockbox.hartshorn.reporting.Reportable;
  *     <li>IEC: 1024 bytes = 1KiB</li>
  * </ul>
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class MemoryUsageDiagnosticsReporter implements Reportable {
 

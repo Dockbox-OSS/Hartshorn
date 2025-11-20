@@ -39,16 +39,20 @@ import java.util.Set;
  * the {@link Populate} annotation on the component type. If no {@link Populate} annotation is
  * present, all injection points will be resolved.
  *
- * @author Guus Lieben
  * @see Populate
  * @see ComponentInjectionPoint
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectionPointsResolver {
 
     private final Set<Class<? extends Annotation>> injectAnnotations;
 
-    public MethodsAndFieldsInjectionPointResolver(Set<Class<? extends Annotation>> injectAnnotations) {
+    public MethodsAndFieldsInjectionPointResolver(
+        Set<Class<? extends Annotation>> injectAnnotations
+    ) {
         this.injectAnnotations = injectAnnotations;
     }
 
@@ -89,9 +93,8 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
      *
      * @return A contextual initializer for the resolver
      */
-    public static ContextualInitializer<InjectorEnvironment, ComponentInjectionPointsResolver> create(
-        Customizer<Configurer> customizer
-    ) {
+    public static ContextualInitializer<InjectorEnvironment, ComponentInjectionPointsResolver>
+    create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -106,8 +109,9 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
      * A configurer for the {@link MethodsAndFieldsInjectionPointResolver}, that allows for the
      * configuration of supported annotations.
      *
-     * @author Guus Lieben
      * @since 0.6.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer {
 
@@ -149,7 +153,10 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
          *
          * @return The current configurer, for chaining
          */
-        public Configurer annotations(Customizer<StreamableConfigurer<InjectorEnvironment, Class<? extends Annotation>>> customizer) {
+        public Configurer annotations(
+            Customizer<StreamableConfigurer<InjectorEnvironment, Class<? extends Annotation>>>
+                customizer
+        ) {
             this.annotations.customizer(customizer);
             return this;
         }

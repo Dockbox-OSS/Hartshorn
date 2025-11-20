@@ -28,8 +28,9 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> the type of the component being instantiated
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface PrototypeInstantiationStrategy<T> extends NonTypeAwareInstantiationStrategy<T> {

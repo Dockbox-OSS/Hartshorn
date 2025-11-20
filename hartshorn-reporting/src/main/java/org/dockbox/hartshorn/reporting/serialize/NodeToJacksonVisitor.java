@@ -32,8 +32,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * A {@link NodeVisitor} which converts a {@link Node} to a {@link JsonNode}. This is useful for
  * serialization using Jackson.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 class NodeToJacksonVisitor implements NodeVisitor<JsonNode> {
 

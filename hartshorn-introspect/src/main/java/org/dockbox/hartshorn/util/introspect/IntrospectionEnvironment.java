@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.util.introspect;
  * An interface that defines the environment in which introspection is performed. This is used to
  * determine whether certain information is available, such as parameter names.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface IntrospectionEnvironment {
 
@@ -30,8 +31,8 @@ public interface IntrospectionEnvironment {
      *
      * @return {@code true} if parameter names are available, {@code false} otherwise
      *
-     * @see <a
-     * href="https://docs.oracle.com/javase%2Ftutorial%2F/reflect/member/methodparameterreflection.html">
+     * @see
+     * <a href="https://docs.oracle.com/javase%2Ftutorial%2F/reflect/member/methodparameterreflection.html">
      * Obtaining Names of Method Parameters
      * </a>
      */

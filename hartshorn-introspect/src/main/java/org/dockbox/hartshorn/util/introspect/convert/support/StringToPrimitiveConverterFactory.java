@@ -28,11 +28,13 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * {@link StringToBooleanConverter} and {@link StringToCharacterConverter} for boolean and character
  * types respectively.
  *
- * @author Guus Lieben
  * @see StringToNumberConverterFactory
  * @see StringToBooleanConverter
  * @see StringToCharacterConverter
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class StringToPrimitiveConverterFactory
     implements ConverterFactory<String, Object>, ConditionalConverter {

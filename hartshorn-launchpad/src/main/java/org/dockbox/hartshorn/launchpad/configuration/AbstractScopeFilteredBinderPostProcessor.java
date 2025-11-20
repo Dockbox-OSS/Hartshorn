@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.inject.scope.Scope;
  * A {@link HierarchicalBinderPostProcessor} that filters the {@link HierarchicalBinder} based on
  * the {@link Scope} of the binder.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public abstract class AbstractScopeFilteredBinderPostProcessor
     implements HierarchicalBinderPostProcessor {

@@ -40,8 +40,9 @@ import java.util.StringJoiner;
  * @param <Parent> The type of the class that the method belongs to
  * @param <ReturnType> The return type of the method
  *
- * @author Guus Lieben
  * @since 0.4.13
+ * 
+ * @author Guus Lieben
  */
 public class ReflectionMethodView<Parent, ReturnType>
     extends ReflectionExecutableElementView<Parent> implements MethodView<Parent, ReturnType> {
@@ -97,8 +98,8 @@ public class ReflectionMethodView<Parent, ReturnType>
     @Override
     public TypeView<ReturnType> genericReturnType() {
         if (this.genericReturnType == null) {
-            this.genericReturnType =
-                (TypeView<ReturnType>) this.introspector.introspect(this.method.getGenericReturnType());
+            this.genericReturnType = (TypeView<ReturnType>)
+                this.introspector.introspect(this.method.getGenericReturnType());
         }
         return this.genericReturnType;
     }

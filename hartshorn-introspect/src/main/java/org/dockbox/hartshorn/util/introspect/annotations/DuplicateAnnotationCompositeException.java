@@ -26,8 +26,9 @@ import java.util.stream.Collectors;
  * Thrown when a duplicate annotation is found on a target. This can happen when an annotation is
  * extended by multiple annotations, and both of those annotations are used on the same target.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class DuplicateAnnotationCompositeException extends ApplicationRuntimeException {
     public DuplicateAnnotationCompositeException(

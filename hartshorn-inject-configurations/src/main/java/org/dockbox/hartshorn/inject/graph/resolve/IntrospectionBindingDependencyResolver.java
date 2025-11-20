@@ -28,9 +28,11 @@ import org.dockbox.hartshorn.inject.ComponentKeyResolver;
  * Resolves dependencies for a binding declaration using a {@link IntrospectionDependencyResolver}
  * to introspect the method and resolve the dependencies.
  *
- * @author Guus Lieben
  * @see IntrospectionDependencyResolver
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public class IntrospectionBindingDependencyResolver
     implements BindingDeclarationDependencyResolver {

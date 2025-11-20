@@ -21,8 +21,9 @@ package org.dockbox.hartshorn.proxy;
  * generated based on the type context or the type name. The way the name is generated is based on
  * the implementation of the {@link NameGenerator} interface.
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public interface NameGenerator {
 

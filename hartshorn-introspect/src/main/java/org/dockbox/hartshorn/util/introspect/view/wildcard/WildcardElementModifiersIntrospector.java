@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 /**
  * A {@link ElementModifiersIntrospector} implementation for wildcard types.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class WildcardElementModifiersIntrospector implements ElementModifiersIntrospector {
 

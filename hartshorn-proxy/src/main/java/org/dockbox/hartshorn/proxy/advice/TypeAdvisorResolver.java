@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> The type of the proxy instance
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public interface TypeAdvisorResolver<T> {
 

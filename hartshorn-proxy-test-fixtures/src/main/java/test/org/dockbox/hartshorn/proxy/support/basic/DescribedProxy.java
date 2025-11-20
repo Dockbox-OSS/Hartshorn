@@ -19,8 +19,9 @@ package test.org.dockbox.hartshorn.proxy.support.basic;
 /**
  * A simple interface to test the proxying of a class with a single method.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface DescribedProxy {
     String description();

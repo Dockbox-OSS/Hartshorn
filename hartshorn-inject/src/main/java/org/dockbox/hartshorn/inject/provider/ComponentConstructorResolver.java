@@ -41,8 +41,9 @@ import java.util.List;
  * default constructor or, if configured to do so, fallback to a single constructor if only one
  * constructor is available.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public final class ComponentConstructorResolver {
 
@@ -94,7 +95,9 @@ public final class ComponentConstructorResolver {
      *
      * @return a new component constructor resolver
      */
-    public static ComponentConstructorResolver create(InjectionCapableApplication applicationContext) {
+    public static ComponentConstructorResolver create(
+        InjectionCapableApplication applicationContext
+    ) {
         return create(applicationContext.environment(), applicationContext.defaultBinder());
     }
 
@@ -163,8 +166,9 @@ public final class ComponentConstructorResolver {
             node.componentKey());
     }
 
-    private <C> Option<ConstructorView<? extends C>> findConstructorInImplementation(TypeView<? extends C> type)
-        throws MissingInjectConstructorException {
+    private <C> Option<ConstructorView<? extends C>> findConstructorInImplementation(
+        TypeView<? extends C> type
+    ) throws MissingInjectConstructorException {
         if (type.modifiers().isAbstract()) {
             return Option.empty();
         }
@@ -176,8 +180,8 @@ public final class ComponentConstructorResolver {
             throw new MissingInjectConstructorException(type);
         }
 
-        // An optimal constructor is the one with the highest amount of injectable parameters, so as many dependencies
-        // can be satiated at once.
+        // An optimal constructor is the one with the highest amount of injectable parameters, so as
+        // many dependencies can be satiated at once.
         optimalConstructor = constructors.getFirst();
         for (ConstructorView<? extends C> constructor : constructors) {
             if (optimalConstructor.parameters().count() < constructor.parameters().count()) {

@@ -35,12 +35,14 @@ import javassist.util.proxy.ProxyFactory;
  * is assignable from the class. For unproxying, it is assumed that the proxy is managed by a
  * {@link JavassistProxyMethodHandler}.
  *
- * @author Guus Lieben
  * @see ProxyFactory#isProxyClass(Class)
  * @see ProxyFactory#getHandler(Proxy)
  * @see Proxy
  * @see JavassistProxyMethodHandler
+ * 
  * @since 0.4.9
+ * 
+ * @author Guus Lieben
  */
 public class JavassistProxyLookup implements StandardProxyLookup {
 

@@ -21,8 +21,9 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
 /**
  * Factory interface for creating instances of {@link PropertyRegistry}.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface PropertyRegistryFactory {
 

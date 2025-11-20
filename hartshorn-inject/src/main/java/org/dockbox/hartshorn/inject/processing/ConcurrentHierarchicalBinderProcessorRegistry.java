@@ -45,13 +45,17 @@ public class ConcurrentHierarchicalBinderProcessorRegistry
     }
 
     @Override
-    public boolean isRegistered(Class<? extends HierarchicalBinderPostProcessor> componentProcessor) {
+    public boolean isRegistered(
+        Class<? extends HierarchicalBinderPostProcessor> componentProcessor
+    ) {
         return this.processors.stream()
             .anyMatch(processor -> processor.getClass().equals(componentProcessor));
     }
 
     @Override
-    public <T extends HierarchicalBinderPostProcessor> Option<T> lookup(Class<T> componentProcessor) {
+    public <T extends HierarchicalBinderPostProcessor> Option<T> lookup(
+        Class<T> componentProcessor
+    ) {
         return Option.of(this.processors.stream()
             .filter(processor -> processor.getClass().equals(componentProcessor))
             .map(componentProcessor::cast)

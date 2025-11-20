@@ -38,9 +38,11 @@ import org.dockbox.hartshorn.reporting.Reportable;
  * {@link ComponentAttribute attribute}. Individual components are reported using
  * {@link ComponentContainerReporter}s.
  *
- * @author Guus Lieben
  * @see ComponentContainerReporter
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ComponentDiagnosticsReporter
     implements ConfigurableDiagnosticsReporter<ComponentReportingConfiguration>,
@@ -67,11 +69,13 @@ public class ComponentDiagnosticsReporter
         else {
             Map<String, List<ComponentContainer<?>>> groupedContainers =
                 componentRegistry.containers().stream()
-                    .collect(Collectors.groupingBy(container -> switch (this.configuration.groupBy()) {
-                        case STEREOTYPE -> stereotype(container).getCanonicalName();
-                        case PACKAGE -> container.type().packageInfo().name();
-                        default -> throw new IllegalStateException("Unexpected value: "
-                            + this.configuration.groupBy());
+                    .collect(Collectors.groupingBy(container -> {
+                        return switch (this.configuration.groupBy()) {
+                            case STEREOTYPE -> stereotype(container).getCanonicalName();
+                            case PACKAGE -> container.type().packageInfo().name();
+                            default -> throw new IllegalStateException("Unexpected value: "
+                                + this.configuration.groupBy());
+                        };
                     }));
 
             for (String key : groupedContainers.keySet()) {

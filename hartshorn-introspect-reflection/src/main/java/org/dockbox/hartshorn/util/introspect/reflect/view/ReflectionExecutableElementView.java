@@ -40,10 +40,12 @@ import java.util.List;
  *
  * @param <Parent> the type of the class that the constructor belongs to
  *
- * @author Guus Lieben
  * @see ExecutableParametersIntrospector
  * @see TypeVariablesIntrospector
+ * 
  * @since 0.4.13
+ * 
+ * @author Guus Lieben
  */
 public abstract class ReflectionExecutableElementView<Parent> extends ReflectionAnnotatedElementView
     implements ExecutableElementView<Parent> {
@@ -107,8 +109,8 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     @Override
     public TypeView<Parent> declaredBy() {
         if (this.declaredBy == null) {
-            this.declaredBy =
-                (TypeView<Parent>) this.introspector.introspect(this.executable.getDeclaringClass());
+            this.declaredBy = (TypeView<Parent>)
+                this.introspector.introspect(this.executable.getDeclaringClass());
         }
         return this.declaredBy;
     }

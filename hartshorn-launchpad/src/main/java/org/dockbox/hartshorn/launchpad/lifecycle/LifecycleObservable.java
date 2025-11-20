@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.launchpad.lifecycle;
  * A lifecycle observable is an object that can be observed for lifecycle events. The lifecycle
  * events are defined by the {@link LifecycleObserver} interface.
  *
- * @author Guus Lieben
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public interface LifecycleObservable {
 

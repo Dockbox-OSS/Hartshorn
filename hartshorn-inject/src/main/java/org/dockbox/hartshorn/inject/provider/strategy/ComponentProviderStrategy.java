@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * can delegate to the next strategy in the {@link ComponentProviderStrategyChain} if it cannot
  * provide the requested component.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface ComponentProviderStrategy {
 

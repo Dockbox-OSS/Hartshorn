@@ -25,8 +25,9 @@ import java.util.stream.Collectors;
  * An exception that is thrown when a proxy constraint is violated. This exception contains a
  * message that describes why the constraint is violated.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ProxyConstraintViolationException extends ApplicationException {
 

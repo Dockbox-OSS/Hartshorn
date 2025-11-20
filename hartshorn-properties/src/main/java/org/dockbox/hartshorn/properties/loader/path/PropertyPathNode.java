@@ -20,11 +20,13 @@ package org.dockbox.hartshorn.properties.loader.path;
  * Represents a node in a property path. A node is a single element in a configuration path, such as
  * a field or an index. Nodes can be chained together to form a path.
  *
- * @author Guus Lieben
  * @see PropertyRootPathNode
  * @see PropertyFieldPathNode
  * @see PropertyIndexPathNode
+ *
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public sealed interface PropertyPathNode
     permits PropertyFieldPathNode, PropertyIndexPathNode, PropertyRootPathNode {

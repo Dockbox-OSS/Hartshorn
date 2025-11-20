@@ -21,10 +21,12 @@ package org.dockbox.hartshorn.util.introspect.scan.classpath;
  * {@link ClassPathScanner}s, which will invoke the {@link #handle(ClassPathResource)} method for
  * each resource that is found on the classpath.
  *
- * @author Guus Lieben
  * @see ClassPathScanner
  * @see ClassPathResource
+ *
  * @since 0.4.13
+ * 
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ResourceHandler {

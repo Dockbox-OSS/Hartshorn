@@ -27,8 +27,9 @@ import java.util.Collection;
  * hierarchies (typically through the use of
  * {@link org.dockbox.hartshorn.util.introspect.annotations.Extends} decorators).
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public interface EnvironmentTypeResolver {
 

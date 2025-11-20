@@ -62,15 +62,19 @@ public record IntegrationTestApplicationFactoryCustomizer(
                 environment.enableBatchMode();
                 environment.showStacktraces();
                 environment.applicationFSProvider(new TemporaryFileSystemProvider());
-                environment.applicationContext(SimpleApplicationContext.create(this.applicationCustomizer::customizeApplication));
+                environment.applicationContext(SimpleApplicationContext.create(
+                    this.applicationCustomizer::customizeApplication
+                ));
 
-                environment.propertyRegistryFactory(EnvironmentProfilesPropertyRegistryFactory.create(
-                    propertyRegistryFactory -> {
-                        propertyRegistryFactory.profileNameResolver(new CompositeProfileNameResolver(
-                            new FromPropertyProfileNameResolver(),
-                            new FromTestAnnotationProfileNameResolver(this.testComponentSources)
-                        ));
-                    }));
+                environment.propertyRegistryFactory(
+                    EnvironmentProfilesPropertyRegistryFactory.create(propertyRegistryFactory -> {
+                        propertyRegistryFactory.profileNameResolver(
+                            new CompositeProfileNameResolver(
+                                new FromPropertyProfileNameResolver(),
+                                new FromTestAnnotationProfileNameResolver(this.testComponentSources)
+                            ));
+                    })
+                );
             };
         constructor.environment(ConfigurableApplicationEnvironment.create(
             environmentCustomizer.compose(this.applicationCustomizer::customizeEnvironment)
@@ -83,7 +87,9 @@ public record IntegrationTestApplicationFactoryCustomizer(
         this.customizeModuleActivators(constructor);
     }
 
-    private void customizeModuleActivators(StandardApplicationContextFactory.Configurer constructor) {
+    private void customizeModuleActivators(
+        StandardApplicationContextFactory.Configurer constructor
+    ) {
         Class<?> next = this.testClass;
         Set<Annotation> moduleActivators = new HashSet<>();
         while (next != null) {
@@ -134,7 +140,9 @@ public record IntegrationTestApplicationFactoryCustomizer(
     ) {
         if (element.isAnnotationPresent(TestComponents.class)) {
             TestComponents testComponents = element.getAnnotation(TestComponents.class);
-            constructor.standaloneComponents(components -> components.addAll(testComponents.value()));
+            constructor.standaloneComponents(
+                components -> components.addAll(testComponents.value())
+            );
         }
     }
 

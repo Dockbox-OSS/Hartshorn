@@ -28,8 +28,9 @@ import java.util.List;
  *
  * @param <T> the type to introspect
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public interface TypeConstructorsIntrospector<T> {
 

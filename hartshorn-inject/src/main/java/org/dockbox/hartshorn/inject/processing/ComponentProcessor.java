@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * <p>This interface defines the basic contract for a component processor. All processors should
  * have an activator annotation, and a phase at which they are performed.
  *
- * @author Guus Lieben
  * @since 0.4.7
+ * 
+ * @author Guus Lieben
  */
 public sealed interface ComponentProcessor permits ComponentPostProcessor, ComponentPreProcessor {
 

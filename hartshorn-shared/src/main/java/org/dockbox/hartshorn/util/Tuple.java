@@ -27,8 +27,9 @@ import java.util.Map.Entry;
  * @param <K> The type of the key represented by this tuple
  * @param <V> The type of the value represented by this tuple
  *
- * @author Guus Lieben
  * @since 0.4.1
+ * 
+ * @author Guus Lieben
  */
 public record Tuple<K, V>(K key, V value) implements Entry<K, V> {
 

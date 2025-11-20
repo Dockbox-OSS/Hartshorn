@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.util.configure.Customizer;
  * and their proxying capabilities. This post-processor will only permit proxying if the
  * {@link ComponentContainer} permits it.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ContainerAwareComponentPopulatorPostProcessor extends ComponentPopulatorPostProcessor {
 

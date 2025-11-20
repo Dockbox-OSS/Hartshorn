@@ -48,10 +48,12 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @param <T> the type of the components
  *
- * @author Guus Lieben
  * @see CollectionBindingHierarchy
  * @see CollectionBindingHierarchy#getOrCreateInstantiationStrategy(int)
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class CollectionInstantiationStrategy<T>
     implements NonTypeAwareInstantiationStrategy<ComponentCollection<T>> {

@@ -22,8 +22,9 @@ package org.dockbox.hartshorn.reporting;
  *
  * @param <C> the type of the configuration object
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ConfigurableDiagnosticsReporter<C> extends Reportable {
 

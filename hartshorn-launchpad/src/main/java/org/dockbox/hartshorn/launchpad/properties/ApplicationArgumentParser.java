@@ -27,8 +27,9 @@ import java.util.Properties;
  * passed in other ways. The arguments are parsed into a {@link Properties} object, which is
  * typically passed to the {@link ApplicationEnvironment} as part of the bootstrap process.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ * 
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ApplicationArgumentParser {

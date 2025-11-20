@@ -30,8 +30,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * @param <T> the return type of the method
  * @param <P> the type of the instance on which the method is invoked
  *
- * @author Guus Lieben
  * @since 0.4.9
+ * 
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface MethodInvoker<T, P> {

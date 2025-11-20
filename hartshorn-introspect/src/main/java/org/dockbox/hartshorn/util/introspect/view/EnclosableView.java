@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * Represents a view that may be enclosed in another view. A common example of this is a nested
  * class {@link TypeView view} that is enclosed in another {@link TypeView}.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public interface EnclosableView extends View {
 

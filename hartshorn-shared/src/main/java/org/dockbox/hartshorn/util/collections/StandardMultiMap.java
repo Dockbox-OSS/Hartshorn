@@ -26,8 +26,9 @@ import java.util.Map;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public abstract class StandardMultiMap<K, V> extends AbstractMultiMap<K, V> {
 

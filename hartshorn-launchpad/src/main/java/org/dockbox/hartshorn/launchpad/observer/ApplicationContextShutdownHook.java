@@ -23,8 +23,9 @@ import org.slf4j.Logger;
 /**
  * A shutdown hook that closes the application context when the JVM is shutting down.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ApplicationContextShutdownHook implements Runnable {
 

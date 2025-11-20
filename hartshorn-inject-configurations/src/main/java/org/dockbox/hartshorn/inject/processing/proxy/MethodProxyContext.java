@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @param <T> the type of the class containing the method
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public interface MethodProxyContext<T> extends InjectionApplicationAwareContext {
 

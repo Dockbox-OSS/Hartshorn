@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.util.describe.ObjectDescriber;
  * of the class represented by this reference. It is possible that the class is not yet
  * initialized.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ClassReference implements TypeReference {
 

@@ -55,9 +55,11 @@ import java.lang.annotation.Target;
  * private DataRepository repository;
  * }</pre>
  *
- * @author Guus Lieben
  * @see QualifierKey
+ *
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

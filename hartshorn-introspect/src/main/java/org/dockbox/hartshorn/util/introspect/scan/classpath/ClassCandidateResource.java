@@ -31,8 +31,9 @@ import java.nio.file.Path;
  * @param isClassResource Whether this resource is a class. If {@code true}, the resource can be
  * loaded as a class.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 record ClassCandidateResource(
     URLClassLoader classLoader,

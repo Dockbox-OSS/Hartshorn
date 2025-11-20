@@ -32,9 +32,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <I> the type of the input
  * @param <T> the type of the result
  *
- * @author Guus Lieben
  * @see ContextualInitializer
+ *
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class CachedContextualInitializer<I, T> implements ContextualInitializer<I, T> {
 

@@ -42,8 +42,9 @@ import java.util.TreeMap;
  *
  * @param <T> the type of the component
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T> {
 

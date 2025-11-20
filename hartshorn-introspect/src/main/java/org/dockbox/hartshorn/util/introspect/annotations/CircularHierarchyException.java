@@ -25,8 +25,9 @@ import java.lang.annotation.Annotation;
  * {@link org.dockbox.hartshorn.util.introspect.annotations.Extends} is used to extend an annotation
  * that already extends the current annotation.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class CircularHierarchyException extends ApplicationRuntimeException {
     public CircularHierarchyException(Class<? extends Annotation> current) {

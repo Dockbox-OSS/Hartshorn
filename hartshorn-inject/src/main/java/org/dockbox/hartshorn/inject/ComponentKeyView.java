@@ -29,9 +29,11 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
  * @param qualifier The qualifier of the component key
  * @param <T> the type of the component
  *
- * @author Guus Lieben
  * @see ComponentKey#view()
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public record ComponentKeyView<T>(
     ParameterizableType type,

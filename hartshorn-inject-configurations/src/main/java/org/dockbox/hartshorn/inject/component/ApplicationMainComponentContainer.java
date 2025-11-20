@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @param <T> The type of the main class
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ApplicationMainComponentContainer<T> implements ComponentContainer<T> {
 

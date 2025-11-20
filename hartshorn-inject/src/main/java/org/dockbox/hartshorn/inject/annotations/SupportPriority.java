@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
  * Support specialization of {@link Priority}, used as a shorthand for
  * {@code @Priority(Priority.SUPPORT_PRIORITY)}.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

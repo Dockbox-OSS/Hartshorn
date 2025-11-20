@@ -32,8 +32,9 @@ import java.util.Set;
  * Instead, it provides a caching mechanism that is shared between all instances of this class. This
  * caching mechanism is used to prevent the same classpath from being scanned multiple times.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public abstract class ClasspathTypeReferenceCollector implements TypeReferenceCollector {
 

@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * An exception that is thrown when an error occurs while working with a {@link Graph}. This is a
  * generic wrapper for any exception that occurs while working with a graph.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class GraphException extends ApplicationException {
 

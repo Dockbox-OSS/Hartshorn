@@ -40,8 +40,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * concurrent calls to the same method. Note that batch mode may affect the behavior of specific
  * implementations.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface IntrospectionViewCache {
 

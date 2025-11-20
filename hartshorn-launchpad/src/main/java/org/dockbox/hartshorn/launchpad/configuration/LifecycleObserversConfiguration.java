@@ -28,11 +28,13 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Singleton;
 /**
  * Registers lifecycle observers to the application context.
  *
- * @author Guus Lieben
  * @see LifecycleObserver
  * @see RuntimeHookLifecycleObserver
  * @see ComponentActivatorObserver
+ *
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 @Configuration
 @RequiresActivator(UseLifecycleObservers.class)

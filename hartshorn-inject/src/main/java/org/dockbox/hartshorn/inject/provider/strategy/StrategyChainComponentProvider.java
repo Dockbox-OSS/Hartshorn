@@ -34,8 +34,9 @@ import java.util.SequencedCollection;
  * {@link ComponentProviderStrategyChain} that is used to resolve the component. The provider itself
  * does not make any guarantees about the nullability of the resolved component.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public abstract class StrategyChainComponentProvider implements ComponentProvider {
 
@@ -85,8 +86,8 @@ public abstract class StrategyChainComponentProvider implements ComponentProvide
         }
 
         // If the object is already processed at this point, it means that the object container was
-        // reused, so we don't need to process it again. Note that this is not the same as the object
-        // being a singleton, which is handled by the singleton cache.
+        // reused, so we don't need to process it again. Note that this is not the same as the
+        // object being a singleton, which is handled by the singleton cache.
         if (container.processed()) {
             return container.instance();
         }

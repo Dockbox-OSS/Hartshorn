@@ -28,8 +28,9 @@ import java.util.Set;
  * records. This constraint is applied by default when using
  * {@link CollectorProxyValidator#withDefaults()}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class FinalClassConstraint implements ProxyConstraint {
 

@@ -64,8 +64,9 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
- * @author Guus Lieben
  * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)

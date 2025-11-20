@@ -42,11 +42,13 @@ import org.dockbox.hartshorn.util.option.Option;
  * {@link ProviderSelectionStrategy}
  * defined in the {@link ComponentKey#selectionStrategy() component key's selection strategy}.
  *
- * @author Guus Lieben
  * @see InstantiationStrategy
  * @see BindingHierarchy
  * @see ProviderSelectionStrategy
+ *
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class InstantiationStrategyComponentProviderStrategy implements ComponentProviderStrategy {
 
@@ -105,18 +107,14 @@ public class InstantiationStrategyComponentProviderStrategy implements Component
         ComponentKey<T> key,
         boolean useGlobalIfAbsent
     ) {
-        switch (componentProvider) {
-            case HierarchyLookup hierarchyLookup -> {
-                return this.hierarchy(hierarchyLookup, key, useGlobalIfAbsent);
-            }
+        return switch (componentProvider) {
+            case HierarchyLookup hierarchyLookup ->
+                this.hierarchy(hierarchyLookup, key, useGlobalIfAbsent);
             case BinderAwareComponentProvider binderAwareProvider
-                when binderAwareProvider.binder() instanceof HierarchicalBinder hierarchicalBinder -> {
-                return this.hierarchy(hierarchicalBinder, key, useGlobalIfAbsent);
-            }
-            default -> {
-                return null;
-            }
-        }
+                when binderAwareProvider.binder() instanceof HierarchicalBinder hierarchicalBinder
+                -> this.hierarchy(hierarchicalBinder, key, useGlobalIfAbsent);
+            default -> null;
+        };
     }
 
     private <T> BindingHierarchy<T> hierarchy(

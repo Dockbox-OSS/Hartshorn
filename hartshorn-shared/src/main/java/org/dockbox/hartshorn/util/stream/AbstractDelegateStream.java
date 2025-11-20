@@ -44,9 +44,11 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of the stream
  *
- * @author Guus Lieben
  * @see Stream
+ *
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractDelegateStream<T> implements Stream<T> {
 

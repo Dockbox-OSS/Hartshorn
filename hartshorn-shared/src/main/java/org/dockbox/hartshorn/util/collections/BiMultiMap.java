@@ -31,8 +31,9 @@ package org.dockbox.hartshorn.util.collections;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface BiMultiMap<K, V> extends MultiMap<K, V> {
 

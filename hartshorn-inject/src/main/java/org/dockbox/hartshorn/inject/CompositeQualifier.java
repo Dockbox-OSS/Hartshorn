@@ -33,10 +33,12 @@ import java.util.Set;
  * used. For example, a {@link ComponentKey} can be qualified with one {@link QualifierKey} of type
  * {@link Named}, but not with two or more.
  *
- * @author Guus Lieben
  * @see QualifierKey
  * @see ComponentKey
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public class CompositeQualifier implements Reportable {
 

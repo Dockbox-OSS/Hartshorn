@@ -30,8 +30,9 @@ import java.util.List;
  * arguments. It is useful for scenarios where properties need to be dynamically defined or
  * configured at runtime, such as in testing environments or during application startup.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class StringListCustomPropertiesResolver extends AbstractCustomPropertiesResolver {
 
@@ -42,7 +43,9 @@ public class StringListCustomPropertiesResolver extends AbstractCustomProperties
     }
 
     @Override
-    protected List<String> resolveStringProperties(SingleElementContext<? extends ApplicationEnvironment> initializerContext) {
+    protected List<String> resolveStringProperties(
+        SingleElementContext<? extends ApplicationEnvironment> initializerContext
+    ) {
         return this.properties;
     }
 }

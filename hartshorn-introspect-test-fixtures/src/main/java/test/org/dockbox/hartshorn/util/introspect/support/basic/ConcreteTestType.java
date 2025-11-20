@@ -26,8 +26,9 @@ import test.org.dockbox.hartshorn.util.introspect.support.annotations.MultipleEl
  * Complete test type for introspection tests, containing various fields, methods and annotations
  * with different modifiers and annotations.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @MultipleElementAnnotation
 @SuppressWarnings({"FieldMayBeFinal", "unused"})

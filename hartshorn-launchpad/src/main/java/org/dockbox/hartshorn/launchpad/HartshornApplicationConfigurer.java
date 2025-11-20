@@ -65,23 +65,22 @@ import java.util.function.Function;
  * {@link HartshornApplication}
  * class to start your application.
  *
- * @author Guus Lieben
  * @see HartshornApplication
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public class HartshornApplicationConfigurer {
 
+    // checkstyle:off LineLength
     private Customizer<Configurer> applicationBuilder = Customizer.useDefaults();
-    private Customizer<StandardApplicationContextFactory.Configurer> applicationContextFactory =
-        Customizer.useDefaults();
-    private Customizer<ConfigurableApplicationEnvironment.Configurer> environment =
-        Customizer.useDefaults();
-    private Customizer<SimpleApplicationContext.Configurer> applicationContext =
-        Customizer.useDefaults();
-    private Customizer<MethodsAndFieldsInjectionPointResolver.Configurer> injectionPointResolver =
-        Customizer.useDefaults();
-    private Customizer<AnnotatedMethodComponentPostConstructor.Configurer>
-        componentPostConstructor = Customizer.useDefaults();
+    private Customizer<StandardApplicationContextFactory.Configurer> applicationContextFactory = Customizer.useDefaults();
+    private Customizer<ConfigurableApplicationEnvironment.Configurer> environment = Customizer.useDefaults();
+    private Customizer<SimpleApplicationContext.Configurer> applicationContext = Customizer.useDefaults();
+    private Customizer<MethodsAndFieldsInjectionPointResolver.Configurer> injectionPointResolver = Customizer.useDefaults();
+    private Customizer<AnnotatedMethodComponentPostConstructor.Configurer> componentPostConstructor = Customizer.useDefaults();
+    // checkstyle:on LineLength
 
     /**
      * Configures the arguments that are provided to the application that will be created. The
@@ -91,9 +90,11 @@ public class HartshornApplicationConfigurer {
      *
      * @return This {@link Configurer} instance.
      */
-    public HartshornApplicationConfigurer arguments(Customizer<StreamableConfigurer<Class<?>, String>> customizer) {
-        this.applicationBuilder =
-            this.applicationBuilder.compose(configuration -> configuration.arguments(customizer));
+    public HartshornApplicationConfigurer arguments(
+        Customizer<StreamableConfigurer<Class<?>, String>> customizer
+    ) {
+        this.applicationBuilder = this.applicationBuilder
+            .compose(configuration -> configuration.arguments(customizer));
         return this;
     }
 
@@ -105,10 +106,11 @@ public class HartshornApplicationConfigurer {
      *
      * @return The current configurator instance
      */
-    public HartshornApplicationConfigurer activators(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Annotation>> customizer) {
-        this.applicationContextFactory =
-            this.applicationContextFactory.compose(configuration -> configuration.moduleActivators(
-                customizer));
+    public HartshornApplicationConfigurer activators(
+        Customizer<StreamableConfigurer<ApplicationBootstrapContext, Annotation>> customizer
+    ) {
+        this.applicationContextFactory = this.applicationContextFactory
+            .compose(configuration -> configuration.moduleActivators(customizer));
         return this;
     }
 
@@ -120,10 +122,11 @@ public class HartshornApplicationConfigurer {
      *
      * @return The current configurator instance
      */
-    public HartshornApplicationConfigurer componentPreProcessors(Customizer<StreamableConfigurer<ApplicationContext, ComponentPreProcessor>> customizer) {
-        this.applicationContextFactory =
-            this.applicationContextFactory.compose(configuration -> configuration.componentPreProcessors(
-                customizer));
+    public HartshornApplicationConfigurer componentPreProcessors(
+        Customizer<StreamableConfigurer<ApplicationContext, ComponentPreProcessor>> customizer
+    ) {
+        this.applicationContextFactory = this.applicationContextFactory
+            .compose(configuration -> configuration.componentPreProcessors(customizer));
         return this;
     }
 
@@ -136,10 +139,11 @@ public class HartshornApplicationConfigurer {
      *
      * @return The current configurator instance
      */
-    public HartshornApplicationConfigurer componentPostProcessors(Customizer<StreamableConfigurer<ApplicationContext, ComponentPostProcessor>> customizer) {
-        this.applicationContextFactory =
-            this.applicationContextFactory.compose(configuration -> configuration.componentPostProcessors(
-                customizer));
+    public HartshornApplicationConfigurer componentPostProcessors(
+        Customizer<StreamableConfigurer<ApplicationContext, ComponentPostProcessor>> customizer
+    ) {
+        this.applicationContextFactory = this.applicationContextFactory
+            .compose(configuration -> configuration.componentPostProcessors(customizer));
         return this;
     }
 
@@ -155,10 +159,11 @@ public class HartshornApplicationConfigurer {
      *
      * @return The current configurator instance
      */
-    public HartshornApplicationConfigurer standaloneComponents(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Class<?>>> customizer) {
-        this.applicationContextFactory =
-            this.applicationContextFactory.compose(configuration -> configuration.standaloneComponents(
-                customizer));
+    public HartshornApplicationConfigurer standaloneComponents(
+        Customizer<StreamableConfigurer<ApplicationBootstrapContext, Class<?>>> customizer
+    ) {
+        this.applicationContextFactory = this.applicationContextFactory
+            .compose(configuration -> configuration.standaloneComponents(customizer));
         return this;
     }
 
@@ -172,10 +177,11 @@ public class HartshornApplicationConfigurer {
      *
      * @return The current configurator instance
      */
-    public HartshornApplicationConfigurer scanPackages(Customizer<StreamableConfigurer<ApplicationBootstrapContext, String>> customizer) {
-        this.applicationContextFactory =
-            this.applicationContextFactory.compose(configuration -> configuration.scanPackages(
-                customizer));
+    public HartshornApplicationConfigurer scanPackages(
+        Customizer<StreamableConfigurer<ApplicationBootstrapContext, String>> customizer
+    ) {
+        this.applicationContextFactory = this.applicationContextFactory
+            .compose(configuration -> configuration.scanPackages(customizer));
         return this;
     }
 
@@ -201,10 +207,13 @@ public class HartshornApplicationConfigurer {
      *
      * @return The current configurator instance
      */
-    public HartshornApplicationConfigurer includeBasePackages(ContextualInitializer<ApplicationBuildContext, Boolean> includeBasePackages) {
-        this.applicationContextFactory =
-            this.applicationContextFactory.compose(configuration -> configuration.includeBasePackages(
-                includeBasePackages));
+    public HartshornApplicationConfigurer includeBasePackages(
+        ContextualInitializer<ApplicationBuildContext, Boolean> includeBasePackages
+    ) {
+        this.applicationContextFactory = this.applicationContextFactory
+            .compose(configuration -> configuration.includeBasePackages(
+                includeBasePackages
+            ));
         return this;
     }
 
@@ -216,9 +225,11 @@ public class HartshornApplicationConfigurer {
      *
      * @return the current {@link HartshornApplicationConfigurer} instance
      */
-    public HartshornApplicationConfigurer enableBanner(ContextualInitializer<PropertyRegistry, Boolean> enableBanner) {
-        this.environment =
-            this.environment.compose(configuration -> configuration.enableBanner(enableBanner));
+    public HartshornApplicationConfigurer enableBanner(
+        ContextualInitializer<PropertyRegistry, Boolean> enableBanner
+    ) {
+        this.environment = this.environment
+            .compose(configuration -> configuration.enableBanner(enableBanner));
         return this;
     }
 
@@ -251,9 +262,11 @@ public class HartshornApplicationConfigurer {
      *
      * @return the current {@link HartshornApplicationConfigurer} instance
      */
-    public HartshornApplicationConfigurer enableBatchMode(ContextualInitializer<PropertyRegistry, Boolean> enableBatchMode) {
-        this.environment =
-            this.environment.compose(configuration -> configuration.enableBatchMode(enableBatchMode));
+    public HartshornApplicationConfigurer enableBatchMode(
+        ContextualInitializer<PropertyRegistry, Boolean> enableBatchMode
+    ) {
+        this.environment = this.environment
+            .compose(configuration -> configuration.enableBatchMode(enableBatchMode));
         return this;
     }
 
@@ -310,9 +323,11 @@ public class HartshornApplicationConfigurer {
      *
      * @return the current {@link HartshornApplicationConfigurer} instance
      */
-    public HartshornApplicationConfigurer enableStrictMode(ContextualInitializer<PropertyRegistry, Boolean> enableStrictMode) {
-        this.environment = this.environment.compose(configuration -> configuration.enableStrictMode(
-            enableStrictMode));
+    public HartshornApplicationConfigurer enableStrictMode(
+        ContextualInitializer<PropertyRegistry, Boolean> enableStrictMode
+    ) {
+        this.environment = this.environment
+            .compose(configuration -> configuration.enableStrictMode(enableStrictMode));
         return this;
     }
 
@@ -324,9 +339,11 @@ public class HartshornApplicationConfigurer {
      *
      * @return the current {@link HartshornApplicationConfigurer} instance
      */
-    public HartshornApplicationConfigurer showStacktraces(ContextualInitializer<PropertyRegistry, Boolean> showStacktraces) {
-        this.environment =
-            this.environment.compose(configuration -> configuration.showStacktraces(showStacktraces));
+    public HartshornApplicationConfigurer showStacktraces(
+        ContextualInitializer<PropertyRegistry, Boolean> showStacktraces
+    ) {
+        this.environment = this.environment
+            .compose(configuration -> configuration.showStacktraces(showStacktraces));
         return this;
     }
 
@@ -359,10 +376,13 @@ public class HartshornApplicationConfigurer {
      *
      * @return the current {@link HartshornApplicationConfigurer} instance
      */
-    public HartshornApplicationConfigurer isBuildEnvironment(ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment) {
-        this.environment =
-            this.environment.compose(configuration -> configuration.isBuildEnvironment(
-                isBuildEnvironment));
+    public HartshornApplicationConfigurer isBuildEnvironment(
+        ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment
+    ) {
+        this.environment = this.environment
+                .compose(configuration -> configuration.isBuildEnvironment(
+                    isBuildEnvironment
+                ));
         return this;
     }
 
@@ -388,10 +408,12 @@ public class HartshornApplicationConfigurer {
      *
      * @return the current instance
      */
-    public HartshornApplicationConfigurer defaultBindings(ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer> defaultBindings) {
-        this.applicationContext =
-            this.applicationContext.compose(configuration -> configuration.defaultBindings(
-                defaultBindings));
+    public HartshornApplicationConfigurer defaultBindings(
+        ContextualInitializer<ApplicationContext, ? extends DefaultBindingConfigurer>
+            defaultBindings
+    ) {
+        this.applicationContext = this.applicationContext
+            .compose(configuration -> configuration.defaultBindings(defaultBindings));
         return this;
     }
 
@@ -404,7 +426,9 @@ public class HartshornApplicationConfigurer {
      *
      * @return the current instance
      */
-    public HartshornApplicationConfigurer defaultBindings(DefaultBindingConfigurer defaultBindings) {
+    public HartshornApplicationConfigurer defaultBindings(
+        DefaultBindingConfigurer defaultBindings
+    ) {
         return this.defaultBindings(ContextualInitializer.of(defaultBindings));
     }
 
@@ -417,7 +441,9 @@ public class HartshornApplicationConfigurer {
      *
      * @return the current instance
      */
-    public HartshornApplicationConfigurer defaultBindings(BiConsumer<ApplicationContext, Binder> defaultBindings) {
+    public HartshornApplicationConfigurer defaultBindings(
+        BiConsumer<ApplicationContext, Binder> defaultBindings
+    ) {
         return this.defaultBindings(context -> binder -> defaultBindings.accept(context.input(),
             binder));
     }
@@ -431,7 +457,9 @@ public class HartshornApplicationConfigurer {
      * @return The current configurer, for chaining
      */
     @SafeVarargs
-    public final HartshornApplicationConfigurer injectMarkerAnnotations(Class<? extends Annotation>... annotations) {
+    public final HartshornApplicationConfigurer injectMarkerAnnotations(
+        Class<? extends Annotation>... annotations
+    ) {
         this.injectMarkerAnnotations(collection -> collection.addAll(annotations));
         return this;
     }
@@ -444,7 +472,9 @@ public class HartshornApplicationConfigurer {
      *
      * @return The current configurer, for chaining
      */
-    public HartshornApplicationConfigurer injectMarkerAnnotations(Set<Class<? extends Annotation>> annotations) {
+    public HartshornApplicationConfigurer injectMarkerAnnotations(
+        Set<Class<? extends Annotation>> annotations
+    ) {
         this.injectMarkerAnnotations(collection -> collection.addAll(annotations));
         return this;
     }
@@ -457,10 +487,12 @@ public class HartshornApplicationConfigurer {
      *
      * @return The current configurer, for chaining
      */
-    public HartshornApplicationConfigurer injectMarkerAnnotations(Customizer<StreamableConfigurer<InjectorEnvironment, Class<? extends Annotation>>> customizer) {
-        this.injectionPointResolver =
-            this.injectionPointResolver.compose(configuration -> configuration.annotations(
-                customizer));
+    public HartshornApplicationConfigurer injectMarkerAnnotations(
+        Customizer<StreamableConfigurer<InjectorEnvironment, Class<? extends Annotation>>>
+            customizer
+    ) {
+        this.injectionPointResolver = this.injectionPointResolver
+            .compose(configuration -> configuration.annotations(customizer));
         return this;
     }
 
@@ -473,7 +505,9 @@ public class HartshornApplicationConfigurer {
      * @return The current configurer, for chaining
      */
     @SafeVarargs
-    public final HartshornApplicationConfigurer onInitializedAnnotations(Class<? extends Annotation>... annotations) {
+    public final HartshornApplicationConfigurer onInitializedAnnotations(
+        Class<? extends Annotation>... annotations
+    ) {
         this.onInitializedAnnotations(collection -> collection.addAll(annotations));
         return this;
     }
@@ -486,7 +520,9 @@ public class HartshornApplicationConfigurer {
      *
      * @return The current configurer, for chaining
      */
-    public HartshornApplicationConfigurer onInitializedAnnotations(Set<Class<? extends Annotation>> annotations) {
+    public HartshornApplicationConfigurer onInitializedAnnotations(
+        Set<Class<? extends Annotation>> annotations
+    ) {
         this.onInitializedAnnotations(collection -> collection.addAll(annotations));
         return this;
     }
@@ -499,10 +535,12 @@ public class HartshornApplicationConfigurer {
      *
      * @return The current configurer, for chaining
      */
-    public HartshornApplicationConfigurer onInitializedAnnotations(Customizer<StreamableConfigurer<InjectionCapableApplication, Class<? extends Annotation>>> customizer) {
-        this.componentPostConstructor =
-            this.componentPostConstructor.compose(configuration -> configuration.annotations(
-                customizer));
+    public HartshornApplicationConfigurer onInitializedAnnotations(
+        Customizer<StreamableConfigurer<InjectionCapableApplication, Class<? extends Annotation>>>
+            customizer
+    ) {
+        this.componentPostConstructor = this.componentPostConstructor
+            .compose(configuration -> configuration.annotations(customizer));
         return this;
     }
 
@@ -517,10 +555,10 @@ public class HartshornApplicationConfigurer {
      * @see MethodsAndFieldsInjectionPointResolver.Configurer#withJavaxAnnotations()
      */
     public HartshornApplicationConfigurer withJavaxAnnotations() {
-        this.componentPostConstructor =
-            this.componentPostConstructor.compose(AnnotatedMethodComponentPostConstructor.Configurer::withJavaxAnnotations);
-        this.injectionPointResolver =
-            this.injectionPointResolver.compose(MethodsAndFieldsInjectionPointResolver.Configurer::withJavaxAnnotations);
+        this.componentPostConstructor = this.componentPostConstructor
+            .compose(AnnotatedMethodComponentPostConstructor.Configurer::withJavaxAnnotations);
+        this.injectionPointResolver = this.injectionPointResolver
+            .compose(MethodsAndFieldsInjectionPointResolver.Configurer::withJavaxAnnotations);
         return this;
     }
 
@@ -535,10 +573,10 @@ public class HartshornApplicationConfigurer {
      * @see MethodsAndFieldsInjectionPointResolver.Configurer#withJakartaAnnotations()
      */
     public HartshornApplicationConfigurer withJakartaAnnotations() {
-        this.componentPostConstructor =
-            this.componentPostConstructor.compose(AnnotatedMethodComponentPostConstructor.Configurer::withJakartaAnnotations);
-        this.injectionPointResolver =
-            this.injectionPointResolver.compose(MethodsAndFieldsInjectionPointResolver.Configurer::withJakartaAnnotations);
+        this.componentPostConstructor = this.componentPostConstructor
+            .compose(AnnotatedMethodComponentPostConstructor.Configurer::withJakartaAnnotations);
+        this.injectionPointResolver = this.injectionPointResolver
+            .compose(MethodsAndFieldsInjectionPointResolver.Configurer::withJakartaAnnotations);
         return this;
     }
 
@@ -579,7 +617,9 @@ public class HartshornApplicationConfigurer {
         ));
     }
 
-    private void configureApplicationConstructor(StandardApplicationContextFactory.Configurer constructor) {
+    private void configureApplicationConstructor(
+        StandardApplicationContextFactory.Configurer constructor
+    ) {
         this.applicationContextFactory.configure(constructor);
         constructor.environment(this.initializer(
             ConfigurableApplicationEnvironment::create,
@@ -587,14 +627,17 @@ public class HartshornApplicationConfigurer {
         ));
     }
 
-    private void configureApplicationEnvironment(ConfigurableApplicationEnvironment.Configurer environment) {
+    private void configureApplicationEnvironment(
+        ConfigurableApplicationEnvironment.Configurer environment
+    ) {
         this.environment.configure(environment);
         environment.applicationContext(this.initializer(
             SimpleApplicationContext::create,
             this::configureApplicationContext
         ));
-        environment.injectionPointsResolver(ContextualInitializer.defer(() -> MethodsAndFieldsInjectionPointResolver.create(
-            this.injectionPointResolver)));
+        environment.injectionPointsResolver(ContextualInitializer.defer(() -> {
+            return MethodsAndFieldsInjectionPointResolver.create(this.injectionPointResolver);
+        }));
     }
 
     private void configureApplicationContext(SimpleApplicationContext.Configurer context) {
@@ -605,8 +648,12 @@ public class HartshornApplicationConfigurer {
         ));
     }
 
-    private void configureComponentProvider(HierarchicalComponentProviderOrchestrator.Configurer provider) {
-        provider.componentPostConstructor(AnnotatedMethodComponentPostConstructor.create(this.componentPostConstructor));
+    private void configureComponentProvider(
+        HierarchicalComponentProviderOrchestrator.Configurer provider
+    ) {
+        provider.componentPostConstructor(
+            AnnotatedMethodComponentPostConstructor.create(this.componentPostConstructor)
+        );
     }
 
     private <T, C, F> ContextualInitializer<C, T> initializer(

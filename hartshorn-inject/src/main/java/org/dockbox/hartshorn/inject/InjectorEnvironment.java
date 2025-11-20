@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
  * environment provides access to the various components that are used by the application to perform
  * its operations.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface InjectorEnvironment {
 

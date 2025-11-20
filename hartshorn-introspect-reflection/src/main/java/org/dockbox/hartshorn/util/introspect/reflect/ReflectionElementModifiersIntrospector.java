@@ -29,8 +29,9 @@ import java.lang.reflect.Modifier;
  * An introspector for element modifiers that uses reflection to determine the modifiers of a given
  * member. Additional modifiers such as {@code SYNTHETIC} and {@code MANDATED} are also supported.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ReflectionElementModifiersIntrospector implements ElementModifiersIntrospector {
 

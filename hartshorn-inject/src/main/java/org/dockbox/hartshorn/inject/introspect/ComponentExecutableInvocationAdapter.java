@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * elements to be invoked and/or populated using the application context, without the need for
  * manually looking up dependencies.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ComponentExecutableInvocationAdapter extends Context {
 
@@ -53,7 +54,9 @@ public interface ComponentExecutableInvocationAdapter extends Context {
      * @return a new {@link ComponentExecutableInvocationAdapter} instance bound to the given
      * component request context
      */
-    ComponentExecutableInvocationAdapter requestContext(ComponentRequestContext componentRequestContext);
+    ComponentExecutableInvocationAdapter requestContext(
+        ComponentRequestContext componentRequestContext
+    );
 
     /**
      * Creates an instance of type {@link T} using the given constructor view.

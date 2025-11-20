@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> the type of the instance
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class SingletonInstantiationStrategy<T> implements NonTypeAwareInstantiationStrategy<T> {
 

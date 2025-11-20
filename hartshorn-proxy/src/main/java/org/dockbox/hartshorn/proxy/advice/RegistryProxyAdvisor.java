@@ -30,8 +30,9 @@ import java.util.Collection;
  *
  * @param <T> the type of the proxy instance
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class RegistryProxyAdvisor<T> implements ProxyAdvisor<T> {
 

@@ -24,8 +24,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param <T> the target type
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface DefaultValueProvider<T> extends Converter<Null, T> {

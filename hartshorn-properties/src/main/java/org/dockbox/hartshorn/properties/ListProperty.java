@@ -28,8 +28,9 @@ import java.util.List;
  * to take the same form, this interface provides methods to retrieve values as
  * {@link ValueProperty}, {@link ObjectProperty} and {@link ListProperty} instances.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public non-sealed interface ListProperty extends Property {
 

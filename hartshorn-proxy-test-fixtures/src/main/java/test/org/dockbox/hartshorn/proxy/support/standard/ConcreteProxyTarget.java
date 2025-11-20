@@ -19,8 +19,9 @@ package test.org.dockbox.hartshorn.proxy.support.standard;
 /**
  * Concrete class with no inheritance or interfaces, but with a single method.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ConcreteProxyTarget {
     public String name() {

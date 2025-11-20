@@ -34,8 +34,9 @@ import java.util.stream.Collectors;
 /**
  * An introspector for the parameters of an executable element, such as a method or constructor.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ReflectionExecutableParametersIntrospector
     implements ExecutableParametersIntrospector {

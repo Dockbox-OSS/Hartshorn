@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
  *
  * @param <T> the type of the target object
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ProxyMethodInvoker<T> {
 

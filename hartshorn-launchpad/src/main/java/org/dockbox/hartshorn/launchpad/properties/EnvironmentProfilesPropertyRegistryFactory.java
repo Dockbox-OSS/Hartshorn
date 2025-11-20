@@ -67,13 +67,15 @@ import java.util.stream.Collectors;
  * {@link PropertyRegistryPathLoader} instances are resolved from SPI providers, allowing for
  * extensibility.
  *
- * @author Guus Lieben
  * @see PropertyRegistryPathLoader
  * @see PropertySourceResolver
  * @see ResourceLookup
  * @see PropertyRegistry
  * @see ProfileRegistry
+ *
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegistryFactory {
 
@@ -105,8 +107,9 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
             PropertyRegistry defaultRegistry =
                 this.loadDefaultPropertyRegistry(propertyRegistryLoader);
             Set<ConfiguredProperty> configuredProperties = this.loadAdditionalProperties();
-            // Register early to allow overriding active profiles. Preferably this would only register the specific
-            // `hartshorn.profiles` property, but as the profile name resolver is external, we cannot be sure of that.
+            // Register early to allow overriding active profiles. Preferably this would only
+            // register the specific `hartshorn.profiles` property, but as the profile name resolver
+            // is external, we cannot be sure of that.
             defaultRegistry.registerAll(configuredProperties);
 
             ProfilePropertyRegistry registry =
@@ -121,8 +124,9 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
         }
     }
 
-    private PropertyRegistry loadDefaultPropertyRegistry(PropertyRegistryPathLoader propertyRegistryLoader)
-        throws IOException {
+    private PropertyRegistry loadDefaultPropertyRegistry(
+        PropertyRegistryPathLoader propertyRegistryLoader
+    ) throws IOException {
         PropertyRegistry propertyRegistry = new MapPropertyRegistry();
         SequencedSet<URI> resources = this.resolveResources();
         for (URI resource : resources) {
@@ -183,7 +187,9 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
         return propertyRegistryLoaders;
     }
 
-    private PropertyRegistryPathLoader createRegistryLoader(Collection<PropertyRegistryPathLoader> propertyRegistryLoaders) {
+    private PropertyRegistryPathLoader createRegistryLoader(
+        Collection<PropertyRegistryPathLoader> propertyRegistryLoaders
+    ) {
         PropertyRegistryPathLoader propertyRegistryLoader;
         if (propertyRegistryLoaders.size() == 1) {
             propertyRegistryLoader = CollectionUtilities.first(propertyRegistryLoaders);
@@ -196,10 +202,10 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
                     composite.addLoader(predicateLoader);
                 }
                 else {
-                    throw new ApplicationRuntimeException(
-                        "Found multiple PropertyRegistryLoaders, but cannot differentiate between them. "
-                            + "Please implement PredicatePropertyRegistryLoader for "
-                            + registryLoader.getClass().getName());
+                    throw new ApplicationRuntimeException("Found multiple PropertyRegistryLoaders, "
+                        + "but cannot differentiate between them. "
+                        + "Please implement PredicatePropertyRegistryLoader for "
+                        + registryLoader.getClass().getName());
                 }
             }
             propertyRegistryLoader = composite;
@@ -216,9 +222,8 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
      *
      * @return the contextual initializer for the factory
      */
-    public static ContextualInitializer<ApplicationEnvironment, ? extends PropertyRegistryFactory> create(
-        Customizer<Configurer> customizer
-    ) {
+    public static ContextualInitializer<ApplicationEnvironment, ? extends PropertyRegistryFactory>
+    create(Customizer<Configurer> customizer) {
         return environment -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -277,24 +282,25 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
     /**
      * Configurer for the {@link EnvironmentProfilesPropertyRegistryFactory}.
      *
-     * @author Guus Lieben
      * @since 0.7.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<ApplicationEnvironment, PropertySourceResolver>
-            propertySourceResolvers = LazyStreamableConfigurer.of(customizer -> {
+        // checkstyle:off LineLength
+        private final LazyStreamableConfigurer<ApplicationEnvironment, PropertySourceResolver> propertySourceResolvers = LazyStreamableConfigurer.of(customizer -> {
             customizer.add(ContextualInitializer.of(TypeDiscoveryPropertySourceResolver::new));
             customizer.add(new PredefinedPropertySourceResolver(getSources(
                 EnvironmentProfilesPropertyRegistryFactory.DEFAULT_CONFIGURATION_NAME)));
         });
-        private final LazyStreamableConfigurer<ApplicationEnvironment, CustomPropertiesResolver>
-            customPropertyResolvers = LazyStreamableConfigurer.of(customizer -> {
+        private final LazyStreamableConfigurer<ApplicationEnvironment, CustomPropertiesResolver> customPropertyResolvers = LazyStreamableConfigurer.of(customizer -> {
             customizer.add(new CommandLineArgumentsPropertiesResolver());
         });
 
-        private ContextualInitializer<ApplicationEnvironment, ProfileNameResolver>
-            profileNameResolver = ContextualInitializer.of(FromPropertyProfileNameResolver::new);
+        private ContextualInitializer<ApplicationEnvironment, ProfileNameResolver> profileNameResolver =
+            ContextualInitializer.of(FromPropertyProfileNameResolver::new);
+        // checkstyle:on LineLength
 
         /**
          * Adds a set of property source resolvers to be included in the property registry.
@@ -314,7 +320,10 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
          *
          * @return this configurer
          */
-        public Configurer propertySourceResolvers(Customizer<StreamableConfigurer<ApplicationEnvironment, PropertySourceResolver>> customizer) {
+        public Configurer propertySourceResolvers(
+            Customizer<StreamableConfigurer<ApplicationEnvironment, PropertySourceResolver>>
+                customizer
+        ) {
             this.propertySourceResolvers.customizer(customizer);
             return this;
         }
@@ -337,7 +346,10 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
          *
          * @return this configurer
          */
-        public Configurer customPropertyResolvers(Customizer<StreamableConfigurer<ApplicationEnvironment, CustomPropertiesResolver>> customizer) {
+        public Configurer customPropertyResolvers(
+            Customizer<StreamableConfigurer<ApplicationEnvironment, CustomPropertiesResolver>>
+                customizer
+        ) {
             this.customPropertyResolvers.customizer(customizer);
             return this;
         }
@@ -350,8 +362,9 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
          * @return this configurer
          */
         public Configurer customProperties(Collection<String> properties) {
-            return this.customPropertyResolvers(configuration -> configuration.add(new StringListCustomPropertiesResolver(
-                List.copyOf(properties))));
+            return this.customPropertyResolvers(configuration -> configuration.add(
+                new StringListCustomPropertiesResolver(List.copyOf(properties))
+            ));
         }
 
         /**
@@ -372,7 +385,9 @@ public class EnvironmentProfilesPropertyRegistryFactory implements PropertyRegis
          *
          * @return this configurer
          */
-        public Configurer profileNameResolver(ContextualInitializer<ApplicationEnvironment, ProfileNameResolver> resolver) {
+        public Configurer profileNameResolver(
+            ContextualInitializer<ApplicationEnvironment, ProfileNameResolver> resolver
+        ) {
             this.profileNameResolver = resolver;
             return this;
         }

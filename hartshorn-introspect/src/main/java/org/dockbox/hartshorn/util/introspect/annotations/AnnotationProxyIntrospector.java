@@ -30,8 +30,9 @@ import java.lang.annotation.Annotation;
  *
  * @param <T> The type of annotation that is proxied
  *
- * @author Guus Lieben
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class AnnotationProxyIntrospector<T extends Annotation> implements ProxyIntrospector<T> {
 

@@ -32,9 +32,11 @@ import java.util.Collection;
  * for methods matching the specified criteria. This is useful for adding method-level interceptors
  * to components.
  *
- * @author Guus Lieben
  * @see AnnotatedMethodInterceptorPostProcessor
+ * 
  * @since 0.4.8
+ * 
+ * @author Guus Lieben
  */
 public abstract class MethodInterceptorPostProcessor extends ComponentPostProcessor {
 
@@ -85,7 +87,9 @@ public abstract class MethodInterceptorPostProcessor extends ComponentPostProces
      *
      * @return the modifiable methods
      */
-    protected abstract <T> Collection<MethodView<T, ?>> modifiableMethods(ComponentProcessingContext<T> processingContext);
+    protected abstract <T> Collection<MethodView<T, ?>> modifiableMethods(
+        ComponentProcessingContext<T> processingContext
+    );
 
     /**
      * Checks whether the preconditions for applying the interceptor are met.

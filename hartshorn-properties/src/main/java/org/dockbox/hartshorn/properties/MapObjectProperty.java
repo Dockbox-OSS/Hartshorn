@@ -28,8 +28,9 @@ import java.util.Set;
  * {@link ConfiguredProperty properties}. When values are requested in a specific form (e.g. as a
  * list or object), the implementation will attempt to parse the value into the requested type.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class MapObjectProperty extends AbstractMapProperty<String> implements ObjectProperty {
 

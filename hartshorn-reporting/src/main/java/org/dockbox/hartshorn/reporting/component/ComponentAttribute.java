@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.inject.annotations.configuration.Configuration;
 /**
  * The attributes by which components can be grouped.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public enum ComponentAttribute {
     /**

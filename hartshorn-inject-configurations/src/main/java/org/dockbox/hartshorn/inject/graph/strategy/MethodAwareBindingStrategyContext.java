@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
  *
  * @param <T> the type of the component that is being processed
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class MethodAwareBindingStrategyContext<T> extends DefaultContext
     implements BindingStrategyContext<T> {

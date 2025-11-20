@@ -30,10 +30,12 @@ import org.dockbox.hartshorn.inject.provider.ObjectContainer;
  *
  * @param <T> the type of the components
  *
- * @author Guus Lieben
  * @see CollectionBindingHierarchy
  * @see org.dockbox.hartshorn.inject.ComponentKey#collect(Class)
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public interface ComponentCollection<T> extends Collection<T> {
 

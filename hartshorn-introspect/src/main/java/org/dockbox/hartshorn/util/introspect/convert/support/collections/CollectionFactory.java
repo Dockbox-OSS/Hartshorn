@@ -24,8 +24,9 @@ import java.util.Collection;
  * A factory for creating collections of a given type, with a given element type. This is typically
  * used to support {@link DefaultValueProvider}s for collections.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public interface CollectionFactory {
 

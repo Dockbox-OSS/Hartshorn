@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * implementation supports proxies that are created through a {@link ProxyFactory}, or otherwise
  * implement {@link Proxy} directly.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class HartshornProxyLookup implements ProxyLookup {
 

@@ -29,8 +29,9 @@ import java.util.regex.Pattern;
  * {@code .}, {@code :}, {@code _} and {@code -}. Values may be any string of any length (including
  * empty). Arguments are not trimmed.
  *
- * @author Guus Lieben
  * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
 public class StandardApplicationArgumentParser implements ApplicationArgumentParser {
 

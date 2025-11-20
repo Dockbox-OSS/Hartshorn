@@ -33,8 +33,9 @@ import java.util.function.Function;
  *
  * @param <T> The type instance to provide.
  *
- * @author Guus Lieben
  * @since 0.4.3
+ *
+ * @author Guus Lieben
  */
 public sealed interface InstantiationStrategy<T>
     permits TypeAwareInstantiationStrategy, NonTypeAwareInstantiationStrategy,
@@ -66,7 +67,9 @@ public sealed interface InstantiationStrategy<T>
      *
      * @return A provider that applies the provided function to the result of this provider.
      */
-    default InstantiationStrategy<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
+    default InstantiationStrategy<T> map(
+        Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction
+    ) {
         return new CompositeInstantiationStrategy<>(this, mappingFunction);
     }
 

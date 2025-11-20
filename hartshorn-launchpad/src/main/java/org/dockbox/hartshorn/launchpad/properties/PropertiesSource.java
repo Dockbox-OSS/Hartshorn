@@ -33,16 +33,25 @@ import java.lang.annotation.Target;
  *
  * <p>For example, the following paths are valid by default:
  * <ul>
- *     <li>{@code classpath:application.properties}, through {@link org.dockbox.hartshorn.launchpad.resources.ClassPathResourceLookupStrategy}</li>
- *     <li>{@code fs:/etc/application.properties}, through {@link org.dockbox.hartshorn.launchpad.resources.FileSystemLookupStrategy}</li>
+ *     <li>
+ *         {@code classpath:application.properties}, through
+ *         {@link org.dockbox.hartshorn.launchpad.resources.ClassPathResourceLookupStrategy}
+ *     </li>
+ *     <li>
+ *         {@code fs:/etc/application.properties}, through
+ *         {@link org.dockbox.hartshorn.launchpad.resources.FileSystemLookupStrategy}
+ *     </li>
  * </ul>
  *
- * <p>When multiple sources are specified, the order in which they are specified is the order in which they are loaded.
+ * <p>When multiple sources are specified, the order in which they are specified is the order in
+ * which they are loaded.
  *
- * @author Guus Lieben
  * @see ApplicationEnvironment#resourceLookup()
  * @see TypeDiscoveryPropertySourceResolver
+ * 
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

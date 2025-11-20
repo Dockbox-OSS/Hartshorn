@@ -25,8 +25,9 @@ import java.util.function.Function;
  * A context that allows for storing and retrieving custom data entries associated with specific
  * types.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public abstract class DataContext extends DefaultContext {
 

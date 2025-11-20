@@ -27,8 +27,9 @@ import java.lang.reflect.Array;
 /**
  * Provides default values for array types.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ArrayDefaultValueProviderFactory implements
     DefaultValueProviderFactory<Object>,
@@ -54,9 +55,11 @@ public class ArrayDefaultValueProviderFactory implements
      *
      * @param <O> the type of the array elements
      *
-     * @author Guus Lieben
      * @see Array#newInstance(Class, int)
+     *
      * @since 0.7.0
+     *
+     * @author Guus Lieben
      */
     public static class ArrayDefaultValueProvider<O> implements DefaultValueProvider<O[]> {
 

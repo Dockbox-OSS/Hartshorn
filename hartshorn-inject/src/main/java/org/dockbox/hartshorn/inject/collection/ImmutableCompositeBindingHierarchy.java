@@ -142,7 +142,7 @@ public class ImmutableCompositeBindingHierarchy<T>
     public Iterator<Map.Entry<Integer, InstantiationStrategy<ComponentCollection<T>>>> iterator() {
         MultiMap<Integer, CollectionInstantiationStrategy<T>> providers = new ArrayListMultiMap<>();
         for (CollectionBindingHierarchy<T> hierarchy : this.hierarchies) {
-            for (Map.Entry<Integer, InstantiationStrategy<ComponentCollection<T>>> entry : hierarchy) {
+            for (var entry : hierarchy) {
                 providers.put(entry.getKey(),
                     (CollectionInstantiationStrategy<T>) entry.getValue());
             }

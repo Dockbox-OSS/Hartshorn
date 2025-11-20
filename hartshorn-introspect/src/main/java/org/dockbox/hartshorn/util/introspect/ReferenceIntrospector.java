@@ -25,9 +25,11 @@ import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardTypeView;
  * is used to introspect types in a generic way, without having to know the exact type of the type
  * reference.
  *
- * @author Guus Lieben
  * @see TypeView
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public interface ReferenceIntrospector {
 

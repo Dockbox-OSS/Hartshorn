@@ -47,7 +47,9 @@ public final class StandardValuePropertyParsers {
      * @see StringToNumberConverterFactory
      */
     public static final ValuePropertyParser<Integer> INTEGER =
-        new ConverterValuePropertyParser<>(new StringToNumberConverterFactory().create(Integer.class));
+        new ConverterValuePropertyParser<>(
+            new StringToNumberConverterFactory().create(Integer.class)
+        );
 
     /**
      * A {@link ValuePropertyParser} for parsing long values from a {@link ValueProperty}.
@@ -55,7 +57,9 @@ public final class StandardValuePropertyParsers {
      * @see StringToNumberConverterFactory
      */
     public static final ValuePropertyParser<Long> LONG =
-        new ConverterValuePropertyParser<>(new StringToNumberConverterFactory().create(Long.class));
+        new ConverterValuePropertyParser<>(
+            new StringToNumberConverterFactory().create(Long.class)
+        );
 
     /**
      * A {@link ValuePropertyParser} for parsing double values from a {@link ValueProperty}.
@@ -63,7 +67,9 @@ public final class StandardValuePropertyParsers {
      * @see StringToNumberConverterFactory
      */
     public static final ValuePropertyParser<Double> DOUBLE =
-        new ConverterValuePropertyParser<>(new StringToNumberConverterFactory().create(Double.class));
+        new ConverterValuePropertyParser<>(
+            new StringToNumberConverterFactory().create(Double.class)
+        );
 
     /**
      * A {@link ValuePropertyParser} for parsing float values from a {@link ValueProperty}.
@@ -71,7 +77,9 @@ public final class StandardValuePropertyParsers {
      * @see StringToNumberConverterFactory
      */
     public static final ValuePropertyParser<Float> FLOAT =
-        new ConverterValuePropertyParser<>(new StringToNumberConverterFactory().create(Float.class));
+        new ConverterValuePropertyParser<>(
+            new StringToNumberConverterFactory().create(Float.class)
+        );
 
     /**
      * A {@link ValuePropertyParser} for parsing string values from a {@link ValueProperty}. Uses
@@ -95,7 +103,9 @@ public final class StandardValuePropertyParsers {
      * @see StringToNumberConverterFactory
      */
     public static final ValuePropertyParser<Short> SHORT =
-        new ConverterValuePropertyParser<>(new StringToNumberConverterFactory().create(Short.class));
+        new ConverterValuePropertyParser<>(
+            new StringToNumberConverterFactory().create(Short.class)
+        );
 
     /**
      * A {@link ValuePropertyParser} for parsing byte values from a {@link ValueProperty}.

@@ -25,8 +25,9 @@ import java.net.URI;
  * A loader for {@link PropertyRegistry} instances. This loader is used to populate a registry with
  * properties from a specific source.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface PropertyRegistryPathLoader {
 

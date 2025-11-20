@@ -40,8 +40,9 @@ import java.lang.annotation.Target;
  * active when the activator is present on the application activator. These packages will be scanned
  * when the application is initializing.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

@@ -36,8 +36,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link Class classes} and {@link java.lang.reflect.ParameterizedType parameterized types}, with
  * only the {@link #allInput()} method being implemented differently.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractReflectionTypeParametersIntrospector
     implements TypeParametersIntrospector {
@@ -108,8 +109,9 @@ public abstract class AbstractReflectionTypeParametersIntrospector
                     return new SimpleTypeParameterList(parameters);
                 }
                 catch (TypeParameterResolutionException e) {
-                    // TypeParameterResolverGraphVisitor doesn't throw any exceptions, so this should never happen. If it does,
-                    // it indicates something was unexpectedly modified in the implementation.
+                    // TypeParameterResolverGraphVisitor doesn't throw any exceptions, so this
+                    // should never happen. If it does, it indicates something was unexpectedly
+                    // modified in the implementation.
                     throw new IllegalStateException(
                         "Unexpected graph exception while resolving type parameters",
                         e);

@@ -32,8 +32,9 @@ import org.dockbox.hartshorn.proxy.ProxyFactory;
  *
  * @param <P> the type of the parent that is being delegated to
  *
- * @author Guus Lieben
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProcessor {
 
@@ -65,7 +66,8 @@ public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProce
         P concreteDelegator = this.concreteDelegator(application, factory, this.parentTarget());
 
         if (this.skipConcreteMethods()) {
-            // Ensure we keep the original instance as delegate if possible, to avoid losing context. This rule is defined by the finalizing process.
+            // Ensure we keep the original instance as delegate if possible, to avoid losing
+            // context. This rule is defined by the finalizing process.
             if (instance != null) {
                 factory.advisors().type().delegate(this.parentTarget().cast(instance));
             }

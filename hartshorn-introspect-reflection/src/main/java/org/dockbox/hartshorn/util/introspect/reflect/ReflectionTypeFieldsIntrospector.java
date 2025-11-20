@@ -34,8 +34,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @param <T> the type for which fields are being introspected
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospector<T> {
 
@@ -44,7 +45,7 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
          * This field is a synthetic field which is added by IntelliJ IDEA when running tests with
          * coverage. Refer to IDEA-274803 for more information.
          *
-         * https://youtrack.jetbrains.com/issue/IDEA-274803/Velocity-field-names-check-fails-with-new-coverage
+         * https://youtrack.jetbrains.com/issue/IDEA-274803/
          */
         "__$lineHits$__"
     );

@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.util;
  * Thrown when the application runs a validated problem. This is the unchecked variant of
  * {@link ApplicationException}.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class ApplicationRuntimeException extends RuntimeException {
 

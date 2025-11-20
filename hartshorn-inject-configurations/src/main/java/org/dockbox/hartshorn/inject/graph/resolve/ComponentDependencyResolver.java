@@ -41,8 +41,9 @@ import java.util.Set;
  * to have dependencies on other components. Managed components are allowed to be conditional
  * through the use of {@link org.dockbox.hartshorn.inject.condition.Condition conditions}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ComponentDependencyResolver extends AbstractContainerDependencyResolver {
 
@@ -100,7 +101,8 @@ public class ComponentDependencyResolver extends AbstractContainerDependencyReso
                     constructorView);
             return Set.of(new ConditionalDependencyContext<>(dependencyContext, contexts -> true));
         }
-        else if (declarationContext instanceof ComponentKeyDependencyDeclarationContext<T> keyContext) {
+        else if (declarationContext instanceof ComponentKeyDependencyDeclarationContext<T>
+            keyContext) {
             InstantiationStrategy<T> strategy = keyContext.provider();
             ManagedComponentKeyDependencyContext<T> dependencyContext =
                 ManagedComponentKeyDependencyContext.builder(keyContext.key(), type)

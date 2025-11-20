@@ -28,9 +28,11 @@ import org.dockbox.hartshorn.properties.loader.path.StandardPropertyPathStyle;
  * A {@link PropertyPathFormatter} that formats a {@link PropertyPathNode} to a string
  * representation following the style defined by a {@link PropertyPathStyle}.
  *
- * @author Guus Lieben
  * @see PropertyPathFormatter
+ *
  * @since 0.7.0
+ * 
+ * @author Guus Lieben
  */
 public class StylePropertyPathFormatter implements PropertyPathFormatter {
 

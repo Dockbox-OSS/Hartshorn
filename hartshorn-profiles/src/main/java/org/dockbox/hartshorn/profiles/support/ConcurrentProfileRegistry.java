@@ -28,8 +28,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * A concurrent implementation of the {@link ProfileRegistry} interface.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ConcurrentProfileRegistry implements ProfileRegistry {
 

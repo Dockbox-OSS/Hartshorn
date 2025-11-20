@@ -26,8 +26,9 @@ package org.dockbox.hartshorn.reporting;
  * <p>It is not required that implementations of this interface be thread-safe, nor is it required
  * that they be immutable. However, implementations are expected to be side-effect free.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface Reportable {

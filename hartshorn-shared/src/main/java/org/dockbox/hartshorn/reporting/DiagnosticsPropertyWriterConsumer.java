@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.reporting;
  * A consumer that writes to a {@link DiagnosticsPropertyWriter}, typically used for delegation of
  * writing to a specific type.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface DiagnosticsPropertyWriterConsumer {
 

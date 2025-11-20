@@ -38,8 +38,9 @@ import java.util.stream.Stream;
  * Utility class for functionalities related to types. Within the context of this class, types can
  * either be primitives which require (un)boxing, or {@link Class} instances.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class TypeUtils {
 

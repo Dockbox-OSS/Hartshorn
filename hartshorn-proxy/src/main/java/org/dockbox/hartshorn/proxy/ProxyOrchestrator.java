@@ -26,8 +26,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * middleware between the application and the lower level proxying library, allowing for easy
  * replacement of the proxying library.
  *
- * @author Guus Lieben
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public interface ProxyOrchestrator extends ProxyLookup {
 

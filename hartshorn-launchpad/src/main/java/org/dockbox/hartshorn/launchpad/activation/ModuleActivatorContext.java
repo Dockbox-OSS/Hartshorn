@@ -40,12 +40,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>This context should always be attached to the {@link ApplicationContext}, and yield the
  * same result as {@link ApplicationContext#activators()}.
  *
- * @author Guus Lieben
  * @see ApplicationContextFactory
  * @see ApplicationContext#activators()
  * @see ModuleActivator
  * @see ModuleActivatorHolder
+ *
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ModuleActivatorContext extends DefaultFallbackCompatibleContext implements Reportable {
 

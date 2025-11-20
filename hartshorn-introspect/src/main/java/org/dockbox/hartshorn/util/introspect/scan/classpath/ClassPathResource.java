@@ -22,10 +22,12 @@ import java.nio.file.Path;
  * Represents a resource on the classpath. Resources are provided by {@link ClassPathScanner}s and
  * handed over to {@link ResourceHandler}s for further processing.
  *
- * @author Guus Lieben
  * @see ClassPathScanner
  * @see ResourceHandler
+ *
  * @since 0.4.13
+ * 
+ * @author Guus Lieben
  */
 public interface ClassPathResource {
 

@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
  *
  * @param <C> The type of the {@link ApplicationContext} that is created.
  *
- * @author Guus Lieben
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ApplicationBuilder<C extends ApplicationContext> {

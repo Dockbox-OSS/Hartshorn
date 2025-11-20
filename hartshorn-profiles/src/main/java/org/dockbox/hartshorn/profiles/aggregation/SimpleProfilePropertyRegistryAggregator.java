@@ -40,8 +40,9 @@ import java.util.Set;
  * in the given {@link ProfileRegistry}. Properties from higher priority profiles override those
  * from lower priority ones.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class SimpleProfilePropertyRegistryAggregator implements ProfilePropertyRegistryAggregator {
 

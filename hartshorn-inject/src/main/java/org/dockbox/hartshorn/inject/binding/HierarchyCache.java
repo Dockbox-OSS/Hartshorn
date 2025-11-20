@@ -145,18 +145,20 @@ public class HierarchyCache {
 
         return Objects.requireNonNullElseGet(hierarchy, () -> {
             // If we don't have an explicit hierarchy on the key, we can try to use the hierarchy of
-            // the application context. This is useful for components that are not explicitly scoped,
-            // but are still accessed through a scope.
+            // the application context. This is useful for components that are not explicitly
+            // scoped, but are still accessed through a scope.
             if (useGlobalIfAbsent && this.globalBinder != this.binder) {
                 ComponentKey<T> unscopedKey = key.mutable()
-                    // Need to drop the scope, otherwise we risk the global binder being an orchestrator
-                    // which delegates based on the scope of the key, which would defeat the point of
-                    // attempting a top-level lookup.
+                    // Need to drop the scope, otherwise we risk the global binder being an
+                    // orchestrator which delegates based on the scope of the key, which would
+                    // defeat the point of attempting a top-level lookup.
                     .scope(null)
                     .build();
                 return this.globalBinder.hierarchy(unscopedKey);
             }
-            return new AliasableBindingHierarchyAdapter<>(new NativePrunableBindingHierarchy<>(key));
+            return new AliasableBindingHierarchyAdapter<>(
+                new NativePrunableBindingHierarchy<>(key)
+            );
         });
     }
 
@@ -169,8 +171,8 @@ public class HierarchyCache {
                 new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
         }
         else if (this.isStrict(key)) {
-            // Strict mode, so don't create a hierarchy if it wasn't defined before. Instead, callers
-            // may opt to use a fallback resolution strategy.
+            // Strict mode, so don't create a hierarchy if it wasn't defined before. Instead,
+            // callers may opt to use a fallback resolution strategy.
             hierarchy = null;
         }
         else {
@@ -216,7 +218,8 @@ public class HierarchyCache {
                 return this.hierarchies.get(compatibleKey);
             }
             else {
-                // Acceptable, as long as there is a single highest priority binding. If multiple match, it's an error.
+                // Acceptable, as long as there is a single highest priority binding. If multiple
+                // match, it's an error.
                 return this.lookupHighestPriorityHierarchy(key, compatibleKeys);
             }
         }

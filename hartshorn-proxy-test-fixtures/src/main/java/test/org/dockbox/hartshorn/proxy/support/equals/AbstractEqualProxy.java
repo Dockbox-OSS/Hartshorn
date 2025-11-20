@@ -19,8 +19,9 @@ package test.org.dockbox.hartshorn.proxy.support.equals;
 /**
  * Abstract class to test equality of abstract-class proxies.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractEqualProxy {
 

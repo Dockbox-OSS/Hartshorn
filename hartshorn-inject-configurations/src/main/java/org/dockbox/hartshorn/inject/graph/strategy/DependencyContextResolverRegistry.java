@@ -24,9 +24,11 @@ import java.util.Set;
 /**
  * A registry for {@link DependencyContextResolver} strategies.
  *
- * @author Guus Lieben
  * @see DependencyContextResolver
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public interface DependencyContextResolverRegistry extends Configurer {
 

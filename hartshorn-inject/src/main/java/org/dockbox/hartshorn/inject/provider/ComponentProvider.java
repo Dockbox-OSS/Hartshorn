@@ -34,9 +34,11 @@ import org.dockbox.hartshorn.inject.scope.Scope;
  * the default scope configured by the provider. The default scope is typically the same as the
  * scope of the provider itself, but this is not required.
  *
- * @author Guus Lieben
  * @see ComponentKey
+ * 
  * @since 0.4.9
+ * 
+ * @author Guus Lieben
  */
 public interface ComponentProvider {
 

@@ -34,9 +34,11 @@ import java.lang.annotation.Target;
  * (Configuration) annotation, the extending annotation will override the attribute value of the
  * extended annotation.
  *
- * @author Guus Lieben
  * @see AttributeAlias
+ *
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
  * A {@link PropertyRegistry} that is aware of an associated {@link ProfileRegistry}, and therefore
  * its {@link EnvironmentProfile}s.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface ProfilePropertyRegistry extends PropertyRegistry {
 

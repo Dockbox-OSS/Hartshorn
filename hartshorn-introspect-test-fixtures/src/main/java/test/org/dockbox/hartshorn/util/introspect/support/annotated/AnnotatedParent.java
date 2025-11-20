@@ -21,8 +21,9 @@ import test.org.dockbox.hartshorn.util.introspect.support.annotations.AnyElement
 /**
  * Parent interface for {@link AnnotatedObject}.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @AnyElementAnnotation("parent")
 public interface AnnotatedParent {

@@ -26,8 +26,9 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * A {@link PackageView} implementation for wildcard types.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class WildcardPackageView extends DefaultContext implements PackageView {
 

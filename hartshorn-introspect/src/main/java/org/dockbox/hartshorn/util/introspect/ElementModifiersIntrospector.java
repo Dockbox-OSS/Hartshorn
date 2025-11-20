@@ -32,7 +32,6 @@ package org.dockbox.hartshorn.util.introspect;
  * {@link java.lang.module.ModuleDescriptor.Exports.Modifier}, but the implementation of this
  * introspector is not limited to use of either.
  *
- * @author Guus Lieben
  * @see java.lang.reflect.Modifier
  * @see java.lang.module.ModuleDescriptor.Exports.Modifier
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se9/html/jls-8.html#jls-8.1.1">
@@ -50,7 +49,10 @@ package org.dockbox.hartshorn.util.introspect;
  * @see <a href="https://docs.oracle.com/javase/specs/jls/se9/html/jls-9.html#jls-9.1.1">
  * JLS, 9.1.1. Interface Modifiers
  * </a>
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public interface ElementModifiersIntrospector {
 

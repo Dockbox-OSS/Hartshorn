@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
  * property in the given {@link PropertyRegistry}. The property key used is
  * {@value #PROFILES_PROPERTY}.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class FromPropertyProfileNameResolver implements ProfileNameResolver {
 

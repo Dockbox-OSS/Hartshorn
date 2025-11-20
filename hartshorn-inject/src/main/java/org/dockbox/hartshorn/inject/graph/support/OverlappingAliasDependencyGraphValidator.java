@@ -44,8 +44,9 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
  * the primary key
  * will always take precedence over the alias.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class OverlappingAliasDependencyGraphValidator implements DependencyGraphValidator {
 
@@ -55,7 +56,8 @@ public class OverlappingAliasDependencyGraphValidator implements DependencyGraph
         Introspector introspector,
         ComponentProviderOrchestrator orchestrator
     ) throws ApplicationException {
-        if (orchestrator instanceof AliasCapableComponentProviderOrchestrator aliasCapableOrchestrator) {
+        if (orchestrator instanceof AliasCapableComponentProviderOrchestrator
+            aliasCapableOrchestrator) {
             BindingAliasNormalizer aliasNormalizer = aliasCapableOrchestrator.aliasNormalizer();
             List<? extends AliasableDependencyContext<?>> aliasedDependencyContexts =
                 dependencyGraph.nodes().stream()

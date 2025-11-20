@@ -47,8 +47,9 @@ import org.dockbox.hartshorn.inject.provider.LifecycleType;
  * }
  * }</pre>
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE})

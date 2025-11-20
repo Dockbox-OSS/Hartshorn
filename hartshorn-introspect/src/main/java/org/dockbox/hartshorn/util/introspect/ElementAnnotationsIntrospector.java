@@ -30,8 +30,9 @@ import java.util.Set;
  * for meta-annotations to be used to annotate annotations, and have those meta-annotations be
  * considered when searching for annotations.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public interface ElementAnnotationsIntrospector {
 

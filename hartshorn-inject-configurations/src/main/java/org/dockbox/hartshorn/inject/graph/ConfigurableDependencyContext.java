@@ -40,11 +40,13 @@ import org.dockbox.hartshorn.util.introspect.view.View;
  *
  * @param <T> the type of the component that is auto-configured
  *
- * @author Guus Lieben
  * @see DependencyContext
  * @see BindingFunction
  * @see MethodView
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<T>
     implements LifecycleAwareDependencyContext<T> {
@@ -66,7 +68,9 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
      *
      * @return the builder for the configurable dependency context
      */
-    public static <T> AutoConfiguringDependencyContextBuilder<T> builder(ComponentKey<T> componentKey) {
+    public static <T> AutoConfiguringDependencyContextBuilder<T> builder(
+        ComponentKey<T> componentKey
+    ) {
         return new AutoConfiguringDependencyContextBuilder<>(componentKey);
     }
 
@@ -80,8 +84,10 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
             }
         }
         catch (IllegalScopeException e) {
-            throw new ComponentConfigurationException("Could not configure binding for %s".formatted(
-                this.componentKey()), e);
+            throw new ComponentConfigurationException(
+                "Could not configure binding for %s".formatted(this.componentKey()),
+                e
+            );
         }
         function.priority(this.priority());
         function.processAfterInitialization(this.processAfterInitialization());
@@ -100,16 +106,20 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
                 switch (instanceType) {
                     case SUPPLIER -> collector.supplier(this.supplier);
                     case SINGLETON ->
-                        collector.singleton(this.supplier.get(ComponentRequestContext.createForComponent(),
-                            null));
+                        collector.singleton(this.supplier.get(
+                            ComponentRequestContext.createForComponent(),
+                            null
+                        ));
                     case LAZY_SINGLETON -> collector.lazySingleton(scope -> this.supplier.get(
                         ComponentRequestContext.createForComponent(),
                         scope));
                 }
             }
             catch (ApplicationException e) {
-                throw new ComponentConfigurationException("Could not configure binding for %s".formatted(
-                    this.componentKey()), e);
+                throw new ComponentConfigurationException(
+                    "Could not configure binding for %s".formatted(this.componentKey()),
+                    e
+                );
             }
         });
     }
@@ -121,16 +131,20 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
             switch (instanceType) {
                 case SUPPLIER -> function.to(this.supplier);
                 case SINGLETON ->
-                    function.singleton(this.supplier.get(ComponentRequestContext.createForComponent(),
-                        null));
+                    function.singleton(this.supplier.get(
+                        ComponentRequestContext.createForComponent(),
+                        null
+                    ));
                 case LAZY_SINGLETON -> function.lazySingleton(scope -> this.supplier.get(
                     ComponentRequestContext.createForComponent(),
                     scope));
             }
         }
         catch (ApplicationException e) {
-            throw new ComponentConfigurationException("Could not configure binding for %s".formatted(
-                this.componentKey()), e);
+            throw new ComponentConfigurationException(
+                "Could not configure binding for %s".formatted(this.componentKey()),
+                e
+            );
         }
     }
 
@@ -148,7 +162,8 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
         return switch (this.lifecycleType()) {
             case PROTOTYPE -> InstanceType.SUPPLIER;
             case SINGLETON -> {
-                // Scopes are always lazy, as scopes are not guaranteed to be available at configuration time
+                // Scopes are always lazy, as scopes are not guaranteed to be available at
+                // configuration time
                 if (this.lazy() || this.scope().present()) {
                     yield InstanceType.LAZY_SINGLETON;
                 }
@@ -179,8 +194,9 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
      *
      * @param <T> the type of the component that is auto-configured
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class AutoConfiguringDependencyContextBuilder<T>
         extends AbstractDependencyContextBuilder<T, AutoConfiguringDependencyContextBuilder<T>> {
@@ -204,7 +220,9 @@ public class ConfigurableDependencyContext<T> extends AbstractDependencyContext<
          *
          * @return the builder
          */
-        public AutoConfiguringDependencyContextBuilder<T> supplier(PrototypeInstantiationStrategy<T> supplier) {
+        public AutoConfiguringDependencyContextBuilder<T> supplier(
+            PrototypeInstantiationStrategy<T> supplier
+        ) {
             this.supplier = supplier;
             return this;
         }

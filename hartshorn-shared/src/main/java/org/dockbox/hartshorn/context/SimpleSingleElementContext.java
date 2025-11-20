@@ -24,8 +24,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @param <I> the type of the input
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class SimpleSingleElementContext<I> extends AbstractSingleElementContext<I> {
 

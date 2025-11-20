@@ -35,8 +35,9 @@ import java.util.regex.Pattern;
 /**
  * A collection of utility methods for working with strings.
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public final class StringUtilities {
 
@@ -416,8 +417,9 @@ public final class StringUtilities {
      *     <li>{@code "b2Y"}</li>
      * </ul>
      *
-     * @author Guus Lieben
      * @since 0.7.0
+     *
+     * @author Guus Lieben
      */
     public static class MatrixBuilder {
 

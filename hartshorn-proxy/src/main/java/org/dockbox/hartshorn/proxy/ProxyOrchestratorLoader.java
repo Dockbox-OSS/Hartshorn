@@ -21,8 +21,9 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 /**
  * Service discovery interface for {@link ProxyOrchestrator} implementations.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ProxyOrchestratorLoader {

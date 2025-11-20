@@ -36,10 +36,12 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
  *
  * @param <T> the type of the binding
  *
- * @author Guus Lieben
  * @see ApplicationContext
  * @see BindingFunction
+ * 
  * @since 0.4.11
+ * 
+ * @author Guus Lieben
  */
 public class DelegatingApplicationBindingFunction<T>
     implements BindingFunction<T>, ApplicationContextCarrier {

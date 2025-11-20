@@ -31,8 +31,9 @@ import javassist.util.proxy.MethodHandler;
  * @param introspector the introspector to use
  * @param <T> the type of the proxy
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public record JavassistProxyMethodHandler<T>(ProxyMethodInterceptor<T> interceptor,
                                              Introspector introspector) implements MethodHandler {

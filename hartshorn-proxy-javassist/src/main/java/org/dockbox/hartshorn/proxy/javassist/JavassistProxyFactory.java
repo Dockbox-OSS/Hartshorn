@@ -32,10 +32,12 @@ import javassist.util.proxy.ProxyFactory;
  *
  * @param <T> the type of the proxy
  *
- * @author Guus Lieben
  * @see ProxyFactory
  * @see MethodHandler
+ * 
  * @since 0.4.10
+ * 
+ * @author Guus Lieben
  */
 public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
 
@@ -48,7 +50,9 @@ public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
     }
 
     @Override
-    protected ProxyConstructorFunction<T> concreteOrAbstractEnhancer(ProxyMethodInterceptor<T> interceptor) {
+    protected ProxyConstructorFunction<T> concreteOrAbstractEnhancer(
+        ProxyMethodInterceptor<T> interceptor
+    ) {
         ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.type());
         factory.setInterfaces(this.proxyInterfaces(false));

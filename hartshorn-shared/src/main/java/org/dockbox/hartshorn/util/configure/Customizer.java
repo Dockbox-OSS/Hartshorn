@@ -25,8 +25,9 @@ import java.util.function.Consumer;
  *
  * @param <T> The type of object to customize.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface Customizer<T> {
 

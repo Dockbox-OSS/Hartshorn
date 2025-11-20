@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * invocation. This will attempt to unproxy the argument, and if that fails, will return the
  * argument as-is.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ObjectEqualsParameterLoaderRule
     implements ParameterLoaderRule<ProxyParameterLoaderContext> {

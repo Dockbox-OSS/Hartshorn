@@ -28,8 +28,9 @@ import java.util.function.Predicate;
  * A registry for {@link ConfiguredProperty} instances. This registry allows for the registration
  * and retrieval of properties by name.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface PropertyRegistry extends ObjectProperty {
 

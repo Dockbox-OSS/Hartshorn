@@ -21,9 +21,11 @@ package org.dockbox.hartshorn.reporting;
  * writing a specific property, configured by
  * {@link DiagnosticsPropertyCollector#property(String)}.
  *
- * @author Guus Lieben
  * @see DiagnosticsPropertyCollector
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface DiagnosticsPropertyWriter {
 

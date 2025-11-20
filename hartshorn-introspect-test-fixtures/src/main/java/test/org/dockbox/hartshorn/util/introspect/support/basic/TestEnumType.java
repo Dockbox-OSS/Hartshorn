@@ -19,8 +19,9 @@ package test.org.dockbox.hartshorn.util.introspect.support.basic;
 /**
  * Basic enum type for testing.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public enum TestEnumType {
     A,

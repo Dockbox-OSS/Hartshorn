@@ -35,8 +35,9 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
  *
  * @param <T> The type of the component that is bound.
  *
- * @author Guus Lieben
  * @since 0.4.11
+ *
+ * @author Guus Lieben
  */
 public interface BindingFunction<T> {
 

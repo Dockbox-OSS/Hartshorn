@@ -23,9 +23,11 @@ import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
  * A resolver that determines the {@link ComponentKey} of a component. This is commonly used to
  * determine the {@link ComponentKey} of a binding declaration or injection point.
  *
- * @author Guus Lieben
  * @see ComponentKey
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ComponentKeyResolver {

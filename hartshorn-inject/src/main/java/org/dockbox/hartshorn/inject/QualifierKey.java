@@ -49,8 +49,9 @@ import java.util.stream.Collectors;
  * @param meta The meta data of the qualifier.
  * @param <T> The type of the qualifier.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public record QualifierKey<T>(Class<T> type, Map<String, Object> meta) implements Reportable {
 

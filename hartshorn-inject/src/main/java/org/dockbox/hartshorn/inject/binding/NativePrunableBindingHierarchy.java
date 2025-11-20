@@ -28,9 +28,11 @@ import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
  *
  * @param <C> The type of type to provide.
  *
- * @author Guus Lieben
  * @see BindingHierarchy
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class NativePrunableBindingHierarchy<C> extends AbstractBindingHierarchy<C>
     implements PrunableBindingHierarchy<C> {

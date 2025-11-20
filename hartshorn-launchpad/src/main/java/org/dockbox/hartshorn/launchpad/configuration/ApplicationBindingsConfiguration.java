@@ -35,10 +35,12 @@ import org.dockbox.hartshorn.inject.binding.Binder;
  * default bindings. This is useful when the default bindings are not sufficient, or when the
  * default bindings are not desired.
  *
- * @author Guus Lieben
  * @see Binder
  * @see ApplicationEnvironment
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ApplicationBindingsConfiguration {

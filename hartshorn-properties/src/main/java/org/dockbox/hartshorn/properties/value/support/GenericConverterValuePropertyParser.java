@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * @param targetType the type to convert the value to
  * @param <T> the type to convert the value to
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public record GenericConverterValuePropertyParser<T>(
     GenericConverter converter,

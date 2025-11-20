@@ -37,10 +37,12 @@ import java.util.Optional;
  * @param helperOptionToCollectionConverterFactory The helper {@link ConverterFactory} to convert
  * from {@link Option} to {@link Collection}
  *
- * @author Guus Lieben
  * @see OptionalToOptionConverter
  * @see OptionToCollectionConverterFactory
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public record OptionalToCollectionConverterFactory(
     Converter<Optional<?>, Option<?>> helperOptionalToOptionConverter,

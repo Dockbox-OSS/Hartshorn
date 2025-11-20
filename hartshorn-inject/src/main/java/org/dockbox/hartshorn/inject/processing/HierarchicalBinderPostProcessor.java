@@ -30,8 +30,9 @@ import org.dockbox.hartshorn.inject.scope.Scope;
  * be called at any time
  * in the application lifecycle, including during the initialization of the application.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface HierarchicalBinderPostProcessor {
 

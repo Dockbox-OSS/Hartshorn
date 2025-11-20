@@ -96,12 +96,14 @@ import java.util.stream.Collectors;
  * {@link StandardApplicationContextFactory}, which is also the default for
  * {@link HartshornApplication} and {@link HartshornApplicationConfigurer}.
  *
- * @author Guus Lieben
  * @see ConfigurableApplicationEnvironment.Configurer
  * @see StandardApplicationContextFactory.Configurer#environment(ApplicationEnvironment)
  * @see HartshornApplication
  * @see ObservableApplicationEnvironment
+ *
  * @since 0.4.8
+ *
+ * @author Guus Lieben
  */
 public final class ConfigurableApplicationEnvironment
     implements ObservableApplicationEnvironment, ModifiableApplicationContextCarrier {
@@ -140,72 +142,101 @@ public final class ConfigurableApplicationEnvironment
         ApplicationBootstrapContext bootstrapContext = context.input();
         environmentInitializerContext.addContext(bootstrapContext);
 
-        this.conditionMatcher =
-            this.configure(environmentInitializerContext, configurer.conditionMatcher);
-        this.exceptionHandler =
-            this.configure(environmentInitializerContext, configurer.exceptionHandler);
-        this.annotationLookup =
-            this.configure(environmentInitializerContext, configurer.annotationLookup);
-        this.proxyOrchestrator =
-            this.configure(environmentInitializerContext.transform(this.introspector()),
-                configurer.proxyOrchestrator);
-        this.fileSystemProvider =
-            this.configure(environmentInitializerContext, configurer.applicationFSProvider);
-        this.classPathResourceLocator =
-            this.configure(environmentInitializerContext, configurer.classpathResourceLocator);
-        this.injectionPointsResolver =
-            this.configure(environmentInitializerContext, configurer.injectionPointsResolver);
-        this.componentKeyResolver =
-            this.configure(environmentInitializerContext, configurer.componentKeyResolver);
-        this.typeResolver = this.configure(environmentInitializerContext, configurer.typeResolver);
+        this.conditionMatcher = this.configure(
+            environmentInitializerContext,
+            configurer.conditionMatcher
+        );
+        this.exceptionHandler = this.configure(
+            environmentInitializerContext,
+            configurer.exceptionHandler
+        );
+        this.annotationLookup = this.configure(
+            environmentInitializerContext,
+            configurer.annotationLookup
+        );
+        this.proxyOrchestrator = this.configure(
+            environmentInitializerContext.transform(this.introspector()),
+            configurer.proxyOrchestrator
+        );
+        this.fileSystemProvider = this.configure(
+            environmentInitializerContext,
+            configurer.applicationFSProvider
+        );
+        this.classPathResourceLocator = this.configure(
+            environmentInitializerContext,
+            configurer.classpathResourceLocator
+        );
+        this.injectionPointsResolver = this.configure(
+            environmentInitializerContext,
+            configurer.injectionPointsResolver
+        );
+        this.componentKeyResolver = this.configure(
+            environmentInitializerContext,
+            configurer.componentKeyResolver
+        );
+        this.typeResolver = this.configure(
+            environmentInitializerContext,
+            configurer.typeResolver
+        );
+        this.componentRegistry = this.configure(
+            environmentInitializerContext,
+            configurer.componentRegistry
+        );
 
-        this.componentRegistry =
-            this.configure(environmentInitializerContext, configurer.componentRegistry);
         Class<?> mainClass = bootstrapContext.mainClass();
-        // Potentially started from an unnamed class, in which case there will be no constructors. In such scenarios we do
-        // not support the main 'class' as an application component.
+        // Potentially started from an unnamed class, in which case there will be no constructors.
+        // In such scenarios we do not support the main 'class' as an application component.
         if (mainClass.getConstructors().length > 0) {
             TypeView<?> mainType = this.introspector().introspect(mainClass);
             this.componentRegistry()
                 .addCustomContainer(new ApplicationMainComponentContainer<>(mainType));
         }
 
-        this.resourceLookup =
-            this.configure(environmentInitializerContext, configurer.resourceLookup);
-        this.propertyRegistry =
-            this.initializePropertyRegistry(configurer, environmentInitializerContext);
+        this.resourceLookup = this.configure(
+            environmentInitializerContext,
+            configurer.resourceLookup
+        );
+        this.propertyRegistry = this.initializePropertyRegistry(
+            configurer,
+            environmentInitializerContext
+        );
 
-        SingleElementContext<PropertyRegistry> argumentsInitializerContext =
-            context.transform(this.propertyRegistry);
+        SingleElementContext<PropertyRegistry> argumentsInitializerContext = context.transform(
+            this.propertyRegistry
+        );
+
         this.printStackTraces(configurer.showStacktraces.initialize(argumentsInitializerContext));
         this.isBatchMode = configurer.enableBatchMode.initialize(argumentsInitializerContext);
         this.isStrictMode = configurer.enableStrictMode.initialize(argumentsInitializerContext);
-        this.allowFallbackToSingleConstructor =
-            configurer.allowFallbackToSingleConstructor.initialize(argumentsInitializerContext);
+        this.allowFallbackToSingleConstructor = configurer.allowFallbackToSingleConstructor
+            .initialize(argumentsInitializerContext);
+
         if (this.introspector() instanceof BatchCapableIntrospector batchCapableIntrospector) {
             batchCapableIntrospector.enableBatchMode(this.isBatchMode());
         }
 
-        Boolean isBuildEnvironment =
-            configurer.isBuildEnvironment.initialize(environmentInitializerContext);
+        Boolean isBuildEnvironment = configurer.isBuildEnvironment
+            .initialize(environmentInitializerContext);
+
         if (isBuildEnvironment == null) {
             isBuildEnvironment = false;
         }
         this.isBuildEnvironment = isBuildEnvironment;
 
-        if (!this.isBuildEnvironment && configurer.enableBanner.initialize(
-            argumentsInitializerContext)) {
+        if (!this.isBuildEnvironment
+            && configurer.enableBanner.initialize(argumentsInitializerContext)
+        ) {
             this.printBanner(mainClass);
         }
 
         ApplicationContext initializedContext =
             configurer.applicationContext.initialize(environmentInitializerContext);
         // This will handle two aspects:
-        // 1. If the context was not attached through the implementation of ModifiableContextCarrier, it
-        //    will be attached here.
-        // 2. If the context was attached through the implementation of ModifiableContextCarrier, it will
-        //    verify that the resulting context is the same as the attached context, or throw an exception
-        //    to prevent leaving the application in an inconsistent state.
+        // 1. If the context was not attached through the implementation of
+        //    ModifiableContextCarrier, it will be attached here.
+        // 2. If the context was attached through the implementation of ModifiableContextCarrier,
+        //    it will verify that the resulting context is the same as the attached context, or
+        //    throw an exception to prevent leaving the application in an inconsistent state.
         if (initializedContext != null) {
             this.applicationContext(initializedContext);
         }
@@ -442,9 +473,10 @@ public final class ConfigurableApplicationEnvironment
      * @return a non-cached {@link ContextualInitializer} for the
      * {@link ConfigurableApplicationEnvironment}
      */
-    public static ContextualInitializer<ApplicationBootstrapContext, ConfigurableApplicationEnvironment> create(
-        Customizer<Configurer> customizer
-    ) {
+    // checkstyle:off LineLength
+    public static ContextualInitializer<ApplicationBootstrapContext, ConfigurableApplicationEnvironment>
+    // checkstyle:on LineLength
+    create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -466,11 +498,13 @@ public final class ConfigurableApplicationEnvironment
      * of individual components which are used by the environment, as well as several global
      * settings that influence the behavior of the environment.
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer {
 
+        // checkstyle:off LineLength
         private ContextualInitializer<PropertyRegistry, Boolean> enableBanner =
             PropertyInitializer.booleanProperty("hartshorn.banner.enabled")
                 .orElseGet(() -> true);
@@ -491,8 +525,7 @@ public final class ConfigurableApplicationEnvironment
             PropertyInitializer.booleanProperty("hartshorn.inject.allow-single-constructor-fallback")
                 .orElseGet(() -> true);
 
-        private ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver>
-            typeResolver = context -> {
+        private ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver = context -> {
             TypeReferenceCollectorContext collectorContext =
                 context.firstContext(TypeReferenceCollectorContext.class)
                     .orElseGet(TypeReferenceCollectorContext::new);
@@ -500,42 +533,53 @@ public final class ConfigurableApplicationEnvironment
                 collectorContext));
         };
 
-        private ContextualInitializer<ApplicationEnvironment, ? extends ComponentRegistry>
-            componentRegistry = context -> {
-            ApplicationEnvironment environment = context.input();
-            return new TypeReferenceLookupComponentRegistry(environment.typeResolver(),
-                environment.configuration());
-        };
+        private ContextualInitializer<ApplicationEnvironment, ? extends ComponentRegistry> componentRegistry =
+            context -> {
+                ApplicationEnvironment environment = context.input();
+                return new TypeReferenceLookupComponentRegistry(
+                    environment.typeResolver(),
+                    environment.configuration()
+                );
+            };
 
         private ContextualInitializer<Introspector, ? extends ProxyOrchestrator> proxyOrchestrator =
             DefaultProxyOrchestratorLoader.create(Customizer.useDefaults());
-        private ContextualInitializer<ApplicationEnvironment, ? extends PropertyRegistryFactory>
-            propertyRegistryFactory =
+
+        private ContextualInitializer<ApplicationEnvironment, ? extends PropertyRegistryFactory> propertyRegistryFactory =
             EnvironmentProfilesPropertyRegistryFactory.create(Customizer.useDefaults());
-        private ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider>
-            applicationFSProvider = ContextualInitializer.of(PathFileSystemProvider::new);
-        private ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler>
-            exceptionHandler = ContextualInitializer.of(LoggingExceptionHandler::new);
-        private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator>
-            classpathResourceLocator =
+
+        private ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider =
+            ContextualInitializer.of(PathFileSystemProvider::new);
+
+        private ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler =
+            ContextualInitializer.of(LoggingExceptionHandler::new);
+
+        private ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator =
             ContextualInitializer.of(ClassLoaderClasspathResourceLocator::new);
-        private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup>
-            annotationLookup = ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
-        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext>
-            applicationContext = SimpleApplicationContext.create(Customizer.useDefaults());
+
+        private ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup =
+            ContextualInitializer.of(VirtualHierarchyAnnotationLookup::new);
+
+        private ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext =
+            SimpleApplicationContext.create(Customizer.useDefaults());
+
         private ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment =
             ContextualInitializer.of(environment -> BuildEnvironmentPredicate.isBuildEnvironment());
-        private ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver>
-            injectionPointsResolver =
-            ContextualInitializer.defer(() -> MethodsAndFieldsInjectionPointResolver.create(
-                Customizer.useDefaults()));
-        private ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver>
-            componentKeyResolver =
+
+        private ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver =
+            ContextualInitializer.defer(() -> MethodsAndFieldsInjectionPointResolver.create(Customizer.useDefaults()));
+
+        private ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver =
             ContextualInitializer.of(StandardAnnotationComponentKeyResolver::new);
+
         private ContextualInitializer<ApplicationEnvironment, ResourceLookup> resourceLookup =
             StrategyResourceLookup.create(Customizer.useDefaults());
+
         private ContextualInitializer<ApplicationEnvironment, ConditionMatcher> conditionMatcher =
-            ContextualInitializer.of(environment -> new ConditionMatcher(environment::applicationContext));
+            ContextualInitializer.of(environment -> {
+                return new ConditionMatcher(environment::applicationContext);
+            });
+        // checkstyle:on LineLength
 
         /**
          * Enables or disables the banner. If the banner is enabled, it will be printed to the
@@ -545,7 +589,9 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer enableBanner(ContextualInitializer<PropertyRegistry, Boolean> enableBanner) {
+        public Configurer enableBanner(
+            ContextualInitializer<PropertyRegistry, Boolean> enableBanner
+        ) {
             this.enableBanner = enableBanner;
             return this;
         }
@@ -579,7 +625,9 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer enableBatchMode(ContextualInitializer<PropertyRegistry, Boolean> enableBatchMode) {
+        public Configurer enableBatchMode(
+            ContextualInitializer<PropertyRegistry, Boolean> enableBatchMode
+        ) {
             this.enableBatchMode = enableBatchMode;
             return this;
         }
@@ -615,7 +663,9 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer enableStrictMode(ContextualInitializer<PropertyRegistry, Boolean> enableStrictMode) {
+        public Configurer enableStrictMode(
+            ContextualInitializer<PropertyRegistry, Boolean> enableStrictMode
+        ) {
             this.enableStrictMode = enableStrictMode;
             return this;
         }
@@ -650,7 +700,9 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer showStacktraces(ContextualInitializer<PropertyRegistry, Boolean> showStacktraces) {
+        public Configurer showStacktraces(
+            ContextualInitializer<PropertyRegistry, Boolean> showStacktraces
+        ) {
             this.showStacktraces = showStacktraces;
             return this;
         }
@@ -685,7 +737,9 @@ public final class ConfigurableApplicationEnvironment
          *
          * @see InjectorConfiguration#allowFallbackToSingleConstructor()
          */
-        public Configurer allowFallbackToSingleConstructor(ContextualInitializer<PropertyRegistry, Boolean> allowFallbackToSingleConstructor) {
+        public Configurer allowFallbackToSingleConstructor(
+            ContextualInitializer<PropertyRegistry, Boolean> allowFallbackToSingleConstructor
+        ) {
             this.allowFallbackToSingleConstructor = allowFallbackToSingleConstructor;
             return this;
         }
@@ -732,7 +786,10 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current instance
          */
-        public Configurer componentRegistry(ContextualInitializer<ApplicationEnvironment, ? extends ComponentRegistry> componentRegistry) {
+        public Configurer componentRegistry(
+            ContextualInitializer<ApplicationEnvironment, ? extends ComponentRegistry>
+                componentRegistry
+        ) {
             this.componentRegistry = componentRegistry;
             return this;
         }
@@ -763,7 +820,9 @@ public final class ConfigurableApplicationEnvironment
          *
          * @see ProxyOrchestrator
          */
-        public Configurer applicationOrchestrator(ContextualInitializer<Introspector, ? extends ProxyOrchestrator> orchestrator) {
+        public Configurer applicationOrchestrator(
+            ContextualInitializer<Introspector, ? extends ProxyOrchestrator> orchestrator
+        ) {
             this.proxyOrchestrator = orchestrator;
             return this;
         }
@@ -794,7 +853,10 @@ public final class ConfigurableApplicationEnvironment
          *
          * @see FileSystemProvider
          */
-        public Configurer applicationFSProvider(ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider> applicationFSProvider) {
+        public Configurer applicationFSProvider(
+            ContextualInitializer<ApplicationEnvironment, ? extends FileSystemProvider>
+                applicationFSProvider
+        ) {
             this.applicationFSProvider = applicationFSProvider;
             return this;
         }
@@ -825,7 +887,10 @@ public final class ConfigurableApplicationEnvironment
          *
          * @see ExceptionHandler
          */
-        public Configurer exceptionHandler(ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler> exceptionHandler) {
+        public Configurer exceptionHandler(
+            ContextualInitializer<ApplicationEnvironment, ? extends ExceptionHandler>
+                exceptionHandler
+        ) {
             this.exceptionHandler = exceptionHandler;
             return this;
         }
@@ -852,7 +917,10 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer propertyRegistryFactory(ContextualInitializer<ApplicationEnvironment, ? extends PropertyRegistryFactory> propertyRegistryFactory) {
+        public Configurer propertyRegistryFactory(
+            ContextualInitializer<ApplicationEnvironment, ? extends PropertyRegistryFactory>
+                propertyRegistryFactory
+        ) {
             this.propertyRegistryFactory = propertyRegistryFactory;
             return this;
         }
@@ -868,8 +936,12 @@ public final class ConfigurableApplicationEnvironment
          *
          * @see ClasspathResourceLocator
          */
-        public Configurer classpathResourceLocator(ClasspathResourceLocator classpathResourceLocator) {
-            return this.classpathResourceLocator(ContextualInitializer.of(classpathResourceLocator));
+        public Configurer classpathResourceLocator(
+            ClasspathResourceLocator classpathResourceLocator
+        ) {
+            return this.classpathResourceLocator(
+                ContextualInitializer.of(classpathResourceLocator)
+            );
         }
 
         /**
@@ -883,7 +955,10 @@ public final class ConfigurableApplicationEnvironment
          *
          * @see ClasspathResourceLocator
          */
-        public Configurer classpathResourceLocator(ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator> classpathResourceLocator) {
+        public Configurer classpathResourceLocator(
+            ContextualInitializer<ApplicationEnvironment, ? extends ClasspathResourceLocator>
+                classpathResourceLocator
+        ) {
             this.classpathResourceLocator = classpathResourceLocator;
             return this;
         }
@@ -914,7 +989,10 @@ public final class ConfigurableApplicationEnvironment
          *
          * @see AnnotationLookup
          */
-        public Configurer annotationLookup(ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup> annotationLookup) {
+        public Configurer annotationLookup(
+            ContextualInitializer<ApplicationEnvironment, ? extends AnnotationLookup>
+                annotationLookup
+        ) {
             this.annotationLookup = annotationLookup;
             return this;
         }
@@ -945,7 +1023,10 @@ public final class ConfigurableApplicationEnvironment
          *
          * @see ApplicationContext
          */
-        public Configurer applicationContext(ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext> applicationContext) {
+        public Configurer applicationContext(
+            ContextualInitializer<ApplicationEnvironment, ? extends ApplicationContext>
+                applicationContext
+        ) {
             this.applicationContext = applicationContext;
             return this;
         }
@@ -959,7 +1040,9 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer isBuildEnvironment(ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment) {
+        public Configurer isBuildEnvironment(
+            ContextualInitializer<ApplicationEnvironment, Boolean> isBuildEnvironment
+        ) {
             this.isBuildEnvironment = isBuildEnvironment;
             return this;
         }
@@ -986,8 +1069,12 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer injectionPointsResolver(ComponentInjectionPointsResolver injectionPointsResolver) {
-            return this.injectionPointsResolver(ContextualInitializer.of(() -> injectionPointsResolver));
+        public Configurer injectionPointsResolver(
+            ComponentInjectionPointsResolver injectionPointsResolver
+        ) {
+            return this.injectionPointsResolver(
+                ContextualInitializer.of(() -> injectionPointsResolver)
+            );
         }
 
         /**
@@ -999,7 +1086,10 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer injectionPointsResolver(ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver> injectionPointsResolver) {
+        public Configurer injectionPointsResolver(
+            ContextualInitializer<ApplicationEnvironment, ComponentInjectionPointsResolver>
+                injectionPointsResolver
+        ) {
             this.injectionPointsResolver = injectionPointsResolver;
             return this;
         }
@@ -1024,7 +1114,9 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer componentKeyResolver(Initializer<ComponentKeyResolver> componentKeyResolver) {
+        public Configurer componentKeyResolver(
+            Initializer<ComponentKeyResolver> componentKeyResolver
+        ) {
             return this.componentKeyResolver(ContextualInitializer.of(componentKeyResolver));
         }
 
@@ -1036,7 +1128,9 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer componentKeyResolver(ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver) {
+        public Configurer componentKeyResolver(
+            ContextualInitializer<ApplicationEnvironment, ComponentKeyResolver> componentKeyResolver
+        ) {
             this.componentKeyResolver = componentKeyResolver;
             return this;
         }
@@ -1061,7 +1155,9 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer typeResolver(ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver) {
+        public Configurer typeResolver(
+            ContextualInitializer<ApplicationEnvironment, EnvironmentTypeResolver> typeResolver
+        ) {
             this.typeResolver = typeResolver;
             return this;
         }
@@ -1086,7 +1182,9 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer resourceLookup(ContextualInitializer<ApplicationEnvironment, ResourceLookup> resourceLookup) {
+        public Configurer resourceLookup(
+            ContextualInitializer<ApplicationEnvironment, ResourceLookup> resourceLookup
+        ) {
             this.resourceLookup = resourceLookup;
             return this;
         }
@@ -1113,7 +1211,9 @@ public final class ConfigurableApplicationEnvironment
          *
          * @return the current {@link Configurer} instance
          */
-        public Configurer conditionMatcher(ContextualInitializer<ApplicationEnvironment, ConditionMatcher> conditionMatcher) {
+        public Configurer conditionMatcher(
+            ContextualInitializer<ApplicationEnvironment, ConditionMatcher> conditionMatcher
+        ) {
             this.conditionMatcher = conditionMatcher;
             return this;
         }

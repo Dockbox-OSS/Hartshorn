@@ -23,9 +23,11 @@ import org.dockbox.hartshorn.context.DefaultContext;
  * Carrier context for the {@link DefaultBindingConfigurer}. This context is used to pass the
  * {@link DefaultBindingConfigurer} through the context chain when initializing the application.
  *
- * @author Guus Lieben
  * @see DefaultBindingConfigurer
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class DefaultBindingConfigurerContext extends DefaultContext {
 

@@ -40,8 +40,9 @@ import java.util.stream.Collectors;
 /**
  * Tests for introspecting type parameters.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @SuppressWarnings({"rawtypes", "InterfaceMayBeAnnotatedFunctional"})
 public abstract class TypeParameterIntrospectionTests {
@@ -374,8 +375,9 @@ public abstract class TypeParameterIntrospectionTests {
 
         BiMultiMap<TypeParameterView, TypeParameterView> multiMap = inputParameters.asMap();
         Set<TypeParameterView> keys = multiMap.keySet();
-        // Note: unlike output parameters, I -> O mappings are not 1:1, but are 1:n (where n is the number of
-        // output parameters), so the size of the map will be different, but the keys should be the same
+        // Note: unlike output parameters, I -> O mappings are not 1:1, but are 1:n (where n is the
+        // number of output parameters), so the size of the map will be different, but the keys
+        // should be the same
         Assertions.assertEquals(inputParameters.count(), keys.size());
 
         Assertions.assertEquals(1, keys.size());

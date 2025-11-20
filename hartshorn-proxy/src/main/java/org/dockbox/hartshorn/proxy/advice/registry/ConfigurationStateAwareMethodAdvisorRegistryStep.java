@@ -37,8 +37,9 @@ import java.util.function.Consumer;
  * @param <T> the type of the proxy object
  * @param <R> the return type of the method
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R>
     implements StateAwareMethodAdvisorRegistryStep<T, R> {

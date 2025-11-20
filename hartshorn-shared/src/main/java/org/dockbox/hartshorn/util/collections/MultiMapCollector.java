@@ -44,8 +44,9 @@ import java.util.stream.Collector;
  * @param <M> The type of the intermediate {@link MultiMap} used during collection
  * @param <F> The type of the resulting {@link MultiMap}
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends MultiMap<K, V>>(
     Supplier<M> supplier,

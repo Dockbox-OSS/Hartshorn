@@ -21,8 +21,9 @@ package org.dockbox.hartshorn.util.properties;
  *
  * @param <T> the return type of the visitor
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface NodeVisitor<T> {
 

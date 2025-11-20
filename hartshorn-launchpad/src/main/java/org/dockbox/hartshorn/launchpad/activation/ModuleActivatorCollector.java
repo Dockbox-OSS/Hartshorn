@@ -26,8 +26,9 @@ import java.util.stream.Stream;
 /**
  * Collects {@link ModuleActivator} annotations from a given class and its superclasses.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ModuleActivatorCollector {
 

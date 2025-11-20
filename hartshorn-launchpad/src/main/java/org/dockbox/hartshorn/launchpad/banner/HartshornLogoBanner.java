@@ -26,8 +26,9 @@ import java.util.Objects;
  * The default banner of Hartshorn. This banner is printed when the application starts if no custom
  * banner is provided.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ * 
+ * @author Guus Lieben
  */
 public class HartshornLogoBanner extends AbstractConsoleBanner {
 

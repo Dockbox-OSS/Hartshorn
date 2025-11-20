@@ -34,9 +34,11 @@ import java.util.List;
  *
  * @param <T> The type of the parameterized type being introspected
  *
- * @author Guus Lieben
  * @see ParameterizedType#getActualTypeArguments()
+ *
  * @since 0.4.13
+ * 
+ * @author Guus Lieben
  */
 public class ReflectionParameterizedTypeParametersIntrospector<T>
     extends AbstractReflectionTypeParametersIntrospector {

@@ -54,8 +54,9 @@ import java.util.Set;
  * A {@link DependencyContextResolver} implementation that handles methods annotated with
  * {@link Binds}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class BindingMethodDependencyContextResolver implements DependencyContextResolver {
 
@@ -72,8 +73,9 @@ public class BindingMethodDependencyContextResolver implements DependencyContext
 
     @Override
     public <T> boolean isCompatible(BindingStrategyContext<T> context) {
-        return context instanceof MethodAwareBindingStrategyContext<T> methodAwareBindingStrategyContext
-            && methodAwareBindingStrategyContext.method().annotations().has(Binds.class);
+        return context instanceof MethodAwareBindingStrategyContext<T>
+            methodAwareBindingStrategyContext && methodAwareBindingStrategyContext.method()
+            .annotations().has(Binds.class);
     }
 
     @Override
@@ -197,9 +199,8 @@ public class BindingMethodDependencyContextResolver implements DependencyContext
      *
      * @return the contextual initializer
      */
-    public static ContextualInitializer<InjectionCapableApplication, DependencyContextResolver> create(
-        Customizer<Configurer> customizer
-    ) {
+    public static ContextualInitializer<InjectionCapableApplication, DependencyContextResolver>
+    create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -216,19 +217,22 @@ public class BindingMethodDependencyContextResolver implements DependencyContext
     /**
      * Configurer for the {@link BindingMethodDependencyContextResolver}.
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<InjectionCapableApplication, BindingDeclarationDependencyResolver>
-            declarationDependencyResolvers = LazyStreamableConfigurer.of(resolvers -> {
-            resolvers.add(ContextualInitializer.of(context -> new IntrospectionBindingDependencyResolver(
-                context.environment().injectionPointsResolver(),
-                context.environment().componentKeyResolver()
-            )));
-            resolvers.add(new BindingAfterDeclarationDependencyResolver());
-        });
+        // checkstyle:off LineLength
+        private final LazyStreamableConfigurer<InjectionCapableApplication, BindingDeclarationDependencyResolver> declarationDependencyResolvers =
+            LazyStreamableConfigurer.of(resolvers -> {
+                resolvers.add(ContextualInitializer.of(context -> new IntrospectionBindingDependencyResolver(
+                    context.environment().injectionPointsResolver(),
+                    context.environment().componentKeyResolver()
+                )));
+                resolvers.add(new BindingAfterDeclarationDependencyResolver());
+            });
+        // checkstyle:on LineLength
 
         /**
          * Customizer for dependency resolvers.
@@ -237,9 +241,11 @@ public class BindingMethodDependencyContextResolver implements DependencyContext
          *
          * @return this configurer
          */
+        // checkstyle:off LineLength
         public Configurer declarationDependencyResolvers(Customizer<StreamableConfigurer<InjectionCapableApplication, BindingDeclarationDependencyResolver>> customizer) {
             this.declarationDependencyResolvers.customizer(customizer);
             return this;
         }
+        // checkstyle:on LineLength
     }
 }

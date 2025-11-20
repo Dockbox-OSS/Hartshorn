@@ -47,7 +47,9 @@ public class ComposedCollectionInstantiationStrategy<T> implements NonTypeAwareI
 
     private final Set<CollectionInstantiationStrategy<T>> strategies;
 
-    public ComposedCollectionInstantiationStrategy(Set<CollectionInstantiationStrategy<T>> strategies) {
+    public ComposedCollectionInstantiationStrategy(
+        Set<CollectionInstantiationStrategy<T>> strategies
+    ) {
         this.strategies = strategies;
     }
 
@@ -58,7 +60,8 @@ public class ComposedCollectionInstantiationStrategy<T> implements NonTypeAwareI
             Option<ObjectContainer<ComponentCollection<T>>> containers = provider.provide(application, requestContext, scope);
             if (containers.present()) {
                 ComponentCollection<T> componentCollection = containers.get().instance();
-                if (componentCollection instanceof ContainerAwareComponentCollection<T> containerAwareCollection) {
+                if (componentCollection instanceof ContainerAwareComponentCollection<T>
+                    containerAwareCollection) {
                     components.addAll(containerAwareCollection.containers());
                 }
             }

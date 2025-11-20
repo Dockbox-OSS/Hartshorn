@@ -28,9 +28,11 @@ import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
  * register the reporters that are aggregated by the {@link AggregateDiagnosticsReporter}. No
  * ordering is guaranteed.
  *
- * @author Guus Lieben
  * @see AggregateDiagnosticsReporter
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class AggregateReporterConfiguration {
 

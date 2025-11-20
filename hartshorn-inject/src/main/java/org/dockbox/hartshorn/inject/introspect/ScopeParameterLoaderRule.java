@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * {@link ApplicationBoundParameterLoaderContext} if a parameter matches the type of the current
  * scope (or a parent type thereof).
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ScopeParameterLoaderRule
     implements ParameterLoaderRule<ApplicationBoundParameterLoaderContext> {

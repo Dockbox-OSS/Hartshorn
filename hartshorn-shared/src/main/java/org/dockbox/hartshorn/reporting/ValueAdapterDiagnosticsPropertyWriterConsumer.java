@@ -24,8 +24,9 @@ import java.util.stream.Stream;
  * value. This implementation only supports a limited set of types, and will throw an
  * {@link IllegalStateException} if an unsupported type is encountered.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ValueAdapterDiagnosticsPropertyWriterConsumer
     implements DiagnosticsPropertyWriterConsumer {

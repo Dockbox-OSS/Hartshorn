@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.inject.binding.HierarchyLookup;
  * A provider that supports hierarchical bindings. This means that bindings are not just one-to-one,
  * but can be one-to-many, with various bindings on different priority levels.
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public interface HierarchicalComponentProvider extends ComponentProvider, HierarchyLookup {
 

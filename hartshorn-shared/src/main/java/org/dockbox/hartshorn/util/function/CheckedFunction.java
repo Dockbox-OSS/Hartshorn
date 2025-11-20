@@ -25,9 +25,11 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * @param <T> the type of the first argument to the function
  * @param <R> the type of the result of the function
  *
- * @author Guus Lieben
  * @see java.util.function.Function
+ *
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface CheckedFunction<T, R> {

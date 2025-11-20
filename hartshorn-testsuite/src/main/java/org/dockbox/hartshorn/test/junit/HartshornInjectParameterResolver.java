@@ -45,8 +45,9 @@ import java.util.Optional;
  * (methods
  * and constructors) that is managed by the IoC container.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class HartshornInjectParameterResolver implements ParameterResolver {
 

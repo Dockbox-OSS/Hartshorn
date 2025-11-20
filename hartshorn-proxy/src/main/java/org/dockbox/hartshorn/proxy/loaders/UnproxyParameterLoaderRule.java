@@ -26,8 +26,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * A parameter loader rule that attempts to unproxy arguments if the parameter or method is
  * annotated with {@link Unproxy}.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class UnproxyParameterLoaderRule
     implements ParameterLoaderRule<ProxyParameterLoaderContext> {

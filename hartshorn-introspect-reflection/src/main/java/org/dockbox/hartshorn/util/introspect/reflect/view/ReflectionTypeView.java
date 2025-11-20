@@ -58,8 +58,9 @@ import java.util.stream.Collectors;
  *
  * @param <T> the type of the reflected type
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implements TypeView<T> {
 
@@ -439,8 +440,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
 
     @Override
     public T defaultOrNull() {
-        // Do not use .cast here, getOrDefault causes boxing so we get e.g. Integer instead of int. Explicit cast
-        // unboxes it correctly, but .cast will yield a ClassCastException.
+        // Do not use .cast here, getOrDefault causes boxing so we get e.g. Integer instead of int.
+        // Explicit cast unboxes it correctly, but .cast will yield a ClassCastException.
         if (this.isPrimitive()) {
             //noinspection unchecked
             return (T) PRIMITIVE_DEFAULTS.getOrDefault(this.type(), null);
@@ -462,8 +463,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
         if (object == null) {
             return null;
         }
-        // Do not use .cast here, getOrDefault causes boxing so we get e.g. Integer instead of int. Explicit cast
-        // unboxes it correctly, but .cast will yield a ClassCastException.
+        // Do not use .cast here, getOrDefault causes boxing so we get e.g. Integer instead of int.
+        // Explicit cast unboxes it correctly, but .cast will yield a ClassCastException.
         if (this.isInstance(object)) {
             //noinspection unchecked
             return (T) object;

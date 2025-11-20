@@ -20,8 +20,9 @@ package test.org.dockbox.hartshorn.util.introspect.support.typeparameters;
  * Implementation implementing an interface and extending an abstract class, both with type
  * parameters.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ImplementationWithTypeParameter extends AbstractTypeWithTypeParameter<Integer>
     implements InterfaceWithTypeParameter<String> {

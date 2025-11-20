@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * Thrown when a {@link TypeReferenceCollector} encounters an error while collecting
  * {@link TypeReference}s.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ * 
+ * @author Guus Lieben
  */
 public class TypeCollectionException extends ApplicationException {
     public TypeCollectionException(String message) {

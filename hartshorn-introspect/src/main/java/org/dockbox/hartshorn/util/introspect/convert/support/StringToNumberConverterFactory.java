@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * Converts a {@link String} to a {@link Number}. Supports all primitive type wrappers, but not
  * primitives themselves. Supports both decimal and hexadecimal numbers.
  *
- * @author Guus Lieben
  * @see Integer#parseInt(String)
  * @see Integer#decode(String)
  * @see Long#parseLong(String)
@@ -39,7 +38,10 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * @see Byte#parseByte(String)
  * @see Byte#decode(String)
  * @see #isHexNumber(String)
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class StringToNumberConverterFactory implements ConverterFactory<String, Number> {
 
@@ -86,8 +88,9 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
      * @param decodeFunction The function to use for decoding hexadecimal numbers
      * @param <T> The type of the number
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     private record StringToNumberConverter<T extends Number>(
         Function<String, T> parseFunction,

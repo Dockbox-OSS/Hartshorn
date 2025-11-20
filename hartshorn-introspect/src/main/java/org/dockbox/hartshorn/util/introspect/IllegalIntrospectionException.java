@@ -25,8 +25,9 @@ import java.lang.reflect.Member;
  * Thrown when an illegal introspection operation is attempted, or when an introspection operation
  * fails due to an incorrect state.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class IllegalIntrospectionException extends ApplicationRuntimeException {
 

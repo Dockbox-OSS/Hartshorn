@@ -23,9 +23,11 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
  * {@link RequiresCondition} annotation, or a meta-annotation that contains the
  * {@link RequiresCondition} annotation.
  *
- * @author Guus Lieben
  * @see RequiresCondition
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public class AnnotationConditionDeclaration implements ConditionDeclaration {
 

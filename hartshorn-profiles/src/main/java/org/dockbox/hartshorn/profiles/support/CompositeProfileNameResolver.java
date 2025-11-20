@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
  *
  * @param resolvers the set of profile name resolvers to aggregate
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public record CompositeProfileNameResolver(Set<ProfileNameResolver> resolvers)
     implements ProfileNameResolver {

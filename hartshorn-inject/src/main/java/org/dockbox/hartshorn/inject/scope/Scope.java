@@ -39,9 +39,11 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
  * <p>Scopes are expected to correctly implement {@link Object#equals(Object)} and
  * {@link Object#hashCode()} to ensure that they can be used as keys in a dictionary of scopes.
  *
- * @author Guus Lieben
  * @see ComponentKey#scope()
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface Scope {

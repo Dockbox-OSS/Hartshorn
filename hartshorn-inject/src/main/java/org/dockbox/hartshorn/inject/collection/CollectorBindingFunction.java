@@ -30,8 +30,9 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
  *
  * @param <T> the type of the elements in the collection
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface CollectorBindingFunction<T> {
 

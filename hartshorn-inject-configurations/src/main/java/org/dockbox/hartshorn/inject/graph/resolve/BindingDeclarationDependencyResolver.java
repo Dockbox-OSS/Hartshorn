@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
  * created. This is important for resolving circular dependencies, and ensuring every component has
  * its dependencies resolved before it is created.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public interface BindingDeclarationDependencyResolver {
 

@@ -41,10 +41,12 @@ import java.lang.annotation.Target;
  * contain all elements that are compatible with the key, including sub-types. This will thus not
  * only match the first compatible element, but all compatible elements.
  *
- * @author Guus Lieben
  * @see ComponentKey#strict()
  * @see ComponentKey.Builder#strict(boolean)
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

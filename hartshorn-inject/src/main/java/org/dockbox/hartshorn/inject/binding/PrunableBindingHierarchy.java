@@ -22,9 +22,11 @@ package org.dockbox.hartshorn.inject.binding;
  *
  * @param <T> The type of type {@code T} that the hierarchy is for.
  *
- * @author Guus Lieben
  * @see BindingHierarchy
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface PrunableBindingHierarchy<T> extends BindingHierarchy<T> {
 

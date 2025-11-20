@@ -29,8 +29,9 @@ import java.util.function.Supplier;
  * @param <I> the input type
  * @param <T> the type of the value in the option
  *
- * @author Guus Lieben
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface OptionInitializer<I, T> extends ContextualInitializer<I, Option<T>> {

@@ -31,14 +31,15 @@ import org.dockbox.hartshorn.util.IllegalModificationException;
  * that will be executed before the {@link ApplicationContext} is loaded. This allows for the
  * {@link ApplicationContext} to prepare components before the application state is fully loaded.
  *
- * @author Guus Lieben
  * @see ApplicationContext
+ *
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public interface ProcessableApplicationContext extends ApplicationContext {
 
     @Override
-        // Expand type to PostProcessingComponentProvider, ensuring the processor registry is available
     PostProcessingComponentProvider defaultProvider();
 
     /**

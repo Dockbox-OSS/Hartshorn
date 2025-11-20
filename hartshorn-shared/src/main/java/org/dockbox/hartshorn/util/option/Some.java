@@ -34,8 +34,9 @@ import java.util.stream.Stream;
  *
  * @param <T> The type of the value.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class Some<T> extends DefaultContext implements Option<T> {
 

@@ -28,8 +28,9 @@ import java.util.Iterator;
  *
  * @param <E> the type of elements in this collection
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class AbstractDelegatingCollection<E> implements Collection<E> {
 

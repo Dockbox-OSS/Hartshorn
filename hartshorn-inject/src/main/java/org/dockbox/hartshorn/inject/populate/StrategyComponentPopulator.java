@@ -44,9 +44,11 @@ import java.util.Set;
  * return all injection points of a given type, without prior filtering. Filtering is expected to be
  * done by the {@link ComponentPopulationStrategy strategies}.
  *
- * @author Guus Lieben
  * @see ComponentPopulationStrategy
+ *
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class StrategyComponentPopulator implements ComponentPopulator {
 
@@ -153,15 +155,18 @@ public class StrategyComponentPopulator implements ComponentPopulator {
      * A configurer for the {@link StrategyComponentPopulator}, that allows for the configuration of
      * supported population strategies.
      *
-     * @author Guus Lieben
      * @since 0.6.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer {
 
+        // checkstyle:off LineLength
         private final LazyStreamableConfigurer<InjectionCapableApplication, ComponentPopulationStrategy>
             strategies = LazyStreamableConfigurer.of(collection -> {
             collection.add(InjectPopulationStrategy.create(Customizer.useDefaults()));
         });
+        // checkstyle:on LineLength
 
         /**
          * Adds a population strategy to the populator.
@@ -206,9 +211,11 @@ public class StrategyComponentPopulator implements ComponentPopulator {
          *
          * @return this configurer
          */
+        // checkstyle:off LineLength
         public Configurer strategies(Customizer<StreamableConfigurer<InjectionCapableApplication, ComponentPopulationStrategy>> customizer) {
             this.strategies.customizer(customizer);
             return this;
         }
+        // checkstyle:on LineLength
     }
 }

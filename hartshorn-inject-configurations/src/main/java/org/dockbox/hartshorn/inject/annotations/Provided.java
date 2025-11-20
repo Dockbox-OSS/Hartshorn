@@ -43,9 +43,11 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
- * @author Guus Lieben
  * @see AnnotatedProviderMethodInterceptorPostProcessor
+ *
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

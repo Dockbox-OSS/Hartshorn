@@ -32,9 +32,11 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * This resolver will only accept injection points that implement {@link ContextView}. If multiple
  * contexts are available, the first one is returned.
  *
- * @author Guus Lieben
  * @see ContextView
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public class InjectContextParameterResolver implements InjectParameterResolver {
 
@@ -73,7 +75,9 @@ public class InjectContextParameterResolver implements InjectParameterResolver {
         return this.globalContext.firstContext(key).orNull();
     }
 
-    private static ContextIdentity<? extends ContextView> getContextKey(InjectionPoint injectionPoint) {
+    private static ContextIdentity<? extends ContextView> getContextKey(
+        InjectionPoint injectionPoint
+    ) {
         String name = injectionPoint.injectionPoint().annotations()
             // Unlike components, contexts only support named qualifiers, so we don't
             // need to include Qualifier annotated annotations here.

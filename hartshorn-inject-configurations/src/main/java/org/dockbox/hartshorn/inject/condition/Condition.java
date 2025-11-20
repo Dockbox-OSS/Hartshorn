@@ -21,9 +21,11 @@ package org.dockbox.hartshorn.inject.condition;
  * operation should be executed. Conditions are expected to be stateless, and may be reused for
  * multiple matches.
  *
- * @author Guus Lieben
  * @see ConditionMatcher
+ * 
  * @since 0.4.12
+ * 
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface Condition {

@@ -27,16 +27,20 @@ import java.util.Set;
  * A holder for conditional dependency contexts, which are used to determine whether certain
  * dependencies should be resolved based on specific conditions.
  *
- * @author Guus Lieben
  * @see ConditionalDependencyContext
+ *
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ConditionalDependencyContextsHolder extends DefaultContext {
 
     private final MultiMap<ComponentKey<?>, ConditionalDependencyContext<?>>
         conditionalDependencyContexts;
 
-    private ConditionalDependencyContextsHolder(MultiMap<ComponentKey<?>, ConditionalDependencyContext<?>> conditionalDependencyContexts) {
+    private ConditionalDependencyContextsHolder(
+        MultiMap<ComponentKey<?>, ConditionalDependencyContext<?>> conditionalDependencyContexts
+    ) {
         this.conditionalDependencyContexts = conditionalDependencyContexts;
     }
 
@@ -45,7 +49,10 @@ public class ConditionalDependencyContextsHolder extends DefaultContext {
      *
      * @return a multimap of component keys to their corresponding conditional dependency contexts
      */
-    public MultiMap<ComponentKey<?>, ConditionalDependencyContext<?>> conditionalDependencyContexts() {
+    public MultiMap<
+        ComponentKey<?>,
+        ConditionalDependencyContext<?>
+        > conditionalDependencyContexts() {
         return this.conditionalDependencyContexts;
     }
 
@@ -65,7 +72,9 @@ public class ConditionalDependencyContextsHolder extends DefaultContext {
      *
      * @return a new holder containing the provided contexts
      */
-    public static ConditionalDependencyContextsHolder create(Set<ConditionalDependencyContext<?>> contexts) {
+    public static ConditionalDependencyContextsHolder create(
+        Set<ConditionalDependencyContext<?>> contexts
+    ) {
         MultiMap<ComponentKey<?>, ConditionalDependencyContext<?>> conditionalDependencyContexts =
             contexts.stream()
                 .collect(MultiMapCollector.groupingBy(context -> context.dependencyContext()

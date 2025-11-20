@@ -32,9 +32,11 @@ import java.util.Set;
  * Utilities for working with classpath resources. This class is internal, and should not be used
  * directly. Instead, refer to a {@link ClasspathResourceLocator}.
  *
- * @author Guus Lieben
  * @see ClasspathResourceLocator
+ *
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public final class Resources {
 

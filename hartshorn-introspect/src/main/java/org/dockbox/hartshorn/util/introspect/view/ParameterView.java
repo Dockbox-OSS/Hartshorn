@@ -22,8 +22,9 @@ package org.dockbox.hartshorn.util.introspect.view;
  *
  * @param <T> the type of the parameter
  *
- * @author Guus Lieben
  * @since 0.4.7
+ * 
+ * @author Guus Lieben
  */
 public interface ParameterView<T> extends AnnotatedGenericTypeView<T> {
 

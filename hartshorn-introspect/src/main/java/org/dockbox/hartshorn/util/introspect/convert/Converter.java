@@ -31,8 +31,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param <I> the input object type
  * @param <O> the output object type
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface Converter<I, O> {

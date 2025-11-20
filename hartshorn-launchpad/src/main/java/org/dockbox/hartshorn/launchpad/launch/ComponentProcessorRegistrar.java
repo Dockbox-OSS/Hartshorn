@@ -41,12 +41,14 @@ import java.util.stream.Stream;
  * the application context before {@link ProcessableApplicationContext#loadContext()} is called, to
  * ensure that all components are processed correctly.
  *
- * @author Guus Lieben
  * @see ComponentProcessor
  * @see ModuleActivator
  * @see ApplicationContext
  * @see ProcessableApplicationContext
+ *
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class ComponentProcessorRegistrar {
 
@@ -66,7 +68,9 @@ public class ComponentProcessorRegistrar {
      *
      * @param processors the additional processors to add
      */
-    public void withAdditionalComponentProcessors(Collection<? extends ComponentProcessor> processors) {
+    public void withAdditionalComponentProcessors(
+        Collection<? extends ComponentProcessor> processors
+    ) {
         this.additionalComponentProcessors.addAll(processors);
     }
 
@@ -78,7 +82,9 @@ public class ComponentProcessorRegistrar {
      *
      * @param processors the additional processors to add
      */
-    public void withAdditionalBinderProcessors(Collection<? extends HierarchicalBinderPostProcessor> processors) {
+    public void withAdditionalBinderProcessors(
+        Collection<? extends HierarchicalBinderPostProcessor> processors
+    ) {
         this.additionalBinderProcessors.addAll(processors);
     }
 
@@ -301,8 +307,9 @@ public class ComponentProcessorRegistrar {
             .map(rootType::cast)
             .collect(Collectors.toSet());
 
-        // Note: pre-processors should never have dependencies, as they are used to process components before they are registered
-        // and therefore cannot rely on other components being available
+        // Note: pre-processors should never have dependencies, as they are used to process
+        // components before they are registered and therefore cannot rely on other components being
+        // available
         for (Class<? extends T> processorType : processorTypes) {
             var constructor = introspector.introspect(processorType)
                 .constructors()

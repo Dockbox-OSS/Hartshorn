@@ -20,9 +20,11 @@ package org.dockbox.hartshorn.inject.condition;
  * Represents the result of a {@link Condition} check. Contains a boolean value indicating whether
  * the condition matched or not, and a message describing the result.
  *
- * @author Guus Lieben
  * @see Condition
+ * 
  * @since 0.4.12
+ * 
+ * @author Guus Lieben
  */
 public final class ConditionResult {
 

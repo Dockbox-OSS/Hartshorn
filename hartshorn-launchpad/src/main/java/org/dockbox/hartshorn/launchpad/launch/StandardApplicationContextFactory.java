@@ -67,8 +67,9 @@ import java.util.stream.Collectors;
  * allows for customization of the application context creation process, without needing to subclass
  * this factory.
  *
- * @author Guus Lieben
  * @since 0.4.11
+ * 
+ * @author Guus Lieben
  */
 public class StandardApplicationContextFactory implements ApplicationContextFactory {
 
@@ -122,7 +123,9 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         this.componentProcessorRegistrar = new ComponentProcessorRegistrar(this.buildContext);
 
         this.configure(applicationContext, bootstrapInitializerContext);
-        if (applicationContext instanceof ProcessableApplicationContext activatingApplicationContext) {
+        if (applicationContext instanceof ProcessableApplicationContext
+            activatingApplicationContext
+        ) {
             activatingApplicationContext.loadContext();
         }
         this.finalizeContext(applicationContext);
@@ -163,34 +166,36 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         SingleElementContext<ApplicationContext> context
     ) {
         ApplicationContext applicationContext = context.input();
-        this.componentProcessorRegistrar.withAdditionalComponentProcessors(this.configurer.componentPreProcessors.initialize(
-            context));
-        this.componentProcessorRegistrar.withAdditionalComponentProcessors(this.configurer.componentPostProcessors.initialize(
-            context));
-        this.componentProcessorRegistrar.withAdditionalBinderProcessors(this.configurer.binderPostProcessors.initialize(
-            context));
+        // checkstyle:off LineLength
+        this.componentProcessorRegistrar.withAdditionalComponentProcessors(this.configurer.componentPreProcessors.initialize(context));
+        this.componentProcessorRegistrar.withAdditionalComponentProcessors(this.configurer.componentPostProcessors.initialize(context));
+        this.componentProcessorRegistrar.withAdditionalBinderProcessors(this.configurer.binderPostProcessors.initialize(context));
+        // checkstyle:on LineLength
 
         Set<ModuleActivator> moduleActivators = activators.stream()
             .flatMap(activator -> this.activatorCollector.collectDeclarationsOnActivator(activator)
                 .stream())
             .collect(Collectors.toSet());
 
-        if (applicationContext.defaultProvider() instanceof PostProcessingComponentProvider processingComponentProvider) {
+        if (applicationContext.defaultProvider() instanceof PostProcessingComponentProvider
+            processingComponentProvider) {
             ComponentProcessorRegistry registry = processingComponentProvider.processorRegistry();
             this.componentProcessorRegistrar.registerComponentProcessors(registry,
                 applicationContext.environment().introspector(),
                 moduleActivators);
         }
         else {
-            this.buildContext.logger()
-                .warn(
-                    "Default component provider is not processable, component processors will not be registered");
+            this.buildContext.logger().warn("Default component provider is not processable, "
+                + "component processors will not be registered");
         }
 
-        if (applicationContext.defaultProvider() instanceof ComponentProviderOrchestrator orchestrator) {
+        if (applicationContext.defaultProvider() instanceof ComponentProviderOrchestrator
+            orchestrator) {
             if (orchestrator.containsScope(applicationContext.scope())) {
                 throw new IllegalStateException(
-                    "Application context scope is already present in the component provider orchestrator, cannot process after release");
+                    "Application context scope is already present in the component provider "
+                        + "orchestrator, cannot process after release"
+                );
             }
             HierarchicalBinderProcessorRegistry registry = orchestrator.binderProcessorRegistry();
             this.componentProcessorRegistrar.registerBinderProcessors(registry,
@@ -198,8 +203,10 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
                 moduleActivators);
 
             DefaultBindingConfigurer configurer = DefaultBindingConfigurer.empty();
-            for (DefaultBindingConfigurerContext configurerContext : this.initializerContext.contexts(
-                DefaultBindingConfigurerContext.class)) {
+            for (
+                DefaultBindingConfigurerContext configurerContext
+                : this.initializerContext.contexts(DefaultBindingConfigurerContext.class)
+            ) {
                 configurer = configurer.compose(configurerContext.configurer());
             }
             HierarchicalBinderPostProcessor processor =
@@ -210,8 +217,8 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         }
         else {
             this.buildContext.logger()
-                .warn(
-                    "Default component provider is not orchestrating binders, binder processors will not be registered");
+                .warn("Default component provider is not orchestrating binders, "
+                    + "binder processors will not be registered");
         }
     }
 
@@ -257,9 +264,9 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
             .map(ClassPathScannerTypeReferenceCollector::new)
             .forEach(collectorContext::register);
 
-        Set<Class<?>> standaloneComponents =
-            Set.copyOf(this.configurer.standaloneComponents.initialize(this.initializerContext.transform(
-                bootstrapContext)));
+        Set<Class<?>> standaloneComponents = Set.copyOf(this.configurer.standaloneComponents
+            .initialize(this.initializerContext.transform(bootstrapContext))
+        );
         if (!standaloneComponents.isEmpty()) {
             collectorContext.register(PredefinedSetTypeReferenceCollector.of(standaloneComponents));
         }
@@ -284,8 +291,8 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
         prefixes.addAll(this.configurer.scanPackages.initialize(this.initializerContext.transform(
             bootstrapContext)));
 
-        // Application may prefer to use alternative packages for scanning. This is configured by the application
-        // bootstrap context.
+        // Application may prefer to use alternative packages for scanning. This is configured by
+        // the application bootstrap context.
         if (bootstrapContext.includeBasePackages()) {
             prefixes.add(bootstrapContext.mainClass().getPackageName());
         }
@@ -328,9 +335,11 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      * @param applicationContext The application context that has been created
      */
     protected void notifyObservers(ApplicationContext applicationContext) {
-        if (applicationContext.environment() instanceof ObservableApplicationEnvironment observable) {
-            this.buildContext.logger()
-                .debug("Notifying application environment observers of application context creation");
+        if (applicationContext.environment() instanceof ObservableApplicationEnvironment
+            observable) {
+            this.buildContext.logger().debug(
+                "Notifying application environment observers of application context creation"
+            );
             for (LifecycleObserver observer : observable.observers(LifecycleObserver.class)) {
                 observer.onStarted(applicationContext);
             }
@@ -347,9 +356,8 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      *
      * @return A new initializer for {@link StandardApplicationContextFactory} instances
      */
-    public static ContextualInitializer<ApplicationBuildContext, StandardApplicationContextFactory> create(
-        Customizer<Configurer> customizer
-    ) {
+    public static ContextualInitializer<ApplicationBuildContext, StandardApplicationContextFactory>
+    create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -361,35 +369,35 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
      * A configurator for the {@link StandardApplicationContextFactory}. This class is used to
      * configure the application context factory, without needing to subclass it.
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<ApplicationBootstrapContext, Annotation>
-            moduleActivators = LazyStreamableConfigurer.of(
-            TypeUtils.annotation(UseLaunchpad.class)
-        );
+        // checkstyle:off LineLength
+        private final LazyStreamableConfigurer<ApplicationBootstrapContext, Annotation> moduleActivators =
+            LazyStreamableConfigurer.of(
+                TypeUtils.annotation(UseLaunchpad.class)
+            );
 
-        private final LazyStreamableConfigurer<ApplicationContext, ComponentPreProcessor>
-            componentPreProcessors = LazyStreamableConfigurer.empty();
-        private final LazyStreamableConfigurer<ApplicationContext, HierarchicalBinderPostProcessor>
-            binderPostProcessors = LazyStreamableConfigurer.empty();
-        private final LazyStreamableConfigurer<ApplicationContext, ComponentPostProcessor>
-            componentPostProcessors = LazyStreamableConfigurer.of(collection -> {
-            collection.add(ContextualInitializer.defer(() -> ContainerAwareComponentPopulatorPostProcessor.create(
-                Customizer.useDefaults())));
-        });
+        private final LazyStreamableConfigurer<ApplicationContext, ComponentPreProcessor> componentPreProcessors = LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<ApplicationContext, HierarchicalBinderPostProcessor> binderPostProcessors = LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<ApplicationContext, ComponentPostProcessor> componentPostProcessors =
+            LazyStreamableConfigurer.of(collection -> {
+                collection.add(ContextualInitializer.defer(() -> ContainerAwareComponentPopulatorPostProcessor.create(
+                    Customizer.useDefaults())));
+            });
 
-        private final LazyStreamableConfigurer<ApplicationBootstrapContext, Class<?>>
-            standaloneComponents = LazyStreamableConfigurer.empty();
-        private final LazyStreamableConfigurer<ApplicationBootstrapContext, String> scanPackages =
-            LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<ApplicationBootstrapContext, Class<?>> standaloneComponents = LazyStreamableConfigurer.empty();
+        private final LazyStreamableConfigurer<ApplicationBootstrapContext, String> scanPackages = LazyStreamableConfigurer.empty();
 
-        private ContextualInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment>
-            environment = ConfigurableApplicationEnvironment.create(Customizer.useDefaults());
+        private ContextualInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment> environment =
+            ConfigurableApplicationEnvironment.create(Customizer.useDefaults());
+
         private ContextualInitializer<ApplicationBuildContext, Boolean> includeBasePackages =
             ContextualInitializer.of(true);
+        // checkstyle:on LineLength
 
         /**
          * Configures the module activators that are used to collect component processors. By
@@ -400,7 +408,9 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
          *
          * @return The current configurator instance
          */
-        public Configurer moduleActivators(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Annotation>> customizer) {
+        public Configurer moduleActivators(
+            Customizer<StreamableConfigurer<ApplicationBootstrapContext, Annotation>> customizer
+        ) {
             this.moduleActivators.customizer(customizer);
             return this;
         }
@@ -413,7 +423,10 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
          *
          * @return The current configurator instance
          */
-        public Configurer binderPostProcessors(Customizer<StreamableConfigurer<ApplicationContext, HierarchicalBinderPostProcessor>> customizer) {
+        public Configurer binderPostProcessors(
+            Customizer<StreamableConfigurer<ApplicationContext, HierarchicalBinderPostProcessor>>
+                customizer
+        ) {
             this.binderPostProcessors.customizer(customizer);
             return this;
         }
@@ -426,7 +439,9 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
          *
          * @return The current configurator instance
          */
-        public Configurer componentPreProcessors(Customizer<StreamableConfigurer<ApplicationContext, ComponentPreProcessor>> customizer) {
+        public Configurer componentPreProcessors(
+            Customizer<StreamableConfigurer<ApplicationContext, ComponentPreProcessor>> customizer
+        ) {
             this.componentPreProcessors.customizer(customizer);
             return this;
         }
@@ -440,7 +455,9 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
          *
          * @return The current configurator instance
          */
-        public Configurer componentPostProcessors(Customizer<StreamableConfigurer<ApplicationContext, ComponentPostProcessor>> customizer) {
+        public Configurer componentPostProcessors(
+            Customizer<StreamableConfigurer<ApplicationContext, ComponentPostProcessor>> customizer
+        ) {
             this.componentPostProcessors.customizer(customizer);
             return this;
         }
@@ -458,7 +475,9 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
          *
          * @return The current configurator instance
          */
-        public Configurer standaloneComponents(Customizer<StreamableConfigurer<ApplicationBootstrapContext, Class<?>>> customizer) {
+        public Configurer standaloneComponents(
+            Customizer<StreamableConfigurer<ApplicationBootstrapContext, Class<?>>> customizer
+        ) {
             this.standaloneComponents.customizer(customizer);
             return this;
         }
@@ -473,7 +492,9 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
          *
          * @return The current configurator instance
          */
-        public Configurer scanPackages(Customizer<StreamableConfigurer<ApplicationBootstrapContext, String>> customizer) {
+        public Configurer scanPackages(
+            Customizer<StreamableConfigurer<ApplicationBootstrapContext, String>> customizer
+        ) {
             this.scanPackages.customizer(customizer);
             return this;
         }
@@ -498,7 +519,10 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
          *
          * @return The current configurator instance
          */
-        public Configurer environment(ContextualInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment> environment) {
+        public Configurer environment(
+            ContextualInitializer<ApplicationBootstrapContext, ? extends ApplicationEnvironment>
+                environment
+        ) {
             this.environment = environment;
             return this;
         }
@@ -525,7 +549,9 @@ public class StandardApplicationContextFactory implements ApplicationContextFact
          *
          * @return The current configurator instance
          */
-        public Configurer includeBasePackages(ContextualInitializer<ApplicationBuildContext, Boolean> includeBasePackages) {
+        public Configurer includeBasePackages(
+            ContextualInitializer<ApplicationBuildContext, Boolean> includeBasePackages
+        ) {
             this.includeBasePackages = includeBasePackages;
             return this;
         }

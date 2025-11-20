@@ -21,8 +21,9 @@ import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 /**
  * A view that provides access to the modifiers of an element.
  *
- * @author Guus Lieben
  * @since 0.4.4
+ *
+ * @author Guus Lieben
  */
 public interface ModifierCarrierView extends View {
 

@@ -27,8 +27,9 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
  * Infrastructure specialization of {@link Priority}, used as a shorthand for
  * {@code @Priority(Priority.INFRASTRUCTURE_PRIORITY)}.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

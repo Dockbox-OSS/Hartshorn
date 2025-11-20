@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
  * No-op implementation of {@link ComponentResolutionFailureStrategy}. Typically used for components
  * which are accepted to be potentially absent.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class NoopComponentResolutionFailureStrategy implements ComponentResolutionFailureStrategy {
 

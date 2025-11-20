@@ -30,8 +30,9 @@ import java.util.Set;
  * constraint exists as Groovy traits behave differently from Java interfaces, and are not supported
  * by the proxying mechanism.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class GroovyTraitConstraint implements ProxyConstraint {
 

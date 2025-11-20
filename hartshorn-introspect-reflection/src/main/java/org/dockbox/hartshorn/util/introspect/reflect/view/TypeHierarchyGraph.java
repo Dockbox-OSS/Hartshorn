@@ -46,9 +46,11 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * A B
  * </pre>
  *
- * @author Guus Lieben
  * @see TypeView
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class TypeHierarchyGraph extends SimpleGraph<TypeView<?>> {
 

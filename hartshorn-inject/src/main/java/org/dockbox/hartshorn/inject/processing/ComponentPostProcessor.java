@@ -31,8 +31,9 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
  * called
  * in the order of the specified {@link ComponentProcessor#priority()} value.
  *
- * @author Guus Lieben
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public abstract non-sealed class ComponentPostProcessor implements ComponentProcessor {
 
@@ -67,7 +68,8 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
         T updatedInstance = this.initializeComponent(processingContext.application(),
             processingContext.instance(),
             processingContext);
-        if (processingContext instanceof LockableComponentProcessingContext<T> lockableComponentProcessingContext) {
+        if (processingContext instanceof LockableComponentProcessingContext<T>
+            lockableComponentProcessingContext) {
             if (!lockableComponentProcessingContext.isInstanceLocked()) {
                 lockableComponentProcessingContext.instance(updatedInstance);
             }
@@ -174,7 +176,8 @@ public abstract non-sealed class ComponentPostProcessor implements ComponentProc
                     .type()
                     .getSimpleName(), postProcessor.priority(), postProcessor);
             }
-            if (processingContext instanceof LockableComponentProcessingContext<T> lockableComponentProcessingContext) {
+            if (processingContext instanceof LockableComponentProcessingContext<T>
+                lockableComponentProcessingContext) {
                 lockableComponentProcessingContext.instance(modified);
             }
         }

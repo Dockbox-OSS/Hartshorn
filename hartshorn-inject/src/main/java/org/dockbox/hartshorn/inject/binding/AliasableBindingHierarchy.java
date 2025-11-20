@@ -28,8 +28,9 @@ import java.util.Set;
  *
  * @param <C> The type of the component that this hierarchy is for.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface AliasableBindingHierarchy<C> extends BindingHierarchy<C> {
 

@@ -38,8 +38,9 @@ import test.org.dockbox.hartshorn.proxy.support.standard.InterfaceProxyTarget;
 /**
  * Tests for the default behavior of method stubs.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public abstract class MethodStubTests {
 
@@ -59,7 +60,7 @@ public abstract class MethodStubTests {
 
         MethodStub<InterfaceProxyTarget> methodStub =
             manager.get().advisor().resolver().defaultStub().get();
-        Assertions.assertTrue(methodStub instanceof DefaultValueResponseMethodStub<InterfaceProxyTarget>);
+        Assertions.assertInstanceOf(DefaultValueResponseMethodStub.class, methodStub);
 
         String stringValue = Assertions.assertDoesNotThrow(proxy::stringTest);
         Assertions.assertNull(stringValue);

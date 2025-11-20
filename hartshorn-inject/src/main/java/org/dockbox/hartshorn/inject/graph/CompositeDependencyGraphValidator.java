@@ -29,9 +29,11 @@ import java.util.Set;
 /**
  * A composite validator that can be used to combine multiple validators into a single validator.
  *
- * @author Guus Lieben
  * @see DependencyGraphValidator
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class CompositeDependencyGraphValidator implements DependencyGraphValidator {
 

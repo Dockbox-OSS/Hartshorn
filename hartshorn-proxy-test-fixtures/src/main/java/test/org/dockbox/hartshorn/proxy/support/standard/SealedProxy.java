@@ -22,8 +22,9 @@ import test.org.dockbox.hartshorn.proxy.support.standard.SealedProxy.SealedProxy
  * Simple sealed class to verify sealed classes cannot be proxied (as they are inherently final to
  * any class except those explicitly permitted to extend it)
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public sealed class SealedProxy permits SealedProxy1 {
     public static final class SealedProxy1 extends SealedProxy {

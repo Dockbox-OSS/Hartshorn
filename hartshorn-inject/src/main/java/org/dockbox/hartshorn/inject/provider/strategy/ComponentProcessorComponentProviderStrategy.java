@@ -34,9 +34,11 @@ import org.dockbox.hartshorn.util.option.Option;
  * {@link PostProcessingComponentProvider} if the requested component is a
  * {@link ComponentProcessor}.
  *
- * @author Guus Lieben
  * @see PostProcessingComponentProvider#processorRegistry()
+ *
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class ComponentProcessorComponentProviderStrategy implements ComponentProviderStrategy {
 
@@ -47,14 +49,15 @@ public class ComponentProcessorComponentProviderStrategy implements ComponentPro
         ComponentProviderStrategyChain<T> chain
     ) throws ComponentResolutionException, ApplicationException {
         if (ComponentProcessor.class.isAssignableFrom(componentKey.type())
-            && chain.application()
-            .defaultProvider() instanceof PostProcessingComponentProvider postProcessingComponentProvider) {
+            && chain.application().defaultProvider() instanceof PostProcessingComponentProvider
+            postProcessingComponentProvider) {
 
             Class<? extends ComponentProcessor> processorType =
                 TypeUtils.unchecked(componentKey.type(), Class.class);
             Option<? extends ComponentProcessor> processor =
                 postProcessingComponentProvider.processorRegistry().lookup(processorType);
-            // If absent, the processor may not yet have been initialized, so we'll try to process it instead of exiting early
+            // If absent, the processor may not yet have been initialized, so we'll try to process
+            // it instead of exiting early
             if (processor.present()) {
                 T instance = componentKey.type().cast(processor.get());
                 ObjectContainer<T> container = ComponentObjectContainer.ofSingleton(instance);

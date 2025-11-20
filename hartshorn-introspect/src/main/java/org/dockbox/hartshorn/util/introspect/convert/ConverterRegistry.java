@@ -25,8 +25,9 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * {@link ConversionService} implementation to register converters and not by clients of the
  * {@link ConversionService} to lookup converters.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ConverterRegistry {
 

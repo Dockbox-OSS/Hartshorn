@@ -25,8 +25,9 @@ import java.util.List;
  * properties and resources together, and can be used to create a hierarchy of configuration
  * properties.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface ProfileRegistry {
 

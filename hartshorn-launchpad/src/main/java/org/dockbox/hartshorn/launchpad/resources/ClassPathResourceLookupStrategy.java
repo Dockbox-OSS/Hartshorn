@@ -27,8 +27,9 @@ import java.util.Set;
  * created and managed by {@link ClasspathResourceLocator#resources(String)}. This requires the
  * strategy name to be configured to be equal to {@code classpath:{resource_name}}.
  *
- * @author Guus Lieben
  * @since 0.4.7
+ *
+ * @author Guus Lieben
  */
 public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {
 

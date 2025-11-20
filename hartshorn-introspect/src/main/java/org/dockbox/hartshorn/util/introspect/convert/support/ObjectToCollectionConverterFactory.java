@@ -32,9 +32,11 @@ import java.util.Collection;
  * collections. This converter only creates an array of length 1 and delegates to the helper
  * converter.
  *
- * @author Guus Lieben
  * @see ArrayToCollectionConverterFactory
+ *
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ObjectToCollectionConverterFactory implements ConverterFactory<Object, Collection<?>> {
 
@@ -64,8 +66,9 @@ public class ObjectToCollectionConverterFactory implements ConverterFactory<Obje
      * @param helperConverter the converter that is used to convert an array to a collection
      * @param <O> the type of the collection
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     private record ObjectToCollectionConverter<O extends Collection<?>>(
         Converter<Object[], O> helperConverter

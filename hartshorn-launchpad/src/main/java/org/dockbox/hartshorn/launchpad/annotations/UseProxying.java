@@ -33,8 +33,9 @@ import java.lang.annotation.Target;
  * {@link Component#permitProxying()} is {@code true} for any given component. This acts as a module
  * activator, and is loaded as a default in {@link StandardApplicationBuilder}.
  *
- * @author Guus Lieben
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  * {@link GenericConverter#convertibleTypes() convertible types}, and cannot be meaningfully
  * combined.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class AmbiguousConverterException extends ApplicationRuntimeException {
 

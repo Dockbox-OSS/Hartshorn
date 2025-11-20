@@ -33,8 +33,9 @@ import java.lang.annotation.Target;
  * void performAction() { ... }
  * }</pre>
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

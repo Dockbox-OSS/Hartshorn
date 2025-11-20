@@ -28,8 +28,9 @@ import java.util.Set;
  * Converts any object to an array of the same type, containing only the object. If the given object
  * is a primitive, an array of the primitive type is returned.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ObjectToArrayConverter implements GenericConverter {
 

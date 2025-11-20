@@ -28,8 +28,9 @@ import java.util.Map;
  * Basic implementation of {@link ObjectProperty} that uses a map to store
  * {@link Property properties}.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class SimpleObjectProperty extends AbstractMapObjectProperty<Property> {
 

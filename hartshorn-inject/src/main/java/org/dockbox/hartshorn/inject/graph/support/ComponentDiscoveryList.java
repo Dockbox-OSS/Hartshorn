@@ -32,9 +32,11 @@ import java.util.List;
  * This list is used to determine the origin of a cycle dependency, and to provide a list of all
  * components that are involved in the cycle.
  *
- * @author Guus Lieben
  * @see CyclicDependencyGraphValidator
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
 
@@ -149,8 +151,9 @@ public class ComponentDiscoveryList implements Iterable<DiscoveredComponent> {
      * @param node the original binding declaration
      * @param actualType the actual type of the component
      *
-     * @author Guus Lieben
      * @since 0.5.0
+     *
+     * @author Guus Lieben
      */
     public record DiscoveredComponent(TypePathNode<?> node, TypeView<?> actualType) {
 

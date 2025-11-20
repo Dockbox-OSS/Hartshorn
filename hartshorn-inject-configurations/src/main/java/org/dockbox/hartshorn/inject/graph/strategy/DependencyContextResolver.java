@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.inject.graph.resolve.ManagedConfigurationDependency
  * A resolver for dependency contexts, typically for use within a
  * {@link ManagedConfigurationDependencyResolver}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface DependencyContextResolver {
 

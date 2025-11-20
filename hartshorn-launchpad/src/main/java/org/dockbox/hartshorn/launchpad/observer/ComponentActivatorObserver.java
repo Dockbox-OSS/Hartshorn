@@ -32,8 +32,9 @@ import java.util.function.Predicate;
  * starts. This is done to ensure that all components are instantiated and ready for use when the
  * application starts.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public class ComponentActivatorObserver implements LifecycleObserver {
 

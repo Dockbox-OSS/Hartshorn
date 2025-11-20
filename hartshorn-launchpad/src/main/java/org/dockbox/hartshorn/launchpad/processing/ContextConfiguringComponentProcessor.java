@@ -33,8 +33,9 @@ import org.dockbox.hartshorn.proxy.ProxyFactory;
  *
  * @param <C> The type of the context that is being configured
  *
- * @author Guus Lieben
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public abstract class ContextConfiguringComponentProcessor<C extends ContextView>
     extends ComponentPostProcessor {

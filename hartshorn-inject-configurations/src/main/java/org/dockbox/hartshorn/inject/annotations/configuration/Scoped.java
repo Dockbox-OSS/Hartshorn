@@ -32,9 +32,11 @@ import java.lang.annotation.Target;
  * provide
  * a default application scope, which does not need to be defined explicitly.
  *
- * @author Guus Lieben
  * @see Scope
+ *
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD})

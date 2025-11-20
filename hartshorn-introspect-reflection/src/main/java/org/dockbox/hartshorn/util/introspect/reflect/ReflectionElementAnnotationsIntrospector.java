@@ -38,8 +38,9 @@ import java.util.stream.Collectors;
  * {@link AnnotatedElement}. This introspector is capable of caching annotations, and supports the
  * use of meta-annotations, assuming the {@link AnnotationLookup} provided supports this.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ReflectionElementAnnotationsIntrospector implements ElementAnnotationsIntrospector {
 
@@ -91,7 +92,8 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
     @Override
     public Set<Annotation> annotedWith(Class<? extends Annotation> annotation) {
         return this.all().stream()
-            .filter(presentAnnotation -> this.introspector.introspect(presentAnnotation.annotationType())
+            .filter(presentAnnotation -> this.introspector
+                .introspect(presentAnnotation.annotationType())
                 .annotations()
                 .has(annotation))
             .collect(Collectors.toSet());

@@ -30,8 +30,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * is used to track {@link TypeReferenceCollector} which are used by the application to discover
  * types on the classpath.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class TypeReferenceCollectorContext extends DefaultContext implements Reportable {
 

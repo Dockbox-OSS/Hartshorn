@@ -46,8 +46,9 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> the type of the target instance
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @SuppressWarnings("ProhibitedExceptionDeclared")
 public class ProxyAdvisorMethodInterceptor<T> implements ProxyMethodInterceptor<T> {

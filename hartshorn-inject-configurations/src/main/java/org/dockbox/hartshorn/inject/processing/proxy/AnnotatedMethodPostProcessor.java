@@ -34,9 +34,11 @@ import java.util.Collection;
  *
  * @param <M> the type of the annotation that this post processor processes
  *
- * @author Guus Lieben
  * @see AnnotatedMethodInterceptorPostProcessor
+ *
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 public abstract class AnnotatedMethodPostProcessor<M extends Annotation>
     extends ComponentPostProcessor {

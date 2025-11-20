@@ -28,9 +28,11 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
  * other dependency resolvers. The result of the delegation is a collection of all resolved
  * dependencies, as resolved by the delegates.
  *
- * @author Guus Lieben
  * @see DependencyResolver
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class CompositeDependencyResolver implements DependencyResolver {
 
@@ -50,9 +52,9 @@ public class CompositeDependencyResolver implements DependencyResolver {
     }
 
     @Override
-    public Set<DependencyContext<?>> resolve(Collection<DependencyDeclarationContext<?>> declarationContexts)
-        throws
-        DependencyResolutionException {
+    public Set<DependencyContext<?>> resolve(
+        Collection<DependencyDeclarationContext<?>> declarationContexts
+    ) throws DependencyResolutionException {
         Set<DependencyContext<?>> dependencyContexts = new HashSet<>();
         for (DependencyResolver resolver : this.resolvers()) {
             Set<DependencyContext<?>> resolvedDependencies = resolver.resolve(declarationContexts);

@@ -24,15 +24,16 @@ package org.dockbox.hartshorn.proxy.advice.wrap;
  * the proxy.
  * Wrappers are able to listen to three events:
  * <ul>
- *     <li>When a method is called, this is performed <b>before</b> the method is visited</li>
- *     <li><b>After</b> a method finished. This is performed after a method exits without errors</li>
- *     <li>When a method <b>throws an exception</b></li>
+ *   <li>When a method is called, this is performed <b>before</b> the method is visited</li>
+ *   <li><b>After</b> a method finished. This is performed after a method exits without errors</li>
+ *   <li>When a method <b>throws an exception</b></li>
  * </ul>
  *
  * @param <T> The type of the proxy
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public interface MethodWrapper<T> {
 

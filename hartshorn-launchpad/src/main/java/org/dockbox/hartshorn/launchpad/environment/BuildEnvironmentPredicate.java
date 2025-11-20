@@ -30,14 +30,18 @@ import java.util.Set;
  *     <li>Travis CI, using the <a href="https://docs.travis-ci.com/user/environment-variables/#default-environment-variables">{@code TRAVIS}</a> environment variable</li>
  *     <li>GitHub Actions, using the <a href="https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables">{@code GITHUB_ACTIONS}</a> environment variable</li>
  *     <li>AppVeyor, using the <a href="https://www.appveyor.com/docs/environment-variables/">{@code APPVEYOR}</a> environment variable</li>
- *     <li>Any environment that defines any of the above environment variables, where the value equals {@code "true"}</li>
+ *     <li>
+ *         Any environment that defines any of the above environment variables, where the value
+ *         equals {@code "true"}
+ *     </li>
  * </ul>
  *
  * <p>If an environment does not define any of the above environment variables, this predicate will
  * return {@code false}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class BuildEnvironmentPredicate {
 

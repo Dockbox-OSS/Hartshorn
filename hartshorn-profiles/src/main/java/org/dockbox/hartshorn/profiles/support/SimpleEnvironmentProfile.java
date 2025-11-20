@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
  * @param name the name of the profile
  * @param propertyRegistry the property registry of the profile
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public record SimpleEnvironmentProfile(
     String name,

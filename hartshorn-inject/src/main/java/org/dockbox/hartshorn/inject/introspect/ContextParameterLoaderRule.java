@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.util.introspect.util.ParameterLoaderRule;
 /**
  * Adapter for {@link InjectContextParameterResolver} and {@link ParameterLoaderRule}.
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ContextParameterLoaderRule extends InjectParameterResolverParameterLoaderRule {
 

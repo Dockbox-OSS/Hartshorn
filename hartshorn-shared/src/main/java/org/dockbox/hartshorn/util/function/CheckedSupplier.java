@@ -24,9 +24,11 @@ import org.dockbox.hartshorn.util.ApplicationException;
  *
  * @param <T> the type of results supplied by this supplier
  *
- * @author Guus Lieben
  * @see java.util.function.Supplier
+ *
  * @since 0.4.1
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface CheckedSupplier<T> {

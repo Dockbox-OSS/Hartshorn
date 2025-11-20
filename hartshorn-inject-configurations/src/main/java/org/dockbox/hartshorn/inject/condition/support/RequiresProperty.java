@@ -31,9 +31,11 @@ import java.lang.annotation.Target;
  * The property is resolved by name, and optionally by value. If the value is not specified, the
  * property is required to be present and have any value.
  *
- * @author Guus Lieben
  * @see PropertyCondition
+ * 
  * @since 0.4.12
+ * 
+ * @author Guus Lieben
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

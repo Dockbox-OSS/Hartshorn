@@ -35,8 +35,9 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
  * {@link #doAfterRegister(DependencyContext)} methods, which should be implemented by the extending
  * class.
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractConfigurationDependencyVisitor
     implements BreadthFirstGraphVisitor<DependencyContext<?>>, ConfigurationDependencyVisitor {
@@ -57,8 +58,9 @@ public abstract class AbstractConfigurationDependencyVisitor
         return iterated;
     }
 
-    private Set<GraphNode<DependencyContext<?>>> tryIterateDanglingNodes(Set<GraphNode<DependencyContext<?>>> danglingNodes)
-        throws GraphException {
+    private Set<GraphNode<DependencyContext<?>>> tryIterateDanglingNodes(
+        Set<GraphNode<DependencyContext<?>>> danglingNodes
+    ) throws GraphException {
         Set<GraphNode<DependencyContext<?>>> iterated = new HashSet<>();
         for (GraphNode<DependencyContext<?>> danglingNode : danglingNodes) {
             DependencyContext<?> context = danglingNode.value();

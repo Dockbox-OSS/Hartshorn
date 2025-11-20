@@ -27,9 +27,11 @@ import org.dockbox.hartshorn.launchpad.activation.ModuleActivator;
  * A {@link ModuleActivator} annotation that enables the default configurations for reporting
  * capabilities.
  *
- * @author Guus Lieben
  * @see ReportingConfiguration
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 @ModuleActivator
 @Retention(RetentionPolicy.RUNTIME)

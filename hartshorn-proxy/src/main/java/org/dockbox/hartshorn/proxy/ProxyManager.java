@@ -35,8 +35,9 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> the type of the proxy
  *
- * @author Guus Lieben
  * @since 0.4.10
+ *
+ * @author Guus Lieben
  */
 public interface ProxyManager<T> extends ProxyIntrospector<T>, Context {
 

@@ -31,17 +31,20 @@ import org.dockbox.hartshorn.inject.graph.strategy.MethodAwareBindingStrategyCon
  * indicates that any dependency that is declared in the {@link Binds#after()} attribute should be
  * resolved before the binding that is being resolved.
  *
- * @author Guus Lieben
  * @see Binds#after()
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public class BindingAfterDeclarationDependencyResolver
     implements BindingDeclarationDependencyResolver {
 
     @Override
     public <T> boolean canHandle(BindingStrategyContext<T> context) {
-        return context instanceof MethodAwareBindingStrategyContext<T> methodAwareBindingStrategyContext
-            && methodAwareBindingStrategyContext.method().annotations().has(Binds.class);
+        return context instanceof MethodAwareBindingStrategyContext<T>
+            methodAwareBindingStrategyContext && methodAwareBindingStrategyContext.method()
+            .annotations().has(Binds.class);
     }
 
     @Override

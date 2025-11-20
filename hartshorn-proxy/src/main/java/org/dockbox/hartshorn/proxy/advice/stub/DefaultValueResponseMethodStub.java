@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @param <T> The type of the proxy instance
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class DefaultValueResponseMethodStub<T> implements MethodStub<T> {
 

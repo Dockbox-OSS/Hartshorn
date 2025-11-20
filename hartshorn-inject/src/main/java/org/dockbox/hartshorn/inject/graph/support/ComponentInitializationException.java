@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  * Thrown when a component cannot be initialized. This is usually caused by a missing dependency, or
  * an exception thrown during the initialization of a component.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public class ComponentInitializationException extends ApplicationRuntimeException {
 

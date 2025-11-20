@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.proxy.constraint.ProxyValidator;
  *
  * @param <T> the type of the proxy
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public interface ValidatorProxyFactory<T> extends ProxyFactory<T> {
 

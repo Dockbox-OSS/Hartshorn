@@ -30,8 +30,9 @@ import org.dockbox.hartshorn.util.option.Option;
  * {@link ApplicationContext}. If neither is available, {@link #permitNullableApplicationContext()}
  * is checked. If {@code null} is not permitted, an {@link IllegalStateException} is thrown.
  *
- * @author Guus Lieben
  * @since 0.4.11
+ * 
+ * @author Guus Lieben
  */
 public abstract class DefaultApplicationAwareContext extends DefaultFallbackCompatibleContext
     implements ApplicationAwareContext {
@@ -42,7 +43,8 @@ public abstract class DefaultApplicationAwareContext extends DefaultFallbackComp
     protected DefaultApplicationAwareContext(ApplicationContext applicationContext) {
         if (this instanceof ApplicationContext) {
             throw new IllegalStateException(
-                "The Skynet Funding Bill should not pass! (Application context is not permitted to be self-aware)");
+                "The Skynet Funding Bill should not pass! "
+                    + "(Application context is not permitted to be self-aware)");
         }
 
         if (applicationContext != null) {

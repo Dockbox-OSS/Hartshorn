@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.reporting.Reportable;
 /**
  * A {@link Reportable} that reports information about the Java runtime.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class JavaDiagnosticsReporter implements Reportable {
 

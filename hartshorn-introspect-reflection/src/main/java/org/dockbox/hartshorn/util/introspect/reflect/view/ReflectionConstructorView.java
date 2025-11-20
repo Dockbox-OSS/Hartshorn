@@ -40,8 +40,9 @@ import java.util.stream.Collectors;
  *
  * @param <T> the type of the class that the constructor belongs to
  *
- * @author Guus Lieben
  * @since 0.4.13
+ *
+ * @author Guus Lieben
  */
 public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T>
     implements ConstructorView<T> {

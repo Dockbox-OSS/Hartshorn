@@ -24,9 +24,11 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
  * Implementations may decide whether to always return the same instance, or create a new instance
  * on each invocation.
  *
- * @author Guus Lieben
  * @see StandardApplicationContextFactory
+ *
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface ApplicationContextFactory {

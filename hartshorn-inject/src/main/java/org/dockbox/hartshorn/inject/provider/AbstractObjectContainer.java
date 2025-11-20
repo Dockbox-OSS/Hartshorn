@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.util.describe.ObjectDescriber;
  *
  * @param <T> the type of the object instance contained within this container
  *
- * @author Guus Lieben
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractObjectContainer<T> implements ObjectContainer<T> {
 

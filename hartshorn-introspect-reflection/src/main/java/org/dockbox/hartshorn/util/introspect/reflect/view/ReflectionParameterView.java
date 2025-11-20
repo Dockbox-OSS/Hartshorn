@@ -37,8 +37,9 @@ import java.lang.reflect.Parameter;
  *
  * @param <T> the type of the parameter
  *
- * @author Guus Lieben
  * @since 0.4.13
+ * 
+ * @author Guus Lieben
  */
 public class ReflectionParameterView<T> extends ReflectionAnnotatedElementView
     implements ParameterView<T> {

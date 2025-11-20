@@ -25,8 +25,9 @@ import java.lang.annotation.Target;
  * Explicitly assigns a name to a parameter. This is especially useful when parameter names are not
  * retained at runtime.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)

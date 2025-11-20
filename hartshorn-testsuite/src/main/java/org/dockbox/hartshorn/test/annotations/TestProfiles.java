@@ -31,8 +31,9 @@ import java.lang.annotation.Target;
  * {@code @TestProfiles}, all test methods in that class will have the specified profiles active
  * during their execution.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 @Inherited
 @Target({ElementType.METHOD, ElementType.TYPE})

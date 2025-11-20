@@ -41,8 +41,9 @@ import java.util.SortedSet;
  *
  * @param <C> The type of type {@code C} that the hierarchy is for.
  *
- * @author Guus Lieben
  * @since 0.4.3
+ *
+ * @author Guus Lieben
  */
 public interface BindingHierarchy<C>
     extends Iterable<Entry<Integer, InstantiationStrategy<C>>>, DescribeAsObject {

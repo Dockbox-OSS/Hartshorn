@@ -28,8 +28,9 @@ import org.dockbox.hartshorn.inject.scope.ScopeKey;
  *
  * @param <T> The type of the component that this binding is for.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface AliasBindingFunction<T> extends BindingFunction<T> {
 

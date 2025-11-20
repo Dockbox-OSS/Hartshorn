@@ -22,9 +22,11 @@ import org.dockbox.hartshorn.inject.targets.InjectionPoint;
  * A resolver that may be used to resolve a value for an {@link InjectionPoint}. This is commonly
  * used to extend the functionality of a {@link InjectPopulationStrategy}.
  *
- * @author Guus Lieben
  * @see InjectPopulationStrategy
+ * 
  * @since 0.6.0
+ * 
+ * @author Guus Lieben
  */
 public interface InjectParameterResolver {
 

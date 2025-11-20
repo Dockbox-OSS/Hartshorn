@@ -28,8 +28,9 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * A simple implementation of {@link TypeParameterList}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class SimpleTypeParameterList implements TypeParameterList {
 

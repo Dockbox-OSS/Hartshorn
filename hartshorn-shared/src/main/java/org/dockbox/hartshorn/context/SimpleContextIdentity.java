@@ -23,8 +23,9 @@ package org.dockbox.hartshorn.context;
  *
  * @param <T> The type of context that is identified by this instance.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class SimpleContextIdentity<T extends ContextView> implements ContextIdentity<T> {
 

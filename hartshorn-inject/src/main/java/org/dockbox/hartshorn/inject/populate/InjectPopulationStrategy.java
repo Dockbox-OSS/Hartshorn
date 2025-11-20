@@ -67,11 +67,13 @@ import java.util.Set;
  * }
  * }</pre>
  *
- * @author Guus Lieben
  * @see Inject
  * @see ComponentKey
  * @see InjectParameterResolver
+ *
  * @since 0.6.0
+ *
+ * @author Guus Lieben
  */
 public class InjectPopulationStrategy extends AbstractComponentPopulationStrategy {
 
@@ -108,10 +110,11 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
         for (InjectParameterResolver resolver : this.parameterResolvers) {
             if (resolver.accepts(injectionPoint, context)) {
                 Object resolved = resolver.resolve(injectionPoint, context);
-                // Parameter resolvers are expected to provide compatible instances, or null if they cannot resolve the injection point.
-                // If a non-null value is provided, it must be compatible with the injection point type. If it is not, we do not want
-                // to attempt a manual conversion through the ConversionService, as we cannot make assumptions about custom implementations,
-                // and thus risk resulting in unexpected behaviour.
+                // Parameter resolvers are expected to provide compatible instances, or null if they
+                // cannot resolve the injection point. If a non-null value is provided, it must be
+                // compatible with the injection point type. If it is not, we do not want to attempt
+                // a manual conversion through the ConversionService, as we cannot make assumptions
+                // about custom implementations, and thus risk resulting in unexpected behaviour.
                 if (resolved == null || injectionPoint.type().isInstance(resolved)) {
                     return resolved;
                 }
@@ -132,8 +135,8 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
             ComponentRequestContext.createForInjectionPoint(injectionPoint);
         Object component = this.componentProvider.get(componentKey, requestContext);
 
-        // Ensure types are compatible, or a default value is provided if it is available. This primarily
-        // applies to component collections.
+        // Ensure types are compatible, or a default value is provided if it is available. This
+        // primarily applies to component collections.
         return this.conversionService().convert(component, injectionPoint.type().type());
     }
 
@@ -152,9 +155,8 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
      *
      * @return The contextual initializer for the population strategy
      */
-    public static ContextualInitializer<InjectionCapableApplication, ComponentPopulationStrategy> create(
-        Customizer<Configurer> customizer
-    ) {
+    public static ContextualInitializer<InjectionCapableApplication, ComponentPopulationStrategy>
+    create(Customizer<Configurer> customizer) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
@@ -175,20 +177,24 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
      * rules to determine how additional injection parameter values are resolved, and whether a
      * specific injection point is required to be resolved for a component to be considered valid.
      *
-     * @author Guus Lieben
      * @since 0.6.0
+     *
+     * @author Guus Lieben
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<InjectionCapableApplication, RequireInjectionPointRule>
-            requiresComponentRules =
+        // checkstyle:off LineLength
+        private final LazyStreamableConfigurer<InjectionCapableApplication, RequireInjectionPointRule> requiresComponentRules =
             LazyStreamableConfigurer.of(new AnnotatedInjectionPointRequireRule());
-        private final LazyStreamableConfigurer<InjectionCapableApplication, InjectParameterResolver>
-            parameterResolvers = LazyStreamableConfigurer.of(configurer -> {
-            configurer.add(ContextualInitializer.of(InjectContextParameterResolver::new));
-            configurer.add(ContextualInitializer.of(application -> new InjectPropertyParameterResolver(
-                application.defaultProvider())));
-        });
+
+        private final LazyStreamableConfigurer<InjectionCapableApplication, InjectParameterResolver> parameterResolvers =
+            LazyStreamableConfigurer.of(configurer -> {
+                configurer.add(ContextualInitializer.of(InjectContextParameterResolver::new));
+                configurer.add(ContextualInitializer.of(application -> {
+                    return new InjectPropertyParameterResolver(application.defaultProvider());
+                }));
+            });
+        // checkstyle:on LineLength
 
         /**
          * Adds the given {@link RequireInjectionPointRule rules} which determine whether an
@@ -198,7 +204,9 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
          *
          * @return this configurer
          */
-        public Configurer requiresComponentRules(RequireInjectionPointRule... requiresComponentRules) {
+        public Configurer requiresComponentRules(
+            RequireInjectionPointRule... requiresComponentRules
+        ) {
             this.requiresComponentRules.customizer(collection -> collection.addAll(
                 requiresComponentRules));
             return this;
@@ -212,7 +220,9 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
          *
          * @return this configurer
          */
-        public Configurer requiresComponentRules(Set<RequireInjectionPointRule> requiresComponentRules) {
+        public Configurer requiresComponentRules(
+            Set<RequireInjectionPointRule> requiresComponentRules
+        ) {
             this.requiresComponentRules.customizer(collection -> collection.addAll(
                 requiresComponentRules));
             return this;
@@ -226,7 +236,10 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
          *
          * @return this configurer
          */
-        public Configurer requiresComponentRules(Customizer<StreamableConfigurer<InjectionCapableApplication, RequireInjectionPointRule>> customizer) {
+        public Configurer requiresComponentRules(
+            Customizer<StreamableConfigurer<InjectionCapableApplication, RequireInjectionPointRule>>
+                customizer
+        ) {
             this.requiresComponentRules.customizer(customizer);
             return this;
         }
@@ -265,7 +278,10 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
          *
          * @return this configurer
          */
-        public Configurer parameterResolvers(Customizer<StreamableConfigurer<InjectionCapableApplication, InjectParameterResolver>> customizer) {
+        public Configurer parameterResolvers(
+            Customizer<StreamableConfigurer<InjectionCapableApplication, InjectParameterResolver>>
+                customizer
+        ) {
             this.parameterResolvers.customizer(customizer);
             return this;
         }

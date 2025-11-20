@@ -31,10 +31,12 @@ import java.time.format.DateTimeFormatter;
  * A standard implementation of {@link DiagnosticsReportCollector} which uses a
  * {@link NodeDiagnosticsReport} as the backing data structure.
  *
- * @author Guus Lieben
  * @see NodeDiagnosticsReport
  * @see DiagnosticsReportCollector
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class StandardDiagnosticsReportCollector implements DiagnosticsReportCollector {
 

@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * parameter is not available at runtime, such as when using raw types or when the type parameter is
  * erased due to type erasure in Java generics.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class TypeParameterResolutionException extends ApplicationException {
 

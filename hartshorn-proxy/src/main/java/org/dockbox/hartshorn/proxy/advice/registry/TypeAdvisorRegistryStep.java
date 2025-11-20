@@ -23,9 +23,11 @@ package org.dockbox.hartshorn.proxy.advice.registry;
  * @param <T> the type of the proxy object
  * @param <S> the advised type, which is assignable to T
  *
- * @author Guus Lieben
  * @see AdvisorRegistry
+ *
  * @since 0.4.9
+ *
+ * @author Guus Lieben
  */
 public interface TypeAdvisorRegistryStep<S, T> {
 

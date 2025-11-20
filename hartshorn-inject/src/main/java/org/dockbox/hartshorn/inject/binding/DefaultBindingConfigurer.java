@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.inject.binding;
  * A functional interface used to configure the default bindings of the a {@link Binder}. This
  * interface should be used to configure the default bindings of the application..
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 @FunctionalInterface
 public interface DefaultBindingConfigurer {

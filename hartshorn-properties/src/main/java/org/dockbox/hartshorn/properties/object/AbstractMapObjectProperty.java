@@ -29,8 +29,9 @@ import java.util.Set;
  *
  * @param <T> the type of the properties
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public abstract class AbstractMapObjectProperty<T> implements ObjectProperty {
 

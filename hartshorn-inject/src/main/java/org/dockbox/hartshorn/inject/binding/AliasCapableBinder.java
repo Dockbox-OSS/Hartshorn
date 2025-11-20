@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.inject.ComponentKey;
  * multiple keys, which can be useful when a component is defined in multiple modules, and you want
  * to reference the same component using different keys.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public interface AliasCapableBinder extends Binder {
 

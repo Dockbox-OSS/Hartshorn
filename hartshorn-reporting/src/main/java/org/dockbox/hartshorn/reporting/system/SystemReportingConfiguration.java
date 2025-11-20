@@ -20,9 +20,11 @@ package org.dockbox.hartshorn.reporting.system;
  * A configuration object for {@link SystemDiagnosticsReporter}s that allows for fine-grained
  * control over the information that is reported.
  *
- * @author Guus Lieben
  * @see SystemDiagnosticsReporter
+ * 
  * @since 0.5.0
+ * 
+ * @author Guus Lieben
  */
 public class SystemReportingConfiguration {
 
@@ -212,7 +214,9 @@ public class SystemReportingConfiguration {
      *
      * @return this configuration object
      */
-    public SystemReportingConfiguration includeResponsibleServiceOrUser(boolean includeResponsibleServiceOrUser) {
+    public SystemReportingConfiguration includeResponsibleServiceOrUser(
+        boolean includeResponsibleServiceOrUser
+    ) {
         this.includeResponsibleServiceOrUser = includeResponsibleServiceOrUser;
         return this;
     }

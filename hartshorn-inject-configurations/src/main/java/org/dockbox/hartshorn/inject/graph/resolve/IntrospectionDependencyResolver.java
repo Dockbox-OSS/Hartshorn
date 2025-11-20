@@ -33,8 +33,9 @@ import java.util.stream.Collectors;
  * resolves the dependencies by inspecting the parameters of the executable element, excluding any
  * context parameters.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public final class IntrospectionDependencyResolver {
 

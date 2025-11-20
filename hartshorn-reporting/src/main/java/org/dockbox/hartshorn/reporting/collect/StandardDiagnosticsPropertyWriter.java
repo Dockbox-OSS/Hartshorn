@@ -33,8 +33,9 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
  * A diagnostics property writer that writes to a {@link GroupNode} in a
  * {@link StandardDiagnosticsReportCollector}.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class StandardDiagnosticsPropertyWriter implements DiagnosticsPropertyWriter {
 

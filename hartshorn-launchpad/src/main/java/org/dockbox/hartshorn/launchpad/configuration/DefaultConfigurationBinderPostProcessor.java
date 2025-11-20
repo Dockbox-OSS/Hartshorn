@@ -51,8 +51,9 @@ import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
  * processor should typically only be applied once, and only to the global binder, as it binds
  * components that are shared across the application.
  *
- * @author Guus Lieben
  * @since 0.7.0
+ *
+ * @author Guus Lieben
  */
 public class DefaultConfigurationBinderPostProcessor implements HierarchicalBinderPostProcessor {
 
@@ -120,11 +121,15 @@ public class DefaultConfigurationBinderPostProcessor implements HierarchicalBind
                 .processAfterInitialization(false)
                 .singleton(componentProvider.scope());
 
-            if (componentProvider instanceof HierarchicalComponentProviderOrchestrator scopeAwareComponentProvider) {
-                HierarchicalComponentProvider applicationProvider =
-                    scopeAwareComponentProvider.applicationProvider();
+            if (componentProvider instanceof HierarchicalComponentProviderOrchestrator
+                scopeAwareComponentProvider
+            ) {
+                HierarchicalComponentProvider applicationProvider = scopeAwareComponentProvider
+                    .applicationProvider();
 
-                if (applicationProvider instanceof SingletonCacheComponentProvider singletonCacheComponentProvider) {
+                if (applicationProvider instanceof SingletonCacheComponentProvider
+                    singletonCacheComponentProvider
+                ) {
                     binder.bind(SingletonCache.class)
                         .processAfterInitialization(false)
                         .lazySingleton(scope -> singletonCacheComponentProvider.singletonCache());

@@ -29,8 +29,9 @@ import org.dockbox.hartshorn.context.SingleElementContext;
  *
  * @param <I> The type of the input object.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class ApplicationInitializerContext<I> extends AbstractSingleElementContext<I> {
 
