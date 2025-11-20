@@ -24,14 +24,14 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Objects;
 
 /**
- * Represents a container for a component that is annotated with {@link Component} or a derivative annotation. This
- * container provides access to the component's annotation, the component itself, and the type of the component.
+ * Represents a container for a component that is annotated with {@link Component} or a derivative
+ * annotation. This container provides access to the component's annotation, the component itself,
+ * and the type of the component.
  *
  * @param <T> the type of the component
  *
- * @since 0.4.1
- *
  * @author Guus Lieben
+ * @since 0.4.1
  */
 public class AnnotatedComponentContainer<T> implements ComponentContainer<T> {
 
@@ -41,10 +41,15 @@ public class AnnotatedComponentContainer<T> implements ComponentContainer<T> {
     public AnnotatedComponentContainer(TypeView<T> component) {
         Option<Component> annotated = component.annotations().get(Component.class);
         if (annotated.absent()) {
-            throw new InvalidComponentException("Provided component candidate (" + component.qualifiedName() + ") is not annotated with @" + Component.class.getSimpleName());
+            throw new InvalidComponentException("Provided component candidate ("
+                + component.qualifiedName()
+                + ") is not annotated with @"
+                + Component.class.getSimpleName());
         }
         if (component.isAnnotation()) {
-            throw new InvalidComponentException("Provided component candidate (" + component.qualifiedName() + ") is an annotation and cannot be used as a component, is it a component stereotype?");
+            throw new InvalidComponentException("Provided component candidate ("
+                + component.qualifiedName()
+                + ") is an annotation and cannot be used as a component, is it a component stereotype?");
         }
 
         this.component = component;

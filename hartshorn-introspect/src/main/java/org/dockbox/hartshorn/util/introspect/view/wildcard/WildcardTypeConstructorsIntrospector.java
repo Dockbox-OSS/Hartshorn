@@ -27,9 +27,8 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * A {@link TypeConstructorsIntrospector} implementation for wildcard types.
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class WildcardTypeConstructorsIntrospector implements TypeConstructorsIntrospector<Object> {
 

@@ -22,11 +22,9 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * @param sourceType the source type
  * @param targetType the target type
  *
- * @see GenericConverter#convertibleTypes()
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see GenericConverter#convertibleTypes()
+ * @since 0.5.0
  */
 public record ConvertibleTypePair(Class<?> sourceType, Class<?> targetType) {
 
@@ -46,6 +44,7 @@ public record ConvertibleTypePair(Class<?> sourceType, Class<?> targetType) {
      *
      * @param sourceType the source type
      * @param targetType the target type
+     *
      * @return a new {@link ConvertibleTypePair} instance
      */
     public static ConvertibleTypePair of(Class<?> sourceType, Class<?> targetType) {

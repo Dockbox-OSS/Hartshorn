@@ -20,11 +20,11 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Prints a banner from a given resource path. The resource path is expected to be a (plain) text file.
- *
- * @since 0.4.13
+ * Prints a banner from a given resource path. The resource path is expected to be a (plain) text
+ * file.
  *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class ResourcePathBanner extends AbstractConsoleBanner {
 

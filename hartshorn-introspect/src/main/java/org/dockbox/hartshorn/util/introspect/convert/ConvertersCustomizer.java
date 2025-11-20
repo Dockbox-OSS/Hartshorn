@@ -24,9 +24,8 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * <p>This customizer is typically called immediately after the conversion service or registry is
  * created, but before it is released for general use.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 @FunctionalInterface
 public interface ConvertersCustomizer {

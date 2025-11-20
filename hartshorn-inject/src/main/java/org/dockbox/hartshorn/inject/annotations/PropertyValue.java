@@ -27,18 +27,23 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated field or parameter should be injected with a value from the {@link
- * org.dockbox.hartshorn.properties.PropertyRegistry}. If no value is found, the {@link PropertyValue#defaultValue()} is used.
+ * Indicates that the annotated field or parameter should be injected with a value from the
+ * {@link org.dockbox.hartshorn.properties.PropertyRegistry}. If no value is found, the
+ * {@link PropertyValue#defaultValue()} is used.
  *
- * <p>Properties in the property registry may have been obtained from various sources, such as configuration files or
- * environment variables. The {@link PropertyValue} annotation is a convenient way to inject these values into components.
- * Alternatively, the {@link org.dockbox.hartshorn.properties.PropertyRegistry} can be used directly to obtain values.
+ * <p>Properties in the property registry may have been obtained from various sources, such as
+ * configuration files or environment variables. The {@link PropertyValue} annotation is a
+ * convenient way to inject these values into components. Alternatively, the
+ * {@link org.dockbox.hartshorn.properties.PropertyRegistry} can be used directly to obtain values.
  *
- * <p>Parameters with literal {@link ValueProperty}, {@link ListProperty}, or {@link ObjectProperty} types will be
- * resolved directly from the registry. Other types will be resolved in their raw form from the property registry, and
- * will be converted by the {@link org.dockbox.hartshorn.util.introspect.convert.ConversionService}.
+ * <p>Parameters with literal {@link ValueProperty}, {@link ListProperty}, or
+ * {@link ObjectProperty}
+ * types will be resolved directly from the registry. Other types will be resolved in their raw form
+ * from the property registry, and will be converted by the
+ * {@link org.dockbox.hartshorn.util.introspect.convert.ConversionService}.
  *
- * <p>For example, the following code snippet demonstrates how to inject a property into a component:
+ * <p>For example, the following code snippet demonstrates how to inject a property into a
+ * component:
  * <pre>{@code
  * @Component
  * public class MyComponent {
@@ -50,9 +55,8 @@ import java.lang.annotation.Target;
  *    private SampleEnum enumValue;
  * }}</pre>
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
@@ -60,8 +64,8 @@ import java.lang.annotation.Target;
 public @interface PropertyValue {
 
     /**
-     * The name of the property to inject. If no property with this name is found, the {@link PropertyValue#defaultValue()} is
-     * used.
+     * The name of the property to inject. If no property with this name is found, the
+     * {@link PropertyValue#defaultValue()} is used.
      *
      * @return the name of the property to inject
      */

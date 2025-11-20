@@ -15,7 +15,7 @@
  */
 
 /**
- * Contains types used by the {@link test.org.dockbox.hartshorn.introspect.ClassPathScannerTests} to test
- * whether package scanning works as expected.
+ * Contains types used by the {@link test.org.dockbox.hartshorn.introspect.ClassPathScannerTests} to
+ * test whether package scanning works as expected.
  */
 package test.org.dockbox.hartshorn.introspect.types;

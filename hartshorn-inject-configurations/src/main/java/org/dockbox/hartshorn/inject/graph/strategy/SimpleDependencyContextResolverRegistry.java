@@ -27,16 +27,17 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A simple implementation of the {@link DependencyContextResolverRegistry} interface, which allows multiple
- * strategies to be registered on the same priority level.
- *
- * @since 0.5.0
+ * A simple implementation of the {@link DependencyContextResolverRegistry} interface, which allows
+ * multiple strategies to be registered on the same priority level.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
-public class SimpleDependencyContextResolverRegistry extends DefaultContext implements DependencyContextResolverRegistry {
+public class SimpleDependencyContextResolverRegistry extends DefaultContext
+    implements DependencyContextResolverRegistry {
 
-    private final MultiMap<BindingStrategyPriority, DependencyContextResolver> strategies = MultiMap.<BindingStrategyPriority, DependencyContextResolver>builder()
+    private final MultiMap<BindingStrategyPriority, DependencyContextResolver> strategies =
+        MultiMap.<BindingStrategyPriority, DependencyContextResolver>builder()
             .mapSupplier(() -> new EnumMap<>(BindingStrategyPriority.class))
             .collectionSupplier(HashSet::new)
             .build();
@@ -75,7 +76,10 @@ public class SimpleDependencyContextResolverRegistry extends DefaultContext impl
                 }
             }
             if (matchingStrategies.size() > 1) {
-                throw new IllegalStateException("Multiple strategies found for " + context + " at priority " + priority);
+                throw new IllegalStateException("Multiple strategies found for "
+                    + context
+                    + " at priority "
+                    + priority);
             }
             else if (!matchingStrategies.isEmpty()) {
                 return Option.of(matchingStrategies.getFirst());

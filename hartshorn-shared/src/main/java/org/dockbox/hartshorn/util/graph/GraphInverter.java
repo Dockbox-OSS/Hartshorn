@@ -23,9 +23,8 @@ import java.util.function.Predicate;
  * will have a new root node, which is the first node that matches the given rule. The inverted
  * graph will only contain all nodes that are reachable from the new root node.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class GraphInverter {
 
@@ -78,8 +77,8 @@ public class GraphInverter {
     }
 
     private <T> GraphNode<T> invertNode(
-            GraphNode<T> originalNode,
-            MutableGraphNode<T> invertedNode
+        GraphNode<T> originalNode,
+        MutableGraphNode<T> invertedNode
     ) {
         if (originalNode instanceof ContainableGraphNode<T> containable) {
             for (GraphNode<T> parent : containable.parents()) {

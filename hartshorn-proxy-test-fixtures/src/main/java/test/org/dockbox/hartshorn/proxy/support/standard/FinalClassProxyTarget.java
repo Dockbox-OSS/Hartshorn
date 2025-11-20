@@ -19,9 +19,8 @@ package test.org.dockbox.hartshorn.proxy.support.standard;
 /**
  * A final class with a non-final method that should not be proxied.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public final class FinalClassProxyTarget {
 

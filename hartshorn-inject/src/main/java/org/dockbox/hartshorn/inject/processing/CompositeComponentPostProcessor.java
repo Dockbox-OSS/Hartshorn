@@ -28,17 +28,20 @@ import org.dockbox.hartshorn.util.function.CheckedConsumer;
 import java.util.function.Supplier;
 
 /**
- * A {@link ComponentPostProcessor} which delegates to a collection of other post processors. The post processors are
- * ordered by priority, and will be executed in order of priority. If multiple post processors have the same priority,
- * they will be executed in the order defined by the provided {@link MultiMap} implementation.
+ * A {@link ComponentPostProcessor} which delegates to a collection of other post processors. The
+ * post processors are ordered by priority, and will be executed in order of priority. If multiple
+ * post processors have the same priority, they will be executed in the order defined by the
+ * provided {@link MultiMap} implementation.
  *
- * <p>As this processor is a composite, it is able to call each phase of the component lifecycle on each of the
- * post processors immediately, instead of having each post processor call their own lifecycle phases. This allows for
- * more efficient and predictable execution of the component lifecycle, as all pre-configuration phases will be complete
- * before the initialization phase begins, and all initialization phases will be complete before the post-configuration
- * phase begins.
+ * <p>As this processor is a composite, it is able to call each phase of the component lifecycle on
+ * each of the
+ * post processors immediately, instead of having each post processor call their own lifecycle
+ * phases. This allows for more efficient and predictable execution of the component lifecycle, as
+ * all pre-configuration phases will be complete before the initialization phase begins, and all
+ * initialization phases will be complete before the post-configuration phase begins.
  *
- * <p>In summary, given two post processors, {@code A} and {@code B}, with priorities {@code 1} and {@code 2}
+ * <p>In summary, given two post processors, {@code A} and {@code B}, with priorities {@code 1} and
+ * {@code 2}
  * respectively, the following will occur:
  *
  * <ol>
@@ -68,11 +71,9 @@ import java.util.function.Supplier;
  * provided instance. This is to ensure that the composite processor can be used in place of a {@link ComponentPostProcessor} without any
  * unexpected side effects.
  *
- * @see ComponentPostProcessor
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see ComponentPostProcessor
+ * @since 0.5.0
  */
 public class CompositeComponentPostProcessor extends ComponentPostProcessor {
 
@@ -91,7 +92,8 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
             return true;
         }
         // Doesn't need to be thread-safe, this will only be retained during the processing of a single component.
-        NavigableMultiMap<Integer, ComponentPostProcessor> compatibleProcessors = new ConcurrentSetTreeMultiMap<>();
+        NavigableMultiMap<Integer, ComponentPostProcessor> compatibleProcessors =
+            new ConcurrentSetTreeMultiMap<>();
         for (Integer priority : processors.keySet()) {
             for (ComponentPostProcessor postProcessor : processors.get(priority)) {
                 if (postProcessor.isCompatible(processingContext)) {
@@ -124,10 +126,12 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
         @Nullable T instance,
         ComponentProcessingContext<T> processingContext
     ) throws ApplicationException {
-        MultiMap<Integer, ComponentPostProcessor> processors = this.resolveCompatibleProcessors(processingContext);
+        MultiMap<Integer, ComponentPostProcessor> processors =
+            this.resolveCompatibleProcessors(processingContext);
         for (Integer priority : processors.keySet()) {
             for (ComponentPostProcessor postProcessor : processors.get(priority)) {
-                instance = postProcessor.initializeComponent(application, instance, processingContext);
+                instance =
+                    postProcessor.initializeComponent(application, instance, processingContext);
             }
         }
         return instance;
@@ -144,7 +148,10 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
         });
     }
 
-    private void withProcessors(NavigableMultiMap<Integer, ComponentPostProcessor> processors, CheckedConsumer<ComponentPostProcessor> processor) throws ApplicationException {
+    private void withProcessors(
+        NavigableMultiMap<Integer, ComponentPostProcessor> processors,
+        CheckedConsumer<ComponentPostProcessor> processor
+    ) throws ApplicationException {
         for (Integer priority : processors.keySet()) {
             for (ComponentPostProcessor postProcessor : processors.get(priority)) {
                 processor.accept(postProcessor);
@@ -152,9 +159,13 @@ public class CompositeComponentPostProcessor extends ComponentPostProcessor {
         }
     }
 
-    private NavigableMultiMap<Integer, ComponentPostProcessor> resolveCompatibleProcessors(ContextView context) {
+    private NavigableMultiMap<Integer, ComponentPostProcessor> resolveCompatibleProcessors(
+        ContextView context
+    ) {
         return context.firstContext(CompatibleProcessorsContext.class).orElseThrow(() -> {
-            return new IllegalStateException("No compatible processors context found for context: " + context + ". Was the isCompatible method called?");
+            return new IllegalStateException("No compatible processors context found for context: "
+                + context
+                + ". Was the isCompatible method called?");
         }).processors();
     }
 }

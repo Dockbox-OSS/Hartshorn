@@ -21,16 +21,17 @@ package org.dockbox.hartshorn.proxy;
  *
  * @param <T> The type of the delegate instance
  *
- * @since 0.4.12
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public interface ModifiableProxyManager<T> extends ProxyManager<T> {
 
     /**
-     * Delegates all methods defined by the active type to the given delegate instance.
-     * This targets an original instance, not the backing implementation.
+     * Delegates all methods defined by the active type to the given delegate instance. This targets
+     * an original instance, not the backing implementation.
      *
      * @param delegate The delegate instance
+     *
      * @return This factory
      */
     ModifiableProxyManager<T> delegate(T delegate);

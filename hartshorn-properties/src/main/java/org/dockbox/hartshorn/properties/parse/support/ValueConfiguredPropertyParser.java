@@ -23,21 +23,21 @@ import org.dockbox.hartshorn.properties.value.SimpleValueProperty;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A parser to convert single-value {@link ConfiguredProperty} instances to {@link ValueProperty} instances.
- *
- * @see ValueProperty
- *
- * @since 0.7.0
+ * A parser to convert single-value {@link ConfiguredProperty} instances to {@link ValueProperty}
+ * instances.
  *
  * @author Guus Lieben
+ * @see ValueProperty
+ * @since 0.7.0
  */
 public class ValueConfiguredPropertyParser implements ConfiguredPropertyParser<ValueProperty> {
 
-    public static final ValueConfiguredPropertyParser INSTANCE = new ValueConfiguredPropertyParser();
+    public static final ValueConfiguredPropertyParser INSTANCE =
+        new ValueConfiguredPropertyParser();
 
     @Override
     public Option<ValueProperty> parse(ConfiguredProperty property) {
         return property.value()
-                .map(value -> new SimpleValueProperty(property.name(), value));
+            .map(value -> new SimpleValueProperty(property.name(), value));
     }
 }

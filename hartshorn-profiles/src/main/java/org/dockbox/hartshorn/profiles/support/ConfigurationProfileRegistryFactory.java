@@ -31,13 +31,13 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Standard implementation of {@link ProfileRegistryFactory} that creates a {@link ProfileRegistry} based on
- * a root {@link PropertyRegistry} and additional profiles defined in the root registry. Additional profiles
- * are resolved using a {@link ProfileResourceResolver} and loaded using a {@link PropertyRegistryPathLoader}.
- *
- * @since 0.7.0
+ * Standard implementation of {@link ProfileRegistryFactory} that creates a {@link ProfileRegistry}
+ * based on a root {@link PropertyRegistry} and additional profiles defined in the root registry.
+ * Additional profiles are resolved using a {@link ProfileResourceResolver} and loaded using a
+ * {@link PropertyRegistryPathLoader}.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class ConfigurationProfileRegistryFactory implements ProfileRegistryFactory {
 
@@ -49,10 +49,10 @@ public class ConfigurationProfileRegistryFactory implements ProfileRegistryFacto
     private final ProfileNameResolver profileNameResolver;
 
     public ConfigurationProfileRegistryFactory(
-            PropertyRegistryPathLoader propertyRegistryLoader,
-            ProfileResourceResolver resourceResolver,
-            PropertyRegistrySupplier registrySupplier,
-            ProfileNameResolver profileNameResolver
+        PropertyRegistryPathLoader propertyRegistryLoader,
+        ProfileResourceResolver resourceResolver,
+        PropertyRegistrySupplier registrySupplier,
+        ProfileNameResolver profileNameResolver
     ) {
         this.propertyRegistryLoader = propertyRegistryLoader;
         this.resourceResolver = resourceResolver;
@@ -64,15 +64,16 @@ public class ConfigurationProfileRegistryFactory implements ProfileRegistryFacto
     public ProfileRegistry create(PropertyRegistry rootRegistry) {
         ProfileRegistry profileRegistry = new ConcurrentProfileRegistry();
 
-        EnvironmentProfile defaultProfile = new SimpleEnvironmentProfile(DEFAULT_PROFILE_NAME, rootRegistry);
+        EnvironmentProfile defaultProfile =
+            new SimpleEnvironmentProfile(DEFAULT_PROFILE_NAME, rootRegistry);
         profileRegistry.register(0, defaultProfile);
 
         List<EnvironmentProfile> additionalProfiles = this.profileNameResolver
-                .resolveProfileNames(rootRegistry).stream()
-                .map(this::resolveProfile)
-                .toList();
+            .resolveProfileNames(rootRegistry).stream()
+            .map(this::resolveProfile)
+            .toList();
 
-        for(int i = 0; i < additionalProfiles.size(); i++) {
+        for (int i = 0; i < additionalProfiles.size(); i++) {
             EnvironmentProfile profile = additionalProfiles.get(i);
             profileRegistry.register(i + 1, profile);
         }
@@ -83,11 +84,11 @@ public class ConfigurationProfileRegistryFactory implements ProfileRegistryFacto
     private EnvironmentProfile resolveProfile(String profileName) {
         Set<URI> resources = this.resourceResolver.resolve(profileName);
         PropertyRegistry registry = this.registrySupplier.get();
-        for(URI resource : resources) {
+        for (URI resource : resources) {
             try {
                 this.propertyRegistryLoader.loadRegistry(registry, resource);
             }
-            catch(IOException e) {
+            catch (IOException e) {
                 throw new ProfileLoadingFailedException(profileName, resource, e);
             }
         }

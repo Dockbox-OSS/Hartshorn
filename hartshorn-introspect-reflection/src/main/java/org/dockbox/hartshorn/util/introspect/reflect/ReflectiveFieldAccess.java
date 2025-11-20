@@ -20,15 +20,15 @@ import org.dockbox.hartshorn.util.option.Option;
 
 /**
  * Represents a functional interface that can be used to read a value from a field. This is used to
- * abstract the process of getting a value from a field, and is typically used by {@link
- * org.dockbox.hartshorn.util.introspect.view.FieldView#get(Object)} to get a value from a field.
+ * abstract the process of getting a value from a field, and is typically used by
+ * {@link org.dockbox.hartshorn.util.introspect.view.FieldView#get(Object)} to get a value from a
+ * field.
  *
  * @param <T> the type of the field
  * @param <P> the type of the instance
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 @FunctionalInterface
 public interface ReflectiveFieldAccess<T, P> {
@@ -38,7 +38,9 @@ public interface ReflectiveFieldAccess<T, P> {
      * exception is thrown.
      *
      * @param instance the instance from which to get the value
+     *
      * @return the value of the field
+     *
      * @throws Throwable if the field could not be read from
      */
     Option<T> get(P instance) throws Throwable;

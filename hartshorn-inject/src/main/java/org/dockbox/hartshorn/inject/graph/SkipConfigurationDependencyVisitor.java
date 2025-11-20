@@ -19,17 +19,17 @@ package org.dockbox.hartshorn.inject.graph;
 import org.dockbox.hartshorn.inject.graph.declaration.DependencyContext;
 
 /**
- * A {@link ConfigurationDependencyVisitor} that skips the registration of providers. Effectively this is a no-op
- * implementation of the visitor.
- *
- * @since 0.7.0
+ * A {@link ConfigurationDependencyVisitor} that skips the registration of providers. Effectively
+ * this is a no-op implementation of the visitor.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class SkipConfigurationDependencyVisitor extends AbstractConfigurationDependencyVisitor {
 
     @Override
-    public <T> void registerProvider(DependencyContext<T> dependencyContext) throws ComponentConfigurationException {
+    public <T> void registerProvider(DependencyContext<T> dependencyContext)
+        throws ComponentConfigurationException {
         // Do nothing
     }
 

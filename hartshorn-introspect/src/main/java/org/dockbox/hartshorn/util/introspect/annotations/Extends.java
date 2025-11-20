@@ -24,8 +24,8 @@ import java.lang.annotation.Target;
 
 /**
  * Marks that the annotated annotation extends another annotation, inheriting its attributes.
- * Similar to class inheritance, if annotation X extends annotation Y, when searching Y
- * annotation, X annotation will also be returned.
+ * Similar to class inheritance, if annotation X extends annotation Y, when searching Y annotation,
+ * X annotation will also be returned.
  *
  * <p>A common example of this inheritance are component stereotypes in Hartshorn. For example,
  * {@code Configuration}, which extends {@code Component}.
@@ -35,8 +35,8 @@ import java.lang.annotation.Target;
  * extended annotation.
  *
  * @author Guus Lieben
- * @since 0.4.1
  * @see AttributeAlias
+ * @since 0.4.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

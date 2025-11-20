@@ -21,9 +21,8 @@ package org.dockbox.hartshorn.util;
  * do not have to be immutable, but they do not allow modifications to be made to them at the time
  * of the attempted modification.
  *
- * @since 0.4.12
- *
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public class IllegalModificationException extends ApplicationRuntimeException {
     public IllegalModificationException(String message) {

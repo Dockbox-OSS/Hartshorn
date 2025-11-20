@@ -26,16 +26,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A {@link MapListProperty} is a {@link AbstractMapProperty} that represents a list of properties. The keys of the
- * properties are formatted indexes.
- *
- * @since 0.7.0
+ * A {@link MapListProperty} is a {@link AbstractMapProperty} that represents a list of properties.
+ * The keys of the properties are formatted indexes.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class MapListProperty extends AbstractMapProperty<Integer> implements ListProperty {
 
-    public MapListProperty(String name, Map<String, ConfiguredProperty> properties, PropertyPathStyle pathStyle) {
+    public MapListProperty(
+        String name,
+        Map<String, ConfiguredProperty> properties,
+        PropertyPathStyle pathStyle
+    ) {
         super(name, properties, pathStyle);
     }
 
@@ -57,11 +60,11 @@ public class MapListProperty extends AbstractMapProperty<Integer> implements Lis
     @Override
     public int size() {
         return this.properties().keySet().stream()
-                .map(key -> this.pathStyle().resolveIndexes(key)[0])
-                .map(Integer::parseInt)
-                .max(Integer::compareTo)
-                .map(index -> index + 1) // Add one to get the size, as the max index is zero-based
-                .orElse(0);
+            .map(key -> this.pathStyle().resolveIndexes(key)[0])
+            .map(Integer::parseInt)
+            .max(Integer::compareTo)
+            .map(index -> index + 1) // Add one to get the size, as the max index is zero-based
+            .orElse(0);
     }
 
     @Override

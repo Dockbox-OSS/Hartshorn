@@ -26,9 +26,8 @@ import java.util.Set;
  * populated on the first invocation of {@link #collect()}, and is reused for all subsequent
  * invocations.
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class CachedTypeReferenceCollector implements TypeReferenceCollector {
 
@@ -55,8 +54,8 @@ public class CachedTypeReferenceCollector implements TypeReferenceCollector {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("cached", this.cache != null ? this.cache.size() : 0)
-                .field("delegate", this.collector)
-                .describe();
+            .field("cached", this.cache != null ? this.cache.size() : 0)
+            .field("delegate", this.collector)
+            .describe();
     }
 }

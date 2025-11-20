@@ -31,14 +31,13 @@ import java.util.Set;
  *
  * @param <T> the type of the dependency
  *
+ * @author Guus Lieben
  * @see AliasableDependencyContext
  * @see ConfigurableDependencyContext
- *
  * @since 0.7.0
- *
- * @author Guus Lieben
  */
-public class AliasableConfigurableDependencyContext<T> extends ConfigurableDependencyContext<T> implements AliasableDependencyContext<T> {
+public class AliasableConfigurableDependencyContext<T> extends ConfigurableDependencyContext<T>
+    implements AliasableDependencyContext<T> {
 
     private final Set<Class<? super T>> aliasTypes;
     private final Set<ComponentKey<? super T>> aliasKeys;
@@ -63,7 +62,6 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
         return new AliasableConfigurableDependencyContextBuilder<>(componentKey);
     }
 
-
     @Override
     public void configure(BindingFunction<T> function) throws ComponentConfigurationException {
         super.configure(function);
@@ -72,8 +70,11 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
             this.aliasKeys.forEach(aliasBindingFunction::alias);
             this.aliasQualifiers.forEach(aliasBindingFunction::alias);
         }
-        else if (!this.aliasTypes.isEmpty() || !this.aliasKeys.isEmpty() || !this.aliasQualifiers.isEmpty()) {
-            throw new ComponentConfigurationException("Attempted to configure aliases on a binding that does not support aliasing");
+        else if (!this.aliasTypes.isEmpty()
+            || !this.aliasKeys.isEmpty()
+            || !this.aliasQualifiers.isEmpty()) {
+            throw new ComponentConfigurationException(
+                "Attempted to configure aliases on a binding that does not support aliasing");
         }
     }
 
@@ -105,11 +106,11 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
      *
      * @param <T> the type of the component that is auto-configured
      *
-     * @since 0.7.0
-     *
      * @author Guus Lieben
+     * @since 0.7.0
      */
-    public static class AliasableConfigurableDependencyContextBuilder<T> extends AutoConfiguringDependencyContextBuilder<T> {
+    public static class AliasableConfigurableDependencyContextBuilder<T>
+        extends AutoConfiguringDependencyContextBuilder<T> {
 
         private final Set<Class<? super T>> aliasTypes = new HashSet<>();
         private final Set<ComponentKey<? super T>> aliasKeys = new HashSet<>();
@@ -123,6 +124,7 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
          * Adds a single alias type.
          *
          * @param aliasType the alias type to add
+         *
          * @return the builder instance
          */
         public AliasableConfigurableDependencyContextBuilder<T> aliasType(Class<? super T> aliasType) {
@@ -134,6 +136,7 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
          * Adds multiple alias types.
          *
          * @param aliasTypes the alias types to add
+         *
          * @return the builder instance
          */
         public AliasableConfigurableDependencyContextBuilder<T> aliasTypes(Set<Class<? super T>> aliasTypes) {
@@ -145,6 +148,7 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
          * Adds a single alias key.
          *
          * @param aliasKey the alias key to add
+         *
          * @return the builder instance
          */
         public AliasableConfigurableDependencyContextBuilder<T> aliasKey(ComponentKey<? super T> aliasKey) {
@@ -156,6 +160,7 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
          * Adds multiple alias keys.
          *
          * @param aliasKeys the alias keys to add
+         *
          * @return the builder instance
          */
         public AliasableConfigurableDependencyContextBuilder<T> aliasKeys(Set<ComponentKey<? super T>> aliasKeys) {
@@ -167,6 +172,7 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
          * Adds a single alias qualifier.
          *
          * @param aliasQualifier the alias qualifier to add
+         *
          * @return the builder instance
          */
         public AliasableConfigurableDependencyContextBuilder<T> aliasQualifier(QualifierKey<T> aliasQualifier) {
@@ -178,6 +184,7 @@ public class AliasableConfigurableDependencyContext<T> extends ConfigurableDepen
          * Adds multiple alias qualifiers.
          *
          * @param aliasQualifiers the alias qualifiers to add
+         *
          * @return the builder instance
          */
         public AliasableConfigurableDependencyContextBuilder<T> aliasQualifiers(Set<QualifierKey<T>> aliasQualifiers) {

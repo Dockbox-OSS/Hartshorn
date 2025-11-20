@@ -25,9 +25,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param <I> the type of the input object
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface SingleElementContext<I> extends Context {
 
@@ -37,17 +36,18 @@ public interface SingleElementContext<I> extends Context {
      *
      * @return the input object
      */
-    @NonNull I input();
+    @NonNull
+    I input();
 
     /**
-     * Transforms the input into a new context. This is useful for when you want to keep the
-     * same context that is attached to the input, but want to change the input itself. This
-     * will return a new context with the new input, the original context will not be modified.
+     * Transforms the input into a new context. This is useful for when you want to keep the same
+     * context that is attached to the input, but want to change the input itself. This will return
+     * a new context with the new input, the original context will not be modified.
      *
      * @param input the new input
-     * @return the new context, containing the new input and a copy of the original context
      * @param <T> the type of the new input
+     *
+     * @return the new context, containing the new input and a copy of the original context
      */
     <T> @NonNull SingleElementContext<@Nullable T> transform(@NonNull T input);
-
 }

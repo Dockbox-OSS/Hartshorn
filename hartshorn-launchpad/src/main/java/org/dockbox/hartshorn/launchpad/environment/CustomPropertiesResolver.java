@@ -22,20 +22,19 @@ import org.dockbox.hartshorn.launchpad.properties.PropertySourceResolver;
 import java.util.Properties;
 
 /**
- * Functional interface for resolving custom properties. This interface is used to provide a mechanism for
- * resolving properties that do not reside in a specific resource or file, which would otherwise be resolved
- * through {@link PropertySourceResolver}s.
- *
- * @since 0.7.0
+ * Functional interface for resolving custom properties. This interface is used to provide a
+ * mechanism for resolving properties that do not reside in a specific resource or file, which would
+ * otherwise be resolved through {@link PropertySourceResolver}s.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 @FunctionalInterface
 public interface CustomPropertiesResolver {
 
     /**
-     * Resolves the properties for the application. This method is called during the initialization of the
-     * application environment, and should not depend on other components.
+     * Resolves the properties for the application. This method is called during the initialization
+     * of the application environment, and should not depend on other components.
      *
      * @param initializerContext the context for the application environment initialization
      *

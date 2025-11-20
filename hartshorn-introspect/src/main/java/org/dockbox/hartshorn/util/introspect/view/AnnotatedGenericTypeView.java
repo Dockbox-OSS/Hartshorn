@@ -23,9 +23,8 @@ package org.dockbox.hartshorn.util.introspect.view;
  *
  * @param <T> the type of the element's generic type
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public interface AnnotatedGenericTypeView<T> extends AnnotatedElementView, GenericTypeView<T> {
 }

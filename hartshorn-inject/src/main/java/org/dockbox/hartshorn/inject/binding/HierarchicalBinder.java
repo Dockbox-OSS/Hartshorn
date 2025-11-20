@@ -19,15 +19,13 @@ package org.dockbox.hartshorn.inject.binding;
 import org.dockbox.hartshorn.inject.scope.Scope;
 
 /**
- * A binder that supports hierarchical bindings. This means that bindings are not just one-to-one, but can be
- * one-to-many, with various bindings on different priority levels.
- *
- * @see BindingHierarchy
- * @see Binder
- *
- * @since 0.4.12
+ * A binder that supports hierarchical bindings. This means that bindings are not just one-to-one,
+ * but can be one-to-many, with various bindings on different priority levels.
  *
  * @author Guus Lieben
+ * @see BindingHierarchy
+ * @see Binder
+ * @since 0.4.12
  */
 public interface HierarchicalBinder extends Binder, HierarchyLookup {
 

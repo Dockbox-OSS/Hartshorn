@@ -21,9 +21,8 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 /**
  * Exception thrown when a component's configuration is invalid or cannot be processed.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ComponentConfigurationException extends ApplicationRuntimeException {
 

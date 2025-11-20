@@ -40,7 +40,8 @@ public class ComponentStereotypeTests {
 
     @Test
     void testNonComponentsAreNotProxied() {
-        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(NonComponentType.class));
+        Assertions.assertThrows(ComponentResolutionException.class,
+            () -> this.applicationContext.get(NonComponentType.class));
     }
 
     @Test
@@ -48,12 +49,15 @@ public class ComponentStereotypeTests {
     void testPermittedComponentsAreProxiedWhenRegularProvisionFails() {
         ComponentType instance = this.applicationContext.get(ComponentType.class);
         Assertions.assertNotNull(instance);
-        Assertions.assertTrue(this.applicationContext.environment().proxyOrchestrator().isProxy(instance));
+        Assertions.assertTrue(this.applicationContext.environment()
+            .proxyOrchestrator()
+            .isProxy(instance));
     }
 
     @Test
     @TestComponents(NonProxyComponentType.class)
     void testNonPermittedComponentsAreNotProxied() {
-        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(NonProxyComponentType.class));
+        Assertions.assertThrows(ComponentResolutionException.class,
+            () -> this.applicationContext.get(NonProxyComponentType.class));
     }
 }

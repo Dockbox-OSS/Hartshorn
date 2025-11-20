@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.util.introspect.reflect.ReflectionIntrospector;
 public class ReflectionConversionServiceTests extends ConversionServiceTests {
     @Override
     protected Introspector introspector() {
-        return new ReflectionIntrospector(new NativeProxyLookup(), new VirtualHierarchyAnnotationLookup());
+        return new ReflectionIntrospector(new NativeProxyLookup(),
+            new VirtualHierarchyAnnotationLookup());
     }
 }

@@ -17,27 +17,29 @@
 package org.dockbox.hartshorn.properties.loader.path;
 
 /**
- * Represents a node in a property path. A node is a single element in a configuration path, such as a field or an index.
- * Nodes can be chained together to form a path.
+ * Represents a node in a property path. A node is a single element in a configuration path, such as
+ * a field or an index. Nodes can be chained together to form a path.
  *
+ * @author Guus Lieben
  * @see PropertyRootPathNode
  * @see PropertyFieldPathNode
  * @see PropertyIndexPathNode
- *
  * @since 0.7.0
- *
- * @author Guus Lieben
  */
-public sealed interface PropertyPathNode permits PropertyFieldPathNode, PropertyIndexPathNode, PropertyRootPathNode {
+public sealed interface PropertyPathNode
+    permits PropertyFieldPathNode, PropertyIndexPathNode, PropertyRootPathNode {
 
     /**
      * Returns the name of the node. This does not include the parent node's name.
+     *
      * @return the name of the node
      */
     String name();
 
     /**
-     * Returns the parent node of this node. If this node is the root node, an {@link UnsupportedOperationException} is thrown.
+     * Returns the parent node of this node. If this node is the root node, an
+     * {@link UnsupportedOperationException} is thrown.
+     *
      * @return the parent node
      */
     PropertyPathNode parent();
@@ -46,6 +48,7 @@ public sealed interface PropertyPathNode permits PropertyFieldPathNode, Property
      * Creates a new {@link PropertyFieldPathNode} with the given name and this node as its parent.
      *
      * @param name the name of the field
+     *
      * @return a new field node
      */
     default PropertyPathNode property(String name) {
@@ -53,9 +56,11 @@ public sealed interface PropertyPathNode permits PropertyFieldPathNode, Property
     }
 
     /**
-     * Creates a new {@link PropertyIndexPathNode} with the given index and this node as its parent.
+     * Creates a new {@link PropertyIndexPathNode} with the given index and this node as its
+     * parent.
      *
      * @param index the index of the node
+     *
      * @return a new index node
      */
     default PropertyPathNode index(int index) {

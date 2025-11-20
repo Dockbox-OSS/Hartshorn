@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.util.introspect.convert;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * A functional interface for converting objects from one type to another. This interface provides
- * a single method for converting an input object of type {@link I} to an output object of type
+ * A functional interface for converting objects from one type to another. This interface provides a
+ * single method for converting an input object of type {@link I} to an output object of type
  * {@link O}. The input object may be nullable, and the output object may be nullable as well. If
  * the input object is {@code null}, the {@link #convert(Object)} method may return null, or provide
  * a default value.
@@ -31,9 +31,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param <I> the input object type
  * @param <O> the output object type
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 @FunctionalInterface
 public interface Converter<I, O> {
@@ -58,8 +57,8 @@ public interface Converter<I, O> {
      * @param after the converter to apply after this converter is applied
      * @param <T> the type of output of the {@code after} converter, and of the composed converter
      *
-     * @return a composed converter that first applies this converter and then applies the {@code
-     * after}
+     * @return a composed converter that first applies this converter and then applies the
+     * {@code after}
      */
     default <T> Converter<I, T> andThen(Converter<O, T> after) {
         return (I input) -> {

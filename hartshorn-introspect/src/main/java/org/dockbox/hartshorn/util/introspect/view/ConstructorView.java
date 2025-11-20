@@ -28,9 +28,8 @@ import java.util.Collection;
  *
  * @param <T> the type of the class that declares the constructor
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public interface ConstructorView<T> extends ExecutableElementView<T>, AnnotatedGenericTypeView<T> {
 
@@ -48,6 +47,7 @@ public interface ConstructorView<T> extends ExecutableElementView<T>, AnnotatedG
      * returned. If the constructor throws an exception, the exception is re-thrown.
      *
      * @param arguments the arguments to pass to the constructor
+     *
      * @return a new instance of the class that declares the constructor
      */
     default T create(Object... arguments) throws Throwable {
@@ -61,6 +61,7 @@ public interface ConstructorView<T> extends ExecutableElementView<T>, AnnotatedG
      * returned. If the constructor throws an exception, the exception is re-thrown.
      *
      * @param arguments the arguments to pass to the constructor
+     *
      * @return a new instance of the class that declares the constructor
      */
     T create(Collection<?> arguments) throws Throwable;

@@ -19,12 +19,11 @@ package org.dockbox.hartshorn.inject.populate;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * Exception to indicate that a component is required, but not present. This typically indicates that another
- * component has a dependency on the component that is missing.
- *
- * @since 0.4.12
+ * Exception to indicate that a component is required, but not present. This typically indicates
+ * that another component has a dependency on the component that is missing.
  *
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public class ComponentRequiredException extends ApplicationRuntimeException {
     public ComponentRequiredException(String message) {

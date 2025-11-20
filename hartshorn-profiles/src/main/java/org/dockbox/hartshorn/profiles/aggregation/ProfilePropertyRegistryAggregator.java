@@ -22,20 +22,20 @@ import org.dockbox.hartshorn.profiles.ProfileRegistry;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 
 /**
- * Aggregates multiple {@link PropertyRegistry} instances from different {@link EnvironmentProfile}s into a single
- * {@link ProfilePropertyRegistry}, respecting profile priorities.
- *
- * @since 0.7.0
+ * Aggregates multiple {@link PropertyRegistry} instances from different {@link EnvironmentProfile}s
+ * into a single {@link ProfilePropertyRegistry}, respecting profile priorities.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public interface ProfilePropertyRegistryAggregator {
 
     /**
-     * Aggregates the {@link PropertyRegistry} instances from the given {@link ProfileRegistry} into a single
-     * {@link ProfilePropertyRegistry}.
+     * Aggregates the {@link PropertyRegistry} instances from the given {@link ProfileRegistry} into
+     * a single {@link ProfilePropertyRegistry}.
      *
      * @param profileRegistry the profile registry containing the profiles to aggregate
+     *
      * @return the aggregated profile property registry
      */
     ProfilePropertyRegistry aggregate(ProfileRegistry profileRegistry);

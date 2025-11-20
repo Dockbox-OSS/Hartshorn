@@ -23,13 +23,13 @@ import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 
 /**
  * A specialized {@link ObjectContainer} for {@link ComponentCollection} instances. This container
- * acts as a composite container, in that it delegates all operations to the containers of the collection.
+ * acts as a composite container, in that it delegates all operations to the containers of the
+ * collection.
  *
  * @param <E> The type of the elements in the collection
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class CollectionObjectContainer<E> extends AbstractObjectContainer<ComponentCollection<E>> {
 
@@ -56,12 +56,12 @@ public class CollectionObjectContainer<E> extends AbstractObjectContainer<Compon
     @Override
     public boolean processed() {
         return this.instance().containers().stream()
-                .allMatch(ObjectContainer::processed);
+            .allMatch(ObjectContainer::processed);
     }
 
     @Override
     public void processed(boolean processed) {
         this.instance().containers()
-                .forEach(container -> container.processed(processed));
+            .forEach(container -> container.processed(processed));
     }
 }

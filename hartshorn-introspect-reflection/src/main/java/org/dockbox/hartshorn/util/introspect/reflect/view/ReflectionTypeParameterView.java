@@ -38,15 +38,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * A view that provides access to a type parameter. This view is backed by a {@link Type}, which may be a {@link
- * TypeVariable}, {@link ParameterizedType}, {@link WildcardType} or {@link Class}. The view provides information about
- * the type parameter, such as its bounds, the type that it represents, and the type that it is declared by.
- *
- * @since 0.5.0
+ * A view that provides access to a type parameter. This view is backed by a {@link Type}, which may
+ * be a {@link TypeVariable}, {@link ParameterizedType}, {@link WildcardType} or {@link Class}. The
+ * view provides information about the type parameter, such as its bounds, the type that it
+ * represents, and the type that it is declared by.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
-public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView implements TypeParameterView {
+public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView
+    implements TypeParameterView {
 
     private final Type type;
     private final TypeView<?> consumedBy;
@@ -57,7 +58,12 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView 
     private Option<TypeView<?>> resolvedType;
     private TypeView<?> declaredBy;
 
-    public ReflectionTypeParameterView(Type type, TypeView<?> consumedBy, int index, Introspector introspector) {
+    public ReflectionTypeParameterView(
+        Type type,
+        TypeView<?> consumedBy,
+        int index,
+        Introspector introspector
+    ) {
         super(introspector);
         this.type = type;
         this.consumedBy = consumedBy;
@@ -88,7 +94,8 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView 
                     this.declaredBy = this.introspector().introspect(clazz);
                 }
                 else {
-                    throw new IllegalStateException("Generic declaration is not a class, cannot resolve declaring type");
+                    throw new IllegalStateException(
+                        "Generic declaration is not a class, cannot resolve declaring type");
                 }
             }
             else {
@@ -107,7 +114,8 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView 
     public Option<TypeParameterView> definition() {
         if (this.isOutputParameter() && this.isVariable()) {
             TypeVariable<?> typeVariable = (TypeVariable<?>) this.type;
-            TypeVariable<? extends Class<?>>[] typeParameters = this.declaredBy.type().getTypeParameters();
+            TypeVariable<? extends Class<?>>[] typeParameters =
+                this.declaredBy.type().getTypeParameters();
             int index = -1;
             for (int i = 0; i < typeParameters.length; i++) {
                 TypeVariable<? extends Class<?>> typeParameter = typeParameters[i];
@@ -117,9 +125,15 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView 
                 }
             }
             if (index == -1) {
-                throw new IllegalStateException("Could not find type parameter " + typeVariable.getName() + " in " + this.declaredBy.name());
+                throw new IllegalStateException("Could not find type parameter "
+                    + typeVariable.getName()
+                    + " in "
+                    + this.declaredBy.name());
             }
-            TypeParameterView view = new ReflectionTypeParameterView(typeVariable, this.declaredBy, index, this.introspector());
+            TypeParameterView view = new ReflectionTypeParameterView(typeVariable,
+                this.declaredBy,
+                index,
+                this.introspector());
             return Option.of(view);
         }
         else {
@@ -139,8 +153,9 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView 
                 representationCandidates.addAll(genericInterfaces);
 
                 this.represents = representationCandidates.stream()
-                        .flatMap(candidate -> this.getRepresentedParameters(typeVariable, candidate).stream())
-                        .collect(Collectors.toSet());
+                    .flatMap(candidate -> this.getRepresentedParameters(typeVariable, candidate)
+                        .stream())
+                    .collect(Collectors.toSet());
             }
             else if (this.type instanceof Class<?>) {
                 // A concrete type represents itself, as it is not provided by an input parameter. However, a
@@ -151,7 +166,10 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView 
         return this.represents;
     }
 
-    private Set<TypeParameterView> getRepresentedParameters(TypeVariable<?> typeVariable, TypeView<?> typeView) {
+    private Set<TypeParameterView> getRepresentedParameters(
+        TypeVariable<?> typeVariable,
+        TypeView<?> typeView
+    ) {
         Set<TypeParameterView> representedParameters = new HashSet<>();
         for (TypeParameterView parameterView : typeView.typeParameters().allInput()) {
             if (parameterView instanceof ReflectionTypeParameterView reflectionTypeParameterView) {
@@ -168,11 +186,11 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView 
         if (this.upperBounds == null) {
             this.upperBounds = switch (this.type) {
                 case TypeVariable<?> typeVariable -> Arrays.stream(typeVariable.getBounds())
-                        .map(this.introspector()::introspect)
-                        .collect(Collectors.toSet());
+                    .map(this.introspector()::introspect)
+                    .collect(Collectors.toSet());
                 case WildcardType wildcardType -> Arrays.stream(wildcardType.getUpperBounds())
-                        .map(this.introspector()::introspect)
-                        .collect(Collectors.toSet());
+                    .map(this.introspector()::introspect)
+                    .collect(Collectors.toSet());
                 case null, default -> Set.of();
             };
         }
@@ -184,7 +202,8 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView 
         if (this.resolvedType == null) {
             this.resolvedType = switch (this.type) {
                 case Class<?> clazz -> Option.of(this.introspector().introspect(clazz));
-                case ParameterizedType parameterizedType -> Option.of(this.introspector().introspect(parameterizedType));
+                case ParameterizedType parameterizedType ->
+                    Option.of(this.introspector().introspect(parameterizedType));
                 // Note that upper bounds may be present, but the resolved type itself is still a wildcard,
                 // so we return a wildcard type view here. The upper bounds can be resolved separately if
                 // needed.
@@ -276,10 +295,10 @@ public class ReflectionTypeParameterView extends ReflectionAnnotatedElementView 
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("name", this.name())
-                .field("declaredBy", this.declaredBy())
-                .field("consumedBy", this.consumedBy())
-                .describe();
+            .field("name", this.name())
+            .field("declaredBy", this.declaredBy())
+            .field("consumedBy", this.consumedBy())
+            .describe();
     }
 
     @Override

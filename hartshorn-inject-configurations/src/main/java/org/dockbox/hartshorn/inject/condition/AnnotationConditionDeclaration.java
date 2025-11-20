@@ -19,15 +19,13 @@ package org.dockbox.hartshorn.inject.condition;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 
 /**
- * Represents an annotation-based condition declaration. This may represent
- * a direct use of the {@link RequiresCondition} annotation, or a meta-annotation
- * that contains the {@link RequiresCondition} annotation.
- *
- * @see RequiresCondition
- *
- * @since 0.6.0
+ * Represents an annotation-based condition declaration. This may represent a direct use of the
+ * {@link RequiresCondition} annotation, or a meta-annotation that contains the
+ * {@link RequiresCondition} annotation.
  *
  * @author Guus Lieben
+ * @see RequiresCondition
+ * @since 0.6.0
  */
 public class AnnotationConditionDeclaration implements ConditionDeclaration {
 

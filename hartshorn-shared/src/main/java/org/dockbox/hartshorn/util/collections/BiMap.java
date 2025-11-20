@@ -23,16 +23,16 @@ import java.util.Map;
  * of the {@link Map} interface, and does not include methods that would break the bidirectional
  * lookup.
  *
- * <p>The inverse of a {@link BiMap} can be obtained by calling {@link #inverse()}. The inverse of a
- * {@link BiMap} is another {@link Map} that contains the same entries as the original {@link
- * BiMap}, but with the keys and values swapped.
+ * <p>The inverse of a {@link BiMap} can be obtained by calling {@link #inverse()}. The inverse of
+ * a
+ * {@link BiMap} is another {@link Map} that contains the same entries as the original
+ * {@link BiMap}, but with the keys and values swapped.
  *
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface BiMap<K, V> extends Map<K, V> {
 
@@ -56,9 +56,9 @@ public interface BiMap<K, V> extends Map<K, V> {
     }
 
     /**
-     * Returns the inverse of this {@link BiMap}. The inverse of a {@link BiMap} is another {@link
-     * Map} that contains the same entries as the original {@link BiMap}, but with the keys and
-     * values swapped.
+     * Returns the inverse of this {@link BiMap}. The inverse of a {@link BiMap} is another
+     * {@link Map} that contains the same entries as the original {@link BiMap}, but with the keys
+     * and values swapped.
      *
      * @return the inverse of this {@link BiMap}
      */

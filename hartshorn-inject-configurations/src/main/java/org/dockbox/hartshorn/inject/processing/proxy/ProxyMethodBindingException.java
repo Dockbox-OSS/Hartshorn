@@ -21,14 +21,13 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import java.lang.reflect.Method;
 
 /**
- * Thrown by {@link MethodInterceptorPostProcessor} when a method does meet compatibility requirements for
- * binding to a proxy, but does not pass the preconditions. For example, if the method is annotated with a
- * specific annotation that does not allow the method to return values, yet the method does have a non-void
- * return signature.
- *
- * @since 0.4.1
+ * Thrown by {@link MethodInterceptorPostProcessor} when a method does meet compatibility
+ * requirements for binding to a proxy, but does not pass the preconditions. For example, if the
+ * method is annotated with a specific annotation that does not allow the method to return values,
+ * yet the method does have a non-void return signature.
  *
  * @author Guus Lieben
+ * @since 0.4.1
  */
 public class ProxyMethodBindingException extends RuntimeException {
 
@@ -43,5 +42,4 @@ public class ProxyMethodBindingException extends RuntimeException {
     public ProxyMethodBindingException(Method method) {
         super("Could not bind proxy to " + method.getName() + " because preconditions failed");
     }
-
 }

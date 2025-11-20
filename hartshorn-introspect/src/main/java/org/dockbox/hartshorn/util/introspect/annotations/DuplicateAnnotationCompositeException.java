@@ -26,19 +26,18 @@ import java.util.stream.Collectors;
  * Thrown when a duplicate annotation is found on a target. This can happen when an annotation is
  * extended by multiple annotations, and both of those annotations are used on the same target.
  *
- * @since 0.4.12
- *
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public class DuplicateAnnotationCompositeException extends ApplicationRuntimeException {
     public DuplicateAnnotationCompositeException(
-            Object target,
-            List<? extends Annotation> annotations
+        Object target,
+        List<? extends Annotation> annotations
     ) {
         super("Found more than one annotation on " + target + ":\n"
-                + annotations.stream()
-                .map(Annotation::toString)
-                .collect(Collectors.joining("\n"))
+            + annotations.stream()
+            .map(Annotation::toString)
+            .collect(Collectors.joining("\n"))
         );
     }
 }

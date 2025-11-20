@@ -38,53 +38,52 @@ import java.util.stream.Stream;
  * Utility class for functionalities related to types. Within the context of this class, types can
  * either be primitives which require (un)boxing, or {@link Class} instances.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class TypeUtils {
 
     private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = Map.ofEntries(
-            Map.entry(boolean.class, Boolean.class),
-            Map.entry(byte.class, Byte.class),
-            Map.entry(char.class, Character.class),
-            Map.entry(double.class, Double.class),
-            Map.entry(float.class, Float.class),
-            Map.entry(int.class, Integer.class),
-            Map.entry(long.class, Long.class),
-            Map.entry(short.class, Short.class)
+        Map.entry(boolean.class, Boolean.class),
+        Map.entry(byte.class, Byte.class),
+        Map.entry(char.class, Character.class),
+        Map.entry(double.class, Double.class),
+        Map.entry(float.class, Float.class),
+        Map.entry(int.class, Integer.class),
+        Map.entry(long.class, Long.class),
+        Map.entry(short.class, Short.class)
     );
 
     private static final Map<?, Function<String, ?>> PRIMITIVE_FROM_STRING = Map.ofEntries(
-            Map.entry(boolean.class, input -> {
-                // Boolean.valueOf only checks if the input equals 'true', and otherwise
-                // defaults to 'false'. We want to be more strict.
-                if ("true".equals(input)) {
-                    return true;
-                }
-                else if ("false".equals(input)) {
-                    return false;
-                }
-                else {
-                    throw new TypeConversionException("Invalid boolean value: " + input);
-                }
-            }),
-            Map.entry(byte.class, Byte::valueOf),
-            Map.entry(char.class, input -> {
-                if (input.length() == 1) {
-                    return input.charAt(0);
-                }
-                else {
-                    throw new TypeConversionException(
-                            "Invalid char value: " + input + " (length != 1)"
-                    );
-                }
-            }),
-            Map.entry(double.class, Double::valueOf),
-            Map.entry(float.class, Float::valueOf),
-            Map.entry(int.class, Integer::valueOf),
-            Map.entry(long.class, Long::valueOf),
-            Map.entry(short.class, Short::valueOf)
+        Map.entry(boolean.class, input -> {
+            // Boolean.valueOf only checks if the input equals 'true', and otherwise
+            // defaults to 'false'. We want to be more strict.
+            if ("true".equals(input)) {
+                return true;
+            }
+            else if ("false".equals(input)) {
+                return false;
+            }
+            else {
+                throw new TypeConversionException("Invalid boolean value: " + input);
+            }
+        }),
+        Map.entry(byte.class, Byte::valueOf),
+        Map.entry(char.class, input -> {
+            if (input.length() == 1) {
+                return input.charAt(0);
+            }
+            else {
+                throw new TypeConversionException(
+                    "Invalid char value: " + input + " (length != 1)"
+                );
+            }
+        }),
+        Map.entry(double.class, Double::valueOf),
+        Map.entry(float.class, Float::valueOf),
+        Map.entry(int.class, Integer::valueOf),
+        Map.entry(long.class, Long::valueOf),
+        Map.entry(short.class, Short::valueOf)
     );
 
     /**
@@ -92,7 +91,8 @@ public class TypeUtils {
      * to an enum constant. If the given type is not a primitive, but a primitive wrapper, the value
      * is converted to the primitive type.
      *
-     * <p><b>Note</b>: This utility method is kept for backwards compatibility. It is recommended to
+     * <p><b>Note</b>: This utility method is kept for backwards compatibility. It is recommended
+     * to
      * use the {@code ConversionService} in {@code org.dockbox.hartshorn.util.introspect.convert}
      * instead, as it provides a more robust and extensible way of converting values.
      *
@@ -104,13 +104,12 @@ public class TypeUtils {
      *
      * @throws TypeConversionException If the value cannot be converted to the given type
      * @throws NotPrimitiveException If the given type is not a primitive or primitive wrapper
-     *
      * @deprecated Use {@code ConversionService} instead. This method is not scheduled to be removed
      * in a future release, but is no longer recommended for use.
      */
     @Deprecated(since = "0.6.0", forRemoval = false)
     public static <T> T toPrimitive(Class<?> type, String value)
-            throws TypeConversionException, NotPrimitiveException {
+        throws TypeConversionException, NotPrimitiveException {
         if (type.isEnum()) {
             String name = String.valueOf(value).toUpperCase();
             try {
@@ -119,7 +118,7 @@ public class TypeUtils {
             }
             catch (IllegalArgumentException e) {
                 throw new TypeConversionException(
-                        "No enum constant " + type.getName() + "." + name
+                    "No enum constant " + type.getName() + "." + name
                 );
             }
         }
@@ -157,6 +156,7 @@ public class TypeUtils {
      *
      * @param targetClass The class to check
      * @param primitive The primitive type to check against
+     *
      * @return Whether the given class is a primitive wrapper for the given primitive type
      */
     public static boolean isPrimitiveWrapper(Class<?> targetClass, Class<?> primitive) {
@@ -207,8 +207,8 @@ public class TypeUtils {
      */
     public static <InstanceType extends KeyType, KeyType, AdjustedType extends KeyType>
     AdjustedType unchecked(
-            InstanceType obj,
-            Class<KeyType> type
+        InstanceType obj,
+        Class<KeyType> type
     ) {
         if (obj == null) {
             return null;
@@ -218,7 +218,7 @@ public class TypeUtils {
             return (AdjustedType) obj;
         }
         throw new IllegalArgumentException(
-                "Cannot adjust wildcards for " + obj.getClass().getName() + " to " + type.getName()
+            "Cannot adjust wildcards for " + obj.getClass().getName() + " to " + type.getName()
         );
     }
 
@@ -256,16 +256,16 @@ public class TypeUtils {
      * @see MapBackedAnnotationInvocationHandler
      */
     public static <A extends Annotation> A annotation(
-            Class<A> annotationType,
-            Map<String, Object> values
+        Class<A> annotationType,
+        Map<String, Object> values
     ) {
         Object instance = Proxy.newProxyInstance(
-                annotationType.getClassLoader(),
-                new Class[]{ annotationType },
-                new MapBackedAnnotationInvocationHandler(
-                        annotationType,
-                        values == null ? Collections.emptyMap() : values
-                )
+            annotationType.getClassLoader(),
+            new Class[] {annotationType},
+            new MapBackedAnnotationInvocationHandler(
+                annotationType,
+                values == null ? Collections.emptyMap() : values
+            )
         );
         return annotationType.cast(instance);
     }
@@ -288,6 +288,7 @@ public class TypeUtils {
      * Returns a stream of boxed integers from the given array.
      *
      * @param array The array of primitive ints to stream
+     *
      * @return A stream of boxed integers
      */
     public static Stream<Integer> stream(int[] array) {
@@ -298,6 +299,7 @@ public class TypeUtils {
      * Returns a stream of boxed longs from the given array.
      *
      * @param array The array of primitive longs to stream
+     *
      * @return A stream of boxed longs
      */
     public static Stream<Long> stream(long[] array) {
@@ -308,6 +310,7 @@ public class TypeUtils {
      * Returns a stream of boxed doubles from the given array.
      *
      * @param array The array of primitive doubles to stream
+     *
      * @return A stream of boxed doubles
      */
     public static Stream<Double> stream(double[] array) {
@@ -318,6 +321,7 @@ public class TypeUtils {
      * Returns a stream of boxed floats from the given array.
      *
      * @param array The array of primitive floats to stream
+     *
      * @return A stream of boxed floats
      */
     public static Stream<Float> stream(float[] array) {
@@ -332,6 +336,7 @@ public class TypeUtils {
      * Returns a stream of boxed shorts from the given array.
      *
      * @param array The array of primitive shorts to stream
+     *
      * @return A stream of boxed shorts
      */
     public static Stream<Short> stream(short[] array) {
@@ -346,6 +351,7 @@ public class TypeUtils {
      * Returns a stream of boxed bytes from the given array.
      *
      * @param array The array of primitive bytes to stream
+     *
      * @return A stream of boxed bytes
      */
     public static Stream<Byte> stream(byte[] array) {
@@ -360,6 +366,7 @@ public class TypeUtils {
      * Returns a stream of boxed characters from the given array.
      *
      * @param array The array of primitive chars to stream
+     *
      * @return A stream of boxed characters
      */
     public static Stream<Character> stream(char[] array) {
@@ -374,6 +381,7 @@ public class TypeUtils {
      * Returns a stream of boxed booleans from the given array.
      *
      * @param array The array of primitive booleans to stream
+     *
      * @return A stream of boxed booleans
      */
     public static Stream<Boolean> stream(boolean[] array) {
@@ -394,6 +402,7 @@ public class TypeUtils {
      *
      * @param source The source type
      * @param target The target type
+     *
      * @return Whether the given source type is assignable to the given target type
      */
     public static boolean isAssignable(Class<?> source, Class<?> target) {
@@ -411,31 +420,32 @@ public class TypeUtils {
      * the attributes, and the values are the values of the attributes.
      *
      * @param annotation The annotation to get the attributes of
+     *
      * @return A map of the attributes of the given annotation
      */
     public static Map<String, Object> getAttributes(Annotation annotation) {
         Class<? extends Annotation> annotationType = annotation.annotationType();
         return Arrays.stream(annotationType.getDeclaredMethods())
-                .filter(method -> !method.isAnnotationPresent(Deprecated.class))
-                .collect(Collectors.toMap(
-                        Method::getName,
-                        method -> {
-                            try {
-                                return method.invoke(annotation);
-                            }
-                            catch (IllegalAccessException | InvocationTargetException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                ));
+            .filter(method -> !method.isAnnotationPresent(Deprecated.class))
+            .collect(Collectors.toMap(
+                Method::getName,
+                method -> {
+                    try {
+                        return method.invoke(annotation);
+                    }
+                    catch (IllegalAccessException | InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            ));
     }
 
     /**
      * Returns the class of the given instance. This method is a null-safe and type-safe alternative
      * to {@link Object#getClass()}.
      *
-     * @param instance The instance to get the class of, or {@code null} if the instance is {@code
-     * null}
+     * @param instance The instance to get the class of, or {@code null} if the instance is
+     * {@code null}
      * @param <T> The type of the instance
      *
      * @return The class of the given instance
@@ -446,17 +456,17 @@ public class TypeUtils {
         }
         //noinspection unchecked
         return (Class<T>) instance.getClass();
-
     }
 
     /**
-     * Attempts to load the class with the given name. If the class cannot be found, an empty {@link
-     * Option} is returned. If the class is found, the class is returned as a non-empty {@link
-     * Option}.
+     * Attempts to load the class with the given name. If the class cannot be found, an empty
+     * {@link Option} is returned. If the class is found, the class is returned as a non-empty
+     * {@link Option}.
      *
      * @param name The fully qualified name of the class to load
-     * @return An {@link Option} containing the class with the given name, or an empty {@link
-     * Option}
+     *
+     * @return An {@link Option} containing the class with the given name, or an empty
+     * {@link Option}
      */
     public static Option<Class<?>> forName(String name) {
         try {
@@ -477,8 +487,9 @@ public class TypeUtils {
      * @param name The fully qualified name of the class to load
      * @param parentType The parent type to check if the loaded class is a subclass of
      * @param <T> The parent type
-     * @return An {@link Option} containing the class with the given name, or an empty {@link
-     * Option}
+     *
+     * @return An {@link Option} containing the class with the given name, or an empty
+     * {@link Option}
      */
     public static <T> Option<Class<? extends T>> forName(String name, Class<T> parentType) {
         return forName(name)
@@ -493,9 +504,11 @@ public class TypeUtils {
 
     /**
      * Returns the {@link RetentionPolicy retention policy} of the given annotation. If the given
-     * annotation does not have a {@link Retention} annotation, an empty {@link Option} is returned.
+     * annotation does not have a {@link Retention} annotation, an empty {@link Option} is
+     * returned.
      *
      * @param annotation The annotation to get the retention policy of
+     *
      * @return The retention policy of the given annotation
      */
     public static Option<RetentionPolicy> retention(Class<? extends Annotation> annotation) {
@@ -509,27 +522,29 @@ public class TypeUtils {
      *
      * @param annotation The annotation to check
      * @param policy The retention policy to check for
+     *
      * @return Whether the given annotation has the given retention policy
      */
     public static boolean hasRetentionPolicy(
-            Class<? extends Annotation> annotation,
-            RetentionPolicy policy
+        Class<? extends Annotation> annotation,
+        RetentionPolicy policy
     ) {
         return retention(annotation).test(policy::equals);
     }
 
     /**
      * Returns whether all the given annotations have the given retention policy. If any of the
-     * given annotations do not have a {@link Retention} annotation, this method returns {@code
-     * false}.
+     * given annotations do not have a {@link Retention} annotation, this method returns
+     * {@code false}.
      *
      * @param annotations The annotations to check
      * @param policy The retention policy to check for
+     *
      * @return Whether the given annotations have the given retention policy
      */
     public static boolean hasRetentionPolicy(
-            Set<Class<? extends Annotation>> annotations,
-            RetentionPolicy policy
+        Set<Class<? extends Annotation>> annotations,
+        RetentionPolicy policy
     ) {
         return annotations.stream().allMatch(annotation -> hasRetentionPolicy(annotation, policy));
     }
@@ -539,6 +554,7 @@ public class TypeUtils {
      * the given throwable is returned.
      *
      * @param throwable The throwable to get the root cause of
+     *
      * @return The root cause of the given throwable
      */
     public static Throwable getRootCause(Throwable throwable) {

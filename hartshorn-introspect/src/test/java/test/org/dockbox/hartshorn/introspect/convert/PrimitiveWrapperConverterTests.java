@@ -118,7 +118,8 @@ public class PrimitiveWrapperConverterTests {
         PrimitiveWrapperConverter converter = new PrimitiveWrapperConverter();
         Assertions.assertTrue(converter.canConvert(Double.valueOf(1.0D), double.class));
 
-        double converted = (double) converter.convert(Double.valueOf(1.0D), Double.class, double.class);
+        double converted =
+            (double) converter.convert(Double.valueOf(1.0D), Double.class, double.class);
         Assertions.assertEquals(1.0D, converted);
     }
 
@@ -136,7 +137,8 @@ public class PrimitiveWrapperConverterTests {
         PrimitiveWrapperConverter converter = new PrimitiveWrapperConverter();
         Assertions.assertTrue(converter.canConvert(Short.valueOf((short) 1), short.class));
 
-        short converted = (short) converter.convert(Short.valueOf((short) 1), Short.class, short.class);
+        short converted =
+            (short) converter.convert(Short.valueOf((short) 1), Short.class, short.class);
         Assertions.assertEquals((short) 1, converted);
     }
 
@@ -163,7 +165,8 @@ public class PrimitiveWrapperConverterTests {
         PrimitiveWrapperConverter converter = new PrimitiveWrapperConverter();
         Assertions.assertTrue(converter.canConvert(Character.valueOf('a'), char.class));
 
-        char converted = (char) converter.convert(Character.valueOf('a'), Character.class, char.class);
+        char converted =
+            (char) converter.convert(Character.valueOf('a'), Character.class, char.class);
         Assertions.assertEquals('a', converted);
     }
 }

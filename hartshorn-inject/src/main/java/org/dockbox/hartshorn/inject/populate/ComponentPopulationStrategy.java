@@ -20,35 +20,42 @@ import org.dockbox.hartshorn.inject.targets.ComponentInjectionPoint;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
- * A strategy that can be used to populate a specific injection point for a component. While strategies are
- * constrained to populating single injection points like methods and fields, strategies may be used by a
- * {@link StrategyComponentPopulator} to populate an entire component.
+ * A strategy that can be used to populate a specific injection point for a component. While
+ * strategies are constrained to populating single injection points like methods and fields,
+ * strategies may be used by a {@link StrategyComponentPopulator} to populate an entire component.
  *
- * <p>It remains up to the strategy to determine whether- and how to populate the injection point. Additional
- * validation may be applied, and exceptions may be thrown if the injection point cannot be populated.
+ * <p>It remains up to the strategy to determine whether- and how to populate the injection point.
+ * Additional
+ * validation may be applied, and exceptions may be thrown if the injection point cannot be
+ * populated.
  *
  * <p>Strategies are expected to be stateless, and may be reused for multiple injection points.
  *
+ * @author Guus Lieben
  * @see StrategyComponentPopulator
  * @see PopulateComponentContext
- *
  * @since 0.6.0
- *
- * @author Guus Lieben
  */
 public interface ComponentPopulationStrategy {
 
     /**
-     * Populates the given injection point. The injection point is described by the given {@link ComponentInjectionPoint},
-     * and the context in which the injection point is populated is described by the given {@link PopulateComponentContext}.
+     * Populates the given injection point. The injection point is described by the given
+     * {@link ComponentInjectionPoint}, and the context in which the injection point is populated is
+     * described by the given {@link PopulateComponentContext}.
      *
-     * <p>Implementations are expected to throw an {@link ApplicationException} if the injection point cannot be populated,
+     * <p>Implementations are expected to throw an {@link ApplicationException} if the injection
+     * point cannot be populated,
      * or if constraints are violated.
      *
      * @param context the context in which the injection point is populated
      * @param injectionPoint the injection point to populate
      * @param <T> the type of the component that is populated
-     * @throws ApplicationException if the injection point cannot be populated, or if constraints are violated
+     *
+     * @throws ApplicationException if the injection point cannot be populated, or if constraints
+     * are violated
      */
-    <T> void populate(PopulateComponentContext<T> context, ComponentInjectionPoint<T> injectionPoint) throws ApplicationException;
+    <T> void populate(
+        PopulateComponentContext<T> context,
+        ComponentInjectionPoint<T> injectionPoint
+    ) throws ApplicationException;
 }

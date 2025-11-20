@@ -40,9 +40,8 @@ import java.util.function.Predicate;
  * A collection of utility methods for working with collections. This class is not meant to be
  * instantiated.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public final class CollectionUtilities {
 
@@ -70,8 +69,8 @@ public final class CollectionUtilities {
     }
 
     /**
-     * Constructs a new list from the given collections. If no collections are provided an
-     * empty {@link List} is returned.
+     * Constructs a new list from the given collections. If no collections are provided an empty
+     * {@link List} is returned.
      *
      * @param collections The collections to use while constructing a new list
      * @param <T> The type of the elements in the list
@@ -91,8 +90,8 @@ public final class CollectionUtilities {
 
     /**
      * Combines two arrays into a single array. The first array is copied and the second array is
-     * appended to the end of the first array. The returned array is a new array and does not
-     * modify the original arrays.
+     * appended to the end of the first array. The returned array is a new array and does not modify
+     * the original arrays.
      *
      * @param arrayOne The first array
      * @param arrayTwo The second array
@@ -107,9 +106,9 @@ public final class CollectionUtilities {
     }
 
     /**
-     * Collects the difference between two collections. The returned set contains all elements
-     * that are in either of the collections but not in both. The returned set is a new set and
-     * does not modify the original collections.
+     * Collects the difference between two collections. The returned set contains all elements that
+     * are in either of the collections but not in both. The returned set is a new set and does not
+     * modify the original collections.
      *
      * @param collectionOne The first collection
      * @param collectionTwo The second collection
@@ -119,8 +118,8 @@ public final class CollectionUtilities {
      */
     public static <T> Set<T> difference(Collection<T> collectionOne, Collection<T> collectionTwo) {
         BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
-                .filter(Predicate.not(c2::contains))
-                .toList();
+            .filter(Predicate.not(c2::contains))
+            .toList();
 
         List<T> differenceInOne = filter.apply(collectionOne, collectionTwo);
         List<T> differenceInTwo = filter.apply(collectionTwo, collectionOne);
@@ -138,7 +137,6 @@ public final class CollectionUtilities {
      *
      * @param consumer The consumer to apply to each element
      * @param <T> The type of the elements in the collections
-     *
      * @param collections The collections to iterate over
      */
     @SafeVarargs
@@ -163,10 +161,10 @@ public final class CollectionUtilities {
     }
 
     /**
-     * Returns the last element of the given collection. If the collection is empty or null
-     * null is returned. If the collection indicates a given order, this information is used
-     * to determine the last element. Otherwise the collection is iterated over and the last
-     * element is returned.
+     * Returns the last element of the given collection. If the collection is empty or null null is
+     * returned. If the collection indicates a given order, this information is used to determine
+     * the last element. Otherwise the collection is iterated over and the last element is
+     * returned.
      *
      * @param collection The collection to get the last element from
      * @param <T> The type of the elements in the collection
@@ -193,10 +191,10 @@ public final class CollectionUtilities {
     }
 
     /**
-     * Returns the first element of the given iterable. If the iterable is empty or null
-     * null is returned. If the iterable indicates a given order, this information is used
-     * to determine the first element. Otherwise the {@link Iterable#iterator() iterator}
-     * is used to get the first element.
+     * Returns the first element of the given iterable. If the iterable is empty or null null is
+     * returned. If the iterable indicates a given order, this information is used to determine the
+     * first element. Otherwise the {@link Iterable#iterator() iterator} is used to get the first
+     * element.
      *
      * @param iterable The collection to get the first element from
      * @param <T> The type of the elements in the collection
@@ -206,7 +204,7 @@ public final class CollectionUtilities {
     @Nullable
     public static <T> T first(Iterable<T> iterable) {
         if (iterable == null || (
-                iterable instanceof Collection<T> collection && collection.isEmpty()
+            iterable instanceof Collection<T> collection && collection.isEmpty()
         )) {
             return null;
         }
@@ -241,16 +239,16 @@ public final class CollectionUtilities {
      */
     public static <T> String toString(Collection<T> collection, Function<T, ?> valueMapper) {
         return collection.stream()
-                .map(valueMapper)
-                .map(Object::toString)
-                .reduce("", (a, b) -> a + ", " + b);
+            .map(valueMapper)
+            .map(Object::toString)
+            .reduce("", (a, b) -> a + ", " + b);
     }
 
     /**
-     * Returns a new set containing all elements of the given set. The returned set is a new set
-     * and does not modify the original set. The advantage of this compared to {@link
-     * Set#copyOf(Collection)} is that the order of the elements is preserved if the given set is a
-     * {@link SequencedSet}.
+     * Returns a new set containing all elements of the given set. The returned set is a new set and
+     * does not modify the original set. The advantage of this compared to
+     * {@link Set#copyOf(Collection)} is that the order of the elements is preserved if the given
+     * set is a {@link SequencedSet}.
      *
      * @param set The set to copy
      * @param <T> The type of the elements in the set
@@ -267,9 +265,9 @@ public final class CollectionUtilities {
     }
 
     /**
-     * Iterates over the given iterator and applies the given consumer to each element. A counter
-     * is used to keep track of the index of the element in the iterator. The counter starts at 0
-     * and is incremented for each element in the iterator.
+     * Iterates over the given iterator and applies the given consumer to each element. A counter is
+     * used to keep track of the index of the element in the iterator. The counter starts at 0 and
+     * is incremented for each element in the iterator.
      *
      * @param iterator The iterator to iterate over
      * @param consumer The consumer to apply to each element
@@ -301,6 +299,7 @@ public final class CollectionUtilities {
      *
      * @param values The values to include in the set
      * @param <T> The type of the elements in the set
+     *
      * @return A new unmodifiable {@link SequencedSet} containing the provided values
      */
     @SafeVarargs

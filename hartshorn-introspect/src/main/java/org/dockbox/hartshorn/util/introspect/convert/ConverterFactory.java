@@ -26,17 +26,16 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <I> the input type
  * @param <R> the parent of targeted types (e.g. {@link Number} for {@link Integer}, {@link Long},
- *           etc.)
- *
- * @since 0.5.0
+ * etc.)
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface ConverterFactory<I, R> {
 
     /**
-     * Returns a converter to convert from the source type to the target type, or {@code null} if
-     * no converter is available.
+     * Returns a converter to convert from the source type to the target type, or {@code null} if no
+     * converter is available.
      *
      * @param targetType the target type to convert to
      * @param <O> the output type
@@ -48,8 +47,8 @@ public interface ConverterFactory<I, R> {
     }
 
     /**
-     * Returns a converter to convert from the source type to the target type, or {@code null} if
-     * no converter is available.
+     * Returns a converter to convert from the source type to the target type, or {@code null} if no
+     * converter is available.
      *
      * @param targetType the target type to convert to
      * @param <O> the output type

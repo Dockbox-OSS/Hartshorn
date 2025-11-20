@@ -20,14 +20,13 @@ import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * A specialized {@link ComponentContainer} for the main class of an application. There should only be one of these
- * per application.
+ * A specialized {@link ComponentContainer} for the main class of an application. There should only
+ * be one of these per application.
  *
  * @param <T> The type of the main class
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class ApplicationMainComponentContainer<T> implements ComponentContainer<T> {
 

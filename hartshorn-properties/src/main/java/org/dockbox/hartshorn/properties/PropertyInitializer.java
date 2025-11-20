@@ -25,15 +25,14 @@ import org.dockbox.hartshorn.util.configure.Initializer;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * Utility {@link Initializer} implementation to resolve a property value from
- * the {@link PropertyRegistry}. The value is parsed using the provided {@link ValuePropertyParser}, if a
- * value is found.
+ * Utility {@link Initializer} implementation to resolve a property value from the
+ * {@link PropertyRegistry}. The value is parsed using the provided {@link ValuePropertyParser}, if
+ * a value is found.
  *
  * @param <T> the type to convert the value to
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class PropertyInitializer<T> implements OptionInitializer<PropertyRegistry, T> {
 
@@ -62,6 +61,7 @@ public class PropertyInitializer<T> implements OptionInitializer<PropertyRegistr
      * Creates a new {@link PropertyInitializer} to resolve a boolean property.
      *
      * @param property the name of the property to resolve
+     *
      * @return a new {@link PropertyInitializer} instance
      */
     public static PropertyInitializer<Boolean> booleanProperty(String property) {
@@ -72,6 +72,7 @@ public class PropertyInitializer<T> implements OptionInitializer<PropertyRegistr
      * Creates a new {@link PropertyInitializer} to resolve an integer property.
      *
      * @param property the name of the property to resolve
+     *
      * @return a new {@link PropertyInitializer} instance
      */
     public static PropertyInitializer<Integer> integerProperty(String property) {
@@ -82,6 +83,7 @@ public class PropertyInitializer<T> implements OptionInitializer<PropertyRegistr
      * Creates a new {@link PropertyInitializer} to resolve a long property.
      *
      * @param property the name of the property to resolve
+     *
      * @return a new {@link PropertyInitializer} instance
      */
     public static PropertyInitializer<Long> longProperty(String property) {
@@ -92,6 +94,7 @@ public class PropertyInitializer<T> implements OptionInitializer<PropertyRegistr
      * Creates a new {@link PropertyInitializer} to resolve a double property.
      *
      * @param property the name of the property to resolve
+     *
      * @return a new {@link PropertyInitializer} instance
      */
     public static PropertyInitializer<Double> doubleProperty(String property) {
@@ -102,6 +105,7 @@ public class PropertyInitializer<T> implements OptionInitializer<PropertyRegistr
      * Creates a new {@link PropertyInitializer} to resolve a float property.
      *
      * @param property the name of the property to resolve
+     *
      * @return a new {@link PropertyInitializer} instance
      */
     public static PropertyInitializer<Float> floatProperty(String property) {
@@ -112,6 +116,7 @@ public class PropertyInitializer<T> implements OptionInitializer<PropertyRegistr
      * Creates a new {@link PropertyInitializer} to resolve a string property.
      *
      * @param property the name of the property to resolve
+     *
      * @return a new {@link PropertyInitializer} instance
      */
     public static PropertyInitializer<String> stringProperty(String property) {
@@ -122,6 +127,7 @@ public class PropertyInitializer<T> implements OptionInitializer<PropertyRegistr
      * Creates a new {@link PropertyInitializer} to resolve a character property.
      *
      * @param property the name of the property to resolve
+     *
      * @return a new {@link PropertyInitializer} instance
      */
     public static PropertyInitializer<Character> charProperty(String property) {
@@ -132,6 +138,7 @@ public class PropertyInitializer<T> implements OptionInitializer<PropertyRegistr
      * Creates a new {@link PropertyInitializer} to resolve a short property.
      *
      * @param property the name of the property to resolve
+     *
      * @return a new {@link PropertyInitializer} instance
      */
     public static PropertyInitializer<Short> shortProperty(String property) {
@@ -142,6 +149,7 @@ public class PropertyInitializer<T> implements OptionInitializer<PropertyRegistr
      * Creates a new {@link PropertyInitializer} to resolve a byte property.
      *
      * @param property the name of the property to resolve
+     *
      * @return a new {@link PropertyInitializer} instance
      */
     public static PropertyInitializer<Byte> byteProperty(String property) {
@@ -154,9 +162,13 @@ public class PropertyInitializer<T> implements OptionInitializer<PropertyRegistr
      * @param property the name of the property to resolve
      * @param type the type of the enum to resolve
      * @param <E> the type of the enum to resolve
+     *
      * @return a new {@link PropertyInitializer} instance
      */
-    public static <E extends Enum<E>> PropertyInitializer<E> enumProperty(String property, Class<E> type) {
+    public static <E extends Enum<E>> PropertyInitializer<E> enumProperty(
+        String property,
+        Class<E> type
+    ) {
         return of(property, new EnumValuePropertyParser<>(type));
     }
 

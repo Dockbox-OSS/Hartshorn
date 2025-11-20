@@ -22,11 +22,9 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 /**
  * An exception that is thrown when an attempt is made to close a context that is already closed.
  *
- * @see ApplicationContext#close()
- *
- * @since 0.4.12
- *
  * @author Guus Lieben
+ * @see ApplicationContext#close()
+ * @since 0.4.12
  */
 public class ContextClosedException extends ApplicationRuntimeException {
 

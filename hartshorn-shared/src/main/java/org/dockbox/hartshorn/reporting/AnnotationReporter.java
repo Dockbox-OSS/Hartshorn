@@ -27,9 +27,8 @@ import java.util.Map;
  *
  * @param <A> the type of the annotation
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class AnnotationReporter<A extends Annotation> implements Reportable {
 

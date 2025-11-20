@@ -27,14 +27,15 @@ import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardElementAnnota
 import java.lang.reflect.AnnotatedElement;
 
 /**
- * A view that provides access to the annotations of an {@link AnnotatedElement}. This view is backed by a
- * {@link ReflectionElementAnnotationsIntrospector} that is created based on the provided {@link Introspector}.
- *
- * @since 0.4.13
+ * A view that provides access to the annotations of an {@link AnnotatedElement}. This view is
+ * backed by a {@link ReflectionElementAnnotationsIntrospector} that is created based on the
+ * provided {@link Introspector}.
  *
  * @author Guus Lieben
+ * @since 0.4.13
  */
-public abstract class ReflectionAnnotatedElementView extends DefaultContext implements AnnotatedElementView, IntrospectorAwareView {
+public abstract class ReflectionAnnotatedElementView extends DefaultContext
+    implements AnnotatedElementView, IntrospectorAwareView {
 
     private final Introspector introspector;
     private ElementAnnotationsIntrospector annotationsIntrospector;
@@ -52,11 +53,11 @@ public abstract class ReflectionAnnotatedElementView extends DefaultContext impl
 
     @Override
     public ElementAnnotationsIntrospector annotations() {
-        if(this.annotationsIntrospector == null) {
+        if (this.annotationsIntrospector == null) {
             AnnotatedElement element = this.annotatedElement();
             this.annotationsIntrospector = element != null
-                    ? new ReflectionElementAnnotationsIntrospector(this.introspector, element)
-                    : new WildcardElementAnnotationsIntrospector();
+                ? new ReflectionElementAnnotationsIntrospector(this.introspector, element)
+                : new WildcardElementAnnotationsIntrospector();
         }
         return this.annotationsIntrospector;
     }

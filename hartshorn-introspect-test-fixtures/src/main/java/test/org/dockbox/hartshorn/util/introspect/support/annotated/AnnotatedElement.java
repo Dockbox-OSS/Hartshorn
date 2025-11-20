@@ -21,9 +21,8 @@ import test.org.dockbox.hartshorn.util.introspect.support.annotations.TypeOnlyAn
 /**
  * A class that is annotated with a single annotation.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 @TypeOnlyAnnotation
 public class AnnotatedElement {

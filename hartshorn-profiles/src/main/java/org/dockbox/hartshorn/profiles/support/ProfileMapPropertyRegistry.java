@@ -25,14 +25,14 @@ import org.dockbox.hartshorn.properties.loader.path.PropertyPathStyle;
 import java.util.Map;
 
 /**
- * A {@link MapPropertyRegistry} that is also a {@link ProfilePropertyRegistry}, meaning it is aware of
- * an associated {@link ProfileRegistry}.
- *
- * @since 0.7.0
+ * A {@link MapPropertyRegistry} that is also a {@link ProfilePropertyRegistry}, meaning it is aware
+ * of an associated {@link ProfileRegistry}.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
-public class ProfileMapPropertyRegistry extends MapPropertyRegistry implements ProfilePropertyRegistry {
+public class ProfileMapPropertyRegistry extends MapPropertyRegistry
+    implements ProfilePropertyRegistry {
 
     private final ProfileRegistry profileRegistry;
 
@@ -40,17 +40,27 @@ public class ProfileMapPropertyRegistry extends MapPropertyRegistry implements P
         this.profileRegistry = profileRegistry;
     }
 
-    public ProfileMapPropertyRegistry(Map<String, ConfiguredProperty> properties, ProfileRegistry profileRegistry) {
+    public ProfileMapPropertyRegistry(
+        Map<String, ConfiguredProperty> properties,
+        ProfileRegistry profileRegistry
+    ) {
         super(properties);
         this.profileRegistry = profileRegistry;
     }
 
-    public ProfileMapPropertyRegistry(PropertyPathStyle pathStyle, ProfileRegistry profileRegistry) {
+    public ProfileMapPropertyRegistry(
+        PropertyPathStyle pathStyle,
+        ProfileRegistry profileRegistry
+    ) {
         super(pathStyle);
         this.profileRegistry = profileRegistry;
     }
 
-    public ProfileMapPropertyRegistry(Map<String, ConfiguredProperty> properties, PropertyPathStyle pathStyle, ProfileRegistry profileRegistry) {
+    public ProfileMapPropertyRegistry(
+        Map<String, ConfiguredProperty> properties,
+        PropertyPathStyle pathStyle,
+        ProfileRegistry profileRegistry
+    ) {
         super(properties, pathStyle);
         this.profileRegistry = profileRegistry;
     }

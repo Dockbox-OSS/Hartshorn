@@ -30,9 +30,8 @@ import java.util.Set;
  * Converts any {@link Collection} to an {@link Object} by returning the first and only element of
  * the collection. The collection must have exactly one element.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class CollectionToObjectConverter implements GenericConverter, ConditionalConverter {
 
@@ -44,15 +43,15 @@ public class CollectionToObjectConverter implements GenericConverter, Conditiona
     @Override
     public boolean canConvert(Object source, Class<?> targetType) {
         return source instanceof Collection<?> collection
-                && collection.size() == 1
-                && CollectionUtilities.first(collection).getClass().isAssignableFrom(targetType);
+            && collection.size() == 1
+            && CollectionUtilities.first(collection).getClass().isAssignableFrom(targetType);
     }
 
     @Override
     public @Nullable <I, O> Object convert(
-            @Nullable Object source,
-            @NonNull Class<I> sourceType,
-            @NonNull Class<O> targetType
+        @Nullable Object source,
+        @NonNull Class<I> sourceType,
+        @NonNull Class<O> targetType
     ) {
         assert source != null;
         Collection<?> collection = (Collection<?>) source;

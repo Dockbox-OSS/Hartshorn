@@ -17,11 +17,13 @@
 package org.dockbox.hartshorn.proxy.constraint;
 
 /**
- * A proxy constraint violation is a message that describes why a proxy cannot be created for a given type.
+ * A proxy constraint violation is a message that describes why a proxy cannot be created for a
+ * given type.
+ *
  * @param message the message
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public record ProxyConstraintViolation(String message) {
 }

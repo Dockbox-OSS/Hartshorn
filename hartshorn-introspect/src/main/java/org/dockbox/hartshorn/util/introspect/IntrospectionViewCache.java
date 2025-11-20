@@ -40,9 +40,8 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * concurrent calls to the same method. Note that batch mode may affect the behavior of specific
  * implementations.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface IntrospectionViewCache {
 
@@ -53,8 +52,9 @@ public interface IntrospectionViewCache {
      *
      * @param type the type to introspect
      * @param viewSupplier the supplier to create a new view instance
-     * @return the cached view instance
      * @param <T> the type of the view
+     *
+     * @return the cached view instance
      */
     <T> TypeView<T> computeIfAbsent(Class<T> type, Supplier<TypeView<T>> viewSupplier);
 
@@ -65,6 +65,7 @@ public interface IntrospectionViewCache {
      *
      * @param method the method to introspect
      * @param viewSupplier the supplier to create a new view instance
+     *
      * @return the cached view instance
      */
     MethodView<?, ?> computeIfAbsent(Method method, Supplier<MethodView<?, ?>> viewSupplier);
@@ -76,6 +77,7 @@ public interface IntrospectionViewCache {
      *
      * @param field the field to introspect
      * @param viewSupplier the supplier to create a new view instance
+     *
      * @return the cached view instance
      */
     FieldView<?, ?> computeIfAbsent(Field field, Supplier<FieldView<?, ?>> viewSupplier);
@@ -87,6 +89,7 @@ public interface IntrospectionViewCache {
      *
      * @param parameter the parameter to introspect
      * @param viewSupplier the supplier to create a new view instance
+     *
      * @return the cached view instance
      */
     ParameterView<?> computeIfAbsent(Parameter parameter, Supplier<ParameterView<?>> viewSupplier);
@@ -98,8 +101,9 @@ public interface IntrospectionViewCache {
      *
      * @param constructor the constructor to introspect
      * @param viewSupplier the supplier to create a new view instance
-     * @return the cached view instance
      * @param <T> the type of the view
+     *
+     * @return the cached view instance
      */
     <T> ConstructorView<T> computeIfAbsent(
         Constructor<T> constructor,
@@ -113,6 +117,7 @@ public interface IntrospectionViewCache {
      *
      * @param pkg the package to introspect
      * @param viewSupplier the supplier to create a new view instance
+     *
      * @return the cached view instance
      */
     PackageView computeIfAbsent(Package pkg, Supplier<PackageView> viewSupplier);

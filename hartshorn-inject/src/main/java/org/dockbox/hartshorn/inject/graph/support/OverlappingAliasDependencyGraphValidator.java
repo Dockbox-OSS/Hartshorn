@@ -35,16 +35,17 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
 /**
- * A {@link DependencyGraphValidator} that checks for overlapping aliases in a {@link DependencyGraph}. An overlapping
- * alias is an alias that is defined in multiple locations at the same priority. This is not allowed as it would make it
- * impossible to determine which binding should be used when resolving the alias.
+ * A {@link DependencyGraphValidator} that checks for overlapping aliases in a
+ * {@link DependencyGraph}. An overlapping alias is an alias that is defined in multiple locations
+ * at the same priority. This is not allowed as it would make it impossible to determine which
+ * binding should be used when resolving the alias.
  *
- * <p>Note that an alias that overlaps with a primary key is not considered an overlapping alias, as the primary key
+ * <p>Note that an alias that overlaps with a primary key is not considered an overlapping alias, as
+ * the primary key
  * will always take precedence over the alias.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class OverlappingAliasDependencyGraphValidator implements DependencyGraphValidator {
 
@@ -56,16 +57,21 @@ public class OverlappingAliasDependencyGraphValidator implements DependencyGraph
     ) throws ApplicationException {
         if (orchestrator instanceof AliasCapableComponentProviderOrchestrator aliasCapableOrchestrator) {
             BindingAliasNormalizer aliasNormalizer = aliasCapableOrchestrator.aliasNormalizer();
-            List<? extends AliasableDependencyContext<?>> aliasedDependencyContexts = dependencyGraph.nodes().stream()
-                .filter(node -> node.value() instanceof AliasableDependencyContext<?> context && context.hasConfiguredAliases())
-                .map(node -> (AliasableDependencyContext<?>) node.value())
-                .toList();
+            List<? extends AliasableDependencyContext<?>> aliasedDependencyContexts =
+                dependencyGraph.nodes().stream()
+                    .filter(node -> node.value() instanceof AliasableDependencyContext<?> context
+                        && context.hasConfiguredAliases())
+                    .map(node -> (AliasableDependencyContext<?>) node.value())
+                    .toList();
 
             // Collect all ambiguous locations, rather than just failing on the first one
-            MultiMap<PrioritizedComponentKey<?>, DependencyContext<?>> contextsByAlias = new HashSetMultiMap<>();
+            MultiMap<PrioritizedComponentKey<?>, DependencyContext<?>> contextsByAlias =
+                new HashSetMultiMap<>();
             for (AliasableDependencyContext<?> dependencyContext : aliasedDependencyContexts) {
-                for (ComponentKey<?> componentKey : this.normalizeComponentKeys(dependencyContext, aliasNormalizer)) {
-                    PrioritizedComponentKey<?> key = new PrioritizedComponentKey<>(componentKey, dependencyContext.priority());
+                for (ComponentKey<?> componentKey : this.normalizeComponentKeys(dependencyContext,
+                    aliasNormalizer)) {
+                    PrioritizedComponentKey<?> key =
+                        new PrioritizedComponentKey<>(componentKey, dependencyContext.priority());
                     contextsByAlias.put(key, dependencyContext);
                 }
             }
@@ -79,7 +85,8 @@ public class OverlappingAliasDependencyGraphValidator implements DependencyGraph
         }
     }
 
-    record PrioritizedComponentKey<T>(ComponentKey<? super T> key, int priority) {}
+    record PrioritizedComponentKey<T>(ComponentKey<? super T> key, int priority) {
+    }
 
     private <T> Set<ComponentKey<? super T>> normalizeComponentKeys(
         AliasableDependencyContext<T> dependencyContext,
@@ -91,7 +98,8 @@ public class OverlappingAliasDependencyGraphValidator implements DependencyGraph
 
         Set<ComponentKey<? super T>> normalizedKeys = new HashSet<>(componentKeys);
         for (QualifierKey<T> qualifierKey : qualifierKeys) {
-            normalizedKeys.add(aliasNormalizer.alias(dependencyContext.componentKey(), qualifierKey));
+            normalizedKeys.add(aliasNormalizer.alias(dependencyContext.componentKey(),
+                qualifierKey));
         }
         for (Class<? super T> type : types) {
             normalizedKeys.add(aliasNormalizer.alias(dependencyContext.componentKey(), type));

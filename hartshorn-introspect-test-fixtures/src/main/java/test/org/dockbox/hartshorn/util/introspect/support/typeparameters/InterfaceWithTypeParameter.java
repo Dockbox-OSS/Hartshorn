@@ -21,9 +21,8 @@ package test.org.dockbox.hartshorn.util.introspect.support.typeparameters;
  *
  * @param <A> the type parameter
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 @SuppressWarnings("unused")
 public interface InterfaceWithTypeParameter<A> {

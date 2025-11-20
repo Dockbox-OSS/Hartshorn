@@ -23,14 +23,14 @@ import org.dockbox.hartshorn.inject.annotations.Inject
 @Component
 open class KotlinClassComponent @Inject constructor(private val environment: ApplicationEnvironment) {
 
-    @Inject
-    private lateinit var applicationContext: ApplicationContext
+  @Inject
+  private lateinit var applicationContext: ApplicationContext
 
-    fun applicationContext(): ApplicationContext {
-        return this.applicationContext
-    }
+  fun applicationContext(): ApplicationContext {
+    return this.applicationContext
+  }
 
-    fun environment(): ApplicationEnvironment {
-        return this.environment
-    }
+  fun environment(): ApplicationEnvironment {
+    return this.environment
+  }
 }

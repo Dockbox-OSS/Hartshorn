@@ -23,11 +23,9 @@ import org.dockbox.hartshorn.inject.populate.ComponentPopulator;
  * commonly used by {@link ComponentPopulator}s (or delegates of a populator) to handle optional
  * dependencies.
  *
- * @see ComponentPopulator
- *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @see ComponentPopulator
+ * @since 0.6.0
  */
 @FunctionalInterface
 public interface RequireInjectionPointRule {
@@ -36,8 +34,8 @@ public interface RequireInjectionPointRule {
      * Indicates whether the given {@link InjectionPoint} is required to be populated.
      *
      * @param injectionPoint the injection point to check
+     *
      * @return {@code true} if the injection point is required, {@code false} otherwise
      */
     boolean isRequired(InjectionPoint injectionPoint);
-
 }

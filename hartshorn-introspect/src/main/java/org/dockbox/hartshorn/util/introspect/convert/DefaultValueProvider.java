@@ -24,9 +24,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param <T> the target type
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 @FunctionalInterface
 public interface DefaultValueProvider<T> extends Converter<Null, T> {
@@ -38,10 +37,11 @@ public interface DefaultValueProvider<T> extends Converter<Null, T> {
     }
 
     /**
-     * Returns the default value to use when the input is {@code null}. This method should only
-     * be called through {@link #convert(Null)}, and serves purely as a convenience method.
+     * Returns the default value to use when the input is {@code null}. This method should only be
+     * called through {@link #convert(Null)}, and serves purely as a convenience method.
      *
      * @return the default value to use when the input is {@code null}
      */
-    @Nullable T defaultValue();
+    @Nullable
+    T defaultValue();
 }

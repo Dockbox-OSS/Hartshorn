@@ -23,17 +23,18 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
 
 /**
- * A composite dependency resolver that combines multiple dependency resolvers into a single resolver.
- * This resolver will delegate to all resolvers that can handle the given context and combine the results
- * into a single set of dependencies.
+ * A composite dependency resolver that combines multiple dependency resolvers into a single
+ * resolver. This resolver will delegate to all resolvers that can handle the given context and
+ * combine the results into a single set of dependencies.
  *
  * @param resolvers The resolvers to combine
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
-public record CompositeBindingDependencyResolver(Set<BindingDeclarationDependencyResolver> resolvers) implements BindingDeclarationDependencyResolver {
+public record CompositeBindingDependencyResolver(
+    Set<BindingDeclarationDependencyResolver> resolvers)
+    implements BindingDeclarationDependencyResolver {
 
     @Override
     public <T> boolean canHandle(BindingStrategyContext<T> context) {
@@ -43,8 +44,8 @@ public record CompositeBindingDependencyResolver(Set<BindingDeclarationDependenc
     @Override
     public Set<ComponentKey<?>> dependencies(BindingStrategyContext<?> context) {
         return this.resolvers.stream()
-                .filter(resolver -> resolver.canHandle(context))
-                .flatMap(resolver -> resolver.dependencies(context).stream())
-                .collect(Collectors.toSet());
+            .filter(resolver -> resolver.canHandle(context))
+            .flatMap(resolver -> resolver.dependencies(context).stream())
+            .collect(Collectors.toSet());
     }
 }

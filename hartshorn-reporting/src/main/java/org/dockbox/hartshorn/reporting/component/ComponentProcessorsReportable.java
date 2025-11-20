@@ -26,9 +26,8 @@ import java.util.Collection;
 /**
  * A {@link Reportable} that reports all provided {@link ComponentProcessor}s.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ComponentProcessorsReportable implements Reportable {
 
@@ -41,11 +40,12 @@ public class ComponentProcessorsReportable implements Reportable {
     @Override
     public void report(DiagnosticsPropertyCollector propertyCollector) {
         Reportable[] reportables = this.processors.values().stream()
-                .flatMap(Collection::stream)
-                .map(processor -> (Reportable) processorCollector -> {
-                    processorCollector.property("name").writeString(processor.getClass().getCanonicalName());
-                    processorCollector.property("priority").writeInt(processor.priority());
-                }).toArray(Reportable[]::new);
+            .flatMap(Collection::stream)
+            .map(processor -> (Reportable) processorCollector -> {
+                processorCollector.property("name")
+                    .writeString(processor.getClass().getCanonicalName());
+                processorCollector.property("priority").writeInt(processor.priority());
+            }).toArray(Reportable[]::new);
 
         propertyCollector.property("processors").writeDelegates(reportables);
     }

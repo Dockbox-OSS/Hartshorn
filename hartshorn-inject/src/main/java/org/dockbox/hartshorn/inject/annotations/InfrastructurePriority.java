@@ -24,13 +24,13 @@ import java.lang.annotation.Target;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
- * Infrastructure specialization of {@link Priority}, used as a shorthand for {@code @Priority(Priority.INFRASTRUCTURE_PRIORITY)}.
- *
- * @since 0.6.0
+ * Infrastructure specialization of {@link Priority}, used as a shorthand for
+ * {@code @Priority(Priority.INFRASTRUCTURE_PRIORITY)}.
  *
  * @author Guus Lieben
+ * @since 0.6.0
  */
-@Target({ ElementType.PARAMETER, ElementType.METHOD})
+@Target({ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Extends(Priority.class)
 @Priority(Priority.INFRASTRUCTURE_PRIORITY)

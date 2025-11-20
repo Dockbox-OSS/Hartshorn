@@ -34,20 +34,19 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @param <T> the type for which fields are being introspected
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospector<T> {
 
     private static final Set<String> EXCLUDED_FIELDS = Set.of(
-            /*
-             * This field is a synthetic field which is added by IntelliJ IDEA when running tests with
-             * coverage. Refer to IDEA-274803 for more information.
-             *
-             * https://youtrack.jetbrains.com/issue/IDEA-274803/Velocity-field-names-check-fails-with-new-coverage
-             */
-            "__$lineHits$__"
+        /*
+         * This field is a synthetic field which is added by IntelliJ IDEA when running tests with
+         * coverage. Refer to IDEA-274803 for more information.
+         *
+         * https://youtrack.jetbrains.com/issue/IDEA-274803/Velocity-field-names-check-fails-with-new-coverage
+         */
+        "__$lineHits$__"
     );
 
     private final Map<String, FieldView<T, ?>> fields = new ConcurrentHashMap<>();
@@ -67,9 +66,11 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
                     continue;
                 }
 
-                this.fields.put(declared.getName(), (FieldView<T, ?>) this.introspector.introspect(declared));
+                this.fields.put(declared.getName(),
+                    (FieldView<T, ?>) this.introspector.introspect(declared));
             }
-            if (!(this.type.superClass().isVoid() || Object.class.equals(this.type.superClass().type()))) {
+            if (!(this.type.superClass().isVoid() || Object.class.equals(this.type.superClass()
+                .type()))) {
                 for (FieldView<?, ?> field : this.type.superClass().fields().all()) {
                     this.fields.put(field.name(), (FieldView<T, ?>) field);
                 }
@@ -85,7 +86,7 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
         }
         else if (!this.type.superClass().isVoid()) {
             return this.type.superClass().fields().named(name)
-                    .map(field -> (FieldView<T, ?>) field);
+                .map(field -> (FieldView<T, ?>) field);
         }
         return Option.empty();
     }
@@ -99,8 +100,7 @@ public class ReflectionTypeFieldsIntrospector<T> implements TypeFieldsIntrospect
     @Override
     public List<FieldView<T, ?>> annotatedWith(Class<? extends Annotation> annotation) {
         return this.all().stream()
-                .filter(field -> field.annotations().has(annotation))
-                .toList();
+            .filter(field -> field.annotations().has(annotation))
+            .toList();
     }
-
 }

@@ -30,13 +30,12 @@ import java.util.Set;
  *
  * @param <T> the type of the content of the graph
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class SimpleContentAwareGraph<T>
-        extends SimpleGraph<T>
-        implements ContentAwareGraph<T>, BreadthFirstGraphVisitor<T> {
+    extends SimpleGraph<T>
+    implements ContentAwareGraph<T>, BreadthFirstGraphVisitor<T> {
 
     private final Set<GraphNode<T>> nodes = new HashSet<>();
 

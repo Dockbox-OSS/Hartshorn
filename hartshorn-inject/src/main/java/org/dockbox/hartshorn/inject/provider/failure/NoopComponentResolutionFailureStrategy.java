@@ -20,23 +20,26 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 
 /**
- * No-op implementation of {@link ComponentResolutionFailureStrategy}. Typically used for components which
- * are accepted to be potentially absent.
- *
- * @since 0.7.0
+ * No-op implementation of {@link ComponentResolutionFailureStrategy}. Typically used for components
+ * which are accepted to be potentially absent.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class NoopComponentResolutionFailureStrategy implements ComponentResolutionFailureStrategy {
 
-    public static final NoopComponentResolutionFailureStrategy INSTANCE = new NoopComponentResolutionFailureStrategy();
+    public static final NoopComponentResolutionFailureStrategy INSTANCE =
+        new NoopComponentResolutionFailureStrategy();
 
     private NoopComponentResolutionFailureStrategy() {
         // Private constructor to enforce singleton pattern
     }
 
     @Override
-    public <T> void onResolutionFailure(ComponentKey<T> componentKey, ComponentRequestContext requestContext) {
+    public <T> void onResolutionFailure(
+        ComponentKey<T> componentKey,
+        ComponentRequestContext requestContext
+    ) {
         // No operation performed on resolution failure
     }
 }

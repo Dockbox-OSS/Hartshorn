@@ -21,9 +21,8 @@ package org.dockbox.hartshorn.util.properties;
  *
  * @param <T> the return type of the visitor
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface NodeVisitor<T> {
 
@@ -32,6 +31,7 @@ public interface NodeVisitor<T> {
      * called for all nodes that are not explicitly handled by other methods.
      *
      * @param node the node to visit
+     *
      * @return the result of the visit
      */
     T visit(Node<?> node);
@@ -40,6 +40,7 @@ public interface NodeVisitor<T> {
      * Visits a {@link GroupNode}.
      *
      * @param node the node to visit
+     *
      * @return the result of the visit
      */
     T visit(GroupNode node);
@@ -48,6 +49,7 @@ public interface NodeVisitor<T> {
      * Visits an {@link ArrayNode}.
      *
      * @param node the node to visit
+     *
      * @return the result of the visit
      */
     T visit(ArrayNode<?> node);

@@ -30,12 +30,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A base implementation of {@link ProxyOrchestrator} that provides a default set of {@link ProxyLookup}s, and
- * allows for registration of additional lookups. Lookup operations are performed with the assumption that Hartshorn's
- * own {@link Proxy} implementation is used.
+ * A base implementation of {@link ProxyOrchestrator} that provides a default set of
+ * {@link ProxyLookup}s, and allows for registration of additional lookups. Lookup operations are
+ * performed with the assumption that Hartshorn's own {@link Proxy} implementation is used.
  *
- * @since 0.4.12
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
 
@@ -70,10 +70,10 @@ public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
     @Override
     public <D, T extends D> Option<D> delegate(Class<D> type, T instance) {
         return this.manager(instance)
-                .map(ProxyManager::advisor)
-                .map(ProxyAdvisor::resolver)
-                .map(resolver -> resolver.type(type))
-                .flatMap(TypeAdvisorResolver::delegate);
+            .map(ProxyManager::advisor)
+            .map(ProxyAdvisor::resolver)
+            .map(resolver -> resolver.type(type))
+            .flatMap(TypeAdvisorResolver::delegate);
     }
 
     @Override
@@ -113,8 +113,8 @@ public abstract class AbstractProxyOrchestrator implements ProxyOrchestrator {
     }
 
     /**
-     * Registers a new {@link ProxyLookup} with this orchestrator. The lookup will be used as a candidate for all
-     * future proxy operations.
+     * Registers a new {@link ProxyLookup} with this orchestrator. The lookup will be used as a
+     * candidate for all future proxy operations.
      *
      * @param proxyLookup the lookup to register
      */

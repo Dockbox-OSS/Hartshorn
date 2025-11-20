@@ -33,21 +33,23 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 
 /**
- * A {@link Reportable} that reports information about the components that are registered in the application context. This
- * reporter can be configured to group components by their {@link ComponentAttribute attribute}. Individual components are
- * reported using {@link ComponentContainerReporter}s.
- *
- * @see ComponentContainerReporter
- *
- * @since 0.5.0
+ * A {@link Reportable} that reports information about the components that are registered in the
+ * application context. This reporter can be configured to group components by their
+ * {@link ComponentAttribute attribute}. Individual components are reported using
+ * {@link ComponentContainerReporter}s.
  *
  * @author Guus Lieben
+ * @see ComponentContainerReporter
+ * @since 0.5.0
  */
-public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsReporter<ComponentReportingConfiguration>, CategorizedDiagnosticsReporter {
+public class ComponentDiagnosticsReporter
+    implements ConfigurableDiagnosticsReporter<ComponentReportingConfiguration>,
+    CategorizedDiagnosticsReporter {
 
     public static final String COMPONENTS_CATEGORY = "components";
 
-    private final ComponentReportingConfiguration configuration = new ComponentReportingConfiguration();
+    private final ComponentReportingConfiguration configuration =
+        new ComponentReportingConfiguration();
     private final ApplicationContext applicationContext;
 
     public ComponentDiagnosticsReporter(ApplicationContext applicationContext) {
@@ -63,15 +65,18 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
             collector.property("all").writeDelegates(reporters);
         }
         else {
-            Map<String, List<ComponentContainer<?>>> groupedContainers = componentRegistry.containers().stream()
+            Map<String, List<ComponentContainer<?>>> groupedContainers =
+                componentRegistry.containers().stream()
                     .collect(Collectors.groupingBy(container -> switch (this.configuration.groupBy()) {
                         case STEREOTYPE -> stereotype(container).getCanonicalName();
                         case PACKAGE -> container.type().packageInfo().name();
-                        default -> throw new IllegalStateException("Unexpected value: " + this.configuration.groupBy());
+                        default -> throw new IllegalStateException("Unexpected value: "
+                            + this.configuration.groupBy());
                     }));
 
             for (String key : groupedContainers.keySet()) {
-                collector.property(key).writeDelegates(this.diagnosticsReporters(groupedContainers.get(key)));
+                collector.property(key)
+                    .writeDelegates(this.diagnosticsReporters(groupedContainers.get(key)));
             }
         }
     }
@@ -79,15 +84,19 @@ public class ComponentDiagnosticsReporter implements ConfigurableDiagnosticsRepo
     @NonNull
     private Reportable[] diagnosticsReporters(Collection<ComponentContainer<?>> containers) {
         return containers.stream()
-                .map(container -> (Reportable) new ComponentContainerReporter(this, this.applicationContext.environment(), container))
-                .toArray(Reportable[]::new);
+            .map(container -> (Reportable) new ComponentContainerReporter(this,
+                this.applicationContext.environment(),
+                container))
+            .toArray(Reportable[]::new);
     }
 
     /**
-     * Returns the stereotype of the given {@link ComponentContainer container}. The stereotype is the annotation that
-     * is used to mark the component as a component, which is always a subtype of {@link Component}.
+     * Returns the stereotype of the given {@link ComponentContainer container}. The stereotype is
+     * the annotation that is used to mark the component as a component, which is always a subtype
+     * of {@link Component}.
      *
      * @param container the container for which the stereotype should be returned
+     *
      * @return the stereotype of the given container
      */
     public static Class<?> stereotype(ComponentContainer<?> container) {

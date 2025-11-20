@@ -33,26 +33,29 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Set;
 
 /**
- * A {@link DependencyContext} implementation that is used for managed components. Managed components are components that
- * are managed by the container. Typically, these are obtained through the active {@link ComponentRegistry}.
+ * A {@link DependencyContext} implementation that is used for managed components. Managed
+ * components are components that are managed by the container. Typically, these are obtained
+ * through the active {@link ComponentRegistry}.
  *
  * @param <T> the type of the component that is managed
  *
+ * @author Guus Lieben
  * @see DependencyContext
  * @see ComponentRegistry
- *
  * @since 0.5.0
- *
- * @author Guus Lieben
  */
-public abstract class ManagedComponentDependencyContext<T> implements LifecycleAwareDependencyContext<T> {
+public abstract class ManagedComponentDependencyContext<T>
+    implements LifecycleAwareDependencyContext<T> {
 
     private final ComponentKey<T> componentKey;
     private final DependencyMap dependencies;
     private final ConstructorView<? extends T> constructorView;
 
     public ManagedComponentDependencyContext(
-            ComponentKey<T> componentKey, DependencyMap dependencies, ConstructorView<? extends T> constructorView) {
+        ComponentKey<T> componentKey,
+        DependencyMap dependencies,
+        ConstructorView<? extends T> constructorView
+    ) {
         this.componentKey = componentKey;
         this.dependencies = dependencies;
         this.constructorView = constructorView;
@@ -114,7 +117,8 @@ public abstract class ManagedComponentDependencyContext<T> implements LifecycleA
             // by the context constructor when the application is ready for initialization.
             case SINGLETON -> function.lazySingleton(componentType);
             case PROTOTYPE -> function.to(componentType);
-            default -> throw new ComponentConfigurationException("Unsupported lifecycle: " + lifecycleType);
+            default -> throw new ComponentConfigurationException("Unsupported lifecycle: "
+                + lifecycleType);
         }
     }
 }

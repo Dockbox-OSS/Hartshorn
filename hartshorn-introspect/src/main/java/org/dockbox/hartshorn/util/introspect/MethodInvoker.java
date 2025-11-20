@@ -20,8 +20,9 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A method invoker is used to invoke a method on an instance. The method is provided as a {@link
- * MethodView} instance, which allows for easy access to the method's parameters and return type.
+ * A method invoker is used to invoke a method on an instance. The method is provided as a
+ * {@link MethodView} instance, which allows for easy access to the method's parameters and return
+ * type.
  *
  * <p>Method invokers are expected to be stateless and thread-safe, so they can be cached and
  * reused.
@@ -29,9 +30,8 @@ import org.dockbox.hartshorn.util.option.Option;
  * @param <T> the return type of the method
  * @param <P> the type of the instance on which the method is invoked
  *
- * @since 0.4.9
- *
  * @author Guus Lieben
+ * @since 0.4.9
  */
 @FunctionalInterface
 public interface MethodInvoker<T, P> {
@@ -42,7 +42,9 @@ public interface MethodInvoker<T, P> {
      * @param method the method to invoke
      * @param instance the instance on which to invoke the method
      * @param args the arguments to pass to the method
+     *
      * @return the result of the method invocation
+     *
      * @throws Throwable if the method invocation fails
      */
     Option<T> invoke(MethodView<P, T> method, P instance, Object[] args) throws Throwable;

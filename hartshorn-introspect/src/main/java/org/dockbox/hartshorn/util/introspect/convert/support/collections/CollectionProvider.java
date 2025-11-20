@@ -24,11 +24,9 @@ import java.util.Collection;
  *
  * @param <T> The type of the collection
  *
- * @see CollectionFactory
- *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @see CollectionFactory
+ * @since 0.6.0
  */
 public interface CollectionProvider<T extends Collection<?>> {
 
@@ -44,6 +42,7 @@ public interface CollectionProvider<T extends Collection<?>> {
      * Creates a collection of the target type, with (at least) the given capacity if applicable.
      *
      * @param capacity The capacity of the collection
+     *
      * @return The created collection
      */
     T createWithCapacity(int capacity);

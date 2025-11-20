@@ -26,17 +26,18 @@ import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 
 /**
- * A {@link ComponentPostProcessor} that configures components with a specific context. This context is created by the
- * implementation of this class. Depending on how the component is being created, the context may be added directly to
- * the component, or to the proxy that is created for the component.
+ * A {@link ComponentPostProcessor} that configures components with a specific context. This context
+ * is created by the implementation of this class. Depending on how the component is being created,
+ * the context may be added directly to the component, or to the proxy that is created for the
+ * component.
  *
  * @param <C> The type of the context that is being configured
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
-public abstract class ContextConfiguringComponentProcessor<C extends ContextView> extends ComponentPostProcessor {
+public abstract class ContextConfiguringComponentProcessor<C extends ContextView>
+    extends ComponentPostProcessor {
 
     private final Class<C> contextType;
 
@@ -45,10 +46,14 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
     }
 
     @Override
-    public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(
+        InjectionCapableApplication application,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) {
         if (this.supports(processingContext)) {
             C componentContext = processingContext.firstContext(ContextKey.of(this.contextType))
-                    .orCompute(() -> this.createContext(application, processingContext)).orNull();
+                .orCompute(() -> this.createContext(application, processingContext)).orNull();
 
             if (componentContext != null) {
                 this.configure(application, componentContext, processingContext);
@@ -68,6 +73,7 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
      * Determines whether this processor supports the given component processing context.
      *
      * @param processingContext the component processing context
+     *
      * @return true if the processor supports the context, false otherwise
      */
     protected abstract boolean supports(
@@ -89,12 +95,13 @@ public abstract class ContextConfiguringComponentProcessor<C extends ContextView
     );
 
     /**
-     * Creates the context to be configured. This context should be specific to the component being processed, but
-     * should not yet be populated (that is the responsibility of the {@link
-     * #configure(InjectionCapableApplication, ContextView, ComponentProcessingContext)}).
+     * Creates the context to be configured. This context should be specific to the component being
+     * processed, but should not yet be populated (that is the responsibility of the
+     * {@link #configure(InjectionCapableApplication, ContextView, ComponentProcessingContext)}).
      *
      * @param application the injection-capable application
      * @param processingContext the component processing context
+     *
      * @return the created context
      */
     protected abstract C createContext(

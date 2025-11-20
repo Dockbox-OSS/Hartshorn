@@ -23,9 +23,8 @@ package org.dockbox.hartshorn.util.describe;
  * <p>This is a hint to the {@link ObjectDescriber}, and will be respected by all {@link
  * ObjectDescriptionStyle}s.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public interface DescribeAsObject {
 }

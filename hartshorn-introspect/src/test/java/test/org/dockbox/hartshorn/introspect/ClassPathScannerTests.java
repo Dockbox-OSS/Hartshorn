@@ -40,8 +40,8 @@ public class ClassPathScannerTests {
     @Test
     void testCanScanWithPackageFilter() throws ClassPathWalkingException {
         ClassPathScanner scanner = ClassPathScanner.create()
-                .includeDefaultClassPath()
-                .filterPrefix("test.org.dockbox.hartshorn.introspect.types");
+            .includeDefaultClassPath()
+            .filterPrefix("test.org.dockbox.hartshorn.introspect.types");
 
         Set<String> classes = new HashSet<>();
         scanner.scan(resource -> classes.add(resource.resourceName()));
@@ -51,7 +51,8 @@ public class ClassPathScannerTests {
         Assertions.assertTrue(classes.contains(ScanAnnotation.class.getCanonicalName()));
         Assertions.assertTrue(classes.contains(ScanClass.class.getCanonicalName()));
         // Inner classes' canonical name is OuterClass.InnerClass, while the resource name (which is also compatible with Class.forName) is OuterClass$InnerClass
-        Assertions.assertTrue(classes.contains(this.resourceNameFromCanonicalName(NonStaticInnerClass.class.getCanonicalName())));
+        Assertions.assertTrue(classes.contains(this.resourceNameFromCanonicalName(
+            NonStaticInnerClass.class.getCanonicalName())));
         Assertions.assertTrue(classes.contains(this.resourceNameFromCanonicalName(StaticInnerClass.class.getCanonicalName())));
         Assertions.assertTrue(classes.contains(ScanEnum.class.getCanonicalName()));
         Assertions.assertTrue(classes.contains(ScanInterface.class.getCanonicalName()));
@@ -65,7 +66,8 @@ public class ClassPathScannerTests {
         dummyFolder.toFile().deleteOnExit();
         URL url = dummyFolder.toUri().toURL();
 
-        ClassPathScanner scanner = Assertions.assertDoesNotThrow(() -> ClassPathScanner.create().addUrlForScanning(url));
+        ClassPathScanner scanner =
+            Assertions.assertDoesNotThrow(() -> ClassPathScanner.create().addUrlForScanning(url));
         scanner.scan(resource -> Assertions.fail("Should not have found any resources"));
     }
 

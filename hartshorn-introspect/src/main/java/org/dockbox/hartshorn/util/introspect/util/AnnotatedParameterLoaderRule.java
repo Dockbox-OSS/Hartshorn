@@ -21,16 +21,17 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import java.lang.annotation.Annotation;
 
 /**
- * A {@link ParameterLoaderRule} that accepts parameters that are annotated with a specific annotation.
+ * A {@link ParameterLoaderRule} that accepts parameters that are annotated with a specific
+ * annotation.
  *
  * @param <A> the annotation type
  * @param <C> the context type
  *
- * @since 0.4.8
- *
  * @author Guus Lieben
+ * @since 0.4.8
  */
-public abstract class AnnotatedParameterLoaderRule<A extends Annotation, C extends ParameterLoaderContext> implements ParameterLoaderRule<C>{
+public abstract class AnnotatedParameterLoaderRule<A extends Annotation, C extends ParameterLoaderContext>
+    implements ParameterLoaderRule<C> {
 
     /**
      * The annotation that this rule accepts.

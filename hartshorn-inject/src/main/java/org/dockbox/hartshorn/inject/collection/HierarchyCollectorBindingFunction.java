@@ -36,9 +36,8 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
  *
  * @param <T> The type of the component that is bound.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFunction<T> {
 
@@ -46,7 +45,11 @@ public class HierarchyCollectorBindingFunction<T> implements CollectorBindingFun
     private final CollectionBindingHierarchy<T> hierarchy;
     private final int priority;
 
-    public HierarchyCollectorBindingFunction(Binder binder, CollectionBindingHierarchy<T> hierarchy, int priority) {
+    public HierarchyCollectorBindingFunction(
+        Binder binder,
+        CollectionBindingHierarchy<T> hierarchy,
+        int priority
+    ) {
         this.binder = binder;
         this.hierarchy = hierarchy;
         this.priority = priority;

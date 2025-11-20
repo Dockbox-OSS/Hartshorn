@@ -35,19 +35,18 @@ import java.lang.reflect.Executable;
 import java.util.List;
 
 /**
- * A view that provides access to executable elements of a class (constructors and methods). This view is
- * backed by a {@link Executable} instance.
+ * A view that provides access to executable elements of a class (constructors and methods). This
+ * view is backed by a {@link Executable} instance.
  *
  * @param <Parent> the type of the class that the constructor belongs to
  *
+ * @author Guus Lieben
  * @see ExecutableParametersIntrospector
  * @see TypeVariablesIntrospector
- *
  * @since 0.4.13
- *
- * @author Guus Lieben
  */
-public abstract class ReflectionExecutableElementView<Parent> extends ReflectionAnnotatedElementView implements ExecutableElementView<Parent> {
+public abstract class ReflectionExecutableElementView<Parent> extends ReflectionAnnotatedElementView
+    implements ExecutableElementView<Parent> {
 
     private final Introspector introspector;
     private final Executable executable;
@@ -57,14 +56,22 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
 
     private TypeView<Parent> declaredBy;
 
-    protected ReflectionExecutableElementView(ReflectionIntrospector introspector, Executable executable) {
+    protected ReflectionExecutableElementView(
+        ReflectionIntrospector introspector,
+        Executable executable
+    ) {
         super(introspector);
         this.executable = executable;
         this.introspector = introspector;
         if (!executable.trySetAccessible()) {
             String packageName = executable.getDeclaringClass().getPackageName();
-            if (!(packageName.startsWith("java.") || packageName.startsWith("jdk.") || packageName.startsWith("sun.") || packageName.startsWith("com.sun.") || packageName.startsWith("javax."))) {
-                throw new IllegalIntrospectionException(executable, "Unable to set executable " + executable.getName() + " accessible");
+            if (!(packageName.startsWith("java.")
+                || packageName.startsWith("jdk.")
+                || packageName.startsWith("sun.")
+                || packageName.startsWith("com.sun.")
+                || packageName.startsWith("javax."))) {
+                throw new IllegalIntrospectionException(executable,
+                    "Unable to set executable " + executable.getName() + " accessible");
             }
         }
     }
@@ -81,7 +88,8 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     @Override
     public ExecutableParametersIntrospector parameters() {
         if (this.parametersIntrospector == null) {
-            this.parametersIntrospector = new ReflectionExecutableParametersIntrospector(this.introspector, this);
+            this.parametersIntrospector =
+                new ReflectionExecutableParametersIntrospector(this.introspector, this);
         }
         return this.parametersIntrospector;
     }
@@ -89,7 +97,9 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     @Override
     public TypeVariablesIntrospector typeVariables() {
         if (this.typeVariablesIntrospector == null) {
-            this.typeVariablesIntrospector = new ReflectionTypeVariablesIntrospector(this.introspector, List.of(this.executable.getTypeParameters()));
+            this.typeVariablesIntrospector =
+                new ReflectionTypeVariablesIntrospector(this.introspector,
+                    List.of(this.executable.getTypeParameters()));
         }
         return this.typeVariablesIntrospector;
     }
@@ -97,7 +107,8 @@ public abstract class ReflectionExecutableElementView<Parent> extends Reflection
     @Override
     public TypeView<Parent> declaredBy() {
         if (this.declaredBy == null) {
-            this.declaredBy = (TypeView<Parent>) this.introspector.introspect(this.executable.getDeclaringClass());
+            this.declaredBy =
+                (TypeView<Parent>) this.introspector.introspect(this.executable.getDeclaringClass());
         }
         return this.declaredBy;
     }

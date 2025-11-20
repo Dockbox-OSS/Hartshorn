@@ -21,22 +21,23 @@ import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 import org.dockbox.hartshorn.inject.scope.Scope;
 
 /**
- * A post processor for hierarchical binders. This can be used to add additional functionality to a binder, or to modify
- * the binder in some way. The post processor will be called for each binder that is created, and will be called
- * in the order of the specified {@link HierarchicalBinderPostProcessor#priority()} value.
+ * A post processor for hierarchical binders. This can be used to add additional functionality to a
+ * binder, or to modify the binder in some way. The post processor will be called for each binder
+ * that is created, and will be called in the order of the specified
+ * {@link HierarchicalBinderPostProcessor#priority()} value.
  *
- * <p>Explicit component instantiation is not recommended in this processor, as this processor may be called at any time
+ * <p>Explicit component instantiation is not recommended in this processor, as this processor may
+ * be called at any time
  * in the application lifecycle, including during the initialization of the application.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public interface HierarchicalBinderPostProcessor {
 
     /**
-     * Process the given binder. This method will be called before the binder is released for use, allowing the post
-     * processor to modify the binder as needed.
+     * Process the given binder. This method will be called before the binder is released for use,
+     * allowing the post processor to modify the binder as needed.
      *
      * @param application the application in which the binder is being processed
      * @param scope the scope associated with the binder
@@ -45,8 +46,8 @@ public interface HierarchicalBinderPostProcessor {
     void process(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder);
 
     /**
-     * The priority of this post processor. Post processors with a lower priority value will be called before
-     * post processors with a higher priority value.
+     * The priority of this post processor. Post processors with a lower priority value will be
+     * called before post processors with a higher priority value.
      *
      * @return the priority of this post processor
      */

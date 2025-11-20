@@ -26,13 +26,12 @@ import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
 /**
- * A context that contains the arguments that were provided to a method or constructor. This context may
- * be used by {@link Condition}s to provide additional information about the context in which the condition
- * is evaluated.
- *
- * @since 0.4.12
+ * A context that contains the arguments that were provided to a method or constructor. This context
+ * may be used by {@link Condition}s to provide additional information about the context in which
+ * the condition is evaluated.
  *
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public final class ProvidedParameterContext extends DefaultFallbackCompatibleContext {
 
@@ -46,6 +45,7 @@ public final class ProvidedParameterContext extends DefaultFallbackCompatibleCon
      * Creates a new {@link ProvidedParameterContext} with the given arguments.
      *
      * @param arguments the arguments
+     *
      * @return the new context
      */
     public static ProvidedParameterContext of(Map<ParameterView<?>, Object> arguments) {
@@ -53,9 +53,9 @@ public final class ProvidedParameterContext extends DefaultFallbackCompatibleCon
     }
 
     /**
-     * Creates a new {@link ProvidedParameterContext} with the given arguments. This method will create a mapping
-     * between the given parameters and arguments, based on the order in which they are provided. The size of the
-     * given lists must be equal.
+     * Creates a new {@link ProvidedParameterContext} with the given arguments. This method will
+     * create a mapping between the given parameters and arguments, based on the order in which they
+     * are provided. The size of the given lists must be equal.
      *
      * @param parameters the parameters
      * @param arguments the arguments
@@ -64,39 +64,47 @@ public final class ProvidedParameterContext extends DefaultFallbackCompatibleCon
      *
      * @throws IllegalArgumentException if the size of the given lists is not equal
      */
-    public static ProvidedParameterContext of(List<ParameterView<?>> parameters, List<Object> arguments) {
+    public static ProvidedParameterContext of(
+        List<ParameterView<?>> parameters,
+        List<Object> arguments
+    ) {
         if (parameters.size() != arguments.size()) {
             throw new IllegalArgumentException("Parameters and arguments must be of the same size");
         }
         Map<ParameterView<?>, Object> argumentMap = IntStream.range(0, parameters.size()).boxed()
-                .collect(
-                        HashMap::new,
-                        (parameterViews, index) -> parameterViews.put(parameters.get(index), arguments.get(index)),
-                        Map::putAll
-                );
+            .collect(
+                HashMap::new,
+                (parameterViews, index) -> parameterViews.put(parameters.get(index),
+                    arguments.get(index)),
+                Map::putAll
+            );
         return new ProvidedParameterContext(argumentMap);
     }
 
     /**
-     * Creates a new {@link ProvidedParameterContext} with the given arguments. This method will create a mapping
-     * between the parameters of the given executable and the given arguments, based on the order in which they are
-     * provided. The size of the given list and the number of parameters of the executable must be equal.
+     * Creates a new {@link ProvidedParameterContext} with the given arguments. This method will
+     * create a mapping between the parameters of the given executable and the given arguments,
+     * based on the order in which they are provided. The size of the given list and the number of
+     * parameters of the executable must be equal.
      *
      * @param executable the executable to use as a source for the parameters
      * @param arguments the arguments
      *
      * @return the new context
      *
-     * @throws IllegalArgumentException if the size of the given list is not equal to the number of parameters of the
-     *                                  executable
+     * @throws IllegalArgumentException if the size of the given list is not equal to the number of
+     * parameters of the executable
      */
-    public static ProvidedParameterContext of(ExecutableElementView<?> executable, List<Object> arguments) {
+    public static ProvidedParameterContext of(
+        ExecutableElementView<?> executable,
+        List<Object> arguments
+    ) {
         return of(executable.parameters().all(), arguments);
     }
 
     /**
-     * Returns the arguments that were provided to the method or constructor. This represents the mapping between
-     * parameters and arguments.
+     * Returns the arguments that were provided to the method or constructor. This represents the
+     * mapping between parameters and arguments.
      *
      * @return the arguments
      */

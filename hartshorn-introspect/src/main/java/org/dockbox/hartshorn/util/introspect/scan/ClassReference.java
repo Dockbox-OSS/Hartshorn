@@ -19,12 +19,12 @@ package org.dockbox.hartshorn.util.introspect.scan;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
- * A {@link TypeReference} that represents a {@link Class}. No guarantees are made about the state of the class
- * represented by this reference. It is possible that the class is not yet initialized.
- *
- * @since 0.4.13
+ * A {@link TypeReference} that represents a {@link Class}. No guarantees are made about the state
+ * of the class represented by this reference. It is possible that the class is not yet
+ * initialized.
  *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class ClassReference implements TypeReference {
 
@@ -57,7 +57,7 @@ public class ClassReference implements TypeReference {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("type", this.type.getName())
-                .describe();
+            .field("type", this.type.getName())
+            .describe();
     }
 }

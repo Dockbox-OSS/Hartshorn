@@ -21,9 +21,8 @@ package org.dockbox.hartshorn.context;
  * the application. This is the interface for any context which is capable of storing other
  * contexts.
  *
- * @since 0.4.1
- *
  * @author Guus Lieben
+ * @since 0.4.1
  */
 public interface Context extends ContextView {
 
@@ -45,8 +44,8 @@ public interface Context extends ContextView {
     <C extends ContextView> void addContext(String name, C context);
 
     /**
-     * Returns a view of the current context. This view is read-only and does not allow
-     * for modification of the context.
+     * Returns a view of the current context. This view is read-only and does not allow for
+     * modification of the context.
      *
      * @return A view of the current context.
      */

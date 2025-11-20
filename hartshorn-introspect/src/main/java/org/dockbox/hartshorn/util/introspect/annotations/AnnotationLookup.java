@@ -30,11 +30,9 @@ import java.util.SequencedSet;
  * commonly used for component stereotypes, where a stereotype is defined as an annotation that
  * extends another annotation.
  *
- * @see Extends
- *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @see Extends
+ * @since 0.4.13
  */
 public interface AnnotationLookup {
 
@@ -46,7 +44,6 @@ public interface AnnotationLookup {
      *
      * @param element The element to find the annotation on
      * @param annotationType The type of the annotation to find
-     *
      * @param <A> The type of the annotation
      *
      * @return The annotation of the given type on the given element, or {@code null} if it is not
@@ -56,8 +53,8 @@ public interface AnnotationLookup {
      * matching the given type
      */
     <A extends Annotation> A find(
-            AnnotatedElement element,
-            Class<A> annotationType
+        AnnotatedElement element,
+        Class<A> annotationType
     ) throws DuplicateAnnotationCompositeException;
 
     /**
@@ -68,9 +65,10 @@ public interface AnnotationLookup {
      *
      * @param element The element to find the annotations on
      * @param annotationType The type of the annotations to find
+     * @param <A> The type of the annotation
+     *
      * @return All (composite) annotations of the given type on the given element, or an empty list
      * if none are present.
-     * @param <A> The type of the annotation
      */
     <A extends Annotation> List<A> findAll(AnnotatedElement element, Class<A> annotationType);
 
@@ -82,6 +80,7 @@ public interface AnnotationLookup {
      * of this interface.
      *
      * @param annotation The annotation to get the backing annotation of
+     *
      * @return The backing annotation of the given annotation
      */
     Annotation unproxy(Annotation annotation);
@@ -93,6 +92,7 @@ public interface AnnotationLookup {
      * one other annotation, the last element is always the base annotation.
      *
      * @param type The annotation to get the hierarchy of
+     *
      * @return The linear hierarchy of the given annotation
      */
     SequencedSet<Class<? extends Annotation>> annotationHierarchy(Class<? extends Annotation> type);

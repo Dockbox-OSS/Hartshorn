@@ -29,13 +29,13 @@ import java.util.List;
 import java.util.SequencedCollection;
 
 /**
- * A {@link ComponentProvider} that uses a chain of {@link ComponentProviderStrategy strategies} to resolve components.
- * Each component request is assigned a unique {@link ComponentProviderStrategyChain} that is used to resolve the
- * component. The provider itself does not make any guarantees about the nullability of the resolved component.
- *
- * @since 0.7.0
+ * A {@link ComponentProvider} that uses a chain of {@link ComponentProviderStrategy strategies} to
+ * resolve components. Each component request is assigned a unique
+ * {@link ComponentProviderStrategyChain} that is used to resolve the component. The provider itself
+ * does not make any guarantees about the nullability of the resolved component.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public abstract class StrategyChainComponentProvider implements ComponentProvider {
 
@@ -48,7 +48,8 @@ public abstract class StrategyChainComponentProvider implements ComponentProvide
     }
 
     /**
-     * Sets the strategies that this provider will use to resolve components. This will replace any existing strategies.
+     * Sets the strategies that this provider will use to resolve components. This will replace any
+     * existing strategies.
      *
      * @param strategies the strategies to set
      */
@@ -70,16 +71,17 @@ public abstract class StrategyChainComponentProvider implements ComponentProvide
     public <T> T get(ComponentKey<T> key, ComponentRequestContext requestContext) {
         List<ComponentProviderStrategy> strategies = List.copyOf(this.strategies);
         ComponentProviderStrategyChain<T> chain = new SimpleComponentProviderStrategyChain<>(
-                this,
-                this.application,
-                strategies);
+            this,
+            this.application,
+            strategies);
 
         final ObjectContainer<T> container;
         try {
             container = chain.get(key, requestContext);
         }
-        catch(ApplicationException e) {
-            throw new ComponentResolutionException("Failed to initialize component with key " + key, e);
+        catch (ApplicationException e) {
+            throw new ComponentResolutionException("Failed to initialize component with key " + key,
+                e);
         }
 
         // If the object is already processed at this point, it means that the object container was
@@ -92,16 +94,18 @@ public abstract class StrategyChainComponentProvider implements ComponentProvide
             try {
                 return this.process(key, requestContext, container);
             }
-            catch(ApplicationException e) {
-                throw new ComponentResolutionException("Failed to process component with key " + key, e);
+            catch (ApplicationException e) {
+                throw new ComponentResolutionException("Failed to process component with key "
+                    + key, e);
             }
         }
     }
 
     /**
-     * Processes the given {@link ObjectContainer} before returning the instance. This method is called
-     * after the component has been resolved by the strategy chain, but before the instance is returned.
-     * This allows for additional processing of the instance, such as initialization or proxying.
+     * Processes the given {@link ObjectContainer} before returning the instance. This method is
+     * called after the component has been resolved by the strategy chain, but before the instance
+     * is returned. This allows for additional processing of the instance, such as initialization or
+     * proxying.
      *
      * @param key the component key used to resolve the component
      * @param requestContext the request context
@@ -112,5 +116,9 @@ public abstract class StrategyChainComponentProvider implements ComponentProvide
      *
      * @throws ApplicationException if processing fails
      */
-    protected abstract <T> T process(ComponentKey<T> key, ComponentRequestContext requestContext, ObjectContainer<T> container) throws ApplicationException;
+    protected abstract <T> T process(
+        ComponentKey<T> key,
+        ComponentRequestContext requestContext,
+        ObjectContainer<T> container
+    ) throws ApplicationException;
 }

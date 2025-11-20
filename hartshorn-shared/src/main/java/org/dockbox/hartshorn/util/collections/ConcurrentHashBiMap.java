@@ -24,13 +24,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
+ * @author Guus Lieben
  * @see ConcurrentHashMap
  * @see BiMap
  * @see AbstractBiMap
- *
  * @since 0.5.0
- *
- * @author Guus Lieben
  */
 public class ConcurrentHashBiMap<K, V> extends AbstractBiMap<K, V> {
 

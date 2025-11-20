@@ -51,11 +51,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Simple implementation of the {@link ApplicationContext} interface. This implementation primarily delegates to individual
- * components, such as the {@link DependencyGraphInitializer} and {@link PostProcessingComponentProvider}. It also supports
- * pre-processing of components, which is performed immediately when {@link #loadContext() the context is loaded}.
+ * Simple implementation of the {@link ApplicationContext} interface. This implementation primarily
+ * delegates to individual components, such as the {@link DependencyGraphInitializer} and
+ * {@link PostProcessingComponentProvider}. It also supports pre-processing of components, which is
+ * performed immediately when {@link #loadContext() the context is loaded}.
  *
- * <p>This context is limited to only being initialized once, and is not refreshable (unless its individual components support
+ * <p>This context is limited to only being initialized once, and is not refreshable (unless its
+ * individual components support
  * this).
  *
  * @see DependencyGraphInitializer

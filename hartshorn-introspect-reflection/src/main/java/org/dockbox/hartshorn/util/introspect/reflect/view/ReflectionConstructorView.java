@@ -35,15 +35,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A view that provides access to the constructor of a class. This view is backed by a {@link Constructor} instance.
+ * A view that provides access to the constructor of a class. This view is backed by a
+ * {@link Constructor} instance.
  *
  * @param <T> the type of the class that the constructor belongs to
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
-public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T> implements ConstructorView<T> {
+public class ReflectionConstructorView<T> extends ReflectionExecutableElementView<T>
+    implements ConstructorView<T> {
 
     private final Constructor<T> constructor;
     private final Introspector introspector;
@@ -53,15 +54,18 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     private String qualifiedName;
     private TypeView<T> type;
 
-    public ReflectionConstructorView(ReflectionIntrospector introspector, Constructor<T> constructor) {
+    public ReflectionConstructorView(
+        ReflectionIntrospector introspector,
+        Constructor<T> constructor
+    ) {
         super(introspector, constructor);
         this.constructor = constructor;
         this.introspector = introspector;
     }
 
     /**
-     * Returns the invoker for this constructor. The invoker is responsible for calling the constructor with the
-     * given arguments.
+     * Returns the invoker for this constructor. The invoker is responsible for calling the
+     * constructor with the given arguments.
      *
      * @return the invoker for this constructor
      */
@@ -70,7 +74,8 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
             this.invoker = args -> {
                 try {
                     return this.constructor.newInstance(args);
-                } catch (InvocationTargetException e) {
+                }
+                catch (InvocationTargetException e) {
                     if (e.getCause() instanceof Exception ex) {
                         throw ex;
                     }
@@ -113,10 +118,10 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     public String qualifiedName() {
         if (this.qualifiedName == null) {
             this.qualifiedName = "%s(%s)".formatted(
-                    this.type().qualifiedName(),
-                    this.parameters().all().stream()
-                            .map(ParameterView::name)
-                            .collect(Collectors.joining(", "))
+                this.type().qualifiedName(),
+                this.parameters().all().stream()
+                    .map(ParameterView::name)
+                    .collect(Collectors.joining(", "))
             );
         }
         return this.qualifiedName;
@@ -125,7 +130,9 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     @Override
     public TypeVariablesIntrospector typeVariables() {
         if (this.typeParametersIntrospector == null) {
-            this.typeParametersIntrospector = new ReflectionTypeVariablesIntrospector(this.introspector, List.of(this.constructor.getTypeParameters()));
+            this.typeParametersIntrospector =
+                new ReflectionTypeVariablesIntrospector(this.introspector,
+                    List.of(this.constructor.getTypeParameters()));
         }
         return this.typeParametersIntrospector;
     }
@@ -134,6 +141,7 @@ public class ReflectionConstructorView<T> extends ReflectionExecutableElementVie
     public void report(DiagnosticsPropertyCollector collector) {
         collector.property("type").writeDelegate(this.type());
         collector.property("elementType").writeString("constructor");
-        collector.property("parameters").writeDelegates(this.parameters().all().toArray(Reportable[]::new));
+        collector.property("parameters")
+            .writeDelegates(this.parameters().all().toArray(Reportable[]::new));
     }
 }

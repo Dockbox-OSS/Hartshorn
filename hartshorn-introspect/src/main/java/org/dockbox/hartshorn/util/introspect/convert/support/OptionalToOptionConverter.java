@@ -25,11 +25,9 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * Converts an {@link Optional} to an {@link Option}.
  *
- * @see Option#of(Optional)
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see Option#of(Optional)
+ * @since 0.5.0
  */
 public class OptionalToOptionConverter implements Converter<Optional<?>, Option<?>> {
 

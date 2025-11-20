@@ -24,9 +24,8 @@ import java.util.Set;
  *
  * @param <T> the type of the value of the node
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface GraphNode<T> {
 

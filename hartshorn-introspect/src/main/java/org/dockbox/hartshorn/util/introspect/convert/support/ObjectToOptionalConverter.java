@@ -22,12 +22,11 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import java.util.Optional;
 
 /**
- * Converts any object to an {@link Optional} by wrapping the object in an {@link
- * Optional#of(Object)}.
- *
- * @since 0.5.0
+ * Converts any object to an {@link Optional} by wrapping the object in an
+ * {@link Optional#of(Object)}.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ObjectToOptionalConverter implements Converter<Object, Optional<?>> {
 

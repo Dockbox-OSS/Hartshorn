@@ -10,11 +10,11 @@ public class ReportingLaunchpadDemo {
     public static void main(String[] args) {
         ApplicationContext applicationContext = HartshornApplication.create(args);
         applicationContext.bind(String.class)
-                .priority(100)
-                .singleton("Hello 100");
+            .priority(100)
+            .singleton("Hello 100");
         applicationContext.bind(String.class)
-                .priority(50)
-                .singleton("Hello 50");
+            .priority(50)
+            .singleton("Hello 50");
         System.out.println();
     }
 }

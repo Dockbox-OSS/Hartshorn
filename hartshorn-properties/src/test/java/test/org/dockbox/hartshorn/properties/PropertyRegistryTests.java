@@ -34,7 +34,10 @@ import java.util.function.Consumer;
 
 public class PropertyRegistryTests {
 
-    void assertWithRegistry(Collection<ConfiguredProperty> properties, Consumer<PropertyRegistry> registryConsumer) {
+    void assertWithRegistry(
+        Collection<ConfiguredProperty> properties,
+        Consumer<PropertyRegistry> registryConsumer
+    ) {
         PropertyRegistry registry = new MapPropertyRegistry();
         registry.registerAll(properties);
         registryConsumer.accept(registry);
@@ -60,8 +63,8 @@ public class PropertyRegistryTests {
 
     void assertObjectAccess(String objectKey) {
         this.assertWithRegistry(List.of(
-                new SingleConfiguredProperty(objectKey + ".one", "one"),
-                new SingleConfiguredProperty(objectKey + ".two", "two")
+            new SingleConfiguredProperty(objectKey + ".one", "one"),
+            new SingleConfiguredProperty(objectKey + ".two", "two")
         ), registry -> {
             Option<ObjectProperty> object = registry.object(objectKey);
             Assertions.assertTrue(object.present());
@@ -100,8 +103,8 @@ public class PropertyRegistryTests {
 
     void testListAccess(String listKey) {
         this.assertWithRegistry(List.of(
-                new SingleConfiguredProperty(listKey + "[0]", "one"),
-                new SingleConfiguredProperty(listKey + "[1]", "two")
+            new SingleConfiguredProperty(listKey + "[0]", "one"),
+            new SingleConfiguredProperty(listKey + "[1]", "two")
         ), registry -> {
             Option<ListProperty> list = registry.list(listKey);
             Assertions.assertTrue(list.present());
@@ -140,7 +143,7 @@ public class PropertyRegistryTests {
 
     void testValueAccess(String valueKey) {
         this.assertWithRegistry(List.of(
-                new SingleConfiguredProperty(valueKey, "value")
+            new SingleConfiguredProperty(valueKey, "value")
         ), registry -> {
             Option<ValueProperty> value = registry.get(valueKey);
             Assertions.assertTrue(value.present());
@@ -155,40 +158,47 @@ public class PropertyRegistryTests {
     @DisplayName("Test access to deeply nested value with step-by-step access")
     void testComplexAccess() {
         this.assertWithRegistry(
-                List.of(new SingleConfiguredProperty("sample[0][1][0].property.sample[1].value", "value")),
-                registry -> {
-                    // sample
-                    Option<ListProperty> sample = registry.list("sample");
-                    Assertions.assertTrue(sample.present());
+            List.of(new SingleConfiguredProperty("sample[0][1][0].property.sample[1].value",
+                "value")),
+            registry -> {
+                // sample
+                Option<ListProperty> sample = registry.list("sample");
+                Assertions.assertTrue(sample.present());
 
-                    // sample[0]
-                    Option<ListProperty> sampleIndex0 = sample.get().list(0);
-                    Assertions.assertTrue(sampleIndex0.present());
+                // sample[0]
+                Option<ListProperty> sampleIndex0 = sample.get().list(0);
+                Assertions.assertTrue(sampleIndex0.present());
 
-                    // sample[0][1]
-                    Option<ListProperty> sampleIndex0Index1 = sampleIndex0.get().list(1);
-                    Assertions.assertTrue(sampleIndex0Index1.present());
+                // sample[0][1]
+                Option<ListProperty> sampleIndex0Index1 = sampleIndex0.get().list(1);
+                Assertions.assertTrue(sampleIndex0Index1.present());
 
-                    // sample[0][1][0]
-                    Option<ObjectProperty> sampleIndex0Index1Index0 = sampleIndex0Index1.get().object(0);
-                    Assertions.assertTrue(sampleIndex0Index1Index0.present());
+                // sample[0][1][0]
+                Option<ObjectProperty> sampleIndex0Index1Index0 =
+                    sampleIndex0Index1.get().object(0);
+                Assertions.assertTrue(sampleIndex0Index1Index0.present());
 
-                    // sample[0][1][0].property
-                    Option<ObjectProperty> sampleIndex0Index1Index0Property = sampleIndex0Index1Index0.get().object("property");
-                    Assertions.assertTrue(sampleIndex0Index1Index0Property.present());
+                // sample[0][1][0].property
+                Option<ObjectProperty> sampleIndex0Index1Index0Property =
+                    sampleIndex0Index1Index0.get().object("property");
+                Assertions.assertTrue(sampleIndex0Index1Index0Property.present());
 
-                    // sample[0][1][0].property.sample
-                    Option<ListProperty> sampleIndex0Index1Index0PropertySample = sampleIndex0Index1Index0Property.get().list("sample");
-                    Assertions.assertTrue(sampleIndex0Index1Index0PropertySample.present());
+                // sample[0][1][0].property.sample
+                Option<ListProperty> sampleIndex0Index1Index0PropertySample =
+                    sampleIndex0Index1Index0Property.get().list("sample");
+                Assertions.assertTrue(sampleIndex0Index1Index0PropertySample.present());
 
-                    // sample[0][1][0].property.sample[1]
-                    Option<ObjectProperty> sampleIndex0Index1Index0PropertySampleIndex1 = sampleIndex0Index1Index0PropertySample.get().object(1);
-                    Assertions.assertTrue(sampleIndex0Index1Index0PropertySampleIndex1.present());
+                // sample[0][1][0].property.sample[1]
+                Option<ObjectProperty> sampleIndex0Index1Index0PropertySampleIndex1 =
+                    sampleIndex0Index1Index0PropertySample.get().object(1);
+                Assertions.assertTrue(sampleIndex0Index1Index0PropertySampleIndex1.present());
 
-                    // sample[0][1][0].property.sample[1].value
-                    Option<ValueProperty> sampleIndex0Index1Index0PropertySampleIndex1Value = sampleIndex0Index1Index0PropertySampleIndex1.get().get("value");
-                    Assertions.assertTrue(sampleIndex0Index1Index0PropertySampleIndex1Value.present());
-                    Assertions.assertEquals("value", sampleIndex0Index1Index0PropertySampleIndex1Value.get().value().get());
-                });
+                // sample[0][1][0].property.sample[1].value
+                Option<ValueProperty> sampleIndex0Index1Index0PropertySampleIndex1Value =
+                    sampleIndex0Index1Index0PropertySampleIndex1.get().get("value");
+                Assertions.assertTrue(sampleIndex0Index1Index0PropertySampleIndex1Value.present());
+                Assertions.assertEquals("value",
+                    sampleIndex0Index1Index0PropertySampleIndex1Value.get().value().get());
+            });
     }
 }

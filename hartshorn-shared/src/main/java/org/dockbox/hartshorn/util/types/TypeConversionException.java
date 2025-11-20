@@ -19,12 +19,11 @@ package org.dockbox.hartshorn.util.types;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * An exception thrown when a type conversion fails. This is typically thrown when a value cannot
- * be converted to a specific type.
- *
- * @since 0.4.1
+ * An exception thrown when a type conversion fails. This is typically thrown when a value cannot be
+ * converted to a specific type.
  *
  * @author Guus Lieben
+ * @since 0.4.1
  */
 public class TypeConversionException extends ApplicationRuntimeException {
 

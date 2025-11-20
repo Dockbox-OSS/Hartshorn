@@ -38,14 +38,15 @@ public class ComponentCollectionTests {
     void testPriority() {
         Set<String> strings = Set.of("Hello", "World", "!");
         this.applicationContext.bind(String.class).collect(collector -> {
-            for(String string : strings) {
+            for (String string : strings) {
                 collector.singleton(string);
             }
         });
 
         this.applicationContext.bind(String.class).singleton("Hello world!");
 
-        ComponentCollection<String> collection = this.applicationContext.get(ComponentKey.collect(String.class));
+        ComponentCollection<String> collection =
+            this.applicationContext.get(ComponentKey.collect(String.class));
         Assertions.assertEquals(3, collection.size());
         Assertions.assertTrue(collection.containsAll(strings));
 
@@ -56,7 +57,8 @@ public class ComponentCollectionTests {
     @Test
     @TestComponents(CollectionConfiguration.class)
     void testConfigurationLoadsWithDependencies() {
-        ComponentCollection<String> collection = this.applicationContext.get(ComponentKey.collect(String.class));
+        ComponentCollection<String> collection =
+            this.applicationContext.get(ComponentKey.collect(String.class));
         Assertions.assertEquals(2, collection.size());
         Assertions.assertTrue(collection.contains("Hello"));
         Assertions.assertTrue(collection.contains("World"));

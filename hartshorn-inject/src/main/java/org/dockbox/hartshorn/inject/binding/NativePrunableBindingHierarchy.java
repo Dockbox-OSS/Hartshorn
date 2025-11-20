@@ -22,18 +22,18 @@ import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 
 /**
- * The default implementation of the {@link BindingHierarchy} interface. This uses a specified {@link ComponentKey}
- * to identify the binding hierarchy, and stores the bindings in a {@link TreeMap}.
+ * The default implementation of the {@link BindingHierarchy} interface. This uses a specified
+ * {@link ComponentKey} to identify the binding hierarchy, and stores the bindings in a
+ * {@link TreeMap}.
  *
  * @param <C> The type of type to provide.
  *
- * @see BindingHierarchy
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see BindingHierarchy
+ * @since 0.5.0
  */
-public class NativePrunableBindingHierarchy<C> extends AbstractBindingHierarchy<C> implements PrunableBindingHierarchy<C> {
+public class NativePrunableBindingHierarchy<C> extends AbstractBindingHierarchy<C>
+    implements PrunableBindingHierarchy<C> {
 
     public NativePrunableBindingHierarchy(ComponentKey<C> key) {
         super(key);
@@ -47,7 +47,8 @@ public class NativePrunableBindingHierarchy<C> extends AbstractBindingHierarchy<
     @Override
     public int pruneAbove(int priority) {
         int count = 0;
-        for (Map.Entry<Integer, InstantiationStrategy<C>> entry : this.priorityProviders().entrySet()) {
+        for (Map.Entry<Integer, InstantiationStrategy<C>> entry : this.priorityProviders()
+            .entrySet()) {
             if (entry.getKey() > priority && this.prune(entry.getKey())) {
                 count++;
             }
@@ -58,7 +59,8 @@ public class NativePrunableBindingHierarchy<C> extends AbstractBindingHierarchy<
     @Override
     public int pruneBelow(int priority) {
         int count = 0;
-        for (Map.Entry<Integer, InstantiationStrategy<C>> entry : this.priorityProviders().entrySet()) {
+        for (Map.Entry<Integer, InstantiationStrategy<C>> entry : this.priorityProviders()
+            .entrySet()) {
             if (entry.getKey() < priority && this.prune(entry.getKey())) {
                 count++;
             }

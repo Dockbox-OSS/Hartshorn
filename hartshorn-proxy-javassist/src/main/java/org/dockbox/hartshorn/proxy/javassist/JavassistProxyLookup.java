@@ -27,21 +27,20 @@ import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
 
 /**
- * A proxy lookup implementation that uses Javassist to determine whether a given instance is a proxy, and to retrieve
- * the target class of a proxy.
+ * A proxy lookup implementation that uses Javassist to determine whether a given instance is a
+ * proxy, and to retrieve the target class of a proxy.
  *
- * <p>Proxies are detected by checking whether the given instance is an instance of {@link Proxy}, or if {@link Proxy}
- * is assignable from the class. For unproxying, it is assumed that the proxy is managed by a {@link
- * JavassistProxyMethodHandler}.
+ * <p>Proxies are detected by checking whether the given instance is an instance of {@link Proxy},
+ * or if {@link Proxy}
+ * is assignable from the class. For unproxying, it is assumed that the proxy is managed by a
+ * {@link JavassistProxyMethodHandler}.
  *
+ * @author Guus Lieben
  * @see ProxyFactory#isProxyClass(Class)
  * @see ProxyFactory#getHandler(Proxy)
  * @see Proxy
  * @see JavassistProxyMethodHandler
- *
  * @since 0.4.9
- *
- * @author Guus Lieben
  */
 public class JavassistProxyLookup implements StandardProxyLookup {
 
@@ -50,7 +49,8 @@ public class JavassistProxyLookup implements StandardProxyLookup {
         if (instance instanceof Proxy proxy) {
             MethodHandler handler = ProxyFactory.getHandler(proxy);
             if (handler instanceof JavassistProxyMethodHandler<?> javassistProxyMethodHandler) {
-                Class<?> targetClass = javassistProxyMethodHandler.interceptor().manager().targetClass();
+                Class<?> targetClass =
+                    javassistProxyMethodHandler.interceptor().manager().targetClass();
                 Class<T> adjustedTargetClass = TypeUtils.unchecked(targetClass, Class.class);
                 return Option.of(adjustedTargetClass);
             }
@@ -70,7 +70,8 @@ public class JavassistProxyLookup implements StandardProxyLookup {
             if (handler instanceof JavassistProxyMethodHandler<?> javassistProxyMethodHandler) {
                 ProxyManager<?> manager = javassistProxyMethodHandler.interceptor().manager();
                 if (manager.proxy() == instance) {
-                    ProxyManager<T> adjustedManager = TypeUtils.unchecked(manager, ProxyManager.class);
+                    ProxyManager<T> adjustedManager =
+                        TypeUtils.unchecked(manager, ProxyManager.class);
                     return Option.of(adjustedManager);
                 }
             }

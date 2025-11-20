@@ -25,6 +25,7 @@ public class ReflectionIntrospectorTests extends IntrospectorTests {
 
     @Override
     protected Introspector introspector() {
-        return new ReflectionIntrospector(new NativeProxyLookup(), new VirtualHierarchyAnnotationLookup());
+        return new ReflectionIntrospector(new NativeProxyLookup(),
+            new VirtualHierarchyAnnotationLookup());
     }
 }

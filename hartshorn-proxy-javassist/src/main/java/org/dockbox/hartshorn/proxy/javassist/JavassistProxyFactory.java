@@ -25,19 +25,17 @@ import javassist.util.proxy.ProxyFactory;
 
 /**
  * A proxy factory that uses Javassist to create proxies. This implementation is based on the
- * {@link JDKInterfaceProxyFactory}, but uses Javassist to create the proxy class if the type
- * is not an interface. This allows for the creation of proxies for concrete and abstract classes. The
+ * {@link JDKInterfaceProxyFactory}, but uses Javassist to create the proxy class if the type is not
+ * an interface. This allows for the creation of proxies for concrete and abstract classes. The
  * proxy class is created by extending the target class, and implementing all interfaces that the
  * target class implements.
  *
  * @param <T> the type of the proxy
  *
+ * @author Guus Lieben
  * @see ProxyFactory
  * @see MethodHandler
- *
  * @since 0.4.10
- *
- * @author Guus Lieben
  */
 public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
 
@@ -55,8 +53,8 @@ public class JavassistProxyFactory<T> extends JDKInterfaceProxyFactory<T> {
         factory.setSuperclass(this.type());
         factory.setInterfaces(this.proxyInterfaces(false));
 
-        MethodHandler methodHandler = new JavassistProxyMethodHandler<>(interceptor, this.orchestrator().introspector());
+        MethodHandler methodHandler =
+            new JavassistProxyMethodHandler<>(interceptor, this.orchestrator().introspector());
         return new JavassistProxyConstructorFunction<>(this.type(), factory, methodHandler);
     }
-
 }

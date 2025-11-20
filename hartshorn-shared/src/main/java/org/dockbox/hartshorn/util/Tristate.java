@@ -20,9 +20,8 @@ package org.dockbox.hartshorn.util;
  * Represents a simple tristate, which is either {@code true}, {@code false}, or {@code undefined}
  * (indicating the value isn't present, either as a boolean or at all)
  *
- * @since 0.4.1
- *
  * @author Guus Lieben
+ * @since 0.4.1
  */
 public enum Tristate {
 
@@ -46,8 +45,8 @@ public enum Tristate {
     }
 
     /**
-     * Returns the boolean value of this tristate. If the tristate is {@link #UNDEFINED}, {@code
-     * false} is returned.
+     * Returns the boolean value of this tristate. If the tristate is {@link #UNDEFINED},
+     * {@code false} is returned.
      *
      * @return the boolean value of this tristate
      */
@@ -59,6 +58,7 @@ public enum Tristate {
      * Returns the tristate value of the provided boolean value.
      *
      * @param booleanValue the boolean value to convert
+     *
      * @return the tristate value of the provided boolean value
      */
     public static Tristate valueOf(boolean booleanValue) {

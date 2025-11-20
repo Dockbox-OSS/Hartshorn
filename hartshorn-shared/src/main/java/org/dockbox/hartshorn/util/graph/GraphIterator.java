@@ -24,9 +24,8 @@ import java.util.Set;
  *
  * @param <T> the type of the value of the node
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 @FunctionalInterface
 public interface GraphIterator<T> {
@@ -37,9 +36,10 @@ public interface GraphIterator<T> {
      * visited, and which nodes are visited.
      *
      * @param graph the graph to iterate over
+     *
      * @return a set of all visited nodes
+     *
      * @throws GraphException if the graph could not be iterated
      */
     Set<GraphNode<T>> iterate(Graph<T> graph) throws GraphException;
-
 }

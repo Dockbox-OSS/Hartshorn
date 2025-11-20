@@ -34,9 +34,8 @@ import java.util.stream.Stream;
  *
  * @param <T> The type of the value.
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class Some<T> extends DefaultContext implements Option<T> {
 
@@ -79,7 +78,7 @@ public class Some<T> extends DefaultContext implements Option<T> {
 
     @Override
     public <E extends Throwable> @NonNull T orElseThrow(
-            @NonNull Supplier<@NonNull E> supplier
+        @NonNull Supplier<@NonNull E> supplier
     ) throws E {
         return this.value;
     }
@@ -116,7 +115,7 @@ public class Some<T> extends DefaultContext implements Option<T> {
 
     @Override
     public @NonNull <U> Option<U> flatMap(
-            @NonNull Function<@NonNull T, @NonNull Option<U>> function
+        @NonNull Function<@NonNull T, @NonNull Option<U>> function
     ) {
         return function.apply(this.value);
     }
@@ -139,7 +138,7 @@ public class Some<T> extends DefaultContext implements Option<T> {
     @Override
     public @NonNull String toString() {
         return ObjectDescriber.of(this)
-                .field("value", this.value)
-                .describe();
+            .field("value", this.value)
+            .describe();
     }
 }

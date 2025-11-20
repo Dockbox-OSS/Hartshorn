@@ -46,8 +46,8 @@ import java.lang.annotation.Target;
  * specific annotation, then you can use the {@link AttributeAlias#target()} attribute.
  *
  * @author Guus Lieben
- * @since 0.5.0
  * @see Extends
+ * @since 0.5.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -55,12 +55,14 @@ public @interface AttributeAlias {
 
     /**
      * The name of the attribute to be aliased.
+     *
      * @return the name of the attribute to be aliased.
      */
     String value();
 
     /**
      * The target annotation for which the alias is defined.
+     *
      * @return the target annotation for which the alias is defined.
      */
     Class<?> target() default Void.class;

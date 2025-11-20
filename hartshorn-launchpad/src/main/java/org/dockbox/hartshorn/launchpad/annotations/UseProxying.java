@@ -29,9 +29,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to indicate that {@link Provided} methods can be proxied when {@link Component#permitProxying()}
- * is {@code true} for any given component. This acts as a module activator, and is loaded as a default in
- * {@link StandardApplicationBuilder}.
+ * Annotation to indicate that {@link Provided} methods can be proxied when
+ * {@link Component#permitProxying()} is {@code true} for any given component. This acts as a module
+ * activator, and is loaded as a default in {@link StandardApplicationBuilder}.
  *
  * @author Guus Lieben
  * @since 0.4.1
@@ -39,8 +39,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ModuleActivator(componentPostProcessors = {
-        ContextCarrierDelegationPostProcessor.class,
-        AnnotatedProviderMethodInterceptorPostProcessor.class,
+    ContextCarrierDelegationPostProcessor.class,
+    AnnotatedProviderMethodInterceptorPostProcessor.class,
 })
 public @interface UseProxying {
 }

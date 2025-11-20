@@ -29,15 +29,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A singleton cache implementation that uses a {@link ConcurrentHashMap} to store
- * instances. This implementation is thread-safe.
- *
- * @see SingletonCache
- * @see ConcurrentHashMap
- *
- * @since 0.4.11
+ * A singleton cache implementation that uses a {@link ConcurrentHashMap} to store instances. This
+ * implementation is thread-safe.
  *
  * @author Guus Lieben
+ * @see SingletonCache
+ * @see ConcurrentHashMap
+ * @since 0.4.11
  */
 public class ConcurrentHashSingletonCache implements SingletonCache {
 
@@ -48,7 +46,8 @@ public class ConcurrentHashSingletonCache implements SingletonCache {
     public void lock(ComponentKey<?> key) {
         ComponentKeyView<?> keyView = new ComponentKeyView<>(key);
         if (!this.cache.containsKey(keyView)) {
-            throw new IllegalModificationException("Cannot lock a key that is not present in the cache");
+            throw new IllegalModificationException(
+                "Cannot lock a key that is not present in the cache");
         }
         this.locked.add(keyView);
     }
@@ -57,7 +56,9 @@ public class ConcurrentHashSingletonCache implements SingletonCache {
     public <T> void put(ComponentKey<T> key, T instance) {
         ComponentKeyView<T> keyView = new ComponentKeyView<>(key);
         if (this.locked.contains(keyView) && this.cache.get(keyView) != instance) {
-            throw new IllegalModificationException("Another instance is already stored for key '" + key + "'");
+            throw new IllegalModificationException("Another instance is already stored for key '"
+                + key
+                + "'");
         }
         this.cache.put(keyView, instance);
     }

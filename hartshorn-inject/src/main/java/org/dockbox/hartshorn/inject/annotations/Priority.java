@@ -29,25 +29,27 @@ import org.dockbox.hartshorn.inject.provider.selection.HighestPriorityProviderSe
  * Allows for the explicit definition of a priority for an injectable parameter or binding method.
  *
  * <p><h2>Methods</h2>
- * Binding methods default to the {@link Priority#DEFAULT_PRIORITY default priority} of {@code -1} if no priority is
- * defined. When a binding method requires an existing binding to be overwritten, configuring a higher priority is the
- * recommended approach.
+ * Binding methods default to the {@link Priority#DEFAULT_PRIORITY default priority} of {@code -1}
+ * if no priority is defined. When a binding method requires an existing binding to be overwritten,
+ * configuring a higher priority is the recommended approach.
  *
  * <p><h2>Parameters</h2>
- * For parameters this is useful when multiple implementations of the same type are available, and a specific
- * implementation is preferred, or when another priority should be used instead of the default resolved priority for
- * the parameter.
+ * For parameters this is useful when multiple implementations of the same type are available, and a
+ * specific implementation is preferred, or when another priority should be used instead of the
+ * default resolved priority for the parameter.
  *
- * <p>For binding methods, this annotation may cause a {@link ExactPriorityProviderSelectionStrategy} to be used,
- * instead of the default {@link HighestPriorityProviderSelectionStrategy}. A valid declaration of this annotation on
- * a binding method can be seen below. In this scenario, a self-type delegate is selected with a priority of {@code 5},
- * and the binding method itself is given a priority of {@code 10}.
+ * <p>For binding methods, this annotation may cause a
+ * {@link ExactPriorityProviderSelectionStrategy} to be used,
+ * instead of the default {@link HighestPriorityProviderSelectionStrategy}. A valid declaration of
+ * this annotation on a binding method can be seen below. In this scenario, a self-type delegate is
+ * selected with a priority of {@code 5}, and the binding method itself is given a priority of
+ * {@code 10}.
  *
  * <p><h2>Notes</h2>
- * Note that this annotation indicates an exact priority, and not a priority range. This means that if a
- * priority of {@code 100} is defined, and only priorities of {@code 99} and {@code 101} are available, no
- * binding will be found. In the case of parameters it remains up to the parameter resolver to determine how to handle
- * this situation.
+ * Note that this annotation indicates an exact priority, and not a priority range. This means that
+ * if a priority of {@code 100} is defined, and only priorities of {@code 99} and {@code 101} are
+ * available, no binding will be found. In the case of parameters it remains up to the parameter
+ * resolver to determine how to handle this situation.
  *
  * <pre>{@code
  * @Singleton
@@ -57,17 +59,16 @@ import org.dockbox.hartshorn.inject.provider.selection.HighestPriorityProviderSe
  * }
  * }</pre>
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Priority {
 
     /**
-     * The default priority value, used when no priority is defined. This usually indicates
-     * that a component is a major part of the application, but not a core component.
+     * The default priority value, used when no priority is defined. This usually indicates that a
+     * component is a major part of the application, but not a core component.
      */
     int DEFAULT_PRIORITY = -1;
 
@@ -84,8 +85,8 @@ public @interface Priority {
     int INFRASTRUCTURE_PRIORITY = -64;
 
     /**
-     * The priority value, directly linked to an optional entry in a {@link BindingHierarchy}. Values can be
-     * negative, zero or positive. The higher the value, the higher the priority.
+     * The priority value, directly linked to an optional entry in a {@link BindingHierarchy}.
+     * Values can be negative, zero or positive. The higher the value, the higher the priority.
      *
      * @return The priority value
      */

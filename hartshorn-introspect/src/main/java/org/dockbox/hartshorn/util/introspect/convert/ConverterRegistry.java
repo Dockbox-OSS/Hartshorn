@@ -21,13 +21,12 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * conversion process, typically performed by a {@link ConversionService} implementation.
  *
  * <p>This contract does not expose the ability to lookup converters or to remove converters from
- * the registry. This is intentional as the registry is intended to be used by a {@link
- * ConversionService} implementation to register converters and not by clients of the {@link
- * ConversionService} to lookup converters.
- *
- * @since 0.5.0
+ * the registry. This is intentional as the registry is intended to be used by a
+ * {@link ConversionService} implementation to register converters and not by clients of the
+ * {@link ConversionService} to lookup converters.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface ConverterRegistry {
 
@@ -39,7 +38,7 @@ public interface ConverterRegistry {
      * @param <I> the source type
      * @param <O> the target type
      */
-    <I, O> void addConverter(Converter<I, O>  converter);
+    <I, O> void addConverter(Converter<I, O> converter);
 
     /**
      * Add a converter to the registry. The source and target types are to be used to determine
@@ -55,8 +54,8 @@ public interface ConverterRegistry {
     <I, O> void addConverter(Class<I> sourceType, Class<O> targetType, Converter<I, O> converter);
 
     /**
-     * Add a generic converter to the registry. The source and target types are determined from
-     * the {@link GenericConverter#convertibleTypes()} method.
+     * Add a generic converter to the registry. The source and target types are determined from the
+     * {@link GenericConverter#convertibleTypes()} method.
      *
      * @param converter the converter to add
      */
@@ -70,7 +69,7 @@ public interface ConverterRegistry {
      * @param <I> the source type
      * @param <O> the target type
      */
-    <I, O> void addConverterFactory(ConverterFactory<I, O>  converterFactory);
+    <I, O> void addConverterFactory(ConverterFactory<I, O> converterFactory);
 
     /**
      * Add a converter factory to the registry. The source type is to be used to determine whether
@@ -112,5 +111,4 @@ public interface ConverterRegistry {
      * @param <O> the target type
      */
     <O> void addDefaultValueProviderFactory(DefaultValueProviderFactory<O> factory);
-
 }

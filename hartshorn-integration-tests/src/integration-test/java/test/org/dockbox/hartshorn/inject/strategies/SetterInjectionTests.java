@@ -34,9 +34,10 @@ public class SetterInjectionTests {
     private ApplicationContext applicationContext;
 
     @Test
-    @TestComponents({ SetterInjectedComponent.class, ComponentType.class})
+    @TestComponents({SetterInjectedComponent.class, ComponentType.class})
     void testSetterInjectionWithRegularComponent() {
-        SetterInjectedComponent component = this.applicationContext.get(SetterInjectedComponent.class);
+        SetterInjectedComponent component =
+            this.applicationContext.get(SetterInjectedComponent.class);
         Assertions.assertNotNull(component);
         Assertions.assertNotNull(component.component());
     }
@@ -44,13 +45,15 @@ public class SetterInjectionTests {
     @Test
     @TestComponents(SetterInjectedComponentWithAbsentBinding.class)
     void testSetterInjectionWithAbsentRequiredComponent() {
-        Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
+        Assertions.assertThrows(ComponentResolutionException.class,
+            () -> this.applicationContext.get(SetterInjectedComponentWithAbsentBinding.class));
     }
 
     @Test
     @TestComponents(SetterInjectedComponentWithNonRequiredAbsentBinding.class)
     void testSetterInjectionWithAbsentComponent() {
-        var component = Assertions.assertDoesNotThrow(() -> this.applicationContext.get(SetterInjectedComponentWithNonRequiredAbsentBinding.class));
+        var component = Assertions.assertDoesNotThrow(() -> this.applicationContext.get(
+            SetterInjectedComponentWithNonRequiredAbsentBinding.class));
         Assertions.assertNotNull(component);
         Assertions.assertNull(component.object());
     }
@@ -60,7 +63,8 @@ public class SetterInjectionTests {
     void testSetterInjectionWithContext() {
         SampleContext sampleContext = new SampleContext("setter");
         this.applicationContext.addContext("setter", sampleContext);
-        SetterInjectedComponent component = this.applicationContext.get(SetterInjectedComponent.class);
+        SetterInjectedComponent component =
+            this.applicationContext.get(SetterInjectedComponent.class);
         Assertions.assertNotNull(component);
         Assertions.assertNotNull(component.context());
         Assertions.assertSame(sampleContext, component.context());

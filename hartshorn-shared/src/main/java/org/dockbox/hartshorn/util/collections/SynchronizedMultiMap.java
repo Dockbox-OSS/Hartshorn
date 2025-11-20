@@ -21,19 +21,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A {@link MultiMap} implementation that synchronizes all access to the backing map. This is
- * useful when the map is accessed concurrently by multiple threads, and it is not possible to
- * synchronize the access externally.
+ * A {@link MultiMap} implementation that synchronizes all access to the backing map. This is useful
+ * when the map is accessed concurrently by multiple threads, and it is not possible to synchronize
+ * the access externally.
  *
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
+ * @author Guus Lieben
  * @see MultiMap
  * @see StandardMultiMap
- *
  * @since 0.4.12
- *
- * @author Guus Lieben
  */
 public abstract class SynchronizedMultiMap<K, V> extends AbstractMultiMap<K, V> {
 
@@ -66,5 +64,4 @@ public abstract class SynchronizedMultiMap<K, V> extends AbstractMultiMap<K, V> 
     protected Map<K, Collection<V>> createEmptyMap() {
         return new HashMap<>();
     }
-
 }

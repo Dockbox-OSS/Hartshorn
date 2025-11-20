@@ -18,15 +18,15 @@ package org.dockbox.hartshorn.util.introspect.reflect;
 
 /**
  * Represents a functional interface that can be used to write a value to a field. This is used to
- * abstract the process of setting a value on a field, and is typically used by {@link
- * org.dockbox.hartshorn.util.introspect.view.FieldView#set(Object, Object)} to set a value on a field.
+ * abstract the process of setting a value on a field, and is typically used by
+ * {@link org.dockbox.hartshorn.util.introspect.view.FieldView#set(Object, Object)} to set a value
+ * on a field.
  *
  * @param <T> the type of the field
  * @param <P> the type of the instance
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 @FunctionalInterface
 public interface ReflectiveFieldWriter<T, P> {
@@ -37,6 +37,7 @@ public interface ReflectiveFieldWriter<T, P> {
      *
      * @param instance the instance on which to set the value
      * @param value the value to set
+     *
      * @throws Throwable if the field could not be written to
      */
     void set(P instance, T value) throws Throwable;

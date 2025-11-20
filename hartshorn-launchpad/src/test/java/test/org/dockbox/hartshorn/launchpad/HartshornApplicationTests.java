@@ -28,12 +28,14 @@ public class HartshornApplicationTests {
 
     @Test
     void testCreationFailsWithAbstractActivator() {
-        Assertions.assertThrows(InvalidActivationSourceException.class, () -> HartshornApplication.create(AbstractActivator.class));
+        Assertions.assertThrows(InvalidActivationSourceException.class,
+            () -> HartshornApplication.create(AbstractActivator.class));
     }
 
     @Test
     void testCreationFailsWithInterfaceActivator() {
-        Assertions.assertThrows(InvalidActivationSourceException.class, () -> HartshornApplication.create(InterfaceActivator.class));
+        Assertions.assertThrows(InvalidActivationSourceException.class,
+            () -> HartshornApplication.create(InterfaceActivator.class));
     }
 
     @Test

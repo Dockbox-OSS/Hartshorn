@@ -21,9 +21,8 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * Utility class for working with annotations.
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public class AnnotationUtilities {
 
@@ -34,13 +33,14 @@ public class AnnotationUtilities {
      *
      * @param type The type to check
      * @param stereotype The stereotype to check against
+     *
      * @return {@code true} if the type is a stereotype of the provided stereotype, {@code false}
      * otherwise
      */
     public static boolean isStereotypeOf(Class<?> type, Class<?> stereotype) {
         return Option.of(type.getAnnotation(Extends.class)).test(annotation -> {
             return annotation.value() == stereotype
-                    || isStereotypeOf(annotation.value(), stereotype);
+                || isStereotypeOf(annotation.value(), stereotype);
         });
     }
 }

@@ -24,17 +24,16 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * support {@link Converter}, {@link ConverterFactory}, {@link DefaultValueProvider}, and
  * {@link DefaultValueProviderFactory} implementations.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface ConditionalConverter {
 
     /**
      * Returns whether this converter can convert the given source object to the target type.
      *
-     * @param source the source object to convert. Will only be {@code null} if this is a {@link
-     * DefaultValueProvider}
+     * @param source the source object to convert. Will only be {@code null} if this is a
+     * {@link DefaultValueProvider}
      * @param targetType the target type to convert to
      *
      * @return {@code true} if this converter can perform the conversion; {@code false} otherwise

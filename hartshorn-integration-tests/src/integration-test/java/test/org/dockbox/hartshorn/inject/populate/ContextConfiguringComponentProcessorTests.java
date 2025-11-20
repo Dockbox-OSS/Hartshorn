@@ -34,23 +34,31 @@ public class ContextConfiguringComponentProcessorTests {
 
     @Test
     @TestComponents(EmptyComponent.class)
-    void testNonContextComponentIsProcessed(@Inject EmptyComponent emptyComponent, @Inject ProxyOrchestrator proxyOrchestrator) {
+    void testNonContextComponentIsProcessed(
+        @Inject EmptyComponent emptyComponent,
+        @Inject ProxyOrchestrator proxyOrchestrator
+    ) {
         Assertions.assertNotNull(emptyComponent);
         Assertions.assertTrue(proxyOrchestrator.isProxy(emptyComponent));
 
         Proxy<EmptyComponent> component = (Proxy<EmptyComponent>) emptyComponent;
-        Option<SimpleContext> context = component.manager().firstContext(ContextKey.of(SimpleContext.class));
+        Option<SimpleContext> context =
+            component.manager().firstContext(ContextKey.of(SimpleContext.class));
         Assertions.assertTrue(context.present());
         Assertions.assertEquals("Foo", context.get().value());
     }
 
     @Test
     @TestComponents(ContextComponent.class)
-    void testContextComponentIsProcessed(@Inject ContextComponent contextComponent, @Inject ProxyOrchestrator proxyOrchestrator) {
+    void testContextComponentIsProcessed(
+        @Inject ContextComponent contextComponent,
+        @Inject ProxyOrchestrator proxyOrchestrator
+    ) {
         Assertions.assertNotNull(contextComponent);
         Assertions.assertFalse(proxyOrchestrator.isProxy(contextComponent));
 
-        Option<SimpleContext> context = contextComponent.firstContext(ContextKey.of(SimpleContext.class));
+        Option<SimpleContext> context =
+            contextComponent.firstContext(ContextKey.of(SimpleContext.class));
         Assertions.assertTrue(context.present());
         Assertions.assertEquals("Foo", context.get().value());
     }

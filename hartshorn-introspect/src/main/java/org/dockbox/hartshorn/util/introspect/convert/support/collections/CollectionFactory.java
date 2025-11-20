@@ -24,9 +24,8 @@ import java.util.Collection;
  * A factory for creating collections of a given type, with a given element type. This is typically
  * used to support {@link DefaultValueProvider}s for collections.
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public interface CollectionFactory {
 
@@ -37,9 +36,10 @@ public interface CollectionFactory {
      *
      * @param targetType The type of the collection to create
      * @param elementType The type of the elements in the collection
-     * @return The created collection
      * @param <O> The type of the collection
      * @param <E> The type of the elements in the collection
+     *
+     * @return The created collection
      */
     <O extends Collection<E>, E> O createCollection(Class<O> targetType, Class<E> elementType);
 
@@ -50,13 +50,14 @@ public interface CollectionFactory {
      * @param targetType The type of the collection to create
      * @param elementType The type of the elements in the collection
      * @param length The capacity of the collection
-     * @return The created collection
      * @param <O> The type of the collection
      * @param <E> The type of the elements in the collection
+     *
+     * @return The created collection
      */
     <O extends Collection<E>, E> O createCollection(
-            Class<O> targetType,
-            Class<E> elementType,
-            int length
+        Class<O> targetType,
+        Class<E> elementType,
+        int length
     );
 }

@@ -22,18 +22,16 @@ import org.slf4j.Logger;
  * Represents a banner that can be printed to the active logging system. Banners are usually printed
  * when the application starts.
  *
- * @see HartshornLogoBanner
- *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @see HartshornLogoBanner
+ * @since 0.4.13
  */
 @FunctionalInterface
 public interface Banner {
 
     /**
-     * Prints the banner to the given {@link Logger}. The logger is expected to be the primary logger
-     * of the application.
+     * Prints the banner to the given {@link Logger}. The logger is expected to be the primary
+     * logger of the application.
      *
      * @param logger The logger to print the banner to.
      */

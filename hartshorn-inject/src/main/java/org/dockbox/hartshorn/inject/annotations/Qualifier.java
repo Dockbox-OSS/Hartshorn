@@ -24,9 +24,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Meta annotation to mark annotations as qualifiers. Qualifier annotations allow for the creation of
- * multiple bindings for the same type, which can be distinguished by the qualifier annotation and potential
- * attributes of the qualifier annotation.
+ * Meta annotation to mark annotations as qualifiers. Qualifier annotations allow for the creation
+ * of multiple bindings for the same type, which can be distinguished by the qualifier annotation
+ * and potential attributes of the qualifier annotation.
  *
  * <p>For example, given an API that has multiple versions, you can create a qualifier annotation
  * that allows you to bind different implementations for each version:
@@ -55,11 +55,9 @@ import java.lang.annotation.Target;
  * private DataRepository repository;
  * }</pre>
  *
- * @since 0.6.0
- *
- * @see QualifierKey
- *
  * @author Guus Lieben
+ * @see QualifierKey
+ * @since 0.6.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

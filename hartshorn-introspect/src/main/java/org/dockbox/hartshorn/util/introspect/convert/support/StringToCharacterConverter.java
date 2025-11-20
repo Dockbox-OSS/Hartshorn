@@ -20,12 +20,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.introspect.convert.Converter;
 
 /**
- * Converts a {@link String} to a {@link Character}. The input must be exactly one character. If
- * the input is empty or contains more than one character, {@code null} is returned.
- *
- * @since 0.5.0
+ * Converts a {@link String} to a {@link Character}. The input must be exactly one character. If the
+ * input is empty or contains more than one character, {@code null} is returned.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class StringToCharacterConverter implements Converter<String, Character> {
 

@@ -17,12 +17,11 @@
 package org.dockbox.hartshorn.reporting;
 
 /**
- * A collector for {@link Reportable} instances. This is used to collect properties of a {@link
- * Reportable} instance.
- *
- * @since 0.5.0
+ * A collector for {@link Reportable} instances. This is used to collect properties of a
+ * {@link Reportable} instance.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 @FunctionalInterface
 public interface DiagnosticsPropertyCollector {
@@ -37,6 +36,7 @@ public interface DiagnosticsPropertyCollector {
      * how to handle this.
      *
      * @param name the name of the property to write
+     *
      * @return a writer for the given property name
      */
     DiagnosticsPropertyWriter property(String name);

@@ -24,11 +24,11 @@ import java.util.SequencedSet;
  *
  * @param sources the sources to return
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
-public record PredefinedPropertySourceResolver(SequencedSet<String> sources) implements PropertySourceResolver {
+public record PredefinedPropertySourceResolver(SequencedSet<String> sources)
+    implements PropertySourceResolver {
 
     @Override
     public SequencedSet<String> resolve() {

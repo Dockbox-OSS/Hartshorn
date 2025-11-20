@@ -23,18 +23,19 @@ import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
- * Strategy for providing components. This is a chain of responsibility pattern, where each strategy can delegate to the
- * next strategy in the {@link ComponentProviderStrategyChain} if it cannot provide the requested component.
- *
- * @since 0.7.0
+ * Strategy for providing components. This is a chain of responsibility pattern, where each strategy
+ * can delegate to the next strategy in the {@link ComponentProviderStrategyChain} if it cannot
+ * provide the requested component.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public interface ComponentProviderStrategy {
 
     /**
-     * Attempts to provide a component for the given {@code componentKey} and {@code requestContext}. If this strategy
-     * cannot provide the component, it should delegate to the next strategy in the {@code chain}.
+     * Attempts to provide a component for the given {@code componentKey} and
+     * {@code requestContext}. If this strategy cannot provide the component, it should delegate to
+     * the next strategy in the {@code chain}.
      *
      * @param componentKey the component key to resolve
      * @param requestContext the request context for the component resolution
@@ -47,8 +48,8 @@ public interface ComponentProviderStrategy {
      * @throws ApplicationException if the component could not be initialized or processed
      */
     <T> ObjectContainer<T> get(
-            ComponentKey<T> componentKey,
-            ComponentRequestContext requestContext,
-            ComponentProviderStrategyChain<T> chain
+        ComponentKey<T> componentKey,
+        ComponentRequestContext requestContext,
+        ComponentProviderStrategyChain<T> chain
     ) throws ComponentResolutionException, ApplicationException;
 }

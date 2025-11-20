@@ -27,17 +27,16 @@ import java.util.Map;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A map that can be used to define dependencies for a component. Dependencies are grouped by
- * their {@link DependencyResolutionType}. If multiple dependencies are defined for the same
- * resolution type, they are all added to the same collection.
- *
- * @see DependencyResolutionType
- *
- * @since 0.5.0
+ * A map that can be used to define dependencies for a component. Dependencies are grouped by their
+ * {@link DependencyResolutionType}. If multiple dependencies are defined for the same resolution
+ * type, they are all added to the same collection.
  *
  * @author Guus Lieben
+ * @see DependencyResolutionType
+ * @since 0.5.0
  */
-public final class DependencyMap extends StandardMultiMap<DependencyResolutionType, ComponentKey<?>> {
+public final class DependencyMap
+    extends StandardMultiMap<DependencyResolutionType, ComponentKey<?>> {
 
     private DependencyMap() {
         // Use static factory method
@@ -66,6 +65,7 @@ public final class DependencyMap extends StandardMultiMap<DependencyResolutionTy
      * Adds the given component key as a dependency which requires immediate resolution.
      *
      * @param key the component key to add
+     *
      * @return the dependency map
      *
      * @see DependencyResolutionType#IMMEDIATE
@@ -79,6 +79,7 @@ public final class DependencyMap extends StandardMultiMap<DependencyResolutionTy
      * Adds the given component keys as dependencies which require immediate resolution.
      *
      * @param keys the component keys to add
+     *
      * @return the dependency map
      *
      * @see DependencyResolutionType#IMMEDIATE
@@ -92,6 +93,7 @@ public final class DependencyMap extends StandardMultiMap<DependencyResolutionTy
      * Adds the given component key as a dependency which may be resolved at a later time.
      *
      * @param key the component key to add
+     *
      * @return the dependency map
      *
      * @see DependencyResolutionType#DELAYED
@@ -105,6 +107,7 @@ public final class DependencyMap extends StandardMultiMap<DependencyResolutionTy
      * Adds the given component keys as dependencies which may be resolved at a later time.
      *
      * @param keys the component keys to add
+     *
      * @return the dependency map
      *
      * @see DependencyResolutionType#DELAYED
@@ -115,17 +118,19 @@ public final class DependencyMap extends StandardMultiMap<DependencyResolutionTy
     }
 
     /**
-     * Returns the resolution type of the given component key. If the key is not present in the
-     * map, an empty option is returned.
+     * Returns the resolution type of the given component key. If the key is not present in the map,
+     * an empty option is returned.
      *
      * @param componentKey the component key to check
+     *
      * @return the resolution type of the component key
      */
     public Option<DependencyResolutionType> resolutionType(ComponentKey<?> componentKey) {
         if (!this.containsValue(componentKey)) {
             return Option.empty();
         }
-        for (Map.Entry<DependencyResolutionType, Collection<ComponentKey<?>>> entry : this.map().entrySet()) {
+        for (Map.Entry<DependencyResolutionType, Collection<ComponentKey<?>>> entry : this.map()
+            .entrySet()) {
             if (entry.getValue().contains(componentKey)) {
                 return Option.of(entry.getKey());
             }

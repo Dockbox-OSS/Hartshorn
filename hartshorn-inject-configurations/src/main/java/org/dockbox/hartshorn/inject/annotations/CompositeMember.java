@@ -24,11 +24,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a binding declaration as a member of a composite collection. Composite members are not exposed
- * as individual components, but rather as a {@link ComponentCollection} that contains all members.
+ * Marks a binding declaration as a member of a composite collection. Composite members are not
+ * exposed as individual components, but rather as a {@link ComponentCollection} that contains all
+ * members.
  *
- * <p>Composite members may be declared in any configuration class, and are typically used to provide
- * multiple implementations of a single interface. A simple declaration may look like the example below.
+ * <p>Composite members may be declared in any configuration class, and are typically used to
+ * provide
+ * multiple implementations of a single interface. A simple declaration may look like the example
+ * below.
  * <pre>{@code
  * @Configuration
  * class SampleConfiguration {
@@ -46,16 +49,15 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
- * <p>Note that the example consumer above does not consider {@link Strict strictness} of the collection.
- *
- * @since 0.6.0
- *
- * @see ComponentCollection
+ * <p>Note that the example consumer above does not consider {@link Strict strictness} of the
+ * collection.
  *
  * @author Guus Lieben
+ * @see ComponentCollection
+ * @since 0.6.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.FIELD })
+@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.FIELD})
 public @interface CompositeMember {
 }
 

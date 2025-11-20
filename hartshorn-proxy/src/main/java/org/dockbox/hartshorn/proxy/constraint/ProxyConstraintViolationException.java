@@ -22,11 +22,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * An exception that is thrown when a proxy constraint is violated. This exception contains a message that describes
- * why the constraint is violated.
+ * An exception that is thrown when a proxy constraint is violated. This exception contains a
+ * message that describes why the constraint is violated.
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ProxyConstraintViolationException extends ApplicationException {
 
@@ -36,8 +36,8 @@ public class ProxyConstraintViolationException extends ApplicationException {
 
     public ProxyConstraintViolationException(Set<ProxyConstraintViolation> violations) {
         this(violations.stream()
-                .map(ProxyConstraintViolation::message)
-                .collect(Collectors.joining("\n"))
+            .map(ProxyConstraintViolation::message)
+            .collect(Collectors.joining("\n"))
         );
     }
 }

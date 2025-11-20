@@ -28,19 +28,17 @@ import java.util.Collection;
 import java.util.function.Supplier;
 
 /**
- * A {@link DefaultValueProviderFactory} for {@link Collection}s, backed by a {@link
- * SimpleCollectionFactory}. If the requested {@link Collection} type is parameterized, this
+ * A {@link DefaultValueProviderFactory} for {@link Collection}s, backed by a
+ * {@link SimpleCollectionFactory}. If the requested {@link Collection} type is parameterized, this
  * provider will attempt to retrieve its type parameter for the element type. If the type parameter
  * is not available, {@link Object} will be used as the element type.
  *
- * @see SimpleCollectionFactory
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see SimpleCollectionFactory
+ * @since 0.5.0
  */
 public class CollectionDefaultValueProviderFactory
-        implements DefaultValueProviderFactory<Collection<?>> {
+    implements DefaultValueProviderFactory<Collection<?>> {
 
     private final Introspector introspector;
     private final SimpleCollectionFactory helperFactory;
@@ -63,30 +61,30 @@ public class CollectionDefaultValueProviderFactory
      * @return a new {@link DefaultValueProvider}
      */
     public <E, O extends Collection<E>> DefaultValueProvider<O> create(
-            Class<O> targetType,
-            Class<E> elementType
+        Class<O> targetType,
+        Class<E> elementType
     ) {
         return () -> {
             try {
                 return this.helperFactory.createCollection(targetType, elementType);
             }
-            catch(IllegalArgumentException e) {
+            catch (IllegalArgumentException e) {
                 return null;
             }
         };
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public <O extends Collection<?>> DefaultValueProvider<O> create(Class<O> targetType) {
         TypeView<O> type = this.introspector.introspect(targetType);
         Class<?> componentType = type.typeParameters()
-                .inputFor(Collection.class)
-                .atIndex(0)
-                .flatMap(TypeParameterView::resolvedType)
-                .map(TypeView::type)
-                .map(Class.class::cast)
-                .orElse(Object.class);
+            .inputFor(Collection.class)
+            .atIndex(0)
+            .flatMap(TypeParameterView::resolvedType)
+            .map(TypeView::type)
+            .map(Class.class::cast)
+            .orElse(Object.class);
 
         return this.create((Class) targetType, componentType);
     }
@@ -117,8 +115,8 @@ public class CollectionDefaultValueProviderFactory
      * @see SimpleCollectionFactory#withDefault(Class, Supplier)
      */
     public <T extends Collection<?>> CollectionDefaultValueProviderFactory withDefault(
-            Class<T> type,
-            CollectionProvider<T> provider
+        Class<T> type,
+        CollectionProvider<T> provider
     ) {
         this.helperFactory.withDefault(type, provider);
         return this;

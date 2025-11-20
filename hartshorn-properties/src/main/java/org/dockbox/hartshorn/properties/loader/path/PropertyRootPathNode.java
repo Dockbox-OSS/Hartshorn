@@ -19,9 +19,8 @@ package org.dockbox.hartshorn.properties.loader.path;
 /**
  * Represents the root node of a property path.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public final class PropertyRootPathNode implements PropertyPathNode {
 

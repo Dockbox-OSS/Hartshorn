@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.util.introspect.scan;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
- * Thrown when a {@link TypeReferenceCollector} encounters an error while collecting {@link TypeReference}s.
- *
- * @since 0.4.13
+ * Thrown when a {@link TypeReferenceCollector} encounters an error while collecting
+ * {@link TypeReference}s.
  *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class TypeCollectionException extends ApplicationException {
     public TypeCollectionException(String message) {

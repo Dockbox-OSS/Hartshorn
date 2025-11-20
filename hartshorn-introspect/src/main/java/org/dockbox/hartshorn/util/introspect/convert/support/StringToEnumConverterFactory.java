@@ -24,11 +24,9 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * Converts a {@link String} to an {@link Enum}. The {@link Enum} constant is matched by name in a
  * case-sensitive manner. If no match is found, {@code null} is returned.
  *
- * @see Enum#valueOf(Class, String)
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see Enum#valueOf(Class, String)
+ * @since 0.5.0
  */
 @SuppressWarnings("rawtypes")
 public class StringToEnumConverterFactory implements ConverterFactory<String, Enum> {
@@ -39,18 +37,16 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
     }
 
     /**
-     * Converts a {@link String} to an {@link Enum}. The {@link Enum} constant is matched by name
-     * in a case-sensitive manner. Extraneous whitespace is trimmed. If no match is found, {@code
-     * null} is returned.
+     * Converts a {@link String} to an {@link Enum}. The {@link Enum} constant is matched by name in
+     * a case-sensitive manner. Extraneous whitespace is trimmed. If no match is found, {@code null}
+     * is returned.
      *
      * @param enumType The type of {@link Enum} to convert to
      * @param <T> The type of {@link Enum} to convert to
      *
-     * @see Enum#valueOf(Class, String)
-     *
-     * @since 0.5.0
-     *
      * @author Guus Lieben
+     * @see Enum#valueOf(Class, String)
+     * @since 0.5.0
      */
     @SuppressWarnings("unchecked")
     private record StringToEnumConverter<T extends Enum>(Class<T> enumType)
@@ -59,14 +55,14 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
         @Override
         public @Nullable T convert(@Nullable String source) {
             assert source != null;
-            if(source.isEmpty()) {
+            if (source.isEmpty()) {
                 return null;
             }
             try {
                 Enum value = Enum.valueOf(this.enumType, source.trim());
                 return this.enumType.cast(value);
             }
-            catch(IllegalArgumentException e) {
+            catch (IllegalArgumentException e) {
                 return null;
             }
         }

@@ -27,17 +27,15 @@ import java.util.Objects;
 
 /**
  * Converts a {@link Collection} to another {@link Collection} by adding all elements of the source
- * collection to the target collection. The target collection is created using the {@link
- * DefaultValueProvider} of the target type.
- *
- * @see CollectionDefaultValueProviderFactory
- *
- * @since 0.5.0
+ * collection to the target collection. The target collection is created using the
+ * {@link DefaultValueProvider} of the target type.
  *
  * @author Guus Lieben
+ * @see CollectionDefaultValueProviderFactory
+ * @since 0.5.0
  */
 public class CollectionToCollectionConverterFactory
-        implements ConverterFactory<Collection<?>, Collection<?>> {
+    implements ConverterFactory<Collection<?>, Collection<?>> {
 
     private final DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory;
 
@@ -46,7 +44,7 @@ public class CollectionToCollectionConverterFactory
     }
 
     public CollectionToCollectionConverterFactory(
-            DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory
+        DefaultValueProviderFactory<Collection<?>> defaultValueProviderFactory
     ) {
         this.defaultValueProviderFactory = defaultValueProviderFactory;
     }
@@ -54,8 +52,8 @@ public class CollectionToCollectionConverterFactory
     @Override
     public <O extends Collection<?>> Converter<Collection<?>, O> create(Class<O> targetType) {
         return new CollectionToCollectionConverter<>(
-                this.defaultValueProviderFactory.create(targetType),
-                targetType
+            this.defaultValueProviderFactory.create(targetType),
+            targetType
         );
     }
 
@@ -66,19 +64,18 @@ public class CollectionToCollectionConverterFactory
      *
      * @param <O> the target type
      *
-     * @since 0.5.0
-     *
      * @author Guus Lieben
+     * @since 0.5.0
      */
     public static class CollectionToCollectionConverter<O extends Collection<?>>
-            implements Converter<Collection<?>, O> {
+        implements Converter<Collection<?>, O> {
 
         private final DefaultValueProvider<O> defaultValueProvider;
         private final Class<O> targetType;
 
         public CollectionToCollectionConverter(
-                DefaultValueProvider<O> defaultValueProvider,
-                Class<O> targetType
+            DefaultValueProvider<O> defaultValueProvider,
+            Class<O> targetType
         ) {
             this.defaultValueProvider = defaultValueProvider;
             this.targetType = targetType;
@@ -88,7 +85,7 @@ public class CollectionToCollectionConverterFactory
         public O convert(Collection<?> source) {
             //noinspection unchecked
             Collection<Object> collection = (Collection<Object>) this.defaultValueProvider
-                    .defaultValue();
+                .defaultValue();
             Objects.requireNonNull(collection).addAll(source);
             return this.targetType.cast(collection);
         }

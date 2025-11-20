@@ -32,15 +32,16 @@ import java.util.function.Supplier;
 
 /**
  * A context that manages default bindings for scope modules. The hierarchies of bindings are stored
- * based on their scope keys, allowing them to be re-used for different instances of the same scope.
- *
- * @since 0.5.0
+ * based on their scope keys, allowing them to be re-used for different instances of the same
+ * scope.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ScopeModuleContext extends DefaultContext {
 
-    private final MultiMap<ScopeKey, BindingHierarchy<?>> scopeModules = new ConcurrentSetMultiMap<>();
+    private final MultiMap<ScopeKey, BindingHierarchy<?>> scopeModules =
+        new ConcurrentSetMultiMap<>();
 
     private final ScopeKey applicationScope;
 
@@ -49,10 +50,12 @@ public class ScopeModuleContext extends DefaultContext {
     }
 
     /**
-     * Creates a context key for the {@link ScopeModuleContext}. If there is no existing context for the
-     * {@link ScopeModuleContext}, a new one will be created using the provided fallback scope key.
+     * Creates a context key for the {@link ScopeModuleContext}. If there is no existing context for
+     * the {@link ScopeModuleContext}, a new one will be created using the provided fallback scope
+     * key.
      *
      * @param fallbackScope the supplier for the fallback scope key
+     *
      * @return a context key for the {@link ScopeModuleContext}
      */
     public static ContextKey<ScopeModuleContext> createKey(Supplier<ScopeKey> fallbackScope) {
@@ -65,6 +68,7 @@ public class ScopeModuleContext extends DefaultContext {
      * Checks if the provided scope key is the application scope.
      *
      * @param scopeKey the scope key to check
+     *
      * @return true if the scope key is the application scope, false otherwise
      */
     public boolean isApplicationScope(ScopeKey scopeKey) {
@@ -72,23 +76,24 @@ public class ScopeModuleContext extends DefaultContext {
     }
 
     /**
-     * Retrieves the binding hierarchy for the specified scope and component key. If no hierarchy exists,
-     * a new empty one is created and added to the context.
+     * Retrieves the binding hierarchy for the specified scope and component key. If no hierarchy
+     * exists, a new empty one is created and added to the context.
      *
      * @param scope the scope key for which to retrieve the hierarchy
      * @param key the component key for which to retrieve the hierarchy
      * @param <T> the type of the component
+     *
      * @return the binding hierarchy for the specified scope and component key
      */
     public <T> BindingHierarchy<T> hierarchy(ScopeKey scope, ComponentKey<T> key) {
         BindingHierarchy<?> bindingHierarchy = this.scopeModules.get(scope).stream()
-                .filter(hierarchy -> hierarchy.isCompatible(key))
-                .findFirst()
-                .orElseGet(() -> {
-                    BindingHierarchy<T> hierarchy = new NativePrunableBindingHierarchy<>(key);
-                    this.scopeModules.put(scope, hierarchy);
-                    return hierarchy;
-                });
+            .filter(hierarchy -> hierarchy.isCompatible(key))
+            .findFirst()
+            .orElseGet(() -> {
+                BindingHierarchy<T> hierarchy = new NativePrunableBindingHierarchy<>(key);
+                this.scopeModules.put(scope, hierarchy);
+                return hierarchy;
+            });
 
         return TypeUtils.unchecked(bindingHierarchy, BindingHierarchy.class);
     }
@@ -97,7 +102,9 @@ public class ScopeModuleContext extends DefaultContext {
      * Retrieves all binding hierarchies associated with the specified scope key.
      *
      * @param type the scope key for which to retrieve the hierarchies
-     * @return a collection of binding hierarchies for the specified scope key, or an empty collection if none exist
+     *
+     * @return a collection of binding hierarchies for the specified scope key, or an empty
+     * collection if none exist
      */
     public Collection<BindingHierarchy<?>> hierarchies(ScopeKey type) {
         if (type == this.applicationScope) {
@@ -109,8 +116,8 @@ public class ScopeModuleContext extends DefaultContext {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("applicationScope", this.applicationScope)
-                .field("scopeModules", this.scopeModules)
-                .describe();
+            .field("applicationScope", this.applicationScope)
+            .field("scopeModules", this.scopeModules)
+            .describe();
     }
 }

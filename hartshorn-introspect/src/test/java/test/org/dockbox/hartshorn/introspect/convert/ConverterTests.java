@@ -25,9 +25,9 @@ public class ConverterTests {
     @Test
     void testConverterChainingFollowsCorrectOrder() {
         Converter<String, Byte> converter = ((Converter<String, Double>) Double::parseDouble)
-                .andThen(Double::longValue)
-                .andThen(Long::intValue)
-                .andThen(Integer::byteValue);
+            .andThen(Double::longValue)
+            .andThen(Long::intValue)
+            .andThen(Integer::byteValue);
 
         byte result = converter.convert("1.0");
         Assertions.assertEquals((byte) 1, result);

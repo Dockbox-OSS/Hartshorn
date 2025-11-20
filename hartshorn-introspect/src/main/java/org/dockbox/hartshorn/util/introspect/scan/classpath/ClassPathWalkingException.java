@@ -21,9 +21,8 @@ import org.dockbox.hartshorn.util.ApplicationException;
 /**
  * An exception that is thrown when an error occurs while walking the classpath.
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class ClassPathWalkingException extends ApplicationException {
 

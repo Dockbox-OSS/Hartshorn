@@ -19,14 +19,13 @@ package org.dockbox.hartshorn.proxy.advice.wrap;
 /**
  * A callback interface for a proxy method. This interface is used to provide a callback mechanism
  * for proxy methods, while remaining unaware of which phase of the proxy method invocation is
- * currently being executed. This is useful for component processors, and is typically used to create
- * a {@link MethodWrapper} for the proxy method.
+ * currently being executed. This is useful for component processors, and is typically used to
+ * create a {@link MethodWrapper} for the proxy method.
  *
  * @param <T> the type of the proxy method
  *
- * @since 0.4.9
- *
  * @author Guus Lieben
+ * @since 0.4.9
  */
 @FunctionalInterface
 public interface ProxyCallback<T> {
@@ -39,9 +38,11 @@ public interface ProxyCallback<T> {
     void accept(ProxyCallbackContext<T> context);
 
     /**
-     * Returns a new callback that will execute the current callback, and then the provided callback.
+     * Returns a new callback that will execute the current callback, and then the provided
+     * callback.
      *
      * @param next the callback to execute after the current callback
+     *
      * @return the new callback
      */
     default ProxyCallback<T> then(ProxyCallback<T> next) {

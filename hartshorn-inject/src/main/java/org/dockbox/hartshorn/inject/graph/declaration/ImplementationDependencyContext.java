@@ -23,37 +23,41 @@ import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.util.introspect.view.View;
 
 /**
- * A {@link DependencyContext} implementation that is used for implementation-aware components. Components are considered
- * implementation-aware when their primary binding's strategy is an implementation of {@link TypeAwareInstantiationStrategy}.
+ * A {@link DependencyContext} implementation that is used for implementation-aware components.
+ * Components are considered implementation-aware when their primary binding's strategy is an
+ * implementation of {@link TypeAwareInstantiationStrategy}.
  *
- * <p>Implementation-aware {@link DependencyContext}s allow for more fine-grained validation and configuration of the
- * component, as this typically allows better dependency resolution and more accurate component descriptions.
+ * <p>Implementation-aware {@link DependencyContext}s allow for more fine-grained validation and
+ * configuration of the
+ * component, as this typically allows better dependency resolution and more accurate component
+ * descriptions.
  *
  * @param <T> the type of the component that is implemented
  * @param <I> the type of the component that is the implementation
  *
+ * @author Guus Lieben
  * @see DependencyContext
  * @see TypeAwareInstantiationStrategy
  * @see BindingHierarchy
- *
  * @since 0.5.0
- *
- * @author Guus Lieben
  */
 public class ImplementationDependencyContext<T, I extends T> extends AbstractDependencyContext<I> {
 
     private final DependencyContext<I> implementationContext;
     private final DependencyContext<T> declarationContext;
 
-    public ImplementationDependencyContext(DependencyContext<I> implementationContext, DependencyContext<T> declarationContext) {
+    public ImplementationDependencyContext(
+        DependencyContext<I> implementationContext,
+        DependencyContext<T> declarationContext
+    ) {
         super(implementationContext);
         this.implementationContext = implementationContext;
         this.declarationContext = declarationContext;
     }
 
     /**
-     * Returns the {@link DependencyContext} of the implementation component. This is the component that is created by
-     * the container.
+     * Returns the {@link DependencyContext} of the implementation component. This is the component
+     * that is created by the container.
      *
      * @return the {@link DependencyContext} of the implementation component
      */
@@ -62,9 +66,9 @@ public class ImplementationDependencyContext<T, I extends T> extends AbstractDep
     }
 
     /**
-     * Returns the {@link DependencyContext} of the declaration component. This is the component that is declared by the
-     * user, and is being implemented by the {@link #implementationContext()}. This component is not created by the
-     * container.
+     * Returns the {@link DependencyContext} of the declaration component. This is the component
+     * that is declared by the user, and is being implemented by the
+     * {@link #implementationContext()}. This component is not created by the container.
      *
      * @return the {@link DependencyContext} of the declaration component
      */
@@ -84,6 +88,9 @@ public class ImplementationDependencyContext<T, I extends T> extends AbstractDep
 
     @Override
     public String describe() {
-        return this.implementationContext().describe() + " (implementation of " + this.declarationContext().describe() + ")";
+        return this.implementationContext().describe()
+            + " (implementation of "
+            + this.declarationContext().describe()
+            + ")";
     }
 }

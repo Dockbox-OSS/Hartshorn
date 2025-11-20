@@ -21,12 +21,13 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * Standard implementation of {@link ProxyResultValidator} that uses the {@link Introspector} to validate the result
- * type of a method invocation. This will ensure that the result type is compatible with the return type of the method
- * that was invoked, and will throw an {@link IllegalArgumentException} if this is not the case.
+ * Standard implementation of {@link ProxyResultValidator} that uses the {@link Introspector} to
+ * validate the result type of a method invocation. This will ensure that the result type is
+ * compatible with the return type of the method that was invoked, and will throw an
+ * {@link IllegalArgumentException} if this is not the case.
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class IntrospectionProxyResultValidator implements ProxyResultValidator {
 
@@ -52,7 +53,10 @@ public class IntrospectionProxyResultValidator implements ProxyResultValidator {
                     return result;
                 }
                 else {
-                    throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
+                    throw new IllegalArgumentException("Invalid return type: "
+                        + resultView.name()
+                        + " for "
+                        + source.qualifiedName());
                 }
             }
         }
@@ -65,7 +69,10 @@ public class IntrospectionProxyResultValidator implements ProxyResultValidator {
                 return result;
             }
             else {
-                throw new IllegalArgumentException("Invalid return type: " + resultView.name() + " for " + source.qualifiedName());
+                throw new IllegalArgumentException("Invalid return type: "
+                    + resultView.name()
+                    + " for "
+                    + source.qualifiedName());
             }
         }
     }

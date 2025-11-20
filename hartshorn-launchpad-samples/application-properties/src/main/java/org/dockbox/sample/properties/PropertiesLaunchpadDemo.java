@@ -36,8 +36,8 @@ public class PropertiesLaunchpadDemo {
             // Properties can be accessed via the PropertyRegistry. You can retrieve the registry as a component,
             // or through the ApplicationContext's environment.
             String greeting = propertyRegistry.get("sample.greeting")
-                    .flatMap(ValueProperty::value)
-                    .orElseThrow(() -> new IllegalStateException("Property 'sample.greeting' not found"));
+                .flatMap(ValueProperty::value)
+                .orElseThrow(() -> new IllegalStateException("Property 'sample.greeting' not found"));
 
             // Due to the presence of hartshorn.profiles in application.yml, the sample.greeting
             // property will resolve to the value defined in application-demo.yml.
@@ -45,10 +45,11 @@ public class PropertiesLaunchpadDemo {
 
             // Active profiles can be inspected by casting the PropertyRegistry to ProfilePropertyRegistry
             if (propertyRegistry instanceof ProfilePropertyRegistry profilePropertyRegistry) {
-                List<EnvironmentProfile> profiles = profilePropertyRegistry.profileRegistry().profiles();
+                List<EnvironmentProfile> profiles =
+                    profilePropertyRegistry.profileRegistry().profiles();
                 String profilesLabel = profiles.stream()
-                        .map(EnvironmentProfile::name)
-                        .collect(Collectors.joining(", "));
+                    .map(EnvironmentProfile::name)
+                    .collect(Collectors.joining(", "));
 
                 // This should log "Active profiles: default, demo". The default profile is always active,
                 // and the demo profile is activated via hartshorn.profiles in application.yml.

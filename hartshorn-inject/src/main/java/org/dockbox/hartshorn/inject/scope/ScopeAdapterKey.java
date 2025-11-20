@@ -24,15 +24,13 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 import java.util.Objects;
 
 /**
- * Specialized {@link ScopeKey} for {@link ScopeAdapter} instances. This tracks both the adaptee type
- * and the scope adapter type.
- *
- * @see ScopeAdapter
- * @see ScopeKey
- *
- * @since 0.5.0
+ * Specialized {@link ScopeKey} for {@link ScopeAdapter} instances. This tracks both the adaptee
+ * type and the scope adapter type.
  *
  * @author Guus Lieben
+ * @see ScopeAdapter
+ * @see ScopeKey
+ * @since 0.5.0
  */
 public class ScopeAdapterKey implements ScopeKey {
 
@@ -47,7 +45,8 @@ public class ScopeAdapterKey implements ScopeKey {
             throw new IllegalArgumentException("The given type is not a parameterized ScopeAdapter");
         }
         if (adapterType.parameters().size() > 1) {
-            throw new IllegalArgumentException("The given type is a ScopeAdapter with too many parameters");
+            throw new IllegalArgumentException(
+                "The given type is a ScopeAdapter with too many parameters");
         }
         this.adapterType = adapterType;
         this.adapteeType = adapterType.parameters().getFirst();
@@ -63,7 +62,8 @@ public class ScopeAdapterKey implements ScopeKey {
      */
     public static <T> ScopeAdapterKey of(ScopeAdapter<T> adapter) {
         ParameterizableType adapteeType = adapter.adapteeType();
-        ParameterizableType adapterType = ParameterizableType.builder(ScopeAdapter.class).parameters(adapteeType).build();
+        ParameterizableType adapterType =
+            ParameterizableType.builder(ScopeAdapter.class).parameters(adapteeType).build();
         return new ScopeAdapterKey(TypeUtils.unchecked(adapterType, ParameterizableType.class));
     }
 
@@ -71,6 +71,7 @@ public class ScopeAdapterKey implements ScopeKey {
      * Creates a new key for the given adaptee type.
      *
      * @param type the adaptee type
+     *
      * @return the key
      */
     public static ScopeAdapterKey of(ParameterizableType type) {
@@ -100,10 +101,10 @@ public class ScopeAdapterKey implements ScopeKey {
 
     @Override
     public boolean equals(Object object) {
-        if(this == object) {
+        if (this == object) {
             return true;
         }
-        if(!(object instanceof ScopeAdapterKey that)) {
+        if (!(object instanceof ScopeAdapterKey that)) {
             return false;
         }
         // Note that adapterType already contains adaptee type, so no need to check that separately
@@ -124,8 +125,8 @@ public class ScopeAdapterKey implements ScopeKey {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("adapterType", this.adapterType)
-                .field("adapteeType", this.adapteeType)
-                .describe();
+            .field("adapterType", this.adapterType)
+            .field("adapteeType", this.adapteeType)
+            .describe();
     }
 }

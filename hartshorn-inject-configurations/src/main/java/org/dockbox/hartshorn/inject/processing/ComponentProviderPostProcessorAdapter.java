@@ -36,16 +36,18 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
 import java.util.Set;
 
 /**
- * An adapter for {@link ComponentProviderPostProcessor} that allows for the processing of components provided
- * by a {@link ComponentRegistryAwareComponentProvider}. This offers full support for {@link ComponentCollection
- * component collections}, and allows for the processing of both managed and unmanaged components.
+ * An adapter for {@link ComponentProviderPostProcessor} that allows for the processing of
+ * components provided by a {@link ComponentRegistryAwareComponentProvider}. This offers full
+ * support for {@link ComponentCollection component collections}, and allows for the processing of
+ * both managed and unmanaged components.
  *
- * <p>The actual processing of components is delegated to a {@link ComponentPostProcessor}. This adapter ensures
- * the instance is sufficiently prepared for processing, and that the component store is updated accordingly.
- *
- * @since 0.6.0
+ * <p>The actual processing of components is delegated to a {@link ComponentPostProcessor}. This
+ * adapter ensures
+ * the instance is sufficiently prepared for processing, and that the component store is updated
+ * accordingly.
  *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public class ComponentProviderPostProcessorAdapter implements ComponentProviderPostProcessor {
 
@@ -56,10 +58,10 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
     private final ComponentStoreCallback componentStoreCallback;
 
     public ComponentProviderPostProcessorAdapter(
-            ComponentRegistryAwareComponentProvider owner,
-            ComponentPostProcessor processor,
-            InjectionCapableApplication application,
-            ComponentStoreCallback componentStoreCallback
+        ComponentRegistryAwareComponentProvider owner,
+        ComponentPostProcessor processor,
+        InjectionCapableApplication application,
+        ComponentStoreCallback componentStoreCallback
     ) {
         this.owner = owner;
         this.processor = processor;
@@ -68,7 +70,11 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
     }
 
     @Override
-    public <T> T processInstance(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, ComponentRequestContext requestContext) throws ApplicationException {
+    public <T> T processInstance(
+        ComponentKey<T> componentKey,
+        ObjectContainer<T> objectContainer,
+        ComponentRequestContext requestContext
+    ) throws ApplicationException {
         Class<? extends T> type = componentKey.type();
         T instance = objectContainer.instance();
         if (instance != null) {
@@ -77,74 +83,87 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
 
         Option<ComponentContainer<?>> container = this.owner.componentRegistry().container(type);
         instance = container.present()
-                ? this.processManagedComponent(componentKey, objectContainer, container, requestContext)
-                : this.processUnmanagedComponent(componentKey, objectContainer, requestContext);
+            ? this.processManagedComponent(componentKey, objectContainer, container, requestContext)
+            : this.processUnmanagedComponent(componentKey, objectContainer, requestContext);
 
-        if (instance == null && (!requestContext.isForInjectionPoint() || this.requireRule.isRequired(requestContext.injectionPoint()))) {
+        if (instance == null && (!requestContext.isForInjectionPoint()
+            || this.requireRule.isRequired(requestContext.injectionPoint()))) {
             componentKey.failureStrategy().onResolutionFailure(componentKey, requestContext);
         }
 
         return instance;
     }
 
-    private <T> T processManagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer,
-            Option<ComponentContainer<?>> container, ComponentRequestContext requestContext) throws ApplicationException {
+    private <T> T processManagedComponent(
+        ComponentKey<T> componentKey, ObjectContainer<T> objectContainer,
+        Option<ComponentContainer<?>> container, ComponentRequestContext requestContext
+    ) throws ApplicationException {
         // Will only mark the object container as processed if the component container permits
         // processing.
         return this.process(componentKey, objectContainer, container.get(), requestContext);
     }
 
-    private <T> T processUnmanagedComponent(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, ComponentRequestContext requestContext)
-            throws ApplicationException {
+    private <T> T processUnmanagedComponent(
+        ComponentKey<T> componentKey,
+        ObjectContainer<T> objectContainer,
+        ComponentRequestContext requestContext
+    )
+        throws ApplicationException {
         if (ComponentCollection.class.isAssignableFrom(componentKey.type())) {
             if (ComponentCollection.class != componentKey.type()) {
-                throw new IllegalArgumentException("Component collection key must be of type ComponentCollection, specific implementations are not supported");
+                throw new IllegalArgumentException(
+                    "Component collection key must be of type ComponentCollection, specific implementations are not supported");
             }
             ComponentCollection<Object> collection = this.processComponentCollection(
-                    TypeUtils.unchecked(componentKey, ComponentKey.class),
-                    TypeUtils.unchecked(objectContainer, ObjectContainer.class),
-                    requestContext
+                TypeUtils.unchecked(componentKey, ComponentKey.class),
+                TypeUtils.unchecked(objectContainer, ObjectContainer.class),
+                requestContext
             );
             return componentKey.type().cast(collection);
         }
         return this.process(componentKey, objectContainer, null, requestContext);
     }
 
-    private <E, T extends ComponentCollection<E>> ComponentCollection<E> processComponentCollection(ComponentKey<T> componentKey, ObjectContainer<T> objectContainer, ComponentRequestContext requestContext)
-            throws ApplicationException {
+    private <E, T extends ComponentCollection<E>> ComponentCollection<E> processComponentCollection(
+        ComponentKey<T> componentKey,
+        ObjectContainer<T> objectContainer,
+        ComponentRequestContext requestContext
+    )
+        throws ApplicationException {
         if (objectContainer.instance() == null) {
             return new ContainerAwareComponentCollection<>(Set.of());
         }
         else if (objectContainer.instance() instanceof ContainerAwareComponentCollection<?> containerAwareComponentCollection) {
 
             ContainerAwareComponentCollection<E> collection = TypeUtils.unchecked(
-                    containerAwareComponentCollection,
-                    ContainerAwareComponentCollection.class);
+                containerAwareComponentCollection,
+                ContainerAwareComponentCollection.class);
 
             ComponentKey<ContainerAwareComponentCollection<E>> key = TypeUtils.unchecked(
-                    componentKey,
-                    ComponentKey.class);
+                componentKey,
+                ComponentKey.class);
 
             return this.processCollection(key, collection, requestContext);
         }
         else {
-            throw new IllegalArgumentException("Component collection from provider must be of type ContainerAwareComponentCollection");
+            throw new IllegalArgumentException(
+                "Component collection from provider must be of type ContainerAwareComponentCollection");
         }
     }
 
     /**
-     * Processes the given {@link LockableComponentProcessingContext} using the configured {@link
-     * ComponentPostProcessor}.
+     * Processes the given {@link LockableComponentProcessingContext} using the configured
+     * {@link ComponentPostProcessor}.
      *
      * @param processingContext the processing context to process
-     *
      * @param <T> the type of the component being processed
      *
      * @return the processed context
      *
      * @throws ApplicationException if an error occurs during processing
      */
-    protected <T> LockableComponentProcessingContext<T> process(LockableComponentProcessingContext<T> processingContext) throws ApplicationException {
+    protected <T> LockableComponentProcessingContext<T> process(LockableComponentProcessingContext<T> processingContext)
+        throws ApplicationException {
         // Store early, so cyclic dependencies may be resolved
         this.componentStoreCallback.store(processingContext.key(), processingContext.container());
         this.processor.process(processingContext);
@@ -152,27 +171,32 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
     }
 
     /**
-     * Processes a component instance within the given {@link ObjectContainer}. If a {@link ComponentContainer}
-     * is provided, it is used to determine whether processing is permitted. If processing is not permitted,
-     * the instance is returned as-is.
+     * Processes a component instance within the given {@link ObjectContainer}. If a
+     * {@link ComponentContainer} is provided, it is used to determine whether processing is
+     * permitted. If processing is not permitted, the instance is returned as-is.
      *
      * @param key the component key of the component being processed
      * @param objectContainer the object container holding the instance to be processed
      * @param container the component container describing the component, if any
      * @param requestContext the request context for the processing operation
-     *
      * @param <T> the type of the component being processed
      *
      * @return the processed instance
      *
      * @throws ApplicationException if an error occurs during processing
      */
-    protected <T> T process(ComponentKey<T> key, ObjectContainer<T> objectContainer, @Nullable ComponentContainer<?> container, ComponentRequestContext requestContext) throws ApplicationException {
+    protected <T> T process(
+        ComponentKey<T> key,
+        ObjectContainer<T> objectContainer,
+        @Nullable ComponentContainer<?> container,
+        ComponentRequestContext requestContext
+    ) throws ApplicationException {
         if (container != null && !container.permitsProcessing()) {
             return objectContainer.instance();
         }
 
-        LockableComponentProcessingContext<T> processingContext = this.prepareProcessingContext(key, objectContainer, container, requestContext);
+        LockableComponentProcessingContext<T> processingContext =
+            this.prepareProcessingContext(key, objectContainer, container, requestContext);
         objectContainer.processed(true);
 
         processingContext = this.process(processingContext);
@@ -180,13 +204,12 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
     }
 
     /**
-     * Processes a {@link ContainerAwareComponentCollection} by processing each individual component within the
-     * collection.
+     * Processes a {@link ContainerAwareComponentCollection} by processing each individual component
+     * within the collection.
      *
      * @param key the component key of the collection
      * @param collection the collection to process
      * @param requestContext the request context for the processing operation
-     *
      * @param <E> the element type of the collection
      * @param <T> the type of the collection
      *
@@ -194,32 +217,42 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
      *
      * @throws ApplicationException if an error occurs during processing
      */
-    protected <E, T extends ContainerAwareComponentCollection<E>> T processCollection(ComponentKey<T> key, T collection, ComponentRequestContext requestContext) throws ApplicationException {
+    protected <E, T extends ContainerAwareComponentCollection<E>> T processCollection(
+        ComponentKey<T> key,
+        T collection,
+        ComponentRequestContext requestContext
+    ) throws ApplicationException {
         ComponentKey<E> build = TypeUtils.unchecked(key.mutable()
-                .type(key.parameterizedType().parameters().getFirst())
-                .build(), ComponentKey.class);
+            .type(key.parameterizedType().parameters().getFirst())
+            .build(), ComponentKey.class);
 
-        for(ObjectContainer<E> container : collection.containers()) {
+        for (ObjectContainer<E> container : collection.containers()) {
             this.process(build, container, null, requestContext);
         }
         return collection;
     }
 
     /**
-     * Prepares a {@link LockableComponentProcessingContext} for processing. This includes setting up tooling
-     * which may be required during processing, such as a {@link ProxyFactory} if proxying is permitted.
+     * Prepares a {@link LockableComponentProcessingContext} for processing. This includes setting
+     * up tooling which may be required during processing, such as a {@link ProxyFactory} if
+     * proxying is permitted.
      *
      * @param key the component key of the component being processed
      * @param objectContainer the object container holding the instance to be processed
      * @param componentContainer the component container describing the component, if any
      * @param requestContext the request context for the processing operation
-     *
      * @param <T> the type of the component being processed
      *
      * @return the prepared processing context
      */
-    protected <T> LockableComponentProcessingContext<T> prepareProcessingContext(ComponentKey<T> key, ObjectContainer<T> objectContainer, @Nullable ComponentContainer<?> componentContainer, ComponentRequestContext requestContext) {
-        LockableComponentProcessingContext<T> processingContext = new LockableComponentProcessingContext<>(
+    protected <T> LockableComponentProcessingContext<T> prepareProcessingContext(
+        ComponentKey<T> key,
+        ObjectContainer<T> objectContainer,
+        @Nullable ComponentContainer<?> componentContainer,
+        ComponentRequestContext requestContext
+    ) {
+        LockableComponentProcessingContext<T> processingContext =
+            new LockableComponentProcessingContext<>(
                 this.application, key, requestContext, objectContainer,
                 componentContainer == null || componentContainer.permitsProxying(),
                 this.componentStoreCallback);
@@ -231,13 +264,17 @@ public class ComponentProviderPostProcessorAdapter implements ComponentProviderP
                 // Always attempt to use the most detailed proxy factory available, as this allows for
                 // more advanced proxying capabilities.
                 Class<?> proxyBaseType = hasObjectInstance
-                        ? objectContainer.instance().getClass()
-                        : key.type();
-                StateAwareProxyFactory<?> factory = this.application.environment().proxyOrchestrator().factory(proxyBaseType);
+                    ? objectContainer.instance().getClass()
+                    : key.type();
+                StateAwareProxyFactory<?> factory =
+                    this.application.environment().proxyOrchestrator().factory(proxyBaseType);
 
                 if (objectContainer.instance() != null) {
                     factory.trackState(false);
-                    factory.advisors().type().delegateAbstractOnly(TypeUtils.unchecked(objectContainer.instance(), Object.class));
+                    factory.advisors()
+                        .type()
+                        .delegateAbstractOnly(TypeUtils.unchecked(objectContainer.instance(),
+                            Object.class));
                     factory.trackState(true);
                 }
                 processingContext.put(ProxyFactory.class, factory);

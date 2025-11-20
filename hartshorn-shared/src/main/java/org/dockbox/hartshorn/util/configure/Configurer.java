@@ -22,9 +22,8 @@ import org.dockbox.hartshorn.context.Context;
  * A marker interface for classes that can be configured. This interface is used to allow for
  * context-attached configurers to be used in {@link Customizer}s.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface Configurer extends Context {
 }

@@ -22,19 +22,18 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
  * A context carrier is a class that can be used to transport an active {@link ApplicationContext},
  * and allows for the attached {@link ApplicationContext} to be changed.
  *
- * @see ApplicationContextCarrier
- *
- * @since 0.4.9
- *
  * @author Guus Lieben
+ * @see ApplicationContextCarrier
+ * @since 0.4.9
  */
 public interface ModifiableApplicationContextCarrier extends ApplicationContextCarrier {
 
     /**
-     * Sets the active {@link ApplicationContext}. Depending on the implementation, additional
-     * rules may be applied to the provided {@link ApplicationContext}.
+     * Sets the active {@link ApplicationContext}. Depending on the implementation, additional rules
+     * may be applied to the provided {@link ApplicationContext}.
      *
      * @param context The {@link ApplicationContext} to set.
+     *
      * @return The current instance.
      */
     ModifiableApplicationContextCarrier applicationContext(ApplicationContext context);

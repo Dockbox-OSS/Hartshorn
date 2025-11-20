@@ -21,31 +21,32 @@ import org.dockbox.hartshorn.inject.provider.PostProcessingComponentProvider;
 import org.dockbox.hartshorn.util.IllegalModificationException;
 
 /**
- * A {@link ProcessableApplicationContext} is an {@link ApplicationContext} that can be lazily loaded. This allows for
- * the {@link ApplicationContext} to be configured before it is loaded, which is useful when the {@link ApplicationContext}
- * requires information from the environment to be loaded.
+ * A {@link ProcessableApplicationContext} is an {@link ApplicationContext} that can be lazily
+ * loaded. This allows for the {@link ApplicationContext} to be configured before it is loaded,
+ * which is useful when the {@link ApplicationContext} requires information from the environment to
+ * be loaded.
  *
- * <p>A {@link ProcessableApplicationContext} also allows for {@link ComponentPreProcessor} instances to be registered
- * that will be executed before the {@link ApplicationContext} is loaded. This allows for the {@link ApplicationContext}
- * to prepare components before the application state is fully loaded.
- *
- * @see ApplicationContext
- *
- * @since 0.4.9
+ * <p>A {@link ProcessableApplicationContext} also allows for {@link ComponentPreProcessor}
+ * instances to be registered
+ * that will be executed before the {@link ApplicationContext} is loaded. This allows for the
+ * {@link ApplicationContext} to prepare components before the application state is fully loaded.
  *
  * @author Guus Lieben
+ * @see ApplicationContext
+ * @since 0.4.9
  */
 public interface ProcessableApplicationContext extends ApplicationContext {
 
-    @Override // Expand type to PostProcessingComponentProvider, ensuring the processor registry is available
+    @Override
+        // Expand type to PostProcessingComponentProvider, ensuring the processor registry is available
     PostProcessingComponentProvider defaultProvider();
 
     /**
-     * Loads the context. This will cause the {@link ApplicationContext} to become active, and may cause
-     * the {@link ApplicationContext} prevent further configuration. This method may only be called once.
+     * Loads the context. This will cause the {@link ApplicationContext} to become active, and may
+     * cause the {@link ApplicationContext} prevent further configuration. This method may only be
+     * called once.
      *
      * @throws IllegalModificationException when the {@link ApplicationContext} is already loaded
      */
     void loadContext();
-
 }

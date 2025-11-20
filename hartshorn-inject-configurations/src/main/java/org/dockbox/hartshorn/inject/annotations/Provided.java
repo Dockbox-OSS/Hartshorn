@@ -25,13 +25,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation used to indicate a method will return a provided object. The underlying method should not be
- * called, but the provided object should be returned instead. The provided object is obtained from the active
- * {@link org.dockbox.hartshorn.inject.provider.ComponentProvider}.
+ * Annotation used to indicate a method will return a provided object. The underlying method should
+ * not be called, but the provided object should be returned instead. The provided object is
+ * obtained from the active {@link org.dockbox.hartshorn.inject.provider.ComponentProvider}.
  *
- * <p>The lookup key for the provided object is determined by the {@link InjectorEnvironment#componentKeyResolver()
- * environment's key resolver}. This means that any method annotated with {@link Provided} will also include any
- * qualifiers that are present on the method itself, such as {@link Named}.
+ * <p>The lookup key for the provided object is determined by the
+ * {@link InjectorEnvironment#componentKeyResolver()
+ * environment's key resolver}. This means that any method annotated with {@link Provided} will also
+ * include any qualifiers that are present on the method itself, such as {@link Named}.
  *
  * <p>Example:
  * <pre>{@code
@@ -42,8 +43,8 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
- * @see AnnotatedProviderMethodInterceptorPostProcessor
  * @author Guus Lieben
+ * @see AnnotatedProviderMethodInterceptorPostProcessor
  * @since 0.4.1
  */
 @Retention(RetentionPolicy.RUNTIME)

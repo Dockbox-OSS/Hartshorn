@@ -22,9 +22,8 @@ import org.slf4j.Logger;
  * A simple implementation of a console banner that can be used to print a banner to a given
  * {@link Logger}.
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public abstract class AbstractConsoleBanner implements Banner {
 

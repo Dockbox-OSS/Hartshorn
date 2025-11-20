@@ -25,8 +25,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @ModuleActivator(
-        scanPackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning.components",
-        componentPreProcessors = CountingComponentPreProcessor.class
+    scanPackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning.components",
+    componentPreProcessors = CountingComponentPreProcessor.class
 )
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

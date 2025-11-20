@@ -32,9 +32,8 @@ import java.util.Objects;
  * array. The {@link Collection} is created using a {@link CollectionDefaultValueProviderFactory}
  * and supports any {@link Collection} implementation that has a default constructor.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ArrayToCollectionConverterFactory
     implements ConverterFactory<Object[], Collection<?>> {
@@ -43,7 +42,7 @@ public class ArrayToCollectionConverterFactory
 
     public ArrayToCollectionConverterFactory(Introspector introspector) {
         this.collectionFactory = new CollectionDefaultValueProviderFactory(introspector)
-                .withDefaults();
+            .withDefaults();
     }
 
     @Override
@@ -53,27 +52,27 @@ public class ArrayToCollectionConverterFactory
 
     /**
      * Converts any array to a {@link Collection} of the same type, containing only the objects in
-     * the array. The {@link Collection} is created using the provided {@link DefaultValueProvider}.
+     * the array. The {@link Collection} is created using the provided
+     * {@link DefaultValueProvider}.
      *
-     * @param helperProvider the {@link DefaultValueProvider} that is used to create the {@link
-     * Collection}
+     * @param helperProvider the {@link DefaultValueProvider} that is used to create the
+     * {@link Collection}
      * @param <O> the type of the {@link Collection}
      *
-     * @since 0.5.0
-     *
      * @author Guus Lieben
+     * @since 0.5.0
      */
     private record ArrayToCollectionConverter<O extends Collection<?>>(
-            DefaultValueProvider<O> helperProvider
+        DefaultValueProvider<O> helperProvider
     ) implements Converter<Object[], O> {
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-            @Override
-            public O convert(Object @Nullable [] source) {
-                assert source != null;
-                Collection collection = this.helperProvider.defaultValue();
-                Objects.requireNonNull(collection).addAll(Arrays.asList(source));
-                return (O) collection;
-            }
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        @Override
+        public O convert(Object @Nullable [] source) {
+            assert source != null;
+            Collection collection = this.helperProvider.defaultValue();
+            Objects.requireNonNull(collection).addAll(Arrays.asList(source));
+            return (O) collection;
         }
+    }
 }

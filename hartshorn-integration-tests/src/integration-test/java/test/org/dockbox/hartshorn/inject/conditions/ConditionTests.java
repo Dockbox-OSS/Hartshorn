@@ -47,9 +47,9 @@ import java.util.stream.Stream;
 @HartshornIntegrationTest(includeBasePackages = false)
 @TestComponents(ConditionalConfiguration.class)
 @TestProperties({
-        "property.c=o",
-        "property.d=d",
-        "property.e=otherValue"
+    "property.c=o",
+    "property.d=d",
+    "property.e=otherValue"
 })
 @DemoActivator
 public class ConditionTests {
@@ -59,12 +59,12 @@ public class ConditionTests {
 
     public static Stream<Arguments> properties() {
         return Stream.of(
-                Arguments.of("a", true),
-                Arguments.of("b", false),
-                Arguments.of("c", true),
-                Arguments.of("d", true),
-                Arguments.of("e", false),
-                Arguments.of("f", true)
+            Arguments.of("a", true),
+            Arguments.of("b", false),
+            Arguments.of("c", true),
+            Arguments.of("d", true),
+            Arguments.of("e", false),
+            Arguments.of("f", true)
         );
     }
 
@@ -87,17 +87,19 @@ public class ConditionTests {
 
     @Test
     void testActivatorConditions() {
-        Assertions.assertTrue(this.applicationContext.activators().hasActivator(DemoActivator.class));
+        Assertions.assertTrue(this.applicationContext.activators()
+            .hasActivator(DemoActivator.class));
 
         MethodView<ConditionTests, ?> method = this.applicationContext.environment()
-                .introspector()
-                .introspect(ConditionTests.class)
-                .methods()
-                .named("requiresActivator")
-                .get();
+            .introspector()
+            .introspect(ConditionTests.class)
+            .methods()
+            .named("requiresActivator")
+            .get();
         RequiresCondition annotation = method.annotations().get(RequiresCondition.class).get();
         AnnotationConditionDeclaration declaration = new AnnotationConditionDeclaration(annotation);
-        ConditionContext context = new ConditionContext(this.applicationContext, method, declaration);
+        ConditionContext context =
+            new ConditionContext(this.applicationContext, method, declaration);
         Condition condition = new ActivatorCondition();
 
         ConditionResult result = condition.matches(context);
@@ -105,33 +107,45 @@ public class ConditionTests {
     }
 
     @RequiresActivator(DemoActivator.class)
-    private void requiresActivator() {}
+    private void requiresActivator() {
+    }
 
     @Test
     void testClassConditions() {
-        TypeView<ConditionTests> type = this.applicationContext.environment().introspector().introspect(ConditionTests.class);
+        TypeView<ConditionTests> type =
+            this.applicationContext.environment().introspector().introspect(ConditionTests.class);
         Condition condition = new ClassCondition();
 
         MethodView<ConditionTests, ?> requiresClass = type.methods().named("requiresClass").get();
-        RequiresCondition annotationForPresent = requiresClass.annotations().get(RequiresCondition.class).get();
-        ConditionContext contextForPresent = new ConditionContext(this.applicationContext, requiresClass, new AnnotationConditionDeclaration(annotationForPresent));
+        RequiresCondition annotationForPresent =
+            requiresClass.annotations().get(RequiresCondition.class).get();
+        ConditionContext contextForPresent = new ConditionContext(this.applicationContext,
+            requiresClass,
+            new AnnotationConditionDeclaration(annotationForPresent));
         Assertions.assertTrue(condition.matches(contextForPresent).matches());
 
-        MethodView<ConditionTests, ?> requiresAbsentClass = type.methods().named("requiresAbsentClass").get();
-        RequiresCondition annotationForAbsent = requiresAbsentClass.annotations().get(RequiresCondition.class).get();
-        ConditionContext contextForAbsent = new ConditionContext(this.applicationContext, requiresAbsentClass, new AnnotationConditionDeclaration(annotationForAbsent));
+        MethodView<ConditionTests, ?> requiresAbsentClass =
+            type.methods().named("requiresAbsentClass").get();
+        RequiresCondition annotationForAbsent =
+            requiresAbsentClass.annotations().get(RequiresCondition.class).get();
+        ConditionContext contextForAbsent = new ConditionContext(this.applicationContext,
+            requiresAbsentClass,
+            new AnnotationConditionDeclaration(annotationForAbsent));
         Assertions.assertFalse(condition.matches(contextForAbsent).matches());
     }
 
     @RequiresClass("java.lang.String")
-    private void requiresClass() {}
+    private void requiresClass() {
+    }
 
     @RequiresClass("java.gnal.String")
-    private void requiresAbsentClass() {}
+    private void requiresAbsentClass() {
+    }
 
     @Test
     void testEnclosedViewsIncludeParentCondition() {
-        TypeView<ParentClass> type = this.applicationContext.environment().introspector().introspect(ParentClass.class);
+        TypeView<ParentClass> type =
+            this.applicationContext.environment().introspector().introspect(ParentClass.class);
         ConditionMatcher matcher = new ConditionMatcher(() -> this.applicationContext);
         Assertions.assertFalse(matcher.match(type));
 
@@ -146,6 +160,7 @@ public class ConditionTests {
     @RequiresClass("java.gnal.String")
     public static class ParentClass {
         @RequiresClass("java.lang.String")
-        public void requiresClass() {}
+        public void requiresClass() {
+        }
     }
 }

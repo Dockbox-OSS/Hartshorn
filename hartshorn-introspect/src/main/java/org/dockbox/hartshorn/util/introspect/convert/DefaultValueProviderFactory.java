@@ -18,16 +18,15 @@ package org.dockbox.hartshorn.util.introspect.convert;
 
 /**
  * A specialized {@link ConverterFactory} to handle {@code null} values. This is useful when
- * implementing default values for complex objects. This factory is used to create {@link
- * DefaultValueProvider} instances.
+ * implementing default values for complex objects. This factory is used to create
+ * {@link DefaultValueProvider} instances.
  *
  * @param <T> the target type
- * @see DefaultValueProvider
- * @see ConverterFactory
- *
- * @since 0.5.0
  *
  * @author Guus Lieben
+ * @see DefaultValueProvider
+ * @see ConverterFactory
+ * @since 0.5.0
  */
 public interface DefaultValueProviderFactory<T> extends ConverterFactory<Null, T> {
 

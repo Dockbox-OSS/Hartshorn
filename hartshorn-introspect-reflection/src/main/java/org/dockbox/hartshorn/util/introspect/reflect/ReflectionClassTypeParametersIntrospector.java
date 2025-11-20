@@ -30,13 +30,12 @@ import java.util.List;
 /**
  * Reflection-based introspector for class type parameters.
  *
- * @see Class#getTypeParameters()
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see Class#getTypeParameters()
+ * @since 0.5.0
  */
-public class ReflectionClassTypeParametersIntrospector extends AbstractReflectionTypeParametersIntrospector {
+public class ReflectionClassTypeParametersIntrospector
+    extends AbstractReflectionTypeParametersIntrospector {
 
     private TypeParameterList inputParameters;
 
@@ -48,10 +47,14 @@ public class ReflectionClassTypeParametersIntrospector extends AbstractReflectio
     public TypeParameterList allInput() {
         if (this.inputParameters == null) {
             List<TypeParameterView> parameters = new ArrayList<>();
-            TypeVariable<? extends Class<?>>[] typeParameters = this.type().type().getTypeParameters();
+            TypeVariable<? extends Class<?>>[] typeParameters =
+                this.type().type().getTypeParameters();
             for (int i = 0; i < typeParameters.length; i++) {
                 TypeVariable<?> typeParameter = typeParameters[i];
-                parameters.add(new ReflectionTypeParameterView(typeParameter, this.type(), i, this.introspector()));
+                parameters.add(new ReflectionTypeParameterView(typeParameter,
+                    this.type(),
+                    i,
+                    this.introspector()));
             }
             this.inputParameters = new SimpleTypeParameterList(parameters);
         }

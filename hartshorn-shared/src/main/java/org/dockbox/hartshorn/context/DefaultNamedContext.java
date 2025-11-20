@@ -19,9 +19,8 @@ package org.dockbox.hartshorn.context;
 /**
  * A default implementation of {@link NamedContext}.
  *
- * @since 0.4.3
- *
  * @author Guus Lieben
+ * @since 0.4.3
  */
 public abstract class DefaultNamedContext extends DefaultContext implements NamedContext {
 

@@ -24,14 +24,14 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Collection;
 
 /**
- * A parser to convert all single values in a {@link ListProperty} to instances of a specific type. This
- * requires all elements in the list to be compatible single-value {@link ValueProperty} instances.
+ * A parser to convert all single values in a {@link ListProperty} to instances of a specific type.
+ * This requires all elements in the list to be compatible single-value {@link ValueProperty}
+ * instances.
  *
  * @param <T> the type to convert the value to
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class ValueListPropertyParser<T> implements ListPropertyParser<T> {
 
@@ -44,8 +44,8 @@ public class ValueListPropertyParser<T> implements ListPropertyParser<T> {
     @Override
     public Collection<T> parse(ListProperty property) {
         return property.values().stream()
-                .map(this.delegate::parse)
-                .flatMap(Option::stream)
-                .toList();
+            .map(this.delegate::parse)
+            .flatMap(Option::stream)
+            .toList();
     }
 }

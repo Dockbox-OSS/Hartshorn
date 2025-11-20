@@ -26,10 +26,12 @@ import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
- * A callback that cleans up resources after a test lifecycle has been completed. On its own this callback only
- * closes the {@link ApplicationContext}. The callback can be extended to add additional cleanup logic by registering
- * additional {@link HartshornCleanupCallback} instances to the extension context through {@link
- * HartshornJUnitNamespace#registerCleanupCallback(HartshornCleanupCallback, ExtensionContext)}.
+ * A callback that cleans up resources after a test lifecycle has been completed. On its own this
+ * callback only closes the {@link ApplicationContext}. The callback can be extended to add
+ * additional cleanup logic by registering additional {@link HartshornCleanupCallback} instances to
+ * the extension context through
+ * {@link HartshornJUnitNamespace#registerCleanupCallback(HartshornCleanupCallback,
+ * ExtensionContext)}.
  *
  * @see HartshornCleanupCallback
  * @see HartshornJUnitNamespace
@@ -39,7 +41,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  *
  * @author Guus Lieben
  */
-public class HartshornJUnitCleanupCallback implements BeforeTestExecutionCallback, AfterAllCallback, AfterEachCallback {
+public class HartshornJUnitCleanupCallback
+    implements BeforeTestExecutionCallback, AfterAllCallback, AfterEachCallback {
 
     @Override
     public void beforeTestExecution(ExtensionContext context) {
@@ -59,7 +62,8 @@ public class HartshornJUnitCleanupCallback implements BeforeTestExecutionCallbac
     }
 
     private void afterLifecycle(ExtensionContext context) throws Exception {
-        for(HartshornCleanupCallback callback : HartshornJUnitNamespace.collectCleanupCallbacks(context)) {
+        for (HartshornCleanupCallback callback : HartshornJUnitNamespace.collectCleanupCallbacks(
+            context)) {
             callback.closeAfterLifecycle(context);
         }
         // Always last, in case the application is used by the callbacks

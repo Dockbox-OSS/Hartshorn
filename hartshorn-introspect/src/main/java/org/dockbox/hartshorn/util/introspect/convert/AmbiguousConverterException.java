@@ -19,12 +19,12 @@ package org.dockbox.hartshorn.util.introspect.convert;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * Thrown when two or more {@link GenericConverter}s have overlapping {@link
- * GenericConverter#convertibleTypes() convertible types}, and cannot be meaningfully combined.
- *
- * @since 0.5.0
+ * Thrown when two or more {@link GenericConverter}s have overlapping
+ * {@link GenericConverter#convertibleTypes() convertible types}, and cannot be meaningfully
+ * combined.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class AmbiguousConverterException extends ApplicationRuntimeException {
 

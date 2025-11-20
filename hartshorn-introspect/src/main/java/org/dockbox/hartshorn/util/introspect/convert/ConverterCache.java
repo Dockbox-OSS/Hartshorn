@@ -20,12 +20,11 @@ import java.util.Set;
 
 /**
  * A cache of converters which can be used to find a converter for a given source and target type.
- * This is useful to serve as middle layer between a {@link ConversionService} and a {@link
- * ConverterRegistry}.
- *
- * @since 0.5.0
+ * This is useful to serve as middle layer between a {@link ConversionService} and a
+ * {@link ConverterRegistry}.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface ConverterCache {
 
@@ -40,20 +39,22 @@ public interface ConverterCache {
 
     /**
      * Attempts to find a converter for the given source and target type. If no converter is found,
-     * {@code null} is returned. If multiple converters are found, a {@link
-     * AmbiguousConverterException} may be thrown, or the first instance may be returned. This
-     * remains up to the implementation.
+     * {@code null} is returned. If multiple converters are found, a
+     * {@link AmbiguousConverterException} may be thrown, or the first instance may be returned.
+     * This remains up to the implementation.
      *
      * @param source The source object
      * @param targetType The target type
+     *
      * @return The converter, or {@code null} if no converter is found
+     *
      * @throws AmbiguousConverterException If multiple converters are found
      */
     GenericConverter getConverter(Object source, Class<?> targetType);
 
     /**
-     * Returns all converters registered in this cache. This may be an empty set, but never {@code
-     * null}.
+     * Returns all converters registered in this cache. This may be an empty set, but never
+     * {@code null}.
      *
      * @return All converters registered in this cache
      */

@@ -25,11 +25,9 @@ import java.util.Objects;
  *
  * @param type the parameterized type to wrap
  *
- * @see ParameterizableType
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see ParameterizableType
+ * @since 0.5.0
  */
 record ParameterizableParameterizedTypeWrapper(ParameterizableType type)
     implements ParameterizedType {
@@ -37,8 +35,8 @@ record ParameterizableParameterizedTypeWrapper(ParameterizableType type)
     @Override
     public java.lang.reflect.Type[] getActualTypeArguments() {
         return this.type.parameters().stream()
-                .map(ParameterizableType::asParameterizedType)
-                .toArray(java.lang.reflect.Type[]::new);
+            .map(ParameterizableType::asParameterizedType)
+            .toArray(java.lang.reflect.Type[]::new);
     }
 
     @Override
@@ -53,10 +51,10 @@ record ParameterizableParameterizedTypeWrapper(ParameterizableType type)
 
     @Override
     public boolean equals(Object object) {
-        if(this == object) {
+        if (this == object) {
             return true;
         }
-        if(!(object instanceof ParameterizableParameterizedTypeWrapper that)) {
+        if (!(object instanceof ParameterizableParameterizedTypeWrapper that)) {
             return false;
         }
         return Objects.equals(this.type, that.type);

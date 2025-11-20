@@ -34,9 +34,8 @@ import java.util.stream.Stream;
  *
  * @param <T> The type of the value
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class None<T> extends DefaultContext implements Option<T> {
 
@@ -73,7 +72,7 @@ public class None<T> extends DefaultContext implements Option<T> {
 
     @Override
     public <E extends Throwable> @NonNull T orElseThrow(
-            @NonNull Supplier<@NonNull E> supplier
+        @NonNull Supplier<@NonNull E> supplier
     ) throws E {
         throw supplier.get();
     }
@@ -110,7 +109,7 @@ public class None<T> extends DefaultContext implements Option<T> {
 
     @Override
     public @NonNull <U> Option<U> flatMap(
-            @NonNull Function<@NonNull T, @NonNull Option<U>> function
+        @NonNull Function<@NonNull T, @NonNull Option<U>> function
     ) {
         return Option.empty();
     }

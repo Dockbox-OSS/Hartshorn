@@ -37,50 +37,62 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 
 /**
- * A parameter resolver for JUnit 5 that resolves parameters annotated with {@link Inject}, and optionally
- * {@code jakarta.inject.Inject} or {@code javax.inject.Inject} if they are present on the classpath.
+ * A parameter resolver for JUnit 5 that resolves parameters annotated with {@link Inject}, and
+ * optionally {@code jakarta.inject.Inject} or {@code javax.inject.Inject} if they are present on
+ * the classpath.
  *
- * <p>Annotated parameters are resolved in the same manner as they would be in an executable element (methods
+ * <p>Annotated parameters are resolved in the same manner as they would be in an executable element
+ * (methods
  * and constructors) that is managed by the IoC container.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class HartshornInjectParameterResolver implements ParameterResolver {
 
-    private static final Option<Class<? extends Annotation>> JAVAX_INJECT = TypeUtils.forName("javax.inject.Inject", Annotation.class);
-    private static final Option<Class<? extends Annotation>> JAKARTA_INJECT = TypeUtils.forName("jakarta.inject.Inject", Annotation.class);
+    private static final Option<Class<? extends Annotation>> JAVAX_INJECT =
+        TypeUtils.forName("javax.inject.Inject", Annotation.class);
+    private static final Option<Class<? extends Annotation>> JAKARTA_INJECT =
+        TypeUtils.forName("jakarta.inject.Inject", Annotation.class);
 
     @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
-            throws ParameterResolutionException {
-        ReflectionElementAnnotationsIntrospector introspector = new ReflectionElementAnnotationsIntrospector(
+    public boolean supportsParameter(
+        ParameterContext parameterContext,
+        ExtensionContext extensionContext
+    )
+        throws ParameterResolutionException {
+        ReflectionElementAnnotationsIntrospector introspector =
+            new ReflectionElementAnnotationsIntrospector(
                 null, parameterContext.getParameter(), new VirtualHierarchyAnnotationLookup()
-        );
+            );
         return introspector.has(Inject.class)
-                || JAVAX_INJECT.test(introspector::has)
-                || JAKARTA_INJECT.test(introspector::has);
+            || JAVAX_INJECT.test(introspector::has)
+            || JAKARTA_INJECT.test(introspector::has);
     }
 
     @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
-            throws ParameterResolutionException {
+    public Object resolveParameter(
+        ParameterContext parameterContext,
+        ExtensionContext extensionContext
+    )
+        throws ParameterResolutionException {
         Optional<Method> testMethod = extensionContext.getTestMethod();
         if (testMethod.isEmpty()) {
             throw new ParameterResolutionException("Test method was not provided to runner");
         }
 
-        InjectionCapableApplication application = HartshornJUnitNamespace.application(extensionContext);
+        InjectionCapableApplication application =
+            HartshornJUnitNamespace.application(extensionContext);
         Introspector introspector = application.environment().introspector();
         MethodView<?, ?> executable = introspector.introspect(testMethod.get());
 
         ParameterLoader parameterLoader = new ExecutableElementContextParameterLoader(application);
-        ApplicationBoundParameterLoaderContext parameterLoaderContext = new ApplicationBoundParameterLoaderContext(
+        ApplicationBoundParameterLoaderContext parameterLoaderContext =
+            new ApplicationBoundParameterLoaderContext(
                 executable,
                 extensionContext.getTestInstance().orElse(null),
                 application
-        );
+            );
 
         return parameterLoader.loadArgument(parameterLoaderContext, parameterContext.getIndex());
     }

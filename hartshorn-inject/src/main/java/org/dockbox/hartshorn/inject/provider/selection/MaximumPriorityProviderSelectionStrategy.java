@@ -23,15 +23,13 @@ import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 
 /**
  * A {@link ProviderSelectionStrategy} which selects the provider with the highest priority, as long
- * as that priority is lower than the provided maximum priority. If no provider is found, {@code null}
- * is returned.
- *
- * @see ProviderSelectionStrategy
- * @see BindingHierarchy#priorities()
- *
- * @since 0.5.0
+ * as that priority is lower than the provided maximum priority. If no provider is found,
+ * {@code null} is returned.
  *
  * @author Guus Lieben
+ * @see ProviderSelectionStrategy
+ * @see BindingHierarchy#priorities()
+ * @since 0.5.0
  */
 public class MaximumPriorityProviderSelectionStrategy implements ProviderSelectionStrategy {
 
@@ -49,7 +47,9 @@ public class MaximumPriorityProviderSelectionStrategy implements ProviderSelecti
         for (Integer priority : priorities.reversed()) {
             if (priority < this.maximumPriorityExclusive) {
                 return hierarchy.get(priority)
-                        .orElseThrow(() -> new IllegalStateException("No provider found for priority " + priority + ", but priority was reported."));
+                    .orElseThrow(() -> new IllegalStateException("No provider found for priority "
+                        + priority
+                        + ", but priority was reported."));
             }
         }
         return null;

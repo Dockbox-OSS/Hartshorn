@@ -21,12 +21,12 @@ import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 
 /**
- * Strategy which can be used by {@link ComponentProvider component providers} to handle scenarios where
- * a component could not be resolved. This is typically provided as a hint through a {@link ComponentKey}.
- *
- * @since 0.7.0
+ * Strategy which can be used by {@link ComponentProvider component providers} to handle scenarios
+ * where a component could not be resolved. This is typically provided as a hint through a
+ * {@link ComponentKey}.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public interface ComponentResolutionFailureStrategy {
 
@@ -37,5 +37,8 @@ public interface ComponentResolutionFailureStrategy {
      * @param requestContext the request context for the component resolution
      * @param <T> the type of the component
      */
-    <T> void onResolutionFailure(ComponentKey<T> componentKey, ComponentRequestContext requestContext);
+    <T> void onResolutionFailure(
+        ComponentKey<T> componentKey,
+        ComponentRequestContext requestContext
+    );
 }

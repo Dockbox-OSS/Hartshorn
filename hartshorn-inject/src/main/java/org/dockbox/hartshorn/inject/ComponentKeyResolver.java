@@ -20,23 +20,22 @@ import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 
 /**
- * A resolver that determines the {@link ComponentKey} of a component. This is commonly used to determine the
- * {@link ComponentKey} of a binding declaration or injection point.
- *
- * @see ComponentKey
- *
- * @since 0.6.0
+ * A resolver that determines the {@link ComponentKey} of a component. This is commonly used to
+ * determine the {@link ComponentKey} of a binding declaration or injection point.
  *
  * @author Guus Lieben
+ * @see ComponentKey
+ * @since 0.6.0
  */
 @FunctionalInterface
 public interface ComponentKeyResolver {
 
     /**
-     * Resolves the {@link ComponentKey} of the given view. The key will be scoped to the default scope, which
-     * is typically the application scope.
+     * Resolves the {@link ComponentKey} of the given view. The key will be scoped to the default
+     * scope, which is typically the application scope.
      *
      * @param view the view to resolve the key for
+     *
      * @return the key of the given view
      */
     default ComponentKey<?> resolve(AnnotatedGenericTypeView<?> view) {
@@ -44,10 +43,12 @@ public interface ComponentKeyResolver {
     }
 
     /**
-     * Resolves the {@link ComponentKey} of the given view. The key will be scoped to the given scope.
+     * Resolves the {@link ComponentKey} of the given view. The key will be scoped to the given
+     * scope.
      *
      * @param view the view to resolve the key for
      * @param scope the scope of the key
+     *
      * @return the key of the given view
      */
     ComponentKey<?> resolve(AnnotatedGenericTypeView<?> view, Scope scope);

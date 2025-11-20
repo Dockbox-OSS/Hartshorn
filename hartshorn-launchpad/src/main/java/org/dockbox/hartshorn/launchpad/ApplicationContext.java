@@ -30,16 +30,17 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * to log messages and exceptions in a standardized way.
  *
  * <p>The primary context is created by the {@link ApplicationBuilder}
- * and is accessible through any {@link ApplicationContextCarrier} that is attached
- * to the application. If the context supports component injection, it can also be accessed through
- * any form of injection.
+ * and is accessible through any {@link ApplicationContextCarrier} that is attached to the
+ * application. If the context supports component injection, it can also be accessed through any
+ * form of injection.
  *
- * <p>The application context is responsible for managing the lifecycle of the application, including
+ * <p>The application context is responsible for managing the lifecycle of the application,
+ * including
  * its components. The implementation may choose to perform specific actions based on available
  * activators and properties.
  *
- * @since 0.4.11
  * @author Guus Lieben
+ * @since 0.4.11
  */
 public interface ApplicationContext extends
     ConfigurableActivationInjectionCapableApplication,
@@ -52,15 +53,16 @@ public interface ApplicationContext extends
      * Gets the active {@link ApplicationEnvironment} for the application.
      *
      * @return The active {@link ApplicationEnvironment} for the application.
+     *
      * @see ApplicationEnvironment
      */
     @Override
     ApplicationEnvironment environment();
 
     /**
-     * Indicates whether the application context is closed. A closed context cannot be used reliably to
-     * access its components, as the components may have been removed from the context, or have been
-     * cancelled, interrupted, or otherwise stopped.
+     * Indicates whether the application context is closed. A closed context cannot be used reliably
+     * to access its components, as the components may have been removed from the context, or have
+     * been cancelled, interrupted, or otherwise stopped.
      *
      * @return {@code true} if the context is closed, {@code false} otherwise.
      */

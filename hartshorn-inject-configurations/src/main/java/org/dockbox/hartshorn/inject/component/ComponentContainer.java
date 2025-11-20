@@ -22,16 +22,14 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.util.Comparator;
 
 /**
- * Represents a container for a component. The metadata provided by this container is used to register the component with
- * the IoC container.
+ * Represents a container for a component. The metadata provided by this container is used to
+ * register the component with the IoC container.
  *
  * @param <T> the type of the component
  *
- * @see ComponentRegistry
- *
- * @since 0.4.1
- *
  * @author Guus Lieben
+ * @see ComponentRegistry
+ * @since 0.4.1
  */
 public interface ComponentContainer<T> {
 

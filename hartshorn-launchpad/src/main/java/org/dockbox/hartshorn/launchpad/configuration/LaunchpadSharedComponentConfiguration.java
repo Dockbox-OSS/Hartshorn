@@ -88,8 +88,8 @@ public class LaunchpadSharedComponentConfiguration {
         return this.loggerForInjectionPoint(injectionPoint, () -> {
             Class<?> declaringType = declarationResolver.resolve(injectionPoint).type();
             return componentRegistry.container(declaringType)
-                    .map(ComponentContainer::name)
-                    .orElseGet(declaringType::getName);
+                .map(ComponentContainer::name)
+                .orElseGet(declaringType::getName);
         });
     }
 
@@ -99,6 +99,7 @@ public class LaunchpadSharedComponentConfiguration {
      *
      * @param injectionPoint the injection point, if available
      * @param declarationResolver the injection point declaration resolver
+     *
      * @return the logger
      */
     @Prototype
@@ -118,14 +119,14 @@ public class LaunchpadSharedComponentConfiguration {
     }
 
     private Logger loggerForInjectionPoint(
-            InjectionPoint injectionPoint,
-            Supplier<String> defaultNameSupplier
+        InjectionPoint injectionPoint,
+        Supplier<String> defaultNameSupplier
     ) {
         String name = injectionPoint.injectionPoint().annotations()
-                .get(LoggerMeta.class)
-                .map(LoggerMeta::name)
-                .filter(StringUtilities::notEmpty)
-                .orElseGet(defaultNameSupplier);
+            .get(LoggerMeta.class)
+            .map(LoggerMeta::name)
+            .filter(StringUtilities::notEmpty)
+            .orElseGet(defaultNameSupplier);
         return LoggerFactory.getLogger(name);
     }
 
@@ -180,9 +181,9 @@ public class LaunchpadSharedComponentConfiguration {
     }
 
     /**
-     * Provides additional internal converters for the conversion service. Currently, this
-     * only includes {@link ValuePropertyToObjectConverterFactory} to convert from
-     * {@link ValueProperty} instances.
+     * Provides additional internal converters for the conversion service. Currently, this only
+     * includes {@link ValuePropertyToObjectConverterFactory} to convert from {@link ValueProperty}
+     * instances.
      *
      * @return the converters customizer
      */
@@ -190,7 +191,6 @@ public class LaunchpadSharedComponentConfiguration {
     @CompositeMember
     public ConvertersCustomizer additionalInternalConvertersCustomizer() {
         return (conversionService, converterRegistry) -> {
-            // From Hartshorn Properties
             converterRegistry.addConverterFactory(
                 ValueProperty.class,
                 new ValuePropertyToObjectConverterFactory(conversionService)
@@ -208,28 +208,6 @@ public class LaunchpadSharedComponentConfiguration {
     @Singleton
     @CompositeMember
     public LifecycleObserver applicationStarterLifecycleObserver() {
-        return new LifecycleObserver() {
-            @Override
-            public void onStarted(ApplicationContext applicationContext) {
-                // Late lookup for ApplicationStarter, to allow for maximum flexibility early in the
-                // application lifecycle.
-                ComponentKey<ApplicationStarter> componentKey = ComponentKey
-                    .builder(ApplicationStarter.class)
-                    .strict(false)
-                    .optional()
-                    .build();
-                ApplicationStarter applicationStarter = applicationContext.get(componentKey);
-                // OK to do nothing if no ApplicationStarter is present, as this is optional. Other
-                // observers may still be present, and will be invoked.
-                if (applicationStarter != null) {
-                    try {
-                        applicationStarter.run(applicationContext);
-                    }
-                    catch (ApplicationException e) {
-                        applicationContext.handle(e);
-                    }
-                }
-            }
-        };
+        return new ApplicationStarterLifecycleObserver();
     }
 }

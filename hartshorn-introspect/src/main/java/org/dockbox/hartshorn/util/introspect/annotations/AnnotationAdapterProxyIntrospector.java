@@ -23,24 +23,23 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.lang.annotation.Annotation;
 
 /**
- * An introspector for {@link Annotation} instances that are proxied with a {@link
- * AnnotationAdapterProxy} handler.
+ * An introspector for {@link Annotation} instances that are proxied with a
+ * {@link AnnotationAdapterProxy} handler.
  *
  * @param <T> The type of annotation that is proxied
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class AnnotationAdapterProxyIntrospector<T extends Annotation>
-        implements ProxyIntrospector<T> {
+    implements ProxyIntrospector<T> {
 
     private final Annotation annotation;
     private final AnnotationAdapterProxy<T> adapterProxy;
 
     public AnnotationAdapterProxyIntrospector(
-            Annotation annotation,
-            AnnotationAdapterProxy<T> adapterProxy
+        Annotation annotation,
+        AnnotationAdapterProxy<T> adapterProxy
     ) {
         this.annotation = annotation;
         this.adapterProxy = adapterProxy;
@@ -65,7 +64,7 @@ public class AnnotationAdapterProxyIntrospector<T extends Annotation>
     @Override
     public Option<T> delegate() {
         return Option.of(
-                this.adapterProxy.targetAnnotationClass().cast(this.adapterProxy.actualAnnotation())
+            this.adapterProxy.targetAnnotationClass().cast(this.adapterProxy.actualAnnotation())
         );
     }
 }

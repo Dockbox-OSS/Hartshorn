@@ -17,14 +17,13 @@
 package org.dockbox.hartshorn.util.introspect.convert;
 
 /**
- * A marker class used to represent a null value. This is used to avoid unnecessary conversions
- * when using {@link DefaultValueProvider}s. The instance of this class is not intended to be
- * used outside the {@link org.dockbox.hartshorn.util.introspect.convert} package, and is thus
- * reserved for internal use only.
- *
- * @since 0.5.0
+ * A marker class used to represent a null value. This is used to avoid unnecessary conversions when
+ * using {@link DefaultValueProvider}s. The instance of this class is not intended to be used
+ * outside the {@link org.dockbox.hartshorn.util.introspect.convert} package, and is thus reserved
+ * for internal use only.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public final class Null {
 
@@ -34,8 +33,8 @@ public final class Null {
     public static final Class<Null> TYPE = Null.class;
 
     /**
-     * The singleton instance of {@link Null}. Should not be used directly through public APIs,
-     * as the conversion service itself should only expect {@code null} and translate that to
+     * The singleton instance of {@link Null}. Should not be used directly through public APIs, as
+     * the conversion service itself should only expect {@code null} and translate that to
      * {@link Null} internally.
      */
     static final Null INSTANCE = new Null();

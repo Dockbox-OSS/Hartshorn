@@ -26,19 +26,24 @@ public class ContextKeyTests {
 
     @Test
     void testContextKeyNameIsNullIfUndefined() {
-        ContextIdentity<ContextView> undefinedNameKey = ContextKey.builder(ContextView.class).build();
+        ContextIdentity<ContextView> undefinedNameKey =
+            ContextKey.builder(ContextView.class).build();
         Assertions.assertNull(undefinedNameKey.name());
     }
 
     @Test
     void testContextKeyNameIsNullIfEmpty() {
-        ContextIdentity<ContextView> emptyNameKey = ContextKey.builder(ContextView.class).name("").build();
+        ContextIdentity<ContextView> emptyNameKey =
+            ContextKey.builder(ContextView.class).name("").build();
         Assertions.assertNull(emptyNameKey.name());
     }
 
     @Test
     void testContextKeyNameIsNullIfNull() {
-        ContextIdentity<ContextView> nullNameKey = Assertions.assertDoesNotThrow(() -> ContextKey.builder(ContextView.class).name(null).build());
+        ContextIdentity<ContextView> nullNameKey =
+            Assertions.assertDoesNotThrow(() -> ContextKey.builder(ContextView.class)
+                .name(null)
+                .build());
         // Ensure no NPE is thrown
         Assertions.assertNull(nullNameKey.name());
     }

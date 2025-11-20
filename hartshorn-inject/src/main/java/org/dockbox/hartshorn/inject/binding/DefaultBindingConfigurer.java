@@ -17,12 +17,11 @@
 package org.dockbox.hartshorn.inject.binding;
 
 /**
- * A functional interface used to configure the default bindings of the a {@link Binder}. This interface should
- * be used to configure the default bindings of the application..
- *
- * @since 0.5.0
+ * A functional interface used to configure the default bindings of the a {@link Binder}. This
+ * interface should be used to configure the default bindings of the application..
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 @FunctionalInterface
 public interface DefaultBindingConfigurer {
@@ -35,11 +34,13 @@ public interface DefaultBindingConfigurer {
     void configure(Binder binder);
 
     /**
-     * Returns a new {@link DefaultBindingConfigurer} that will invoke this configurer, and then the given configurer.
-     * This is useful for composing multiple configurers together.
+     * Returns a new {@link DefaultBindingConfigurer} that will invoke this configurer, and then the
+     * given configurer. This is useful for composing multiple configurers together.
      *
      * @param other The other configurer to invoke.
-     * @return A new {@link DefaultBindingConfigurer} that will invoke this configurer, and then the given configurer.
+     *
+     * @return A new {@link DefaultBindingConfigurer} that will invoke this configurer, and then the
+     * given configurer.
      */
     default DefaultBindingConfigurer compose(DefaultBindingConfigurer other) {
         return binder -> {
@@ -49,12 +50,14 @@ public interface DefaultBindingConfigurer {
     }
 
     /**
-     * Returns a new {@link DefaultBindingConfigurer} that will exit without configuring anything. This is useful for
-     * providing a default value for a {@link DefaultBindingConfigurer} parameter.
+     * Returns a new {@link DefaultBindingConfigurer} that will exit without configuring anything.
+     * This is useful for providing a default value for a {@link DefaultBindingConfigurer}
+     * parameter.
      *
      * @return A new {@link DefaultBindingConfigurer} that will exit without configuring anything.
      */
     static DefaultBindingConfigurer empty() {
-        return binder -> {};
+        return binder -> {
+        };
     }
 }

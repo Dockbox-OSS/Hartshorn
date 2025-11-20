@@ -27,9 +27,8 @@ import java.util.Set;
 /**
  * A converter which converts any object to 'void', returning {@code null} as the result.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ObjectToVoidConverter implements GenericConverter, ConditionalConverter {
 
@@ -45,9 +44,9 @@ public class ObjectToVoidConverter implements GenericConverter, ConditionalConve
 
     @Override
     public @Nullable <I, O> Object convert(
-            @Nullable Object source,
-            @NonNull Class<I> sourceType,
-            @NonNull Class<O> targetType
+        @Nullable Object source,
+        @NonNull Class<I> sourceType,
+        @NonNull Class<O> targetType
     ) {
         // Void should never be instantiated, so we can safely return null
         return null;

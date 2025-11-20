@@ -28,15 +28,13 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 /**
- * A standard implementation of {@link DiagnosticsReportCollector} which uses a {@link NodeDiagnosticsReport} as the
- * backing data structure.
- *
- * @see NodeDiagnosticsReport
- * @see DiagnosticsReportCollector
- *
- * @since 0.5.0
+ * A standard implementation of {@link DiagnosticsReportCollector} which uses a
+ * {@link NodeDiagnosticsReport} as the backing data structure.
  *
  * @author Guus Lieben
+ * @see NodeDiagnosticsReport
+ * @see DiagnosticsReportCollector
+ * @since 0.5.0
  */
 public class StandardDiagnosticsReportCollector implements DiagnosticsReportCollector {
 
@@ -49,7 +47,8 @@ public class StandardDiagnosticsReportCollector implements DiagnosticsReportColl
 
     @Override
     public DiagnosticsReport report(Reportable reportable) {
-        String timestamp = LocalDateTime.now(Clock.system(ZoneId.systemDefault())).format(DateTimeFormatter.ISO_DATE_TIME);
+        String timestamp = LocalDateTime.now(Clock.system(ZoneId.systemDefault()))
+            .format(DateTimeFormatter.ISO_DATE_TIME);
         this.property("timestamp").writeString(timestamp);
 
         reportable.report(this);

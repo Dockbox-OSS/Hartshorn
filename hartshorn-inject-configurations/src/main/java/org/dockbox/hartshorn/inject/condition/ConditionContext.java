@@ -21,22 +21,25 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 
 /**
- * A context that is used during the evaluation of a condition. This includes the annotated element that is being
- * evaluated, and the {@link RequiresCondition} annotation that is used to evaluate the condition. Note that this
- * annotation is not necessarily present on the annotated element, but may be composed from extending annotations.
- *
- * @see RequiresCondition
- *
- * @since 0.4.12
+ * A context that is used during the evaluation of a condition. This includes the annotated element
+ * that is being evaluated, and the {@link RequiresCondition} annotation that is used to evaluate
+ * the condition. Note that this annotation is not necessarily present on the annotated element, but
+ * may be composed from extending annotations.
  *
  * @author Guus Lieben
+ * @see RequiresCondition
+ * @since 0.4.12
  */
 public class ConditionContext extends DefaultInjectionApplicationAwareContext {
 
     private final AnnotatedElementView annotatedElementContext;
     private final ConditionDeclaration condition;
 
-    public ConditionContext(InjectionCapableApplication application, AnnotatedElementView annotatedElementContext, ConditionDeclaration condition) {
+    public ConditionContext(
+        InjectionCapableApplication application,
+        AnnotatedElementView annotatedElementContext,
+        ConditionDeclaration condition
+    ) {
         super(application);
         this.annotatedElementContext = annotatedElementContext;
         this.condition = condition;

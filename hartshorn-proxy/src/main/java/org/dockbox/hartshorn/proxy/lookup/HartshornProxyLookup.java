@@ -25,12 +25,12 @@ import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link ProxyLookup} implementation for Hartshorn's own proxy implementation. This implementation
- * supports proxies that are created through a {@link ProxyFactory}, or otherwise implement {@link Proxy}
- * directly.
+ * A {@link ProxyLookup} implementation for Hartshorn's own proxy implementation. This
+ * implementation supports proxies that are created through a {@link ProxyFactory}, or otherwise
+ * implement {@link Proxy} directly.
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class HartshornProxyLookup implements ProxyLookup {
 

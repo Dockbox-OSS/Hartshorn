@@ -25,9 +25,8 @@ import java.util.List;
  *
  * @param <T> the type of the values
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ArrayNode<T> extends SimpleNode<List<T>> {
 

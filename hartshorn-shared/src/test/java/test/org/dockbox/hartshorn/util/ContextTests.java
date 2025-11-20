@@ -63,7 +63,8 @@ public class ContextTests {
 
         context.addContext(named);
 
-        ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
+        ContextIdentity<ContextView> key =
+            new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
         Option<ContextView> first = context.firstContext(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
@@ -76,7 +77,8 @@ public class ContextTests {
 
         context.addContext(named);
 
-        ContextIdentity<NamedTestContext> key = new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
+        ContextIdentity<NamedTestContext> key =
+            new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
         Option<NamedTestContext> first = context.firstContext(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(named, first.get());
@@ -89,7 +91,8 @@ public class ContextTests {
 
         context.addContext(NamedTestContext.NAME, child);
 
-        ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
+        ContextIdentity<ContextView> key =
+            new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
         Option<ContextView> first = context.firstContext(key);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
@@ -102,7 +105,8 @@ public class ContextTests {
 
         context.addContext(named);
 
-        ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
+        ContextIdentity<ContextView> key =
+            new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
         List<ContextView> all = context.contexts(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
@@ -115,7 +119,8 @@ public class ContextTests {
 
         context.addContext(named);
 
-        ContextIdentity<NamedTestContext> key = new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
+        ContextIdentity<NamedTestContext> key =
+            new SimpleContextIdentity<>(NamedTestContext.class, NamedTestContext.NAME);
         List<NamedTestContext> all = context.contexts(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
@@ -128,13 +133,15 @@ public class ContextTests {
 
         context.addContext(NamedTestContext.NAME, child);
 
-        ContextIdentity<ContextView> key = new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
+        ContextIdentity<ContextView> key =
+            new SimpleContextIdentity<>(ContextView.class, NamedTestContext.NAME);
         List<ContextView> all = context.contexts(key);
         Assertions.assertNotNull(all);
         Assertions.assertEquals(1, all.size());
     }
 
-    public static class TestContext extends DefaultContext { }
+    public static class TestContext extends DefaultContext {
+    }
 
     public static class NamedTestContext extends DefaultNamedContext {
 

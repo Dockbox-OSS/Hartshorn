@@ -23,9 +23,8 @@ import java.util.function.Supplier;
 /**
  * Supplier utility for {@link PropertyRegistry} instances.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 @FunctionalInterface
 public interface PropertyRegistrySupplier extends Supplier<PropertyRegistry> {

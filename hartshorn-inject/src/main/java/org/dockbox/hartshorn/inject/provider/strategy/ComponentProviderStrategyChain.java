@@ -25,14 +25,14 @@ import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
- * A top-level interface for a chain of {@link ComponentProviderStrategy} instances. This chain is typically passed to
- * the {@link ComponentProviderStrategy}, which can then use it delegate to the next strategy in the chain.
+ * A top-level interface for a chain of {@link ComponentProviderStrategy} instances. This chain is
+ * typically passed to the {@link ComponentProviderStrategy}, which can then use it delegate to the
+ * next strategy in the chain.
  *
  * @param <T> the type of the component to resolve
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public interface ComponentProviderStrategyChain<T> {
 
@@ -62,5 +62,5 @@ public interface ComponentProviderStrategyChain<T> {
      * @throws ApplicationException if the component could not be resolved or processed
      */
     ObjectContainer<T> get(ComponentKey<T> componentKey, ComponentRequestContext requestContext)
-            throws ComponentInitializationException, ApplicationException;
+        throws ComponentInitializationException, ApplicationException;
 }

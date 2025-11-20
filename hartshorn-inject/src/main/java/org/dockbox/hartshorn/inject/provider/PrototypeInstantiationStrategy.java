@@ -28,15 +28,18 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> the type of the component being instantiated
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 @FunctionalInterface
 public interface PrototypeInstantiationStrategy<T> extends NonTypeAwareInstantiationStrategy<T> {
 
     @Override
-    default Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException {
+    default Option<ObjectContainer<T>> provide(
+        InjectionCapableApplication application,
+        ComponentRequestContext requestContext,
+        Scope scope
+    ) throws ApplicationException {
         return Option.of(ComponentObjectContainer.ofPrototype(this.get(requestContext, scope)));
     }
 
@@ -45,7 +48,9 @@ public interface PrototypeInstantiationStrategy<T> extends NonTypeAwareInstantia
      *
      * @param context the component request context
      * @param scope the scope in which the component is being instantiated
+     *
      * @return the instantiated component
+     *
      * @throws ApplicationException if instantiation fails
      */
     T get(ComponentRequestContext context, Scope scope) throws ApplicationException;

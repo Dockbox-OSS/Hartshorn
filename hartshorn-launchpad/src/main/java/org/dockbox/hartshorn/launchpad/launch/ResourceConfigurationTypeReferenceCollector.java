@@ -37,19 +37,20 @@ import java.util.stream.Collectors;
  * These files are expected to be located at "META-INF/hartshorn.environment.types" and contain
  * fully qualified class names, one per line.
  *
- * <p>This collector serves as a convenient way to gather type references for environment configurations
+ * <p>This collector serves as a convenient way to gather type references for environment
+ * configurations
  * without requiring classpath scanning, which can be costly in terms of performance.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class ResourceConfigurationTypeReferenceCollector implements TypeReferenceCollector {
 
     @Override
     public Set<TypeReference> collect() throws TypeCollectionException {
         try {
-            Set<InputStream> resourceConfigurations = Resources.getResourcesAsInputStreams("META-INF/hartshorn.environment.types");
+            Set<InputStream> resourceConfigurations =
+                Resources.getResourcesAsInputStreams("META-INF/hartshorn.environment.types");
             Set<TypeReference> typeReferences = new HashSet<>();
             for (InputStream resourceConfiguration : resourceConfigurations) {
                 typeReferences.addAll(this.collectConfigurationTypes(resourceConfiguration));
@@ -64,10 +65,10 @@ public class ResourceConfigurationTypeReferenceCollector implements TypeReferenc
     private List<TypeReference> collectConfigurationTypes(InputStream resourceConfiguration) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(resourceConfiguration));
         return reader.lines()
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .map(ClassNameReference::new)
-                .collect(Collectors.toUnmodifiableList());
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .map(ClassNameReference::new)
+            .collect(Collectors.toUnmodifiableList());
     }
 
     @Override

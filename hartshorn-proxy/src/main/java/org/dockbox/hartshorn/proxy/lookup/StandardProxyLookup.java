@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.proxy.lookup;
 import org.dockbox.hartshorn.util.introspect.ProxyLookup;
 
 /**
- * A {@link ProxyLookup} implementation which only supports checking for proxies based on their class. This
- * implementation can still support unproxying of instances.
+ * A {@link ProxyLookup} implementation which only supports checking for proxies based on their
+ * class. This implementation can still support unproxying of instances.
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface StandardProxyLookup extends ProxyLookup {
 

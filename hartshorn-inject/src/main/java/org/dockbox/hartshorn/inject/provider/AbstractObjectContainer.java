@@ -24,9 +24,8 @@ import org.dockbox.hartshorn.util.describe.ObjectDescriber;
  *
  * @param <T> the type of the object instance contained within this container
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public abstract class AbstractObjectContainer<T> implements ObjectContainer<T> {
 
@@ -49,7 +48,7 @@ public abstract class AbstractObjectContainer<T> implements ObjectContainer<T> {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("instance", this.instance)
-                .describe();
+            .field("instance", this.instance)
+            .describe();
     }
 }

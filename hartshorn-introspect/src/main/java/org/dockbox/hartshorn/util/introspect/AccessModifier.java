@@ -31,13 +31,11 @@ import java.util.function.Predicate;
  * interact with the {@link Modifier} constants through {@link ModifierCarrierView views}, without
  * directly interacting with JDK reflections.
  *
+ * @author Guus Lieben
  * @see Modifier
  * @see ModifierCarrierView
  * @see Member#getModifiers()
- *
  * @since 0.4.4
- *
- * @author Guus Lieben
  */
 public enum AccessModifier {
     /**
@@ -119,6 +117,7 @@ public enum AccessModifier {
      * Returns whether or not this {@link AccessModifier} is set in the given {@code modifiers}.
      *
      * @param modifiers The modifiers to check
+     *
      * @return Whether or not this {@link AccessModifier} is set in the given {@code modifiers}.
      */
     public boolean test(int modifiers) {
@@ -129,7 +128,9 @@ public enum AccessModifier {
      * Returns a list of all {@link AccessModifier}s that are set in the given {@code modifiers}.
      *
      * @param mod The modifiers to check
+     *
      * @return A list of all {@link AccessModifier}s that are set in the given {@code modifiers}.
+     *
      * @see Member#getModifiers()
      */
     public static List<AccessModifier> from(int mod) {

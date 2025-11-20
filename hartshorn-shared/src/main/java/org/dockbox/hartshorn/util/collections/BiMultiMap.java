@@ -21,9 +21,9 @@ package org.dockbox.hartshorn.util.collections;
  * become the values.
  *
  * <p>If a value is present in the map multiple times, all keys that are associated with that value
- * will be present in the inverse map. For example, if the map contains the mapping {@code
- * "a" -> "b"} and {@code "c" -> "b"}, the inverse map will contain the mapping {@code
- * "b" -> ["a", "c"]}.
+ * will be present in the inverse map. For example, if the map contains the mapping
+ * {@code "a" -> "b"} and {@code "c" -> "b"}, the inverse map will contain the mapping
+ * {@code "b" -> ["a", "c"]}.
  *
  * <p>This interface is comparable to {@link BiMap}, but is specifically designed for {@link
  * MultiMap} instances.
@@ -31,9 +31,8 @@ package org.dockbox.hartshorn.util.collections;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface BiMultiMap<K, V> extends MultiMap<K, V> {
 
@@ -45,5 +44,4 @@ public interface BiMultiMap<K, V> extends MultiMap<K, V> {
      * @return the inverse of this {@link BiMultiMap}
      */
     MultiMap<V, K> inverse();
-
 }

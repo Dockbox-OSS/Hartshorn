@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 /**
  * Service discovery interface for {@link ProxyOrchestrator} implementations.
  *
- * @since 0.4.1
  * @author Guus Lieben
+ * @since 0.4.1
  */
 @FunctionalInterface
 public interface ProxyOrchestratorLoader {
@@ -31,6 +31,7 @@ public interface ProxyOrchestratorLoader {
      * Creates a new {@link ProxyOrchestrator} instance.
      *
      * @param introspector The introspector to use for introspection
+     *
      * @return The created {@link ProxyOrchestrator} instance
      */
     ProxyOrchestrator create(Introspector introspector);

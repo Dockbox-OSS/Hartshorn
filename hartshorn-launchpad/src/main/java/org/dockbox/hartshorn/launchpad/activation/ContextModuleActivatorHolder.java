@@ -23,11 +23,11 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 /**
- * A lazy {@link ModuleActivatorHolder} that provides activators from a {@link ModuleActivatorContext} when needed.
- *
- * @since 0.7.0
+ * A lazy {@link ModuleActivatorHolder} that provides activators from a
+ * {@link ModuleActivatorContext} when needed.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
 
@@ -41,6 +41,7 @@ public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
      * Create a new {@link ContextModuleActivatorHolder} with the given context provider.
      *
      * @param contextProvider the provider of the module activator context
+     *
      * @return the created module activator holder
      */
     public static ContextModuleActivatorHolder of(Supplier<Option<ModuleActivatorContext>> contextProvider) {
@@ -51,6 +52,7 @@ public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
      * Create a new {@link ContextModuleActivatorHolder} with the given context.
      *
      * @param context the module activator context
+     *
      * @return the created module activator holder
      */
     public static ContextModuleActivatorHolder of(ModuleActivatorContext context) {
@@ -60,14 +62,14 @@ public class ContextModuleActivatorHolder implements ModuleActivatorHolder {
     @Override
     public Set<Annotation> activators() {
         return this.contextProvider.get()
-                .map(ModuleActivatorContext::activators)
-                .orElseGet(Set::of);
+            .map(ModuleActivatorContext::activators)
+            .orElseGet(Set::of);
     }
 
     @Override
     public <A> Option<A> activator(Class<A> activator) {
         return this.contextProvider.get()
-                .map(context -> context.activator(activator));
+            .map(context -> context.activator(activator));
     }
 
     @Override

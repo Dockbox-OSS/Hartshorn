@@ -17,14 +17,13 @@
 package org.dockbox.hartshorn.proxy.advice.wrap;
 
 /**
- * Standard implementation of {@link MethodWrapperFactory}. This implementation allows for the creation of a
- * {@link MethodWrapper} by adding individual {@link ProxyCallback}s.
+ * Standard implementation of {@link MethodWrapperFactory}. This implementation allows for the
+ * creation of a {@link MethodWrapper} by adding individual {@link ProxyCallback}s.
  *
  * @param <T> The type of the proxy instance
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class StandardMethodWrapperFactory<T> implements MethodWrapperFactory<T> {
 
@@ -35,29 +34,30 @@ public class StandardMethodWrapperFactory<T> implements MethodWrapperFactory<T> 
     @Override
     public MethodWrapperFactory<T> before(ProxyCallback<T> callback) {
         this.before = this.before == null
-                ? callback
-                : this.before.then(callback);
+            ? callback
+            : this.before.then(callback);
         return this;
     }
 
     @Override
     public MethodWrapperFactory<T> after(ProxyCallback<T> callback) {
         this.after = this.after == null
-                ? callback
-                : this.after.then(callback);
+            ? callback
+            : this.after.then(callback);
         return this;
     }
 
     @Override
     public MethodWrapperFactory<T> onError(ProxyCallback<T> callback) {
         this.onError = this.onError == null
-                ? callback
-                : this.onError.then(callback);
+            ? callback
+            : this.onError.then(callback);
         return this;
     }
 
     /**
-     * Creates a new {@link MethodWrapper} instance based on the callbacks that were added to this factory.
+     * Creates a new {@link MethodWrapper} instance based on the callbacks that were added to this
+     * factory.
      *
      * @return The created method wrapper
      */

@@ -29,9 +29,8 @@ import org.dockbox.hartshorn.util.option.Option;
  * {@link Collection} is returned. Otherwise, a {@link Collection} containing the value of the
  * {@link Option} is returned.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class OptionToCollectionConverterFactory
     implements ConverterFactory<Option<?>, Collection<?>> {

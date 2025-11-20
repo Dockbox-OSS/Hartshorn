@@ -55,30 +55,31 @@ import org.dockbox.hartshorn.util.option.Option;
  * <code>E<sub>2</sub></code> will return a type parameter representing <code>E<sub>1</sub></code>.
  *
  * <p>Type parameters may be bounded, unbounded, or concrete. A type parameter is bounded if it has
- * an upper bound that is not {@link Object}. An example of a bounded type parameter is {@code
- * List<T extends CharSequence>}. Here the type parameter {@code T} is bounded, as it has an upper
- * bound of {@link CharSequence}. A type parameter is unbounded if it has no upper bound. An example
- * of this is {@code List<T>}. Here the type parameter {@code T} is unbounded, as it has no upper
- * bound. An example of a concrete type parameter is {@code List<String>}. Here the type parameter
- * {@code String} is concrete, as it represents the type {@link String}.
+ * an upper bound that is not {@link Object}. An example of a bounded type parameter is
+ * {@code List<T extends CharSequence>}. Here the type parameter {@code T} is bounded, as it has an
+ * upper bound of {@link CharSequence}. A type parameter is unbounded if it has no upper bound. An
+ * example of this is {@code List<T>}. Here the type parameter {@code T} is unbounded, as it has no
+ * upper bound. An example of a concrete type parameter is {@code List<String>}. Here the type
+ * parameter {@code String} is concrete, as it represents the type {@link String}.
  *
  * <p>Note that a bounded type parameter may be either a {@link #isVariable() type variable} or a
- * {@link #isWildcard()} wildcard}, for example {@code List<? extends CharSequence>} and {@code
- * List<T extends CharSequence>}. In both cases, the type parameter is bounded, as it has an upper
- * bound that is not {@link Object}. However, in the first case, the type parameter is a wildcard,
- * while in the second case, the type parameter is a variable.
+ * {@link #isWildcard()} wildcard}, for example {@code List<? extends CharSequence>} and
+ * {@code List<T extends CharSequence>}. In both cases, the type parameter is bounded, as it has an
+ * upper bound that is not {@link Object}. However, in the first case, the type parameter is a
+ * wildcard, while in the second case, the type parameter is a variable.
  *
  * <p>Annotations on type parameters are accessible, as long as they are directly on the parameter
- * itself, and not on upperbounds. For example, given the following type declaration: {@code
- * List<@NotNull T extends CharSequence>}, the type parameter <code>T</code> has an annotation of
- * <code>@NotNull</code>, which can be accessed through the {@link #annotations()} method. Given the
+ * itself, and not on upperbounds. For example, given the following type declaration:
+ * {@code List<@NotNull T extends CharSequence>}, the type parameter <code>T</code> has an
+ * annotation of
+ * <code>@NotNull</code>, which can be accessed through the {@link #annotations()} method. Given
+ * the
  * following type declaration however: {@code List<T extends @NotNull CharSequence>}, the type
  * parameter <code>T</code> has no annotations, as the annotation is declared on the upper bound,
  * and not on the type parameter itself.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface TypeParameterView extends AnnotatedElementView {
 
@@ -116,7 +117,8 @@ public interface TypeParameterView extends AnnotatedElementView {
      *
      * <pre><code>List&lt;E<sub>1</sub>&gt; extends Collection&lt;E<sub>2</sub>&gt;</code></pre>
      *
-     * <p>The type parameter <code>E<sub>2</sub></code> is an output parameter, as it is declared on
+     * <p>The type parameter <code>E<sub>2</sub></code> is an output parameter, as it is declared
+     * on
      * the type <code>List</code>, but consumed by the type <code>Collection</code>.
      *
      * @return {@code true} if this type parameter is an output parameter, or {@code false}
@@ -264,12 +266,12 @@ public interface TypeParameterView extends AnnotatedElementView {
     boolean isInterface();
 
     /**
-     * Returns {@code true} if this type parameter is a concrete type that is an enum, or {@code
-     * false} otherwise. A type is considered concrete it {@link #resolvedType()} returns a
+     * Returns {@code true} if this type parameter is a concrete type that is an enum, or
+     * {@code false} otherwise. A type is considered concrete it {@link #resolvedType()} returns a
      * non-empty non-wildcard option.
      *
-     * @return {@code true} if this type parameter is a concrete type that is an enum, or {@code
-     * false}
+     * @return {@code true} if this type parameter is a concrete type that is an enum, or
+     * {@code false}
      */
     boolean isEnum();
 
@@ -284,12 +286,12 @@ public interface TypeParameterView extends AnnotatedElementView {
     boolean isAnnotation();
 
     /**
-     * Returns {@code true} if this type parameter is a concrete type that is a record, or {@code
-     * false} otherwise. A type is considered concrete it {@link #resolvedType()} returns a
+     * Returns {@code true} if this type parameter is a concrete type that is a record, or
+     * {@code false} otherwise. A type is considered concrete it {@link #resolvedType()} returns a
      * non-empty non-wildcard option.
      *
-     * @return {@code true} if this type parameter is a concrete type that is a record, or {@code
-     * false}
+     * @return {@code true} if this type parameter is a concrete type that is a record, or
+     * {@code false}
      */
     boolean isRecord();
 

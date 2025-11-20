@@ -22,9 +22,8 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * Represents a property that holds a single value. This is the most basic form of a property.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public non-sealed interface ValueProperty extends Property {
 
@@ -39,8 +38,9 @@ public non-sealed interface ValueProperty extends Property {
      * Parses the value of this property using the provided parser.
      *
      * @param parser the parser to use
-     * @return the parsed value
      * @param <T> the type to convert the value to
+     *
+     * @return the parsed value
      */
     <T> Option<T> parse(ValuePropertyParser<T> parser);
 }

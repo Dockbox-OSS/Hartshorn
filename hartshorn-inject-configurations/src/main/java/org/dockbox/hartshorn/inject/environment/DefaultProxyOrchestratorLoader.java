@@ -26,13 +26,13 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import org.dockbox.hartshorn.util.introspect.Introspector;
 
 /**
- * Initializer for the default {@link ProxyOrchestrator} implementation provided by the {@link DiscoveryService}. This
- * is mostly a re-usable support class for any component that requires a {@link ProxyOrchestrator} to be loaded. Note
- * that this initializer is not cached, and will return a new instance of the {@link ProxyOrchestrator} on each call.
- *
- * @since 0.5.0
+ * Initializer for the default {@link ProxyOrchestrator} implementation provided by the
+ * {@link DiscoveryService}. This is mostly a re-usable support class for any component that
+ * requires a {@link ProxyOrchestrator} to be loaded. Note that this initializer is not cached, and
+ * will return a new instance of the {@link ProxyOrchestrator} on each call.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public final class DefaultProxyOrchestratorLoader {
 
@@ -41,10 +41,12 @@ public final class DefaultProxyOrchestratorLoader {
     }
 
     /**
-     * Creates a new {@link ContextualInitializer initializer} that will load the default {@link ProxyOrchestrator}
-     * implementation from the {@link DiscoveryService}.
+     * Creates a new {@link ContextualInitializer initializer} that will load the default
+     * {@link ProxyOrchestrator} implementation from the {@link DiscoveryService}.
      *
-     * @param customizer The customizer to apply to the {@link Configurer} before loading the {@link ProxyOrchestrator}
+     * @param customizer The customizer to apply to the {@link Configurer} before loading the
+     * {@link ProxyOrchestrator}
+     *
      * @return The initializer
      */
     public static ContextualInitializer<Introspector, ProxyOrchestrator> create(Customizer<Configurer> customizer) {
@@ -52,7 +54,8 @@ public final class DefaultProxyOrchestratorLoader {
             // Call, but ignore the result of the customizer for now
             customizer.configure(new Configurer());
             try {
-                ProxyOrchestratorLoader loader = DiscoveryService.instance().discover(ProxyOrchestratorLoader.class);
+                ProxyOrchestratorLoader loader =
+                    DiscoveryService.instance().discover(ProxyOrchestratorLoader.class);
                 return loader.create(context.input());
             }
             catch (ServiceDiscoveryException e) {
@@ -64,9 +67,8 @@ public final class DefaultProxyOrchestratorLoader {
     /**
      * A no-op class that may be used to configure the {@link ProxyOrchestrator} loader.
      *
-     * @since 0.5.0
-     *
      * @author Guus Lieben
+     * @since 0.5.0
      */
     public static class Configurer {
         // No-op, may be used in the future

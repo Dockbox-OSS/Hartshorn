@@ -26,16 +26,19 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a test method or class as requiring specific components to be registered in the test context.
- * These components will be available for injection in the test method or class.
+ * Marks a test method or class as requiring specific components to be registered in the test
+ * context. These components will be available for injection in the test method or class.
  *
- * <p>Test components are always treated as managed components, meaning they will be registered in the
+ * <p>Test components are always treated as managed components, meaning they will be registered in
+ * the
  * {@link org.dockbox.hartshorn.inject.component.ComponentRegistry}, and should be annotated with
- * {@link Component} or a component stereotype annotation. For non-managed components, you can provide
- * them as bindings in a {@link Configuration} class.
+ * {@link Component} or a component stereotype annotation. For non-managed components, you can
+ * provide them as bindings in a {@link Configuration} class.
  *
- * <p>Test components can be registered at both the method and class level. If a test class is annotated with
- * {@code @TestComponents}, all test methods in that class will have access to the specified components.
+ * <p>Test components can be registered at both the method and class level. If a test class is
+ * annotated with
+ * {@code @TestComponents}, all test methods in that class will have access to the specified
+ * components.
  *
  * <pre>{@code
  * @TestComponents(MyTestComponent.class)
@@ -61,9 +64,8 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
- * @since 0.4.11
- *
  * @author Guus Lieben
+ * @since 0.4.11
  */
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)

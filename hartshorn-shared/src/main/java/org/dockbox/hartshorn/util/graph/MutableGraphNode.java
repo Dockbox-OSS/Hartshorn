@@ -19,21 +19,20 @@ package org.dockbox.hartshorn.util.graph;
 import java.util.Collection;
 
 /**
- * A mutable implementation of a {@link GraphNode}, which is a node that can have children added
- * to it.
+ * A mutable implementation of a {@link GraphNode}, which is a node that can have children added to
+ * it.
  *
  * @param <T> the type of the value of the node
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface MutableGraphNode<T> extends GraphNode<T> {
 
     /**
-     * Adds a child to this node. If the provided node is already a child of this node, this
-     * method does nothing. If the provided node is a {@link MutableContainableGraphNode}, this
-     * node is added as a parent to the provided node.
+     * Adds a child to this node. If the provided node is already a child of this node, this method
+     * does nothing. If the provided node is a {@link MutableContainableGraphNode}, this node is
+     * added as a parent to the provided node.
      *
      * @param child the child to add
      */
@@ -41,8 +40,8 @@ public interface MutableGraphNode<T> extends GraphNode<T> {
 
     /**
      * Adds a collection of children to this node. If any of the provided nodes is already a child
-     * of this node, this method does nothing. If any of the provided nodes is a {@link
-     * MutableContainableGraphNode}, this node is added as a parent to the provided node.
+     * of this node, this method does nothing. If any of the provided nodes is a
+     * {@link MutableContainableGraphNode}, this node is added as a parent to the provided node.
      *
      * @param children the children to add
      */

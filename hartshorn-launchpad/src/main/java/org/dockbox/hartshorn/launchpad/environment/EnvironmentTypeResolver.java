@@ -22,13 +22,13 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 /**
- * Resolver to find annotated types in the environment. Depending on the environment and implementation of
- * this interface, this may also support meta-annotations or annotation hierarchies (typically through the
- * use of {@link org.dockbox.hartshorn.util.introspect.annotations.Extends} decorators).
- *
- * @since 0.6.0
+ * Resolver to find annotated types in the environment. Depending on the environment and
+ * implementation of this interface, this may also support meta-annotations or annotation
+ * hierarchies (typically through the use of
+ * {@link org.dockbox.hartshorn.util.introspect.annotations.Extends} decorators).
  *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public interface EnvironmentTypeResolver {
 
@@ -37,8 +37,8 @@ public interface EnvironmentTypeResolver {
      *
      * @param <A> The annotation constraint
      * @param annotation The annotation expected to be present on one or more types
+     *
      * @return The annotated types
      */
     <A extends Annotation> Collection<TypeView<?>> types(Class<A> annotation);
-
 }

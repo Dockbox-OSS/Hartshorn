@@ -24,11 +24,9 @@ import org.dockbox.hartshorn.util.introspect.annotations.AnnotationLookup;
 /**
  * A {@link IntrospectorLoader} that creates {@link ReflectionIntrospector} instances.
  *
- * @see ReflectionIntrospector
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see ReflectionIntrospector
+ * @since 0.5.0
  */
 public class ReflectionIntrospectorLoader implements IntrospectorLoader {
 

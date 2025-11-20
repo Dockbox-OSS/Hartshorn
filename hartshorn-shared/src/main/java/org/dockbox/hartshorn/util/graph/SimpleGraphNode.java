@@ -23,14 +23,13 @@ import java.util.Set;
 import org.dockbox.hartshorn.util.describe.ObjectDescriber;
 
 /**
- * A simple implementation of a {@link MutableContainableGraphNode}, which is a node that can be
- * can have parents and children added to it.
+ * A simple implementation of a {@link MutableContainableGraphNode}, which is a node that can be can
+ * have parents and children added to it.
  *
  * @param <T> the type of the value of the node
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class SimpleGraphNode<T> implements MutableContainableGraphNode<T> {
 
@@ -90,7 +89,7 @@ public class SimpleGraphNode<T> implements MutableContainableGraphNode<T> {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("value", this.value)
-                .describe();
+            .field("value", this.value)
+            .describe();
     }
 }

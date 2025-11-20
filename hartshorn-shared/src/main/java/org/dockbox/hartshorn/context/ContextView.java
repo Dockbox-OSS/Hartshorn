@@ -23,14 +23,14 @@ import java.util.List;
 /**
  * Immutable view of a {@link Context}, providing read-only access to the contexts stored within.
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public interface ContextView {
 
     /**
      * Returns all contexts stored in the current context.
+     *
      * @return All contexts stored in the current context.
      */
     List<ContextView> contexts();
@@ -40,6 +40,7 @@ public interface ContextView {
      *
      * @param context The type of the context.
      * @param <C> The type of the context.
+     *
      * @return The first context of the given type.
      */
     <C extends ContextView> Option<C> firstContext(Class<C> context);
@@ -49,8 +50,9 @@ public interface ContextView {
      * list is returned.
      *
      * @param context The type of the context.
-     * @return All contexts of the given type.
      * @param <C> The type of the context.
+     *
+     * @return All contexts of the given type.
      */
     <C extends ContextView> List<C> contexts(Class<C> context);
 
@@ -61,8 +63,9 @@ public interface ContextView {
      * returned.
      *
      * @param key The identity of the context.
-     * @return The first context matching the given identity.
      * @param <C> The type of the context.
+     *
+     * @return The first context matching the given identity.
      */
     <C extends ContextView> Option<C> firstContext(ContextIdentity<C> key);
 
@@ -71,8 +74,9 @@ public interface ContextView {
      * returned.
      *
      * @param key The identity of the context.
-     * @return All contexts matching the given identity.
      * @param <C> The type of the context.
+     *
+     * @return All contexts matching the given identity.
      */
     <C extends ContextView> List<C> contexts(ContextIdentity<C> key);
 

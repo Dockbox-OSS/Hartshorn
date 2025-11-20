@@ -19,12 +19,11 @@ package org.dockbox.hartshorn.properties.loader.path;
 import java.util.regex.Pattern;
 
 /**
- * Standard implementation of {@link PropertyPathStyle} that uses a dot as field separator and square brackets for
- * indices.
- *
- * @since 0.7.0
+ * Standard implementation of {@link PropertyPathStyle} that uses a dot as field separator and
+ * square brackets for indices.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class StandardPropertyPathStyle implements PropertyPathStyle {
 
@@ -50,9 +49,9 @@ public class StandardPropertyPathStyle implements PropertyPathStyle {
     @Override
     public String[] resolveIndexes(String path) {
         return INDEX_PATTERN
-                .matcher(path)
-                .results()
-                .map(result -> result.group(1)) // Group 0 is the entire match, group 1 is the index
-                .toArray(String[]::new);
+            .matcher(path)
+            .results()
+            .map(result -> result.group(1)) // Group 0 is the entire match, group 1 is the index
+            .toArray(String[]::new);
     }
 }

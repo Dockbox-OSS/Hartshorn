@@ -23,9 +23,8 @@ package org.dockbox.hartshorn.context;
  *
  * @param <T> The type of context that is identified by this instance.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class SimpleContextIdentity<T extends ContextView> implements ContextIdentity<T> {
 
@@ -54,7 +53,7 @@ public class SimpleContextIdentity<T extends ContextView> implements ContextIden
     @Override
     public T create() {
         throw new IllegalStateException(
-                "No fallback defined for context " + this.type.getSimpleName()
+            "No fallback defined for context " + this.type.getSimpleName()
         );
     }
 }

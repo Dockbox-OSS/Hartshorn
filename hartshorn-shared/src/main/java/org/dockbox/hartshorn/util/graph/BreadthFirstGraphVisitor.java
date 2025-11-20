@@ -29,9 +29,8 @@ import java.util.Set;
  *
  * @param <T> the type of the value of the node
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 @FunctionalInterface
 public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
@@ -56,6 +55,7 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
      *
      * @param visited the set of visited nodes
      * @param node the node to visit
+     *
      * @throws GraphException when an error occurs while visiting the node
      */
     default void visitSingle(Set<GraphNode<T>> visited, GraphNode<T> node) throws GraphException {
@@ -65,8 +65,8 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
     }
 
     private Set<GraphNode<T>> visitRow(
-            Set<GraphNode<T>> visited,
-            Set<GraphNode<T>> currentRow
+        Set<GraphNode<T>> visited,
+        Set<GraphNode<T>> currentRow
     ) throws GraphException {
         Set<GraphNode<T>> nextRow = new HashSet<>();
         for (GraphNode<T> node : currentRow) {
@@ -78,8 +78,8 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
     }
 
     private Set<GraphNode<T>> filterNodesWithUnresolvedParents(
-            Set<GraphNode<T>> visited,
-            Set<GraphNode<T>> nodes
+        Set<GraphNode<T>> visited,
+        Set<GraphNode<T>> nodes
     ) throws GraphException {
         Set<GraphNode<T>> currentRow = new HashSet<>(nodes);
         // Filter out nodes that have parents that haven't been visited yet, as they can't be
@@ -100,12 +100,13 @@ public interface BreadthFirstGraphVisitor<T> extends ObservableGraphIterator<T> 
      * @param visited the set of visited nodes
      * @param allNodes the set of all nodes
      * @param node the node to check
+     *
      * @return {@code true} if all parent nodes have been visited, {@code false} otherwise
      */
     default boolean hasVisitedParents(
-            Set<GraphNode<T>> visited,
-            Set<GraphNode<T>> allNodes,
-            GraphNode<T> node
+        Set<GraphNode<T>> visited,
+        Set<GraphNode<T>> allNodes,
+        GraphNode<T> node
     ) throws GraphException {
         if (node instanceof ContainableGraphNode<T> containable) {
             return visited.containsAll(containable.parents());

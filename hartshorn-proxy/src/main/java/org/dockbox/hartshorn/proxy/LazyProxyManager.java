@@ -26,19 +26,21 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.lang.reflect.Method;
 
 /**
- * A lazy-loading proxy manager. This implementation tracks the proxy's delegates and interceptors, and allows
- * the proxy to be set lazily. This is useful for when the manager is created in a context where the proxy is not
- * yet available, such as when the proxy requires modification to access its manager before being constructed. The
- * proxy is set lazily, and the manager is set when the proxy is created.
+ * A lazy-loading proxy manager. This implementation tracks the proxy's delegates and interceptors,
+ * and allows the proxy to be set lazily. This is useful for when the manager is created in a
+ * context where the proxy is not yet available, such as when the proxy requires modification to
+ * access its manager before being constructed. The proxy is set lazily, and the manager is set when
+ * the proxy is created.
  *
- * <p>The manager will only allow the proxy to be set once, and will throw an exception if the proxy is set more
- * than once. This is to prevent the proxy from being set multiple times, which can cause unexpected behavior.
+ * <p>The manager will only allow the proxy to be set once, and will throw an exception if the proxy
+ * is set more
+ * than once. This is to prevent the proxy from being set multiple times, which can cause unexpected
+ * behavior.
  *
  * @param <T> the type of the proxy
  *
- * @since 0.4.10
- *
  * @author Guus Lieben
+ * @since 0.4.10
  */
 public class LazyProxyManager<T> extends DefaultContext implements ModifiableProxyManager<T> {
 
@@ -64,8 +66,10 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
         this(proxyFactory.orchestrator(), null, proxyFactory.type(), proxyFactory.advisors());
     }
 
-    public LazyProxyManager(ProxyOrchestrator proxyOrchestrator, Class<T> proxyClass, Class<T> targetClass,
-                            StateAwareAdvisorRegistry<T> advisors) {
+    public LazyProxyManager(
+        ProxyOrchestrator proxyOrchestrator, Class<T> proxyClass, Class<T> targetClass,
+        StateAwareAdvisorRegistry<T> advisors
+    ) {
         this.proxyOrchestrator = proxyOrchestrator;
 
         if (this.proxyOrchestrator.isProxy(targetClass)) {
@@ -83,8 +87,9 @@ public class LazyProxyManager<T> extends DefaultContext implements ModifiablePro
     }
 
     /**
-     * Sets the proxy instance. This method can only be called once, and will throw an exception if called more than
-     * once. This method should only be called by a {@link ProxyFactory} when the proxy is created.
+     * Sets the proxy instance. This method can only be called once, and will throw an exception if
+     * called more than once. This method should only be called by a {@link ProxyFactory} when the
+     * proxy is created.
      *
      * @param proxy the proxy instance
      */

@@ -27,28 +27,27 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.test.annotations.TestProfiles;
 
 /**
- * A {@link ProfileNameResolver} that resolves profile names from {@link TestProfiles}
- * annotations present on the provided test component sources.
+ * A {@link ProfileNameResolver} that resolves profile names from {@link TestProfiles} annotations
+ * present on the provided test component sources.
  *
- * @param testComponentSources the list of annotated elements to scan for {@link TestProfiles} annotations
- *
- * @see TestProfiles
- *
- * @since 0.7.0
+ * @param testComponentSources the list of annotated elements to scan for {@link TestProfiles}
+ * annotations
  *
  * @author Guus Lieben
+ * @see TestProfiles
+ * @since 0.7.0
  */
 public record FromTestAnnotationProfileNameResolver(
-        List<AnnotatedElement> testComponentSources
+    List<AnnotatedElement> testComponentSources
 ) implements ProfileNameResolver {
 
     @Override
     public SequencedSet<String> resolveProfileNames(PropertyRegistry rootRegistry) {
         return this.testComponentSources.stream()
-                .filter(element -> element.isAnnotationPresent(TestProfiles.class))
-                .map(element -> element.getAnnotation(TestProfiles.class))
-                .map(TestProfiles::value)
-                .flatMap(Stream::of)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .filter(element -> element.isAnnotationPresent(TestProfiles.class))
+            .map(element -> element.getAnnotation(TestProfiles.class))
+            .map(TestProfiles::value)
+            .flatMap(Stream::of)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

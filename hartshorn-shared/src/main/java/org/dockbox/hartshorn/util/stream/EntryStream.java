@@ -42,12 +42,10 @@ import java.util.stream.StreamSupport;
  * @param <K> the key type
  * @param <V> the value type
  *
+ * @author Guus Lieben
  * @see Stream
  * @see Map.Entry
- *
  * @since 0.7.0
- *
- * @author Guus Lieben
  */
 public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
 
@@ -177,9 +175,9 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * corresponding keys and values
      */
     public static <T, K, V> EntryStream<K, V> of(
-            Stream<T> stream,
-            Function<T, K> keyMapper,
-            Function<T, V> valueMapper
+        Stream<T> stream,
+        Function<T, K> keyMapper,
+        Function<T, V> valueMapper
     ) {
         return new EntryStream<>(stream.map(element -> {
             return Map.entry(keyMapper.apply(element), valueMapper.apply(element));
@@ -206,7 +204,8 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * Filters the entries in this stream based on the provided key filter function.
      *
      * @param filter the function to filter keys, returning true for keys that should be included in
-     *              the stream
+     * the stream
+     *
      * @return a new {@link EntryStream} containing only the entries with keys that match the filter
      */
     public EntryStream<K, V> filterKeys(Function<K, Boolean> filter) {
@@ -217,7 +216,8 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * Filters the entries in this stream based on the provided value filter function.
      *
      * @param filter the function to filter values, returning true for values that should be
-     *               included in the stream
+     * included in the stream
+     *
      * @return a new {@link EntryStream} containing only the entries with values that match the
      * filter
      */
@@ -229,7 +229,8 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * Filters the entries in this stream based on the provided key-value filter function.
      *
      * @param filter the function to filter entries, returning true for entries that should be
-     *               included in the stream
+     * included in the stream
+     *
      * @return a new {@link EntryStream} containing only the entries that match the filter
      */
     public EntryStream<K, V> filter(BiPredicate<K, V> filter) {
@@ -240,6 +241,7 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * Peeks at the keys of the entries in this stream, applying the provided action to each key.
      *
      * @param action the action to apply to each key
+     *
      * @return a new {@link EntryStream} with the same entries, but with the action applied to each
      * key
      */
@@ -252,6 +254,7 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * value.
      *
      * @param action the action to apply to each value
+     *
      * @return a new {@link EntryStream} with the same entries, but with the action applied to each
      * value
      */
@@ -263,6 +266,7 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * Peeks at the entries in this stream, applying the provided action to each entry.
      *
      * @param action the action to apply to each entry
+     *
      * @return a new {@link EntryStream} with the same entries, but with the action applied to each
      * entry
      */
@@ -281,8 +285,8 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      */
     public <R> EntryStream<R, V> mapKeys(Function<K, R> mapper) {
         return EntryStream.of(this.map(entry -> Map.entry(
-                mapper.apply(entry.getKey()),
-                entry.getValue()
+            mapper.apply(entry.getKey()),
+            entry.getValue()
         )));
     }
 
@@ -297,8 +301,8 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      */
     public <R> EntryStream<K, R> mapValues(Function<V, R> mapper) {
         return EntryStream.of(this.map(entry -> Map.entry(
-                entry.getKey(),
-                mapper.apply(entry.getValue())
+            entry.getKey(),
+            mapper.apply(entry.getValue())
         )));
     }
 
@@ -310,15 +314,16 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * @param valueMapper the function to map each value to a new value
      * @param <RK> the type of the resulting keys
      * @param <RV> the type of the resulting values
+     *
      * @return a new {@link EntryStream} with the keys and values mapped to new keys and values
      */
     public <RK, RV> EntryStream<RK, RV> map(
-            Function<K, RK> keyMapper,
-            Function<V, RV> valueMapper
+        Function<K, RK> keyMapper,
+        Function<V, RV> valueMapper
     ) {
         return EntryStream.of(this.map(entry -> Map.entry(
-                keyMapper.apply(entry.getKey()),
-                valueMapper.apply(entry.getValue())
+            keyMapper.apply(entry.getKey()),
+            valueMapper.apply(entry.getValue())
         )));
     }
 
@@ -342,12 +347,13 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      *
      * @param mapper the function to map each key to a stream of new keys
      * @param <R> the type of the resulting keys
+     *
      * @return a new {@link EntryStream} with the keys flatmapped to new keys
      */
     public <R> EntryStream<R, V> flatMapKeys(Function<K, Stream<R>> mapper) {
         return EntryStream.of(this.flatMap(entry -> mapper
-                .apply(entry.getKey())
-                .map(key -> Map.entry(key, entry.getValue()))
+            .apply(entry.getKey())
+            .map(key -> Map.entry(key, entry.getValue()))
         ));
     }
 
@@ -358,12 +364,13 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      *
      * @param mapper the function to map each value to a stream of new values
      * @param <R> the type of the resulting values
+     *
      * @return a new {@link EntryStream} with the values flatmapped to new values
      */
     public <R> EntryStream<K, R> flatMapValues(Function<V, Stream<R>> mapper) {
         return EntryStream.of(this.flatMap(entry -> mapper
-                .apply(entry.getValue())
-                .map(value -> Map.entry(entry.getKey(), value))
+            .apply(entry.getValue())
+            .map(value -> Map.entry(entry.getKey(), value))
         ));
     }
 
@@ -374,7 +381,7 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      */
     public EntryStream<K, V> sortedKeys() {
         return EntryStream.of(this.sorted(
-                Comparator.comparingInt(entry -> entry.getKey().hashCode())
+            Comparator.comparingInt(entry -> entry.getKey().hashCode())
         ));
     }
 
@@ -385,7 +392,7 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      */
     public EntryStream<K, V> sortedValues() {
         return EntryStream.of(this.sorted(
-                Comparator.comparingInt(entry -> entry.getValue().hashCode())
+            Comparator.comparingInt(entry -> entry.getValue().hashCode())
         ));
     }
 
@@ -393,6 +400,7 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * Sorts the entries in ascending order, using the provided comparator for the keys.
      *
      * @param comparator the comparator to use for sorting the keys
+     *
      * @return a new {@link EntryStream} with the entries sorted by their keys using the provided
      * comparator
      */
@@ -406,6 +414,7 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
      * Sorts the entries in ascending order, using the provided comparator for the values.
      *
      * @param comparator the comparator to use for sorting the values
+     *
      * @return a new {@link EntryStream} with the entries sorted by their values using the provided
      * comparator
      */
@@ -416,9 +425,11 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
     }
 
     /**
-     * Sorts the entries in ascending order, using the provided comparator for both keys and values.
+     * Sorts the entries in ascending order, using the provided comparator for both keys and
+     * values.
      *
      * @param comparator the comparator to use for sorting the entries
+     *
      * @return a new {@link EntryStream} with the entries sorted by their keys and values using the
      * provided comparator
      */
@@ -451,9 +462,9 @@ public class EntryStream<K, V> extends AbstractDelegateStream<Entry<K, V>> {
     }
 
     /**
-     * Performs the given action for each entry in this stream. Equivalent to {@link
-     * #forEach(Consumer)}, but accepts a {@link BiConsumer} that takes both the key and value of
-     * each entry.
+     * Performs the given action for each entry in this stream. Equivalent to
+     * {@link #forEach(Consumer)}, but accepts a {@link BiConsumer} that takes both the key and
+     * value of each entry.
      *
      * @param action the action to perform for each entry
      */

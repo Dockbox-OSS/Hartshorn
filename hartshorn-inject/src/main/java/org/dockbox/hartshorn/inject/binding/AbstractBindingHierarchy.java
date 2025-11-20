@@ -35,21 +35,22 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 
 /**
- * A base implementation of a {@link BindingHierarchy}. This implementation tracks providers by priority, and allows
- * for the addition of providers with a priority. The priority is used to determine the order in which providers are
- * evaluated. The higher the priority, the earlier the provider is evaluated.
+ * A base implementation of a {@link BindingHierarchy}. This implementation tracks providers by
+ * priority, and allows for the addition of providers with a priority. The priority is used to
+ * determine the order in which providers are evaluated. The higher the priority, the earlier the
+ * provider is evaluated.
  *
  * @param <T> the type of the component
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBindingHierarchy.class);
 
-    private final NavigableMap<Integer, InstantiationStrategy<T>> providers = new TreeMap<>(Collections.reverseOrder());
+    private final NavigableMap<Integer, InstantiationStrategy<T>> providers =
+        new TreeMap<>(Collections.reverseOrder());
 
     private final ComponentKey<T> key;
 
@@ -58,8 +59,8 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     }
 
     /**
-     * Returns the map of providers, where the key is the priority, and the value is the provider. The map is sorted
-     * in descending order, meaning the highest priority is the first entry.
+     * Returns the map of providers, where the key is the priority, and the value is the provider.
+     * The map is sorted in descending order, meaning the highest priority is the first entry.
      *
      * @return the map of providers
      */
@@ -103,7 +104,7 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     public BindingHierarchy<T> addNext(InstantiationStrategy<T> strategy) {
         int next = Priority.DEFAULT_PRIORITY;
         if (!this.priorityProviders().isEmpty()) {
-            next = this.priorityProviders().lastKey()+1;
+            next = this.priorityProviders().lastKey() + 1;
         }
         return this.add(next, strategy);
     }
@@ -154,9 +155,9 @@ public abstract class AbstractBindingHierarchy<T> implements BindingHierarchy<T>
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("componentKey", this.key())
-                .field("providers", this.priorityProviders())
-                .describe();
+            .field("componentKey", this.key())
+            .field("providers", this.priorityProviders())
+            .describe();
     }
 
     @Override

@@ -26,8 +26,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @HartshornIntegrationTest(
-        includeBasePackages = false,
-        customizers = ExceptionHandlerTests.ExceptionHandlerTestsCustomizer.class
+    includeBasePackages = false,
+    customizers = ExceptionHandlerTests.ExceptionHandlerTestsCustomizer.class
 )
 public class ExceptionHandlerTests {
 

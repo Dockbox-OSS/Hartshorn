@@ -30,65 +30,65 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
  *
  * @param <T> the type of the elements in the collection
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface CollectorBindingFunction<T> {
 
     /**
-     * Binds the given provider, this will call the provider every time it is
-     * requested.
+     * Binds the given provider, this will call the provider every time it is requested.
      *
      * @param strategy the provider to add
+     *
      * @return the binder
      */
     Binder provider(InstantiationStrategy<T> strategy);
 
     /**
-     * Binds the given supplier, this will call the supplier every time it is
-     * requested.
+     * Binds the given supplier, this will call the supplier every time it is requested.
      *
      * @param supplier The supplier to bind to
+     *
      * @return The binder
      */
     Binder supplier(CheckedSupplier<T> supplier);
 
     /**
-     * Binds the given supplier, this will call the supplier every time it is
-     * requested.
+     * Binds the given supplier, this will call the supplier every time it is requested.
      *
      * @param supplier The supplier to bind to
+     *
      * @return The binder
      */
     Binder supplier(PrototypeInstantiationStrategy<T> supplier);
 
     /**
-     * Binds to the given instance, this will always return the same instance
-     * every time it is requested. This may not enhance the instance before it
-     * is returned.
+     * Binds to the given instance, this will always return the same instance every time it is
+     * requested. This may not enhance the instance before it is returned.
      *
      * @param instance the instance to bind to
+     *
      * @return the binder
      */
     Binder singleton(T instance);
 
     /**
-     * Binds to the given type, this will create a new instance of the given type
-     * every time it is requested.
+     * Binds to the given type, this will create a new instance of the given type every time it is
+     * requested.
      *
      * @param type the type to bind to
+     *
      * @return the binder
      */
     Binder type(Class<? extends T> type);
 
     /**
-     * Binds to a supplier that will provide a lazy instance of the given type
-     * every time it is requested. This will create the instance the first time
-     * it is requested and then return the same instance every time it is
-     * requested.
+     * Binds to a supplier that will provide a lazy instance of the given type every time it is
+     * requested. This will create the instance the first time it is requested and then return the
+     * same instance every time it is requested.
      *
      * @param supplier the supplier to bind to
+     *
      * @return the binder
      */
     Binder lazySingleton(CheckedFunction<Scope, T> supplier);

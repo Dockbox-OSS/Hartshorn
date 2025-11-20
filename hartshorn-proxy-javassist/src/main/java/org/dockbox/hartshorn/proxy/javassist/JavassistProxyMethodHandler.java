@@ -31,17 +31,18 @@ import javassist.util.proxy.MethodHandler;
  * @param introspector the introspector to use
  * @param <T> the type of the proxy
  *
- * @since 0.4.10
- *
  * @author Guus Lieben
+ * @since 0.4.10
  */
-public record JavassistProxyMethodHandler<T>(ProxyMethodInterceptor<T> interceptor, Introspector introspector) implements MethodHandler {
+public record JavassistProxyMethodHandler<T>(ProxyMethodInterceptor<T> interceptor,
+                                             Introspector introspector) implements MethodHandler {
 
     @Override
-    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
+    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args)
+        throws Throwable {
         return this.interceptor.intercept(self,
-                new MethodInvokable(thisMethod, this.introspector()),
-                new MethodInvokable(proceed, this.introspector()),
-                args);
+            new MethodInvokable(thisMethod, this.introspector()),
+            new MethodInvokable(proceed, this.introspector()),
+            args);
     }
 }

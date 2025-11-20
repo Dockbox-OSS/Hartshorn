@@ -17,16 +17,15 @@
 package org.dockbox.hartshorn.proxy.advice.registry;
 
 /**
- * Configuration step for {@link AdvisorRegistry}s. This step is used to configure the registry by adding
- * advisors for specific types.
+ * Configuration step for {@link AdvisorRegistry}s. This step is used to configure the registry by
+ * adding advisors for specific types.
  *
  * @param <T> the type of the proxy object
  * @param <S> the advised type, which is assignable to T
  *
- * @see AdvisorRegistry
- *
- * @since 0.4.9
  * @author Guus Lieben
+ * @see AdvisorRegistry
+ * @since 0.4.9
  */
 public interface TypeAdvisorRegistryStep<S, T> {
 
@@ -35,19 +34,21 @@ public interface TypeAdvisorRegistryStep<S, T> {
      * targets a backing implementation, not the original instance.
      *
      * @param delegateInstance the instance to which the method is delegated
+     *
      * @return the registry, for chaining
      */
     AdvisorRegistry<T> delegate(S delegateInstance);
 
     /**
-     * Delegates all methods defined by the given {@code type} which are not implemented in the advised type
-     * to the given delegate instance. This means any method which is still abstract at the top-level will be
-     * delegated, and any method with a concrete implementation will invoke the default method without interception.
-     * This targets a backing implementation, not the original instance.
+     * Delegates all methods defined by the given {@code type} which are not implemented in the
+     * advised type to the given delegate instance. This means any method which is still abstract at
+     * the top-level will be delegated, and any method with a concrete implementation will invoke
+     * the default method without interception. This targets a backing implementation, not the
+     * original instance.
      *
      * @param delegateInstance the instance to which the method is delegated
+     *
      * @return the registry, for chaining
      */
     AdvisorRegistry<T> delegateAbstractOnly(S delegateInstance);
-
 }

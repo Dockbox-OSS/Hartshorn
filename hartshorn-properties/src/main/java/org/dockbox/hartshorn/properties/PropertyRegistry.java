@@ -25,43 +25,45 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * A registry for {@link ConfiguredProperty} instances. This registry allows for the registration and retrieval of
- * properties by name.
- *
- * @since 0.7.0
+ * A registry for {@link ConfiguredProperty} instances. This registry allows for the registration
+ * and retrieval of properties by name.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public interface PropertyRegistry extends ObjectProperty {
 
     /**
-     * Returns the property with the given key. If no properties are found with the given key, an empty {@link
-     * ListProperty} is returned. This method will attempt to find all properties that start with the given key,
-     * and create a new {@link ListProperty} from them.
+     * Returns the property with the given key. If no properties are found with the given key, an
+     * empty {@link ListProperty} is returned. This method will attempt to find all properties that
+     * start with the given key, and create a new {@link ListProperty} from them.
      *
-     * <p>If only a single value is found without an index (e.g. "key" instead of "key[0]"), the value will be
-     * parsed using the provided {@link Function} to convert it to a list of values.
+     * <p>If only a single value is found without an index (e.g. "key" instead of "key[0]"), the
+     * value will be parsed using the provided {@link Function} to convert it to a list of values.
      *
      * @param name the key of the property to retrieve
      * @param singleValueMapper the function to use to map a single value to a list property
+     *
      * @return the property with the given key
      */
     Option<ListProperty> list(String name, Function<ValueProperty, ListProperty> singleValueMapper);
 
     /**
-     * Returns all properties that match the given predicate. This will not convert the properties to a specific type,
-     * and will instead return the raw {@link ConfiguredProperty} instances.
+     * Returns all properties that match the given predicate. This will not convert the properties
+     * to a specific type, and will instead return the raw {@link ConfiguredProperty} instances.
      *
      * @param predicate the predicate to match properties against
+     *
      * @return all properties that match the given predicate
      */
     List<ConfiguredProperty> find(Predicate<ConfiguredProperty> predicate);
 
     /**
-     * Returns the value of the property with the given name. If no property is found with the given name, or the
-     * property does not have a value, an empty {@link Option} is returned.
+     * Returns the value of the property with the given name. If no property is found with the given
+     * name, or the property does not have a value, an empty {@link Option} is returned.
      *
      * @param name the name of the property to retrieve
+     *
      * @return the value of the property with the given name
      */
     default Option<String> value(String name) {
@@ -69,9 +71,9 @@ public interface PropertyRegistry extends ObjectProperty {
     }
 
     /**
-     * Returns the value of the property with the given name, parsed using the provided {@link ValuePropertyParser}.
-     * If no property is found with the given name, or the property does not have a value, an empty {@link Option} is
-     * returned.
+     * Returns the value of the property with the given name, parsed using the provided
+     * {@link ValuePropertyParser}. If no property is found with the given name, or the property
+     * does not have a value, an empty {@link Option} is returned.
      *
      * @param name the name of the property to retrieve
      * @param parser the parser to use to convert the property value
@@ -110,10 +112,12 @@ public interface PropertyRegistry extends ObjectProperty {
     void clear();
 
     /**
-     * Returns whether the property with the given key exists in this map property. This method will check if a property
-     * with the given key exists, or if any properties exist that start with the given key.
+     * Returns whether the property with the given key exists in this map property. This method will
+     * check if a property with the given key exists, or if any properties exist that start with the
+     * given key.
      *
      * @param name the key of the property to retrieve
+     *
      * @return the property with the given key, or an empty {@link Option}
      */
     boolean contains(String name);

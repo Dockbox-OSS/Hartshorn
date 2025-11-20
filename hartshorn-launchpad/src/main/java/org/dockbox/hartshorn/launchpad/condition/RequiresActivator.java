@@ -31,29 +31,28 @@ import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 /**
  * A condition that requires an activator to be present in the {@link ModuleActivatorHolder}.
  *
- * @see ActivatorCondition
- *
- * @since 0.4.12
- *
  * @author Guus Lieben
+ * @see ActivatorCondition
+ * @since 0.4.12
  */
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Extends(RequiresCondition.class)
 @RequiresCondition(condition = ActivatorCondition.class)
 public @interface RequiresActivator {
 
     /**
-     * The type of the activator that is required to be present. The activator should be an annotation which itself
-     * is annotated with {@link ModuleActivator}.
+     * The type of the activator that is required to be present. The activator should be an
+     * annotation which itself is annotated with {@link ModuleActivator}.
      *
      * @return the type of the activator that is required to be present
      */
     Class<? extends Annotation>[] value();
 
     /**
-     * @see RequiresCondition#failOnNoMatch()
      * @return whether to fail on no match
+     *
+     * @see RequiresCondition#failOnNoMatch()
      */
     @AttributeAlias(value = "failsOnNoMatch", target = RequiresCondition.class)
     boolean failOnNoMatch() default false;

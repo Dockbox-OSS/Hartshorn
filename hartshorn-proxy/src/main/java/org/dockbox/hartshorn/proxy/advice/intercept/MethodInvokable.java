@@ -22,11 +22,11 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import java.lang.reflect.Method;
 
 /**
- * Implementation of {@link Invokable} that is backed by a {@link Method}. Invoking the method is delegated to the
- * {@link Method#invoke(Object, Object...)} method.
+ * Implementation of {@link Invokable} that is backed by a {@link Method}. Invoking the method is
+ * delegated to the {@link Method#invoke(Object, Object...)} method.
  *
- * @since 0.4.12
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public class MethodInvokable implements Invokable {
 

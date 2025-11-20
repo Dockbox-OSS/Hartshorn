@@ -24,9 +24,8 @@ import org.dockbox.hartshorn.inject.provider.ComponentProvider;
  * Represents an application that is capable of injection. In other words, an application that can
  * provide components and resolve dependencies.
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public interface InjectionCapableApplication extends Context {
 

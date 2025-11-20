@@ -26,12 +26,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A {@link TypeReferenceCollectorContext} is a {@link org.dockbox.hartshorn.context.Context} that is used
- * to track {@link TypeReferenceCollector} which are used by the application to discover types on the classpath.
- *
- * @since 0.4.13
+ * A {@link TypeReferenceCollectorContext} is a {@link org.dockbox.hartshorn.context.Context} that
+ * is used to track {@link TypeReferenceCollector} which are used by the application to discover
+ * types on the classpath.
  *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class TypeReferenceCollectorContext extends DefaultContext implements Reportable {
 
@@ -50,13 +50,15 @@ public class TypeReferenceCollectorContext extends DefaultContext implements Rep
     }
 
     /**
-     * Creates a new {@link AggregateTypeReferenceCollector} that combines all registered collectors.
+     * Creates a new {@link AggregateTypeReferenceCollector} that combines all registered
+     * collectors.
      *
      * @return A new {@link AggregateTypeReferenceCollector}
      */
     public synchronized TypeReferenceCollector collector() {
         if (this.aggregate == null) {
-            AggregateTypeReferenceCollector collector = new AggregateTypeReferenceCollector(this.collectors);
+            AggregateTypeReferenceCollector collector =
+                new AggregateTypeReferenceCollector(this.collectors);
             this.aggregate = new CachedTypeReferenceCollector(collector);
         }
         return this.aggregate;
@@ -74,17 +76,17 @@ public class TypeReferenceCollectorContext extends DefaultContext implements Rep
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         Reportable[] reporters = this.collectors.stream()
-                .map(referenceCollector -> (Reportable) trcCollector -> {
-                    trcCollector.property("type").writeString(referenceCollector.getClass().getName());
-                    referenceCollector.report(trcCollector);
-                }).toArray(Reportable[]::new);
+            .map(referenceCollector -> (Reportable) trcCollector -> {
+                trcCollector.property("type").writeString(referenceCollector.getClass().getName());
+                referenceCollector.report(trcCollector);
+            }).toArray(Reportable[]::new);
         collector.property("collectors").writeDelegates(reporters);
     }
 
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("collectors", this.collectors)
-                .describe();
+            .field("collectors", this.collectors)
+            .describe();
     }
 }

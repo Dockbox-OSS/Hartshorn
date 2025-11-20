@@ -31,9 +31,8 @@ import java.util.function.Supplier;
  * @param <I> The type of input to initialize with.
  * @param <T> The type of object to initialize.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 @FunctionalInterface
 public interface ContextualInitializer<I, T> {
@@ -43,14 +42,15 @@ public interface ContextualInitializer<I, T> {
      * each invocation, or a new instance on each invocation.
      *
      * @param input The input to initialize with.
+     *
      * @return The initialized object.
      */
     T initialize(SingleElementContext<? extends I> input);
 
     /**
-     * Returns an initializer that invokes the given initializer, ignoring the input value.
-     * This is useful for initializers that do not require context to initialize, but need to be
-     * provided to a configurer that requires a {@link ContextualInitializer}.
+     * Returns an initializer that invokes the given initializer, ignoring the input value. This is
+     * useful for initializers that do not require context to initialize, but need to be provided to
+     * a configurer that requires a {@link ContextualInitializer}.
      *
      * @param initializer The initializer to invoke.
      * @param <I> The type of input to initialize with.
@@ -105,7 +105,7 @@ public interface ContextualInitializer<I, T> {
      * @return An initializer that delegates to the given initializer.
      */
     static <I1, I2 extends I1, T> ContextualInitializer<I2, T> defer(
-            Supplier<ContextualInitializer<I1, T>> initializer
+        Supplier<ContextualInitializer<I1, T>> initializer
     ) {
         return input -> initializer.get().initialize(input);
     }
@@ -128,6 +128,7 @@ public interface ContextualInitializer<I, T> {
      * needing to invoke the initializer directly.
      *
      * @param consumer The consumer to invoke with the result of this initializer.
+     *
      * @return An initializer that invokes this initializer, and then invokes the given consumer
      * with the result.
      */
@@ -145,7 +146,8 @@ public interface ContextualInitializer<I, T> {
      * initializer, without needing to invoke the initializer directly.
      *
      * @param consumer The consumer to invoke with the original input and the result of this
-     *                 initializer.
+     * initializer.
+     *
      * @return An initializer that invokes this initializer, and then invokes the given consumer
      * with the original input and the result.
      */

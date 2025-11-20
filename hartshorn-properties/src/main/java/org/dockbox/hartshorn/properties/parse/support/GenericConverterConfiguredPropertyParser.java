@@ -22,26 +22,25 @@ import org.dockbox.hartshorn.util.introspect.convert.GenericConverter;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A parser to convert single-value {@link ConfiguredProperty} instances to instances of a specific type using a
- * {@link GenericConverter}.
+ * A parser to convert single-value {@link ConfiguredProperty} instances to instances of a specific
+ * type using a {@link GenericConverter}.
  *
  * @param converter the converter to use
  * @param targetType the type to convert the value to
  * @param <T> the type to convert the value to
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public record GenericConverterConfiguredPropertyParser<T>(
-        GenericConverter converter,
-        Class<T> targetType
+    GenericConverter converter,
+    Class<T> targetType
 ) implements ConfiguredPropertyParser<T> {
 
     @Override
     public Option<T> parse(ConfiguredProperty property) {
         return property.value()
-                .map(value -> this.converter.convert(value, String.class, this.targetType()))
-                .cast(this.targetType());
+            .map(value -> this.converter.convert(value, String.class, this.targetType()))
+            .cast(this.targetType());
     }
 }

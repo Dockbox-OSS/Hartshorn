@@ -49,14 +49,15 @@ import java.util.stream.Collectors;
  *
  * @author Guus Lieben
  */
-public class ImmutableCompositeBindingHierarchy<T> implements BindingHierarchy<ComponentCollection<T>> {
+public class ImmutableCompositeBindingHierarchy<T>
+    implements BindingHierarchy<ComponentCollection<T>> {
 
     private final Set<CollectionBindingHierarchy<T>> hierarchies;
     private final ComponentKey<ComponentCollection<T>> componentKey;
 
     public ImmutableCompositeBindingHierarchy(
-            ComponentKey<ComponentCollection<T>> componentKey,
-            Set<CollectionBindingHierarchy<T>> hierarchies
+        ComponentKey<ComponentCollection<T>> componentKey,
+        Set<CollectionBindingHierarchy<T>> hierarchies
     ) {
         this.componentKey = componentKey;
         this.hierarchies = hierarchies;
@@ -70,30 +71,37 @@ public class ImmutableCompositeBindingHierarchy<T> implements BindingHierarchy<C
     }
 
     @Override
-    public BindingHierarchy<ComponentCollection<T>> add(InstantiationStrategy<ComponentCollection<T>> strategy) {
+    public BindingHierarchy<ComponentCollection<T>> add(
+        InstantiationStrategy<ComponentCollection<T>> strategy
+    ) {
         throw new UnsupportedOperationException("Cannot add to an immutable hierarchy");
     }
 
     @Override
-    public BindingHierarchy<ComponentCollection<T>> add(int priority, InstantiationStrategy<ComponentCollection<T>> strategy) {
+    public BindingHierarchy<ComponentCollection<T>> add(
+        int priority,
+        InstantiationStrategy<ComponentCollection<T>> strategy
+    ) {
         throw new UnsupportedOperationException("Cannot add to an immutable hierarchy");
     }
 
     @Override
-    public BindingHierarchy<ComponentCollection<T>> addNext(InstantiationStrategy<ComponentCollection<T>> strategy) {
+    public BindingHierarchy<ComponentCollection<T>> addNext(
+        InstantiationStrategy<ComponentCollection<T>> strategy
+    ) {
         throw new UnsupportedOperationException("Cannot add to an immutable hierarchy");
     }
 
     @Override
-    public BindingHierarchy<ComponentCollection<T>> merge(BindingHierarchy<ComponentCollection<T>> hierarchy) {
+    public BindingHierarchy<ComponentCollection<T>> merge(
+        BindingHierarchy<ComponentCollection<T>> hierarchy
+    ) {
         throw new UnsupportedOperationException("Cannot merge composite hierarchies");
     }
 
     @Override
     public int size() {
-        return this.hierarchies.stream()
-            .mapToInt(BindingHierarchy::size)
-            .sum();
+        return this.hierarchies.stream().mapToInt(BindingHierarchy::size).sum();
     }
 
     @Override
@@ -135,14 +143,17 @@ public class ImmutableCompositeBindingHierarchy<T> implements BindingHierarchy<C
         MultiMap<Integer, CollectionInstantiationStrategy<T>> providers = new ArrayListMultiMap<>();
         for (CollectionBindingHierarchy<T> hierarchy : this.hierarchies) {
             for (Map.Entry<Integer, InstantiationStrategy<ComponentCollection<T>>> entry : hierarchy) {
-                providers.put(entry.getKey(), (CollectionInstantiationStrategy<T>) entry.getValue());
+                providers.put(entry.getKey(),
+                    (CollectionInstantiationStrategy<T>) entry.getValue());
             }
         }
 
-        Map<Integer, InstantiationStrategy<ComponentCollection<T>>> zippedProviders = new TreeMap<>(Collections.reverseOrder());
+        Map<Integer, InstantiationStrategy<ComponentCollection<T>>> zippedProviders =
+            new TreeMap<>(Collections.reverseOrder());
         for (int priority : providers.keySet()) {
             Collection<CollectionInstantiationStrategy<T>> collection = providers.get(priority);
-            zippedProviders.put(priority, new ComposedCollectionInstantiationStrategy<>(Set.copyOf(collection)));
+            zippedProviders.put(priority,
+                new ComposedCollectionInstantiationStrategy<>(Set.copyOf(collection)));
         }
         return zippedProviders.entrySet().iterator();
     }
@@ -150,8 +161,8 @@ public class ImmutableCompositeBindingHierarchy<T> implements BindingHierarchy<C
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("componentKey", this.componentKey)
-                .field("hierarchies", this.hierarchies)
-                .describe();
+            .field("componentKey", this.componentKey)
+            .field("hierarchies", this.hierarchies)
+            .describe();
     }
 }

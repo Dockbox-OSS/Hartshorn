@@ -21,9 +21,8 @@ import org.dockbox.hartshorn.proxy.lookup.Unproxy;
 /**
  * Concrete class to test equality of proxies.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class EqualProxy {
     public boolean test(@Unproxy(fallbackToProxy = true) EqualProxy self) {

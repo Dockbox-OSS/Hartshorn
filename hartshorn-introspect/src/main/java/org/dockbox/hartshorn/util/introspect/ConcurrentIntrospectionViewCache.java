@@ -42,9 +42,8 @@ import java.util.function.Supplier;
  * concurrent calls. This is typically not an issue, as the cache is populated with the same
  * effective value. If this is not the case, it is recommended to use a synchronized cache.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ConcurrentIntrospectionViewCache implements IntrospectionViewCache {
 
@@ -53,15 +52,16 @@ public class ConcurrentIntrospectionViewCache implements IntrospectionViewCache 
     private final Map<Method, MethodView<?, ?>> methodViewCache = new ConcurrentHashMap<>();
     private final Map<Field, FieldView<?, ?>> fieldViewCache = new ConcurrentHashMap<>();
     private final Map<Parameter, ParameterView<?>> parameterViewCache = new ConcurrentHashMap<>();
-    private final Map<Constructor<?>, ConstructorView<?>> constructorViewCache = new ConcurrentHashMap<>();
+    private final Map<Constructor<?>, ConstructorView<?>> constructorViewCache =
+        new ConcurrentHashMap<>();
     private final Map<Package, PackageView> packageViewCache = new ConcurrentHashMap<>();
     // checkstyle:on LineLength
 
     @Override
     public <T> TypeView<T> computeIfAbsent(Class<T> type, Supplier<TypeView<T>> viewSupplier) {
         return TypeUtils.unchecked(
-                this.typeViewCache.computeIfAbsent(type, key0 -> viewSupplier.get()),
-                TypeView.class
+            this.typeViewCache.computeIfAbsent(type, key0 -> viewSupplier.get()),
+            TypeView.class
         );
     }
 
@@ -80,20 +80,20 @@ public class ConcurrentIntrospectionViewCache implements IntrospectionViewCache 
 
     @Override
     public ParameterView<?> computeIfAbsent(
-            Parameter parameter,
-            Supplier<ParameterView<?>> viewSupplier
+        Parameter parameter,
+        Supplier<ParameterView<?>> viewSupplier
     ) {
         return this.parameterViewCache.computeIfAbsent(parameter, key0 -> viewSupplier.get());
     }
 
     @Override
     public <T> ConstructorView<T> computeIfAbsent(
-            Constructor<T> constructor,
-            Supplier<ConstructorView<T>> viewSupplier
+        Constructor<T> constructor,
+        Supplier<ConstructorView<T>> viewSupplier
     ) {
         return TypeUtils.unchecked(this.constructorViewCache.computeIfAbsent(
-                constructor,
-                key0 -> viewSupplier.get()
+            constructor,
+            key0 -> viewSupplier.get()
         ), ConstructorView.class);
     }
 

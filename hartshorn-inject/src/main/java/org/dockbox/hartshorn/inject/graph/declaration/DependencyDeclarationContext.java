@@ -24,9 +24,8 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  *
  * @param <T> ...
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface DependencyDeclarationContext<T> {
 
@@ -38,7 +37,8 @@ public interface DependencyDeclarationContext<T> {
     TypeView<T> type();
 
     /**
-     * Returns the composite qualifier of the dependency, which may be used to identify the dependency.
+     * Returns the composite qualifier of the dependency, which may be used to identify the
+     * dependency.
      *
      * @return the composite qualifier of the dependency
      */

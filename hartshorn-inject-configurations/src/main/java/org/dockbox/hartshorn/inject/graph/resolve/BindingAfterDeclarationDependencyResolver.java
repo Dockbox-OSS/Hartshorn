@@ -26,31 +26,32 @@ import org.dockbox.hartshorn.inject.graph.strategy.BindingStrategyContext;
 import org.dockbox.hartshorn.inject.graph.strategy.MethodAwareBindingStrategyContext;
 
 /**
- * A {@link BindingDeclarationDependencyResolver} that resolves dependencies based on explicit non-direct
- * dependencies as defined by the {@link Binds#after()} attribute. This resolver indicates that any
- * dependency that is declared in the {@link Binds#after()} attribute should be resolved before the
- * binding that is being resolved.
- *
- * @see Binds#after()
- *
- * @since 0.6.0
+ * A {@link BindingDeclarationDependencyResolver} that resolves dependencies based on explicit
+ * non-direct dependencies as defined by the {@link Binds#after()} attribute. This resolver
+ * indicates that any dependency that is declared in the {@link Binds#after()} attribute should be
+ * resolved before the binding that is being resolved.
  *
  * @author Guus Lieben
+ * @see Binds#after()
+ * @since 0.6.0
  */
-public class BindingAfterDeclarationDependencyResolver implements BindingDeclarationDependencyResolver {
+public class BindingAfterDeclarationDependencyResolver
+    implements BindingDeclarationDependencyResolver {
 
     @Override
     public <T> boolean canHandle(BindingStrategyContext<T> context) {
         return context instanceof MethodAwareBindingStrategyContext<T> methodAwareBindingStrategyContext
-                && methodAwareBindingStrategyContext.method().annotations().has(Binds.class);
+            && methodAwareBindingStrategyContext.method().annotations().has(Binds.class);
     }
 
     @Override
     public Set<ComponentKey<?>> dependencies(BindingStrategyContext<?> context) {
-        MethodAwareBindingStrategyContext<?> strategyContext = (MethodAwareBindingStrategyContext<?>) context;
+        MethodAwareBindingStrategyContext<?> strategyContext =
+            (MethodAwareBindingStrategyContext<?>) context;
         Binds bindingDecorator = strategyContext.method().annotations()
-                .get(Binds.class)
-                .orElseThrow(() -> new IllegalStateException("Method is not annotated with @Binds (or a compatible meta-annotation)"));
+            .get(Binds.class)
+            .orElseThrow(() -> new IllegalStateException(
+                "Method is not annotated with @Binds (or a compatible meta-annotation)"));
 
         Class<?>[] after = bindingDecorator.after();
         return Arrays.stream(after).map(ComponentKey::of).collect(Collectors.toSet());

@@ -54,31 +54,39 @@ public class ComponentPopulationTests {
         SampleContext sampleContext = new SampleContext();
         this.applicationContext.addContext(sampleContext);
 
-        ComponentPopulationStrategy strategy = InjectPopulationStrategy.create(Customizer.useDefaults())
+        ComponentPopulationStrategy strategy =
+            InjectPopulationStrategy.create(Customizer.useDefaults())
                 .initialize(SimpleSingleElementContext.create(this.applicationContext));
 
-        PopulationTestComponent component = this.createAndPopulateComponent(strategy, type -> createFieldInjectionPoint("context", type));
+        PopulationTestComponent component = this.createAndPopulateComponent(strategy,
+            type -> createFieldInjectionPoint("context", type));
         Assertions.assertNotNull(component.context);
         Assertions.assertSame(sampleContext, component.context);
     }
 
     @Test
     void testInjectFieldPopulation() {
-        ComponentPopulationStrategy strategy = InjectPopulationStrategy.create(Customizer.useDefaults())
+        ComponentPopulationStrategy strategy =
+            InjectPopulationStrategy.create(Customizer.useDefaults())
                 .initialize(SimpleSingleElementContext.create(this.applicationContext));
 
         PopulationTestComponent component =
-            this.createAndPopulateComponent(strategy, type -> createFieldInjectionPoint("applicationContext", type));
+            this.createAndPopulateComponent(strategy,
+                type -> createFieldInjectionPoint("applicationContext", type));
         Assertions.assertNotNull(component.applicationContext);
         Assertions.assertSame(this.applicationContext, component.applicationContext);
     }
 
     @Test
     void testInjectMethodPopulation() {
-        ComponentPopulationStrategy strategy = InjectPopulationStrategy.create(Customizer.useDefaults())
+        ComponentPopulationStrategy strategy =
+            InjectPopulationStrategy.create(Customizer.useDefaults())
                 .initialize(SimpleSingleElementContext.create(this.applicationContext));
 
-        PopulationTestComponent component = this.createAndPopulateComponent(strategy, type -> createMethodInjectionPoint("setApplicationContext", List.of(ApplicationContext.class), type));
+        PopulationTestComponent component = this.createAndPopulateComponent(strategy,
+            type -> createMethodInjectionPoint("setApplicationContext",
+                List.of(ApplicationContext.class),
+                type));
         Assertions.assertNotNull(component.applicationContext);
         Assertions.assertSame(this.applicationContext, component.applicationContext);
     }
@@ -88,10 +96,14 @@ public class ComponentPopulationTests {
         SampleContext sampleContext = new SampleContext();
         this.applicationContext.addContext(sampleContext);
 
-        ComponentPopulationStrategy strategy = InjectPopulationStrategy.create(Customizer.useDefaults())
+        ComponentPopulationStrategy strategy =
+            InjectPopulationStrategy.create(Customizer.useDefaults())
                 .initialize(SimpleSingleElementContext.create(this.applicationContext));
 
-        PopulationTestComponent component = this.createAndPopulateComponent(strategy, type -> createMethodInjectionPoint("setContexts", List.of(ApplicationContext.class, SampleContext.class), type));
+        PopulationTestComponent component = this.createAndPopulateComponent(strategy,
+            type -> createMethodInjectionPoint("setContexts",
+                List.of(ApplicationContext.class, SampleContext.class),
+                type));
         Assertions.assertNotNull(component.applicationContext);
         Assertions.assertSame(this.applicationContext, component.applicationContext);
 
@@ -118,28 +130,42 @@ public class ComponentPopulationTests {
         }
     }
 
-    private PopulationTestComponent createAndPopulateComponent(ComponentPopulationStrategy strategy, Function<TypeView<PopulationTestComponent>, ComponentInjectionPoint<PopulationTestComponent>> injectionPointProvider) {
+    private PopulationTestComponent createAndPopulateComponent(
+        ComponentPopulationStrategy strategy,
+        Function<TypeView<PopulationTestComponent>, ComponentInjectionPoint<PopulationTestComponent>> injectionPointProvider
+    ) {
         PopulationTestComponent component = new PopulationTestComponent();
-        TypeView<PopulationTestComponent> typeView = this.applicationContext.environment().introspector().introspect(component);
-        PopulateComponentContext<PopulationTestComponent> componentContext = new PopulateComponentContext<>(
+        TypeView<PopulationTestComponent> typeView =
+            this.applicationContext.environment().introspector().introspect(component);
+        PopulateComponentContext<PopulationTestComponent> componentContext =
+            new PopulateComponentContext<>(
                 component, component,
                 typeView, this.applicationContext.scope(),
-            this.applicationContext
-        );
+                this.applicationContext
+            );
 
-        ComponentInjectionPoint<PopulationTestComponent> injectionPoint = injectionPointProvider.apply(typeView);
+        ComponentInjectionPoint<PopulationTestComponent> injectionPoint =
+            injectionPointProvider.apply(typeView);
         Assertions.assertDoesNotThrow(() -> strategy.populate(componentContext, injectionPoint));
 
         return component;
     }
 
-    private static ComponentInjectionPoint<PopulationTestComponent> createFieldInjectionPoint(String fieldName, TypeView<PopulationTestComponent> typeView) {
+    private static ComponentInjectionPoint<PopulationTestComponent> createFieldInjectionPoint(
+        String fieldName,
+        TypeView<PopulationTestComponent> typeView
+    ) {
         FieldView<PopulationTestComponent, ?> fieldView = typeView.fields().named(fieldName).get();
         return new ComponentFieldInjectionPoint<>(fieldView);
     }
 
-    private static ComponentInjectionPoint<PopulationTestComponent> createMethodInjectionPoint(String methodName, List<Class<?>> parameterTypes, TypeView<PopulationTestComponent> typeView) {
-        MethodView<PopulationTestComponent, ?> methodView = typeView.methods().named(methodName, parameterTypes).get();
+    private static ComponentInjectionPoint<PopulationTestComponent> createMethodInjectionPoint(
+        String methodName,
+        List<Class<?>> parameterTypes,
+        TypeView<PopulationTestComponent> typeView
+    ) {
+        MethodView<PopulationTestComponent, ?> methodView =
+            typeView.methods().named(methodName, parameterTypes).get();
         return new ComponentMethodInjectionPoint<>(methodView);
     }
 
@@ -163,5 +189,6 @@ public class ComponentPopulationTests {
         }
     }
 
-    public static class SampleContext extends DefaultContext {}
+    public static class SampleContext extends DefaultContext {
+    }
 }

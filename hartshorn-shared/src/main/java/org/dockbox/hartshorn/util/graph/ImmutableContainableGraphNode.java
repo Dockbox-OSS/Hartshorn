@@ -24,13 +24,12 @@ import java.util.Set;
  *
  * @param <T> the type of the node
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ImmutableContainableGraphNode<T>
-        extends ImmutableGraphNode<T>
-        implements ContainableGraphNode<T> {
+    extends ImmutableGraphNode<T>
+    implements ContainableGraphNode<T> {
 
     private final Set<GraphNode<T>> parents;
 

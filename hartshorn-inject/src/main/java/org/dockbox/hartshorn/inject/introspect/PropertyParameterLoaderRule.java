@@ -21,14 +21,13 @@ import org.dockbox.hartshorn.inject.populate.InjectPropertyParameterResolver;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 
 /**
- * A parameter loader rule that loads parameters annotated with {@link PropertyValue}. Values are resolved from the {@link
- * org.dockbox.hartshorn.properties.PropertyRegistry}, or from the {@link PropertyValue#defaultValue()} if no value is found.
- *
- * @see InjectPropertyParameterResolver
- *
- * @since 0.7.0
+ * A parameter loader rule that loads parameters annotated with {@link PropertyValue}. Values are
+ * resolved from the {@link org.dockbox.hartshorn.properties.PropertyRegistry}, or from the
+ * {@link PropertyValue#defaultValue()} if no value is found.
  *
  * @author Guus Lieben
+ * @see InjectPropertyParameterResolver
+ * @since 0.7.0
  */
 public class PropertyParameterLoaderRule extends InjectParameterResolverParameterLoaderRule {
 

@@ -32,8 +32,8 @@ import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstru
  * if it is not {@code null}.
  *
  * <p>If the annotated element is a method, the behavior is different depending on the
- * responsible {@link ComponentPostProcessor} which handles the method. Typically,
- * this will indicate that the result of the method will be enabled.
+ * responsible {@link ComponentPostProcessor} which handles the method. Typically, this will
+ * indicate that the result of the method will be enabled.
  *
  * <p>If the value of {@link #value()} is {@code true}, the annotated element will be
  * enabled. If the value is {@code false}, the annotated element will be not be enabled

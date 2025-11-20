@@ -27,9 +27,8 @@ import java.util.HashMap;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ArrayListMultiMap<K, V> extends HashMultiMap<K, V> {
 

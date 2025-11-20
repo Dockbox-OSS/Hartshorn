@@ -19,13 +19,12 @@ package org.dockbox.hartshorn.inject.populate;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * Indicates that an error occurred while populating a component. This can happen when a component is being
- * populated with values but the values are not compatible with the component's fields, or a value cannot
- * be resolved.
- *
- * @since 0.4.8
+ * Indicates that an error occurred while populating a component. This can happen when a component
+ * is being populated with values but the values are not compatible with the component's fields, or
+ * a value cannot be resolved.
  *
  * @author Guus Lieben
+ * @since 0.4.8
  */
 public class ComponentPopulateException extends ApplicationRuntimeException {
 

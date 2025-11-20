@@ -21,9 +21,8 @@ import org.dockbox.hartshorn.util.ApplicationException;
 /**
  * Thrown when a {@link DiagnosticsReport} instance cannot be serialized.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ReportSerializationException extends ApplicationException {
 

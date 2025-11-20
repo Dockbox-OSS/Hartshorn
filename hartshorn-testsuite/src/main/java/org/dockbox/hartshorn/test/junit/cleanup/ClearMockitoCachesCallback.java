@@ -25,9 +25,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 /**
  * A callback that clears the caches of Mockito after the test has been executed.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class ClearMockitoCachesCallback implements HartshornCleanupCallback {
 

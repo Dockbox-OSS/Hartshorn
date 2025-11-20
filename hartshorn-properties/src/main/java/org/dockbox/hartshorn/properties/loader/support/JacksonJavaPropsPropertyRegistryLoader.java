@@ -26,12 +26,11 @@ import org.dockbox.hartshorn.util.configure.Customizer;
 import java.util.Set;
 
 /**
- * A {@link JacksonPropertyRegistryLoader} that loads properties from Java properties files. This loader uses a
- * {@link JavaPropsMapper} to read the properties from the file.
- *
- * @since 0.7.0
+ * A {@link JacksonPropertyRegistryLoader} that loads properties from Java properties files. This
+ * loader uses a {@link JavaPropsMapper} to read the properties from the file.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class JacksonJavaPropsPropertyRegistryLoader extends JacksonPropertyRegistryLoader {
 
@@ -46,7 +45,10 @@ public class JacksonJavaPropsPropertyRegistryLoader extends JacksonPropertyRegis
         this(formatter, Customizer.useDefaults());
     }
 
-    public JacksonJavaPropsPropertyRegistryLoader(PropertyPathFormatter formatter, Customizer<JavaPropsMapper.Builder> customizer) {
+    public JacksonJavaPropsPropertyRegistryLoader(
+        PropertyPathFormatter formatter,
+        Customizer<JavaPropsMapper.Builder> customizer
+    ) {
         super(formatter);
         this.customizer = customizer;
     }

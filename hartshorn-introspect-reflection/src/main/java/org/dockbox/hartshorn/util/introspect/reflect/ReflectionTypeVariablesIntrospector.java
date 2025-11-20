@@ -29,9 +29,8 @@ import java.util.stream.Collectors;
 /**
  * Reflection-based implementation of {@link TypeVariablesIntrospector}.
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class ReflectionTypeVariablesIntrospector implements TypeVariablesIntrospector {
 
@@ -39,7 +38,10 @@ public class ReflectionTypeVariablesIntrospector implements TypeVariablesIntrosp
     private final List<TypeVariable<?>> variables;
     private List<TypeView<?>> typeViews;
 
-    public ReflectionTypeVariablesIntrospector(Introspector introspector, List<TypeVariable<?>> variables) {
+    public ReflectionTypeVariablesIntrospector(
+        Introspector introspector,
+        List<TypeVariable<?>> variables
+    ) {
         this.introspector = introspector;
         this.variables = variables;
     }
@@ -56,8 +58,8 @@ public class ReflectionTypeVariablesIntrospector implements TypeVariablesIntrosp
     public List<TypeView<?>> all() {
         if (this.typeViews == null) {
             this.typeViews = this.variables.stream()
-                    .map(variable -> this.introspector.introspect((Type) variable))
-                    .collect(Collectors.toList());
+                .map(variable -> this.introspector.introspect((Type) variable))
+                .collect(Collectors.toList());
         }
         return this.typeViews;
     }

@@ -21,13 +21,15 @@ import org.dockbox.hartshorn.util.introspect.util.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 
 /**
- * A parameter loader that attempts to unproxy arguments for several common use cases. This loader is used by default
- * by the {@link ProxyAdvisorMethodInterceptor} and can be used as a reference for custom implementations.
+ * A parameter loader that attempts to unproxy arguments for several common use cases. This loader
+ * is used by default by the {@link ProxyAdvisorMethodInterceptor} and can be used as a reference
+ * for custom implementations.
  *
- * @since 0.4.12
  * @author Guus Lieben
+ * @since 0.4.12
  */
-public class UnproxyingParameterLoader extends RuleBasedParameterLoader<ProxyParameterLoaderContext> {
+public class UnproxyingParameterLoader
+    extends RuleBasedParameterLoader<ProxyParameterLoaderContext> {
 
     public UnproxyingParameterLoader() {
         super(ProxyParameterLoaderContext.class);
@@ -36,7 +38,12 @@ public class UnproxyingParameterLoader extends RuleBasedParameterLoader<ProxyPar
     }
 
     @Override
-    protected <T> T loadDefault(ParameterView<T> parameter, int index, ProxyParameterLoaderContext context, Object... args) {
+    protected <T> T loadDefault(
+        ParameterView<T> parameter,
+        int index,
+        ProxyParameterLoaderContext context,
+        Object... args
+    ) {
         return (T) args[index];
     }
 }

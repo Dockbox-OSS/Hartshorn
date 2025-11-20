@@ -23,43 +23,42 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
 
 /**
- * Converts a {@link String} to a primitive value. Supports all primitive types except {@code
- * void}. Delegates to {@link StringToNumberConverterFactory} for numeric types, and {@link
- * StringToBooleanConverter} and {@link StringToCharacterConverter} for boolean and character types
- * respectively.
+ * Converts a {@link String} to a primitive value. Supports all primitive types except {@code void}.
+ * Delegates to {@link StringToNumberConverterFactory} for numeric types, and
+ * {@link StringToBooleanConverter} and {@link StringToCharacterConverter} for boolean and character
+ * types respectively.
  *
+ * @author Guus Lieben
  * @see StringToNumberConverterFactory
  * @see StringToBooleanConverter
  * @see StringToCharacterConverter
- *
  * @since 0.5.0
- *
- * @author Guus Lieben
  */
 public class StringToPrimitiveConverterFactory
     implements ConverterFactory<String, Object>, ConditionalConverter {
 
     // checkstyle:off LineLength
-    private static final ConverterFactory<String, Number> NUMBER_CONVERTER_FACTORY = new StringToNumberConverterFactory();
+    private static final ConverterFactory<String, Number> NUMBER_CONVERTER_FACTORY =
+        new StringToNumberConverterFactory();
     // checkstyle:on LineLength
 
     private static final Map<Class<?>, Converter<String, ?>> PRIMITIVE_CONVERTERS = Map.ofEntries(
-            Map.entry(boolean.class, new StringToBooleanConverter()
-                .andThen(aBoolean -> aBoolean)),
-            Map.entry(char.class, new StringToCharacterConverter()
-                .andThen(character -> character)),
-            Map.entry(byte.class, NUMBER_CONVERTER_FACTORY.create(Byte.class)
-                .andThen(aByte -> aByte)),
-            Map.entry(double.class, NUMBER_CONVERTER_FACTORY.create(Double.class)
-                .andThen(aDouble -> aDouble)),
-            Map.entry(float.class, NUMBER_CONVERTER_FACTORY.create(Float.class)
-                .andThen(aFloat -> aFloat)),
-            Map.entry(int.class, NUMBER_CONVERTER_FACTORY.create(Integer.class)
-                .andThen(integer -> integer)),
-            Map.entry(long.class, NUMBER_CONVERTER_FACTORY.create(Long.class)
-                .andThen(aLong -> aLong)),
-            Map.entry(short.class, NUMBER_CONVERTER_FACTORY.create(Short.class)
-                .andThen(aShort -> aShort))
+        Map.entry(boolean.class, new StringToBooleanConverter()
+            .andThen(aBoolean -> aBoolean)),
+        Map.entry(char.class, new StringToCharacterConverter()
+            .andThen(character -> character)),
+        Map.entry(byte.class, NUMBER_CONVERTER_FACTORY.create(Byte.class)
+            .andThen(aByte -> aByte)),
+        Map.entry(double.class, NUMBER_CONVERTER_FACTORY.create(Double.class)
+            .andThen(aDouble -> aDouble)),
+        Map.entry(float.class, NUMBER_CONVERTER_FACTORY.create(Float.class)
+            .andThen(aFloat -> aFloat)),
+        Map.entry(int.class, NUMBER_CONVERTER_FACTORY.create(Integer.class)
+            .andThen(integer -> integer)),
+        Map.entry(long.class, NUMBER_CONVERTER_FACTORY.create(Long.class)
+            .andThen(aLong -> aLong)),
+        Map.entry(short.class, NUMBER_CONVERTER_FACTORY.create(Short.class)
+            .andThen(aShort -> aShort))
     );
 
     @SuppressWarnings("unchecked")

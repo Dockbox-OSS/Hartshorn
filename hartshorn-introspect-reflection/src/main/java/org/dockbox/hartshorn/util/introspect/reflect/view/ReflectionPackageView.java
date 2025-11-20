@@ -28,9 +28,8 @@ import java.lang.reflect.AnnotatedElement;
 /**
  * A view that provides access to a package. This view is backed by a {@link Package} instance.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ReflectionPackageView extends ReflectionAnnotatedElementView implements PackageView {
 
@@ -99,7 +98,11 @@ public class ReflectionPackageView extends ReflectionAnnotatedElementView implem
         writeIfNotEmpty(collector, "SpecificationVersion", this.specificationVersion());
     }
 
-    private void writeIfNotEmpty(DiagnosticsPropertyCollector collector, String propertyName, String value) {
+    private void writeIfNotEmpty(
+        DiagnosticsPropertyCollector collector,
+        String propertyName,
+        String value
+    ) {
         if (value != null && !value.isEmpty()) {
             collector.property(propertyName).writeString(value);
         }

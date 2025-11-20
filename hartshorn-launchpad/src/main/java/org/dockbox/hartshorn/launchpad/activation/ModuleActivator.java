@@ -29,8 +29,8 @@ import java.lang.annotation.Target;
 
 /**
  * Meta-annotation used to mark annotations as module activators. Module activators indicate whether
- * specific components processors become active. Additionally, they can be used to filter the activation
- * of components using the {@link RequiresActivator} annotation.
+ * specific components processors become active. Additionally, they can be used to filter the
+ * activation of components using the {@link RequiresActivator} annotation.
  *
  * <p>Module activators always need to be annotated with {@link ModuleActivator}. If an annotation
  * is used as activator, but is not annotated with {@link ModuleActivator}, it will be rejected by
@@ -48,9 +48,9 @@ import java.lang.annotation.Target;
 public @interface ModuleActivator {
 
     /**
-     * Additional packages to scan for components if this module activator is present. If a package has already
-     * been processed before, it is up to the active {@link InjectionCapableApplication} to decide whether to
-     * process it again.
+     * Additional packages to scan for components if this module activator is present. If a package
+     * has already been processed before, it is up to the active {@link InjectionCapableApplication}
+     * to decide whether to process it again.
      *
      * @return The additional packages to scan for components.
      */

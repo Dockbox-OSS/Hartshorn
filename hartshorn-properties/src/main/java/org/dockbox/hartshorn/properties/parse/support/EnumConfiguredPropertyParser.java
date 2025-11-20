@@ -20,18 +20,18 @@ import org.dockbox.hartshorn.properties.ConfiguredProperty;
 import org.dockbox.hartshorn.util.introspect.convert.support.StringToEnumConverterFactory;
 
 /**
- * A parser to convert single-value {@link ConfiguredProperty} instances to enum instances. This parser uses the
- * {@link StringToEnumConverterFactory} to convert the string value to the target enum type.
+ * A parser to convert single-value {@link ConfiguredProperty} instances to enum instances. This
+ * parser uses the {@link StringToEnumConverterFactory} to convert the string value to the target
+ * enum type.
  *
  * @param <E> the enum type to convert to
  *
- * @see StringToEnumConverterFactory
- *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @see StringToEnumConverterFactory
+ * @since 0.7.0
  */
-public class EnumConfiguredPropertyParser<E extends Enum<E>> extends ConverterConfiguredPropertyParser<E> {
+public class EnumConfiguredPropertyParser<E extends Enum<E>>
+    extends ConverterConfiguredPropertyParser<E> {
 
     public EnumConfiguredPropertyParser(Class<E> type) {
         super(new StringToEnumConverterFactory().create(type));

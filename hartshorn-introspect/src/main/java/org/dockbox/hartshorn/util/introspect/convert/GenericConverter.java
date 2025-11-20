@@ -26,19 +26,19 @@ import java.util.Set;
  * interface can be used either directly, or through a {@link ConversionService}. Implementations
  * should be thread-safe.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface GenericConverter {
 
     /**
      * Returns the set of {@link ConvertibleTypePair} that this converter can convert between. This
-     * method is primarily intended to be used for introspection purposes through a {@link
-     * ConversionService}. This allows the service to discover all converters that are available for
-     * a given conversion task.
+     * method is primarily intended to be used for introspection purposes through a
+     * {@link ConversionService}. This allows the service to discover all converters that are
+     * available for a given conversion task.
      *
-     * <p>If this converter is {@link ConditionalConverter conditional}, then this method may return
+     * <p>If this converter is {@link ConditionalConverter conditional}, then this method may
+     * return
      * {@code null} to indicate that it does not declare a specific source-to-target conversion
      * pair.
      *
@@ -53,14 +53,14 @@ public interface GenericConverter {
      * @param source the source object to convert
      * @param sourceType the type descriptor of the source object
      * @param targetType the type descriptor of the target object, which is to be created
-     * @return the converted object, or {@code null} if the conversion cannot be performed
      * @param <I> the source type
      * @param <O> the target type
+     *
+     * @return the converted object, or {@code null} if the conversion cannot be performed
      */
     <I, O> @Nullable Object convert(
-            @Nullable Object source,
-            @NonNull Class<I> sourceType,
-            @NonNull Class<O> targetType
+        @Nullable Object source,
+        @NonNull Class<I> sourceType,
+        @NonNull Class<O> targetType
     );
-
 }

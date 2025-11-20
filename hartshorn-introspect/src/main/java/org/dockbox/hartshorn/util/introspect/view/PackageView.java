@@ -21,18 +21,19 @@ package org.dockbox.hartshorn.util.introspect.view;
  * well as its name and qualified name. A package is a grouping of related types providing access
  * protection and name space management.
  *
- * <p>The set of classes that make up the run-time package may implement a particular specification. The
+ * <p>The set of classes that make up the run-time package may implement a particular specification.
+ * The
  * title, version, and vendor (indicating the owner/maintainer of the specification) of both the
  * specification and implementation are available via this interface.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface PackageView extends AnnotatedElementView {
 
     /**
      * Returns the title of the specification that this package implements.
+     *
      * @return the specification title, an empty string is returned if it is not known.
      */
     String specificationTitle();
@@ -82,18 +83,19 @@ public interface PackageView extends AnnotatedElementView {
     String implementationTitle();
 
     /**
-     * Returns the vendor that implemented this package, an empty string is returned if it is not known.
+     * Returns the vendor that implemented this package, an empty string is returned if it is not
+     * known.
      *
-     * @return the vendor that implemented this package, an empty string is returned if it is not known.
+     * @return the vendor that implemented this package, an empty string is returned if it is not
+     * known.
      */
     String implementationVendor();
 
-
     /**
-     * Return the version of this implementation. It consists of any string assigned by the vendor of
-     * this implementation and does not have any particular syntax specified or expected by the Java
-     * runtime. It may be compared for equality with other package version strings used for this
-     * implementation by this vendor for this package.
+     * Return the version of this implementation. It consists of any string assigned by the vendor
+     * of this implementation and does not have any particular syntax specified or expected by the
+     * Java runtime. It may be compared for equality with other package version strings used for
+     * this implementation by this vendor for this package.
      *
      * @return the version of the implementation, an empty string is returned if it is not known.
      */

@@ -42,7 +42,8 @@ public class ApplicationReportingTests {
     @Test
     void testApplicationDiagnosticsReportingPasses() {
         Reportable configurable = this.applicationContext.get(Reportable.class);
-        DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
+        DiagnosticsReportCollector collector =
+            this.applicationContext.get(DiagnosticsReportCollector.class);
 
         DiagnosticsReport report = collector.report(configurable);
         Assertions.assertNotNull(report);
@@ -51,7 +52,8 @@ public class ApplicationReportingTests {
     @Test
     void testApplicationDiagnosticsIncludeRequiredDiagnostics() {
         Reportable configurable = this.applicationContext.get(Reportable.class);
-        DiagnosticsReportCollector collector = this.applicationContext.get(DiagnosticsReportCollector.class);
+        DiagnosticsReportCollector collector =
+            this.applicationContext.get(DiagnosticsReportCollector.class);
 
         DiagnosticsReport report = collector.report(configurable);
         Node<?> root = report.root();

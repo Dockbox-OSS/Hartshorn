@@ -32,7 +32,8 @@ public class GenericConvertersTests {
 
     @Test
     void testGenericConverterWithSingleTypePair() {
-        GenericConverter converter = new SimpleGenericConverter(Set.of(ConvertibleTypePair.of(Object.class, String.class)));
+        GenericConverter converter =
+            new SimpleGenericConverter(Set.of(ConvertibleTypePair.of(Object.class, String.class)));
         ConverterCache converters = new GenericConverters();
         converters.addConverter(converter);
 
@@ -44,17 +45,19 @@ public class GenericConvertersTests {
     @Test
     void testGenericConverterWithMultipleTypePairs() {
         GenericConverter converter = new SimpleGenericConverter(Set.of(
-                ConvertibleTypePair.of(Object.class, String.class),
-                ConvertibleTypePair.of(Object.class, Integer.class)
+            ConvertibleTypePair.of(Object.class, String.class),
+            ConvertibleTypePair.of(Object.class, Integer.class)
         ));
         ConverterCache converters = new GenericConverters();
         converters.addConverter(converter);
 
-        GenericConverter locatedStringConverter = converters.getConverter(new Object(), String.class);
+        GenericConverter locatedStringConverter =
+            converters.getConverter(new Object(), String.class);
         Assertions.assertNotNull(locatedStringConverter);
         Assertions.assertSame(converter, locatedStringConverter);
 
-        GenericConverter locatedIntegerConverter = converters.getConverter(new Object(), Integer.class);
+        GenericConverter locatedIntegerConverter =
+            converters.getConverter(new Object(), Integer.class);
         Assertions.assertNotNull(locatedIntegerConverter);
         Assertions.assertSame(converter, locatedIntegerConverter);
     }
@@ -62,28 +65,35 @@ public class GenericConvertersTests {
     @Test
     void testGenericConverterWithMultipleTypePairsAndMultipleConverters() {
         GenericConverter converter1 = new SimpleGenericConverter(Set.of(
-                ConvertibleTypePair.of(Object.class, String.class),
-                ConvertibleTypePair.of(Object.class, Integer.class)
+            ConvertibleTypePair.of(Object.class, String.class),
+            ConvertibleTypePair.of(Object.class, Integer.class)
         ));
         GenericConverter converter2 = new SimpleGenericConverter(Set.of(
-                ConvertibleTypePair.of(Object.class, String.class),
-                ConvertibleTypePair.of(Object.class, Integer.class),
-                // Additional type to ensure the converters aren't considered equal, as they are implemented
-                // as the same record type.
-                ConvertibleTypePair.of(Object.class, Long.class)
+            ConvertibleTypePair.of(Object.class, String.class),
+            ConvertibleTypePair.of(Object.class, Integer.class),
+            // Additional type to ensure the converters aren't considered equal, as they are implemented
+            // as the same record type.
+            ConvertibleTypePair.of(Object.class, Long.class)
         ));
         GenericConverters converters = new GenericConverters();
         converters.addConverter(converter1);
         converters.addConverter(converter2);
 
-        Assertions.assertThrows(AmbiguousConverterException.class, () -> converters.getConverter(new Object(), String.class));
-        Assertions.assertThrows(AmbiguousConverterException.class, () -> converters.getConverter(new Object(), Integer.class));
+        Assertions.assertThrows(AmbiguousConverterException.class,
+            () -> converters.getConverter(new Object(), String.class));
+        Assertions.assertThrows(AmbiguousConverterException.class,
+            () -> converters.getConverter(new Object(), Integer.class));
         Assertions.assertDoesNotThrow(() -> converters.getConverter(new Object(), Long.class));
     }
 
-    private record SimpleGenericConverter(Set<ConvertibleTypePair> convertibleTypes) implements GenericConverter {
+    private record SimpleGenericConverter(Set<ConvertibleTypePair> convertibleTypes)
+        implements GenericConverter {
         @Override
-        public @Nullable <I, O> Object convert(@Nullable Object source, @NonNull Class<I> sourceType, @NonNull Class<O> targetType) {
+        public @Nullable <I, O> Object convert(
+            @Nullable Object source,
+            @NonNull Class<I> sourceType,
+            @NonNull Class<O> targetType
+        ) {
             throw new UnsupportedOperationException("Not implemented");
         }
     }

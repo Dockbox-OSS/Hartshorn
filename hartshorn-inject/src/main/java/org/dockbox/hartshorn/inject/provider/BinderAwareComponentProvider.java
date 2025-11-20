@@ -19,14 +19,13 @@ package org.dockbox.hartshorn.inject.provider;
 import org.dockbox.hartshorn.inject.binding.Binder;
 
 /**
- * A {@link ComponentProvider} that is aware of the {@link Binder} associated with the provider. Typically the associated
- * binder is the sole binder that is used to bind components to the provider.
- *
- * @see Binder
- *
- * @since 0.7.0
+ * A {@link ComponentProvider} that is aware of the {@link Binder} associated with the provider.
+ * Typically the associated binder is the sole binder that is used to bind components to the
+ * provider.
  *
  * @author Guus Lieben
+ * @see Binder
+ * @since 0.7.0
  */
 public interface BinderAwareComponentProvider extends ComponentProvider {
 

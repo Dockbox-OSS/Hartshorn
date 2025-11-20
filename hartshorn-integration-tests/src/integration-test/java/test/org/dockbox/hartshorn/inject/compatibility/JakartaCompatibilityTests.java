@@ -35,31 +35,34 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @HartshornIntegrationTest(
-        includeBasePackages = false,
-        customizers = DisableSingleConstructorFallbackTestCustomizer.class
+    includeBasePackages = false,
+    customizers = DisableSingleConstructorFallbackTestCustomizer.class
 )
 public class JakartaCompatibilityTests {
 
     /**
-     * Test application customizer that enables support for Jakarta annotations in the test application. Note that
-     * typically Jakarta support would be enabled through {@link HartshornApplicationConfigurer#withJakartaAnnotations()}.
+     * Test application customizer that enables support for Jakarta annotations in the test
+     * application. Note that typically Jakarta support would be enabled through
+     * {@link HartshornApplicationConfigurer#withJakartaAnnotations()}.
      */
-    public static class EnableJakartaTestApplicationCustomizer implements TestApplicationCustomizer {
+    public static class EnableJakartaTestApplicationCustomizer
+        implements TestApplicationCustomizer {
         @Override
         public void customizeApplication(SimpleApplicationContext.Configurer configurer) {
-            configurer.componentProvider(HierarchicalComponentProviderOrchestrator.create(orchestrator -> {
-                orchestrator.componentPostConstructor(AnnotatedMethodComponentPostConstructor.create(
+            configurer.componentProvider(HierarchicalComponentProviderOrchestrator.create(
+                orchestrator -> {
+                    orchestrator.componentPostConstructor(AnnotatedMethodComponentPostConstructor.create(
                         AnnotatedMethodComponentPostConstructor.Configurer::withJakartaAnnotations
-                ));
-            }));
+                    ));
+                }));
         }
 
         @Override
         public void customizeEnvironment(ConfigurableApplicationEnvironment.Configurer configurer) {
             configurer.injectionPointsResolver(ContextualInitializer.defer(() ->
-                    MethodsAndFieldsInjectionPointResolver.create(
-                            MethodsAndFieldsInjectionPointResolver.Configurer::withJakartaAnnotations
-                    )
+                MethodsAndFieldsInjectionPointResolver.create(
+                    MethodsAndFieldsInjectionPointResolver.Configurer::withJakartaAnnotations
+                )
             ));
         }
     }
@@ -74,7 +77,8 @@ public class JakartaCompatibilityTests {
     void testJakartaFieldInjectSupportedIfEnabled() {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
-        FieldJakartaComponent component = this.applicationContext.defaultProvider().get(FieldJakartaComponent.class);
+        FieldJakartaComponent component =
+            this.applicationContext.defaultProvider().get(FieldJakartaComponent.class);
         Assertions.assertNotNull(component);
 
         Assertions.assertEquals("Hello, World!", component.messageAsInject);
@@ -86,11 +90,14 @@ public class JakartaCompatibilityTests {
     void testJakartaFieldInjectFailsIfDisabled() {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
-        FieldJakartaComponent component = this.applicationContext.defaultProvider().get(FieldJakartaComponent.class);
+        FieldJakartaComponent component =
+            this.applicationContext.defaultProvider().get(FieldJakartaComponent.class);
         Assertions.assertNotNull(component);
 
-        Assertions.assertNull(component.messageAsInject, "Field injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled");
-        Assertions.assertNull(component.messageAsResource, "Field injection with @jakarta.annotation.Resource should not be supported when Jakarta compatibility is disabled");
+        Assertions.assertNull(component.messageAsInject,
+            "Field injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled");
+        Assertions.assertNull(component.messageAsResource,
+            "Field injection with @jakarta.annotation.Resource should not be supported when Jakarta compatibility is disabled");
     }
 
     @Test
@@ -99,7 +106,8 @@ public class JakartaCompatibilityTests {
     void testJakartaConstructorInjectSupportedIfEnabled() {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
-        ConstructorJakartaComponent component = this.applicationContext.defaultProvider().get(ConstructorJakartaComponent.class);
+        ConstructorJakartaComponent component =
+            this.applicationContext.defaultProvider().get(ConstructorJakartaComponent.class);
         Assertions.assertNotNull(component);
 
         Assertions.assertEquals("Hello, World!", component.messageAsInject);
@@ -112,14 +120,14 @@ public class JakartaCompatibilityTests {
 
         // No compatible constructor should be found, as Jakarta compatibility is disabled
         ComponentResolutionException componentResolutionException = Assertions.assertThrows(
-                ComponentResolutionException.class,
-                () -> this.applicationContext.defaultProvider().get(ConstructorJakartaComponent.class),
-                "Constructor injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled"
+            ComponentResolutionException.class,
+            () -> this.applicationContext.defaultProvider().get(ConstructorJakartaComponent.class),
+            "Constructor injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled"
         );
         Assertions.assertInstanceOf(
-                MissingInjectConstructorException.class,
-                componentResolutionException.getCause(),
-                "Constructor injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled"
+            MissingInjectConstructorException.class,
+            componentResolutionException.getCause(),
+            "Constructor injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled"
         );
     }
 
@@ -129,7 +137,8 @@ public class JakartaCompatibilityTests {
     void testJakartaMethodInjectSupportedIfEnabled() {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
-        MethodJakartaComponent component = this.applicationContext.defaultProvider().get(MethodJakartaComponent.class);
+        MethodJakartaComponent component =
+            this.applicationContext.defaultProvider().get(MethodJakartaComponent.class);
         Assertions.assertNotNull(component);
 
         Assertions.assertEquals("Hello, World!", component.messageAsInject);
@@ -141,11 +150,14 @@ public class JakartaCompatibilityTests {
     void testJakartaMethodInjectFailsIfDisabled() {
         this.applicationContext.defaultBinder().bind(String.class).singleton("Hello, World!");
 
-        MethodJakartaComponent component = this.applicationContext.defaultProvider().get(MethodJakartaComponent.class);
+        MethodJakartaComponent component =
+            this.applicationContext.defaultProvider().get(MethodJakartaComponent.class);
         Assertions.assertNotNull(component);
 
-        Assertions.assertNull(component.messageAsInject, "Method injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled");
-        Assertions.assertNull(component.messageAsResource, "Method injection with @jakarta.annotation.Resource should not be supported when Jakarta compatibility is disabled");
+        Assertions.assertNull(component.messageAsInject,
+            "Method injection with @jakarta.inject.Inject should not be supported when Jakarta compatibility is disabled");
+        Assertions.assertNull(component.messageAsResource,
+            "Method injection with @jakarta.annotation.Resource should not be supported when Jakarta compatibility is disabled");
     }
 
     private static class FieldJakartaComponent {

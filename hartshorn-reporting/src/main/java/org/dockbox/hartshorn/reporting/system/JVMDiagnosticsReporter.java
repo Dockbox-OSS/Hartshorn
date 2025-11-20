@@ -26,9 +26,8 @@ import org.dockbox.hartshorn.reporting.Reportable;
 /**
  * A {@link Reportable} that reports information about the Java Virtual Machine.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class JVMDiagnosticsReporter implements Reportable {
 

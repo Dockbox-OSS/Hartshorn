@@ -28,16 +28,17 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A parameter resolver that resolves parameters annotated with {@link PropertyValue}. Values are resolved from the {@link
- * org.dockbox.hartshorn.properties.PropertyRegistry}, or from the {@link PropertyValue#defaultValue()} if no value is found.
+ * A parameter resolver that resolves parameters annotated with {@link PropertyValue}. Values are
+ * resolved from the {@link org.dockbox.hartshorn.properties.PropertyRegistry}, or from the
+ * {@link PropertyValue#defaultValue()} if no value is found.
  *
- * <p>If the parameter type is {@link ValueProperty}, {@link ListProperty}, or {@link ObjectProperty}, the value is
- * resolved directly from the registry. Otherwise, the raw value is resolved and attempted to be converted to the
- * target type.
- *
- * @since 0.7.0
+ * <p>If the parameter type is {@link ValueProperty}, {@link ListProperty}, or
+ * {@link ObjectProperty}, the value is
+ * resolved directly from the registry. Otherwise, the raw value is resolved and attempted to be
+ * converted to the target type.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class InjectPropertyParameterResolver implements InjectParameterResolver {
 
@@ -56,7 +57,8 @@ public class InjectPropertyParameterResolver implements InjectParameterResolver 
     @Override
     public Object resolve(InjectionPoint injectionPoint, PopulateComponentContext<?> context) {
         PropertyRegistry propertyRegistry = context.application().environment().propertyRegistry();
-        PropertyValue propertyValueAnnotation = injectionPoint.injectionPoint().annotations().get(PropertyValue.class).get();
+        PropertyValue propertyValueAnnotation =
+            injectionPoint.injectionPoint().annotations().get(PropertyValue.class).get();
         String propertyName = propertyValueAnnotation.name();
         TypeView<?> targetType = injectionPoint.type();
         if (propertyRegistry.contains(propertyName)) {
@@ -77,12 +79,18 @@ public class InjectPropertyParameterResolver implements InjectParameterResolver 
                 return value.get();
             }
         }
-        return this.conversionService().convert(propertyValueAnnotation.defaultValue(), targetType.type());
+        return this.conversionService()
+            .convert(propertyValueAnnotation.defaultValue(), targetType.type());
     }
 
-    private Option<?> getPropertyValue(InjectionPoint injectionPoint, PropertyRegistry propertyRegistry, String propertyName) {
+    private Option<?> getPropertyValue(
+        InjectionPoint injectionPoint,
+        PropertyRegistry propertyRegistry,
+        String propertyName
+    ) {
         return propertyRegistry.value(propertyName, property -> {
-            return Option.of(this.conversionService().convert(property, injectionPoint.type().type()));
+            return Option.of(this.conversionService()
+                .convert(property, injectionPoint.type().type()));
         });
     }
 

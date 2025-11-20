@@ -25,5 +25,4 @@ public class ScanClass {
 
     public static class StaticInnerClass {
     }
-
 }

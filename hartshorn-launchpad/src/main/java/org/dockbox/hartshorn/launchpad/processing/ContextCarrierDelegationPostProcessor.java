@@ -22,16 +22,16 @@ import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 import org.dockbox.hartshorn.inject.processing.proxy.ProxyDelegationPostProcessor;
 
 /**
- * A {@link ProxyDelegationPostProcessor} that configures proxies to delegate calls to {@link ApplicationContextCarrier}
- * methods. This only applies to methods which lack a concrete implementation in the target class.
- *
- * @see ApplicationContextCarrierConfiguration#contextCarrier(ApplicationContext)
- *
- * @since 0.4.9
+ * A {@link ProxyDelegationPostProcessor} that configures proxies to delegate calls to
+ * {@link ApplicationContextCarrier} methods. This only applies to methods which lack a concrete
+ * implementation in the target class.
  *
  * @author Guus Lieben
+ * @see ApplicationContextCarrierConfiguration#contextCarrier(ApplicationContext)
+ * @since 0.4.9
  */
-public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ApplicationContextCarrier> {
+public class ContextCarrierDelegationPostProcessor
+    extends ProxyDelegationPostProcessor<ApplicationContextCarrier> {
 
     @Override
     protected Class<ApplicationContextCarrier> parentTarget() {

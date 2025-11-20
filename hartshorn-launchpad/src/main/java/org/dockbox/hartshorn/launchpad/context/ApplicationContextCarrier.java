@@ -21,9 +21,8 @@ import org.dockbox.hartshorn.launchpad.ApplicationContext;
 /**
  * A context carrier is a class that can be used to transport an active {@link ApplicationContext}.
  *
- * @since 0.4.4
- *
  * @author Guus Lieben
+ * @since 0.4.4
  */
 @FunctionalInterface
 public interface ApplicationContextCarrier {

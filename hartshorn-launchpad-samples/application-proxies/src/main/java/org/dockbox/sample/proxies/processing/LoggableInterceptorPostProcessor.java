@@ -8,7 +8,8 @@ import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoggableInterceptorPostProcessor extends AnnotatedMethodInterceptorPostProcessor<Loggable> {
+public class LoggableInterceptorPostProcessor
+    extends AnnotatedMethodInterceptorPostProcessor<Loggable> {
 
     @Override
     public Class<Loggable> annotation() {
@@ -16,15 +17,23 @@ public class LoggableInterceptorPostProcessor extends AnnotatedMethodInterceptor
     }
 
     @Override
-    public <T> boolean preconditions(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
+    public <T> boolean preconditions(
+        InjectionCapableApplication application,
+        MethodProxyContext<T> methodContext,
+        ComponentProcessingContext<T> processingContext
+    ) {
         return true; // Just the presence of the annotation is enough
     }
 
     @Override
-    public <T, R> MethodInterceptor<T, R> process(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext) {
+    public <T, R> MethodInterceptor<T, R> process(
+        InjectionCapableApplication application,
+        MethodProxyContext<T> methodContext,
+        ComponentProcessingContext<T> processingContext
+    ) {
         Logger logger = processingContext.computeIfAbsent(
-                Logger.class,
-                key -> LoggerFactory.getLogger(processingContext.type().type())
+            Logger.class,
+            key -> LoggerFactory.getLogger(processingContext.type().type())
         );
         return context -> {
             logger.info("Intercepting method: {}", methodContext.method().qualifiedName());

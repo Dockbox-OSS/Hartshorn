@@ -26,16 +26,16 @@ import java.util.function.Supplier;
  * {@link Map} and {@link Collection} implementations that are used by the {@link MultiMap} that is
  * built.
  *
- * <p>Additionally, this builder allows for the configuration of the concurrency and synchronization
+ * <p>Additionally, this builder allows for the configuration of the concurrency and
+ * synchronization
  * capabilities of the {@link MultiMap} that is built. This expects the backing {@link Map} to be
  * compatible with the concurrency and synchronization capabilities that are configured.
  *
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @since 0.4.12
- *
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public class MultiMapBuilder<K, V> {
 
@@ -51,6 +51,7 @@ public class MultiMapBuilder<K, V> {
      * on each invocation.
      *
      * @param mapSupplier the supplier of the {@link Map} implementation
+     *
      * @return this builder
      */
     public MultiMapBuilder<K, V> mapSupplier(Supplier<Map<K, Collection<V>>> mapSupplier) {
@@ -60,11 +61,12 @@ public class MultiMapBuilder<K, V> {
 
     /**
      * Configures the {@link Collection} implementation that is used by the {@link MultiMap} that is
-     * built. When a key is first added or resolved, this supplier is invoked to create a new {@link
-     * Collection} instance. This supplier is expected to return a new, empty {@link Collection}
-     * instance on each invocation.
+     * built. When a key is first added or resolved, this supplier is invoked to create a new
+     * {@link Collection} instance. This supplier is expected to return a new, empty
+     * {@link Collection} instance on each invocation.
      *
      * @param collectionSupplier the supplier of the {@link Collection} implementation
+     *
      * @return this builder
      */
     public MultiMapBuilder<K, V> collectionSupplier(Supplier<Collection<V>> collectionSupplier) {
@@ -80,8 +82,9 @@ public class MultiMapBuilder<K, V> {
      *
      * <p>Note that the backing {@link Map} is expected to be compatible with synchronization.
      *
-     * @param makeSynchronized {@code true} to make the {@link MultiMap} synchronized, else {@code
-     * false}
+     * @param makeSynchronized {@code true} to make the {@link MultiMap} synchronized, else
+     * {@code false}
+     *
      * @return this builder
      */
     public MultiMapBuilder<K, V> makeSynchronized(boolean makeSynchronized) {
@@ -93,8 +96,9 @@ public class MultiMapBuilder<K, V> {
      * Indicates that the {@link MultiMap} that is built should be concurrent. This means that the
      * backing {@link Map} is expected to be a {@link ConcurrentMap}.
      *
-     * @param makeConcurrent {@code true} to make the {@link MultiMap} concurrent, else {@code
-     * false}
+     * @param makeConcurrent {@code true} to make the {@link MultiMap} concurrent, else
+     * {@code false}
+     *
      * @return this builder
      */
     public MultiMapBuilder<K, V> makeConcurrent(boolean makeConcurrent) {
@@ -110,17 +114,17 @@ public class MultiMapBuilder<K, V> {
     public MultiMap<K, V> build() {
         if (this.mapSupplier == null) {
             throw new IllegalArgumentException(
-                    "Cannot build new MultiMap without configuring Map<K, V> supplier."
+                "Cannot build new MultiMap without configuring Map<K, V> supplier."
             );
         }
         if (this.collectionSupplier == null) {
             throw new IllegalArgumentException(
-                    "Cannot build new MultiMap without configuring Collection<V> supplier."
+                "Cannot build new MultiMap without configuring Collection<V> supplier."
             );
         }
         if (this.makeSynchronized && this.makeConcurrent) {
             throw new IllegalArgumentException(
-                    "Cannot build new MultiMap with both synchronized and concurrent capabilities."
+                "Cannot build new MultiMap with both synchronized and concurrent capabilities."
             );
         }
 
@@ -137,11 +141,12 @@ public class MultiMapBuilder<K, V> {
                     return baseMap;
                 }
             };
-        } else if (this.makeConcurrent) {
+        }
+        else if (this.makeConcurrent) {
             if (!(baseMap instanceof ConcurrentMap)) {
                 throw new IllegalArgumentException(
-                        "Cannot build new ConcurrentMultiMap with base map " +
-                                "that is not a ConcurrentMap."
+                    "Cannot build new ConcurrentMultiMap with base map " +
+                        "that is not a ConcurrentMap."
                 );
             }
             return new StandardMultiMap<>() {
@@ -155,7 +160,8 @@ public class MultiMapBuilder<K, V> {
                     return baseMap;
                 }
             };
-        } else {
+        }
+        else {
             return new StandardMultiMap<>() {
                 @Override
                 protected Collection<V> createEmptyCollection() {

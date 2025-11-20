@@ -19,17 +19,17 @@ package org.dockbox.hartshorn.inject.provider;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
 
 /**
- * A composite interface that combines {@link BinderAwareComponentProvider} and {@link HierarchicalComponentProvider}, expanding the
+ * A composite interface that combines {@link BinderAwareComponentProvider} and
+ * {@link HierarchicalComponentProvider}, expanding the
  * {@link BinderAwareComponentProvider#binder()} method to return a {@link HierarchicalBinder}.
  *
+ * @author Guus Lieben
  * @see BinderAwareComponentProvider
  * @see HierarchicalComponentProvider
- *
  * @since 0.7.0
- *
- * @author Guus Lieben
  */
-public interface HierarchicalBinderAwareComponentProvider extends BinderAwareComponentProvider, HierarchicalComponentProvider {
+public interface HierarchicalBinderAwareComponentProvider
+    extends BinderAwareComponentProvider, HierarchicalComponentProvider {
 
     @Override
     HierarchicalBinder binder();

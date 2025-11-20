@@ -27,14 +27,14 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Basic implementation of {@link ListProperty} that uses a list to store {@link Property properties}.
+ * Basic implementation of {@link ListProperty} that uses a list to store
+ * {@link Property properties}.
  *
  * @param name the name of the property
  * @param elements the elements of the list
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public record SimpleListProperty(String name, List<Property> elements) implements ListProperty {
 
@@ -56,9 +56,9 @@ public record SimpleListProperty(String name, List<Property> elements) implement
     @Override
     public List<ValueProperty> values() {
         return this.elements().stream()
-                .filter(ValueProperty.class::isInstance)
-                .map(ValueProperty.class::cast)
-                .toList();
+            .filter(ValueProperty.class::isInstance)
+            .map(ValueProperty.class::cast)
+            .toList();
     }
 
     @Override
@@ -69,9 +69,9 @@ public record SimpleListProperty(String name, List<Property> elements) implement
     @Override
     public List<ObjectProperty> objects() {
         return this.elements().stream()
-                .filter(ObjectProperty.class::isInstance)
-                .map(ObjectProperty.class::cast)
-                .toList();
+            .filter(ObjectProperty.class::isInstance)
+            .map(ObjectProperty.class::cast)
+            .toList();
     }
 
     @Override
@@ -82,9 +82,9 @@ public record SimpleListProperty(String name, List<Property> elements) implement
     @Override
     public List<ListProperty> lists() {
         return this.elements().stream()
-                .filter(ListProperty.class::isInstance)
-                .map(ListProperty.class::cast)
-                .toList();
+            .filter(ListProperty.class::isInstance)
+            .map(ListProperty.class::cast)
+            .toList();
     }
 
     @Override
@@ -95,8 +95,8 @@ public record SimpleListProperty(String name, List<Property> elements) implement
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("name", this.name)
-                .field("values", this.values())
-                .describe();
+            .field("name", this.name)
+            .field("values", this.values())
+            .describe();
     }
 }

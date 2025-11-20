@@ -35,8 +35,8 @@ import org.junit.jupiter.api.Test;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @TestComponents({
-        ScopedInjectionTests.ScopedConfiguration.class,
-        ScopedInjectionTests.TestManagedComponent.class,
+    ScopedInjectionTests.ScopedConfiguration.class,
+    ScopedInjectionTests.TestManagedComponent.class,
 })
 public class ScopedInjectionTests {
 
@@ -48,10 +48,12 @@ public class ScopedInjectionTests {
     void testScopedRequestOfUnmanagedComponentHasScopedDependencies() {
         TestScope scope = new TestScope();
 
-        ComponentKey<String> scopedStringKey = ComponentKey.builder(String.class).scope(scope).build();
+        ComponentKey<String> scopedStringKey =
+            ComponentKey.builder(String.class).scope(scope).build();
         Assertions.assertEquals("testScopedString", this.applicationContext.get(scopedStringKey));
 
-        TestComponent component = this.applicationContext.get(ComponentKey.builder(TestComponent.class)
+        TestComponent component =
+            this.applicationContext.get(ComponentKey.builder(TestComponent.class)
                 .scope(scope)
                 .build());
         Assertions.assertNotNull(component);
@@ -64,7 +66,8 @@ public class ScopedInjectionTests {
     @DisplayName("Unscoped requests of components should have application dependencies")
     void testUnscopedRequestOfUnmanagedComponentHasApplicationDependencies() {
         ComponentKey<String> applicationStringKey = ComponentKey.of(String.class);
-        Assertions.assertEquals("applicationScopedString", this.applicationContext.get(applicationStringKey));
+        Assertions.assertEquals("applicationScopedString",
+            this.applicationContext.get(applicationStringKey));
 
         TestComponent component = this.applicationContext.get(TestComponent.class);
         Assertions.assertNotNull(component);
@@ -81,8 +84,8 @@ public class ScopedInjectionTests {
         this.applicationContext.addContext(new SampleContext("application"));
 
         ComponentKey<TestComponent> scopedComponentKey = ComponentKey.builder(TestComponent.class)
-                .scope(scope)
-                .build();
+            .scope(scope)
+            .build();
         TestComponent component = this.applicationContext.get(scopedComponentKey);
         Assertions.assertNotNull(component);
 
@@ -98,8 +101,8 @@ public class ScopedInjectionTests {
         this.applicationContext.addContext(new SampleContext("application"));
 
         ComponentKey<TestComponent> scopedComponentKey = ComponentKey.builder(TestComponent.class)
-                .scope(scope)
-                .build();
+            .scope(scope)
+            .build();
         TestComponent component = this.applicationContext.get(scopedComponentKey);
         Assertions.assertNotNull(component);
 
@@ -113,14 +116,17 @@ public class ScopedInjectionTests {
     void testScopedRequestOfManagedComponentIsApplicationRedirect() {
         TestScope scope = new TestScope();
 
-        ComponentKey<TestManagedComponent> scopedManagedComponentKey = ComponentKey.builder(TestManagedComponent.class)
+        ComponentKey<TestManagedComponent> scopedManagedComponentKey =
+            ComponentKey.builder(TestManagedComponent.class)
                 .scope(scope)
                 .build();
-        TestManagedComponent scopedManagedComponent = this.applicationContext.get(scopedManagedComponentKey);
+        TestManagedComponent scopedManagedComponent =
+            this.applicationContext.get(scopedManagedComponentKey);
         Assertions.assertNotNull(scopedManagedComponent);
 
         // Managed components should always be application scoped, even if the request for it is scoped
-        TestManagedComponent applicationManagedComponent = this.applicationContext.get(TestManagedComponent.class);
+        TestManagedComponent applicationManagedComponent =
+            this.applicationContext.get(TestManagedComponent.class);
         Assertions.assertSame(applicationManagedComponent, scopedManagedComponent);
 
         // The dependency should be the application scoped value
@@ -135,8 +141,10 @@ public class ScopedInjectionTests {
         TestScope scope2 = new TestScope();
         scope2.addContext(new SampleContext("test2"));
 
-        ComponentKey<TestComponent> scopedComponentKey1 = ComponentKey.builder(TestComponent.class).scope(scope1).build();
-        ComponentKey<TestComponent> scopedComponentKey2 = ComponentKey.builder(TestComponent.class).scope(scope2).build();
+        ComponentKey<TestComponent> scopedComponentKey1 =
+            ComponentKey.builder(TestComponent.class).scope(scope1).build();
+        ComponentKey<TestComponent> scopedComponentKey2 =
+            ComponentKey.builder(TestComponent.class).scope(scope2).build();
 
         TestComponent scopedComponent1 = this.applicationContext.get(scopedComponentKey1);
         TestComponent scopedComponent2 = this.applicationContext.get(scopedComponentKey2);

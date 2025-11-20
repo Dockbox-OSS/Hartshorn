@@ -31,11 +31,11 @@ import org.junit.jupiter.api.Test;
 @HartshornIntegrationTest(includeBasePackages = false)
 public class ProvidedMethodTests {
 
-    @Inject 
+    @Inject
     private ProviderComponent providerComponent;
     @Inject
     private Binder binder;
-    
+
     @Test
     void testProviderWithoutQualifiers() {
         this.binder.bind(String.class).singleton("Hello World");
@@ -65,12 +65,12 @@ public class ProvidedMethodTests {
     void testProviderWithCustomQualifiers() {
         this.binder.bind(String.class).singleton("Hello Red World");
         this.binder.bind(ComponentKey.builder(String.class)
-                .qualifier(QualifierKey.of(TypeUtils.annotation(Color.class, Colors.RED)))
-                .build()
+            .qualifier(QualifierKey.of(TypeUtils.annotation(Color.class, Colors.RED)))
+            .build()
         ).singleton("Hello Red World");
         this.binder.bind(ComponentKey.builder(String.class)
-                .qualifier(QualifierKey.of(TypeUtils.annotation(Color.class, Colors.BLUE)))
-                .build()
+            .qualifier(QualifierKey.of(TypeUtils.annotation(Color.class, Colors.BLUE)))
+            .build()
         ).singleton("Hello Blue World");
 
         Assertions.assertNotNull(this.providerComponent);

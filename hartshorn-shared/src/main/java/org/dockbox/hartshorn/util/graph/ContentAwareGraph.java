@@ -19,15 +19,14 @@ package org.dockbox.hartshorn.util.graph;
 import java.util.Set;
 
 /**
- * A specialized {@link Graph} that tracks all nodes that have been added to the graph. This
- * may assume that nodes are not added to the graph outside of the {@link #addRoot(GraphNode)},
- * and that nodes are treated as immutable.
+ * A specialized {@link Graph} that tracks all nodes that have been added to the graph. This may
+ * assume that nodes are not added to the graph outside of the {@link #addRoot(GraphNode)}, and that
+ * nodes are treated as immutable.
  *
  * @param <T> the type of the content of the graph
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface ContentAwareGraph<T> extends Graph<T> {
 

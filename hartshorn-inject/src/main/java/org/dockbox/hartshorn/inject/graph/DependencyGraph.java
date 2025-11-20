@@ -27,21 +27,20 @@ import org.dockbox.hartshorn.util.graph.GraphNode;
 import org.dockbox.hartshorn.util.graph.SimpleContentAwareGraph;
 
 /**
- * A dependency graph is a graph of {@link DependencyContext} instances. It is used to resolve dependencies
- * and to determine the order in which they should be resolved. This can also be used by
- * {@link DependencyGraphValidator validators} to validate whether dependencies are valid.
+ * A dependency graph is a graph of {@link DependencyContext} instances. It is used to resolve
+ * dependencies and to determine the order in which they should be resolved. This can also be used
+ * by {@link DependencyGraphValidator validators} to validate whether dependencies are valid.
  *
- * <p>You should not use this class directly, but instead use the {@link DependencyGraphBuilder} to build
- * a dependency graph from a collection of {@link DependencyContext} instances. This will ensure the graph
- * contains valid references internally.
+ * <p>You should not use this class directly, but instead use the {@link DependencyGraphBuilder} to
+ * build
+ * a dependency graph from a collection of {@link DependencyContext} instances. This will ensure the
+ * graph contains valid references internally.
  *
+ * @author Guus Lieben
  * @see DependencyContext
  * @see DependencyGraphValidator
  * @see DependencyGraphBuilder
- *
  * @since 0.5.0
- *
- * @author Guus Lieben
  */
 public class DependencyGraph extends SimpleContentAwareGraph<DependencyContext<?>> {
 
@@ -49,7 +48,8 @@ public class DependencyGraph extends SimpleContentAwareGraph<DependencyContext<?
     public Set<GraphNode<DependencyContext<?>>> roots() {
         Set<GraphNode<DependencyContext<?>>> defaultRoots = new HashSet<>(super.roots());
         Set<GraphNode<DependencyContext<?>>> nodes = this.nodes();
-        Set<GraphNode<DependencyContext<?>>> danglingNodes = CollectionUtilities.difference(defaultRoots, nodes);
+        Set<GraphNode<DependencyContext<?>>> danglingNodes =
+            CollectionUtilities.difference(defaultRoots, nodes);
         for (GraphNode<DependencyContext<?>> danglingNode : danglingNodes) {
             if (isSingletonNode(danglingNode)) {
                 defaultRoots.add(danglingNode);
@@ -59,10 +59,11 @@ public class DependencyGraph extends SimpleContentAwareGraph<DependencyContext<?
     }
 
     /**
-     * Determines if the given node is a singleton node. A singleton node is a node that is a singleton
-     * in the context of the application lifecycle.
+     * Determines if the given node is a singleton node. A singleton node is a node that is a
+     * singleton in the context of the application lifecycle.
      *
      * @param node the node to check
+     *
      * @return {@code true} if the node is a singleton node, {@code false} otherwise
      */
     public static boolean isSingletonNode(GraphNode<DependencyContext<?>> node) {

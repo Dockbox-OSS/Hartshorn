@@ -27,13 +27,12 @@ import java.lang.reflect.Array;
 /**
  * Provides default values for array types.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class ArrayDefaultValueProviderFactory implements
-        DefaultValueProviderFactory<Object>,
-        ConditionalConverter {
+    DefaultValueProviderFactory<Object>,
+    ConditionalConverter {
 
     @Override
     public <O> DefaultValueProvider<O> create(Class<O> targetType) {
@@ -55,11 +54,9 @@ public class ArrayDefaultValueProviderFactory implements
      *
      * @param <O> the type of the array elements
      *
-     * @see Array#newInstance(Class, int)
-     *
-     * @since 0.7.0
-     *
      * @author Guus Lieben
+     * @see Array#newInstance(Class, int)
+     * @since 0.7.0
      */
     public static class ArrayDefaultValueProvider<O> implements DefaultValueProvider<O[]> {
 

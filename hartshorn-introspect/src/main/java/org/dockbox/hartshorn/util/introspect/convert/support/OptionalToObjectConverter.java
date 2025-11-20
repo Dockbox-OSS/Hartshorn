@@ -27,9 +27,8 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
  * Converts an {@link Optional} to an {@link Object}. If the optional is empty, {@code null} is
  * returned. Otherwise, the value of the optional is returned.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class OptionalToObjectConverter
     implements Converter<Optional<?>, Object>, ConditionalConverter {

@@ -22,11 +22,9 @@ package org.dockbox.hartshorn.inject.binding;
  *
  * @param <T> The type of type {@code T} that the hierarchy is for.
  *
- * @see BindingHierarchy
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see BindingHierarchy
+ * @since 0.5.0
  */
 public interface PrunableBindingHierarchy<T> extends BindingHierarchy<T> {
 
@@ -35,24 +33,27 @@ public interface PrunableBindingHierarchy<T> extends BindingHierarchy<T> {
      * given priority exists, nothing happens.
      *
      * @param priority The priority of the provider to remove.
+     *
      * @return {@code true} if a provider was removed, {@code false} otherwise.
      */
     boolean prune(int priority);
 
     /**
-     * Removes all providers with a priority higher than the given priority. If no providers with
-     * a higher priority exist, nothing happens.
+     * Removes all providers with a priority higher than the given priority. If no providers with a
+     * higher priority exist, nothing happens.
      *
      * @param priority The priority to prune above.
+     *
      * @return The amount of providers that were removed.
      */
     int pruneAbove(int priority);
 
     /**
-     * Removes all providers with a priority lower than the given priority. If no providers with
-     * a lower priority exist, nothing happens.
+     * Removes all providers with a priority lower than the given priority. If no providers with a
+     * lower priority exist, nothing happens.
      *
      * @param priority The priority to prune below.
+     *
      * @return The amount of providers that were removed.
      */
     int pruneBelow(int priority);

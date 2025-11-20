@@ -20,19 +20,18 @@ import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.inject.targets.InjectionPoint;
 
 /**
- * A context that is used to provide information about the current component request. This gives additional
- * insights of <i>where</i> a component will be used, contrary to a {@link ComponentKey} which describes the
- * component itself.
+ * A context that is used to provide information about the current component request. This gives
+ * additional insights of <i>where</i> a component will be used, contrary to a {@link ComponentKey}
+ * which describes the component itself.
  *
- * <p>The target of the request context is typically an injection point, but it may also be used to describe
+ * <p>The target of the request context is typically an injection point, but it may also be used to
+ * describe
  * the use case of a component in other scenarios through custom context implementations.
  *
+ * @author Guus Lieben
  * @see InjectionPoint
  * @see ComponentKey
- *
  * @since 0.6.0
- *
- * @author Guus Lieben
  */
 public final class ComponentRequestContext extends DefaultContext {
 
@@ -46,6 +45,7 @@ public final class ComponentRequestContext extends DefaultContext {
      * Creates a new {@link ComponentRequestContext} for the given injection point.
      *
      * @param injectionPoint The injection point for which the request context is created.
+     *
      * @return A new request context for the given injection point.
      */
     public static ComponentRequestContext createForInjectionPoint(InjectionPoint injectionPoint) {
@@ -53,8 +53,8 @@ public final class ComponentRequestContext extends DefaultContext {
     }
 
     /**
-     * Creates a new {@link ComponentRequestContext} for a component that is not used in a specific injection
-     * point, or for a component that is used in an unknown context.
+     * Creates a new {@link ComponentRequestContext} for a component that is not used in a specific
+     * injection point, or for a component that is used in an unknown context.
      *
      * @return A new request context for a component.
      */
@@ -63,11 +63,12 @@ public final class ComponentRequestContext extends DefaultContext {
     }
 
     /**
-     * Returns the injection point for which the request context was created. If the request context was created
-     * for a component that is not used in a specific injection point, this method will return {@code null}.
+     * Returns the injection point for which the request context was created. If the request context
+     * was created for a component that is not used in a specific injection point, this method will
+     * return {@code null}.
      *
-     * @return The injection point for which the request context was created, or {@code null} if the request context
-     * was created for a component.
+     * @return The injection point for which the request context was created, or {@code null} if the
+     * request context was created for a component.
      */
     public InjectionPoint injectionPoint() {
         return this.injectionPoint;
@@ -76,7 +77,8 @@ public final class ComponentRequestContext extends DefaultContext {
     /**
      * Returns whether the request context was created for a specific injection point.
      *
-     * @return {@code true} if the request context was created for a specific injection point, {@code false} otherwise.
+     * @return {@code true} if the request context was created for a specific injection point,
+     * {@code false} otherwise.
      */
     public boolean isForInjectionPoint() {
         return this.injectionPoint != null;

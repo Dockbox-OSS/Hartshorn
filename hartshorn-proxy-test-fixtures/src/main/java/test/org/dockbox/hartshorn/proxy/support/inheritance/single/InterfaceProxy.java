@@ -19,11 +19,11 @@ package test.org.dockbox.hartshorn.proxy.support.inheritance.single;
 /**
  * Interface for various proxy tests.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public interface InterfaceProxy {
     String name();
+
     int age();
 }

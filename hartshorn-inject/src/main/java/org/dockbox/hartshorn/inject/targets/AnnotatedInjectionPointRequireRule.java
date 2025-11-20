@@ -20,20 +20,19 @@ import org.dockbox.hartshorn.inject.annotations.Required;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A rule that determines whether an {@link InjectionPoint} is required to be present. This uses
- * the {@link Required} annotation to determine whether the injection point is required.
- *
- * @see Required
- *
- * @since 0.6.0
+ * A rule that determines whether an {@link InjectionPoint} is required to be present. This uses the
+ * {@link Required} annotation to determine whether the injection point is required.
  *
  * @author Guus Lieben
+ * @see Required
+ * @since 0.6.0
  */
 public class AnnotatedInjectionPointRequireRule implements RequireInjectionPointRule {
 
     @Override
     public boolean isRequired(InjectionPoint injectionPoint) {
-        Option<Required> required = injectionPoint.injectionPoint().annotations().get(Required.class);
+        Option<Required> required =
+            injectionPoint.injectionPoint().annotations().get(Required.class);
         return required.present() && required.get().value();
     }
 }

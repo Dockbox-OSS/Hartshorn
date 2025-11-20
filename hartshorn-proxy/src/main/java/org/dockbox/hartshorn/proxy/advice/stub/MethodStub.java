@@ -19,35 +19,40 @@ package org.dockbox.hartshorn.proxy.advice.stub;
 import java.util.function.Consumer;
 
 /**
- * A {@link MethodStub} is a functional interface that can be used to stub a method invocation. It is used by the
- * {@link org.dockbox.hartshorn.proxy.ProxyFactory} to intercept method invocations if no explicit advisor was
- * registered for the method.
+ * A {@link MethodStub} is a functional interface that can be used to stub a method invocation. It
+ * is used by the {@link org.dockbox.hartshorn.proxy.ProxyFactory} to intercept method invocations
+ * if no explicit advisor was registered for the method.
  *
- * @param <T> The type of the proxy instance as defined by the owning {@link org.dockbox.hartshorn.proxy.ProxyFactory}
+ * @param <T> The type of the proxy instance as defined by the owning
+ * {@link org.dockbox.hartshorn.proxy.ProxyFactory}
  *
- * @since 0.4.9
  * @author Guus Lieben
+ * @since 0.4.9
  */
 @FunctionalInterface
 public interface MethodStub<T> {
 
     /**
-     * Invokes the stubbed method. The {@link MethodStubContext} provides access to the method arguments, as well as
-     * the proxy instance on which the method was invoked. The return value of this method is returned to the caller of
-     * the stubbed method. If the stubbed method is void, the return value of this method is ignored.
+     * Invokes the stubbed method. The {@link MethodStubContext} provides access to the method
+     * arguments, as well as the proxy instance on which the method was invoked. The return value of
+     * this method is returned to the caller of the stubbed method. If the stubbed method is void,
+     * the return value of this method is ignored.
      *
      * @param stubContext The context of the stubbed method invocation
+     *
      * @return The return value of the stubbed method invocation
+     *
      * @throws Throwable Any exception that is thrown by the stubbed method invocation
      */
     Object invoke(MethodStubContext<T> stubContext) throws Throwable;
 
     /**
-     * Wraps the given consumer in a {@link MethodStub} that always returns null. For primitive types the
-     * result is expected to be transformed by the owning invoker.
+     * Wraps the given consumer in a {@link MethodStub} that always returns null. For primitive
+     * types the result is expected to be transformed by the owning invoker.
      *
      * @param methodStub the consumer to wrap in a method stub.
      * @param <T> the type of the proxy.
+     *
      * @return a method stub wrapping the given consumer.
      */
     static <T> MethodStub<T> withoutReturnValue(Consumer<MethodStubContext<T>> methodStub) {
@@ -56,5 +61,4 @@ public interface MethodStub<T> {
             return null;
         };
     }
-
 }

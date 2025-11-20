@@ -24,18 +24,17 @@ import org.dockbox.hartshorn.util.collections.MultiMapCollector;
 import java.util.Set;
 
 /**
- * A holder for conditional dependency contexts, which are used to determine whether certain dependencies
- * should be resolved based on specific conditions.
- *
- * @see ConditionalDependencyContext
- *
- * @since 0.7.0
+ * A holder for conditional dependency contexts, which are used to determine whether certain
+ * dependencies should be resolved based on specific conditions.
  *
  * @author Guus Lieben
+ * @see ConditionalDependencyContext
+ * @since 0.7.0
  */
 public class ConditionalDependencyContextsHolder extends DefaultContext {
 
-    private final MultiMap<ComponentKey<?>, ConditionalDependencyContext<?>> conditionalDependencyContexts;
+    private final MultiMap<ComponentKey<?>, ConditionalDependencyContext<?>>
+        conditionalDependencyContexts;
 
     private ConditionalDependencyContextsHolder(MultiMap<ComponentKey<?>, ConditionalDependencyContext<?>> conditionalDependencyContexts) {
         this.conditionalDependencyContexts = conditionalDependencyContexts;
@@ -63,11 +62,14 @@ public class ConditionalDependencyContextsHolder extends DefaultContext {
      * Creates a new {@link ConditionalDependencyContextsHolder} from the provided set of contexts.
      *
      * @param contexts the set of conditional dependency contexts
+     *
      * @return a new holder containing the provided contexts
      */
     public static ConditionalDependencyContextsHolder create(Set<ConditionalDependencyContext<?>> contexts) {
-        MultiMap<ComponentKey<?>, ConditionalDependencyContext<?>> conditionalDependencyContexts = contexts.stream()
-            .collect(MultiMapCollector.groupingBy(context -> context.dependencyContext().componentKey()));
+        MultiMap<ComponentKey<?>, ConditionalDependencyContext<?>> conditionalDependencyContexts =
+            contexts.stream()
+                .collect(MultiMapCollector.groupingBy(context -> context.dependencyContext()
+                    .componentKey()));
         return new ConditionalDependencyContextsHolder(conditionalDependencyContexts);
     }
 }

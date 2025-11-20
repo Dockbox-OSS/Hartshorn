@@ -23,16 +23,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Arguments to be passed to the application context when running the test. Each argument is equivalent
- * to a single CLI argument passed to the application.
+ * Arguments to be passed to the application context when running the test. Each argument is
+ * equivalent to a single CLI argument passed to the application.
  *
  * <p>For example, to pass an application property: {@code
- * @TestProperties({"hartshorn.banner.enabled=false"})
- * }
- *
- * @since 0.4.12
  *
  * @author Guus Lieben
+ * @since 0.4.12
  */
 @Inherited
 @Target({ElementType.METHOD, ElementType.TYPE})

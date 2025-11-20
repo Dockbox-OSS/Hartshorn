@@ -55,19 +55,21 @@ import java.util.WeakHashMap;
 import java.util.function.Function;
 
 /**
- * A component provider orchestrator that manages component providers for different scopes, and switches between
- * them based on the scope of the requested component. This implementation supports the full range of features
- * within the Hartshorn framework, including hierarchical binding and aliasing.
- *
- * @since 0.5.0
+ * A component provider orchestrator that manages component providers for different scopes, and
+ * switches between them based on the scope of the requested component. This implementation supports
+ * the full range of features within the Hartshorn framework, including hierarchical binding and
+ * aliasing.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class HierarchicalComponentProviderOrchestrator
-        extends DefaultFallbackCompatibleContext
-        implements HierarchicalComponentProvider, ComponentRegistryAwareProviderOrchestrator, AliasCapableComponentProviderOrchestrator, HierarchicalBinder, AliasCapableBinder {
+    extends DefaultFallbackCompatibleContext
+    implements HierarchicalComponentProvider, ComponentRegistryAwareProviderOrchestrator,
+    AliasCapableComponentProviderOrchestrator, HierarchicalBinder, AliasCapableBinder {
 
-    private final Map<Scope, HierarchicalAliasBinderAwareComponentProvider> scopedProviders = Collections.synchronizedMap(new WeakHashMap<>());
+    private final Map<Scope, HierarchicalAliasBinderAwareComponentProvider> scopedProviders =
+        Collections.synchronizedMap(new WeakHashMap<>());
     private final Scope applicationScope;
 
     private final InjectionCapableApplication application;
@@ -95,15 +97,17 @@ public class HierarchicalComponentProviderOrchestrator
     }
 
     /**
-     * Creates a new child-provider for the given scope. This method is called when a provider for the given scope
-     * does not yet exist.
+     * Creates a new child-provider for the given scope. This method is called when a provider for
+     * the given scope does not yet exist.
      *
      * @param scope the scope for which to create the provider
+     *
      * @return the created provider
      */
     @NonNull
     protected HierarchicalAliasBinderAwareComponentProvider createComponentProvider(Scope scope) {
-        HierarchicalAliasBinderAwareComponentProvider provider = HierarchyAwareComponentProvider.create(
+        HierarchicalAliasBinderAwareComponentProvider provider =
+            HierarchyAwareComponentProvider.create(
                 this,
                 this.postConstructor,
                 this.bindingAliasNormalizer,
@@ -114,10 +118,13 @@ public class HierarchicalComponentProviderOrchestrator
                     strategies.insert(0, new ManagedComponentProviderStrategy());
                 });
 
-        if(scope != this.application) {
-            ContextKey<ScopeModuleContext> scopeModuleContextKey = ScopeModuleContext.createKey(() -> this.scope().installableScopeType());
-            ScopeModuleContext scopeModuleContext = this.application.firstContext(scopeModuleContextKey).get();
-            Collection<BindingHierarchy<?>> hierarchies = scopeModuleContext.hierarchies(scope.installableScopeType());
+        if (scope != this.application) {
+            ContextKey<ScopeModuleContext> scopeModuleContextKey =
+                ScopeModuleContext.createKey(() -> this.scope().installableScopeType());
+            ScopeModuleContext scopeModuleContext =
+                this.application.firstContext(scopeModuleContextKey).get();
+            Collection<BindingHierarchy<?>> hierarchies =
+                scopeModuleContext.hierarchies(scope.installableScopeType());
             for (BindingHierarchy<?> hierarchy : hierarchies) {
                 provider.binder().bind(hierarchy);
             }
@@ -126,7 +133,8 @@ public class HierarchicalComponentProviderOrchestrator
         // Cache provider before processing, in case of recursive calls
         this.scopedProviders.put(scope, provider);
 
-        HierarchicalBinderPostProcessor binderPostProcessor = new CompositeHierarchicalBinderPostProcessor(this.binderProcessorRegistry()::processors);
+        HierarchicalBinderPostProcessor binderPostProcessor =
+            new CompositeHierarchicalBinderPostProcessor(this.binderProcessorRegistry()::processors);
         binderPostProcessor.process(this.application, provider.scope(), provider.binder());
         return provider;
     }
@@ -139,7 +147,10 @@ public class HierarchicalComponentProviderOrchestrator
         return this.tryGetProvider(scope, this::createComponentProvider);
     }
 
-    private HierarchicalAliasBinderAwareComponentProvider tryGetProvider(Scope scope, Function<Scope, HierarchicalAliasBinderAwareComponentProvider> fallbackValue) {
+    private HierarchicalAliasBinderAwareComponentProvider tryGetProvider(
+        Scope scope,
+        Function<Scope, HierarchicalAliasBinderAwareComponentProvider> fallbackValue
+    ) {
         if (scope == null) {
             scope = this.applicationScope;
         }
@@ -208,8 +219,10 @@ public class HierarchicalComponentProviderOrchestrator
     public MultiMap<Scope, BindingHierarchy<?>> hierarchies() {
         MultiMap<Scope, BindingHierarchy<?>> hierarchies = new HashSetMultiMap<>();
         for (HierarchicalComponentProvider componentProvider : this.scopedProviders.values()) {
-            MultiMap<Scope, BindingHierarchy<?>> providerHierarchies = componentProvider.hierarchies();
-            assert providerHierarchies.keySet().size() == 1 : "Hierarchy collection from scoped provider should only contain one scope";
+            MultiMap<Scope, BindingHierarchy<?>> providerHierarchies =
+                componentProvider.hierarchies();
+            assert providerHierarchies.keySet().size() == 1 :
+                "Hierarchy collection from scoped provider should only contain one scope";
             hierarchies.putAll(providerHierarchies);
         }
         return hierarchies;
@@ -226,25 +239,34 @@ public class HierarchicalComponentProviderOrchestrator
     }
 
     /**
-     * Creates a contextual initializer for a {@link HierarchicalComponentProviderOrchestrator}, which can be
-     * customized using the provided customizer.
+     * Creates a contextual initializer for a {@link HierarchicalComponentProviderOrchestrator},
+     * which can be customized using the provided customizer.
      *
      * @param customizer the customizer to configure the orchestrator
+     *
      * @return the contextual initializer
      */
-    public static ContextualInitializer<ComponentRegistry, ComponentProviderOrchestrator> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<ComponentRegistry, ComponentProviderOrchestrator> create(
+        Customizer<Configurer> customizer
+    ) {
         return context -> {
-            InjectionCapableApplication application = context.firstContext(InjectionCapableApplication.class)
+            InjectionCapableApplication application =
+                context.firstContext(InjectionCapableApplication.class)
                     .orElseThrow(() -> new IllegalStateException("No application context found"));
 
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
 
             ComponentRegistry registry = context.input();
-            ComponentPostConstructor postConstructor = configurer.componentPostConstructor.initialize(context.transform(application));
-            BindingAliasNormalizer bindingAliasNormalizer = configurer.bindingAliasNormalizer.initialize(context.transform(application));
+            ComponentPostConstructor postConstructor =
+                configurer.componentPostConstructor.initialize(context.transform(application));
+            BindingAliasNormalizer bindingAliasNormalizer =
+                configurer.bindingAliasNormalizer.initialize(context.transform(application));
 
-            return new HierarchicalComponentProviderOrchestrator(application, registry, postConstructor, bindingAliasNormalizer);
+            return new HierarchicalComponentProviderOrchestrator(application,
+                registry,
+                postConstructor,
+                bindingAliasNormalizer);
         };
     }
 
@@ -256,19 +278,22 @@ public class HierarchicalComponentProviderOrchestrator
     /**
      * Configurer for the {@link HierarchicalComponentProviderOrchestrator}.
      *
-     * @since 0.5.0
-     *
      * @author Guus Lieben
+     * @since 0.5.0
      */
     public static class Configurer {
 
-        private ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor> componentPostConstructor = AnnotatedMethodComponentPostConstructor.create(Customizer.useDefaults());
-        private ContextualInitializer<InjectionCapableApplication, BindingAliasNormalizer> bindingAliasNormalizer = ContextualInitializer.of(DefaultBindingAliasNormalizer::new);
+        private ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor>
+            componentPostConstructor =
+            AnnotatedMethodComponentPostConstructor.create(Customizer.useDefaults());
+        private ContextualInitializer<InjectionCapableApplication, BindingAliasNormalizer>
+            bindingAliasNormalizer = ContextualInitializer.of(DefaultBindingAliasNormalizer::new);
 
         /**
          * Sets the component post constructor to use.
          *
          * @param componentPostConstructor the component post constructor
+         *
          * @return this configurer
          */
         public Configurer componentPostConstructor(ComponentPostConstructor componentPostConstructor) {
@@ -279,6 +304,7 @@ public class HierarchicalComponentProviderOrchestrator
          * Sets the component post constructor to use.
          *
          * @param componentPostConstructor the component post constructor initializer
+         *
          * @return this configurer
          */
         public Configurer componentPostConstructor(ContextualInitializer<InjectionCapableApplication, ComponentPostConstructor> componentPostConstructor) {
@@ -290,6 +316,7 @@ public class HierarchicalComponentProviderOrchestrator
          * Sets the binding alias normalizer to use.
          *
          * @param bindingAliasNormalizer the binding alias normalizer
+         *
          * @return this configurer
          */
         public Configurer bindingAliasNormalizer(BindingAliasNormalizer bindingAliasNormalizer) {
@@ -300,6 +327,7 @@ public class HierarchicalComponentProviderOrchestrator
          * Sets the binding alias normalizer to use.
          *
          * @param bindingAliasNormalizer the binding alias normalizer initializer
+         *
          * @return this configurer
          */
         public Configurer bindingAliasNormalizer(ContextualInitializer<InjectionCapableApplication, BindingAliasNormalizer> bindingAliasNormalizer) {

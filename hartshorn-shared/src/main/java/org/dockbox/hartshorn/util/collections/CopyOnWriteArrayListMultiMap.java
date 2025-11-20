@@ -26,9 +26,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class CopyOnWriteArrayListMultiMap<K, V> extends ConcurrentMultiMap<K, V> {
 

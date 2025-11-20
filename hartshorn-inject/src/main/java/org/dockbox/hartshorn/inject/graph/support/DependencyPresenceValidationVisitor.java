@@ -25,14 +25,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A graph visitor that validates the presence of dependencies in a graph. This visitor is used to determine if all
- * dependencies in a graph are present, and if not, which dependencies are missing.
- *
- * @since 0.5.0
+ * A graph visitor that validates the presence of dependencies in a graph. This visitor is used to
+ * determine if all dependencies in a graph are present, and if not, which dependencies are
+ * missing.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
-public class DependencyPresenceValidationVisitor implements BreadthFirstGraphVisitor<DependencyContext<?>> {
+public class DependencyPresenceValidationVisitor
+    implements BreadthFirstGraphVisitor<DependencyContext<?>> {
 
     private final Set<GraphNode<DependencyContext<?>>> missingDependencies = new HashSet<>();
     private final Set<GraphNode<DependencyContext<?>>> visitedDependencies;
@@ -42,8 +43,8 @@ public class DependencyPresenceValidationVisitor implements BreadthFirstGraphVis
     }
 
     /**
-     * Returns the set of missing dependencies that were not visited during the traversal of the graph. If
-     * this set is empty, all dependencies were visited.
+     * Returns the set of missing dependencies that were not visited during the traversal of the
+     * graph. If this set is empty, all dependencies were visited.
      *
      * @return the set of missing dependencies
      */

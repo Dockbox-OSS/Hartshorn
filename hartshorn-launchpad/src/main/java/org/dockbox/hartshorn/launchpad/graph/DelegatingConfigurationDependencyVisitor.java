@@ -27,26 +27,28 @@ import org.dockbox.hartshorn.inject.processing.ComponentProcessor;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 
 /**
- * {@link ConfigurationDependencyVisitor} implementation that delegates the configuration of the dependency to the provided
- * {@link DependencyContext}, through {@link DependencyContext#configure(BindingFunction)}.
+ * {@link ConfigurationDependencyVisitor} implementation that delegates the configuration of the
+ * dependency to the provided {@link DependencyContext}, through
+ * {@link DependencyContext#configure(BindingFunction)}.
  *
- * <p>Additional hooks are in place to register {@link ComponentProcessor}s to the given {@link ComponentProcessorRegistry}
+ * <p>Additional hooks are in place to register {@link ComponentProcessor}s to the given
+ * {@link ComponentProcessorRegistry}
  * immediately after they have been configured.
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
-public class DelegatingConfigurationDependencyVisitor extends AbstractConfigurationDependencyVisitor {
+public class DelegatingConfigurationDependencyVisitor
+    extends AbstractConfigurationDependencyVisitor {
 
     private final ComponentProcessorRegistry processorRegistry;
     private final ComponentProvider componentProvider;
     private final Binder binder;
 
     public DelegatingConfigurationDependencyVisitor(
-            Binder binder,
-            ComponentProvider componentProvider,
-            ComponentProcessorRegistry processorRegistry
+        Binder binder,
+        ComponentProvider componentProvider,
+        ComponentProcessorRegistry processorRegistry
     ) {
         this.componentProvider = componentProvider;
         this.processorRegistry = processorRegistry;
@@ -54,15 +56,17 @@ public class DelegatingConfigurationDependencyVisitor extends AbstractConfigurat
     }
 
     @Override
-    public <T> void registerProvider(DependencyContext<T> dependencyContext) throws ComponentConfigurationException {
+    public <T> void registerProvider(DependencyContext<T> dependencyContext)
+        throws ComponentConfigurationException {
         BindingFunction<T> function = this.binder.bind(dependencyContext.componentKey());
         dependencyContext.configure(function);
     }
 
     @Override
     public void doAfterRegister(DependencyContext<?> dependencyContext) {
-        if(ComponentProcessor.class.isAssignableFrom(dependencyContext.componentKey().type())) {
-            ComponentProcessor processor = (ComponentProcessor) this.componentProvider.get(dependencyContext.componentKey());
+        if (ComponentProcessor.class.isAssignableFrom(dependencyContext.componentKey().type())) {
+            ComponentProcessor processor =
+                (ComponentProcessor) this.componentProvider.get(dependencyContext.componentKey());
             this.processorRegistry.register(processor);
         }
     }

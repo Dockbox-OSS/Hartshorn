@@ -34,9 +34,8 @@ import java.util.function.BiPredicate;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @since 0.4.7
- *
  * @author Guus Lieben
+ * @since 0.4.7
  */
 public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
 
@@ -48,18 +47,18 @@ public abstract class AbstractMultiMap<K, V> implements MultiMap<K, V> {
     }
 
     /**
-     * Returns the backing map of this multi-map. This method is called by most
-     * methods in this class, so it should return a map that is mutable and
-     * can be modified by the methods in this class.
+     * Returns the backing map of this multi-map. This method is called by most methods in this
+     * class, so it should return a map that is mutable and can be modified by the methods in this
+     * class.
      *
      * @return The backing map of this multi-map.
      */
     protected abstract Map<K, Collection<V>> map();
 
     /**
-     * Creates an empty collection that will be used to store the values for a given key.
-     * This method is called when a new key is added to the map, and should return a new
-     * instance of a mutable collection that can hold the values for that key.
+     * Creates an empty collection that will be used to store the values for a given key. This
+     * method is called when a new key is added to the map, and should return a new instance of a
+     * mutable collection that can hold the values for that key.
      *
      * @return A new empty collection instance.
      */

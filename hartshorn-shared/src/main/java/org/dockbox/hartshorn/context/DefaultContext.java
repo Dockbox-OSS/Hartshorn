@@ -29,12 +29,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 /**
- * The default implementation of {@link Context}. This implementation uses a {@link
- * SynchronizedHashSetMultiMap} to store the contexts.
- *
- * @since 0.4.1
+ * The default implementation of {@link Context}. This implementation uses a
+ * {@link SynchronizedHashSetMultiMap} to store the contexts.
  *
  * @author Guus Lieben
+ * @since 0.4.1
  */
 public abstract class DefaultContext implements Context {
 
@@ -80,8 +79,8 @@ public abstract class DefaultContext implements Context {
     public <C extends ContextView> void addContext(String name, C context) {
         if (context instanceof NamedContext named && !named.name().equals(name)) {
             throw new IllegalArgumentException(("Context name does not match the provided name. " +
-                    "Context name: %s, provided name: %s. Either use only the name of the " +
-                    "context, or encapsulate the context so the appropriate name is used."
+                "Context name: %s, provided name: %s. Either use only the name of the " +
+                "context, or encapsulate the context so the appropriate name is used."
             ).formatted(named.name(), name));
         }
         else if (context != null) {
@@ -104,11 +103,11 @@ public abstract class DefaultContext implements Context {
     @Override
     public <C extends ContextView> Option<C> firstContext(ContextIdentity<C> key) {
         return Option.of(this.stream(key).findFirst())
-                .orCompute(() -> {
-                    C context = key.create();
-                    this.addContext(context);
-                    return context;
-                });
+            .orCompute(() -> {
+                C context = key.create();
+                this.addContext(context);
+                return context;
+            });
     }
 
     @Override
@@ -128,11 +127,11 @@ public abstract class DefaultContext implements Context {
      */
     protected <C extends ContextView> Stream<C> stream(ContextIdentity<C> key) {
         Stream<ContextView> contexts = StringUtilities.empty(key.name())
-                ? this.unnamedContexts().stream()
-                : this.namedContexts().get(key.name()).stream();
+            ? this.unnamedContexts().stream()
+            : this.namedContexts().get(key.name()).stream();
 
         return contexts.filter(key.type()::isInstance)
-                .map(key.type()::cast);
+            .map(key.type()::cast);
     }
 
     @Override

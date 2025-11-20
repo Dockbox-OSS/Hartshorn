@@ -31,7 +31,7 @@ public class ArrayToObjectConverterTests {
     @Test
     void testArrayConvertsToObjectIfLengthIsOne() {
         GenericConverter converter = new ArrayToObjectConverter(null);
-        Object[] array = { "test" };
+        Object[] array = {"test"};
         Object result = converter.convert(array, Object[].class, Object.class);
         Assertions.assertNotNull(result);
         Assertions.assertEquals("test", result);
@@ -48,7 +48,7 @@ public class ArrayToObjectConverterTests {
     @Test
     void testArrayDoesNotConvertIfLengthIsMoreThanOne() {
         GenericConverter converter = new ArrayToObjectConverter(null);
-        Object[] array = { "test", "test" };
+        Object[] array = {"test", "test"};
         Object result = converter.convert(array, Object[].class, Object.class);
         Assertions.assertNull(result);
     }
@@ -57,17 +57,20 @@ public class ArrayToObjectConverterTests {
     void testArrayElementIsConvertedIfComponentTypeDoesNotMatch() {
         TypeView<Integer> integerTypeView = Mockito.mock(TypeView.class);
         Mockito.when(integerTypeView.type()).thenReturn(Integer.class);
-        Mockito.when(integerTypeView.cast(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
+        Mockito.when(integerTypeView.cast(Mockito.any()))
+            .thenAnswer(invocation -> invocation.getArgument(0));
         Mockito.when(integerTypeView.defaultOrNull()).thenAnswer(invocation -> 0);
 
         Introspector introspector = Mockito.mock(Introspector.class);
         Mockito.when(introspector.introspect(Integer.class)).thenReturn(integerTypeView);
 
         StandardConversionService conversionService = new StandardConversionService(introspector);
-        conversionService.addConverter(String.class, Integer.class, new StringToNumberConverterFactory().create(Integer.class));
+        conversionService.addConverter(String.class,
+            Integer.class,
+            new StringToNumberConverterFactory().create(Integer.class));
 
         GenericConverter converter = new ArrayToObjectConverter(conversionService);
-        Object[] array = { "1" };
+        Object[] array = {"1"};
         // Use Object[].class as the source type, so we can test that the element type is used, instead of the array component type
         Object result = converter.convert(array, Object[].class, Integer.class);
         Assertions.assertNotNull(result);

@@ -23,9 +23,8 @@ import org.dockbox.hartshorn.util.option.Option;
  * instances. Direct use of an implementation of this interface is not guaranteed to be accurate,
  * and should be used with caution.
  *
- * @since 0.4.9
- *
  * @author Guus Lieben
+ * @since 0.4.9
  */
 public interface ProxyLookup {
 
@@ -44,6 +43,7 @@ public interface ProxyLookup {
      * Indicates whether the given instance is a proxy.
      *
      * @param instance the instance to check
+     *
      * @return true if the given instance is a proxy, false otherwise
      */
     boolean isProxy(Object instance);
@@ -52,18 +52,19 @@ public interface ProxyLookup {
      * Indicates whether the given type is a proxy type.
      *
      * @param candidate the type to check
+     *
      * @return true if the given type is a proxy type, false otherwise
      */
     boolean isProxy(Class<?> candidate);
 
     /**
-     * Returns a proxy introspector for the given instance. If the given instance is not a proxy,
-     * or is not supported by this lookup implementation, an empty {@link Option} is returned.
+     * Returns a proxy introspector for the given instance. If the given instance is not a proxy, or
+     * is not supported by this lookup implementation, an empty {@link Option} is returned.
      *
      * @param instance the instance to introspect
-     * @return a proxy introspector for the given instance
      * @param <T> the type of the instance
+     *
+     * @return a proxy introspector for the given instance
      */
     <T> Option<ProxyIntrospector<T>> introspector(T instance);
-
 }

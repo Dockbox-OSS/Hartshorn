@@ -25,15 +25,16 @@ import test.org.dockbox.hartshorn.launchpad.launch.scanning.discover.ScanSpecifi
 import test.org.dockbox.hartshorn.launchpad.launch.scanning.components.CountingComponentPreProcessor;
 
 /**
- * This test is associated with <a href="https://github.com/GuusLieben/Hartshorn/issues/609">#609</a>. It tests that
- * overly specific packages like {@code com.specific.sub} are not processed twice if a broader package like
+ * This test is associated with <a
+ * href="https://github.com/GuusLieben/Hartshorn/issues/609">#609</a>. It tests that overly specific
+ * packages like {@code com.specific.sub} are not processed twice if a broader package like
  * {@code com.specific} is bound to the same application context.
  */
 @ScanSpecificPackageActivator
 @HartshornIntegrationTest(
-        includeBasePackages = false,
-        scanPackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning",
-        componentPreProcessors = { CountingComponentPreProcessor.class }
+    includeBasePackages = false,
+    scanPackages = "test.org.dockbox.hartshorn.launchpad.launch.scanning",
+    componentPreProcessors = {CountingComponentPreProcessor.class}
 )
 public class SpecificPackageTests {
 

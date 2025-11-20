@@ -24,12 +24,14 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 
 /**
- * A constraint that prevents the creation of proxies for Groovy traits. This constraint is applied by default when
- * using {@link org.dockbox.hartshorn.proxy.constraint.CollectorProxyValidator#withDefaults()}. This constraint exists
- * as Groovy traits behave differently from Java interfaces, and are not supported by the proxying mechanism.
+ * A constraint that prevents the creation of proxies for Groovy traits. This constraint is applied
+ * by default when using
+ * {@link org.dockbox.hartshorn.proxy.constraint.CollectorProxyValidator#withDefaults()}. This
+ * constraint exists as Groovy traits behave differently from Java interfaces, and are not supported
+ * by the proxying mechanism.
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class GroovyTraitConstraint implements ProxyConstraint {
 
@@ -38,22 +40,25 @@ public class GroovyTraitConstraint implements ProxyConstraint {
     @Override
     public Set<ProxyConstraintViolation> validate(TypeView<?> typeView) {
         if (this.isGroovyTrait(typeView.type())) {
-            return Set.of(new ProxyConstraintViolation("Cannot create proxy for Groovy trait " + typeView.qualifiedName()));
+            return Set.of(new ProxyConstraintViolation("Cannot create proxy for Groovy trait "
+                + typeView.qualifiedName()));
         }
         return Set.of();
     }
 
     /**
-     * Checks if the given type is a Groovy trait. If the Groovy trait annotation is not available on the classpath,
-     * this method will always return {@code false}.
+     * Checks if the given type is a Groovy trait. If the Groovy trait annotation is not available
+     * on the classpath, this method will always return {@code false}.
      *
      * @param type the type to check
+     *
      * @return {@code true} if the type is a Groovy trait, {@code false} otherwise
      */
     protected boolean isGroovyTrait(Class<?> type) {
         try {
             Class<?> groovyTrait = Class.forName(GROOVY_TRAIT);
-            return groovyTrait.isAnnotation() && type.isAnnotationPresent((Class<? extends Annotation>) groovyTrait);
+            return groovyTrait.isAnnotation()
+                && type.isAnnotationPresent((Class<? extends Annotation>) groovyTrait);
         }
         catch (ClassNotFoundException e) {
             return false;

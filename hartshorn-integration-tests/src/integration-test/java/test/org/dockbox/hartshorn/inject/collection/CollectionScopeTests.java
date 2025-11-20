@@ -52,19 +52,22 @@ public class CollectionScopeTests {
         });
 
         ComponentKey<ComponentCollection<String>> componentKey = ComponentKey.collect(String.class);
-        BindingHierarchy<ComponentCollection<String>> hierarchy = this.applicationContext.hierarchy(componentKey);
+        BindingHierarchy<ComponentCollection<String>> hierarchy =
+            this.applicationContext.hierarchy(componentKey);
         Assertions.assertTrue(hierarchy instanceof CollectionBindingHierarchy<String>);
 
         Assertions.assertEquals(1, hierarchy.size());
 
         int highestPriority = hierarchy.highestPriority();
-        Option<InstantiationStrategy<ComponentCollection<String>>> candidateProvider = hierarchy.get(highestPriority);
+        Option<InstantiationStrategy<ComponentCollection<String>>> candidateProvider =
+            hierarchy.get(highestPriority);
         Assertions.assertTrue(candidateProvider.present());
 
         InstantiationStrategy<ComponentCollection<String>> strategy = candidateProvider.get();
         Assertions.assertTrue(strategy instanceof CollectionInstantiationStrategy<String>);
 
-        CollectionInstantiationStrategy<String> collectionProvider = (CollectionInstantiationStrategy<String>) strategy;
+        CollectionInstantiationStrategy<String> collectionProvider =
+            (CollectionInstantiationStrategy<String>) strategy;
         Set<InstantiationStrategy<String>> strategies = collectionProvider.providers();
         Assertions.assertEquals(2, strategies.size());
     }
@@ -75,9 +78,10 @@ public class CollectionScopeTests {
         ComponentKey<String> nameKey = ComponentKey.of(String.class, "names");
         List<String> names = List.of("John", "Jane", "Joe");
         this.applicationContext.bind(nameKey)
-                .collect(collector -> names.forEach(collector::singleton));
+            .collect(collector -> names.forEach(collector::singleton));
 
-        ComponentKey<ComponentCollection<String>> collectionKey = nameKey.mutable().collector().build();
+        ComponentKey<ComponentCollection<String>> collectionKey =
+            nameKey.mutable().collector().build();
         ComponentCollection<String> nameCollection = this.applicationContext.get(collectionKey);
 
         Assertions.assertEquals(3, nameCollection.size());
@@ -96,7 +100,8 @@ public class CollectionScopeTests {
             collector.singleton("Bar");
         });
 
-        ComponentWithCollectionDependencies component = this.applicationContext.get(ComponentWithCollectionDependencies.class);
+        ComponentWithCollectionDependencies component =
+            this.applicationContext.get(ComponentWithCollectionDependencies.class);
         List<String> names = component.names();
 
         Assertions.assertNotNull(names);
@@ -115,7 +120,8 @@ public class CollectionScopeTests {
             collector.singleton(2);
         });
 
-        ComponentWithCollectionDependencies component = this.applicationContext.get(ComponentWithCollectionDependencies.class);
+        ComponentWithCollectionDependencies component =
+            this.applicationContext.get(ComponentWithCollectionDependencies.class);
         Set<Integer> ages = component.ages();
 
         Assertions.assertNotNull(ages);
@@ -129,18 +135,19 @@ public class CollectionScopeTests {
     @DisplayName("Collection components can be obtained with a collection component key")
     @TestComponents(CompositeMembersConfiguration.class)
     void testCollectionsAreCollected() {
-        ComponentKey<ComponentCollection<StaticComponent>> componentKey = ComponentKey.collect(StaticComponent.class);
+        ComponentKey<ComponentCollection<StaticComponent>> componentKey =
+            ComponentKey.collect(StaticComponent.class);
         ComponentCollection<StaticComponent> collection = this.applicationContext.get(componentKey);
         // Even if no bindings are present, the collection should be created
         Assertions.assertNotNull(collection);
         Assertions.assertEquals(0, collection.size());
 
         String[] names = {
-                CompositeMembersConfiguration.USER,
-                CompositeMembersConfiguration.ADMIN,
-                CompositeMembersConfiguration.GUEST
+            CompositeMembersConfiguration.USER,
+            CompositeMembersConfiguration.ADMIN,
+            CompositeMembersConfiguration.GUEST
         };
-        for(String name : names) {
+        for (String name : names) {
             componentKey = componentKey.mutable().name(name).build();
             collection = this.applicationContext.get(componentKey);
             Assertions.assertEquals(1, collection.size());

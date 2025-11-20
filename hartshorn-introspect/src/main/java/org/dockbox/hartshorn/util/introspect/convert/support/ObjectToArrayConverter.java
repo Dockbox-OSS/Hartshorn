@@ -28,9 +28,8 @@ import java.util.Set;
  * Converts any object to an array of the same type, containing only the object. If the given object
  * is a primitive, an array of the primitive type is returned.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ObjectToArrayConverter implements GenericConverter {
 
@@ -42,9 +41,9 @@ public class ObjectToArrayConverter implements GenericConverter {
     @SuppressWarnings("unchecked")
     @Override
     public @Nullable <I, O> Object convert(
-            @Nullable Object source,
-            @NonNull Class<I> sourceType,
-            @NonNull Class<O> targetType
+        @Nullable Object source,
+        @NonNull Class<I> sourceType,
+        @NonNull Class<O> targetType
     ) {
         if (sourceType.isPrimitive()) {
             return this.convertPrimitive(source, sourceType);
@@ -98,7 +97,7 @@ public class ObjectToArrayConverter implements GenericConverter {
                 return doubleArray;
             }
             default -> throw new IllegalArgumentException(
-                    "Unsupported primitive type: " + sourceType.getName()
+                "Unsupported primitive type: " + sourceType.getName()
             );
         }
     }

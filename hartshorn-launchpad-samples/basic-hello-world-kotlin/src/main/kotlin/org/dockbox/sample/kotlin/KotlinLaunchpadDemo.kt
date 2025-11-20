@@ -4,6 +4,6 @@ import org.dockbox.hartshorn.inject.provider.get
 import org.dockbox.hartshorn.launchpad.HartshornApplication
 
 fun main(args: Array<String>) {
-    val application = HartshornApplication.create(*args)
-    application.get<GreetingAction>().greet()
+  val application = HartshornApplication.create(*args)
+  application.get<GreetingAction>().greet()
 }

@@ -33,20 +33,18 @@ import java.util.Optional;
  * {@link OptionToCollectionConverterFactory}.
  *
  * @param helperOptionalToOptionConverter The helper {@link Converter} to convert from
- *                                        {@link Optional} to {@link Option}
+ * {@link Optional} to {@link Option}
  * @param helperOptionToCollectionConverterFactory The helper {@link ConverterFactory} to convert
- *                                                from {@link Option} to {@link Collection}
- *
- * @see OptionalToOptionConverter
- * @see OptionToCollectionConverterFactory
- *
- * @since 0.5.0
+ * from {@link Option} to {@link Collection}
  *
  * @author Guus Lieben
+ * @see OptionalToOptionConverter
+ * @see OptionToCollectionConverterFactory
+ * @since 0.5.0
  */
 public record OptionalToCollectionConverterFactory(
-        Converter<Optional<?>, Option<?>> helperOptionalToOptionConverter,
-        ConverterFactory<Option<?>, Collection<?>> helperOptionToCollectionConverterFactory
+    Converter<Optional<?>, Option<?>> helperOptionalToOptionConverter,
+    ConverterFactory<Option<?>, Collection<?>> helperOptionToCollectionConverterFactory
 ) implements ConverterFactory<Optional<?>, Collection<?>> {
 
     public OptionalToCollectionConverterFactory(Introspector introspector) {
@@ -56,7 +54,7 @@ public record OptionalToCollectionConverterFactory(
     @Override
     public <O extends Collection<?>> Converter<Optional<?>, O> create(Class<O> targetType) {
         Converter<Option<?>, O> optionToCollectionConverter = this
-                .helperOptionToCollectionConverterFactory.create(targetType);
+            .helperOptionToCollectionConverterFactory.create(targetType);
         return input -> {
             Option<?> option = this.helperOptionalToOptionConverter.convert(input);
             return optionToCollectionConverter.convert(option);

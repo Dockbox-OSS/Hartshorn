@@ -29,26 +29,30 @@ import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link SubscribableBindingHierarchy} is a {@link BindingHierarchy} that can be subscribed to. If the delegate
- * {@link BindingHierarchy} is updated, the given subscriber will be notified. This allows for external components to
- * react to changes in the hierarchy, without having to poll the hierarchy for changes.
+ * A {@link SubscribableBindingHierarchy} is a {@link BindingHierarchy} that can be subscribed to.
+ * If the delegate {@link BindingHierarchy} is updated, the given subscriber will be notified. This
+ * allows for external components to react to changes in the hierarchy, without having to poll the
+ * hierarchy for changes.
  *
  * @param <C> The type of the wrapped {@link BindingHierarchy}.
  *
- * @since 0.4.3
- *
  * @author Guus Lieben
+ * @since 0.4.3
  */
-public class SubscribableBindingHierarchy<C> implements PrunableBindingHierarchy<C>, AliasableBindingHierarchy<C> {
+public class SubscribableBindingHierarchy<C>
+    implements PrunableBindingHierarchy<C>, AliasableBindingHierarchy<C> {
 
     private final Consumer<BindingHierarchy<C>> onUpdate;
 
     private AliasableBindingHierarchy<C> real;
 
-    public SubscribableBindingHierarchy(BindingHierarchy<C> real, Consumer<BindingHierarchy<C>> onUpdate) {
+    public SubscribableBindingHierarchy(
+        BindingHierarchy<C> real,
+        Consumer<BindingHierarchy<C>> onUpdate
+    ) {
         this.real = real instanceof AliasableBindingHierarchy<C> aliasable
-                ? aliasable
-                : new AliasableBindingHierarchyAdapter<>(real);
+            ? aliasable
+            : new AliasableBindingHierarchyAdapter<>(real);
         this.onUpdate = onUpdate;
     }
 

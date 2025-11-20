@@ -39,15 +39,14 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A {@link PredicatePropertyRegistryLoader} that loads properties using a Jackson {@link ObjectMapper}. Depending
- * on the implementation of the {@link ObjectMapper}, different file formats can be supported.
- *
- * @see JacksonJavaPropsPropertyRegistryLoader
- * @see JacksonYamlPropertyRegistryLoader
- *
- * @since 0.7.0
+ * A {@link PredicatePropertyRegistryLoader} that loads properties using a Jackson
+ * {@link ObjectMapper}. Depending on the implementation of the {@link ObjectMapper}, different file
+ * formats can be supported.
  *
  * @author Guus Lieben
+ * @see JacksonJavaPropsPropertyRegistryLoader
+ * @see JacksonYamlPropertyRegistryLoader
+ * @since 0.7.0
  */
 public abstract class JacksonPropertyRegistryLoader implements PredicatePropertyRegistryLoader {
 
@@ -59,7 +58,8 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
     }
 
     /**
-     * Creates a new instance of the {@link ObjectMapper} that is used to load the properties from the file.
+     * Creates a new instance of the {@link ObjectMapper} that is used to load the properties from
+     * the file.
      *
      * @return a new instance of the {@link ObjectMapper}
      */
@@ -88,7 +88,8 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
     }
 
     /**
-     * Loads the properties from the given {@link JsonNode} and registers them in the provided {@link PropertyRegistry}.
+     * Loads the properties from the given {@link JsonNode} and registers them in the provided
+     * {@link PropertyRegistry}.
      *
      * @param registry the registry to register the properties in
      * @param node the node to load the properties from
@@ -99,10 +100,12 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
     }
 
     /**
-     * Loads the properties from the given {@link JsonNode}. All {@link ConfiguredProperty properties} returned will
-     * have the same {@link PropertyRootPathNode} as their parent.
+     * Loads the properties from the given {@link JsonNode}. All
+     * {@link ConfiguredProperty properties} returned will have the same
+     * {@link PropertyRootPathNode} as their parent.
      *
      * @param node the node to load the properties from
+     *
      * @return a list of {@link ConfiguredProperty properties} loaded from the given node
      */
     protected List<ConfiguredProperty> loadProperties(JsonNode node) {
@@ -110,19 +113,21 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
     }
 
     /**
-     * Loads the properties from the given {@link JsonNode} using the provided path. All {@link ConfiguredProperty
-     * properties} returned will have the provided path as their parent.
+     * Loads the properties from the given {@link JsonNode} using the provided path. All
+     * {@link ConfiguredProperty properties} returned will have the provided path as their parent.
      *
      * @param path the node to use as the parent of the properties
      * @param node the node to load the properties from
+     *
      * @return a list of {@link ConfiguredProperty properties} loaded from the given node
      */
     protected List<ConfiguredProperty> loadProperties(PropertyPathNode path, JsonNode node) {
-        return switch(node) {
+        return switch (node) {
             case ArrayNode arrayNode -> this.loadArrayProperties(path, arrayNode);
             case ObjectNode objectNode -> this.loadObjectProperties(path, objectNode);
             case ValueNode valueNode -> List.of(this.loadSingleProperty(path, valueNode));
-            default -> throw new IllegalArgumentException("Invalid node type: " + node.getNodeType());
+            default ->
+                throw new IllegalArgumentException("Invalid node type: " + node.getNodeType());
         };
     }
 
@@ -131,6 +136,7 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
      *
      * @param path the node to use as the parent of the property
      * @param valueNode the node to load the property from
+     *
      * @return a single {@link ConfiguredProperty property} loaded from the given node
      */
     protected ConfiguredProperty loadSingleProperty(PropertyPathNode path, ValueNode valueNode) {
@@ -139,15 +145,19 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
     }
 
     /**
-     * Loads the properties from the given {@link ArrayNode} using the provided path. All {@link ConfiguredProperty
-     * properties} returned will have a parent node for the array index. The nodes for the array indexes will have
-     * the given path as their parent.
+     * Loads the properties from the given {@link ArrayNode} using the provided path. All
+     * {@link ConfiguredProperty properties} returned will have a parent node for the array index.
+     * The nodes for the array indexes will have the given path as their parent.
      *
      * @param path the node to use as the parent of the properties
      * @param arrayNode the node to load the properties from
+     *
      * @return a list of {@link ConfiguredProperty properties} loaded from the given node
      */
-    protected List<ConfiguredProperty> loadArrayProperties(PropertyPathNode path, ArrayNode arrayNode) {
+    protected List<ConfiguredProperty> loadArrayProperties(
+        PropertyPathNode path,
+        ArrayNode arrayNode
+    ) {
         List<ConfiguredProperty> properties = new ArrayList<>();
         CollectionUtilities.indexed(arrayNode.elements(), (index, element) -> {
             PropertyPathNode nextPath = path.index(index);
@@ -157,28 +167,36 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
     }
 
     /**
-     * Loads the properties from the given {@link ObjectNode} using the provided path. All {@link ConfiguredProperty
-     * properties} returned will have a parent node for their respective field name. The nodes for the field names will
-     * have the given path as their parent.
+     * Loads the properties from the given {@link ObjectNode} using the provided path. All
+     * {@link ConfiguredProperty properties} returned will have a parent node for their respective
+     * field name. The nodes for the field names will have the given path as their parent.
      *
      * @param path the node to use as the parent of the properties
      * @param objectNode the node to load the properties from
+     *
      * @return a list of {@link ConfiguredProperty properties} loaded from the given node
      */
-    protected List<ConfiguredProperty> loadObjectProperties(PropertyPathNode path, ObjectNode objectNode) {
+    protected List<ConfiguredProperty> loadObjectProperties(
+        PropertyPathNode path,
+        ObjectNode objectNode
+    ) {
         List<ConfiguredProperty> properties = new ArrayList<>();
-        EntryStream.of(CollectionUtilities.iterableOf(objectNode.fields())).forEach((name, value) -> {
-            PropertyPathNode nextPath = path.property(name);
-            properties.addAll(this.loadProperties(nextPath, value));
-        });
+        EntryStream.of(CollectionUtilities.iterableOf(objectNode.fields()))
+            .forEach((name, value) -> {
+                PropertyPathNode nextPath = path.property(name);
+                properties.addAll(this.loadProperties(nextPath, value));
+            });
         return properties;
     }
 
     /**
-     * Loads the contents of the file at the given path into a {@link JsonNode node-based tree structure}.
+     * Loads the contents of the file at the given path into a
+     * {@link JsonNode node-based tree structure}.
      *
      * @param path the path to the file to load
+     *
      * @return a {@link JsonNode node-based tree structure} representing the contents of the file
+     *
      * @throws IOException if an error occurs while reading the file
      */
     protected JsonNode loadGraph(URI path) throws IOException {
@@ -186,21 +204,22 @@ public abstract class JacksonPropertyRegistryLoader implements PredicateProperty
     }
 
     /**
-     * Returns the {@link ObjectMapper} that is used to load the properties from the file. If the object mapper has not
-     * been created yet, a new instance is created using {@link #createObjectMapper()}.
+     * Returns the {@link ObjectMapper} that is used to load the properties from the file. If the
+     * object mapper has not been created yet, a new instance is created using
+     * {@link #createObjectMapper()}.
      *
      * @return the {@link ObjectMapper} that is used to load the properties from the file
      */
     protected ObjectMapper objectMapper() {
-        if(this.objectMapper == null) {
+        if (this.objectMapper == null) {
             this.objectMapper = this.createObjectMapper();
         }
         return this.objectMapper;
     }
 
     /**
-     * Returns a set of file extensions that this loader supports. The file extension of the file that is being loaded
-     * must be one of the extensions in this set.
+     * Returns a set of file extensions that this loader supports. The file extension of the file
+     * that is being loaded must be one of the extensions in this set.
      *
      * @return a set of file extensions that this loader supports
      */

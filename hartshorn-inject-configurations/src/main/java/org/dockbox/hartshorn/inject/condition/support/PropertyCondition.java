@@ -23,52 +23,56 @@ import org.dockbox.hartshorn.properties.ValueProperty;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A condition that checks if a property is present in the application context. If the property is present and an expected
- * value is configured, the condition will check if the value matches the configured value. If the property is not present,
- * the condition will check if the {@link RequiresProperty#matchIfMissing()} is set to {@code true}.
- *
- * @see RequiresProperty
- * @see Condition
- *
- * @since 0.4.12
+ * A condition that checks if a property is present in the application context. If the property is
+ * present and an expected value is configured, the condition will check if the value matches the
+ * configured value. If the property is not present, the condition will check if the
+ * {@link RequiresProperty#matchIfMissing()} is set to {@code true}.
  *
  * @author Guus Lieben
+ * @see RequiresProperty
+ * @see Condition
+ * @since 0.4.12
  */
 public class PropertyCondition implements Condition {
 
     @Override
     public ConditionResult matches(ConditionContext context) {
-        return context.annotatedElement().annotations().get(RequiresProperty.class).map(condition -> {
-            String name = condition.name();
-            Option<ValueProperty> result = context.application()
+        return context.annotatedElement()
+            .annotations()
+            .get(RequiresProperty.class)
+            .map(condition -> {
+                String name = condition.name();
+                Option<ValueProperty> result = context.application()
                     .environment()
                     .propertyRegistry()
                     .get(name);
-            if (result.absent()) {
-                if (condition.matchIfMissing()) {
+                if (result.absent()) {
+                    if (condition.matchIfMissing()) {
+                        return ConditionResult.matched();
+                    }
+                    return ConditionResult.notFound("property", name);
+                }
+
+                ValueProperty property = result.get();
+                Option<String> value = property.value();
+                if (condition.matchIfMissing() && value.present()) {
+                    return ConditionResult.found("property", name, value.get());
+                }
+
+                if (condition.withValue().isEmpty()) {
                     return ConditionResult.matched();
                 }
-                return ConditionResult.notFound("property", name);
-            }
-
-            ValueProperty property = result.get();
-            Option<String> value = property.value();
-            if (condition.matchIfMissing() && value.present()) {
-                return ConditionResult.found("property", name, value.get());
-            }
-
-            if (condition.withValue().isEmpty()) {
-                return ConditionResult.matched();
-            }
-            else if (value.absent()) {
-                return ConditionResult.notFound("property", name);
-            }
-            else {
-                String actualValue = value.get();
-                return condition.withValue().equals(actualValue)
+                else if (value.absent()) {
+                    return ConditionResult.notFound("property", name);
+                }
+                else {
+                    String actualValue = value.get();
+                    return condition.withValue().equals(actualValue)
                         ? ConditionResult.matched()
                         : ConditionResult.notEqual("property", condition.withValue(), actualValue);
-            }
-        }).orCompute(() -> ConditionResult.invalidCondition("property")).get();
+                }
+            })
+            .orCompute(() -> ConditionResult.invalidCondition("property"))
+            .get();
     }
 }

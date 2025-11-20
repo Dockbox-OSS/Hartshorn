@@ -23,9 +23,8 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * Converts any object to an {@link Option} by wrapping the object in an {@link Option#of(Object)}.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ObjectToOptionConverter implements Converter<Object, Option<?>> {
 

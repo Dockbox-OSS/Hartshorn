@@ -32,64 +32,81 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Resolver for type parameters of types in a type hierarchy. This allows you to trace the type hierarchy of a base
- * type, and resolve the input type parameters for a given parent type, even if the concrete types are scattered
- * across multiple levels of the hierarchy.
- *
- * @since 0.5.0
+ * Resolver for type parameters of types in a type hierarchy. This allows you to trace the type
+ * hierarchy of a base type, and resolve the input type parameters for a given parent type, even if
+ * the concrete types are scattered across multiple levels of the hierarchy.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class TypeParameterResolver {
 
     /**
-     * Attempts to resolve the input type parameters for the given parent, tracing the type hierarchy of the base type.
-     * This includes tracing of any interfaces and superclasses of the base type.
+     * Attempts to resolve the input type parameters for the given parent, tracing the type
+     * hierarchy of the base type. This includes tracing of any interfaces and superclasses of the
+     * base type.
      *
-     * <p>If there is no concrete type parameter for a given index, the type parameter at that index in the result will
+     * <p>If there is no concrete type parameter for a given index, the type parameter at that index
+     * in the result will
      * be {@code null}.
      *
      * <h2>Examples</h2>
      * <h3>All parameters defined at same level</h3>
-     * <p>In simple scenarios, all type parameters may be defined at the same level in the hierarchy. For example, if
-     * the base type is {@code ArrayList<String>} and the parent is {@code Collection}, this method will return a list
-     * containing a single type parameter view for {@code String}.
+     * <p>In simple scenarios, all type parameters may be defined at the same level in the
+     * hierarchy. For example, if
+     * the base type is {@code ArrayList<String>} and the parent is {@code Collection}, this method
+     * will return a list containing a single type parameter view for {@code String}.
      *
      * <h3>Parameters defined at different levels</h3>
-     * <p>Parameters may be defined in different levels of the hierarchy. For example, if the base type is {@code
-     * StringToNumberFunction}, which extends {@code NumberFunction<String>}, which in turn extends {@code
-     * Function<T, Number>}, and the parent is {@code Function}, this method will return a list containing both {@code
-     * String} and {@code Number} as type parameter views, in that order.
+     * <p>Parameters may be defined in different levels of the hierarchy. For example, if the base
+     * type is {@code
+     * StringToNumberFunction}, which extends {@code NumberFunction<String>}, which in turn extends
+     * {@code Function<T, Number>}, and the parent is {@code Function}, this method will return a
+     * list containing both {@code String} and {@code Number} as type parameter views, in that
+     * order.
      *
      * @param baseType the base type from which to resolve the input type parameters
      * @param forParent the parent type for which to resolve the input type parameters
      *
-     * @return a list of type parameter views representing the input type parameters for the parent type
+     * @return a list of type parameter views representing the input type parameters for the parent
+     * type
      *
-     * @throws TypeParameterResolutionException if the type parameters cannot be resolved, for example if the parent
-     * type is not found in the hierarchy
+     * @throws TypeParameterResolutionException if the type parameters cannot be resolved, for
+     * example if the parent type is not found in the hierarchy
      */
-    public List<TypeParameterView> resolveInputForParent(TypeView<?> baseType, TypeView<?> forParent) throws TypeParameterResolutionException {
+    public List<TypeParameterView> resolveInputForParent(
+        TypeView<?> baseType,
+        TypeView<?> forParent
+    ) throws TypeParameterResolutionException {
         TypeHierarchyGraph baseTypeHierarchy = TypeHierarchyGraph.of(baseType);
         try {
-            Graph<TypeView<?>> inverted = new GraphInverter().invertGraph(baseTypeHierarchy, node -> node.type() == forParent.type());
+            Graph<TypeView<?>> inverted = new GraphInverter().invertGraph(baseTypeHierarchy,
+                node -> node.type() == forParent.type());
             return this.resolveFromHierarchy(forParent, inverted);
         }
         catch (GraphException e) {
-            throw new TypeParameterResolutionException("Failed to resolve type parameters for " + forParent.type().getName() + " from hierarchy graph", e);
+            throw new TypeParameterResolutionException("Failed to resolve type parameters for "
+                + forParent.type().getName()
+                + " from hierarchy graph", e);
         }
     }
 
-    private List<TypeParameterView> resolveFromHierarchy(TypeView<?> parent, Graph<TypeView<?>> graph) throws TypeParameterResolutionException {
-        TypeParameterView[] parameters = new TypeParameterView[parent.typeParameters().allInput().count()];
+    private List<TypeParameterView> resolveFromHierarchy(
+        TypeView<?> parent,
+        Graph<TypeView<?>> graph
+    ) throws TypeParameterResolutionException {
+        TypeParameterView[] parameters =
+            new TypeParameterView[parent.typeParameters().allInput().count()];
         Set<GraphNode<TypeView<?>>> roots = graph.roots();
         if (roots.size() != 1) {
-            throw new TypeParameterResolutionException("Expected exactly one root node, found " + roots.size());
+            throw new TypeParameterResolutionException("Expected exactly one root node, found "
+                + roots.size());
         }
         GraphNode<TypeView<?>> root = CollectionUtilities.first(roots);
         // Compare type, not view, as the view is likely parameterized and thus a different non-equal instance
         if (root.value().type() != parent.type()) {
-            throw new TypeParameterResolutionException("Expected root node to be " + parent.type().getName() + ", found " + root.value().type().getName());
+            throw new TypeParameterResolutionException("Expected root node to be " + parent.type()
+                .getName() + ", found " + root.value().type().getName());
         }
 
         this.visit(root, parameters);
@@ -106,7 +123,10 @@ public class TypeParameterResolver {
         }
     }
 
-    private TypeParameterView resolveParameter(GraphNode<TypeView<?>> node, TypeParameterView parameter) {
+    private TypeParameterView resolveParameter(
+        GraphNode<TypeView<?>> node,
+        TypeParameterView parameter
+    ) {
         int index = parameter.index();
         TypeView<?> typeView = node.value();
         Class<?> type = typeView.type();
@@ -130,7 +150,10 @@ public class TypeParameterResolver {
         return null;
     }
 
-    private TypeParameterView resolveFromGenericParent(TypeParameterView parameter, TypeView<?> typeView) {
+    private TypeParameterView resolveFromGenericParent(
+        TypeParameterView parameter,
+        TypeView<?> typeView
+    ) {
         TypeParameterList parameterViews = typeView.typeParameters().allInput();
         Option<TypeParameterView> parameterAtIndex = parameterViews.atIndex(parameter.index());
         if (parameterAtIndex.present()) {
@@ -142,7 +165,11 @@ public class TypeParameterResolver {
         return null;
     }
 
-    private TypeParameterView resolveFromTypeDefinition(int index, Class<?> type, Set<GraphNode<TypeView<?>>> children) {
+    private TypeParameterView resolveFromTypeDefinition(
+        int index,
+        Class<?> type,
+        Set<GraphNode<TypeView<?>>> children
+    ) {
         for (GraphNode<TypeView<?>> child : children) {
             TypeParameterList outputParameters = child.value().typeParameters().outputFor(type);
             // If there are no output parameters for the given type, we don't have anything to resolve for this child.

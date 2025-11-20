@@ -24,9 +24,8 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
  *
  * @param <T> the type of the component being processed by the strategy
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface BindingStrategyContext<T> extends Context {
 

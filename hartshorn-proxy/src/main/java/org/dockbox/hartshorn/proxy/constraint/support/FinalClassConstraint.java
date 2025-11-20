@@ -24,11 +24,12 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.util.Set;
 
 /**
- * A constraint that prevents the creation of proxies for classes. This includes sealed classes and records.
- * This constraint is applied by default when using {@link CollectorProxyValidator#withDefaults()}.
+ * A constraint that prevents the creation of proxies for classes. This includes sealed classes and
+ * records. This constraint is applied by default when using
+ * {@link CollectorProxyValidator#withDefaults()}.
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class FinalClassConstraint implements ProxyConstraint {
 
@@ -46,7 +47,10 @@ public class FinalClassConstraint implements ProxyConstraint {
         }
 
         if (classType != null) {
-            return Set.of(new ProxyConstraintViolation("Cannot create proxy for " + classType + " " + typeView.qualifiedName()));
+            return Set.of(new ProxyConstraintViolation("Cannot create proxy for "
+                + classType
+                + " "
+                + typeView.qualifiedName()));
         }
         return Set.of();
     }

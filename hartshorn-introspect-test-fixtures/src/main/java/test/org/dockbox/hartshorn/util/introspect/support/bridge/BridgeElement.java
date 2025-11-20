@@ -19,9 +19,8 @@ package test.org.dockbox.hartshorn.util.introspect.support.bridge;
 /**
  * Basic interface containing a bridge method.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public interface BridgeElement extends BridgeParent<String> {
     @Override

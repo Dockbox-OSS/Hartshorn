@@ -17,12 +17,11 @@
 package org.dockbox.hartshorn.util.introspect.convert;
 
 /**
- * Accessor to expose the {@link Null} instance, which is otherwise only accessible to the converter package
- * for internal usage.
- *
- * @since 0.7.0
+ * Accessor to expose the {@link Null} instance, which is otherwise only accessible to the converter
+ * package for internal usage.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class NullAccess {
 

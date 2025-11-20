@@ -17,15 +17,13 @@
 package org.dockbox.hartshorn.launchpad.environment;
 
 /**
- * An application component that is directly bound to an active {@link ApplicationEnvironment}. This is respected
- * by the {@link ApplicationEnvironment}, which will set itself as the component's environment when the component
- * is used by the environment.
- *
- * @see ApplicationEnvironment
- *
- * @since 0.4.8
+ * An application component that is directly bound to an active {@link ApplicationEnvironment}. This
+ * is respected by the {@link ApplicationEnvironment}, which will set itself as the component's
+ * environment when the component is used by the environment.
  *
  * @author Guus Lieben
+ * @see ApplicationEnvironment
+ * @since 0.4.8
  */
 public interface ApplicationManaged {
 
@@ -36,6 +34,7 @@ public interface ApplicationManaged {
 
     /**
      * Sets the {@link ApplicationEnvironment} that is managing this component.
+     *
      * @param environment the {@link ApplicationEnvironment} that is managing this component.
      */
     void environment(ApplicationEnvironment environment);

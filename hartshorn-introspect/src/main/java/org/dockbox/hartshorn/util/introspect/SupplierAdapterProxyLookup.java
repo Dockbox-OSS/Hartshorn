@@ -21,12 +21,12 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.function.Supplier;
 
 /**
- * A {@link ProxyLookup} that delegates to a lazily initialized {@link ProxyLookup}. This is useful when the
- * {@link ProxyLookup} is not available at the time of construction, but is available at the time of use.
- *
- * @since 0.5.0
+ * A {@link ProxyLookup} that delegates to a lazily initialized {@link ProxyLookup}. This is useful
+ * when the {@link ProxyLookup} is not available at the time of construction, but is available at
+ * the time of use.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class SupplierAdapterProxyLookup implements ProxyLookup {
 

@@ -28,33 +28,35 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * The entrypoint for creating proxy objects. This class is responsible for creating proxy objects for
- * a given class, and is a default contract provided in all {@code ComponentProcessingContext}s for
- * components that permit the creation of proxies.
+ * The entrypoint for creating proxy objects. This class is responsible for creating proxy objects
+ * for a given class, and is a default contract provided in all {@code ComponentProcessingContext}s
+ * for components that permit the creation of proxies.
  *
  * <p>Proxy factories are responsible for creating proxy objects for a given class, after the proxy
  * has been created, the proxy object is passed to the responsible {@link ProxyManager} for further
- * life-cycle management. Proxy factories are able to create zero or more unique proxy objects for
- * a given class, and are responsible for ensuring that the proxy objects are unique.
+ * life-cycle management. Proxy factories are able to create zero or more unique proxy objects for a
+ * given class, and are responsible for ensuring that the proxy objects are unique.
  *
  * <p>To support the creation of proxies, the {@link ProxyFactory} exposes a set of methods that
  * can be used to modify the proxy object before it is created. This includes the delegation and
  * interception of methods.
  *
  * <p><b>Interception</b>
- * <p>Interception indicates the method is replaced by whichever implementation is chosen. Interception
+ * <p>Interception indicates the method is replaced by whichever implementation is chosen.
+ * Interception
  * can be done in two ways; full replacement, and wrapping.
  *
  * <p><b>Full replacement interception</b>
  * <p>A full replacement is done using a custom
- * {@link MethodInterceptor}, which accepts a {@link MethodInterceptorContext} to execute given functionality.
- * Within an interceptor it is possible to access all required information about the intercepted method,
- * as can be seen in the {@link MethodInterceptorContext} class.
+ * {@link MethodInterceptor}, which accepts a {@link MethodInterceptorContext} to execute given
+ * functionality. Within an interceptor it is possible to access all required information about the
+ * intercepted method, as can be seen in the {@link MethodInterceptorContext} class.
  *
- * <p>Method interceptors are executed in series, allowing each step to re-use and/or modify the result of
- * another interceptor. To do so, the previous {@link MethodInterceptorContext#result()} is provided. If
- * the interceptor is the first one to execute, the result will be the default value of the return type.
- * The series are executed in no specific order.
+ * <p>Method interceptors are executed in series, allowing each step to re-use and/or modify the
+ * result of
+ * another interceptor. To do so, the previous {@link MethodInterceptorContext#result()} is
+ * provided. If the interceptor is the first one to execute, the result will be the default value of
+ * the return type. The series are executed in no specific order.
  *
  * <pre>{@code
  * factory.intercept(greetingMethod, interceptorContext -> "Hello world!");
@@ -64,10 +66,11 @@ import java.util.function.Consumer;
  *
  * <p><b>Wrapping interception</b>
  * <p>Wrapping interception is similar to the pre-existing method phasing
- * approach. It allows for specific callbacks to be executed before a method is performed, after it is finished,
- * and when an exception is thrown during the execution of the method. Wrappers will always be executed, even
- * if the method is intercepted or delegated. This allows for specific states to be prepared and closed around
- * a method's execution. For example, an annotation like {@code @Transactional} the wrapper can be used to:
+ * approach. It allows for specific callbacks to be executed before a method is performed, after it
+ * is finished, and when an exception is thrown during the execution of the method. Wrappers will
+ * always be executed, even if the method is intercepted or delegated. This allows for specific
+ * states to be prepared and closed around a method's execution. For example, an annotation like
+ * {@code @Transactional} the wrapper can be used to:
  * <ul>
  *     <li>Open a transaction before the method is performed</li>
  *     <li>Commit the transaction after the method is finished</li>
@@ -182,91 +185,100 @@ import java.util.function.Consumer;
  *
  * @param <T> The type of the proxy
  *
- * @since 0.4.10
- *
  * @author Guus Lieben
+ * @since 0.4.10
  */
 public interface ProxyFactory<T> {
 
     /**
-     * Gets the registry of advisors that are currently active on this factory. This will return a registry
-     * that can be used to add, remove, and replace advisors.
+     * Gets the registry of advisors that are currently active on this factory. This will return a
+     * registry that can be used to add, remove, and replace advisors.
      *
      * @return The registry
      */
     AdvisorRegistry<T> advisors();
 
     /**
-     * Applies the registry of advisors that are currently active to the given consumer. This will return
-     * this factory, for easier chaining. Any changes made to the registry will be applied to the factory
-     * either immediately or after the consumer has been executed.
+     * Applies the registry of advisors that are currently active to the given consumer. This will
+     * return this factory, for easier chaining. Any changes made to the registry will be applied to
+     * the factory either immediately or after the consumer has been executed.
      *
      * @param registryConsumer The consumer to apply the registry to
+     *
      * @return This factory
      */
     ProxyFactory<T> advisors(Consumer<? super AdvisorRegistry<T>> registryConsumer);
 
     /**
-     * Implements the given interfaces on the proxy. This will add the given interfaces to the list of
-     * interfaces that the proxy implements. This will not replace existing interfaces. This will not
-     * affect the interfaces that the proxy implements directly. This will not affect implemented methods,
-     * and new interface methods will have to be implemented manually either through delegation or
-     * intercepting.
+     * Implements the given interfaces on the proxy. This will add the given interfaces to the list
+     * of interfaces that the proxy implements. This will not replace existing interfaces. This will
+     * not affect the interfaces that the proxy implements directly. This will not affect
+     * implemented methods, and new interface methods will have to be implemented manually either
+     * through delegation or intercepting.
      *
      * @param interfaces The interfaces to implement
+     *
      * @return This factory
      */
     ProxyFactory<T> implement(Class<?>... interfaces);
 
     /**
-     * Creates a proxy instance of the active {@link #type()} and returns it. This will create a new proxy,
-     * as well as a new {@link ProxyManager} responsible for managing the proxy. The proxy will be created
-     * with all currently known behaviors.
+     * Creates a proxy instance of the active {@link #type()} and returns it. This will create a new
+     * proxy, as well as a new {@link ProxyManager} responsible for managing the proxy. The proxy
+     * will be created with all currently known behaviors.
      *
      * <p>If the proxy could not be created, {@link Option#empty()} will be returned.
      *
      * @return A proxy instance
+     *
      * @throws ApplicationException If the proxy could not be created
      */
     Option<T> proxy() throws ApplicationException;
 
     /**
-     * Creates a proxy instance of the given {@code type} and returns it. This will create a new proxy and
-     * invokes the given {@link ConstructorView} to create the proxy instance. This also creates a new
-     * {@link ProxyManager} responsible for managing the proxy. The proxy will be created with all currently
-     * known behaviors.
+     * Creates a proxy instance of the given {@code type} and returns it. This will create a new
+     * proxy and invokes the given {@link ConstructorView} to create the proxy instance. This also
+     * creates a new {@link ProxyManager} responsible for managing the proxy. The proxy will be
+     * created with all currently known behaviors.
      *
      * <p>If the proxy could not be created, {@link Option#empty()} will be returned.
      *
      * @param constructor The constructor to use
      * @param args The arguments to pass to the constructor
+     *
      * @return A proxy instance
+     *
      * @throws ApplicationException If the proxy could not be created
      */
-    Option<T> proxy(ConstructorView<? extends T> constructor, Object[] args) throws ApplicationException;
+    Option<T> proxy(ConstructorView<? extends T> constructor, Object[] args)
+        throws ApplicationException;
 
     /**
-     * Creates a proxy instance of the given {@code type} and returns it. This will create a new proxy and
-     * invokes the given {@link Constructor} to create the proxy instance. This also creates a new
-     * {@link ProxyManager} responsible for managing the proxy. The proxy will be created with all currently
-     * known behaviors.
+     * Creates a proxy instance of the given {@code type} and returns it. This will create a new
+     * proxy and invokes the given {@link Constructor} to create the proxy instance. This also
+     * creates a new {@link ProxyManager} responsible for managing the proxy. The proxy will be
+     * created with all currently known behaviors.
      *
      * @param constructor The constructor to use
      * @param args The arguments to pass to the constructor
+     *
      * @return A proxy instance
+     *
      * @throws ApplicationException If the proxy could not be created
      */
-    Option<T> proxy(Constructor<? extends T> constructor, Object[] args) throws ApplicationException;
+    Option<T> proxy(Constructor<? extends T> constructor, Object[] args)
+        throws ApplicationException;
 
     /**
      * Gets the type of the proxy. This will return the original type, and not a proxy type.
+     *
      * @return The type of the proxy
      */
     Class<T> type();
 
     /**
-     * Gets all currently known interfaces. This will return an empty set if no interfaces were set. This
-     * will not include {@link Proxy}.
+     * Gets all currently known interfaces. This will return an empty set if no interfaces were set.
+     * This will not include {@link Proxy}.
      *
      * @return All known interfaces, or an empty set
      */
@@ -275,6 +287,7 @@ public interface ProxyFactory<T> {
     /**
      * Gets a temporary context for the current proxy factory. When a new proxy is created, this
      * context will be assigned to its {@link ProxyManager}.
+     *
      * @return The temporary context
      */
     ProxyContextContainer contextContainer();

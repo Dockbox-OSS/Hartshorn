@@ -17,14 +17,13 @@
 package org.dockbox.hartshorn.inject.provider;
 
 /**
- * A specialized {@link ObjectContainer} for singular instances. This is a basic implementation,
- * and only tracks the instance and whether the instance has already been processed.
+ * A specialized {@link ObjectContainer} for singular instances. This is a basic implementation, and
+ * only tracks the instance and whether the instance has already been processed.
  *
  * @param <T> the type of the object instance
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ComponentObjectContainer<T> extends AbstractObjectContainer<T> {
 
@@ -48,24 +47,28 @@ public class ComponentObjectContainer<T> extends AbstractObjectContainer<T> {
     }
 
     /**
-     * Creates a new {@link ComponentObjectContainer} with the given instance and a prototype lifecycle type.
+     * Creates a new {@link ComponentObjectContainer} with the given instance and a prototype
+     * lifecycle type.
      *
      * @param instance the object instance
      * @param <T> the type of the object instance
      *
-     * @return a new {@link ComponentObjectContainer} with the given instance and prototype lifecycle type
+     * @return a new {@link ComponentObjectContainer} with the given instance and prototype
+     * lifecycle type
      */
     public static <T> ComponentObjectContainer<T> ofPrototype(T instance) {
         return ofLifecycleType(instance, LifecycleType.PROTOTYPE);
     }
 
     /**
-     * Creates a new {@link ComponentObjectContainer} with the given instance and a singleton lifecycle type.
+     * Creates a new {@link ComponentObjectContainer} with the given instance and a singleton
+     * lifecycle type.
      *
      * @param instance the object instance
      * @param <T> the type of the object instance
      *
-     * @return a new {@link ComponentObjectContainer} with the given instance and singleton lifecycle type
+     * @return a new {@link ComponentObjectContainer} with the given instance and singleton
+     * lifecycle type
      */
     public static <T> ComponentObjectContainer<T> ofSingleton(T instance) {
         return ofLifecycleType(instance, LifecycleType.SINGLETON);
@@ -80,7 +83,10 @@ public class ComponentObjectContainer<T> extends AbstractObjectContainer<T> {
      *
      * @return a new {@link ComponentObjectContainer} with the given instance and lifecycle type
      */
-    public static <T> ComponentObjectContainer<T> ofLifecycleType(T instance, LifecycleType lifecycleType) {
+    public static <T> ComponentObjectContainer<T> ofLifecycleType(
+        T instance,
+        LifecycleType lifecycleType
+    ) {
         return new ComponentObjectContainer<>(instance, lifecycleType);
     }
 
@@ -95,8 +101,8 @@ public class ComponentObjectContainer<T> extends AbstractObjectContainer<T> {
     }
 
     /**
-     * Sets whether the object instance has been processed or not. This method is intended to be used by
-     * providers that are responsible for processing the object instance.
+     * Sets whether the object instance has been processed or not. This method is intended to be
+     * used by providers that are responsible for processing the object instance.
      *
      * @param processed whether the object instance has been processed or not
      */

@@ -32,21 +32,27 @@ import org.junit.jupiter.api.Test;
 public class PropertiesBootstrapTests {
 
     @Test
-    void testConfigurationValueWasLoaded_AccessedByRegistry(@Inject PropertyRegistry propertyRegistry) {
+    void testConfigurationValueWasLoaded_AccessedByRegistry(
+        @Inject PropertyRegistry propertyRegistry
+    ) {
         Option<Boolean> isAdditionalConfigPresent = propertyRegistry.value(
-                "hartshorn.test.additional-config",
-                StandardValuePropertyParsers.BOOLEAN
+            "hartshorn.test.additional-config",
+            StandardValuePropertyParsers.BOOLEAN
         );
         Assertions.assertTrue(isAdditionalConfigPresent.test(Boolean::booleanValue));
     }
 
     @Test
-    void testConfigurationValueWasLoaded_AccessedByInjector(@PropertyValue(name = "hartshorn.test.additional-config") boolean additionalConfig) {
+    void testConfigurationValueWasLoaded_AccessedByInjector(
+        @PropertyValue(name = "hartshorn.test.additional-config") boolean additionalConfig
+    ) {
         Assertions.assertTrue(additionalConfig);
     }
 
     @Test
-    void testConfigurationPropertyWasLoaded_AccessedByInjector(@PropertyValue(name = "hartshorn.test.additional-config") ValueProperty property) {
+    void testConfigurationPropertyWasLoaded_AccessedByInjector(
+        @PropertyValue(name = "hartshorn.test.additional-config") ValueProperty property
+    ) {
         Assertions.assertNotNull(property);
 
         Option<String> value = property.value();

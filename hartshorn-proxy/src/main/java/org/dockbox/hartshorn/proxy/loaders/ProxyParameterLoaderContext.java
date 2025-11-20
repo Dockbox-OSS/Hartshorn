@@ -23,20 +23,25 @@ import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 /**
  * A parameter loader context that provides access to the {@link ProxyOrchestrator} instance.
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ProxyParameterLoaderContext extends ParameterLoaderContext {
 
     private final ProxyOrchestrator proxyOrchestrator;
 
-    public ProxyParameterLoaderContext(ExecutableElementView<?> executable, Object instance, ProxyOrchestrator proxyOrchestrator) {
+    public ProxyParameterLoaderContext(
+        ExecutableElementView<?> executable,
+        Object instance,
+        ProxyOrchestrator proxyOrchestrator
+    ) {
         super(executable, instance);
         this.proxyOrchestrator = proxyOrchestrator;
     }
 
     /**
-     * Returns the {@link ProxyOrchestrator} instance that owns the proxy that is being created or used.
+     * Returns the {@link ProxyOrchestrator} instance that owns the proxy that is being created or
+     * used.
      *
      * @return the proxy orchestrator
      */

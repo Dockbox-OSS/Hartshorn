@@ -42,9 +42,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * A cache that stores {@link BindingHierarchy} instances, keyed by a view of their {@link ComponentKey}. This cache
- * is typically used by {@link Binder}s (commonly {@link HierarchicalBinder}s) to store and retrieve hierarchies of
- * bindings.
+ * A cache that stores {@link BindingHierarchy} instances, keyed by a view of their
+ * {@link ComponentKey}. This cache is typically used by {@link Binder}s (commonly
+ * {@link HierarchicalBinder}s) to store and retrieve hierarchies of bindings.
  *
  * @since 0.6.0
  *
@@ -52,16 +52,18 @@ import java.util.stream.Collectors;
  */
 public class HierarchyCache {
 
-    private final transient Map<ComponentKeyView<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
+    private final transient Map<ComponentKeyView<?>, BindingHierarchy<?>> hierarchies =
+        new ConcurrentHashMap<>();
 
     private final InjectorConfiguration configuration;
     private final HierarchicalBinder globalBinder;
     private final HierarchicalBinder binder;
 
     public HierarchyCache(
-            InjectorConfiguration configuration,
-            HierarchicalBinder globalBinder,
-            HierarchicalBinder binder) {
+        InjectorConfiguration configuration,
+        HierarchicalBinder globalBinder,
+        HierarchicalBinder binder
+    ) {
         this.configuration = configuration;
         this.globalBinder = globalBinder;
         this.binder = binder;
@@ -98,18 +100,22 @@ public class HierarchyCache {
     }
 
     /**
-     * Retrieves the binding hierarchy for the given component key. If no exact match is found, a compatible hierarchy
-     * is searched for. If multiple compatible hierarchies are found, an {@link AmbiguousComponentException} is thrown.
-     * If no compatible hierarchies are found either, a new hierarchy is computed or resolved from the global binder if
-     * allowed.
+     * Retrieves the binding hierarchy for the given component key. If no exact match is found, a
+     * compatible hierarchy is searched for. If multiple compatible hierarchies are found, an
+     * {@link AmbiguousComponentException} is thrown. If no compatible hierarchies are found either,
+     * a new hierarchy is computed or resolved from the global binder if allowed.
      *
      * @param key the component key
-     * @param useGlobalIfAbsent whether to use the global binder to resolve the hierarchy if no local hierarchy is found
+     * @param useGlobalIfAbsent whether to use the global binder to resolve the hierarchy if no
+     * local hierarchy is found
      * @param <T> the type of the component
      *
      * @return the binding hierarchy
      */
-    public <T> BindingHierarchy<?> getOrComputeHierarchy(ComponentKey<T> key, boolean useGlobalIfAbsent) {
+    public <T> BindingHierarchy<?> getOrComputeHierarchy(
+        ComponentKey<T> key,
+        boolean useGlobalIfAbsent
+    ) {
         ComponentKeyView<T> view = key.view();
         if (this.hierarchies.containsKey(view)) {
             return this.hierarchies.get(view);
@@ -120,8 +126,8 @@ public class HierarchyCache {
                     .collect(Collectors.toCollection(LinkedHashSet::new));
             if (compatibleAliases.size() > 1) {
                 throw new AmbiguousComponentException(key, compatibleAliases.stream()
-                        .map(BindingHierarchy::key)
-                        .collect(Collectors.toSet()));
+                    .map(BindingHierarchy::key)
+                    .collect(Collectors.toSet()));
             }
             else if (compatibleAliases.size() == 1) {
                 return compatibleAliases.getFirst();
@@ -131,20 +137,23 @@ public class HierarchyCache {
     }
 
     @NonNull
-    private <T> BindingHierarchy<?> computeHierarchy(ComponentKey<T> key, boolean useGlobalIfAbsent) {
+    private <T> BindingHierarchy<?> computeHierarchy(
+        ComponentKey<T> key,
+        boolean useGlobalIfAbsent
+    ) {
         BindingHierarchy<?> hierarchy = this.tryCreateHierarchy(key);
 
         return Objects.requireNonNullElseGet(hierarchy, () -> {
             // If we don't have an explicit hierarchy on the key, we can try to use the hierarchy of
             // the application context. This is useful for components that are not explicitly scoped,
             // but are still accessed through a scope.
-            if(useGlobalIfAbsent && this.globalBinder != this.binder) {
+            if (useGlobalIfAbsent && this.globalBinder != this.binder) {
                 ComponentKey<T> unscopedKey = key.mutable()
-                        // Need to drop the scope, otherwise we risk the global binder being an orchestrator
-                        // which delegates based on the scope of the key, which would defeat the point of
-                        // attempting a top-level lookup.
-                        .scope(null)
-                        .build();
+                    // Need to drop the scope, otherwise we risk the global binder being an orchestrator
+                    // which delegates based on the scope of the key, which would defeat the point of
+                    // attempting a top-level lookup.
+                    .scope(null)
+                    .build();
                 return this.globalBinder.hierarchy(unscopedKey);
             }
             return new AliasableBindingHierarchyAdapter<>(new NativePrunableBindingHierarchy<>(key));
@@ -156,9 +165,10 @@ public class HierarchyCache {
         final BindingHierarchy<?> hierarchy;
         // Collection components can always be created, as they may contain 0-N elements.
         if (this.isCollectionComponentKey(key) && key.strict() == Tristate.UNDEFINED) {
-            hierarchy = new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
+            hierarchy =
+                new CollectionBindingHierarchy<>(TypeUtils.unchecked(key, ComponentKey.class));
         }
-        else if(this.isStrict(key)) {
+        else if (this.isStrict(key)) {
             // Strict mode, so don't create a hierarchy if it wasn't defined before. Instead, callers
             // may opt to use a fallback resolution strategy.
             hierarchy = null;
@@ -172,10 +182,11 @@ public class HierarchyCache {
     }
 
     /**
-     * Determines whether the given key should be treated in strict mode. If the key has a defined strictness,
-     * that value is used. Otherwise, the global configuration is used.
+     * Determines whether the given key should be treated in strict mode. If the key has a defined
+     * strictness, that value is used. Otherwise, the global configuration is used.
      *
      * @param key the component key
+     *
      * @return true if the key should be treated in strict mode, false otherwise
      */
     protected boolean isStrict(ComponentKey<?> key) {
@@ -196,7 +207,8 @@ public class HierarchyCache {
                 .collect(Collectors.toSet());
 
         if (this.isCollectionComponentKey(key)) {
-            return this.composeCollectionHierarchy(TypeUtils.unchecked(key, ComponentKey.class), compatibleKeys);
+            return this.composeCollectionHierarchy(TypeUtils.unchecked(key, ComponentKey.class),
+                compatibleKeys);
         }
         else {
             if (compatibleKeys.size() == 1) {
@@ -215,13 +227,17 @@ public class HierarchyCache {
     }
 
     @Nullable
-    private BindingHierarchy<?> lookupHighestPriorityHierarchy(ComponentKey<?> key, Set<ComponentKeyView<?>> compatibleKeys) {
+    private BindingHierarchy<?> lookupHighestPriorityHierarchy(
+        ComponentKey<?> key,
+        Set<ComponentKeyView<?>> compatibleKeys
+    ) {
         Set<BindingHierarchy<?>> compatibleHierarchies = compatibleKeys.stream()
-                .map(this.hierarchies::get)
-                .collect(Collectors.toSet());
+            .map(this.hierarchies::get)
+            .collect(Collectors.toSet());
 
         // Track entire hierarchy, so potential duplicate top-priority hierarchies can be reported
-        AbstractNavigableMultiMap<Integer, BindingHierarchy<?>> providers = new ConcurrentSetTreeMultiMap<>();
+        AbstractNavigableMultiMap<Integer, BindingHierarchy<?>> providers =
+            new ConcurrentSetTreeMultiMap<>();
         for (BindingHierarchy<?> compatibleHierarchy : compatibleHierarchies) {
             int highestPriority = compatibleHierarchy.highestPriority();
             compatibleHierarchy.get(highestPriority).peek(provider -> {
@@ -231,8 +247,8 @@ public class HierarchyCache {
         Collection<BindingHierarchy<?>> highestPriority = providers.lastEntry();
         if (highestPriority.size() > 1) {
             Set<ComponentKey<?>> foundKeys = highestPriority.stream()
-                    .map(BindingHierarchy::key)
-                    .collect(Collectors.toSet());
+                .map(BindingHierarchy::key)
+                .collect(Collectors.toSet());
             throw new AmbiguousComponentException(key, foundKeys);
         }
         return CollectionUtilities.first(highestPriority);
@@ -246,9 +262,13 @@ public class HierarchyCache {
                 hierarchies.add(collectionBindingHierarchy);
             }
             else {
-                throw new IllegalStateException("Found incompatible hierarchy for key " + compatibleKey +". Expected CollectionBindingHierarchy, but found " + hierarchy.getClass().getSimpleName());
+                throw new IllegalStateException("Found incompatible hierarchy for key "
+                    + compatibleKey
+                    + ". Expected CollectionBindingHierarchy, but found "
+                    + hierarchy.getClass().getSimpleName());
             }
         }
-        return new ImmutableCompositeBindingHierarchy<>(key, TypeUtils.unchecked(hierarchies, Collection.class));
+        return new ImmutableCompositeBindingHierarchy<>(key,
+            TypeUtils.unchecked(hierarchies, Collection.class));
     }
 }

@@ -25,30 +25,33 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * Adapter interface for invoking element views within an application context. This allows all elements
- * to be invoked and/or populated using the application context, without the need for manually looking
- * up dependencies.
- *
- * @since 0.5.0
+ * Adapter interface for invoking element views within an application context. This allows all
+ * elements to be invoked and/or populated using the application context, without the need for
+ * manually looking up dependencies.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface ComponentExecutableInvocationAdapter extends Context {
 
     /**
-     * Returns a new {@link ComponentExecutableInvocationAdapter} instance that is scoped to the given scope.
+     * Returns a new {@link ComponentExecutableInvocationAdapter} instance that is scoped to the
+     * given scope.
      *
      * @param scope the scope to scope the context to
+     *
      * @return a new {@link ComponentExecutableInvocationAdapter} instance scoped to the given scope
      */
     ComponentExecutableInvocationAdapter scope(Scope scope);
 
     /**
-     * Returns a new {@link ComponentExecutableInvocationAdapter} instance that is bound to the given
-     * {@link ComponentRequestContext}.
+     * Returns a new {@link ComponentExecutableInvocationAdapter} instance that is bound to the
+     * given {@link ComponentRequestContext}.
      *
      * @param componentRequestContext the component request context to bind to
-     * @return a new {@link ComponentExecutableInvocationAdapter} instance bound to the given component request context
+     *
+     * @return a new {@link ComponentExecutableInvocationAdapter} instance bound to the given
+     * component request context
      */
     ComponentExecutableInvocationAdapter requestContext(ComponentRequestContext componentRequestContext);
 
@@ -69,27 +72,29 @@ public interface ComponentExecutableInvocationAdapter extends Context {
      * retrieve the parameters that should be passed to the executable element when it is invoked.
      *
      * <p>In most cases, it is preferred to use {@link #invoke(MethodView, Object)} or {@link
-     * #create(ConstructorView)} directly, as these methods will automatically load the parameters for
-     * you. However, in cases where manual parameter loading is required, this method can be used.
+     * #create(ConstructorView)} directly, as these methods will automatically load the parameters
+     * for you. However, in cases where manual parameter loading is required, this method can be
+     * used.
      *
      * @param element the executable element view for which to load the parameters
      *
-     * @return an array of objects representing the parameters to be passed to the executable element
+     * @return an array of objects representing the parameters to be passed to the executable
+     * element
      */
     Object[] loadParameters(ExecutableElementView<?> element);
 
     /**
-     * Invokes a method represented by the given {@link MethodView} on the provided instance. This method
-     * retrieves the parameters for the method from the method view, and invokes the method with these
-     * parameters.
+     * Invokes a method represented by the given {@link MethodView} on the provided instance. This
+     * method retrieves the parameters for the method from the method view, and invokes the method
+     * with these parameters.
      *
      * @param method the method view representing the method to invoke
      * @param instance the instance on which to invoke the method
      * @param <P> the type of the parameters for the method
      * @param <R> the return type of the method
      *
-     * @return an {@link Option} containing the result of the method invocation, or empty if the invocation yielded no
-     * result (e.g. if the method returns void, or simply returned null)
+     * @return an {@link Option} containing the result of the method invocation, or empty if the
+     * invocation yielded no result (e.g. if the method returns void, or simply returned null)
      *
      * @throws Throwable if an error occurs during the invocation of the method
      */
@@ -97,15 +102,15 @@ public interface ComponentExecutableInvocationAdapter extends Context {
 
     /**
      * Invokes a static method represented by the given {@link MethodView}. This method does not
-     * require an instance of the class, as it is a static method. The parameters for the method
-     * are loaded from the method view, and the method is invoked with these parameters.
+     * require an instance of the class, as it is a static method. The parameters for the method are
+     * loaded from the method view, and the method is invoked with these parameters.
      *
      * @param method the method view representing the static method to invoke
      * @param <P> the type of the parameters for the static method
      * @param <R> the return type of the static method
      *
-     * @return an {@link Option} containing the result of the method invocation, or empty if the invocation yielded no
-     * result (e.g. if the method returns void, or simply returned null)
+     * @return an {@link Option} containing the result of the method invocation, or empty if the
+     * invocation yielded no result (e.g. if the method returns void, or simply returned null)
      *
      * @throws Throwable if an error occurs during the invocation of the static method
      */

@@ -26,8 +26,8 @@ import org.dockbox.hartshorn.reporting.ReportSerializationException;
 import org.dockbox.hartshorn.reporting.ReportSerializer;
 
 /**
- * A {@link ReportSerializer} which uses Jackson's {@link ObjectMapper} to serialize a {@link DiagnosticsReport} to a
- * specific format.
+ * A {@link ReportSerializer} which uses Jackson's {@link ObjectMapper} to serialize a
+ * {@link DiagnosticsReport} to a specific format.
  *
  * @see DiagnosticsReport
  * @see ReportSerializer
@@ -52,16 +52,17 @@ public abstract class ObjectMapperReportSerializer implements ReportSerializer<S
     }
 
     /**
-     * Returns the {@link ObjectMapper} that is used to serialize the report. The returned value is not required to be
-     * thread-safe. The returned value is not required to be the same instance on each invocation.
+     * Returns the {@link ObjectMapper} that is used to serialize the report. The returned value is
+     * not required to be thread-safe. The returned value is not required to be the same instance on
+     * each invocation.
      *
      * @return the object mapper to use
      */
     protected abstract ObjectMapper objectMapper();
 
     /**
-     * A {@link ReportSerializer} that serializes a {@link DiagnosticsReport} to XML. This serializer uses Jackson's
-     * {@link XmlMapper} to serialize the report.
+     * A {@link ReportSerializer} that serializes a {@link DiagnosticsReport} to XML. This
+     * serializer uses Jackson's {@link XmlMapper} to serialize the report.
      *
      * @see DiagnosticsReport
      * @see ReportSerializer
@@ -80,8 +81,8 @@ public abstract class ObjectMapperReportSerializer implements ReportSerializer<S
     }
 
     /**
-     * A {@link ReportSerializer} that serializes a {@link DiagnosticsReport} to JSON. This serializer uses Jackson's
-     * {@link JsonMapper} to serialize the report.
+     * A {@link ReportSerializer} that serializes a {@link DiagnosticsReport} to JSON. This
+     * serializer uses Jackson's {@link JsonMapper} to serialize the report.
      *
      * @see DiagnosticsReport
      * @see ReportSerializer

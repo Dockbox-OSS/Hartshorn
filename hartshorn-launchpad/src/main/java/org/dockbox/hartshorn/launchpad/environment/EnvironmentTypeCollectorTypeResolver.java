@@ -22,11 +22,11 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 /**
- * A {@link EnvironmentTypeResolver} that uses an {@link EnvironmentTypeCollector} to resolve types.
- *
- * @since 0.6.0
+ * A {@link EnvironmentTypeResolver} that uses an {@link EnvironmentTypeCollector} to resolve
+ * types.
  *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public class EnvironmentTypeCollectorTypeResolver implements EnvironmentTypeResolver {
 

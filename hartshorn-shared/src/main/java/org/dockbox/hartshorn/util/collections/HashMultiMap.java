@@ -26,9 +26,8 @@ import java.util.Map;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public abstract class HashMultiMap<K, V> extends StandardMultiMap<K, V> {
 

@@ -17,14 +17,12 @@
 package org.dockbox.hartshorn.inject.condition;
 
 /**
- * Represents the result of a {@link Condition} check. Contains a boolean value indicating whether the condition matched
- * or not, and a message describing the result.
- *
- * @see Condition
- *
- * @since 0.4.12
+ * Represents the result of a {@link Condition} check. Contains a boolean value indicating whether
+ * the condition matched or not, and a message describing the result.
  *
  * @author Guus Lieben
+ * @see Condition
+ * @since 0.4.12
  */
 public final class ConditionResult {
 
@@ -55,7 +53,8 @@ public final class ConditionResult {
     }
 
     /**
-     * Creates a new {@link ConditionResult} with the given matched value. The message will be {@code null}.
+     * Creates a new {@link ConditionResult} with the given matched value. The message will be
+     * {@code null}.
      *
      * @param matched the matched value
      *
@@ -78,6 +77,7 @@ public final class ConditionResult {
      * Creates a new unmatched {@link ConditionResult} with the given message.
      *
      * @param message the message
+     *
      * @return the new {@link ConditionResult}
      */
     public static ConditionResult notMatched(String message) {
@@ -85,8 +85,8 @@ public final class ConditionResult {
     }
 
     /**
-     * Creates a new unmatched {@link ConditionResult} with a default message indicating that the given what and name
-     * could not be found.
+     * Creates a new unmatched {@link ConditionResult} with a default message indicating that the
+     * given what and name could not be found.
      *
      * @param what the what, e.g. "class"
      * @param name the name, e.g. "org.dockbox.hartshorn.inject.condition.Condition"
@@ -98,8 +98,8 @@ public final class ConditionResult {
     }
 
     /**
-     * Creates a new matched {@link ConditionResult} with a default message indicating that the given what and name
-     * were found with the given value.
+     * Creates a new matched {@link ConditionResult} with a default message indicating that the
+     * given what and name were found with the given value.
      *
      * @param what the what, e.g. "property"
      * @param name the name, e.g. "user.name"
@@ -112,11 +112,12 @@ public final class ConditionResult {
     }
 
     /**
-     * Creates a new matched {@link ConditionResult} with a default message indicating that the given what and name
-     * were found.
+     * Creates a new matched {@link ConditionResult} with a default message indicating that the
+     * given what and name were found.
      *
      * @param what the what, e.g. "property"
      * @param name the name, e.g. "user.name"
+     *
      * @return the new {@link ConditionResult}
      */
     public static ConditionResult found(String what, String name) {
@@ -124,23 +125,26 @@ public final class ConditionResult {
     }
 
     /**
-     * Creates a new unmatched {@link ConditionResult} with a default message indicating that the actual value of the
-     * given what was not equal to the expected value.
+     * Creates a new unmatched {@link ConditionResult} with a default message indicating that the
+     * actual value of the given what was not equal to the expected value.
      *
      * @param what the what, e.g. "property"
      * @param expected the expected value
      * @param actual the actual value
+     *
      * @return the new {@link ConditionResult}
      */
     public static ConditionResult notEqual(String what, String expected, String actual) {
-        return new ConditionResult(false, "Expected " + what + " to be " + expected + " but was " + actual);
+        return new ConditionResult(false,
+            "Expected " + what + " to be " + expected + " but was " + actual);
     }
 
     /**
-     * Creates a new unmatched {@link ConditionResult} with a default message indicating that the condition declaration
-     * was invalid.
+     * Creates a new unmatched {@link ConditionResult} with a default message indicating that the
+     * condition declaration was invalid.
      *
      * @param conditionType the condition type, e.g. "property"
+     *
      * @return the new {@link ConditionResult}
      */
     public static ConditionResult invalidCondition(String conditionType) {

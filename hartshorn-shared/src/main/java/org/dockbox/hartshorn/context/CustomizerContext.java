@@ -20,14 +20,13 @@ import org.dockbox.hartshorn.util.configure.ContextualCustomizer;
 import org.dockbox.hartshorn.util.configure.Customizer;
 
 /**
- * A generic context used to store a {@link Customizer}s. This allows any
- * context-driven customizations to be passed along to builders or similar constructs.
+ * A generic context used to store a {@link Customizer}s. This allows any context-driven
+ * customizations to be passed along to builders or similar constructs.
  *
  * @param <T> The type of the object that is being customized
- *     
- * @since 0.5.0
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class CustomizerContext<T> extends DefaultContext {
 
@@ -50,6 +49,7 @@ public class CustomizerContext<T> extends DefaultContext {
      * Composes this context with another, returning a new context that contains both customizers.
      *
      * @param before The context to compose with
+     *
      * @return A new context containing both customizers
      */
     public CustomizerContext<T> compose(CustomizerContext<T> before) {
@@ -61,6 +61,7 @@ public class CustomizerContext<T> extends DefaultContext {
      * customizers.
      *
      * @param before The customizer to compose with
+     *
      * @return A new context containing both customizers
      */
     public CustomizerContext<T> compose(ContextualCustomizer<T> before) {

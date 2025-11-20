@@ -28,7 +28,6 @@ import java.util.NavigableMap;
  *
  * @see MultiMap
  * @see NavigableMap
- *
  * @since 0.7.0
  */
 public interface NavigableMultiMap<K, V> extends MultiMap<K, V> {
@@ -52,6 +51,7 @@ public interface NavigableMultiMap<K, V> extends MultiMap<K, V> {
      * or an empty collection if there is no such key.
      *
      * @param key the key
+     *
      * @return the collection associated with the greatest key less than or equal to the given key
      */
     Collection<V> floorEntry(K key);
@@ -61,6 +61,7 @@ public interface NavigableMultiMap<K, V> extends MultiMap<K, V> {
      * or an empty collection if there is no such key.
      *
      * @param key the key
+     *
      * @return the collection associated with the least key greater than or equal to the given key
      */
     Collection<V> ceilingEntry(K key);
@@ -70,6 +71,7 @@ public interface NavigableMultiMap<K, V> extends MultiMap<K, V> {
      * an empty collection if there is no such key.
      *
      * @param key the key
+     *
      * @return the collection associated with the greatest key strictly less than the given key
      */
     Collection<V> lowerEntry(K key);
@@ -79,6 +81,7 @@ public interface NavigableMultiMap<K, V> extends MultiMap<K, V> {
      * an empty collection if there is no such key.
      *
      * @param key the key
+     *
      * @return the collection associated with the least key strictly greater than the given key
      */
     Collection<V> higherEntry(K key);

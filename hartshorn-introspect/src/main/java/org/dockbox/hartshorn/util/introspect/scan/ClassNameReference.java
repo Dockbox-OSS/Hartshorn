@@ -24,9 +24,8 @@ import java.util.Objects;
  * A {@link TypeReference} that references a class by its fully qualified name. This reference can
  * be used to load the class, or to obtain information about the class.
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class ClassNameReference implements TypeReference {
 
@@ -40,7 +39,8 @@ public class ClassNameReference implements TypeReference {
     public Class<?> getOrLoad(ClassLoader classLoader) throws ClassReferenceLoadException {
         try {
             return Class.forName(this.name, false, classLoader);
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             throw new ClassReferenceLoadException(e);
         }
     }
@@ -79,7 +79,7 @@ public class ClassNameReference implements TypeReference {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("name", this.name)
-                .describe();
+            .field("name", this.name)
+            .describe();
     }
 }

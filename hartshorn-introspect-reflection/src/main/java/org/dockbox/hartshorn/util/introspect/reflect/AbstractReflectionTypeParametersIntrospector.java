@@ -31,16 +31,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A base implementation of {@link TypeParametersIntrospector} that uses reflection to introspect the type parameters of
- * a given {@link TypeView}. This implementation is shared between {@link Class classes} and {@link
- * java.lang.reflect.ParameterizedType parameterized types}, with only the {@link #allInput()} method being implemented
- * differently.
- *
- * @since 0.5.0
+ * A base implementation of {@link TypeParametersIntrospector} that uses reflection to introspect
+ * the type parameters of a given {@link TypeView}. This implementation is shared between
+ * {@link Class classes} and {@link java.lang.reflect.ParameterizedType parameterized types}, with
+ * only the {@link #allInput()} method being implemented differently.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
-public abstract class AbstractReflectionTypeParametersIntrospector implements TypeParametersIntrospector {
+public abstract class AbstractReflectionTypeParametersIntrospector
+    implements TypeParametersIntrospector {
 
     private final TypeView<?> type;
     private final Introspector introspector;
@@ -50,7 +50,10 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     private TypeHierarchyGraph typeHierarchy;
     private TypeParameterList outputParameters;
 
-    protected AbstractReflectionTypeParametersIntrospector(TypeView<?> type, Introspector introspector) {
+    protected AbstractReflectionTypeParametersIntrospector(
+        TypeView<?> type,
+        Introspector introspector
+    ) {
         this.type = type;
         this.introspector = introspector;
     }
@@ -65,8 +68,8 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     }
 
     /**
-     * Returns the introspector that is used to introspect the type, and can be used
-     * to introspect any other types that are encountered during introspection.
+     * Returns the introspector that is used to introspect the type, and can be used to introspect
+     * any other types that are encountered during introspection.
      *
      * @return the introspector that is used to introspect the type
      */
@@ -101,13 +104,15 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
             return this.resolvedParameters.computeIfAbsent(parent.type(), parentType -> {
                 try {
                     List<TypeParameterView> parameters = new TypeParameterResolver()
-                            .resolveInputForParent(this.type(), parent);
+                        .resolveInputForParent(this.type(), parent);
                     return new SimpleTypeParameterList(parameters);
                 }
                 catch (TypeParameterResolutionException e) {
                     // TypeParameterResolverGraphVisitor doesn't throw any exceptions, so this should never happen. If it does,
                     // it indicates something was unexpectedly modified in the implementation.
-                    throw new IllegalStateException("Unexpected graph exception while resolving type parameters", e);
+                    throw new IllegalStateException(
+                        "Unexpected graph exception while resolving type parameters",
+                        e);
                 }
             });
         }
@@ -120,12 +125,14 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     public TypeParameterList allOutput() {
         if (this.outputParameters == null) {
             TypeView<?> genericSuperClass = this.type().genericSuperClass();
-            List<TypeParameterView> superInput = genericSuperClass.typeParameters().allInput().asList();
+            List<TypeParameterView> superInput =
+                genericSuperClass.typeParameters().allInput().asList();
             List<TypeParameterView> interfacesInput = this.type().genericInterfaces().stream()
-                    .flatMap(genericInterface -> genericInterface.typeParameters().allInput().stream())
-                    .toList();
+                .flatMap(genericInterface -> genericInterface.typeParameters().allInput().stream())
+                .toList();
 
-            List<TypeParameterView> allInputParameters = CollectionUtilities.mergeList(superInput, interfacesInput);
+            List<TypeParameterView> allInputParameters =
+                CollectionUtilities.mergeList(superInput, interfacesInput);
             this.outputParameters = new SimpleTypeParameterList(allInputParameters);
         }
         return this.outputParameters;
@@ -135,8 +142,8 @@ public abstract class AbstractReflectionTypeParametersIntrospector implements Ty
     public TypeParameterList outputFor(Class<?> fromParentType) {
         if (this.type().isChildOf(fromParentType)) {
             List<TypeParameterView> consumedByParent = this.allOutput().stream()
-                    .filter(parameter -> parameter.consumedBy().is(fromParentType))
-                    .toList();
+                .filter(parameter -> parameter.consumedBy().is(fromParentType))
+                .toList();
             return new SimpleTypeParameterList(consumedByParent);
         }
         return new SimpleTypeParameterList(List.of());

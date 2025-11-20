@@ -24,12 +24,12 @@ import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 
 /**
- * A proxy context container is a {@link Context} implementation that acts as a temporary container for
- * contexts which are later used to create a proxy. This container is used to store the contexts that are
- * created during the proxy creation process.
+ * A proxy context container is a {@link Context} implementation that acts as a temporary container
+ * for contexts which are later used to create a proxy. This container is used to store the contexts
+ * that are created during the proxy creation process.
  *
- * @since 0.4.12
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public class ProxyContextContainer extends DefaultContext {
 

@@ -28,9 +28,8 @@ import java.util.Set;
  *
  * @param <T> the type of the value of the node
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 @FunctionalInterface
 public interface DepthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
@@ -45,8 +44,8 @@ public interface DepthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
     }
 
     private void visitSingleRoot(
-            Set<GraphNode<T>> visited,
-            GraphNode<T> root
+        Set<GraphNode<T>> visited,
+        GraphNode<T> root
     ) throws GraphException {
         Deque<GraphNode<T>> stack = new ArrayDeque<>();
         stack.push(root);
@@ -60,10 +59,10 @@ public interface DepthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
     }
 
     private boolean visitNextNode(
-            Deque<GraphNode<T>> stack,
-            Set<GraphNode<T>> visited,
-            boolean atNextPathStart,
-            GraphNode<T> node
+        Deque<GraphNode<T>> stack,
+        Set<GraphNode<T>> visited,
+        boolean atNextPathStart,
+        GraphNode<T> node
     ) {
         // Do not use children directly, as we want to ensure they can be visited
         // before considering them for the next node.
@@ -72,7 +71,8 @@ public interface DepthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
         if (visitableChildren.isEmpty()) {
             this.afterPathVisited();
             atNextPathStart = true;
-        } else {
+        }
+        else {
             for (GraphNode<T> visitableChild : visitableChildren) {
                 stack.push(visitableChild);
             }
@@ -88,7 +88,7 @@ public interface DepthFirstGraphVisitor<T> extends ObservableGraphIterator<T> {
         Set<GraphNode<T>> visitableChildren = new HashSet<>();
         for (GraphNode<T> child : node.children()) {
             if (child instanceof ContainableGraphNode<T> containable
-                    && visited.containsAll(containable.parents())
+                && visited.containsAll(containable.parents())
             ) {
                 visitableChildren.add(child);
             }

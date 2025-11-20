@@ -28,15 +28,16 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
 
 /**
- * A diagnostics reporter that reports all {@link ComponentPreProcessor pre-processors} and {@link
- * ComponentPostProcessor post-processors} that are registered in the application context.
+ * A diagnostics reporter that reports all {@link ComponentPreProcessor pre-processors} and
+ * {@link ComponentPostProcessor post-processors} that are registered in the application context.
  *
- * <p>Pre-processors are only reported if the application context is a {@link ProcessableApplicationContext}, and
- * post-processors are only reported if the application context has a {@link PostProcessingComponentProvider}.
- *
- * @since 0.5.0
+ * <p>Pre-processors are only reported if the application context is a
+ * {@link ProcessableApplicationContext}, and
+ * post-processors are only reported if the application context has a
+ * {@link PostProcessingComponentProvider}.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ComponentProcessorDiagnosticsReporter implements CategorizedDiagnosticsReporter {
 
@@ -51,21 +52,28 @@ public class ComponentProcessorDiagnosticsReporter implements CategorizedDiagnos
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
         if (this.applicationContext instanceof ProcessableApplicationContext processableApplicationContext) {
-            ComponentProcessorRegistry registry = processableApplicationContext.defaultProvider().processorRegistry();
+            ComponentProcessorRegistry registry =
+                processableApplicationContext.defaultProvider().processorRegistry();
             this.reportPreProcessors(collector, registry);
             this.reportPostProcessors(collector, registry);
         }
     }
 
-    private void reportPreProcessors(DiagnosticsPropertyCollector collector,
-            ComponentProcessorRegistry registry) {
-        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors = registry.preProcessors();
+    private void reportPreProcessors(
+        DiagnosticsPropertyCollector collector,
+        ComponentProcessorRegistry registry
+    ) {
+        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors =
+            registry.preProcessors();
         collector.property("pre").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 
-    private void reportPostProcessors(DiagnosticsPropertyCollector collector,
-            ComponentProcessorRegistry registry) {
-        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors = registry.postProcessors();
+    private void reportPostProcessors(
+        DiagnosticsPropertyCollector collector,
+        ComponentProcessorRegistry registry
+    ) {
+        NavigableMultiMap<Integer, ? extends ComponentProcessor> processors =
+            registry.postProcessors();
         collector.property("post").writeDelegate(new ComponentProcessorsReportable(processors));
     }
 

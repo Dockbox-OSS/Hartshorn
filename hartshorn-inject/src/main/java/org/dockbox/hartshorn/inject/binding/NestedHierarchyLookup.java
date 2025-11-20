@@ -23,21 +23,22 @@ import org.dockbox.hartshorn.inject.ComponentKey;
  * {@link NestedHierarchyLookup} to look up bindings in the parent {@link HierarchyLookup} if the
  * binding is not found in the {@link NestedHierarchyLookup}.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public interface NestedHierarchyLookup extends HierarchyLookup {
 
     /**
-     * Returns the {@link BindingHierarchy} for the given {@link ComponentKey}. If the binding is not
-     * found in this {@link NestedHierarchyLookup} and {@code useGlobalIfAbsent} is {@code true}, the
-     * parent {@link HierarchyLookup} is used to look up the binding.
+     * Returns the {@link BindingHierarchy} for the given {@link ComponentKey}. If the binding is
+     * not found in this {@link NestedHierarchyLookup} and {@code useGlobalIfAbsent} is
+     * {@code true}, the parent {@link HierarchyLookup} is used to look up the binding.
      *
      * @param key the key of the hierarchy to look up
-     * @param useGlobalIfAbsent whether to use the parent {@link HierarchyLookup} if the binding is not found
-     * @return the {@link BindingHierarchy} for the given {@link ComponentKey}
+     * @param useGlobalIfAbsent whether to use the parent {@link HierarchyLookup} if the binding is
+     * not found
      * @param <T> the type of the hierarchy
+     *
+     * @return the {@link BindingHierarchy} for the given {@link ComponentKey}
      */
     <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key, boolean useGlobalIfAbsent);
 }

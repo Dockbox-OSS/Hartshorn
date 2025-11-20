@@ -17,10 +17,11 @@
 package org.dockbox.hartshorn.proxy.advice.wrap;
 
 /**
- * A wrapper for a method. This is used to intercept method calls, without modifying the original method, though
- * it is possible to use this on intercepted or delegated methods as well.
+ * A wrapper for a method. This is used to intercept method calls, without modifying the original
+ * method, though it is possible to use this on intercepted or delegated methods as well.
  *
- * <p>Method wrappers are always called for the method(s) they wrap in the order they are added to the proxy.
+ * <p>Method wrappers are always called for the method(s) they wrap in the order they are added to
+ * the proxy.
  * Wrappers are able to listen to three events:
  * <ul>
  *     <li>When a method is called, this is performed <b>before</b> the method is visited</li>
@@ -30,9 +31,8 @@ package org.dockbox.hartshorn.proxy.advice.wrap;
  *
  * @param <T> The type of the proxy
  *
- * @since 0.4.10
- *
  * @author Guus Lieben
+ * @since 0.4.10
  */
 public interface MethodWrapper<T> {
 
@@ -58,8 +58,9 @@ public interface MethodWrapper<T> {
     void acceptError(ProxyCallbackContext<T> context);
 
     /**
-     * A utility method to construct a simple method wrapper that calls different {@link ProxyCallback}s for each
-     * of the three events. This is useful for simple component processors.
+     * A utility method to construct a simple method wrapper that calls different
+     * {@link ProxyCallback}s for each of the three events. This is useful for simple component
+     * processors.
      *
      * <p>If a callback is null, it will not be called.
      *
@@ -67,9 +68,14 @@ public interface MethodWrapper<T> {
      * @param after The callback to call after a method is visited
      * @param afterThrowing The callback to call after a method throws an exception
      * @param <T> The type of the proxy
+     *
      * @return A method wrapper that calls the given callbacks
      */
-    static <T> MethodWrapper<T> of(ProxyCallback<T> before, ProxyCallback<T> after, ProxyCallback<T> afterThrowing) {
+    static <T> MethodWrapper<T> of(
+        ProxyCallback<T> before,
+        ProxyCallback<T> after,
+        ProxyCallback<T> afterThrowing
+    ) {
         return new CallbackMethodWrapper<>(before, after, afterThrowing);
     }
 }

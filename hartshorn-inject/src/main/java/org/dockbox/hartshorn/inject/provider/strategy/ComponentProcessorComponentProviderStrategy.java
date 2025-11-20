@@ -29,29 +29,31 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link ComponentProviderStrategy} which attempts to provide a {@link ComponentProcessor} instance from the {@link
- * ComponentProcessorRegistry} of the {@link PostProcessingComponentProvider} if the requested component is a {@link
- * ComponentProcessor}.
- *
- * @see PostProcessingComponentProvider#processorRegistry()
- *
- * @since 0.7.0
+ * A {@link ComponentProviderStrategy} which attempts to provide a {@link ComponentProcessor}
+ * instance from the {@link ComponentProcessorRegistry} of the
+ * {@link PostProcessingComponentProvider} if the requested component is a
+ * {@link ComponentProcessor}.
  *
  * @author Guus Lieben
+ * @see PostProcessingComponentProvider#processorRegistry()
+ * @since 0.7.0
  */
 public class ComponentProcessorComponentProviderStrategy implements ComponentProviderStrategy {
 
     @Override
     public <T> ObjectContainer<T> get(
-            ComponentKey<T> componentKey,
-            ComponentRequestContext requestContext,
-            ComponentProviderStrategyChain<T> chain
+        ComponentKey<T> componentKey,
+        ComponentRequestContext requestContext,
+        ComponentProviderStrategyChain<T> chain
     ) throws ComponentResolutionException, ApplicationException {
         if (ComponentProcessor.class.isAssignableFrom(componentKey.type())
-                && chain.application().defaultProvider() instanceof PostProcessingComponentProvider postProcessingComponentProvider) {
+            && chain.application()
+            .defaultProvider() instanceof PostProcessingComponentProvider postProcessingComponentProvider) {
 
-            Class<? extends ComponentProcessor> processorType = TypeUtils.unchecked(componentKey.type(), Class.class);
-            Option<? extends ComponentProcessor> processor = postProcessingComponentProvider.processorRegistry().lookup(processorType);
+            Class<? extends ComponentProcessor> processorType =
+                TypeUtils.unchecked(componentKey.type(), Class.class);
+            Option<? extends ComponentProcessor> processor =
+                postProcessingComponentProvider.processorRegistry().lookup(processorType);
             // If absent, the processor may not yet have been initialized, so we'll try to process it instead of exiting early
             if (processor.present()) {
                 T instance = componentKey.type().cast(processor.get());

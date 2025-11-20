@@ -29,9 +29,8 @@ import java.util.Set;
  * Converts any {@link Collection} to an array of the same type, containing only the objects in the
  * collection.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class CollectionToArrayConverter implements GenericConverter {
 
@@ -42,9 +41,9 @@ public class CollectionToArrayConverter implements GenericConverter {
 
     @Override
     public @Nullable <I, O> Object convert(
-            @Nullable Object source,
-            @NonNull Class<I> sourceType,
-            @NonNull Class<O> targetType
+        @Nullable Object source,
+        @NonNull Class<I> sourceType,
+        @NonNull Class<O> targetType
     ) {
         assert source != null;
         assert targetType.isArray();

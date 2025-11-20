@@ -22,25 +22,23 @@ import org.dockbox.hartshorn.inject.condition.ConditionMatcher;
 /**
  * Represents an environment that is capable of managing components.
  *
- * @see ComponentRegistry
- *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @see ComponentRegistry
+ * @since 0.7.0
  */
 public interface ManagedComponentEnvironment extends InjectorEnvironment {
 
     /**
-     * Returns the {@link ComponentRegistry} that is used by this {@link ManagedComponentEnvironment} to locate
-     * components.
+     * Returns the {@link ComponentRegistry} that is used by this
+     * {@link ManagedComponentEnvironment} to locate components.
      *
      * @return the {@link ComponentRegistry}
      */
     ComponentRegistry componentRegistry();
 
     /**
-     * Returns the {@link ConditionMatcher} that is used by this {@link ManagedComponentEnvironment} to evaluate
-     * conditions.
+     * Returns the {@link ConditionMatcher} that is used by this {@link ManagedComponentEnvironment}
+     * to evaluate conditions.
      *
      * @return the {@link ConditionMatcher}
      */

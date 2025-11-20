@@ -25,23 +25,22 @@ import org.dockbox.hartshorn.util.introspect.TypeVariablesIntrospector;
  *
  * @param <Parent> the type of the element's parent
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public interface ExecutableElementView<Parent> extends AnnotatedElementView, ModifierCarrierView {
 
     /**
-     * Returns an {@link ExecutableParametersIntrospector} for the element. This introspector
-     * can be used to introspect the element's parameters.
+     * Returns an {@link ExecutableParametersIntrospector} for the element. This introspector can be
+     * used to introspect the element's parameters.
      *
      * @return an introspector for the element's parameters
      */
     ExecutableParametersIntrospector parameters();
 
     /**
-     * Returns an {@link TypeVariablesIntrospector} for the element. This introspector
-     * can be used to introspect the element's type variables.
+     * Returns an {@link TypeVariablesIntrospector} for the element. This introspector can be used
+     * to introspect the element's type variables.
      *
      * @return an introspector for the element's type variables
      */

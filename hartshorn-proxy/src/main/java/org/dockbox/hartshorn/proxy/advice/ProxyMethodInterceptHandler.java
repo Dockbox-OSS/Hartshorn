@@ -22,15 +22,16 @@ import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.proxy.advice.intercept.MethodInvokable;
 
 /**
- * A handler that can be used by {@link org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor}s to handle
- * method invocations. This handler is capable of handling invocations of methods that are not intercepted, as well as
- * methods that are intercepted. Typically, this handler is used in combination with a {@link ProxyMethodInvoker} which
- * can further delegate method invocations for various purposes.
+ * A handler that can be used by
+ * {@link org.dockbox.hartshorn.proxy.advice.intercept.ProxyMethodInterceptor}s to handle method
+ * invocations. This handler is capable of handling invocations of methods that are not intercepted,
+ * as well as methods that are intercepted. Typically, this handler is used in combination with a
+ * {@link ProxyMethodInvoker} which can further delegate method invocations for various purposes.
  *
  * @param <T> the type of the target object
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface ProxyMethodInterceptHandler<T> {
 
@@ -42,23 +43,40 @@ public interface ProxyMethodInterceptHandler<T> {
      * @param proxy the proxy method that is invoked
      * @param callbackTarget the target object on which the method is invoked
      * @param arguments the arguments that are passed to the method
+     *
      * @return the result of the method invocation
+     *
      * @throws Throwable if an error occurs during the method invocation
      */
-    Object handleNonInterceptedMethod(T self, MethodInvokable source, Invokable proxy, T callbackTarget, Object[] arguments) throws Throwable;
+    Object handleNonInterceptedMethod(
+        T self,
+        MethodInvokable source,
+        Invokable proxy,
+        T callbackTarget,
+        Object[] arguments
+    ) throws Throwable;
 
     /**
      * Handles a method invocation that is intercepted by the given {@link MethodInterceptor}.
      *
      * @param source the method that is invoked
      * @param callbackTarget the target object on which the method is invoked
-     * @param customInvocation the custom invocation that is used to invoke the real method if possible
+     * @param customInvocation the custom invocation that is used to invoke the real method if
+     * possible
      * @param arguments the arguments that are passed to the method
      * @param interceptor the interceptor that intercepts the method invocation
+     *
      * @return the result of the method invocation
+     *
      * @throws Throwable if an error occurs during the method invocation
      */
-    Object handleInterceptedMethod(MethodInvokable source, T callbackTarget, CustomInvocation<?> customInvocation, Object[] arguments, MethodInterceptor<T, Object> interceptor) throws Throwable;
+    Object handleInterceptedMethod(
+        MethodInvokable source,
+        T callbackTarget,
+        CustomInvocation<?> customInvocation,
+        Object[] arguments,
+        MethodInterceptor<T, Object> interceptor
+    ) throws Throwable;
 
     /**
      * Returns the {@link ProxyMethodInvoker} that is used by this handler.

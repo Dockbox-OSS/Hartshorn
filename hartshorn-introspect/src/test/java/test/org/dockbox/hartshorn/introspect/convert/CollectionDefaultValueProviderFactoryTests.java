@@ -110,9 +110,14 @@ public class CollectionDefaultValueProviderFactoryTests {
         return createProvider(type, () -> null);
     }
 
-    private static <T extends Collection<?>> DefaultValueProvider<T> createProvider(Class<T> type, Supplier<T> supplier) {
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(type, supplier);
-        DefaultValueProviderFactory<Collection<?>> factory = new CollectionDefaultValueProviderFactory(introspector).withDefaults();
+    private static <T extends Collection<?>> DefaultValueProvider<T> createProvider(
+        Class<T> type,
+        Supplier<T> supplier
+    ) {
+        Introspector introspector =
+            ConverterIntrospectionHelper.createIntrospectorForCollection(type, supplier);
+        DefaultValueProviderFactory<Collection<?>> factory =
+            new CollectionDefaultValueProviderFactory(introspector).withDefaults();
 
         DefaultValueProvider<T> provider = factory.create(type);
         Assertions.assertNotNull(provider);

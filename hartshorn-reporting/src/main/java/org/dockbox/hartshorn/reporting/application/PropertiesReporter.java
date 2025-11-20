@@ -23,14 +23,13 @@ import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 
 /**
- * A reportable that reports the contents of a {@link Properties} instance. The keys of the properties are used as
- * property names, and the values of the properties are used as property values.
- *
- * @see Properties
- *
- * @since 0.5.0
+ * A reportable that reports the contents of a {@link Properties} instance. The keys of the
+ * properties are used as property names, and the values of the properties are used as property
+ * values.
  *
  * @author Guus Lieben
+ * @see Properties
+ * @since 0.5.0
  */
 public class PropertiesReporter implements Reportable {
 
@@ -42,9 +41,9 @@ public class PropertiesReporter implements Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        for(String key : this.registry.keys()) {
+        for (String key : this.registry.keys()) {
             String value = this.registry.value(key)
-                    .orElseGet(() -> "<empty>");
+                .orElseGet(() -> "<empty>");
             collector.property(key).writeString(value);
         }
     }

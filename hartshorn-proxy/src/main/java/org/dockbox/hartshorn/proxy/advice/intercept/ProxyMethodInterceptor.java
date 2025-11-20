@@ -20,12 +20,13 @@ import org.dockbox.hartshorn.proxy.ProxyManager;
 
 /**
  * A simple contract for intercepting method invocations. This contract can be used by
- * {@link org.dockbox.hartshorn.proxy.ProxyFactory proxy factories} to intercept method invocations.
+ * {@link org.dockbox.hartshorn.proxy.ProxyFactory proxy factories} to intercept method
+ * invocations.
  *
  * @param <T> the type of the proxy
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface ProxyMethodInterceptor<T> {
 
@@ -37,19 +38,22 @@ public interface ProxyMethodInterceptor<T> {
     ProxyManager<T> manager();
 
     /**
-     * Intercepts the given method invocation. The {@link MethodInvokable} instance can be used to invoke the
-     * method on the proxy, or to invoke the method on the super class. The {@link Invokable} instance can be
-     * used to invoke the method on the proxy. The {@code self} and {@code args} parameters are the same as
-     * those that would be passed to the method invocation. Depending on the implementation these parameters
-     * may be ignored or processed before being passed to the method invocation.
+     * Intercepts the given method invocation. The {@link MethodInvokable} instance can be used to
+     * invoke the method on the proxy, or to invoke the method on the super class. The
+     * {@link Invokable} instance can be used to invoke the method on the proxy. The {@code self}
+     * and {@code args} parameters are the same as those that would be passed to the method
+     * invocation. Depending on the implementation these parameters may be ignored or processed
+     * before being passed to the method invocation.
      *
      * @param self the proxy instance
      * @param source the method that is being invoked
      * @param proxy the method that can be used to invoke the method on the proxy
      * @param args the arguments that are passed to the method invocation
+     *
      * @return the result of the method invocation
+     *
      * @throws Throwable if the method invocation fails
      */
-    Object intercept(Object self, MethodInvokable source, Invokable proxy, Object[] args) throws Throwable;
-
+    Object intercept(Object self, MethodInvokable source, Invokable proxy, Object[] args)
+        throws Throwable;
 }

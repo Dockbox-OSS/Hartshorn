@@ -26,13 +26,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @param <I> The type of the input object.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public abstract class AbstractSingleElementContext<I>
-        extends DefaultContext
-        implements SingleElementContext<I> {
+    extends DefaultContext
+    implements SingleElementContext<I> {
 
     private final I input;
 

@@ -25,9 +25,8 @@ import org.dockbox.hartshorn.context.ContextView;
  *
  * @param <T> The type of object to customize.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface ContextualCustomizer<T> {
 
@@ -65,6 +64,7 @@ public interface ContextualCustomizer<T> {
      * @return A customizer that does nothing.
      */
     static <T> ContextualCustomizer<T> useDefaults() {
-        return (context, target) -> {};
+        return (context, target) -> {
+        };
     }
 }

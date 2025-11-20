@@ -24,14 +24,13 @@ import java.util.Set;
 import org.dockbox.hartshorn.reporting.CategorizedDiagnosticsReporter;
 
 /**
- * A configuration for an {@link AggregateDiagnosticsReporter}. This configuration is used to register the reporters
- * that are aggregated by the {@link AggregateDiagnosticsReporter}. No ordering is guaranteed.
- *
- * @see AggregateDiagnosticsReporter
- *
- * @since 0.5.0
+ * A configuration for an {@link AggregateDiagnosticsReporter}. This configuration is used to
+ * register the reporters that are aggregated by the {@link AggregateDiagnosticsReporter}. No
+ * ordering is guaranteed.
  *
  * @author Guus Lieben
+ * @see AggregateDiagnosticsReporter
+ * @since 0.5.0
  */
 public class AggregateReporterConfiguration {
 
@@ -43,11 +42,14 @@ public class AggregateReporterConfiguration {
      *
      * @param reporter the reporter to register
      *
-     * @throws IllegalArgumentException when a reporter with the same category is already registered
+     * @throws IllegalArgumentException when a reporter with the same category is already
+     * registered
      */
     public void add(CategorizedDiagnosticsReporter reporter) {
         if (this.reporters.containsKey(reporter.category())) {
-            throw new IllegalArgumentException("Reporter with category '" + reporter.category() + "' already registered");
+            throw new IllegalArgumentException("Reporter with category '"
+                + reporter.category()
+                + "' already registered");
         }
         this.reporters.put(reporter.category(), reporter);
     }
@@ -58,7 +60,8 @@ public class AggregateReporterConfiguration {
      *
      * @param reporters the reporters to register
      *
-     * @throws IllegalArgumentException when a reporter with the same category is already registered
+     * @throws IllegalArgumentException when a reporter with the same category is already
+     * registered
      */
     public void addAll(Collection<CategorizedDiagnosticsReporter> reporters) {
         reporters.forEach(this::add);

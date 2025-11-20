@@ -19,12 +19,11 @@ package org.dockbox.hartshorn.inject.component;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * Exception to indicate a component is invalid. This can be caused by a number of reasons, such as missing annotations,
- * invalid constructors, or incorrect types.
- *
- * @since 0.4.12
+ * Exception to indicate a component is invalid. This can be caused by a number of reasons, such as
+ * missing annotations, invalid constructors, or incorrect types.
  *
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public class InvalidComponentException extends ApplicationRuntimeException {
     public InvalidComponentException(String message) {

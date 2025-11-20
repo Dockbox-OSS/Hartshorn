@@ -38,17 +38,15 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 /**
- * An abstract implementation of a {@link Stream} that delegates all calls to a wrapped {@link
- * Stream}. This allows for easy extension of the {@link Stream} interface without having to
+ * An abstract implementation of a {@link Stream} that delegates all calls to a wrapped
+ * {@link Stream}. This allows for easy extension of the {@link Stream} interface without having to
  * implement all methods.
  *
  * @param <T> the type of the stream
  *
- * @see Stream
- *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @see Stream
+ * @since 0.7.0
  */
 public abstract class AbstractDelegateStream<T> implements Stream<T> {
 
@@ -172,18 +170,18 @@ public abstract class AbstractDelegateStream<T> implements Stream<T> {
 
     @Override
     public <U> U reduce(
-            U identity,
-            BiFunction<U, ? super T, U> accumulator,
-            BinaryOperator<U> combiner
+        U identity,
+        BiFunction<U, ? super T, U> accumulator,
+        BinaryOperator<U> combiner
     ) {
         return this.delegate.reduce(identity, accumulator, combiner);
     }
 
     @Override
     public <R> R collect(
-            Supplier<R> supplier,
-            BiConsumer<R, ? super T> accumulator,
-            BiConsumer<R, R> combiner
+        Supplier<R> supplier,
+        BiConsumer<R, ? super T> accumulator,
+        BiConsumer<R, R> combiner
     ) {
         return this.delegate.collect(supplier, accumulator, combiner);
     }

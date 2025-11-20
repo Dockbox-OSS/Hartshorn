@@ -23,11 +23,9 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * A simple implementation of a {@link ValueProperty}.
  *
- * @see ValueProperty
- *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @see ValueProperty
+ * @since 0.7.0
  */
 public class SimpleValueProperty implements ValueProperty {
 
@@ -57,8 +55,8 @@ public class SimpleValueProperty implements ValueProperty {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("name", this.name)
-                .field("value", this.value)
-                .describe();
+            .field("name", this.name)
+            .field("value", this.value)
+            .describe();
     }
 }

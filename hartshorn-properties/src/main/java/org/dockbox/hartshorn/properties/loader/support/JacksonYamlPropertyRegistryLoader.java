@@ -28,9 +28,8 @@ import java.util.Set;
  * A {@link JacksonPropertyRegistryLoader} that loads properties from YAML files. This loader uses a
  * {@link YAMLMapper} to read the properties from the file.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class JacksonYamlPropertyRegistryLoader extends JacksonPropertyRegistryLoader {
 
@@ -45,7 +44,10 @@ public class JacksonYamlPropertyRegistryLoader extends JacksonPropertyRegistryLo
         this(formatter, Customizer.useDefaults());
     }
 
-    public JacksonYamlPropertyRegistryLoader(PropertyPathFormatter formatter, Customizer<YAMLMapper.Builder> customizer) {
+    public JacksonYamlPropertyRegistryLoader(
+        PropertyPathFormatter formatter,
+        Customizer<YAMLMapper.Builder> customizer
+    ) {
         super(formatter);
         this.customizer = customizer;
     }

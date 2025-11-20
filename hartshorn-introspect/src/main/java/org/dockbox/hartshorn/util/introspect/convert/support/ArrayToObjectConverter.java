@@ -27,12 +27,11 @@ import java.lang.reflect.Array;
 import java.util.Set;
 
 /**
- * Converts any array to an {@link Object} by returning the first and only element of the
- * array. The array must have exactly one element.
- *
- * @since 0.5.0
+ * Converts any array to an {@link Object} by returning the first and only element of the array. The
+ * array must have exactly one element.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ArrayToObjectConverter implements GenericConverter, ConditionalConverter {
 
@@ -54,9 +53,9 @@ public class ArrayToObjectConverter implements GenericConverter, ConditionalConv
 
     @Override
     public @Nullable <I, O> Object convert(
-            @Nullable Object source,
-            @NonNull Class<I> sourceType,
-            @NonNull Class<O> targetType
+        @Nullable Object source,
+        @NonNull Class<I> sourceType,
+        @NonNull Class<O> targetType
     ) {
         if (sourceType.isArray()) {
             if (Array.getLength(source) != 1) {

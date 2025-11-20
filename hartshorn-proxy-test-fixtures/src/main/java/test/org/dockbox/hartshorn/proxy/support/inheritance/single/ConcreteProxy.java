@@ -17,12 +17,11 @@
 package test.org.dockbox.hartshorn.proxy.support.inheritance.single;
 
 /**
- * Concrete implementation of {@link InterfaceProxy}. This class is used to test the proxying of interfaces and
- * implementations of those interfaces.
- *
- * @since 0.7.0
+ * Concrete implementation of {@link InterfaceProxy}. This class is used to test the proxying of
+ * interfaces and implementations of those interfaces.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class ConcreteProxy implements InterfaceProxy {
     @Override

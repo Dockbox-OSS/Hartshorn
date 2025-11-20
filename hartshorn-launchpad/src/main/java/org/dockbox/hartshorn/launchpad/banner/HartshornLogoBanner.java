@@ -23,31 +23,32 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * The default banner of Hartshorn. This banner is printed when the application starts if
- * no custom banner is provided.
- *
- * @since 0.4.13
+ * The default banner of Hartshorn. This banner is printed when the application starts if no custom
+ * banner is provided.
  *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class HartshornLogoBanner extends AbstractConsoleBanner {
 
     private static final List<String> BANNER_LINES = List.of(
-            "",
-            "     _   _            _       _",
-            "    | | | | __ _ _ __| |_ ___| |__   ___  _ __ _ __",
-            "    | |_| |/ _` | '__| __/ __| '_ \\ / _ \\| '__| '_ \\",
-            "    |  _  | (_| | |  | |_\\__ \\ | | | (_) | |  | | | |",
-            "    |_| |_|\\__,_|_|   \\__|___/_| |_|\\___/|_|  |_| |_|    ",
-            AnsiMessage.of("                                  ")
-                    .append(AnsiMessage.of("-< ", AnsiColor.WHITE))
-                    .append(AnsiMessage.of("Hartshorn %s".formatted(getImplementationVersion()), AnsiColor.GREEN))
-                    .append(AnsiMessage.of(" >-\n", AnsiColor.WHITE))
-                    .toString()
+        "",
+        "     _   _            _       _",
+        "    | | | | __ _ _ __| |_ ___| |__   ___  _ __ _ __",
+        "    | |_| |/ _` | '__| __/ __| '_ \\ / _ \\| '__| '_ \\",
+        "    |  _  | (_| | |  | |_\\__ \\ | | | (_) | |  | | | |",
+        "    |_| |_|\\__,_|_|   \\__|___/_| |_|\\___/|_|  |_| |_|    ",
+        AnsiMessage.of("                                  ")
+            .append(AnsiMessage.of("-< ", AnsiColor.WHITE))
+            .append(AnsiMessage.of("Hartshorn %s".formatted(getImplementationVersion()),
+                AnsiColor.GREEN))
+            .append(AnsiMessage.of(" >-\n", AnsiColor.WHITE))
+            .toString()
     );
 
     private static String getImplementationVersion() {
-        String implementationVersion = HartshornLogoBanner.class.getPackage().getImplementationVersion();
+        String implementationVersion =
+            HartshornLogoBanner.class.getPackage().getImplementationVersion();
         return Objects.requireNonNullElse(implementationVersion, "(unreleased version)");
     }
 

@@ -17,11 +17,11 @@
 package org.dockbox.hartshorn.proxy.advice.registry;
 
 /**
- * Default implementation of {@link AdvisorRegistryState}. This implementation tracks whether the registry has been
- * modified since its initial creation.
+ * Default implementation of {@link AdvisorRegistryState}. This implementation tracks whether the
+ * registry has been modified since its initial creation.
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class SimpleAdvisorRegistryState implements AdvisorRegistryState {
 

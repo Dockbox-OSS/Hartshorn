@@ -52,37 +52,37 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * A reflection-based implementation of {@link TypeView}. This implementation is used by the {@link
- * ReflectionIntrospector}, and supports both {@link Class} and {@link ParameterizedType} instances.
+ * A reflection-based implementation of {@link TypeView}. This implementation is used by the
+ * {@link ReflectionIntrospector}, and supports both {@link Class} and {@link ParameterizedType}
+ * instances.
  *
  * @param <T> the type of the reflected type
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implements TypeView<T> {
 
     private static final BiMap<Class<?>, Class<?>> WRAPPERS = BiMap.ofEntries(
-            Map.entry(Boolean.class, boolean.class),
-            Map.entry(Byte.class, byte.class),
-            Map.entry(Character.class, char.class),
-            Map.entry(Double.class, double.class),
-            Map.entry(Float.class, float.class),
-            Map.entry(Integer.class, int.class),
-            Map.entry(Long.class, long.class),
-            Map.entry(Short.class, short.class)
+        Map.entry(Boolean.class, boolean.class),
+        Map.entry(Byte.class, byte.class),
+        Map.entry(Character.class, char.class),
+        Map.entry(Double.class, double.class),
+        Map.entry(Float.class, float.class),
+        Map.entry(Integer.class, int.class),
+        Map.entry(Long.class, long.class),
+        Map.entry(Short.class, short.class)
     );
 
     private static final Map<Class<?>, Object> PRIMITIVE_DEFAULTS = Map.ofEntries(
-            Map.entry(boolean.class, false),
-            Map.entry(byte.class, 0),
-            Map.entry(char.class, '\u0000'),
-            Map.entry(double.class, 0.0d),
-            Map.entry(float.class, 0.0f),
-            Map.entry(int.class, 0),
-            Map.entry(long.class, 0L),
-            Map.entry(short.class, 0)
+        Map.entry(boolean.class, false),
+        Map.entry(byte.class, 0),
+        Map.entry(char.class, '\u0000'),
+        Map.entry(double.class, 0.0d),
+        Map.entry(float.class, 0.0f),
+        Map.entry(int.class, 0),
+        Map.entry(long.class, 0L),
+        Map.entry(short.class, 0)
     );
 
     private final Introspector introspector;
@@ -106,11 +106,18 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
         this(introspector, type, null);
     }
 
-    public ReflectionTypeView(ReflectionIntrospector introspector, ParameterizedType parameterizedType) {
+    public ReflectionTypeView(
+        ReflectionIntrospector introspector,
+        ParameterizedType parameterizedType
+    ) {
         this(introspector, (Class<T>) parameterizedType.getRawType(), parameterizedType);
     }
 
-    private ReflectionTypeView(ReflectionIntrospector introspector, Class<T> type, ParameterizedType parameterizedType) {
+    private ReflectionTypeView(
+        ReflectionIntrospector introspector,
+        Class<T> type,
+        ParameterizedType parameterizedType
+    ) {
         super(introspector);
         this.introspector = introspector;
         this.type = type;
@@ -198,7 +205,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     public boolean isPermittedSubclass(Class<?> subclass) {
         if (this.isSealed()) {
             return this.permittedSubclasses().stream()
-                    .anyMatch(permittedSubclass -> permittedSubclass.type().equals(subclass));
+                .anyMatch(permittedSubclass -> permittedSubclass.type().equals(subclass));
         }
         return false;
     }
@@ -207,7 +214,7 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     public List<TypeView<? extends T>> permittedSubclasses() {
         if (this.permittedSubclasses == null) {
             List<TypeView<? extends T>> list = new ArrayList<>();
-            for(Class<?> permittedSubclass : this.type.getPermittedSubclasses()) {
+            for (Class<?> permittedSubclass : this.type.getPermittedSubclasses()) {
                 TypeView<?> introspect = this.introspector.introspect(permittedSubclass);
                 TypeView<T> adjustedType = TypeUtils.unchecked(introspect, TypeView.class);
                 list.add(adjustedType);
@@ -241,8 +248,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     public List<TypeView<?>> interfaces() {
         if (this.interfaces == null) {
             this.interfaces = Arrays.stream(this.type().getInterfaces())
-                    .map(this.introspector::introspect)
-                    .collect(Collectors.toList());
+                .map(this.introspector::introspect)
+                .collect(Collectors.toList());
         }
         return this.interfaces;
     }
@@ -251,8 +258,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     public List<TypeView<?>> genericInterfaces() {
         if (this.genericInterfaces == null) {
             this.genericInterfaces = Arrays.stream(this.type().getGenericInterfaces())
-                    .map(this.introspector::introspect)
-                    .collect(Collectors.toList());
+                .map(this.introspector::introspect)
+                .collect(Collectors.toList());
         }
         return this.genericInterfaces;
     }
@@ -261,7 +268,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     public TypeView<?> superClass() {
         if (this.parent == null) {
             Class<? super T> parent = this.type().getSuperclass();
-            this.parent = this.introspector.introspect((Class<?>) Objects.requireNonNullElse(parent, Void.class));
+            this.parent = this.introspector.introspect((Class<?>) Objects.requireNonNullElse(parent,
+                Void.class));
         }
         return this.parent;
     }
@@ -283,7 +291,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public TypeMethodsIntrospector<T> methods() {
         if (this.methodsIntrospector == null) {
-            this.methodsIntrospector = new ReflectionTypeMethodsIntrospector<>(this.introspector, this);
+            this.methodsIntrospector =
+                new ReflectionTypeMethodsIntrospector<>(this.introspector, this);
         }
         return this.methodsIntrospector;
     }
@@ -291,7 +300,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public TypeFieldsIntrospector<T> fields() {
         if (this.fieldsIntrospector == null) {
-            this.fieldsIntrospector = new ReflectionTypeFieldsIntrospector<>(this.introspector, this);
+            this.fieldsIntrospector =
+                new ReflectionTypeFieldsIntrospector<>(this.introspector, this);
         }
         return this.fieldsIntrospector;
     }
@@ -299,7 +309,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     @Override
     public TypeConstructorsIntrospector<T> constructors() {
         if (this.constructorsIntrospector == null) {
-            this.constructorsIntrospector = new ReflectionTypeConstructorsIntrospector<>(this.type, this.introspector);
+            this.constructorsIntrospector =
+                new ReflectionTypeConstructorsIntrospector<>(this.type, this.introspector);
         }
         return this.constructorsIntrospector;
     }
@@ -308,8 +319,10 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     public TypeParametersIntrospector typeParameters() {
         if (this.typeParametersIntrospector == null) {
             this.typeParametersIntrospector = this.isParameterized()
-                    ? new ReflectionParameterizedTypeParametersIntrospector<>(this, this.parameterizedType, this.introspector)
-                    : new ReflectionClassTypeParametersIntrospector(this, this.introspector);
+                ? new ReflectionParameterizedTypeParametersIntrospector<>(this,
+                this.parameterizedType,
+                this.introspector)
+                : new ReflectionClassTypeParametersIntrospector(this, this.introspector);
         }
         return this.typeParametersIntrospector;
     }
@@ -401,7 +414,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     public Option<TypeView<?>> elementType() {
         if (this.elementType == null) {
             if (this.isArray()) {
-                this.elementType = Option.of(this.introspector.introspect(this.type().getComponentType()));
+                this.elementType =
+                    Option.of(this.introspector.introspect(this.type().getComponentType()));
             }
             else {
                 this.elementType = Option.empty();
@@ -430,7 +444,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
         if (this.isPrimitive()) {
             //noinspection unchecked
             return (T) PRIMITIVE_DEFAULTS.getOrDefault(this.type(), null);
-        } else {
+        }
+        else {
             Class<?> primitive = WRAPPERS.get(this.type());
             if (primitive == null) {
                 return null;
@@ -456,7 +471,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
         else {
             String targetType = this.qualifiedName();
             String objectType = object.getClass().getCanonicalName();
-            throw new ClassCastException("Cannot cast '%s' to '%s'".formatted(objectType, targetType));
+            throw new ClassCastException("Cannot cast '%s' to '%s'".formatted(objectType,
+                targetType));
         }
     }
 
@@ -469,7 +485,8 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
     public TypeView<?> rawType() {
         if (this.isParameterized()) {
             return this.introspector.introspect(this.parameterizedType.getRawType());
-        } else {
+        }
+        else {
             return this;
         }
     }
@@ -488,12 +505,14 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
         collector.property("typeParameters").writeDelegate(reporter -> {
             TypeParameterList inputParameters = typeParameters.allInput();
             if (!inputParameters.isEmpty()) {
-                reporter.property("input").writeDelegates(inputParameters.asList().toArray(Reportable[]::new));
+                reporter.property("input")
+                    .writeDelegates(inputParameters.asList().toArray(Reportable[]::new));
             }
 
             TypeParameterList outputParameters = typeParameters.allOutput();
             if (!outputParameters.isEmpty()) {
-                reporter.property("output").writeDelegates(outputParameters.asList().toArray(Reportable[]::new));
+                reporter.property("output")
+                    .writeDelegates(outputParameters.asList().toArray(Reportable[]::new));
             }
         });
     }
@@ -510,13 +529,14 @@ public class ReflectionTypeView<T> extends ReflectionAnnotatedElementView implem
 
     @Override
     public boolean equals(Object object) {
-        if(this == object) {
+        if (this == object) {
             return true;
         }
-        if(!(object instanceof ReflectionTypeView<?> that)) {
+        if (!(object instanceof ReflectionTypeView<?> that)) {
             return false;
         }
-        return Objects.equals(this.type, that.type) && Objects.equals(this.parameterizedType, that.parameterizedType);
+        return Objects.equals(this.type, that.type) && Objects.equals(this.parameterizedType,
+            that.parameterizedType);
     }
 
     @Override

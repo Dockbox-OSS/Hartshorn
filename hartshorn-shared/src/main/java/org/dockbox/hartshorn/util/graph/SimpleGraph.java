@@ -25,9 +25,8 @@ import java.util.Set;
  *
  * @param <T> the type of the content of the graph
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class SimpleGraph<T> implements Graph<T> {
 

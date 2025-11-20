@@ -17,14 +17,12 @@
 package org.dockbox.hartshorn.reporting.component;
 
 /**
- * General configuration for the {@link ComponentDiagnosticsReporter} that allows for fine-grained control over the
- * information that is reported.
- *
- * @see ComponentDiagnosticsReporter
- *
- * @since 0.5.0
+ * General configuration for the {@link ComponentDiagnosticsReporter} that allows for fine-grained
+ * control over the information that is reported.
  *
  * @author Guus Lieben
+ * @see ComponentDiagnosticsReporter
+ * @since 0.5.0
  */
 public class ComponentReportingConfiguration {
 
@@ -33,7 +31,8 @@ public class ComponentReportingConfiguration {
     private boolean includeRequiredConditions = true;
 
     /**
-     * The attribute by which components should be grouped. Defaults to {@link ComponentAttribute#STEREOTYPE}.
+     * The attribute by which components should be grouped. Defaults to
+     * {@link ComponentAttribute#STEREOTYPE}.
      *
      * @return the attribute by which components should be grouped
      */
@@ -45,6 +44,7 @@ public class ComponentReportingConfiguration {
      * Sets the attribute by which components should be grouped.
      *
      * @param groupBy the attribute by which components should be grouped
+     *
      * @return this configuration object
      */
     public ComponentReportingConfiguration groupBy(ComponentAttribute groupBy) {
@@ -55,7 +55,8 @@ public class ComponentReportingConfiguration {
     /**
      * Whether dependencies should be included in the report.
      *
-     * @return {@code true} if dependencies should be included in the report, {@code false} otherwise
+     * @return {@code true} if dependencies should be included in the report, {@code false}
+     * otherwise
      */
     public boolean includeDependencies() {
         return this.includeDependencies;
@@ -64,7 +65,9 @@ public class ComponentReportingConfiguration {
     /**
      * Sets whether dependencies should be included in the report.
      *
-     * @param includeDependencies {@code true} if dependencies should be included in the report, {@code false} otherwise
+     * @param includeDependencies {@code true} if dependencies should be included in the report,
+     * {@code false} otherwise
+     *
      * @return this configuration object
      */
     public ComponentReportingConfiguration includeDependencies(boolean includeDependencies) {
@@ -75,7 +78,8 @@ public class ComponentReportingConfiguration {
     /**
      * Whether required conditions should be included in the report.
      *
-     * @return {@code true} if required conditions should be included in the report, {@code false} otherwise
+     * @return {@code true} if required conditions should be included in the report, {@code false}
+     * otherwise
      */
     public boolean includeRequiredConditions() {
         return this.includeRequiredConditions;
@@ -84,7 +88,9 @@ public class ComponentReportingConfiguration {
     /**
      * Sets whether required conditions should be included in the report.
      *
-     * @param includeRequiredConditions {@code true} if required conditions should be included in the report, {@code false} otherwise
+     * @param includeRequiredConditions {@code true} if required conditions should be included in
+     * the report, {@code false} otherwise
+     *
      * @return this configuration object
      */
     public ComponentReportingConfiguration includeRequiredConditions(boolean includeRequiredConditions) {

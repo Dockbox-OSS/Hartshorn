@@ -25,11 +25,12 @@ import java.util.regex.Pattern;
 
 /**
  * A simple implementation of {@link ApplicationArgumentParser} that parses arguments in the form of
- * {@code --key=value}. Keys are expected to be alphanumeric, and may contain the characters {@code .}, {@code :},
- * {@code _} and {@code -}. Values may be any string of any length (including empty). Arguments are not trimmed.
+ * {@code --key=value}. Keys are expected to be alphanumeric, and may contain the characters
+ * {@code .}, {@code :}, {@code _} and {@code -}. Values may be any string of any length (including
+ * empty). Arguments are not trimmed.
  *
- * @since 0.4.11
  * @author Guus Lieben
+ * @since 0.4.11
  */
 public class StandardApplicationArgumentParser implements ApplicationArgumentParser {
 

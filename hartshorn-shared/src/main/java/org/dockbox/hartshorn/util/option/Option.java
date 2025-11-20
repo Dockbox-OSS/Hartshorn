@@ -41,15 +41,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * A container object which may or may not contain a non-null value. If a value is present, {@link
- * #present()} will return {@code true} and {@link #get()} will return the value. If no value is
- * present, {@link #absent()} will return {@code true}.
+ * A container object which may or may not contain a non-null value. If a value is present,
+ * {@link #present()} will return {@code true} and {@link #get()} will return the value. If no value
+ * is present, {@link #absent()} will return {@code true}.
  *
  * <p>Additional methods that depend on the presence or absence of a contained value are provided,
- * such as {@link #orElse(Object)} (return a default value if value not present) and {@link
- * #peek(Consumer)} (execute a block of code if the value is present).
+ * such as {@link #orElse(Object)} (return a default value if value not present) and
+ * {@link #peek(Consumer)} (execute a block of code if the value is present).
  *
- * <p>When comparing {@link Option} to {@link Optional}, there are two major differences between the
+ * <p>When comparing {@link Option} to {@link Optional}, there are two major differences between
+ * the
  * two:
  * <ol>
  *     <li>
@@ -100,8 +101,8 @@ public interface Option<T> extends Context, Iterable<T> {
      * @param optional the {@link Optional} instance to wrap.
      * @param <T> the type of the (potential) value wrapped by the {@link Option} instance.
      *
-     * @return a new {@link Option} instance wrapping the (potential) value of the given {@link
-     * Optional} instance.
+     * @return a new {@link Option} instance wrapping the (potential) value of the given
+     * {@link Optional} instance.
      */
     @NonNull
     static <T> Option<T> of(@NonNull Optional<@Nullable T> optional) {
@@ -121,8 +122,8 @@ public interface Option<T> extends Context, Iterable<T> {
      * @param supplier the {@link Callable} to execute.
      * @param <T> the type of the (potential) value wrapped by the {@link Option} instance.
      *
-     * @return a new {@link Option} instance wrapping the (potential) value of the given {@link
-     * Callable} instance.
+     * @return a new {@link Option} instance wrapping the (potential) value of the given
+     * {@link Callable} instance.
      */
     @NonNull
     static <T> Option<T> of(@NonNull Callable<@Nullable T> supplier) {
@@ -178,6 +179,7 @@ public interface Option<T> extends Context, Iterable<T> {
      * to check if a value is present using {@link #present()}.
      *
      * @return the value wrapped by the {@link Option} instance.
+     *
      * @throws NoSuchElementException if no value is present.
      */
     @NonNull
@@ -227,9 +229,11 @@ public interface Option<T> extends Context, Iterable<T> {
      * @param <E> the type of the error to throw.
      *
      * @return the value wrapped by the {@link Option} instance.
+     *
      * @throws E if no value is present.
      */
-    @NonNull <E extends Throwable> T orElseThrow(@NonNull Supplier<@NonNull E> supplier) throws E;
+    @NonNull
+    <E extends Throwable> T orElseThrow(@NonNull Supplier<@NonNull E> supplier) throws E;
 
     /**
      * If no value is present in this {@link Option}, the given {@link Supplier} is executed. The
@@ -251,8 +255,8 @@ public interface Option<T> extends Context, Iterable<T> {
      *
      * @param supplier the {@link Supplier} to execute if no value is present.
      *
-     * @return the {@link Option} returned by the given {@link Supplier}, or the current {@link
-     * Option} instance if a value is present.
+     * @return the {@link Option} returned by the given {@link Supplier}, or the current
+     * {@link Option} instance if a value is present.
      */
     @NonNull
     Option<T> orComputeFlat(@NonNull Supplier<@NonNull Option<T>> supplier);
@@ -273,20 +277,20 @@ public interface Option<T> extends Context, Iterable<T> {
     boolean absent();
 
     /**
-     * Returns a new {@link Optional} instance wrapping the value wrapped by the current {@link
-     * Option} instance. If no value is present, an empty {@link Optional} is returned.
+     * Returns a new {@link Optional} instance wrapping the value wrapped by the current
+     * {@link Option} instance. If no value is present, an empty {@link Optional} is returned.
      *
-     * @return a new {@link Optional} instance wrapping the value wrapped by the current {@link
-     * Option} instance, or an empty {@link Optional} if no value is present.
+     * @return a new {@link Optional} instance wrapping the value wrapped by the current
+     * {@link Option} instance, or an empty {@link Optional} if no value is present.
      */
     @NonNull
     Optional<T> optional();
 
     /**
-     * Transforms the value wrapped by the current {@link Option} instance using the given {@link
-     * Function}. If the current {@link Option} instance does not contain a value, an empty {@link
-     * Option} is returned. If the given {@link Function} returns {@code null}, no exception is
-     * thrown, and an empty {@link Option} is returned.
+     * Transforms the value wrapped by the current {@link Option} instance using the given
+     * {@link Function}. If the current {@link Option} instance does not contain a value, an empty
+     * {@link Option} is returned. If the given {@link Function} returns {@code null}, no exception
+     * is thrown, and an empty {@link Option} is returned.
      *
      * @param <U> The type of the result of the mapping function
      * @param function A mapping function to apply to the value, if present
@@ -294,12 +298,13 @@ public interface Option<T> extends Context, Iterable<T> {
      * @return an {@link Option} describing the result of applying a mapping function to the value
      * of this {@link Option}, if a value is present, otherwise {@link Option#empty()}
      */
-    @NonNull <U> Option<U> map(@NonNull Function<@NonNull T, @Nullable U> function);
+    @NonNull
+    <U> Option<U> map(@NonNull Function<@NonNull T, @Nullable U> function);
 
     /**
-     * Transforms the value wrapped by the current {@link Option} instance using the given {@link
-     * Function}. If the current {@link Option} instance does not contain a value, an empty {@link
-     * Option} is returned. In all other cases, the result of the given {@link Function} is
+     * Transforms the value wrapped by the current {@link Option} instance using the given
+     * {@link Function}. If the current {@link Option} instance does not contain a value, an empty
+     * {@link Option} is returned. In all other cases, the result of the given {@link Function} is
      * returned.
      *
      * @param <U> The type of the result of the mapping function
@@ -308,11 +313,12 @@ public interface Option<T> extends Context, Iterable<T> {
      * @return the result of applying a mapping function to the value of this {@link Option}, if a
      * value is present, otherwise {@link Option#empty()}
      */
-    @NonNull <U> Option<U> flatMap(@NonNull Function<@NonNull T, @NonNull Option<U>> function);
+    @NonNull
+    <U> Option<U> flatMap(@NonNull Function<@NonNull T, @NonNull Option<U>> function);
 
     /**
-     * If a value is present in this {@link Option}, the value is applied to the given {@link
-     * Predicate}. If the {@link Predicate} returns {@code true}, the current {@link Option}
+     * If a value is present in this {@link Option}, the value is applied to the given
+     * {@link Predicate}. If the {@link Predicate} returns {@code true}, the current {@link Option}
      * instance is returned. If the {@link Predicate} returns {@code false}, an empty {@link Option}
      * is returned. If no value is present, an empty {@link Option} is returned.
      *
@@ -339,7 +345,8 @@ public interface Option<T> extends Context, Iterable<T> {
      * a {@link Stream} is created using the provided {@link Function}. If no value is present, an
      * empty {@link Stream} is returned.
      *
-     * @param mapper the {@link Function} to use to create the {@link Stream} if a value is present.
+     * @param mapper the {@link Function} to use to create the {@link Stream} if a value is
+     * present.
      * @param <U> the type of the elements of the new {@link Stream}
      *
      * @return a {@link Stream} based on the current {@link Option} instance.
@@ -355,7 +362,8 @@ public interface Option<T> extends Context, Iterable<T> {
      * This checks for equality, not for identity.
      *
      * @param value the value to compare to the value wrapped by the current {@link Option}
-     *              instance.
+     * instance.
+     *
      * @return {@code true} if the value wrapped by the current {@link Option} instance is equal to
      * the given value, otherwise {@code false}.
      */
@@ -411,9 +419,9 @@ public interface Option<T> extends Context, Iterable<T> {
     }
 
     /**
-     * Tests the value wrapped by the current {@link Option} instance using the given {@link
-     * Predicate}. If a value is present, the result of the {@link Predicate} is returned. If no
-     * value is present, {@code false} is returned.
+     * Tests the value wrapped by the current {@link Option} instance using the given
+     * {@link Predicate}. If a value is present, the result of the {@link Predicate} is returned. If
+     * no value is present, {@code false} is returned.
      *
      * <p>This is particularly useful as a convenience method when returning primitive {@code
      * boolean} values directly from a {@link Option}, as it does not require explicit unboxing on
@@ -447,8 +455,8 @@ public interface Option<T> extends Context, Iterable<T> {
     }
 
     /**
-     * Performs a mutable reduction operation on the elements of this {@link Option} using a {@link
-     * Collector}. A mutable reduction is one in which the reduced value is a mutable result
+     * Performs a mutable reduction operation on the elements of this {@link Option} using a
+     * {@link Collector}. A mutable reduction is one in which the reduced value is a mutable result
      * container, such as an {@code ArrayList}, and the accumulation function mutates it by adding
      * new elements. This produces a result equivalent to using {@link Stream#collect(Collector)}
      * through {@link #stream()}.
@@ -487,9 +495,8 @@ public interface Option<T> extends Context, Iterable<T> {
      * value, identified by the key returned by the given {@link Function}. If no value is present
      * in the current {@link Option} instance, an empty {@link Map} is returned.
      *
-     * @param keyMapper the {@link Function} used to map the value wrapped by the current {@link
-     * Option} instance to a key in the resulting {@link Map}.
-     *
+     * @param keyMapper the {@link Function} used to map the value wrapped by the current
+     * {@link Option} instance to a key in the resulting {@link Map}.
      * @param <K> the type of the key in the resulting {@link Map}.
      *
      * @return a {@link Map} containing the value wrapped by the current {@link Option} instance as
@@ -505,11 +512,10 @@ public interface Option<T> extends Context, Iterable<T> {
      * returned by the given {@link Function}. If no value is present in the current {@link Option}
      * instance, an empty {@link Map} is returned.
      *
-     * @param keyMapper the {@link Function} used to map the value wrapped by the current {@link
-     * Option} instance to a key in the resulting {@link Map}.
-     * @param valueMapper the {@link Function} used to map the value wrapped by the current {@link
-     * Option} instance to a value in the resulting {@link Map}.
-     *
+     * @param keyMapper the {@link Function} used to map the value wrapped by the current
+     * {@link Option} instance to a key in the resulting {@link Map}.
+     * @param valueMapper the {@link Function} used to map the value wrapped by the current
+     * {@link Option} instance to a value in the resulting {@link Map}.
      * @param <K> the type of the keys in the resulting {@link Map}.
      * @param <V> the type of the values in the resulting {@link Map}.
      *
@@ -517,8 +523,8 @@ public interface Option<T> extends Context, Iterable<T> {
      * given {@link Function functions}.
      */
     default <K, V> Map<K, V> toMap(
-            @NonNull Function<T, K> keyMapper,
-            @NonNull Function<T, V> valueMapper
+        @NonNull Function<T, K> keyMapper,
+        @NonNull Function<T, V> valueMapper
     ) {
         return this.collect(Collectors.toMap(keyMapper, valueMapper));
     }
@@ -532,8 +538,8 @@ public interface Option<T> extends Context, Iterable<T> {
     @Override
     default Iterator<T> iterator() {
         return this.map(List::of)
-                .map(List::iterator)
-                .orElseGet(Collections::emptyIterator);
+            .map(List::iterator)
+            .orElseGet(Collections::emptyIterator);
     }
 
     @Override

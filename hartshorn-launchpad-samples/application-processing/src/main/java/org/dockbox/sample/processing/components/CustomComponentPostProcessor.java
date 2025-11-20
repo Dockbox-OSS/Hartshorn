@@ -26,25 +26,32 @@ public class CustomComponentPostProcessor extends ComponentPostProcessor {
     }
 
     @Override
-    public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance,
-        ComponentProcessingContext<T> processingContext) throws ApplicationException {
+    public <T> void preConfigureComponent(
+        InjectionCapableApplication application, @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) throws ApplicationException {
         // Early configuration, does not typically involve the instance directly
         super.preConfigureComponent(application, instance, processingContext);
     }
 
     @Override
-    public <T> T initializeComponent(InjectionCapableApplication application, @Nullable T instance,
-        ComponentProcessingContext<T> processingContext) throws ApplicationException {
+    public <T> T initializeComponent(
+        InjectionCapableApplication application, @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) throws ApplicationException {
         // This is where the component is initialized, if possible
         return super.initializeComponent(application, instance, processingContext);
     }
 
     @Override
-    public <T> void postConfigureComponent(InjectionCapableApplication application, @Nullable T instance,
-        ComponentProcessingContext<T> processingContext) throws ApplicationException {
+    public <T> void postConfigureComponent(
+        InjectionCapableApplication application, @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) throws ApplicationException {
         // Post-configuration, typically involves the instance
         if (instance instanceof SimpleHelloWorldSupplier simpleHelloWorldSupplier) {
-            this.logger.info("Post-configuring a hello world supplier instance: {}", simpleHelloWorldSupplier);
+            this.logger.info("Post-configuring a hello world supplier instance: {}",
+                simpleHelloWorldSupplier);
             simpleHelloWorldSupplier.message("Hello from CustomComponentPostProcessor!");
         }
         super.postConfigureComponent(application, instance, processingContext);

@@ -29,7 +29,7 @@ package org.dockbox.hartshorn.util.introspect.convert;
  *    <li>{@link DefaultValueProvider}</li>
  *    <li>{@link DefaultValueProviderFactory}</li>
  * </ul>
- *
+ * <p>
  * This service is particularly useful in situations where object conversion is a common task, such
  * as when processing user input data or when converting between different data formats in web
  * controllers.
@@ -41,9 +41,8 @@ package org.dockbox.hartshorn.util.introspect.convert;
  * and whether a {@link DefaultValueProvider} is actually invoked for a {@code null} input will
  * depend on the specific implementation being used.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface ConversionService {
 
@@ -54,6 +53,7 @@ public interface ConversionService {
      *
      * @param source the source type to convert from
      * @param targetType the target type to convert to
+     *
      * @return {@code true} if a conversion can be performed; {@code false} otherwise
      */
     boolean canConvert(Object source, Class<?> targetType);
@@ -65,9 +65,11 @@ public interface ConversionService {
      *
      * @param input the object to convert
      * @param targetType the target type to convert to
-     * @return the converted object, may be {@code null}
      * @param <I> the input type
      * @param <O> the output type
+     *
+     * @return the converted object, may be {@code null}
+     *
      * @throws IllegalArgumentException if no conversion is possible
      */
     <I, O> O convert(I input, Class<O> targetType);

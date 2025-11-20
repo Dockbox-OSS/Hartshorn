@@ -27,23 +27,23 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * Basic implementation of {@link ComponentExecutableInvocationAdapter} using the {@link InjectionCapableApplication}
- * to load parameters.
- *
- * @since 0.5.0
+ * Basic implementation of {@link ComponentExecutableInvocationAdapter} using the
+ * {@link InjectionCapableApplication} to load parameters.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
-public class InjectorExecutableInvocationAdapter extends DefaultContext implements ComponentExecutableInvocationAdapter {
+public class InjectorExecutableInvocationAdapter extends DefaultContext
+    implements ComponentExecutableInvocationAdapter {
 
     private final ComponentRequestContext componentRequestContext;
     private final InjectionCapableApplication application;
     private final Scope scope;
 
     public InjectorExecutableInvocationAdapter(
-            InjectorExecutableInvocationAdapter adapter,
-            ComponentRequestContext componentRequestContext,
-            Scope scope
+        InjectorExecutableInvocationAdapter adapter,
+        ComponentRequestContext componentRequestContext,
+        Scope scope
     ) {
         this.application = adapter.application;
         this.scope = scope;
@@ -78,15 +78,21 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext implemen
 
     @Override
     public Object[] loadParameters(ExecutableElementView<?> element) {
-        ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader(
-            this.application
-        );
+        ExecutableElementContextParameterLoader parameterLoader =
+            new ExecutableElementContextParameterLoader(
+                this.application
+            );
         ComponentRequestContext componentRequestContext = this.componentRequestContext();
         if (componentRequestContext.isForInjectionPoint()) {
-            ParameterLoaderRule<ApplicationBoundParameterLoaderContext> rule = new InjectionPointParameterLoaderRule(componentRequestContext);
+            ParameterLoaderRule<ApplicationBoundParameterLoaderContext> rule =
+                new InjectionPointParameterLoaderRule(componentRequestContext);
             parameterLoader.add(rule);
         }
-        ApplicationBoundParameterLoaderContext loaderContext = new ApplicationBoundParameterLoaderContext(element, null, this.application, this.scope());
+        ApplicationBoundParameterLoaderContext loaderContext =
+            new ApplicationBoundParameterLoaderContext(element,
+                null,
+                this.application,
+                this.scope());
         this.copyToContext(loaderContext);
         return parameterLoader.loadArguments(loaderContext).toArray();
     }
@@ -95,7 +101,8 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext implemen
     public <P, R> Option<R> invoke(MethodView<P, R> method, P instance) throws Throwable {
         if (method.modifiers().isStatic()) {
             return this.invokeStatic(method);
-        } else {
+        }
+        else {
             Object[] parameters = this.loadParameters(method);
             return method.invoke(instance, parameters);
         }
@@ -104,7 +111,8 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext implemen
     @Override
     public <P, R> Option<R> invokeStatic(MethodView<P, R> method) throws Throwable {
         if (!method.modifiers().isStatic()) {
-            throw new IllegalArgumentException("Method must be static to invoke statically: " + method);
+            throw new IllegalArgumentException("Method must be static to invoke statically: "
+                + method);
         }
         Object[] parameters = this.loadParameters(method);
         return method.invokeStatic(parameters);
@@ -112,7 +120,7 @@ public class InjectorExecutableInvocationAdapter extends DefaultContext implemen
 
     private Scope scope() {
         return this.scope != null
-                ? this.scope
-                : this.application.defaultProvider().scope();
+            ? this.scope
+            : this.application.defaultProvider().scope();
     }
 }

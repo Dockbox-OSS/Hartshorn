@@ -24,19 +24,21 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 /**
- * An abstract {@link ComponentPostProcessor} that allows implementations to configure interceptors for methods
- * annotated with a specific annotation.
+ * An abstract {@link ComponentPostProcessor} that allows implementations to configure interceptors
+ * for methods annotated with a specific annotation.
  *
- * @param <M> the type of the annotation that is used to identify methods for which interceptors should be applied
- *
- * @since 0.4.10
+ * @param <M> the type of the annotation that is used to identify methods for which interceptors
+ * should be applied
  *
  * @author Guus Lieben
+ * @since 0.4.10
  */
-public abstract class AnnotatedMethodInterceptorPostProcessor<M extends Annotation> extends MethodInterceptorPostProcessor {
+public abstract class AnnotatedMethodInterceptorPostProcessor<M extends Annotation>
+    extends MethodInterceptorPostProcessor {
 
     /**
-     * Returns the annotation class that is used to identify methods for which interceptors should be applied.
+     * Returns the annotation class that is used to identify methods for which interceptors should
+     * be applied.
      *
      * @return the annotation class
      */

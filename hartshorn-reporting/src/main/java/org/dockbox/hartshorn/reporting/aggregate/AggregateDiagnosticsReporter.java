@@ -23,17 +23,18 @@ import org.dockbox.hartshorn.reporting.ConfigurableDiagnosticsReporter;
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 
 /**
- * A diagnostics reporter that aggregates multiple other reporters, which can be used to report all diagnostics at
- * once. Delegate reporters are expected to be {@link CategorizedDiagnosticsReporter categorized}, so that they can
- * be grouped by category.
- *
- * @since 0.5.0
+ * A diagnostics reporter that aggregates multiple other reporters, which can be used to report all
+ * diagnostics at once. Delegate reporters are expected to be
+ * {@link CategorizedDiagnosticsReporter categorized}, so that they can be grouped by category.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
-public class AggregateDiagnosticsReporter implements ConfigurableDiagnosticsReporter<AggregateReporterConfiguration> {
+public class AggregateDiagnosticsReporter
+    implements ConfigurableDiagnosticsReporter<AggregateReporterConfiguration> {
 
-    private final AggregateReporterConfiguration configuration = new AggregateReporterConfiguration();
+    private final AggregateReporterConfiguration configuration =
+        new AggregateReporterConfiguration();
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
@@ -41,7 +42,8 @@ public class AggregateDiagnosticsReporter implements ConfigurableDiagnosticsRepo
 
         collector.property("reporters").writeDelegate(reporterCollector -> {
             for (CategorizedDiagnosticsReporter reporter : reporters) {
-                reporterCollector.property(reporter.category()).writeStrings(reporter.getClass().getCanonicalName());
+                reporterCollector.property(reporter.category())
+                    .writeStrings(reporter.getClass().getCanonicalName());
             }
         });
 

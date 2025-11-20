@@ -21,13 +21,13 @@ import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.inject.provider.ObjectContainer;
 
 /**
- * An {@link ObjectContainer} that wraps another {@link ObjectContainer} to represent an entry in a collection.
+ * An {@link ObjectContainer} that wraps another {@link ObjectContainer} to represent an entry in a
+ * collection.
  *
  * @param <T> the type of the object contained in this container
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public class CollectionEntryObjectContainer<T> extends AbstractObjectContainer<T> {
 

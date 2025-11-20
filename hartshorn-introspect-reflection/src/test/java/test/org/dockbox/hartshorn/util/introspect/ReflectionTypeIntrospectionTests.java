@@ -29,7 +29,8 @@ public class ReflectionTypeIntrospectionTests extends TypeIntrospectionTests {
     @BeforeEach
     public void setup() {
         // Re-use the same introspector while inside a single test, so caching can be tested
-        this.introspector = new ReflectionIntrospector(new NativeProxyLookup(), new VirtualHierarchyAnnotationLookup());
+        this.introspector = new ReflectionIntrospector(new NativeProxyLookup(),
+            new VirtualHierarchyAnnotationLookup());
     }
 
     @Override

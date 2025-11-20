@@ -24,11 +24,9 @@ import java.util.Set;
 /**
  * A registry for {@link DependencyContextResolver} strategies.
  *
- * @see DependencyContextResolver
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see DependencyContextResolver
+ * @since 0.5.0
  */
 public interface DependencyContextResolverRegistry extends Configurer {
 
@@ -40,19 +38,22 @@ public interface DependencyContextResolverRegistry extends Configurer {
     Set<DependencyContextResolver> strategies();
 
     /**
-     * Register a new resolver strategy. If the strategy is already registered, it will not be added again. If the
-     * strategy was previously registered with a different priority, the priority will be updated to the new value.
+     * Register a new resolver strategy. If the strategy is already registered, it will not be added
+     * again. If the strategy was previously registered with a different priority, the priority will
+     * be updated to the new value.
      *
      * @param strategy the strategy to register
+     *
      * @return this registry
      */
     DependencyContextResolverRegistry register(DependencyContextResolver strategy);
 
     /**
-     * Unregister a specific resolver strategy. If the strategy is not registered, or if its priority does not match
-     * the registered strategy, no action is taken.
+     * Unregister a specific resolver strategy. If the strategy is not registered, or if its
+     * priority does not match the registered strategy, no action is taken.
      *
      * @param strategy the strategy to unregister
+     *
      * @return this registry
      */
     DependencyContextResolverRegistry unregister(DependencyContextResolver strategy);

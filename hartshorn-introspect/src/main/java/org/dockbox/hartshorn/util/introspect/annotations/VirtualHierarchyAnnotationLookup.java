@@ -56,13 +56,12 @@ import java.util.function.Supplier;
  * <p>When an element is annotated with {@code @VirtualAnnotation(id = "foo")}, and a request is
  * made to find the {@code MetaAnnotation} on that element, this lookup will return a proxy
  * implementation of {@code MetaAnnotation} that delegates to the {@code VirtualAnnotation} on the
- * element, and the {@code MetaAnnotation} on the {@code VirtualAnnotation} to resolve the value
- * for requested attributes. In this example, the {@code name} attribute will be resolved to
+ * element, and the {@code MetaAnnotation} on the {@code VirtualAnnotation} to resolve the value for
+ * requested attributes. In this example, the {@code name} attribute will be resolved to
  * {@code "meta"}, and the {@code id} attribute will be resolved to {@code "foo"}.
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
 
@@ -70,8 +69,8 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
 
     @Override
     public <A extends Annotation> A find(
-            AnnotatedElement element,
-            Class<A> annotationType
+        AnnotatedElement element,
+        Class<A> annotationType
     ) throws DuplicateAnnotationCompositeException {
         List<A> allInHierarchy = this.findAll(element, annotationType);
         if (allInHierarchy.size() > 1) {
@@ -82,8 +81,8 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
 
     @Override
     public <A extends Annotation> List<A> findAll(
-            AnnotatedElement element,
-            Class<A> annotationType
+        AnnotatedElement element,
+        Class<A> annotationType
     ) {
         HierarchyKey key = new HierarchyKey(element, annotationType);
         return this.fromCache(key, () -> this.annotationsOnElement(element, annotationType));
@@ -122,13 +121,13 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
      * @return All annotations compatible with the given annotation type on the given element
      */
     protected <A extends Annotation> List<A> annotationsOnElement(
-            AnnotatedElement element,
-            Class<A> annotationType
+        AnnotatedElement element,
+        Class<A> annotationType
     ) {
         return Arrays.stream(element.getAnnotations())
-                .map(annotation -> this.examineAnnotation(annotation, annotationType))
-                .filter(Objects::nonNull)
-                .toList();
+            .map(annotation -> this.examineAnnotation(annotation, annotationType))
+            .filter(Objects::nonNull)
+            .toList();
     }
 
     /**
@@ -143,12 +142,12 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
      * @return A proxy that implements the given annotation type, or {@code null}
      */
     protected <A extends Annotation> A examineAnnotation(
-            Annotation actual,
-            Class<A> targetAnnotationClass
+        Annotation actual,
+        Class<A> targetAnnotationClass
     ) {
         actual = this.unproxy(actual);
         SequencedSet<Class<? extends Annotation>> hierarchy = this.annotationHierarchy(
-                actual.annotationType()
+            actual.annotationType()
         );
 
         if (!hierarchy.contains(targetAnnotationClass)) {
@@ -157,18 +156,18 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
         }
 
         InvocationHandler adapter = new AnnotationAdapterProxy<>(
-                actual,
-                targetAnnotationClass,
-                hierarchy,
-                this
+            actual,
+            targetAnnotationClass,
+            hierarchy,
+            this
         );
         Set<Class<?>> parentInterfaces = new HashSet<>(hierarchy);
         parentInterfaces.add(AnnotationAdapter.class);
 
         Object proxy = Proxy.newProxyInstance(
-                VirtualHierarchyAnnotationLookup.class.getClassLoader(),
-                parentInterfaces.toArray(Class[]::new),
-                adapter);
+            VirtualHierarchyAnnotationLookup.class.getClassLoader(),
+            parentInterfaces.toArray(Class[]::new),
+            adapter);
 
         return targetAnnotationClass.cast(proxy);
     }
@@ -183,7 +182,7 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
 
     @Override
     public SequencedSet<Class<? extends Annotation>> annotationHierarchy(
-            Class<? extends Annotation> type
+        Class<? extends Annotation> type
     ) {
         Class<? extends Annotation> currentClass = type;
         SequencedSet<Class<? extends Annotation>> hierarchy = new LinkedHashSet<>();
@@ -198,7 +197,7 @@ public class VirtualHierarchyAnnotationLookup implements AnnotationLookup {
     }
 
     private static Class<? extends Annotation> superAnnotationOrNull(
-            Class<? extends Annotation> currentClass
+        Class<? extends Annotation> currentClass
     ) {
         Extends extendsAnnotation = currentClass.getAnnotation(Extends.class);
         return extendsAnnotation == null ? null : extendsAnnotation.value();

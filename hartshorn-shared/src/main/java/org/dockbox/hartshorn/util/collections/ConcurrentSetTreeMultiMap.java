@@ -31,17 +31,15 @@ import java.util.concurrent.ConcurrentSkipListMap;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
+ * @author Guus Lieben
  * @see ConcurrentHashMap#newKeySet()
  * @see ConcurrentSkipListMap
  * @see MultiMap
  * @see AbstractNavigableMultiMap
- *
  * @since 0.5.0
- *
- * @author Guus Lieben
  */
 public class ConcurrentSetTreeMultiMap<K extends Comparable<K>, V>
-        extends AbstractNavigableMultiMap<K, V> {
+    extends AbstractNavigableMultiMap<K, V> {
 
     public ConcurrentSetTreeMultiMap() {
         this(Comparator.naturalOrder());

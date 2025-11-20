@@ -56,9 +56,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * <p>Typically, {@link ClassPathScanner} should not be used directly, but rather be used through
  * the {@link ClassPathScannerTypeReferenceCollector}.
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public final class ClassPathScanner {
 
@@ -88,11 +87,12 @@ public final class ClassPathScanner {
 
     /**
      * Adds the value of a system property to the scanner. The value of the system property is
-     * expected to be a classpath entry. The value of the system property is split on the {@link
-     * File#pathSeparatorChar} character. Each resulting path is added to the scanner if it is a
-     * valid path.
+     * expected to be a classpath entry. The value of the system property is split on the
+     * {@link File#pathSeparatorChar} character. Each resulting path is added to the scanner if it
+     * is a valid path.
      *
      * @param key The name of the system property
+     *
      * @return The scanner instance
      */
     public synchronized ClassPathScanner addSystemPropertyPaths(String key) {
@@ -126,10 +126,11 @@ public final class ClassPathScanner {
      * added to the scanner if it is a valid path.
      *
      * @param url The URL to add
+     *
      * @return The scanner instance
      */
     public synchronized ClassPathScanner addUrlForScanning(URL url) {
-        return this.addClassLoaderForScanning(new URLClassLoader(new URL[] { url }) {
+        return this.addClassLoaderForScanning(new URLClassLoader(new URL[] {url}) {
             @Override
             public String toString() {
                 return super.toString() + " [url=" + url.toExternalForm() + "]";
@@ -141,6 +142,7 @@ public final class ClassPathScanner {
      * Adds a {@link URLClassLoader} to the scanner.
      *
      * @param classLoader The classloader to add
+     *
      * @return The scanner instance
      */
     public synchronized ClassPathScanner addClassLoaderForScanning(URLClassLoader classLoader) {
@@ -154,7 +156,9 @@ public final class ClassPathScanner {
      * with the configured scan settings.
      *
      * @param handler The handler that will consume the file if it is compatible
+     *
      * @return The scanner instance
+     *
      * @throws ClassPathWalkingException When an error occurs while scanning the classpath
      */
     public synchronized ClassPathScanner scan(
@@ -178,6 +182,7 @@ public final class ClassPathScanner {
      *
      * @param handler The handler that will consume the file if it is compatible
      * @param classLoader The classloader to scan
+     *
      * @throws ClassPathWalkingException When an error occurs while scanning the classpath
      */
     private void scanClassLoaderResources(
@@ -223,30 +228,31 @@ public final class ClassPathScanner {
         URLClassLoader classLoader,
         File jarFile
     ) {
-        try(JarFile file = new JarFile(jarFile)) {
+        try (JarFile file = new JarFile(jarFile)) {
             Enumeration<JarEntry> entries = file.entries();
-            while(entries.hasMoreElements()) {
+            while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
-                if(!entry.isDirectory()) {
+                if (!entry.isDirectory()) {
                     String name = entry.getName();
                     this.processPathResource(handler, classLoader, name, jarFile.toPath());
                 }
             }
         }
-        catch(IOException e) {
+        catch (IOException e) {
             // Handle exception
         }
     }
 
     /**
-     * Processes a directory resource. This delegates the file visiting to a {@link
-     * DirectoryFileTreeWalker}. The walker will delegate the processing of each file to the
+     * Processes a directory resource. This delegates the file visiting to a
+     * {@link DirectoryFileTreeWalker}. The walker will delegate the processing of each file to the
      * provided {@link ResourceHandler}. The scanner will only process files that are compatible
      * with the configured scan settings.
      *
      * @param handler The handler that will consume the file if it is compatible
      * @param classLoader The classloader to use for loading classes from the jar file
      * @param directory The directory to scan
+     *
      * @throws ClassPathWalkingException When an error occurs while scanning the classpath
      */
     private void processDirectoryResource(
@@ -295,8 +301,8 @@ public final class ClassPathScanner {
 
         boolean isClassResource = resourceName.toLowerCase(Locale.ROOT).endsWith(".class");
         String checkedResourceName = !isClassResource
-                ? resourceName
-                : this.resourceToCanonicalName(resourceName);
+            ? resourceName
+            : this.resourceToCanonicalName(resourceName);
 
         if (!this.shouldProcessResource(isClassResource, checkedResourceName)) {
             return;
@@ -362,8 +368,8 @@ public final class ClassPathScanner {
     @NonNull
     private String resourceToCanonicalName(String resourceName) {
         return resourceName.substring(0, resourceName.length() - 6)
-                .replace('/', '.')
-                .replace('\\', '.');
+            .replace('/', '.')
+            .replace('\\', '.');
     }
 
     /**
@@ -371,6 +377,7 @@ public final class ClassPathScanner {
      * of the provided prefixes.
      *
      * @param prefix The prefix to add
+     *
      * @return The scanner instance
      */
     public synchronized ClassPathScanner filterPrefix(String prefix) {

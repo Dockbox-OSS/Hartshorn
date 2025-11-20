@@ -29,11 +29,11 @@ import org.dockbox.hartshorn.properties.PropertyRegistry;
  *
  * @param resolvers the set of profile name resolvers to aggregate
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
-public record CompositeProfileNameResolver(Set<ProfileNameResolver> resolvers) implements ProfileNameResolver {
+public record CompositeProfileNameResolver(Set<ProfileNameResolver> resolvers)
+    implements ProfileNameResolver {
 
     public CompositeProfileNameResolver(ProfileNameResolver... resolvers) {
         this(Set.of(resolvers));
@@ -42,7 +42,7 @@ public record CompositeProfileNameResolver(Set<ProfileNameResolver> resolvers) i
     @Override
     public SequencedSet<String> resolveProfileNames(PropertyRegistry rootRegistry) {
         return this.resolvers.stream()
-                .flatMap(resolver -> resolver.resolveProfileNames(rootRegistry).stream())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .flatMap(resolver -> resolver.resolveProfileNames(rootRegistry).stream())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

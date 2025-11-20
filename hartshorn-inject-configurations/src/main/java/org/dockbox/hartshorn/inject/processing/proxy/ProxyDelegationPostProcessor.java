@@ -23,16 +23,17 @@ import org.dockbox.hartshorn.inject.processing.ComponentProcessingContext;
 import org.dockbox.hartshorn.proxy.ProxyFactory;
 
 /**
- * An abstract {@link ComponentPostProcessor} that is used to delegate non-implemented methods of a parent
- * type to a concrete implementation of that parent type. By default, the concrete implementation is provided
- * by the {@link InjectionCapableApplication}, though this behavior may be changed by overriding {@link
- * #concreteDelegator(InjectionCapableApplication, ProxyFactory, Class) the concrete delegator} method.
+ * An abstract {@link ComponentPostProcessor} that is used to delegate non-implemented methods of a
+ * parent type to a concrete implementation of that parent type. By default, the concrete
+ * implementation is provided by the {@link InjectionCapableApplication}, though this behavior may
+ * be changed by overriding
+ * {@link #concreteDelegator(InjectionCapableApplication, ProxyFactory, Class) the concrete
+ * delegator} method.
  *
  * @param <P> the type of the parent that is being delegated to
  *
- * @since 0.4.8
- *
  * @author Guus Lieben
+ * @since 0.4.8
  */
 public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProcessor {
 
@@ -46,11 +47,16 @@ public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProce
 
     @Override
     public <T> boolean isCompatible(ComponentProcessingContext<T> processingContext) {
-        return processingContext.permitsProxying() && processingContext.type().isChildOf(this.parentTarget());
+        return processingContext.permitsProxying() && processingContext.type()
+            .isChildOf(this.parentTarget());
     }
 
     @Override
-    public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(
+        InjectionCapableApplication application,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) {
         ProxyFactory<P> factory = processingContext.get(ProxyFactory.class);
         if (factory == null) {
             return;
@@ -71,8 +77,8 @@ public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProce
     }
 
     /**
-     * Provides the concrete delegator instance to which methods will be delegated. By default, this method
-     * retrieves an instance from the application's default provider.
+     * Provides the concrete delegator instance to which methods will be delegated. By default, this
+     * method retrieves an instance from the application's default provider.
      *
      * @param application the injection-capable application
      * @param handler the proxy factory handling the proxy creation
@@ -80,13 +86,17 @@ public abstract class ProxyDelegationPostProcessor<P> extends ComponentPostProce
      *
      * @return the concrete delegator instance
      */
-    protected P concreteDelegator(InjectionCapableApplication application, ProxyFactory<P> handler, Class<? extends P> parent) {
+    protected P concreteDelegator(
+        InjectionCapableApplication application,
+        ProxyFactory<P> handler,
+        Class<? extends P> parent
+    ) {
         return application.defaultProvider().get(this.parentTarget());
     }
 
     /**
-     * Whether to skip concrete methods when delegating to the concrete implementation. If true, only abstract
-     * methods will be delegated.
+     * Whether to skip concrete methods when delegating to the concrete implementation. If true,
+     * only abstract methods will be delegated.
      *
      * @return true to skip concrete methods, false to delegate all methods
      */

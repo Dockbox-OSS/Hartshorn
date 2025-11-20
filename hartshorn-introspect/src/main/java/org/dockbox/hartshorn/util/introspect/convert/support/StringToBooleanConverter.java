@@ -22,11 +22,9 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 /**
  * Converts a {@link String} to a {@link Boolean}.
  *
- * @see Boolean#parseBoolean(String)
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see Boolean#parseBoolean(String)
+ * @since 0.5.0
  */
 public class StringToBooleanConverter implements Converter<String, Boolean> {
 

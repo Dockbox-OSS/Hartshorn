@@ -27,18 +27,19 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A {@link ParameterLoader} that loads parameters based on a set of rules. The rules are evaluated in no
- * particular order, and the first rule that accepts the parameter will be used to load the parameter. In
- * case no rule accepts the parameter, the default value of the parameter type will be used.
+ * A {@link ParameterLoader} that loads parameters based on a set of rules. The rules are evaluated
+ * in no particular order, and the first rule that accepts the parameter will be used to load the
+ * parameter. In case no rule accepts the parameter, the default value of the parameter type will be
+ * used.
  *
- * <p>As there is no particular order in which the rules are evaluated, it remains the responsibility of
+ * <p>As there is no particular order in which the rules are evaluated, it remains the
+ * responsibility of
  * the caller to ensure that the rules are not conflicting.
  *
  * @param <C> the context type that is used to provide context to the rules
  *
- * @since 0.4.8
- *
  * @author Guus Lieben
+ * @since 0.4.8
  */
 public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implements ParameterLoader {
 
@@ -75,6 +76,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implemen
      * Adds the provided rule to the set of rules that are used to load parameters.
      *
      * @param rule the rule to add
+     *
      * @return the current instance
      */
     public RuleBasedParameterLoader<?> add(ParameterLoaderRule<? super C> rule) {
@@ -97,7 +99,11 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implemen
     }
 
     @Override
-    public @Nullable Object loadArgument(ParameterLoaderContext context, int index, Object... args) {
+    public @Nullable Object loadArgument(
+        ParameterLoaderContext context,
+        int index,
+        Object... args
+    ) {
         if (!this.isCompatible(context)) {
             return null;
         }
@@ -110,7 +116,12 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implemen
         return null;
     }
 
-    private Object loadArgument(int index, Object[] args, ParameterView<?> parameter, C adjustedContext) {
+    private Object loadArgument(
+        int index,
+        Object[] args,
+        ParameterView<?> parameter,
+        C adjustedContext
+    ) {
         for (ParameterLoaderRule<C> rule : this.rules()) {
             if (rule.accepts(parameter, index, adjustedContext, args)) {
                 Option<?> argument = rule.load(parameter, index, adjustedContext, args);
@@ -141,8 +152,8 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> implemen
     }
 
     /**
-     * Loads the default value for the provided parameter. This method is invoked when no rule accepts the
-     * parameter.
+     * Loads the default value for the provided parameter. This method is invoked when no rule
+     * accepts the parameter.
      *
      * @param parameter the parameter to load the default value for
      * @param index the index of the parameter in the parameter list

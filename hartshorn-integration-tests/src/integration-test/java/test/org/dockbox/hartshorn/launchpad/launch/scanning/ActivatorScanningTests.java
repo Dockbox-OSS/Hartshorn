@@ -39,8 +39,8 @@ public class ActivatorScanningTests {
     @Test
     void testPrefixFromActivatorIsRegistered(@Inject TypeReferenceCollectorContext context) {
         for (TypeReferenceCollector collector : context.collectors()) {
-            if(collector instanceof ClasspathTypeReferenceCollector referenceCollector
-                    && PackageScanningActivator.PACKAGE.equals(referenceCollector.packageName())) {
+            if (collector instanceof ClasspathTypeReferenceCollector referenceCollector
+                && PackageScanningActivator.PACKAGE.equals(referenceCollector.packageName())) {
                 return;
             }
         }
@@ -57,7 +57,10 @@ public class ActivatorScanningTests {
 
     @Test
     @TestComponents(ComponentInterface.class)
-    void testServicesFromActivatorPrefixArePresent(@Inject ComponentInterface service, @Inject ProxyOrchestrator proxyOrchestrator) {
+    void testServicesFromActivatorPrefixArePresent(
+        @Inject ComponentInterface service,
+        @Inject ProxyOrchestrator proxyOrchestrator
+    ) {
         Assertions.assertNotNull(service);
         Assertions.assertTrue(proxyOrchestrator.isProxy(service));
     }

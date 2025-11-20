@@ -34,6 +34,7 @@ public class JavassistMethodStubTests extends MethodStubTests {
 
     @Override
     protected Introspector introspector() {
-        return new ReflectionIntrospector(new NativeProxyLookup(), new VirtualHierarchyAnnotationLookup());
+        return new ReflectionIntrospector(new NativeProxyLookup(),
+            new VirtualHierarchyAnnotationLookup());
     }
 }

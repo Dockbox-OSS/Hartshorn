@@ -26,11 +26,9 @@ import org.dockbox.hartshorn.util.ApplicationException;
  * @param <U> the type of the second argument to the function
  * @param <R> the type of the result of the function
  *
- * @see java.util.function.BiFunction
- *
- * @since 0.4.1
- *
  * @author Guus Lieben
+ * @see java.util.function.BiFunction
+ * @since 0.4.1
  */
 @FunctionalInterface
 public interface CheckedBiFunction<T, U, R> {
@@ -40,7 +38,9 @@ public interface CheckedBiFunction<T, U, R> {
      *
      * @param t the first function argument
      * @param u the second function argument
+     *
      * @return the function result
+     *
      * @throws ApplicationException if an error occurs during the application of the function
      */
     R apply(T t, U u) throws ApplicationException;

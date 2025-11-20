@@ -49,23 +49,24 @@ import org.dockbox.hartshorn.util.configure.StreamableConfigurer;
 import java.util.List;
 
 /**
- * A {@link ComponentProvider} which is aware of the {@link Scope} in which it is installed, and tracks bindings
- * based on available {@link BindingHierarchy binding hierarchies}. This allows for the creation of a hierarchy of
- * bindings, which can be used to resolve components at specific priorities.
+ * A {@link ComponentProvider} which is aware of the {@link Scope} in which it is installed, and
+ * tracks bindings based on available {@link BindingHierarchy binding hierarchies}. This allows for
+ * the creation of a hierarchy of bindings, which can be used to resolve components at specific
+ * priorities.
  *
- * <p>As this provider is aware of the {@link Scope} in which it is installed, it is constrained to be part of a
- * {@link ComponentProviderOrchestrator}. This orchestrator is responsible for providing the {@link Scope} in which
- * this provider is installed.
- *
- * @see ComponentProviderOrchestrator
- * @see HierarchicalComponentProvider
- *
- * @since 0.4.10
+ * <p>As this provider is aware of the {@link Scope} in which it is installed, it is constrained to
+ * be part of a
+ * {@link ComponentProviderOrchestrator}. This orchestrator is responsible for providing the
+ * {@link Scope} in which this provider is installed.
  *
  * @author Guus Lieben
+ * @see ComponentProviderOrchestrator
+ * @see HierarchicalComponentProvider
+ * @since 0.4.10
  */
 public class HierarchyAwareComponentProvider extends StrategyChainComponentProvider
-        implements HierarchicalAliasBinderAwareComponentProvider, SingletonCacheComponentProvider, NestedHierarchyLookup {
+    implements HierarchicalAliasBinderAwareComponentProvider, SingletonCacheComponentProvider,
+    NestedHierarchyLookup {
 
     private final ComponentProviderPostProcessor processor;
     private final HierarchicalAliasCapableBinder binder;
@@ -81,11 +82,14 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
         Scope scope
     ) {
         this(
-                application,
+            application,
+            singletonCache,
+            new ScopeAwareHierarchicalBinder(application,
+                bindingAliasNormalizer,
                 singletonCache,
-                new ScopeAwareHierarchicalBinder(application, bindingAliasNormalizer, singletonCache, scope),
-                createProviderPostProcessor(singletonCache, orchestrator, application, postConstructor),
-                scope
+                scope),
+            createProviderPostProcessor(singletonCache, orchestrator, application, postConstructor),
+            scope
         );
     }
 
@@ -105,8 +109,9 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
     }
 
     /**
-     * Creates a standard {@link ComponentProviderPostProcessor} for this provider, which combines the post-processors
-     * registered in the orchestrator, and uses a local cache for store callbacks.
+     * Creates a standard {@link ComponentProviderPostProcessor} for this provider, which combines
+     * the post-processors registered in the orchestrator, and uses a local cache for store
+     * callbacks.
      *
      * @param singletonCache the singleton cache to use for store callbacks
      * @param orchestrator the orchestrator to retrieve post-processors from
@@ -116,35 +121,43 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
      * @return a new component provider post-processor
      */
     protected static ComponentProviderPostProcessor createProviderPostProcessor(
-            SingletonCache singletonCache,
-            ComponentRegistryAwareProviderOrchestrator orchestrator,
-            InjectionCapableApplication application,
-            ComponentPostConstructor postConstructor
+        SingletonCache singletonCache,
+        ComponentRegistryAwareProviderOrchestrator orchestrator,
+        InjectionCapableApplication application,
+        ComponentPostConstructor postConstructor
     ) {
-        CompositeComponentPostProcessor postProcessor = new CompositeComponentPostProcessor(() -> orchestrator.processorRegistry().postProcessors());
+        CompositeComponentPostProcessor postProcessor =
+            new CompositeComponentPostProcessor(() -> orchestrator.processorRegistry()
+                .postProcessors());
         ComponentStoreCallback storeCallback = new LocalCacheComponentStoreCallback(singletonCache);
-        ComponentProviderPostProcessor standardProcessor = new ComponentProviderPostProcessorAdapter(
+        ComponentProviderPostProcessor standardProcessor =
+            new ComponentProviderPostProcessorAdapter(
                 orchestrator,
                 postProcessor,
                 application,
                 new LocalCacheComponentStoreCallback(singletonCache)
-        );
+            );
         return new PostConstructingComponentPostProcessor(
-                postConstructor,
-                standardProcessor,
-                storeCallback,
-                orchestrator.scope()
+            postConstructor,
+            standardProcessor,
+            storeCallback,
+            orchestrator.scope()
         );
     }
 
     @Override
-    protected <T> T process(ComponentKey<T> key, ComponentRequestContext requestContext, ObjectContainer<T> container)
-            throws ApplicationException {
+    protected <T> T process(
+        ComponentKey<T> key,
+        ComponentRequestContext requestContext,
+        ObjectContainer<T> container
+    )
+        throws ApplicationException {
         try {
             return this.processor.processInstance(key, container, requestContext);
         }
-        catch(ApplicationException e) {
-            throw new ComponentResolutionException("Failed to process component with key " + key, e);
+        catch (ApplicationException e) {
+            throw new ComponentResolutionException("Failed to process component with key " + key,
+                e);
         }
     }
 
@@ -182,9 +195,10 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
     }
 
     /**
-     * Creates a new {@link HierarchyAwareComponentProvider} with the given parameters. The created provider
-     * will be configured with a default set of {@link ComponentProviderStrategy strategies}, which can
-     * be customized using the provided {@link Customizer}.
+     * Creates a new {@link HierarchyAwareComponentProvider} with the given parameters. The created
+     * provider will be configured with a default set of
+     * {@link ComponentProviderStrategy strategies}, which can be customized using the provided
+     * {@link Customizer}.
      *
      * @param orchestrator the orchestrator this provider is part of
      * @param postConstructor the post constructor to use for component post-construction
@@ -197,23 +211,25 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
      * @return a new hierarchy-aware component provider
      */
     public static HierarchyAwareComponentProvider create(
-            ComponentRegistryAwareProviderOrchestrator orchestrator,
-            ComponentPostConstructor postConstructor,
-            BindingAliasNormalizer bindingAliasNormalizer,
-            InjectionCapableApplication application,
-            SingletonCache singletonCache,
-            Scope scope,
-            Customizer<StreamableConfigurer<InjectionCapableApplication, ComponentProviderStrategy>> strategyCustomizer
+        ComponentRegistryAwareProviderOrchestrator orchestrator,
+        ComponentPostConstructor postConstructor,
+        BindingAliasNormalizer bindingAliasNormalizer,
+        InjectionCapableApplication application,
+        SingletonCache singletonCache,
+        Scope scope,
+        Customizer<StreamableConfigurer<InjectionCapableApplication, ComponentProviderStrategy>> strategyCustomizer
     ) {
-        LazyStreamableConfigurer<InjectionCapableApplication, ComponentProviderStrategy> strategyConfigurer = LazyStreamableConfigurer.of(
-                configurer -> {
-                    configurer.add(new SingletonCacheComponentProviderStrategy());
-                    configurer.add(new ComponentProcessorComponentProviderStrategy());
-                    configurer.add(new InstantiationStrategyComponentProviderStrategy(scope));
-                    configurer.add(new UnboundPrototypeComponentProviderStrategy());
-                });
+        LazyStreamableConfigurer<InjectionCapableApplication, ComponentProviderStrategy>
+            strategyConfigurer = LazyStreamableConfigurer.of(
+            configurer -> {
+                configurer.add(new SingletonCacheComponentProviderStrategy());
+                configurer.add(new ComponentProcessorComponentProviderStrategy());
+                configurer.add(new InstantiationStrategyComponentProviderStrategy(scope));
+                configurer.add(new UnboundPrototypeComponentProviderStrategy());
+            });
 
-        List<ComponentProviderStrategy> strategies = strategyConfigurer.customizer(strategyCustomizer)
+        List<ComponentProviderStrategy> strategies =
+            strategyConfigurer.customizer(strategyCustomizer)
                 .initialize(SimpleSingleElementContext.create(application));
 
         HierarchyAwareComponentProvider provider = new HierarchyAwareComponentProvider(

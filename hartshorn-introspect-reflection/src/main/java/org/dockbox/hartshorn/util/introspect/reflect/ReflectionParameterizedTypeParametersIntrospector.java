@@ -29,27 +29,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Reflection-based implementation of {@link TypeParameterList} for any {@link ParameterizedType} that isn't a {@link
- * Class}.
+ * Reflection-based implementation of {@link TypeParameterList} for any {@link ParameterizedType}
+ * that isn't a {@link Class}.
  *
  * @param <T> The type of the parameterized type being introspected
  *
- * @see ParameterizedType#getActualTypeArguments()
- *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @see ParameterizedType#getActualTypeArguments()
+ * @since 0.4.13
  */
-public class ReflectionParameterizedTypeParametersIntrospector<T> extends AbstractReflectionTypeParametersIntrospector {
+public class ReflectionParameterizedTypeParametersIntrospector<T>
+    extends AbstractReflectionTypeParametersIntrospector {
 
     private final ParameterizedType parameterizedType;
     private TypeParameterList parameters;
 
-    public ReflectionParameterizedTypeParametersIntrospector(TypeView<T> type, ParameterizedType parameterizedType, Introspector introspector) {
+    public ReflectionParameterizedTypeParametersIntrospector(
+        TypeView<T> type,
+        ParameterizedType parameterizedType,
+        Introspector introspector
+    ) {
         super(type, introspector);
         this.parameterizedType = parameterizedType;
         if (parameterizedType != null && parameterizedType.getRawType() != type.type()) {
-            throw new IllegalArgumentException("Type " + type.qualifiedName() + " is not the raw type of " + parameterizedType.getTypeName());
+            throw new IllegalArgumentException("Type "
+                + type.qualifiedName()
+                + " is not the raw type of "
+                + parameterizedType.getTypeName());
         }
     }
 
@@ -60,7 +66,10 @@ public class ReflectionParameterizedTypeParametersIntrospector<T> extends Abstra
             Type[] actualTypeArguments = this.parameterizedType.getActualTypeArguments();
             for (int i = 0; i < actualTypeArguments.length; i++) {
                 Type actualTypeArgument = actualTypeArguments[i];
-                typeParameters.add(new ReflectionTypeParameterView(actualTypeArgument, this.type(), i, this.introspector()));
+                typeParameters.add(new ReflectionTypeParameterView(actualTypeArgument,
+                    this.type(),
+                    i,
+                    this.introspector()));
             }
             this.parameters = new SimpleTypeParameterList(typeParameters);
         }

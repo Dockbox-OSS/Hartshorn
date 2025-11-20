@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.proxy.advice.wrap;
 
 /**
- * A {@link MethodWrapper} which is backed by individual {@link ProxyCallback}s for each of the three method types.
+ * A {@link MethodWrapper} which is backed by individual {@link ProxyCallback}s for each of the
+ * three method types.
  *
  * @param <T> The type of the proxy instance
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class CallbackMethodWrapper<T> implements MethodWrapper<T> {
 
@@ -31,7 +31,11 @@ public class CallbackMethodWrapper<T> implements MethodWrapper<T> {
     private final ProxyCallback<T> after;
     private final ProxyCallback<T> afterThrowing;
 
-    public CallbackMethodWrapper(ProxyCallback<T> before, ProxyCallback<T> after, ProxyCallback<T> afterThrowing) {
+    public CallbackMethodWrapper(
+        ProxyCallback<T> before,
+        ProxyCallback<T> after,
+        ProxyCallback<T> afterThrowing
+    ) {
         this.before = before;
         this.after = after;
         this.afterThrowing = afterThrowing;

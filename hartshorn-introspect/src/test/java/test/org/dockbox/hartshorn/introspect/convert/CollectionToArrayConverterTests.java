@@ -28,7 +28,8 @@ public class CollectionToArrayConverterTests {
     void testConversionKeepsOrderAndElements() {
         List<Object> list = List.of("test", 1, 2.0, true, new Object());
 
-        Object converted = new CollectionToArrayConverter().convert(list, List.class, Object[].class);
+        Object converted =
+            new CollectionToArrayConverter().convert(list, List.class, Object[].class);
         Assertions.assertNotNull(converted);
 
         Assertions.assertTrue(converted instanceof Object[]);
@@ -44,7 +45,8 @@ public class CollectionToArrayConverterTests {
     void testComponentTypeIsRetained() {
         List<String> list = List.of("test", "test2", "test3");
 
-        Object converted = new CollectionToArrayConverter().convert(list, List.class, String[].class);
+        Object converted =
+            new CollectionToArrayConverter().convert(list, List.class, String[].class);
         Assertions.assertNotNull(converted);
 
         Assertions.assertTrue(converted instanceof String[]);

@@ -19,21 +19,21 @@ package org.dockbox.hartshorn.launchpad.launch;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 
 /**
- * The {@link ApplicationBuilder} is responsible for creating the {@link ApplicationContext} and constructing the
- * required components. By default, all components are required, and will be validated before a {@link ApplicationContext}
- * is created.
+ * The {@link ApplicationBuilder} is responsible for creating the {@link ApplicationContext} and
+ * constructing the required components. By default, all components are required, and will be
+ * validated before a {@link ApplicationContext} is created.
  *
  * @param <C> The type of the {@link ApplicationContext} that is created.
  *
- * @since 0.4.8
- *
  * @author Guus Lieben
+ * @since 0.4.8
  */
 @FunctionalInterface
 public interface ApplicationBuilder<C extends ApplicationContext> {
 
     /**
-     * Creates a new {@link ApplicationContext} instance with the components configured in this {@link ApplicationBuilder}.
+     * Creates a new {@link ApplicationContext} instance with the components configured in this
+     * {@link ApplicationBuilder}.
      *
      * @return The created {@link ApplicationContext}.
      */

@@ -24,15 +24,13 @@ import java.lang.annotation.Target;
 import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 
 /**
- * Marks an element as an injection point. This annotation may be used by any {@link
- * ComponentInjectionPointsResolver} to determine which elements of a component should be
+ * Marks an element as an injection point. This annotation may be used by any
+ * {@link ComponentInjectionPointsResolver} to determine which elements of a component should be
  * populated.
  *
- * @see ComponentInjectionPointsResolver
- *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @see ComponentInjectionPointsResolver
+ * @since 0.6.0
  */
 @Target({
     ElementType.FIELD,

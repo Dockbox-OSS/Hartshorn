@@ -24,11 +24,10 @@ import java.lang.annotation.Target;
 /**
  * Annotation which can only be applied to methods, types, fields, and constructors.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.TYPE, ElementType.FIELD, ElementType.CONSTRUCTOR })
+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD, ElementType.CONSTRUCTOR})
 public @interface MultipleElementAnnotation {
 }

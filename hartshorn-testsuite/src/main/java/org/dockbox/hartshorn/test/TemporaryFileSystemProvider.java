@@ -38,8 +38,10 @@ public class TemporaryFileSystemProvider implements FileSystemProvider {
         try {
             this.applicationPath = Files.createTempDirectory("hartshorn");
             this.applicationPath.toFile().deleteOnExit();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to create temporary directory for application files", e);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Unable to create temporary directory for application files",
+                e);
         }
     }
 }

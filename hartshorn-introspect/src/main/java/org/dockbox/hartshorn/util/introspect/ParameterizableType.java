@@ -31,20 +31,18 @@ import java.util.stream.Collectors;
 /**
  * A wrapper for parameterized types that allows for the retrieval of the type and its parameters.
  * This is a simple representation of a {@link ParameterizedType} that allows for easy comparison,
- * which is especially useful for keys such as the {@code
- * org.dockbox.hartshorn.inject.ComponentKey}.
+ * which is especially useful for keys such as the
+ * {@code org.dockbox.hartshorn.inject.ComponentKey}.
  *
  * <p>{@link ParameterizableType}s can be introspected with {@link Introspector introspectors},
  * retaining complete type information.
  *
+ * @author Guus Lieben
  * @see TypeView
  * @see Introspector
  * @see ParameterizedType
  * @see ParameterizableParameterizedTypeWrapper
- *
  * @since 0.5.0
- *
- * @author Guus Lieben
  */
 public final class ParameterizableType implements Reportable {
 
@@ -57,10 +55,11 @@ public final class ParameterizableType implements Reportable {
     }
 
     /**
-     * Creates a new {@link ParameterizableType} for the given type. The type must not be {@code
-     * null}.
+     * Creates a new {@link ParameterizableType} for the given type. The type must not be
+     * {@code null}.
      *
      * @param type the type to create a {@link ParameterizableType} for
+     *
      * @return a new {@link ParameterizableType} for the given type
      */
     public static ParameterizableType create(Class<?> type) {
@@ -68,11 +67,12 @@ public final class ParameterizableType implements Reportable {
     }
 
     /**
-     * Creates a new {@link ParameterizableType} for the given type. The type must not be {@code
-     * null}. If the type represents a {@link ParameterizedType}, the parameters of the type are
-     * used to create the parameters of the {@link ParameterizableType}.
+     * Creates a new {@link ParameterizableType} for the given type. The type must not be
+     * {@code null}. If the type represents a {@link ParameterizedType}, the parameters of the type
+     * are used to create the parameters of the {@link ParameterizableType}.
      *
      * @param type the type to create a {@link ParameterizableType} for
+     *
      * @return a new {@link ParameterizableType} for the given type
      */
     public static ParameterizableType create(TypeView<?> type) {
@@ -83,6 +83,7 @@ public final class ParameterizableType implements Reportable {
      * Creates a new {@link Builder} for the given type. The type must not be {@code null}.
      *
      * @param type the type to create a {@link Builder} for
+     *
      * @return a new {@link Builder} for the given type
      */
     public static Builder builder(Class<?> type) {
@@ -95,6 +96,7 @@ public final class ParameterizableType implements Reportable {
      * pre-configure the parameters of the {@link Builder}.
      *
      * @param type the type to create a {@link Builder} for
+     *
      * @return a new {@link Builder} for the given type
      */
     public static Builder builder(TypeView<?> type) {
@@ -150,10 +152,10 @@ public final class ParameterizableType implements Reportable {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) {
+        if (this == o) {
             return true;
         }
-        if(o == null || this.getClass() != o.getClass()) {
+        if (o == null || this.getClass() != o.getClass()) {
             return false;
         }
         ParameterizableType that = (ParameterizableType) o;
@@ -174,16 +176,16 @@ public final class ParameterizableType implements Reportable {
      */
     public String toQualifiedString() {
         String parameters = this.parameters.stream()
-                .map(ParameterizableType::toQualifiedString)
-                .collect(Collectors.joining(", "));
+            .map(ParameterizableType::toQualifiedString)
+            .collect(Collectors.joining(", "));
         return this.type.getName() + (parameters.isEmpty() ? "" : "<" + parameters + ">");
     }
 
     @Override
     public String toString() {
         String parameters = this.parameters.stream()
-                .map(ParameterizableType::toString)
-                .collect(Collectors.joining(", "));
+            .map(ParameterizableType::toString)
+            .collect(Collectors.joining(", "));
         return this.type.getSimpleName() + (parameters.isEmpty() ? "" : "<" + parameters + ">");
     }
 
@@ -194,12 +196,11 @@ public final class ParameterizableType implements Reportable {
     }
 
     /**
-     * A builder for {@link ParameterizableType}s. This builder allows for the creation of {@link
-     * ParameterizableType}s with parameters.
-     *
-     * @since 0.5.0
+     * A builder for {@link ParameterizableType}s. This builder allows for the creation of
+     * {@link ParameterizableType}s with parameters.
      *
      * @author Guus Lieben
+     * @since 0.5.0
      */
     public static class Builder {
 
@@ -219,12 +220,12 @@ public final class ParameterizableType implements Reportable {
          *
          * @return Self, for chaining
          *
-         * @throws IllegalArgumentException if the number of parameters does not match the number
-         * of type parameters
+         * @throws IllegalArgumentException if the number of parameters does not match the number of
+         * type parameters
          */
         public Builder parameters(List<ParameterizableType> parameters) {
             int expectedSize = this.type.getTypeParameters().length;
-            if(parameters.size() != expectedSize) {
+            if (parameters.size() != expectedSize) {
                 throw new IllegalArgumentException(
                     "Expected %d parameters, but got %d".formatted(expectedSize, parameters.size())
                 );
@@ -239,9 +240,11 @@ public final class ParameterizableType implements Reportable {
          * parameters, the given parameters must be empty.
          *
          * @param parameters the new parameters
+         *
          * @return Self, for chaining
-         * @throws IllegalArgumentException if the number of parameters does not match the number
-         * of type parameters
+         *
+         * @throws IllegalArgumentException if the number of parameters does not match the number of
+         * type parameters
          */
         public Builder parameters(ParameterizableType... parameters) {
             return this.parameters(List.of(parameters));

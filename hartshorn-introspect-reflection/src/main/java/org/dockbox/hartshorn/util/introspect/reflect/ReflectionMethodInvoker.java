@@ -30,16 +30,15 @@ import org.dockbox.hartshorn.util.option.Option;
  * @param <T> the return type of the method
  * @param <P> the type of the instance on which the method is invoked
  *
- * @since 0.4.9
- *
  * @author Guus Lieben
+ * @since 0.4.9
  */
 public class ReflectionMethodInvoker<T, P> implements MethodInvoker<T, P> {
 
     @Override
     public Option<T> invoke(MethodView<P, T> method, P instance, Object[] args) throws Throwable {
         Option<Method> jlrMethod = method.method();
-        if(jlrMethod.absent()) {
+        if (jlrMethod.absent()) {
             return null;
         }
 

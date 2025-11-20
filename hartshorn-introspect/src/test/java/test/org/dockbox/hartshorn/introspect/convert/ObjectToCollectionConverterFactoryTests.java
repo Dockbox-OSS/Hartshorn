@@ -54,8 +54,10 @@ public class ObjectToCollectionConverterFactoryTests {
     }
 
     private static Converter<Object, Set<String>> createConverter() {
-        Introspector introspector = ConverterIntrospectionHelper.createIntrospectorForCollection(Set.class);
-        ConverterFactory<Object, Collection<?>> factory = new ObjectToCollectionConverterFactory(introspector);
+        Introspector introspector =
+            ConverterIntrospectionHelper.createIntrospectorForCollection(Set.class);
+        ConverterFactory<Object, Collection<?>> factory =
+            new ObjectToCollectionConverterFactory(introspector);
         return TypeUtils.unchecked(factory.create(Set.class), Converter.class);
     }
 }

@@ -24,22 +24,25 @@ import org.dockbox.hartshorn.inject.processing.ProcessingPriority;
 import org.dockbox.hartshorn.inject.scope.Scope;
 
 /**
- * Adapter for {@link HierarchicalBinderPostProcessor} that configures the binder with a {@link DefaultBindingConfigurer}.
+ * Adapter for {@link HierarchicalBinderPostProcessor} that configures the binder with a
+ * {@link DefaultBindingConfigurer}.
  *
  * @param configurer the {@link DefaultBindingConfigurer} to use for configuration
  *
- * @see DefaultBindingConfigurer
- *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @see DefaultBindingConfigurer
+ * @since 0.7.0
  */
 public record BindingConfigurerBinderPostProcessorAdapter(
-        DefaultBindingConfigurer configurer
+    DefaultBindingConfigurer configurer
 ) implements HierarchicalBinderPostProcessor {
 
     @Override
-    public void process(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder) {
+    public void process(
+        InjectionCapableApplication application,
+        Scope scope,
+        HierarchicalBinder binder
+    ) {
         this.configurer.configure(binder);
     }
 

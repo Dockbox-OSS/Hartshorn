@@ -23,15 +23,14 @@ import org.junit.jupiter.api.Assertions;
 import test.org.dockbox.hartshorn.util.introspect.support.annotations.MultipleElementAnnotation;
 
 /**
- * Complete test type for introspection tests, containing various fields, methods and annotations with different
- * modifiers and annotations.
- *
- * @since 0.7.0
+ * Complete test type for introspection tests, containing various fields, methods and annotations
+ * with different modifiers and annotations.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 @MultipleElementAnnotation
-@SuppressWarnings({ "FieldMayBeFinal", "unused" })
+@SuppressWarnings({"FieldMayBeFinal", "unused"})
 public class ConcreteTestType extends ParentTestType {
 
     @MultipleElementAnnotation
@@ -88,8 +87,10 @@ public class ConcreteTestType extends ParentTestType {
     }
 
     @MultipleElementAnnotation
-    public void publicAnnotatedMethod() {}
+    public void publicAnnotatedMethod() {
+    }
 
     @MultipleElementAnnotation
-    private void privateAnnotatedMethod() {}
+    private void privateAnnotatedMethod() {
+    }
 }

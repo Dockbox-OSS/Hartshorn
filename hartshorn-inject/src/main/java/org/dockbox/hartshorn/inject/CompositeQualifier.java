@@ -27,27 +27,27 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * A {@link CompositeQualifier} is a collection of {@link QualifierKey}s. It is used to qualify a {@link ComponentKey}
- * with zero or more qualifiers. While multiple {@link QualifierKey}s can be used to qualify a {@link ComponentKey},
- * only one {@link QualifierKey} of a specific type can be used. For example, a {@link ComponentKey} can be qualified
- * with one {@link QualifierKey} of type {@link Named}, but not with two or more.
- *
- * @see QualifierKey
- * @see ComponentKey
- *
- * @since 0.6.0
+ * A {@link CompositeQualifier} is a collection of {@link QualifierKey}s. It is used to qualify a
+ * {@link ComponentKey} with zero or more qualifiers. While multiple {@link QualifierKey}s can be
+ * used to qualify a {@link ComponentKey}, only one {@link QualifierKey} of a specific type can be
+ * used. For example, a {@link ComponentKey} can be qualified with one {@link QualifierKey} of type
+ * {@link Named}, but not with two or more.
  *
  * @author Guus Lieben
+ * @see QualifierKey
+ * @see ComponentKey
+ * @since 0.6.0
  */
 public class CompositeQualifier implements Reportable {
 
     private final Map<Class<?>, QualifierKey<?>> qualifiers = new HashMap<>();
 
     /**
-     * Adds the provided qualifier to this {@link CompositeQualifier}. If a qualifier of the same type already exists,
-     * it is replaced by the provided qualifier.
+     * Adds the provided qualifier to this {@link CompositeQualifier}. If a qualifier of the same
+     * type already exists, it is replaced by the provided qualifier.
      *
      * @param qualifier The qualifier to add.
+     *
      * @return This {@link CompositeQualifier} instance.
      */
     public CompositeQualifier add(QualifierKey<?> qualifier) {
@@ -56,10 +56,11 @@ public class CompositeQualifier implements Reportable {
     }
 
     /**
-     * Adds the provided qualifiers to this {@link CompositeQualifier}. If a qualifier of the same type already exists,
-     * it is replaced by the provided qualifier.
+     * Adds the provided qualifiers to this {@link CompositeQualifier}. If a qualifier of the same
+     * type already exists, it is replaced by the provided qualifier.
      *
      * @param qualifiers The qualifiers to add.
+     *
      * @return This {@link CompositeQualifier} instance.
      */
     public CompositeQualifier addAll(QualifierKey<?>... qualifiers) {
@@ -68,10 +69,11 @@ public class CompositeQualifier implements Reportable {
     }
 
     /**
-     * Adds the provided qualifiers to this {@link CompositeQualifier}. If a qualifier of the same type already exists,
-     * it is replaced by the provided qualifier.
+     * Adds the provided qualifiers to this {@link CompositeQualifier}. If a qualifier of the same
+     * type already exists, it is replaced by the provided qualifier.
      *
      * @param qualifiers The qualifiers to add.
+     *
      * @return This {@link CompositeQualifier} instance.
      */
     public CompositeQualifier addAll(Set<QualifierKey<?>> qualifiers) {
@@ -82,8 +84,9 @@ public class CompositeQualifier implements Reportable {
     }
 
     /**
-     * Adds the qualifiers of the provided {@link CompositeQualifier} to this {@link CompositeQualifier}. If a qualifier
-     * of the same type already exists, it is replaced by the provided qualifier.
+     * Adds the qualifiers of the provided {@link CompositeQualifier} to this
+     * {@link CompositeQualifier}. If a qualifier of the same type already exists, it is replaced by
+     * the provided qualifier.
      *
      * @param qualifier The qualifier to add.
      */
@@ -92,8 +95,8 @@ public class CompositeQualifier implements Reportable {
     }
 
     /**
-     * Returns all qualifiers of this {@link CompositeQualifier}. If no qualifiers are present, an empty set is
-     * returned.
+     * Returns all qualifiers of this {@link CompositeQualifier}. If no qualifiers are present, an
+     * empty set is returned.
      *
      * @return All qualifiers of this {@link CompositeQualifier}.
      */
@@ -132,13 +135,14 @@ public class CompositeQualifier implements Reportable {
 
     @Override
     public void report(DiagnosticsPropertyCollector collector) {
-        collector.property("qualifiers").writeDelegates(this.qualifiers.values().toArray(Reportable[]::new));
+        collector.property("qualifiers")
+            .writeDelegates(this.qualifiers.values().toArray(Reportable[]::new));
     }
 
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("qualifiers", this.qualifiers.values())
-                .describe();
+            .field("qualifiers", this.qualifiers.values())
+            .describe();
     }
 }

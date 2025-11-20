@@ -23,16 +23,16 @@ import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * A {@link ManagedComponentDependencyContext} for components that do not have associated {@link ComponentContainer
- * containers}, but are still managed by the framework.
+ * A {@link ManagedComponentDependencyContext} for components that do not have associated
+ * {@link ComponentContainer containers}, but are still managed by the framework.
  *
  * @param <T> the type of the component
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
-public final class ManagedComponentKeyDependencyContext<T> extends ManagedComponentDependencyContext<T> {
+public final class ManagedComponentKeyDependencyContext<T>
+    extends ManagedComponentDependencyContext<T> {
 
     private final TypeView<T> type;
     private final boolean processAfterInitialization;
@@ -52,12 +52,14 @@ public final class ManagedComponentKeyDependencyContext<T> extends ManagedCompon
      *
      * @param componentKey the component key of the component
      * @param type the type of the component
-     *
      * @param <T> the type of the component
      *
      * @return the builder
      */
-    public static <T> ManagedComponentKeyDependencyContextBuilder<T> builder(ComponentKey<T> componentKey, TypeView<T> type) {
+    public static <T> ManagedComponentKeyDependencyContextBuilder<T> builder(
+        ComponentKey<T> componentKey,
+        TypeView<T> type
+    ) {
         return new ManagedComponentKeyDependencyContextBuilder<>(componentKey, type);
     }
 
@@ -91,9 +93,8 @@ public final class ManagedComponentKeyDependencyContext<T> extends ManagedCompon
      *
      * @param <T> the type of the component
      *
-     * @since 0.6.0
-     *
      * @author Guus Lieben
+     * @since 0.6.0
      */
     public static final class ManagedComponentKeyDependencyContextBuilder<T> {
 
@@ -106,7 +107,10 @@ public final class ManagedComponentKeyDependencyContext<T> extends ManagedCompon
         private DependencyMap dependencies;
         private ConstructorView<? extends T> constructorView;
 
-        private ManagedComponentKeyDependencyContextBuilder(ComponentKey<T> componentKey, TypeView<T> type) {
+        private ManagedComponentKeyDependencyContextBuilder(
+            ComponentKey<T> componentKey,
+            TypeView<T> type
+        ) {
             this.componentKey = componentKey;
             this.type = type;
         }
@@ -115,6 +119,7 @@ public final class ManagedComponentKeyDependencyContext<T> extends ManagedCompon
          * Sets whether to process this component after initialization.
          *
          * @param processAfterInitialization whether to process after initialization
+         *
          * @return the current builder instance
          */
         public ManagedComponentKeyDependencyContextBuilder<T> processAfterInitialization(boolean processAfterInitialization) {
@@ -126,6 +131,7 @@ public final class ManagedComponentKeyDependencyContext<T> extends ManagedCompon
          * Sets the lifecycle type for this context.
          *
          * @param lifecycleType the lifecycle type
+         *
          * @return the current builder instance
          */
         public ManagedComponentKeyDependencyContextBuilder<T> lifecycleType(LifecycleType lifecycleType) {
@@ -134,10 +140,11 @@ public final class ManagedComponentKeyDependencyContext<T> extends ManagedCompon
         }
 
         /**
-         * Sets whether this component is to be lazily initialized. This has no effect if {@link #lifecycleType()} is
-         * set to {@link LifecycleType#PROTOTYPE}.
+         * Sets whether this component is to be lazily initialized. This has no effect if
+         * {@link #lifecycleType()} is set to {@link LifecycleType#PROTOTYPE}.
          *
          * @param lazy whether the component is lazy
+         *
          * @return the current builder instance
          */
         public ManagedComponentKeyDependencyContextBuilder<T> lazy(boolean lazy) {
@@ -149,6 +156,7 @@ public final class ManagedComponentKeyDependencyContext<T> extends ManagedCompon
          * Sets the dependencies for this context.
          *
          * @param dependencies the dependencies
+         *
          * @return the current builder instance
          */
         public ManagedComponentKeyDependencyContextBuilder<T> dependencies(DependencyMap dependencies) {
@@ -157,10 +165,11 @@ public final class ManagedComponentKeyDependencyContext<T> extends ManagedCompon
         }
 
         /**
-         * Sets the constructor view for this context. The constructor view represents the constructor
-         * used to instantiate the managed component.
+         * Sets the constructor view for this context. The constructor view represents the
+         * constructor used to instantiate the managed component.
          *
          * @param constructorView the constructor view
+         *
          * @return the current builder instance
          */
         public ManagedComponentKeyDependencyContextBuilder<T> constructorView(ConstructorView<? extends T> constructorView) {

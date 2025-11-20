@@ -53,5 +53,4 @@ public class StringToUUIDConverterTests {
         UUID uuid = converter.convert(null);
         Assertions.assertNull(uuid);
     }
-
 }

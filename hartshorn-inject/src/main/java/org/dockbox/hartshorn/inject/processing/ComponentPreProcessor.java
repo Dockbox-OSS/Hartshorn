@@ -30,9 +30,8 @@ import org.dockbox.hartshorn.inject.InjectionCapableApplication;
  * not processed by pre-processors, as bindings can be defined at any point in the application's
  * lifecycle.
  *
- * @since 0.4.9
- *
  * @author Guus Lieben
+ * @since 0.4.9
  */
 public abstract non-sealed class ComponentPreProcessor implements ComponentProcessor {
 
@@ -43,13 +42,17 @@ public abstract non-sealed class ComponentPreProcessor implements ComponentProce
     }
 
     /**
-     * Processes a given component. As component instances will not exist yet, this method does not expect
-     * the {@code instance} to be specified.
+     * Processes a given component. As component instances will not exist yet, this method does not
+     * expect the {@code instance} to be specified.
      *
      * @param application The application in which the component is being processed.
      * @param processingContext The type context of the component.
      * @param <T> The type of the component.
+     *
      * @see ComponentProcessor#process(ComponentProcessingContext)
      */
-    public abstract <T> void process(InjectionCapableApplication application, ComponentProcessingContext<T> processingContext);
+    public abstract <T> void process(
+        InjectionCapableApplication application,
+        ComponentProcessingContext<T> processingContext
+    );
 }

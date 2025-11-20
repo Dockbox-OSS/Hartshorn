@@ -22,10 +22,10 @@ import org.dockbox.hartshorn.inject.annotations.Inject
 @Component
 object KotlinObjectComponent {
 
-    @Inject
-    private lateinit var applicationContext: ApplicationContext
+  @Inject
+  private lateinit var applicationContext: ApplicationContext
 
-    fun applicationContext(): ApplicationContext {
-        return applicationContext
-    }
+  fun applicationContext(): ApplicationContext {
+    return applicationContext
+  }
 }

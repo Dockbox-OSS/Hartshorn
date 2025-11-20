@@ -28,15 +28,14 @@ import java.util.Set;
  *
  * @param <C> The type of the component that this hierarchy is for.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public interface AliasableBindingHierarchy<C> extends BindingHierarchy<C> {
 
     /**
-     * Add an alias to the current hierarchy. Note that this will affect all providers in the hierarchy,
-     * at all configured priorities.
+     * Add an alias to the current hierarchy. Note that this will affect all providers in the
+     * hierarchy, at all configured priorities.
      *
      * @param componentKey The key to register as an alias.
      */

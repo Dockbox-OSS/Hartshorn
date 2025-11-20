@@ -19,20 +19,22 @@ package org.dockbox.hartshorn.inject.processing;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * An exception that is thrown when a component is modified during a processing phase that does not allow for
- * such modifications.
- *
- * @since 0.4.12
+ * An exception that is thrown when a component is modified during a processing phase that does not
+ * allow for such modifications.
  *
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public class IllegalComponentModificationException extends ApplicationRuntimeException {
 
-    public IllegalComponentModificationException(String name, int priority, ComponentPostProcessor processor) {
+    public IllegalComponentModificationException(
+        String name,
+        int priority,
+        ComponentPostProcessor processor
+    ) {
         super("""
-              Component %s was modified during phase with priority %s by %s.
-              Component processors are only able to discard existing instances in phases with priority < 0.
-              """.formatted(name, priority, processor.getClass().getSimpleName()));
-
+            Component %s was modified during phase with priority %s by %s.
+            Component processors are only able to discard existing instances in phases with priority < 0.
+            """.formatted(name, priority, processor.getClass().getSimpleName()));
     }
 }

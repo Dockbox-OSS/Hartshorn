@@ -25,19 +25,18 @@ import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
  * A strategy for selecting the provider with the highest priority from a {@link BindingHierarchy}.
  * If the hierarchy is empty, {@code null} is returned.
  *
- * @see ProviderSelectionStrategy
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see ProviderSelectionStrategy
+ * @since 0.5.0
  */
 public class HighestPriorityProviderSelectionStrategy implements ProviderSelectionStrategy {
 
     /**
-     * A singleton instance of this strategy. This instance can be used to avoid unnecessary
-     * object creation.
+     * A singleton instance of this strategy. This instance can be used to avoid unnecessary object
+     * creation.
      */
-    public static final ProviderSelectionStrategy INSTANCE = new HighestPriorityProviderSelectionStrategy();
+    public static final ProviderSelectionStrategy INSTANCE =
+        new HighestPriorityProviderSelectionStrategy();
 
     @Override
     public <T> InstantiationStrategy<T> selectProvider(BindingHierarchy<T> hierarchy) {

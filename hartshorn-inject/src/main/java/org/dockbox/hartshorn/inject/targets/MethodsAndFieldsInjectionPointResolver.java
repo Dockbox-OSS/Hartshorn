@@ -39,12 +39,10 @@ import java.util.Set;
  * the {@link Populate} annotation on the component type. If no {@link Populate} annotation is
  * present, all injection points will be resolved.
  *
+ * @author Guus Lieben
  * @see Populate
  * @see ComponentInjectionPoint
- *
  * @since 0.6.0
- *
- * @author Guus Lieben
  */
 public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectionPointsResolver {
 
@@ -57,22 +55,22 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
     @Override
     public <T> Set<ComponentInjectionPoint<T>> resolve(TypeView<T> type) {
         Set<Populate.Type> types = type.annotations().get(Populate.class)
-                .map(Populate::value)
-                .map(value -> EnumSet.copyOf(Set.of(value)))
-                .orElseGet(() -> EnumSet.allOf(Populate.Type.class));
+            .map(Populate::value)
+            .map(value -> EnumSet.copyOf(Set.of(value)))
+            .orElseGet(() -> EnumSet.allOf(Populate.Type.class));
 
         Set<ComponentInjectionPoint<T>> injectionPoints = new HashSet<>();
         if (types.contains(Populate.Type.EXECUTABLES)) {
             type.methods().all().stream()
-                    .filter(this::isInjectable)
-                    .map(ComponentMethodInjectionPoint::new)
-                    .forEach(injectionPoints::add);
+                .filter(this::isInjectable)
+                .map(ComponentMethodInjectionPoint::new)
+                .forEach(injectionPoints::add);
         }
         if (types.contains(Populate.Type.FIELDS)) {
             type.fields().all().stream()
-                    .filter(this::isInjectable)
-                    .map(ComponentFieldInjectionPoint::new)
-                    .forEach(injectionPoints::add);
+                .filter(this::isInjectable)
+                .map(ComponentFieldInjectionPoint::new)
+                .forEach(injectionPoints::add);
         }
         return injectionPoints;
     }
@@ -83,38 +81,45 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
     }
 
     /**
-     * Creates a {@link ContextualInitializer} for the {@link MethodsAndFieldsInjectionPointResolver}, which may be
-     * customized using the provided {@link Customizer}.
+     * Creates a {@link ContextualInitializer} for the
+     * {@link MethodsAndFieldsInjectionPointResolver}, which may be customized using the provided
+     * {@link Customizer}.
      *
      * @param customizer The customizer to configure the resolver
+     *
      * @return A contextual initializer for the resolver
      */
-    public static ContextualInitializer<InjectorEnvironment, ComponentInjectionPointsResolver> create(Customizer<Configurer> customizer) {
+    public static ContextualInitializer<InjectorEnvironment, ComponentInjectionPointsResolver> create(
+        Customizer<Configurer> customizer
+    ) {
         return context -> {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
 
-            List<Class<? extends Annotation>> annotationTypes = configurer.annotations.initialize(context);
+            List<Class<? extends Annotation>> annotationTypes =
+                configurer.annotations.initialize(context);
             return new MethodsAndFieldsInjectionPointResolver(Set.copyOf(annotationTypes));
         };
     }
 
     /**
-     * A configurer for the {@link MethodsAndFieldsInjectionPointResolver}, that allows for the configuration of
-     * supported annotations.
-     *
-     * @since 0.6.0
+     * A configurer for the {@link MethodsAndFieldsInjectionPointResolver}, that allows for the
+     * configuration of supported annotations.
      *
      * @author Guus Lieben
+     * @since 0.6.0
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<InjectorEnvironment, Class<? extends Annotation>> annotations = LazyStreamableConfigurer.of(Inject.class);
+        private final LazyStreamableConfigurer<InjectorEnvironment, Class<? extends Annotation>>
+            annotations = LazyStreamableConfigurer.of(Inject.class);
 
         /**
-         * Configures the annotations to be used for injection points. By default, this only contains {@link Inject}.
+         * Configures the annotations to be used for injection points. By default, this only
+         * contains {@link Inject}.
          *
          * @param annotations The annotations to use for injection points
+         *
          * @return The current configurer, for chaining
          */
         @SafeVarargs
@@ -124,9 +129,11 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
         }
 
         /**
-         * Configures the annotations to be used for injection points. By default, this only contains {@link Inject}.
+         * Configures the annotations to be used for injection points. By default, this only
+         * contains {@link Inject}.
          *
          * @param annotations The annotations to use for injection points
+         *
          * @return The current configurer, for chaining
          */
         public Configurer annotations(Set<Class<? extends Annotation>> annotations) {
@@ -135,9 +142,11 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
         }
 
         /**
-         * Configures the annotations to be used for injection points. By default, this only contains {@link Inject}.
+         * Configures the annotations to be used for injection points. By default, this only
+         * contains {@link Inject}.
          *
          * @param customizer The customizer to configure the annotations
+         *
          * @return The current configurer, for chaining
          */
         public Configurer annotations(Customizer<StreamableConfigurer<InjectorEnvironment, Class<? extends Annotation>>> customizer) {
@@ -146,28 +155,32 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
         }
 
         /**
-         * Adds support for {@code javax.inject.Inject} and {@code javax.annotation.Resource} annotations if they are present
-         * on the classpath. Disabled by default, but can be enabled for backwards compatibility.
+         * Adds support for {@code javax.inject.Inject} and {@code javax.annotation.Resource}
+         * annotations if they are present on the classpath. Disabled by default, but can be enabled
+         * for backwards compatibility.
          *
          * @return the current configurer, for chaining
          */
         public Configurer withJavaxAnnotations() {
             return this.annotations(collection -> {
                 TypeUtils.forName("javax.inject.Inject", Annotation.class).peek(collection::add);
-                TypeUtils.forName("javax.annotation.Resource", Annotation.class).peek(collection::add);
+                TypeUtils.forName("javax.annotation.Resource", Annotation.class)
+                    .peek(collection::add);
             });
         }
 
         /**
-         * Adds support for {@code jakarta.inject.Inject} and {@code jakarta.annotation.Resource} annotations if they are present
-         * on the classpath. Disabled by default, but can be enabled for backwards compatibility.
+         * Adds support for {@code jakarta.inject.Inject} and {@code jakarta.annotation.Resource}
+         * annotations if they are present on the classpath. Disabled by default, but can be enabled
+         * for backwards compatibility.
          *
          * @return the current configurer, for chaining
          */
         public Configurer withJakartaAnnotations() {
             return this.annotations(collection -> {
                 TypeUtils.forName("jakarta.inject.Inject", Annotation.class).peek(collection::add);
-                TypeUtils.forName("jakarta.annotation.Resource", Annotation.class).peek(collection::add);
+                TypeUtils.forName("jakarta.annotation.Resource", Annotation.class)
+                    .peek(collection::add);
             });
         }
     }

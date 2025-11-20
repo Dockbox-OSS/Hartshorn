@@ -21,9 +21,8 @@ import test.org.dockbox.hartshorn.util.introspect.support.annotations.MultipleEl
 /**
  * Parent class for {@link ConcreteTestType}.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 @SuppressWarnings("unused")
 public abstract class ParentTestType {
@@ -31,6 +30,6 @@ public abstract class ParentTestType {
     private final String parentField = "parentField";
 
     @MultipleElementAnnotation
-    public void parentMethod() {}
-
+    public void parentMethod() {
+    }
 }

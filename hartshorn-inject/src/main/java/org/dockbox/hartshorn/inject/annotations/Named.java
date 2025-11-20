@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.inject.annotations;
 
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -25,24 +24,23 @@ import java.lang.annotation.Target;
 /**
  * Standard string qualifier annotation.
  *
- * @since 0.6.0
- *
- * @see Qualifier
- *
  * @author Guus Lieben
+ * @see Qualifier
+ * @since 0.6.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({
-        ElementType.METHOD,
-        ElementType.FIELD,
-        ElementType.PARAMETER,
+    ElementType.METHOD,
+    ElementType.FIELD,
+    ElementType.PARAMETER,
 })
 @Qualifier
 public @interface Named {
 
     /**
-     * The value of the qualifier. This may be any value, and does not have to follow any specific format (though
-     * it is recommended to use a format that is easily recognizable and consistent across the application).
+     * The value of the qualifier. This may be any value, and does not have to follow any specific
+     * format (though it is recommended to use a format that is easily recognizable and consistent
+     * across the application).
      *
      * @return the value
      */

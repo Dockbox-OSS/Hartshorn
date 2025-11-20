@@ -30,14 +30,14 @@ import org.dockbox.hartshorn.util.option.Option;
 import org.dockbox.hartshorn.util.types.TypeUtils;
 
 /**
- * Standard implementation of {@link HierarchicalBinder}, with additional support for aliasing and complex
- * hierarchy lookups. By default, this binder solely supports the global application scope.
- *
- * @since 0.7.0
+ * Standard implementation of {@link HierarchicalBinder}, with additional support for aliasing and
+ * complex hierarchy lookups. By default, this binder solely supports the global application scope.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
-public class SimpleHierarchicalBinder implements HierarchicalAliasCapableBinder, NestedHierarchyLookup {
+public class SimpleHierarchicalBinder
+    implements HierarchicalAliasCapableBinder, NestedHierarchyLookup {
 
     private final InjectionCapableApplication application;
     private final BindingAliasNormalizer bindingAliasNormalizer;
@@ -45,7 +45,11 @@ public class SimpleHierarchicalBinder implements HierarchicalAliasCapableBinder,
 
     private HierarchyCache hierarchyCache;
 
-    public SimpleHierarchicalBinder(InjectionCapableApplication application, BindingAliasNormalizer bindingAliasNormalizer, SingletonCache singletonCache) {
+    public SimpleHierarchicalBinder(
+        InjectionCapableApplication application,
+        BindingAliasNormalizer bindingAliasNormalizer,
+        SingletonCache singletonCache
+    ) {
         this.application = application;
         this.bindingAliasNormalizer = bindingAliasNormalizer;
         this.singletonCache = singletonCache;
@@ -53,6 +57,7 @@ public class SimpleHierarchicalBinder implements HierarchicalAliasCapableBinder,
 
     /**
      * Returns the application scope.
+     *
      * @return The application scope.
      */
     protected Scope applicationScope() {
@@ -65,13 +70,12 @@ public class SimpleHierarchicalBinder implements HierarchicalAliasCapableBinder,
      * @return The hierarchy cache.
      */
     public HierarchyCache hierarchyCache() {
-        if (this.hierarchyCache == null ) {
+        if (this.hierarchyCache == null) {
             this.hierarchyCache = new HierarchyCache(
-                    this.application.environment().configuration(),
-                    this.application.defaultBinder(),
-                    this
+                this.application.environment().configuration(),
+                this.application.defaultBinder(),
+                this
             );
-
         }
         return this.hierarchyCache;
     }
@@ -86,7 +90,8 @@ public class SimpleHierarchicalBinder implements HierarchicalAliasCapableBinder,
     }
 
     /**
-     * Creates a new {@link BindingFunction} for the given component key within the specified scope.
+     * Creates a new {@link BindingFunction} for the given component key within the specified
+     * scope.
      *
      * @param scope The scope in which to bind the component.
      * @param key The component key to bind.
@@ -96,25 +101,28 @@ public class SimpleHierarchicalBinder implements HierarchicalAliasCapableBinder,
      */
     protected <C> AliasBindingFunction<C> bind(Scope scope, ComponentKey<C> key) {
         BindingHierarchy<C> hierarchy = this.hierarchy(key);
-        AliasableBindingHierarchy<C> aliasableHierarchy = hierarchy instanceof AliasableBindingHierarchy<C> aliasable
+        AliasableBindingHierarchy<C> aliasableHierarchy =
+            hierarchy instanceof AliasableBindingHierarchy<C> aliasable
                 ? aliasable
                 : new AliasableBindingHierarchyAdapter<>(hierarchy);
 
         Option<ScopeModuleContext> scopeModuleContext = resolveScopeModuleContext();
         return new HierarchyBindingFunction<>(
-                aliasableHierarchy, this, this.singletonCache,
-                scope, scopeModuleContext.orNull(),
-                this.bindingAliasNormalizer
+            aliasableHierarchy, this, this.singletonCache,
+            scope, scopeModuleContext.orNull(),
+            this.bindingAliasNormalizer
         );
     }
 
     /**
-     * Resolves the {@link ScopeModuleContext} from the application, or initializes a new one if none is found.
+     * Resolves the {@link ScopeModuleContext} from the application, or initializes a new one if
+     * none is found.
+     *
      * @return The resolved or newly created scope module context.
      */
     protected Option<ScopeModuleContext> resolveScopeModuleContext() {
         ContextIdentity<ScopeModuleContext> scopeModuleContextKey = ScopeModuleContext.createKey(
-                () -> this.applicationScope().installableScopeType()
+            () -> this.applicationScope().installableScopeType()
         );
         return this.application.firstContext(scopeModuleContextKey);
     }
@@ -134,13 +142,16 @@ public class SimpleHierarchicalBinder implements HierarchicalAliasCapableBinder,
     public <T> BindingHierarchy<T> hierarchy(ComponentKey<T> key, boolean useGlobalIfAbsent) {
         HierarchyCache cache = this.hierarchyCache();
         BindingHierarchy<?> hierarchy = cache.getOrComputeHierarchy(key, useGlobalIfAbsent);
-        BindingHierarchy<T> adjustedHierarchy = TypeUtils.unchecked(hierarchy, BindingHierarchy.class);
+        BindingHierarchy<T> adjustedHierarchy =
+            TypeUtils.unchecked(hierarchy, BindingHierarchy.class);
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
-        if (adjustedHierarchy instanceof SubscribableBindingHierarchy || adjustedHierarchy instanceof CollectionBindingHierarchy<?>) {
+        if (adjustedHierarchy instanceof SubscribableBindingHierarchy
+            || adjustedHierarchy instanceof CollectionBindingHierarchy<?>) {
             return adjustedHierarchy;
         }
         else {
-            return new SubscribableBindingHierarchy<>(adjustedHierarchy, updated -> cache.put(key.view(), updated));
+            return new SubscribableBindingHierarchy<>(adjustedHierarchy,
+                updated -> cache.put(key.view(), updated));
         }
     }
 

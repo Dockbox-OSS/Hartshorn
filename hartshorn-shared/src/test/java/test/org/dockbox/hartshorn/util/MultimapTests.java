@@ -37,13 +37,13 @@ public class MultimapTests {
 
     public static Stream<Arguments> multiMapImplementations() {
         return Stream.of(
-                Arguments.of(new ArrayListMultiMap<>()),
-                Arguments.of(new HashSetMultiMap<>()),
-                Arguments.of(new CopyOnWriteArrayListMultiMap<>()),
-                Arguments.of(new ConcurrentSetMultiMap<>()),
-                Arguments.of(new ConcurrentSetTreeMultiMap<>()),
-                Arguments.of(new SynchronizedArrayListMultiMap<>()),
-                Arguments.of(new SynchronizedHashSetMultiMap<>())
+            Arguments.of(new ArrayListMultiMap<>()),
+            Arguments.of(new HashSetMultiMap<>()),
+            Arguments.of(new CopyOnWriteArrayListMultiMap<>()),
+            Arguments.of(new ConcurrentSetMultiMap<>()),
+            Arguments.of(new ConcurrentSetTreeMultiMap<>()),
+            Arguments.of(new SynchronizedArrayListMultiMap<>()),
+            Arguments.of(new SynchronizedHashSetMultiMap<>())
         );
     }
 

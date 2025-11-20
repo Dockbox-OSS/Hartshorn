@@ -36,7 +36,8 @@ public class JacksonPropertyRegistryPathLoaderTests {
     @Test
     void testComplexYamlConfigurationCanBeLoaded() throws IOException {
         // Given
-        PropertyRegistryPathLoader loader = new JacksonYamlPropertyRegistryLoader(new StylePropertyPathFormatter());
+        PropertyRegistryPathLoader loader =
+            new JacksonYamlPropertyRegistryLoader(new StylePropertyPathFormatter());
         Path path = Path.of("src/test/resources/complex-configuration.yml");
 
         // When: Loading registry
@@ -64,51 +65,51 @@ public class JacksonPropertyRegistryPathLoaderTests {
 
         // Then: Property values should be loaded correctly
         registry.value("sample.complex.configuration[0].name")
-                .peek(value -> Assertions.assertEquals("name1", value))
-                .orElseThrow(() -> new AssertionError("Property not found"));
+            .peek(value -> Assertions.assertEquals("name1", value))
+            .orElseThrow(() -> new AssertionError("Property not found"));
         registry.value("sample.complex.configuration[0].value")
-                .peek(value -> Assertions.assertEquals("value1", value))
-                .orElseThrow(() -> new AssertionError("Property not found"));
+            .peek(value -> Assertions.assertEquals("value1", value))
+            .orElseThrow(() -> new AssertionError("Property not found"));
 
         registry.value("sample.complex.configuration[1].name")
-                .peek(value -> Assertions.assertEquals("name2", value))
-                .orElseThrow(() -> new AssertionError("Property not found"));
+            .peek(value -> Assertions.assertEquals("name2", value))
+            .orElseThrow(() -> new AssertionError("Property not found"));
         registry.value("sample.complex.configuration[1].value")
-                .peek(value -> Assertions.assertEquals("value2", value))
-                .orElseThrow(() -> new AssertionError("Property not found"));
+            .peek(value -> Assertions.assertEquals("value2", value))
+            .orElseThrow(() -> new AssertionError("Property not found"));
 
         registry.value("sample.complex.configuration[2].name")
-                .peek(value -> Assertions.assertEquals("name3", value))
-                .orElseThrow(() -> new AssertionError("Property not found"));
+            .peek(value -> Assertions.assertEquals("name3", value))
+            .orElseThrow(() -> new AssertionError("Property not found"));
         registry.value("sample.complex.configuration[2].value")
-                .peek(value -> Assertions.assertEquals("value3", value))
-                .orElseThrow(() -> new AssertionError("Property not found"));
+            .peek(value -> Assertions.assertEquals("value3", value))
+            .orElseThrow(() -> new AssertionError("Property not found"));
 
         registry.value("sample.complex.values", StandardValuePropertyParsers.STRING_LIST)
-                .peek(values -> {
-                    Assertions.assertEquals(3, values.length);
-                    Assertions.assertEquals("value1", values[0]);
-                    Assertions.assertEquals("value2", values[1]);
-                    Assertions.assertEquals("value3", values[2]);
-                })
-                .orElseThrow(() -> new AssertionError("Property not found"));
+            .peek(values -> {
+                Assertions.assertEquals(3, values.length);
+                Assertions.assertEquals("value1", values[0]);
+                Assertions.assertEquals("value2", values[1]);
+                Assertions.assertEquals("value3", values[2]);
+            })
+            .orElseThrow(() -> new AssertionError("Property not found"));
 
         registry.value("sample.complex.flat")
-                .peek(value -> Assertions.assertEquals("value1", value))
-                .orElseThrow(() -> new AssertionError("Property not found"));
+            .peek(value -> Assertions.assertEquals("value1", value))
+            .orElseThrow(() -> new AssertionError("Property not found"));
 
         registry.value("sample.complex.list[0].name")
-                .peek(value -> Assertions.assertEquals("name1", value))
-                .orElseThrow(() -> new AssertionError("Property not found"));
+            .peek(value -> Assertions.assertEquals("name1", value))
+            .orElseThrow(() -> new AssertionError("Property not found"));
         registry.value("sample.complex.list[0].value")
-                .peek(value -> Assertions.assertEquals("value1", value))
-                .orElseThrow(() -> new AssertionError("Property not found"));
+            .peek(value -> Assertions.assertEquals("value1", value))
+            .orElseThrow(() -> new AssertionError("Property not found"));
 
         registry.value("sample.complex.list[1].name")
-                .peek(value -> Assertions.assertEquals("name2", value))
-                .orElseThrow(() -> new AssertionError("Property not found"));
+            .peek(value -> Assertions.assertEquals("name2", value))
+            .orElseThrow(() -> new AssertionError("Property not found"));
         registry.value("sample.complex.list[1].value")
-                .peek(value -> Assertions.assertEquals("value2", value))
-                .orElseThrow(() -> new AssertionError("Property not found"));
+            .peek(value -> Assertions.assertEquals("value2", value))
+            .orElseThrow(() -> new AssertionError("Property not found"));
     }
 }

@@ -21,9 +21,8 @@ import org.dockbox.hartshorn.util.introspect.Introspector;
 /**
  * Specialized view that is aware of the {@link Introspector} that created it.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface IntrospectorAwareView {
 

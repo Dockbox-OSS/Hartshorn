@@ -22,18 +22,17 @@ import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * A {@link DependencyDeclarationContext} that is used to declare a {@link ComponentPostProcessor} as a
- * component within the IoC container.
+ * A {@link DependencyDeclarationContext} that is used to declare a {@link ComponentPostProcessor}
+ * as a component within the IoC container.
  *
  * @param <T> The type of the post processor that is being declared
  * @param type The type of the post processor that is being declared
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public record PostProcessorDependencyDeclarationContext<T extends ComponentPostProcessor>(
-        TypeView<T> type
+    TypeView<T> type
 ) implements DependencyDeclarationContext<T> {
 
     @Override

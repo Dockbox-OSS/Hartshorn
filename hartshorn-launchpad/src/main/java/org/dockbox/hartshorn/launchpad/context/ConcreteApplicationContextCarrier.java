@@ -19,16 +19,15 @@ package org.dockbox.hartshorn.launchpad.context;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 
 /**
- * A concrete implementation of {@link ApplicationContextCarrier}, typically only used
- * to back proxy implementations of {@link ApplicationContextCarrier}.
+ * A concrete implementation of {@link ApplicationContextCarrier}, typically only used to back proxy
+ * implementations of {@link ApplicationContextCarrier}.
  *
  * @param applicationContext the application context to carry
  *
- * @see org.dockbox.hartshorn.launchpad.processing.ContextCarrierDelegationPostProcessor
- *
- * @since 0.4.8
- *
  * @author Guus Lieben
+ * @see org.dockbox.hartshorn.launchpad.processing.ContextCarrierDelegationPostProcessor
+ * @since 0.4.8
  */
-public record ConcreteApplicationContextCarrier(ApplicationContext applicationContext) implements ApplicationContextCarrier {
+public record ConcreteApplicationContextCarrier(ApplicationContext applicationContext)
+    implements ApplicationContextCarrier {
 }

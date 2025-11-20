@@ -28,16 +28,16 @@ import java.util.function.Function;
 
 /**
  * A provider is a class that can provide an instance of a {@link ComponentKey} binding. The
- * provider is not always responsible for creating the instance, but it can be used to create
- * the instance if it is not available.
+ * provider is not always responsible for creating the instance, but it can be used to create the
+ * instance if it is not available.
  *
  * @param <T> The type instance to provide.
  *
- * @since 0.4.3
- *
  * @author Guus Lieben
+ * @since 0.4.3
  */
-public sealed interface InstantiationStrategy<T> permits TypeAwareInstantiationStrategy, NonTypeAwareInstantiationStrategy,
+public sealed interface InstantiationStrategy<T>
+    permits TypeAwareInstantiationStrategy, NonTypeAwareInstantiationStrategy,
     CompositeInstantiationStrategy {
 
     /**
@@ -51,14 +51,19 @@ public sealed interface InstantiationStrategy<T> permits TypeAwareInstantiationS
      *
      * @return The instance, if it can be created.
      */
-    Option<ObjectContainer<T>> provide(InjectionCapableApplication application, ComponentRequestContext requestContext, Scope scope) throws ApplicationException;
+    Option<ObjectContainer<T>> provide(
+        InjectionCapableApplication application,
+        ComponentRequestContext requestContext,
+        Scope scope
+    ) throws ApplicationException;
 
     /**
      * Maps the result of this provider using the provided {@link Function}. The result of the
-     * function is returned as the result of the provider. This may return a new provider, or
-     * this provider.
+     * function is returned as the result of the provider. This may return a new provider, or this
+     * provider.
      *
      * @param mappingFunction The function to apply to the result of this provider.
+     *
      * @return A provider that applies the provided function to the result of this provider.
      */
     default InstantiationStrategy<T> map(Function<ObjectContainer<T>, ObjectContainer<T>> mappingFunction) {
@@ -67,9 +72,9 @@ public sealed interface InstantiationStrategy<T> permits TypeAwareInstantiationS
 
     /**
      * Indicates the default lifecycle of components provided by this provider. This is used to
-     * determine whether the result of this provider should be cached, and whether this provider
-     * may be called multiple times. Note that it remains up to the container to decide whether
-     * to respect this lifecycle.
+     * determine whether the result of this provider should be cached, and whether this provider may
+     * be called multiple times. Note that it remains up to the container to decide whether to
+     * respect this lifecycle.
      *
      * @return The default lifecycle of components provided by this provider.
      */
@@ -77,12 +82,12 @@ public sealed interface InstantiationStrategy<T> permits TypeAwareInstantiationS
 
     /**
      * Indicates the default laziness of components provided by this provider. This is used to
-     * determine whether the result of this provider should be created eagerly, or lazily. Note
-     * that it remains up to the container to decide whether to respect this laziness.
+     * determine whether the result of this provider should be created eagerly, or lazily. Note that
+     * it remains up to the container to decide whether to respect this laziness.
      *
      * <p>If the implementation of this provider does not support laziness, this method should
-     * return {@link Tristate#UNDEFINED}, so the container can decide whether to eagerly or
-     * lazily create components.
+     * return {@link Tristate#UNDEFINED}, so the container can decide whether to eagerly or lazily
+     * create components.
      *
      * @return The default laziness of components provided by this provider.
      */

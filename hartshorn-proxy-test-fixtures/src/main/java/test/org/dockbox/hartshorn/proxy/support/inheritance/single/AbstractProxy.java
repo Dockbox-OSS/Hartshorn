@@ -17,12 +17,11 @@
 package test.org.dockbox.hartshorn.proxy.support.inheritance.single;
 
 /**
- * Abstract class that implements the {@link InterfaceProxy} interface. Intended to test the proxying of
- * abstract classes and interfaces.
- *
- * @since 0.7.0
+ * Abstract class that implements the {@link InterfaceProxy} interface. Intended to test the
+ * proxying of abstract classes and interfaces.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public abstract class AbstractProxy implements InterfaceProxy {
     @Override

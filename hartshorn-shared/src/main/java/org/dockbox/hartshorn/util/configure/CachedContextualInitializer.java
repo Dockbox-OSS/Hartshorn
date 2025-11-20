@@ -32,11 +32,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <I> the type of the input
  * @param <T> the type of the result
  *
- * @see ContextualInitializer
- *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @see ContextualInitializer
+ * @since 0.7.0
  */
 public class CachedContextualInitializer<I, T> implements ContextualInitializer<I, T> {
 
@@ -50,8 +48,8 @@ public class CachedContextualInitializer<I, T> implements ContextualInitializer<
     @Override
     public T initialize(SingleElementContext<? extends I> context) {
         return this.values.computeIfAbsent(
-                context.input(),
-                input -> this.initializer.initialize(context)
+            context.input(),
+            input -> this.initializer.initialize(context)
         );
     }
 }

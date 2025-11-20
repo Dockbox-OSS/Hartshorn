@@ -13,22 +13,46 @@ import org.slf4j.LoggerFactory;
 public class LoggableCallbackPostProcessor extends ProxyCallbackPostProcessor {
 
     @Override
-    public <T> boolean preconditions(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> boolean preconditions(
+        InjectionCapableApplication application,
+        MethodView<T, ?> method,
+        ComponentKey<T> key,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) {
         return method.annotations().has(Loggable.class);
     }
 
     @Override
-    public @Nullable <T> ProxyCallback<T> doBefore(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public @Nullable <T> ProxyCallback<T> doBefore(
+        InjectionCapableApplication application,
+        MethodView<T, ?> method,
+        ComponentKey<T> key,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) {
         return context -> getLogger(processingContext).info("Before: {}", method.qualifiedName());
     }
 
     @Override
-    public @Nullable <T> ProxyCallback<T> doAfter(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public @Nullable <T> ProxyCallback<T> doAfter(
+        InjectionCapableApplication application,
+        MethodView<T, ?> method,
+        ComponentKey<T> key,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) {
         return context -> getLogger(processingContext).info("After: {}", method.qualifiedName());
     }
 
     @Override
-    public @Nullable <T> ProxyCallback<T> doAfterThrowing(InjectionCapableApplication application, MethodView<T, ?> method, ComponentKey<T> key, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public @Nullable <T> ProxyCallback<T> doAfterThrowing(
+        InjectionCapableApplication application,
+        MethodView<T, ?> method,
+        ComponentKey<T> key,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) {
         return context -> {
             Throwable error = context.error();
             String message = error != null ? error.getMessage() : "Unknown error";

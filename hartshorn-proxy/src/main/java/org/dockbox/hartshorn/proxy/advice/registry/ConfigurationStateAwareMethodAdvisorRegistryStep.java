@@ -29,17 +29,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
- * Basic implementation of {@link StateAwareMethodAdvisorRegistryStep}. This implementation is used to configure the
- * {@link StateAwareAdvisorRegistry} by adding {@link MethodInterceptor}s and {@link MethodWrapper}s. As both the
- * registry and this registry step are stateful, the registry is marked as modified when this step is configured.
+ * Basic implementation of {@link StateAwareMethodAdvisorRegistryStep}. This implementation is used
+ * to configure the {@link StateAwareAdvisorRegistry} by adding {@link MethodInterceptor}s and
+ * {@link MethodWrapper}s. As both the registry and this registry step are stateful, the registry is
+ * marked as modified when this step is configured.
  *
  * @param <T> the type of the proxy object
  * @param <R> the return type of the method
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
-public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R> implements StateAwareMethodAdvisorRegistryStep<T, R> {
+public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R>
+    implements StateAwareMethodAdvisorRegistryStep<T, R> {
 
     private final Collection<MethodWrapper<T>> wrappers = ConcurrentHashMap.newKeySet();
     private final StateAwareAdvisorRegistry<T> registry;
@@ -48,7 +50,10 @@ public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R> implements S
     private MethodInterceptor<T, R> interceptor;
     private T delegate;
 
-    public ConfigurationStateAwareMethodAdvisorRegistryStep(StateAwareAdvisorRegistry<T> registry, Method method) {
+    public ConfigurationStateAwareMethodAdvisorRegistryStep(
+        StateAwareAdvisorRegistry<T> registry,
+        Method method
+    ) {
         this.registry = registry;
         this.method = method;
         this.verifyConstraints();
@@ -56,7 +61,8 @@ public class ConfigurationStateAwareMethodAdvisorRegistryStep<T, R> implements S
 
     private void verifyConstraints() {
         if (Modifier.isFinal(this.method.getModifiers())) {
-            throw new IllegalArgumentException("Cannot create advisor for method " + this.method.getName());
+            throw new IllegalArgumentException("Cannot create advisor for method "
+                + this.method.getName());
         }
     }
 

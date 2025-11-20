@@ -32,37 +32,41 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A {@link ResourceLookup} implementation that allows for multiple {@link ResourceLookupStrategy} implementations to be
- * used. The strategy to use is determined by the prefix of the source string. If no prefix is provided, the fallback
- * strategy is used.
+ * A {@link ResourceLookup} implementation that allows for multiple {@link ResourceLookupStrategy}
+ * implementations to be used. The strategy to use is determined by the prefix of the source string.
+ * If no prefix is provided, the fallback strategy is used.
  *
- * <p>Source strings are expected to be in the format {@code strategy:source}, where {@code strategy} is the {@link
- * ResourceLookupStrategy#name() name} of the strategy to use, and {@code source} is the source string to use for the
- * strategy. Strategy names are case-sensitive.
+ * <p>Source strings are expected to be in the format {@code strategy:source}, where
+ * {@code strategy} is the {@link
+ * ResourceLookupStrategy#name() name} of the strategy to use, and {@code source} is the source
+ * string to use for the strategy. Strategy names are case-sensitive.
  *
  * <p>For example, the source string {@code classpath:data.json} will be resolved using the {@link
- * ClassPathResourceLookupStrategy}, while the source string {@code fs:data.json} will be resolved using the {@link
- * FileSystemLookupStrategy} (assuming both strategies are registered with this {@link ResourceLookup} instance).
+ * ClassPathResourceLookupStrategy}, while the source string {@code fs:data.json} will be resolved
+ * using the {@link FileSystemLookupStrategy} (assuming both strategies are registered with this
+ * {@link ResourceLookup} instance).
  *
  * <p>If no strategies are registered, the fallback strategy is used for all source strings.
  *
+ * @author Guus Lieben
  * @see ResourceLookup
  * @see ResourceLookupStrategy
- *
  * @since 0.5.0
- *
- * @author Guus Lieben
  */
 public class StrategyResourceLookup implements ResourceLookup {
 
     public static final String STRATEGY_SEPARATOR = ":";
-    private static final Pattern STRATEGY_PATTERN = Pattern.compile("(.+)" + STRATEGY_SEPARATOR + "(.+)");
+    private static final Pattern STRATEGY_PATTERN =
+        Pattern.compile("(.+)" + STRATEGY_SEPARATOR + "(.+)");
 
     private final Map<String, ResourceLookupStrategy> strategies = new ConcurrentHashMap<>();
     private final ApplicationEnvironment environment;
     private final ResourceLookupStrategy fallbackStrategy;
 
-    public StrategyResourceLookup(ApplicationEnvironment environment, ResourceLookupStrategy fallbackStrategy) {
+    public StrategyResourceLookup(
+        ApplicationEnvironment environment,
+        ResourceLookupStrategy fallbackStrategy
+    ) {
         this.environment = environment;
         this.fallbackStrategy = fallbackStrategy;
     }
@@ -82,22 +86,25 @@ public class StrategyResourceLookup implements ResourceLookup {
     }
 
     /**
-     * Adds a new strategy to this {@link ResourceLookup}. If a strategy with the same name already exists, an {@link
-     * IllegalArgumentException} is thrown.
+     * Adds a new strategy to this {@link ResourceLookup}. If a strategy with the same name already
+     * exists, an {@link IllegalArgumentException} is thrown.
      *
      * @param strategy the strategy to add
+     *
      * @throws IllegalArgumentException if a strategy with the same name already exists
      */
     public void addLookupStrategy(ResourceLookupStrategy strategy) {
         if (this.strategies.containsKey(strategy.name())) {
-            throw new IllegalArgumentException("A strategy for source " + strategy.name() + " already exists");
+            throw new IllegalArgumentException("A strategy for source "
+                + strategy.name()
+                + " already exists");
         }
         this.strategies.put(strategy.name(), strategy);
     }
 
     /**
-     * Removes a strategy from this {@link ResourceLookup}. If no strategy with the given name exists, no action is
-     * taken.
+     * Removes a strategy from this {@link ResourceLookup}. If no strategy with the given name
+     * exists, no action is taken.
      *
      * @param strategy the strategy to remove
      */
@@ -115,8 +122,8 @@ public class StrategyResourceLookup implements ResourceLookup {
     }
 
     /**
-     * Creates a new {@link ContextualInitializer} for a {@link ResourceLookup}, which can be configured using
-     * the given {@link Customizer}.
+     * Creates a new {@link ContextualInitializer} for a {@link ResourceLookup}, which can be
+     * configured using the given {@link Customizer}.
      *
      * @param customizer the customizer to configure the {@link ResourceLookup}
      *
@@ -127,8 +134,10 @@ public class StrategyResourceLookup implements ResourceLookup {
             Configurer configurer = new Configurer();
             customizer.configure(configurer);
 
-            ResourceLookupStrategy fallbackStrategy = configurer.fallbackStrategy.initialize(environment);
-            StrategyResourceLookup resourceLookup = new StrategyResourceLookup(environment.input(), fallbackStrategy);
+            ResourceLookupStrategy fallbackStrategy =
+                configurer.fallbackStrategy.initialize(environment);
+            StrategyResourceLookup resourceLookup =
+                new StrategyResourceLookup(environment.input(), fallbackStrategy);
 
             List<ResourceLookupStrategy> strategies = configurer.strategies.initialize(environment);
             strategies.forEach(resourceLookup::addLookupStrategy);
@@ -140,23 +149,25 @@ public class StrategyResourceLookup implements ResourceLookup {
     /**
      * A {@link Configurer} that allows for the configuration of the strategies used by the lookup.
      *
-     * @since 0.7.0
-     *
      * @author Guus Lieben
+     * @since 0.7.0
      */
     public static class Configurer {
 
-        private final LazyStreamableConfigurer<ApplicationEnvironment, ResourceLookupStrategy> strategies = LazyStreamableConfigurer.of(
+        private final LazyStreamableConfigurer<ApplicationEnvironment, ResourceLookupStrategy>
+            strategies = LazyStreamableConfigurer.of(
             new FileSystemLookupStrategy(),
             new ClassPathResourceLookupStrategy()
         );
 
-        private ContextualInitializer<ApplicationEnvironment, ResourceLookupStrategy> fallbackStrategy = ContextualInitializer.of(FileSystemLookupStrategy::new);
+        private ContextualInitializer<ApplicationEnvironment, ResourceLookupStrategy>
+            fallbackStrategy = ContextualInitializer.of(FileSystemLookupStrategy::new);
 
         /**
          * Sets the fallback strategy to use when no strategy prefix is found in the source string.
          *
          * @param strategy the fallback strategy
+         *
          * @return this configurer
          */
         public Configurer fallbackStrategy(ResourceLookupStrategy strategy) {
@@ -167,6 +178,7 @@ public class StrategyResourceLookup implements ResourceLookup {
          * Sets the fallback strategy to use when no strategy prefix is found in the source string.
          *
          * @param fallbackStrategy the fallback strategy initializer
+         *
          * @return this configurer
          */
         public Configurer fallbackStrategy(ContextualInitializer<ApplicationEnvironment, ResourceLookupStrategy> fallbackStrategy) {
@@ -178,6 +190,7 @@ public class StrategyResourceLookup implements ResourceLookup {
          * Adds the given strategies to this {@link ResourceLookup}.
          *
          * @param strategies the strategies to add
+         *
          * @return this configurer
          */
         public Configurer strategies(Collection<ResourceLookupStrategy> strategies) {
@@ -188,6 +201,7 @@ public class StrategyResourceLookup implements ResourceLookup {
          * Configure the strategies used by this {@link ResourceLookup}.
          *
          * @param customizer the customizer to configure the strategies
+         *
          * @return this configurer
          */
         public Configurer strategies(Customizer<StreamableConfigurer<ApplicationEnvironment, ResourceLookupStrategy>> customizer) {

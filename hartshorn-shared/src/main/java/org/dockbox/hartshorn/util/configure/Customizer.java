@@ -25,9 +25,8 @@ import java.util.function.Consumer;
  *
  * @param <T> The type of object to customize.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface Customizer<T> {
 
@@ -45,6 +44,7 @@ public interface Customizer<T> {
      * customizer is invoked.
      *
      * @param before The customizer to invoke first.
+     *
      * @return A customizer that composes this customizer with the given customizer.
      */
     default Customizer<T> compose(Customizer<T> before) {
@@ -63,6 +63,7 @@ public interface Customizer<T> {
      * @return A customizer that does nothing.
      */
     static <T> Customizer<T> useDefaults() {
-        return target -> {};
+        return target -> {
+        };
     }
 }

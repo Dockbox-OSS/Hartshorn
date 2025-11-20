@@ -23,20 +23,20 @@ import org.dockbox.hartshorn.inject.annotations.Component
 @Component
 class GroovyClassComponent {
 
-    @Inject
-    private ApplicationContext applicationContext
-    private ApplicationEnvironment environment
+  @Inject
+  private ApplicationContext applicationContext
+  private ApplicationEnvironment environment
 
-    @Inject
-    GroovyClassComponent(ApplicationEnvironment environment) {
-        this.environment = environment
-    }
+  @Inject
+  GroovyClassComponent(ApplicationEnvironment environment) {
+    this.environment = environment
+  }
 
-    ApplicationContext applicationContext() {
-        return applicationContext
-    }
+  ApplicationContext applicationContext() {
+    return applicationContext
+  }
 
-    ApplicationEnvironment applicationManager() {
-        return environment
-    }
+  ApplicationEnvironment applicationManager() {
+    return environment
+  }
 }

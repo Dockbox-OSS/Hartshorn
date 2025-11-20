@@ -29,9 +29,8 @@ import java.util.Set;
  * using a {@link ClassPathScanner}. This automatically includes the default classpath, and filters
  * on the configured package name. Scanning does not include any non-class resources.
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferenceCollector {
 
@@ -43,18 +42,18 @@ public class ClassPathScannerTypeReferenceCollector extends ClasspathTypeReferen
     protected Set<TypeReference> createCache() throws TypeCollectionException {
         Set<TypeReference> typeReferences = new HashSet<>();
         ClassPathScanner classpathScanner = ClassPathScanner.create()
-                .includeDefaultClassPath()
-                .filterPrefix(this.packageName())
-                .classesOnly();
+            .includeDefaultClassPath()
+            .filterPrefix(this.packageName())
+            .classesOnly();
 
         try {
             classpathScanner.scan(resource -> {
-                if(resource.isClassResource()) {
+                if (resource.isClassResource()) {
                     typeReferences.add(new ClassNameReference(resource.resourceName()));
                 }
             });
         }
-        catch(ClassPathWalkingException e) {
+        catch (ClassPathWalkingException e) {
             throw new TypeCollectionException(
                 "Failed to collect types in package " + this.packageName(),
                 e

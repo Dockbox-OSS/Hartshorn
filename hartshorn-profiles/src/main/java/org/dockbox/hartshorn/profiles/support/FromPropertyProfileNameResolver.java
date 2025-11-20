@@ -23,12 +23,12 @@ import org.dockbox.hartshorn.profiles.ProfileNameResolver;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 
 /**
- * Implementation of {@link ProfileNameResolver} that resolves profile names from a specific property
- * in the given {@link PropertyRegistry}. The property key used is {@value #PROFILES_PROPERTY}.
- *
- * @since 0.7.0
+ * Implementation of {@link ProfileNameResolver} that resolves profile names from a specific
+ * property in the given {@link PropertyRegistry}. The property key used is
+ * {@value #PROFILES_PROPERTY}.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class FromPropertyProfileNameResolver implements ProfileNameResolver {
 
@@ -37,8 +37,8 @@ public class FromPropertyProfileNameResolver implements ProfileNameResolver {
     @Override
     public SequencedSet<String> resolveProfileNames(PropertyRegistry rootRegistry) {
         return rootRegistry.list(PROFILES_PROPERTY)
-                .stream(list -> list.values().stream())
-                .flatMap(property -> property.value().stream())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .stream(list -> list.values().stream())
+            .flatMap(property -> property.value().stream())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

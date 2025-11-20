@@ -17,20 +17,21 @@
 package org.dockbox.hartshorn.proxy.advice.registry;
 
 /**
- * The state of the {@link AdvisorRegistry}. This is used to track whether the registry has been modified since its
- * initial creation. This is used to determine whether the proxy should be created. If the registry was never modified
- * then the proxy is not required, and the original instance can be returned by the caller of the
- * {@link org.dockbox.hartshorn.proxy.ProxyFactory}.
+ * The state of the {@link AdvisorRegistry}. This is used to track whether the registry has been
+ * modified since its initial creation. This is used to determine whether the proxy should be
+ * created. If the registry was never modified then the proxy is not required, and the original
+ * instance can be returned by the caller of the {@link org.dockbox.hartshorn.proxy.ProxyFactory}.
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface AdvisorRegistryState {
 
     /**
-     * Configure whether the registry should track its state. If this is set to {@code false} then the registry will
-     * not track whether it has been modified. This is useful for performance reasons and initial setup, as the registry
-     * does not need to track its state if the proxy is not required.
+     * Configure whether the registry should track its state. If this is set to {@code false} then
+     * the registry will not track whether it has been modified. This is useful for performance
+     * reasons and initial setup, as the registry does not need to track its state if the proxy is
+     * not required.
      *
      * @param trackingState whether the registry should track its state
      */
@@ -44,9 +45,8 @@ public interface AdvisorRegistryState {
     boolean modified();
 
     /**
-     * Marks the registry as modified. This is used to indicate that the registry has been modified since its initial
-     * creation.
+     * Marks the registry as modified. This is used to indicate that the registry has been modified
+     * since its initial creation.
      */
     void modify();
-
 }

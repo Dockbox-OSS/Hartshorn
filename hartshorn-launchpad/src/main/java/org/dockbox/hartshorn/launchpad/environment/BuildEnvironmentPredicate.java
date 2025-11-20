@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.launchpad.environment;
 import java.util.Set;
 
 /**
- * A predicate that checks if the application is running in a build environment. This is useful
- * to determine if certain features should be enabled or disabled.
+ * A predicate that checks if the application is running in a build environment. This is useful to
+ * determine if certain features should be enabled or disabled.
  *
  * <p>Supported environments include:
  * <ul>
@@ -36,29 +36,29 @@ import java.util.Set;
  * <p>If an environment does not define any of the above environment variables, this predicate will
  * return {@code false}.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class BuildEnvironmentPredicate {
 
     private static final Set<String> BUILD_ENVIRONMENT_VARIABLES = Set.of(
-            "GITLAB_CI",
-            "JENKINS_HOME",
-            "TRAVIS",
-            "GITHUB_ACTIONS",
-            "APPVEYOR"
+        "GITLAB_CI",
+        "JENKINS_HOME",
+        "TRAVIS",
+        "GITHUB_ACTIONS",
+        "APPVEYOR"
     );
 
     /**
-     * Checks if the application is running in a build environment. Returns {@code true} if any of the
-     * supported environment variables are defined, and the value of the variable equals {@code "true"}.
+     * Checks if the application is running in a build environment. Returns {@code true} if any of
+     * the supported environment variables are defined, and the value of the variable equals
+     * {@code "true"}.
      *
      * @return whether the application is running in a build environment
      */
     public static boolean isBuildEnvironment() {
-        for(String buildEnvironmentVariable : BUILD_ENVIRONMENT_VARIABLES) {
-            if(System.getenv().containsKey(buildEnvironmentVariable)) {
+        for (String buildEnvironmentVariable : BUILD_ENVIRONMENT_VARIABLES) {
+            if (System.getenv().containsKey(buildEnvironmentVariable)) {
                 String value = System.getenv().get(buildEnvironmentVariable);
                 if (Boolean.parseBoolean(value)) {
                     return true;

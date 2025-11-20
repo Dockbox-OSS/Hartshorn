@@ -24,18 +24,18 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @param <T> the type to convert the value to
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 @FunctionalInterface
 public interface ObjectPropertyParser<T> {
 
     /**
-     * Parses the given {@link ObjectProperty} to an instance of the target type. If the conversion fails, an empty
-     * {@link Option} is returned.
+     * Parses the given {@link ObjectProperty} to an instance of the target type. If the conversion
+     * fails, an empty {@link Option} is returned.
      *
      * @param property the property to parse
+     *
      * @return the parsed value, or an empty {@link Option}
      */
     Option<T> parse(ObjectProperty property);

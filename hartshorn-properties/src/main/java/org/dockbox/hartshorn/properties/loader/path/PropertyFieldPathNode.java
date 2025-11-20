@@ -22,6 +22,7 @@ package org.dockbox.hartshorn.properties.loader.path;
  * @param name the name of the field
  * @param parent the parent node
  */
-public record PropertyFieldPathNode(String name, PropertyPathNode parent) implements PropertyPathNode {
+public record PropertyFieldPathNode(String name, PropertyPathNode parent)
+    implements PropertyPathNode {
 
 }

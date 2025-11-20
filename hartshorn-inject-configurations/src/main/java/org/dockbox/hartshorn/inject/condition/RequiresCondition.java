@@ -25,9 +25,11 @@ import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
 
 /**
  * A generic condition that requires a specific condition to be met. The condition is defined by the
- * {@link #condition()} attribute. If the condition is not met, the annotated element is not processed.
+ * {@link #condition()} attribute. If the condition is not met, the annotated element is not
+ * processed.
  *
- * <p>In most cases, it is recommended to create a custom annotation that extends this annotation, and
+ * <p>In most cases, it is recommended to create a custom annotation that extends this annotation,
+ * and
  * use that annotation instead. This allows for a more readable code base. A basic example is shown
  * below.
  *
@@ -40,21 +42,19 @@ import org.dockbox.hartshorn.inject.condition.support.RequiresClass;
  * }
  * }</pre>
  *
+ * @author Guus Lieben
  * @see RequiresClass
  * @see Condition
  * @see ConditionMatcher
- *
  * @since 0.4.12
- *
- * @author Guus Lieben
  */
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequiresCondition {
 
     /**
-     * The condition that is required to be met. The condition should be a stateless
-     * class that implements {@link Condition}.
+     * The condition that is required to be met. The condition should be a stateless class that
+     * implements {@link Condition}.
      *
      * @return the condition that is required to be met
      */
@@ -62,8 +62,8 @@ public @interface RequiresCondition {
 
     /**
      * Whether to fail on no match. If set to {@code true}, the operation will fail if the condition
-     * is not met. It remains up to the implementation of the condition to determine what constitutes
-     * a match.
+     * is not met. It remains up to the implementation of the condition to determine what
+     * constitutes a match.
      *
      * @return whether to fail on no match
      */

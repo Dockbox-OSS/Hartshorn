@@ -20,9 +20,8 @@ package org.dockbox.hartshorn.util.describe;
  * A style definition for describing objects. This interface is used by {@link ObjectDescriber} to
  * determine how to describe objects.
  *
- * @since 0.6.0
- *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public interface ObjectDescriptionStyle {
 
@@ -81,10 +80,10 @@ public interface ObjectDescriptionStyle {
      * @param includeTypeName whether to include the type name in the description
      */
     void describeArrayStart(
-            StringBuilder builder,
-            Object collectionObject,
-            int length,
-            boolean includeTypeName
+        StringBuilder builder,
+        Object collectionObject,
+        int length,
+        boolean includeTypeName
     );
 
     /**
@@ -105,10 +104,10 @@ public interface ObjectDescriptionStyle {
      * @param element the element to describe
      */
     void describeArrayElement(
-            StringBuilder builder,
-            Object collectionObject,
-            int index,
-            Object element
+        StringBuilder builder,
+        Object collectionObject,
+        int index,
+        Object element
     );
 
     /**

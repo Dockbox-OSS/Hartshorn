@@ -39,8 +39,8 @@ public class ScopeBindingTests {
     void testScopeBindingIsNotAccessibleFromApplication() {
         Scope scope = ScopeAdapter.of(new Object(), ParameterizableType.create(Object.class));
         ComponentKey<String> key = ComponentKey.builder(String.class)
-                .scope(scope)
-                .build();
+            .scope(scope)
+            .build();
 
         this.applicationContext.bind(key).singleton("test");
         String value = this.applicationContext.get(key);
@@ -58,8 +58,8 @@ public class ScopeBindingTests {
 
         Scope scope = ScopeAdapter.of(new Object(), ParameterizableType.create(Object.class));
         ComponentKey<String> key = ComponentKey.builder(String.class)
-                .scope(scope)
-                .build();
+            .scope(scope)
+            .build();
 
         String value = this.applicationContext.get(key);
         Assertions.assertEquals("test", value);
@@ -69,7 +69,9 @@ public class ScopeBindingTests {
     @TestComponents(ScopedBindingConfiguration.class)
     void testConfigurationScopedValuesAreInstalled() {
         String applicationScope = this.applicationContext.get(String.class);
-        String scopedValue = this.applicationContext.get(ComponentKey.builder(String.class).scope(new SampleScope()).build());
+        String scopedValue = this.applicationContext.get(ComponentKey.builder(String.class)
+            .scope(new SampleScope())
+            .build());
         Assertions.assertEquals("", applicationScope);
         Assertions.assertEquals("test", scopedValue);
     }

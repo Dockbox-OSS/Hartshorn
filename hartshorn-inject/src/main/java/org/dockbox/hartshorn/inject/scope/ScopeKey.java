@@ -22,21 +22,22 @@ import org.dockbox.hartshorn.util.introspect.ParameterizableType;
 
 /**
  * A key that can be used to identify a {@link Scope}. This contains the required metadata to
- * identify a scope, and can be used to manage scoped components in a scoped {@link ComponentProvider}.
+ * identify a scope, and can be used to manage scoped components in a scoped
+ * {@link ComponentProvider}.
  *
- * <p>Scope keys contain a {@link ParameterizableType} that describes the type of the scope. This type can
- * be parameterized. Therefore, key instances differentiate between e.g. {@code TypeScope<String>} and
- * {@code TypeScope<Integer>}.
+ * <p>Scope keys contain a {@link ParameterizableType} that describes the type of the scope. This
+ * type can
+ * be parameterized. Therefore, key instances differentiate between e.g. {@code TypeScope<String>}
+ * and {@code TypeScope<Integer>}.
  *
- * <p>Keys are always immutable. Specific implementations may choose to provide utility builders or factories,
+ * <p>Keys are always immutable. Specific implementations may choose to provide utility builders or
+ * factories,
  * but should never allow the final {@link ScopeKey} to be mutable.
  *
+ * @author Guus Lieben
  * @see ComponentProvider#scope()
  * @see Scope
- *
  * @since 0.5.0
- *
- * @author Guus Lieben
  */
 public interface ScopeKey extends Reportable {
 

@@ -27,9 +27,8 @@ import org.dockbox.hartshorn.util.option.Option;
 /**
  * A {@link TypeFieldsIntrospector} implementation for wildcard types.
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class WildcardTypeFieldsIntrospector implements TypeFieldsIntrospector<Object> {
 
@@ -47,5 +46,4 @@ public class WildcardTypeFieldsIntrospector implements TypeFieldsIntrospector<Ob
     public List<FieldView<Object, ?>> annotatedWith(Class<? extends Annotation> annotation) {
         return Collections.emptyList();
     }
-
 }

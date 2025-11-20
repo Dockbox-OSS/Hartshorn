@@ -27,9 +27,8 @@ import java.util.Objects;
  * Simple implementation of a {@link ScopeKey}, to be used for direct implementations of
  * {@link Scope}. For {@link ScopeAdapter}s, use {@link ScopeAdapterKey} instead.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class DirectScopeKey implements ScopeKey {
 
@@ -53,8 +52,8 @@ public class DirectScopeKey implements ScopeKey {
     }
 
     /**
-     * Creates a new {@link DirectScopeKey} for the given type. This is a convenience method that allows for
-     * the creation of a key without having to specify type parameters.
+     * Creates a new {@link DirectScopeKey} for the given type. This is a convenience method that
+     * allows for the creation of a key without having to specify type parameters.
      *
      * @param scopeType the type of the scope
      * @param <T> the type of the scope
@@ -66,8 +65,8 @@ public class DirectScopeKey implements ScopeKey {
     }
 
     /**
-     * Creates a new {@link DirectScopeKey} for the given type. This is a convenience method that allows for
-     * the creation of a key from existing type metadata.
+     * Creates a new {@link DirectScopeKey} for the given type. This is a convenience method that
+     * allows for the creation of a key from existing type metadata.
      *
      * @param scopeType the type of the scope
      * @param <T> the type of the scope
@@ -79,8 +78,8 @@ public class DirectScopeKey implements ScopeKey {
     }
 
     /**
-     * Creates a new {@link DirectScopeKey} for the given type. This is a convenience method that allows for
-     * the creation of a key from existing type metadata.
+     * Creates a new {@link DirectScopeKey} for the given type. This is a convenience method that
+     * allows for the creation of a key from existing type metadata.
      *
      * @param scopeType the type of the scope
      *
@@ -93,10 +92,10 @@ public class DirectScopeKey implements ScopeKey {
 
     @Override
     public boolean equals(Object object) {
-        if(this == object) {
+        if (this == object) {
             return true;
         }
-        if(!(object instanceof DirectScopeKey scopeKey)) {
+        if (!(object instanceof DirectScopeKey scopeKey)) {
             return false;
         }
         return Objects.equals(this.scopeType, scopeKey.scopeType);
@@ -115,7 +114,7 @@ public class DirectScopeKey implements ScopeKey {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("scopeType", this.scopeType)
-                .describe();
+            .field("scopeType", this.scopeType)
+            .describe();
     }
 }

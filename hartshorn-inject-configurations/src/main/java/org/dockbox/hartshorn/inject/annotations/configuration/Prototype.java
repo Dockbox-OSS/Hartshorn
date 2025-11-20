@@ -26,27 +26,27 @@ import org.dockbox.hartshorn.inject.provider.LifecycleType;
 import org.dockbox.hartshorn.util.introspect.annotations.Extends;
 
 /**
- * Stereotype of {@link Binds} for bindings that should be registered as prototypes. This annotation is a shorthand
- * for {@code @Binds(lifecycle = LifecycleType.PROTOTYPE)}.
+ * Stereotype of {@link Binds} for bindings that should be registered as prototypes. This annotation
+ * is a shorthand for {@code @Binds(lifecycle = LifecycleType.PROTOTYPE)}.
  *
- * <p>Prototype bindings are created every time they are requested from the container. This is useful for bindings
+ * <p>Prototype bindings are created every time they are requested from the container. This is
+ * useful for bindings
  * that are stateful or mutable.
  *
+ * @author Guus Lieben
  * @see Binds
  * @see LifecycleType#PROTOTYPE
- *
  * @since 0.6.0
- *
- * @author Guus Lieben
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.FIELD })
+@Target({ElementType.METHOD, ElementType.FIELD})
 @Extends(Binds.class)
 @Binds(lifecycle = LifecycleType.PROTOTYPE)
 public @interface Prototype {
 
     /**
-     * Whether the binding should be lazily loaded. If not specified, the binding will be loaded eagerly.
+     * Whether the binding should be lazily loaded. If not specified, the binding will be loaded
+     * eagerly.
      *
      * @return whether the binding should be lazily loaded
      *
@@ -55,12 +55,15 @@ public @interface Prototype {
     boolean lazy() default false;
 
     /**
-     * Bindings that should be registered before this binding, for example if this binding depends on other
-     * bindings, but doesn't require them to be provided by the container. If not specified, no guarantees are made
-     * about the order in which bindings are registered, besides their priority.
+     * Bindings that should be registered before this binding, for example if this binding depends
+     * on other bindings, but doesn't require them to be provided by the container. If not
+     * specified, no guarantees are made about the order in which bindings are registered, besides
+     * their priority.
      *
-     * <p>Bindings declared here are considered to be dependencies of this binding. This is similar to requiring the
-     * bindings as method parameters, but without the requirement to actually declare method parameters.
+     * <p>Bindings declared here are considered to be dependencies of this binding. This is similar
+     * to requiring the
+     * bindings as method parameters, but without the requirement to actually declare method
+     * parameters.
      *
      * @return the bindings that should be registered before this binding
      *
@@ -69,12 +72,14 @@ public @interface Prototype {
     Class<?>[] after() default {};
 
     /**
-     * Whether the result of the binding provider should be processed by {@link ComponentPostProcessor}s after
-     * it has been initialized. If not specified, the result of the binding provider will be processed after it
-     * has been initialized. If {@code false}, the result of the binding provider will not be processed until
-     * it is requested from the container.
+     * Whether the result of the binding provider should be processed by
+     * {@link ComponentPostProcessor}s after it has been initialized. If not specified, the result
+     * of the binding provider will be processed after it has been initialized. If {@code false},
+     * the result of the binding provider will not be processed until it is requested from the
+     * container.
      *
-     * @return whether the result of the binding provider should be processed after it has been initialized
+     * @return whether the result of the binding provider should be processed after it has been
+     * initialized
      *
      * @see Binds#processAfterInitialization()
      */

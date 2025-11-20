@@ -23,16 +23,17 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.lang.reflect.Field;
 
 /**
- * Represents a view of a field. This view is used to access the field's value, and to set the field's value.
+ * Represents a view of a field. This view is used to access the field's value, and to set the
+ * field's value.
  *
  * @param <Parent> The type of the field's declaring class
  * @param <FieldType> The type of the field
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
-public interface FieldView<Parent, FieldType> extends ModifierCarrierView, AnnotatedGenericTypeView<FieldType> {
+public interface FieldView<Parent, FieldType>
+    extends ModifierCarrierView, AnnotatedGenericTypeView<FieldType> {
 
     /**
      * Returns the {@link Field} represented by this view, if available.
@@ -42,40 +43,44 @@ public interface FieldView<Parent, FieldType> extends ModifierCarrierView, Annot
     Option<Field> field();
 
     /**
-     * Sets the value of the field represented by this view on the given instance. If the field is static, the instance
-     * is ignored. If the field is annotated with {@link Property}, an attempt is made to use the field's setter method
-     * as configured in {@link Property#setter()}, if available.
+     * Sets the value of the field represented by this view on the given instance. If the field is
+     * static, the instance is ignored. If the field is annotated with {@link Property}, an attempt
+     * is made to use the field's setter method as configured in {@link Property#setter()}, if
+     * available.
      *
      * @param instance the instance on which to set the field's value
      * @param value the value to set
      *
-     * @throws IllegalIntrospectionException if the field is final, the given value does not match the field's type, or
-     *        if the field is not accessible. Also thrown if the configured setter method does not exist.
+     * @throws IllegalIntrospectionException if the field is final, the given value does not match
+     * the field's type, or if the field is not accessible. Also thrown if the configured setter
+     * method does not exist.
      */
     void set(Object instance, Object value) throws Throwable;
 
     /**
-     * Gets the value of the field represented by this view on the given instance. If the field is static, the instance
-     * is ignored. If the field is annotated with {@link Property}, an attempt is made to use the field's getter method
-     * as configured in {@link Property#getter()}, if available.
+     * Gets the value of the field represented by this view on the given instance. If the field is
+     * static, the instance is ignored. If the field is annotated with {@link Property}, an attempt
+     * is made to use the field's getter method as configured in {@link Property#getter()}, if
+     * available.
      *
      * @param instance the instance from which to get the field's value
      *
      * @return the value of the field represented by this view on the given instance
      *
-     * @throws IllegalIntrospectionException if the field is not accessible, or the configured getter method does not exist
+     * @throws IllegalIntrospectionException if the field is not accessible, or the configured
+     * getter method does not exist
      */
     Option<FieldType> get(Object instance) throws Throwable;
 
     /**
-     * Gets the value of the field represented by this view, as a static field. If the field is annotated with
-     * {@link Property}, an attempt is made to use the field's getter method as configured in {@link Property#getter()},
-     * if available.
+     * Gets the value of the field represented by this view, as a static field. If the field is
+     * annotated with {@link Property}, an attempt is made to use the field's getter method as
+     * configured in {@link Property#getter()}, if available.
      *
      * @return the value of the field represented by this view
      *
-     * @throws IllegalIntrospectionException if the field is not accessible, not static, or the configured getter method
-     *       does not exist
+     * @throws IllegalIntrospectionException if the field is not accessible, not static, or the
+     * configured getter method does not exist
      */
     Option<FieldType> getStatic() throws Throwable;
 

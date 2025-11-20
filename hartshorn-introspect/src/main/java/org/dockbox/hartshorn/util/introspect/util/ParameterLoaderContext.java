@@ -24,9 +24,8 @@ import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
  * is being invoked, and the instance on which the method is being invoked. If the executable is
  * static, the instance will be {@code null}.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ParameterLoaderContext {
 
@@ -34,7 +33,8 @@ public class ParameterLoaderContext {
     private final Object instance;
 
     public ParameterLoaderContext(ExecutableElementView<?> executable, Object instance) {
-        assert instance != null || !executable.modifiers().isStatic() : "Instance must not be null for non-static methods";
+        assert instance != null || !executable.modifiers().isStatic() :
+            "Instance must not be null for non-static methods";
 
         this.executable = executable;
         this.instance = instance;

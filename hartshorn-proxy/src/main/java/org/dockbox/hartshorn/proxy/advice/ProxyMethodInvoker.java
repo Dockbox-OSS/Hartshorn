@@ -22,53 +22,67 @@ import org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 
 /**
- * A helper interface that is commonly used in combination with {@link ProxyMethodInterceptHandler} to invoke methods on
- * an object. This interface is typically used to delegate method invocations to other objects, such as the real target
- * object, a delegate object, or an interceptor. This will ensure the method gets invoked correctly, supporting
- * concrete, abstract, and interface methods.
+ * A helper interface that is commonly used in combination with {@link ProxyMethodInterceptHandler}
+ * to invoke methods on an object. This interface is typically used to delegate method invocations
+ * to other objects, such as the real target object, a delegate object, or an interceptor. This will
+ * ensure the method gets invoked correctly, supporting concrete, abstract, and interface methods.
  *
  * @param <T> the type of the target object
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface ProxyMethodInvoker<T> {
 
     /**
-     * Invokes the given {@code interceptor} for the given {@code source} method. The {@code interceptor} is expected to
-     * return the result of the method invocation, or throw an exception.
+     * Invokes the given {@code interceptor} for the given {@code source} method. The
+     * {@code interceptor} is expected to return the result of the method invocation, or throw an
+     * exception.
      *
      * @param self the proxy instance on which the method is invoked
      * @param source the method that is invoked
      * @param args the arguments that are passed to the method
      * @param interceptor the interceptor that intercepts the method invocation
-     * @param customInvocation the custom invocation that is used to invoke the real method if possible
-     * @return the result of the method invocation
+     * @param customInvocation the custom invocation that is used to invoke the real method if
+     * possible
      * @param <R> the type of the result of the method invocation
+     *
+     * @return the result of the method invocation
+     *
      * @throws Throwable if an error occurs during the method invocation
      */
-    <R> R invokeInterceptor(T self, MethodView<T, R> source, Object[] args, MethodInterceptor<T, R> interceptor, CustomInvocation<R> customInvocation) throws Throwable;
+    <R> R invokeInterceptor(
+        T self,
+        MethodView<T, R> source,
+        Object[] args,
+        MethodInterceptor<T, R> interceptor,
+        CustomInvocation<R> customInvocation
+    ) throws Throwable;
 
     /**
-     * Invokes the given {@code target} method on the given {@code self} object. The {@code target} method is expected
-     * to return the result of the method invocation, or throw an exception.
+     * Invokes the given {@code target} method on the given {@code self} object. The {@code target}
+     * method is expected to return the result of the method invocation, or throw an exception.
      *
      * @param self the proxy instance on which the method is invoked
      * @param target the method that is invoked
      * @param args the arguments that are passed to the method
+     *
      * @return the result of the method invocation
      */
     Object invokeDelegate(T self, Invokable target, Object[] args) throws Throwable;
 
     /**
-     * Attempts to invoke the underlying non-proxied method for the current proxy. If the real method is not concrete,
-     * or otherwise not available, this method will attempt to invoke the default stub method.
+     * Attempts to invoke the underlying non-proxied method for the current proxy. If the real
+     * method is not concrete, or otherwise not available, this method will attempt to invoke the
+     * default stub method.
      *
      * @param self the proxy instance on which the method is invoked
      * @param source the real method that is invoked
      * @param target the proxied method that is invoked
      * @param args the arguments that are passed to the method
+     *
      * @return the result of the method invocation
+     *
      * @throws Throwable if an error occurs during the method invocation
      */
     Object invokeReal(T self, Invokable source, Invokable target, Object[] args) throws Throwable;

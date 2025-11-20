@@ -17,14 +17,13 @@
 package org.dockbox.hartshorn.reporting;
 
 /**
- * A reporter that can be configured using a configuration object. This configuration may be
- * mutable or immutable, depending on the implementation.
+ * A reporter that can be configured using a configuration object. This configuration may be mutable
+ * or immutable, depending on the implementation.
  *
  * @param <C> the type of the configuration object
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface ConfigurableDiagnosticsReporter<C> extends Reportable {
 
@@ -34,5 +33,4 @@ public interface ConfigurableDiagnosticsReporter<C> extends Reportable {
      * @return the configuration object of this reporter
      */
     C configuration();
-
 }

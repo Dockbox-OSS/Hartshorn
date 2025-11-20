@@ -20,17 +20,18 @@ import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
- * A component post constructor is responsible for performing post-construction tasks on a component instance.
+ * A component post constructor is responsible for performing post-construction tasks on a component
+ * instance.
  *
- * <p>These tasks are typically defined within the component itself, such as invoking methods annotated with
- * {@link org.dockbox.hartshorn.inject.annotations.OnInitialized}. As such, it is comparable but not equal to a
- * {@link org.dockbox.hartshorn.inject.processing.ComponentPostProcessor}, as post-constructors are for component-level
- * post-construction tasks, while post-processors are for cross-cutting concerns that (potentially) apply to multiple
- * components.
- *
- * @since 0.4.8
+ * <p>These tasks are typically defined within the component itself, such as invoking methods
+ * annotated with
+ * {@link org.dockbox.hartshorn.inject.annotations.OnInitialized}. As such, it is comparable but not
+ * equal to a {@link org.dockbox.hartshorn.inject.processing.ComponentPostProcessor}, as
+ * post-constructors are for component-level post-construction tasks, while post-processors are for
+ * cross-cutting concerns that (potentially) apply to multiple components.
  *
  * @author Guus Lieben
+ * @since 0.4.8
  */
 public interface ComponentPostConstructor {
 
@@ -39,7 +40,6 @@ public interface ComponentPostConstructor {
      *
      * @param instance the instance to perform post-construction on
      * @param scope the scope in which the instance is being constructed
-     *
      * @param <T> the type of the instance being post-constructed
      *
      * @return the instance after post-construction has been applied

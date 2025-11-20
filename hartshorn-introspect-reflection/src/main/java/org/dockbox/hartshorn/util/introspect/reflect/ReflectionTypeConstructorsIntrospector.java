@@ -32,9 +32,8 @@ import java.util.stream.Collectors;
  *
  * @param <T> the type for which constructors are introspected
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class ReflectionTypeConstructorsIntrospector<T> implements TypeConstructorsIntrospector<T> {
 
@@ -43,6 +42,7 @@ public class ReflectionTypeConstructorsIntrospector<T> implements TypeConstructo
 
     private Option<ConstructorView<T>> defaultConstructor;
     private List<ConstructorView<T>> constructors;
+
     public ReflectionTypeConstructorsIntrospector(Class<T> type, Introspector introspector) {
         this.type = type;
         this.introspector = introspector;
@@ -51,7 +51,8 @@ public class ReflectionTypeConstructorsIntrospector<T> implements TypeConstructo
     @Override
     public Option<ConstructorView<T>> defaultConstructor() {
         if (this.defaultConstructor == null) {
-            this.defaultConstructor = Option.of(() -> this.introspector.introspect(this.type.getDeclaredConstructor()));
+            this.defaultConstructor =
+                Option.of(() -> this.introspector.introspect(this.type.getDeclaredConstructor()));
         }
         return this.defaultConstructor;
     }
@@ -59,14 +60,15 @@ public class ReflectionTypeConstructorsIntrospector<T> implements TypeConstructo
     @Override
     public List<ConstructorView<T>> annotatedWith(Class<? extends Annotation> annotation) {
         return this.all()
-                .stream().filter(constructor -> constructor.annotations().has(annotation))
-                .collect(Collectors.toList());
+            .stream().filter(constructor -> constructor.annotations().has(annotation))
+            .collect(Collectors.toList());
     }
 
     @Override
     public Option<ConstructorView<T>> withParameters(List<Class<?>> parameters) {
         return Option.of(() -> {
-            Constructor<T> constructor = this.type.getDeclaredConstructor(parameters.toArray(new Class[0]));
+            Constructor<T> constructor =
+                this.type.getDeclaredConstructor(parameters.toArray(new Class[0]));
             return this.introspector.introspect(constructor);
         });
     }
@@ -75,9 +77,9 @@ public class ReflectionTypeConstructorsIntrospector<T> implements TypeConstructo
     public List<ConstructorView<T>> all() {
         if (this.constructors == null) {
             this.constructors = Arrays.stream(this.type.getConstructors())
-                    .map(constructor -> (Constructor<T>) constructor)
-                    .map(this.introspector::introspect)
-                    .collect(Collectors.toList());
+                .map(constructor -> (Constructor<T>) constructor)
+                .map(this.introspector::introspect)
+                .collect(Collectors.toList());
         }
         return this.constructors;
     }

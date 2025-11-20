@@ -37,7 +37,8 @@ public class ContextInjectionTests {
         String contextName = "InjectedContext";
         this.applicationContext.addContext(new SampleContext(contextName));
 
-        ContextInjectedType instance = this.componentPopulator.populate(new ContextInjectedType(), this.applicationContext.scope());
+        ContextInjectedType instance = this.componentPopulator.populate(new ContextInjectedType(),
+            this.applicationContext.scope());
 
         Assertions.assertNotNull(instance.context());
         Assertions.assertEquals(contextName, instance.context().name());
@@ -48,7 +49,8 @@ public class ContextInjectionTests {
         String contextName = "InjectedContext";
         this.applicationContext.addContext("another", new SampleContext(contextName));
 
-        ContextInjectedType instance = this.componentPopulator.populate(new ContextInjectedType(), this.applicationContext.scope());
+        ContextInjectedType instance = this.componentPopulator.populate(new ContextInjectedType(),
+            this.applicationContext.scope());
 
         Assertions.assertNotNull(instance.anotherContext());
         Assertions.assertEquals(contextName, instance.anotherContext().name());

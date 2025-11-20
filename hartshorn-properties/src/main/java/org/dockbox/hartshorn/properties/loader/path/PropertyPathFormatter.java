@@ -17,23 +17,23 @@
 package org.dockbox.hartshorn.properties.loader.path;
 
 /**
- * A formatter for property paths. This formatter is used to format a {@link PropertyPathNode} and its parents to a
- * string representation.
- *
- * @since 0.7.0
+ * A formatter for property paths. This formatter is used to format a {@link PropertyPathNode} and
+ * its parents to a string representation.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 @FunctionalInterface
 public interface PropertyPathFormatter {
 
     /**
-     * Formats the given {@link PropertyPathNode} to a string representation. For example, a node with the name
-     * 'test' and a parent node with the name 'parent' can be formatted to 'parent.test'.
+     * Formats the given {@link PropertyPathNode} to a string representation. For example, a node
+     * with the name 'test' and a parent node with the name 'parent' can be formatted to
+     * 'parent.test'.
      *
      * @param pathNode the node to format
+     *
      * @return the formatted path
      */
     String formatPath(PropertyPathNode pathNode);
-
 }

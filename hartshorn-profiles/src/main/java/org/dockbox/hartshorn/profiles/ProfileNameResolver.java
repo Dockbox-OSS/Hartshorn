@@ -20,12 +20,12 @@ import java.util.SequencedSet;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 
 /**
- * Resolves profile names from a given property registry. This interface can be implemented to provide
- * custom logic for determining active profiles based on application properties or related components.
- *
- * @since 0.7.0
+ * Resolves profile names from a given property registry. This interface can be implemented to
+ * provide custom logic for determining active profiles based on application properties or related
+ * components.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public interface ProfileNameResolver {
 
@@ -33,6 +33,7 @@ public interface ProfileNameResolver {
      * Resolves profile names from the provided root property registry.
      *
      * @param rootRegistry the root property registry to resolve profile names from
+     *
      * @return a set of resolved profile names
      */
     SequencedSet<String> resolveProfileNames(PropertyRegistry rootRegistry);

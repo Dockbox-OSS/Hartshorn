@@ -26,15 +26,14 @@ import java.util.function.BiPredicate;
 
 /**
  * A map that can contain multiple values for a single key. This allows for a more natural way of
- * storing multiple values for a single key, without having to use a {@link Map} of {@link
- * Collection}s directly.
+ * storing multiple values for a single key, without having to use a {@link Map} of
+ * {@link Collection}s directly.
  *
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @since 0.4.12
- *
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
 
@@ -75,9 +74,9 @@ public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
 
     /**
      * Adds the given value to the given key. If the key already exists in this {@link MultiMap},
-     * the value is added to the existing values. If the key does not exist in this {@link
-     * MultiMap}, the key is added to this {@link MultiMap} and the value is added to the newly
-     * created entry.
+     * the value is added to the existing values. If the key does not exist in this
+     * {@link MultiMap}, the key is added to this {@link MultiMap} and the value is added to the
+     * newly created entry.
      *
      * @param key the key to add the value to
      * @param value the value to add
@@ -85,8 +84,9 @@ public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
     void put(K key, V value);
 
     /**
-     * Adds the given value to the given key, if the key does not already exist in this {@link
-     * MultiMap}. If the key already exists in this {@link MultiMap}, the value is not added.
+     * Adds the given value to the given key, if the key does not already exist in this
+     * {@link MultiMap}. If the key already exists in this {@link MultiMap}, the value is not
+     * added.
      *
      * @param key the key to add the value to
      * @param value the value to add
@@ -98,6 +98,7 @@ public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
      * does not exist in this {@link MultiMap}.
      *
      * @param key the key
+     *
      * @return the values associated with the given key, or an empty {@link Collection}
      */
     Collection<V> get(K key);
@@ -133,6 +134,7 @@ public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
      * Returns whether this {@link MultiMap} contains the given key.
      *
      * @param key the key
+     *
      * @return whether this {@link MultiMap} contains the given key
      */
     boolean containsKey(K key);
@@ -141,6 +143,7 @@ public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
      * Returns whether this {@link MultiMap} contains the given value.
      *
      * @param value the value
+     *
      * @return whether this {@link MultiMap} contains the given value
      */
     boolean containsValue(V value);
@@ -150,16 +153,18 @@ public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
      *
      * @param key the key
      * @param value the value
+     *
      * @return whether this {@link MultiMap} contains the given entry
      */
     boolean containsEntry(K key, V value);
 
     /**
      * Removes all values associated with the given key from this {@link MultiMap} and returns the
-     * removed values. If the key does not exist in this {@link MultiMap}, an empty {@link
-     * Collection} is returned.
+     * removed values. If the key does not exist in this {@link MultiMap}, an empty
+     * {@link Collection} is returned.
      *
      * @param key the key
+     *
      * @return the removed values
      */
     Collection<V> remove(K key);
@@ -191,6 +196,7 @@ public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
      *
      * @param key the key
      * @param value the value
+     *
      * @return whether the value was removed
      */
     boolean remove(K key, V value);
@@ -199,6 +205,7 @@ public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
      * Removes all values associated with the given value from this {@link MultiMap}.
      *
      * @param processor the value to remove
+     *
      * @return the number of values removed
      */
     int removeValue(V processor);
@@ -210,6 +217,7 @@ public interface MultiMap<K, V> extends Iterable<Map.Entry<K, Collection<V>>> {
      * @param key the key
      * @param oldValue the old value
      * @param newValue the new value
+     *
      * @return whether the value was replaced
      */
     boolean replace(K key, V oldValue, V newValue);

@@ -23,23 +23,22 @@ import java.net.URI;
 import java.util.Set;
 
 /**
- * A classpath resource locator. This class is used to locate resources in the classpath, and make them available to
- * the application.
- *
- * @since 0.4.9
+ * A classpath resource locator. This class is used to locate resources in the classpath, and make
+ * them available to the application.
  *
  * @author Guus Lieben
+ * @since 0.4.9
  */
 public interface ClasspathResourceLocator {
 
     /**
-     * Attempts to look up a resource file. If the file exists it is wrapped in a {@link Option}
-     * and returned. If the file does not exist or is a directory, {@link Option#empty()} is
-     * returned.
+     * Attempts to look up a resource file. If the file exists it is wrapped in a {@link Option} and
+     * returned. If the file does not exist or is a directory, {@link Option#empty()} is returned.
      *
      * @param name The name of the file to look up
      *
-     * @return The resource file wrapped in a {@link Option} if present, otherwise {@link Option#empty()}
+     * @return The resource file wrapped in a {@link Option} if present, otherwise
+     * {@link Option#empty()}
      */
     Option<URI> resource(String name) throws IOException;
 
@@ -48,14 +47,15 @@ public interface ClasspathResourceLocator {
      * error occurs, an empty set is returned.
      *
      * @param name The name of the resources to look up
+     *
      * @return A set of all resources with the given name
      */
     Set<URI> resources(String name) throws IOException;
 
     /**
      * Returns a URI pointing to the root of the classpath. This URI can be used to access resources
-     * in the classpath. It is not ensured that the URI is a valid location if the classpath is
-     * not a file system or contains multiple locations.
+     * in the classpath. It is not ensured that the URI is a valid location if the classpath is not
+     * a file system or contains multiple locations.
      *
      * @return A URI pointing to the root of the classpath
      */

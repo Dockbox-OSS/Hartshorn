@@ -17,13 +17,13 @@
 package org.dockbox.hartshorn.proxy.advice.stub;
 
 /**
- * A {@link MethodStub} that throws an {@link AbstractMethodError} when invoked. This is used to indicate that a method
- * is abstract, and that no advisor was found for it.
+ * A {@link MethodStub} that throws an {@link AbstractMethodError} when invoked. This is used to
+ * indicate that a method is abstract, and that no advisor was found for it.
  *
  * @param <T> The type of the proxy instance
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ErrorResponseMethodStub<T> implements MethodStub<T> {
 
@@ -32,6 +32,9 @@ public class ErrorResponseMethodStub<T> implements MethodStub<T> {
         Class<T> targetClass = stubContext.manager().targetClass();
         String className = targetClass == null ? "" : targetClass.getSimpleName() + ".";
         String name = stubContext.target().name();
-        throw new AbstractMethodError("Cannot invoke method '" + className + name + "' because it is abstract. This type is proxied, but no advisor was found for the method.");
+        throw new AbstractMethodError("Cannot invoke method '"
+            + className
+            + name
+            + "' because it is abstract. This type is proxied, but no advisor was found for the method.");
     }
 }

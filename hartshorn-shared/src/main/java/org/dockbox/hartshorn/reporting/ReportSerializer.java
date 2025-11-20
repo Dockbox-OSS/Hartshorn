@@ -22,9 +22,8 @@ package org.dockbox.hartshorn.reporting;
  *
  * @param <T> the type of the serialized report
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 @FunctionalInterface
 public interface ReportSerializer<T> {
@@ -35,7 +34,9 @@ public interface ReportSerializer<T> {
      * thread-safe.
      *
      * @param report the report to serialize
+     *
      * @return the serialized report
+     *
      * @throws ReportSerializationException if the serialization fails
      */
     T serialize(DiagnosticsReport report) throws ReportSerializationException;

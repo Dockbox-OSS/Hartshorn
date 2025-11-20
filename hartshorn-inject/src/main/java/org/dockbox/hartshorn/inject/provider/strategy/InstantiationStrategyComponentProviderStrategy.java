@@ -33,20 +33,20 @@ import org.dockbox.hartshorn.util.ApplicationException;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link ComponentProviderStrategy} that attempts to provide a component using an {@link InstantiationStrategy instantiation
- * strategy} defined in the appropriate {@link BindingHierarchy} matching the given {@link ComponentKey}. If no hierarchy is
- * found, or no suitable {@link InstantiationStrategy} is found, the chain is continued.
+ * A {@link ComponentProviderStrategy} that attempts to provide a component using an
+ * {@link InstantiationStrategy instantiation strategy} defined in the appropriate
+ * {@link BindingHierarchy} matching the given {@link ComponentKey}. If no hierarchy is found, or no
+ * suitable {@link InstantiationStrategy} is found, the chain is continued.
  *
- * <p>The {@link InstantiationStrategy} is selected from the {@link BindingHierarchy} using the {@link ProviderSelectionStrategy}
+ * <p>The {@link InstantiationStrategy} is selected from the {@link BindingHierarchy} using the
+ * {@link ProviderSelectionStrategy}
  * defined in the {@link ComponentKey#selectionStrategy() component key's selection strategy}.
  *
+ * @author Guus Lieben
  * @see InstantiationStrategy
  * @see BindingHierarchy
  * @see ProviderSelectionStrategy
- *
  * @since 0.7.0
- *
- * @author Guus Lieben
  */
 public class InstantiationStrategyComponentProviderStrategy implements ComponentProviderStrategy {
 
@@ -58,40 +58,54 @@ public class InstantiationStrategyComponentProviderStrategy implements Component
 
     @Override
     public <T> ObjectContainer<T> get(
-            ComponentKey<T> componentKey,
-            ComponentRequestContext requestContext,
-            ComponentProviderStrategyChain<T> chain
+        ComponentKey<T> componentKey,
+        ComponentRequestContext requestContext,
+        ComponentProviderStrategyChain<T> chain
     ) throws ApplicationException {
-        BindingHierarchy<T> hierarchy = this.hierarchy(chain.componentProvider(), componentKey, true);
-        if(hierarchy != null) {
-            ObjectContainer<T> container = this.createFromHierarchy(componentKey, requestContext, chain, hierarchy);
-            if(container != null) {
+        BindingHierarchy<T> hierarchy =
+            this.hierarchy(chain.componentProvider(), componentKey, true);
+        if (hierarchy != null) {
+            ObjectContainer<T> container =
+                this.createFromHierarchy(componentKey, requestContext, chain, hierarchy);
+            if (container != null) {
                 return container;
             }
         }
         return chain.get(componentKey, requestContext);
     }
 
-    private <T> @Nullable ObjectContainer<T> createFromHierarchy(ComponentKey<T> componentKey, ComponentRequestContext requestContext,
-            ComponentProviderStrategyChain<T> chain, BindingHierarchy<T> hierarchy) throws ApplicationException {
-        InstantiationStrategy<T> strategy = componentKey.selectionStrategy().selectProvider(hierarchy);
+    private <T> @Nullable ObjectContainer<T> createFromHierarchy(
+        ComponentKey<T> componentKey, ComponentRequestContext requestContext,
+        ComponentProviderStrategyChain<T> chain, BindingHierarchy<T> hierarchy
+    ) throws ApplicationException {
+        InstantiationStrategy<T> strategy =
+            componentKey.selectionStrategy().selectProvider(hierarchy);
         if (strategy != null) {
-            return this.createFromInstantiationStrategy(requestContext, chain, strategy, componentKey.scope().orElse(this.defaultScope));
+            return this.createFromInstantiationStrategy(requestContext,
+                chain,
+                strategy,
+                componentKey.scope().orElse(this.defaultScope));
         }
         return null;
     }
 
     private <T> @Nullable ObjectContainer<T> createFromInstantiationStrategy(
-            ComponentRequestContext requestContext,
-            ComponentProviderStrategyChain<T> chain,
-            InstantiationStrategy<T> strategy,
-            Scope scope) throws ApplicationException {
-        Option<ObjectContainer<T>> container = strategy.provide(chain.application(), requestContext, scope);
+        ComponentRequestContext requestContext,
+        ComponentProviderStrategyChain<T> chain,
+        InstantiationStrategy<T> strategy,
+        Scope scope
+    ) throws ApplicationException {
+        Option<ObjectContainer<T>> container =
+            strategy.provide(chain.application(), requestContext, scope);
         return container.orNull();
     }
 
-    private <T> BindingHierarchy<T> hierarchy(ComponentProvider componentProvider, ComponentKey<T> key, boolean useGlobalIfAbsent) {
-        switch(componentProvider) {
+    private <T> BindingHierarchy<T> hierarchy(
+        ComponentProvider componentProvider,
+        ComponentKey<T> key,
+        boolean useGlobalIfAbsent
+    ) {
+        switch (componentProvider) {
             case HierarchyLookup hierarchyLookup -> {
                 return this.hierarchy(hierarchyLookup, key, useGlobalIfAbsent);
             }
@@ -105,7 +119,11 @@ public class InstantiationStrategyComponentProviderStrategy implements Component
         }
     }
 
-    private <T> BindingHierarchy<T> hierarchy(HierarchyLookup lookup, ComponentKey<T> key, boolean useGlobalIfAbsent) {
+    private <T> BindingHierarchy<T> hierarchy(
+        HierarchyLookup lookup,
+        ComponentKey<T> key,
+        boolean useGlobalIfAbsent
+    ) {
         if (lookup instanceof NestedHierarchyLookup containedLookup) {
             return containedLookup.hierarchy(key, useGlobalIfAbsent);
         }

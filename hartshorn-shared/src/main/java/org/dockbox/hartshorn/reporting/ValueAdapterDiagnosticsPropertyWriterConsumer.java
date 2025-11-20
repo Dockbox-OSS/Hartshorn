@@ -21,15 +21,14 @@ import java.util.stream.Stream;
 
 /**
  * Adapter type that writes a value to a {@link DiagnosticsPropertyWriter} based on the type of the
- * value. This implementation only supports a limited set of types, and will throw an {@link
- * IllegalStateException} if an unsupported type is encountered.
- *
- * @since 0.7.0
+ * value. This implementation only supports a limited set of types, and will throw an
+ * {@link IllegalStateException} if an unsupported type is encountered.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class ValueAdapterDiagnosticsPropertyWriterConsumer
-        implements DiagnosticsPropertyWriterConsumer {
+    implements DiagnosticsPropertyWriterConsumer {
 
     private final Object object;
 
@@ -51,7 +50,7 @@ public class ValueAdapterDiagnosticsPropertyWriterConsumer
             case Reportable reportable -> writer.writeDelegate(reportable);
             case Class<?> clazz -> writer.writeString(clazz.getCanonicalName());
             case Annotation annotation -> writer.writeDelegate(
-                    new AnnotationReporter<>(annotation)
+                new AnnotationReporter<>(annotation)
             );
             case String[] strings -> writer.writeStrings(strings);
             case int[] integers -> writer.writeInts(integers);
@@ -63,14 +62,14 @@ public class ValueAdapterDiagnosticsPropertyWriterConsumer
             case Reportable[] reportables -> writer.writeDelegates(reportables);
             case Class[] clazz -> {
                 String[] array = Stream.of(clazz)
-                        .map(Class::getCanonicalName)
-                        .toArray(String[]::new);
+                    .map(Class::getCanonicalName)
+                    .toArray(String[]::new);
                 writer.writeStrings(array);
             }
             case Annotation[] annotations -> {
                 AnnotationReporter[] array = Stream.of(annotations)
-                        .map(AnnotationReporter::new)
-                        .toArray(AnnotationReporter[]::new);
+                    .map(AnnotationReporter::new)
+                    .toArray(AnnotationReporter[]::new);
                 writer.writeDelegates(array);
             }
             default -> throw new IllegalStateException("Unexpected value: " + this.object);

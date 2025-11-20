@@ -19,9 +19,8 @@ package org.dockbox.hartshorn.inject;
 /**
  * The exception handler is used to handle exceptions that occur during the application lifecycle.
  *
- * @since 0.4.9
- *
  * @author Guus Lieben
+ * @since 0.4.9
  */
 public interface ExceptionHandler {
 
@@ -33,8 +32,8 @@ public interface ExceptionHandler {
     void handle(Throwable throwable);
 
     /**
-     * Handles the given exception using the preferred behavior. The given message may be included to provide more
-     * information about the exception.
+     * Handles the given exception using the preferred behavior. The given message may be included
+     * to provide more information about the exception.
      *
      * @param message The message to include in the exception.
      * @param throwable The exception to handle.
@@ -42,10 +41,11 @@ public interface ExceptionHandler {
     void handle(String message, Throwable throwable);
 
     /**
-     * Whether to use stacktraces in the exception handler. This is useful for debugging purposes, but may be ignored
-     * by the exception handler.
+     * Whether to use stacktraces in the exception handler. This is useful for debugging purposes,
+     * but may be ignored by the exception handler.
      *
      * @param stacktraces Whether to use stacktraces.
+     *
      * @return Itself, for chaining.
      */
     ExceptionHandler printStackTraces(boolean stacktraces);

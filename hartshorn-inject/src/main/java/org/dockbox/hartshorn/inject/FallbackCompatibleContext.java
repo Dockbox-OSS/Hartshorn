@@ -24,13 +24,12 @@ import org.dockbox.hartshorn.context.SimpleContextIdentity;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A {@link Context} which uses {@link ContextKey}s to store and retrieve values instead
- * of {@link SimpleContextIdentity simple identities}. This allows for more flexibility
- * in the retrieval of values, as context keys support fallback functions.
- *
- * @since 0.5.0
+ * A {@link Context} which uses {@link ContextKey}s to store and retrieve values instead of
+ * {@link SimpleContextIdentity simple identities}. This allows for more flexibility in the
+ * retrieval of values, as context keys support fallback functions.
  *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface FallbackCompatibleContext extends Context {
 

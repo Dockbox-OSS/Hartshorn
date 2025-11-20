@@ -24,8 +24,8 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * The interface to provide custom introspection information to an object field when creating
- * an object dynamically.
+ * The interface to provide custom introspection information to an object field when creating an
+ * object dynamically.
  *
  * @author Guus Lieben
  * @since 0.4.13

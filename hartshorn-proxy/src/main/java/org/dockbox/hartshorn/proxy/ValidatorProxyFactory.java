@@ -20,13 +20,13 @@ import org.dockbox.hartshorn.proxy.constraint.ProxyValidator;
 
 /**
  * A {@link ProxyFactory} that will first validate the type before creating the proxy. The
- * validation may be performed during initialization or during the creation of the proxy,
- * depending on the implementation.
+ * validation may be performed during initialization or during the creation of the proxy, depending
+ * on the implementation.
  *
  * @param <T> the type of the proxy
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface ValidatorProxyFactory<T> extends ProxyFactory<T> {
 

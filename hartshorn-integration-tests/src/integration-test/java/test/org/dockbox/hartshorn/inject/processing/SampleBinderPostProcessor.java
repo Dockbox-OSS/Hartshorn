@@ -26,7 +26,11 @@ public class SampleBinderPostProcessor implements HierarchicalBinderPostProcesso
     public static final String HELLO_WORLD = "Hello, World!";
 
     @Override
-    public void process(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder) {
+    public void process(
+        InjectionCapableApplication application,
+        Scope scope,
+        HierarchicalBinder binder
+    ) {
         binder.bind(String.class).singleton(HELLO_WORLD);
     }
 

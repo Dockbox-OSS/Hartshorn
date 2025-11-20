@@ -27,7 +27,8 @@ public class ConvertibleTypePairTests {
 
     @Test
     void testNullTargetTypeIsRejected() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> ConvertibleTypePair.of(String.class, null));
+        Assertions.assertThrows(IllegalArgumentException.class,
+            () -> ConvertibleTypePair.of(String.class, null));
     }
 
     @Test

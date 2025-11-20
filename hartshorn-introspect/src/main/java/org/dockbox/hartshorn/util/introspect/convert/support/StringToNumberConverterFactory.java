@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * Converts a {@link String} to a {@link Number}. Supports all primitive type wrappers, but not
  * primitives themselves. Supports both decimal and hexadecimal numbers.
  *
+ * @author Guus Lieben
  * @see Integer#parseInt(String)
  * @see Integer#decode(String)
  * @see Long#parseLong(String)
@@ -38,10 +39,7 @@ import org.dockbox.hartshorn.util.introspect.convert.ConverterFactory;
  * @see Byte#parseByte(String)
  * @see Byte#decode(String)
  * @see #isHexNumber(String)
- *
  * @since 0.5.0
- *
- * @author Guus Lieben
  */
 public class StringToNumberConverterFactory implements ConverterFactory<String, Number> {
 
@@ -88,27 +86,26 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
      * @param decodeFunction The function to use for decoding hexadecimal numbers
      * @param <T> The type of the number
      *
-     * @since 0.5.0
-     *
      * @author Guus Lieben
+     * @since 0.5.0
      */
     private record StringToNumberConverter<T extends Number>(
-            Function<String, T> parseFunction,
-            Function<String, T> decodeFunction
+        Function<String, T> parseFunction,
+        Function<String, T> decodeFunction
     ) implements Converter<String, T> {
 
         @Override
         public @Nullable T convert(@Nullable String input) {
             assert input != null;
             try {
-                if(isHexNumber(input)) {
+                if (isHexNumber(input)) {
                     return this.decodeFunction.apply(input);
                 }
                 else {
                     return this.parseFunction.apply(input);
                 }
             }
-            catch(NumberFormatException e) {
+            catch (NumberFormatException e) {
                 // If primitive, the conversion service will default to zero
                 return null;
             }
@@ -120,11 +117,12 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
      * prefixed with either {@code 0x} or {@code #}. The prefix may be preceded by a minus sign.
      *
      * @param value the value to check
+     *
      * @return {@code true} if the given value is a hexadecimal number, {@code false} otherwise
      */
     public static boolean isHexNumber(String value) {
         int index = value.startsWith("-") ? 1 : 0;
         return value.toLowerCase(Locale.ROOT).startsWith("0x", index)
-                || value.startsWith("#", index);
+            || value.startsWith("#", index);
     }
 }

@@ -22,14 +22,13 @@ import org.dockbox.hartshorn.util.introspect.convert.Converter;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A parser to convert single-value {@link ConfiguredProperty} instances to instances of a specific type using a
- * {@link Converter}.
+ * A parser to convert single-value {@link ConfiguredProperty} instances to instances of a specific
+ * type using a {@link Converter}.
  *
  * @param <T> the type to convert the value to
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class ConverterConfiguredPropertyParser<T> implements ConfiguredPropertyParser<T> {
 

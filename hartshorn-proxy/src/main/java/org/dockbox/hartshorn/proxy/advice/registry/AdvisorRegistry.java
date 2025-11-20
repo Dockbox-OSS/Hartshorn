@@ -24,8 +24,9 @@ import java.lang.reflect.Method;
 import java.util.function.Supplier;
 
 /**
- * A mutable registry to add advisors to a proxy instance. Advisors can be added for specific methods or for all methods
- * of a specific type. The registry can be used to add a default stub for all methods. Valid advisors are:
+ * A mutable registry to add advisors to a proxy instance. Advisors can be added for specific
+ * methods or for all methods of a specific type. The registry can be used to add a default stub for
+ * all methods. Valid advisors are:
  * <ul>
  *     <li>{@link org.dockbox.hartshorn.proxy.advice.wrap.MethodWrapper}</li>
  *     <li>{@link org.dockbox.hartshorn.proxy.advice.intercept.MethodInterceptor}</li>
@@ -39,51 +40,60 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of the proxy instance
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public interface AdvisorRegistry<T> {
 
     /**
      * Returns the type of the proxy which is being configured.
+     *
      * @return the type of the proxy which is being configured
      */
     Class<T> advisedType();
 
     /**
-     * Gets or creates an advisor registry step for the given method. The method does not have to be a method of the
-     * advised type, but it must be a method of a type which is assignable to the advised type.
+     * Gets or creates an advisor registry step for the given method. The method does not have to be
+     * a method of the advised type, but it must be a method of a type which is assignable to the
+     * advised type.
      *
      * @param method the method to get or create a registry step for
-     * @return the registry step for the given method
      * @param <R> the return type of the method
+     *
+     * @return the registry step for the given method
      */
     <R> MethodAdvisorRegistryStep<T, R> method(MethodView<T, R> method);
 
     /**
-     * Gets or creates an advisor registry step for the given method. The method does not have to be a method of the
-     * advised type, but it must be a method of a type which is assignable to the advised type.
+     * Gets or creates an advisor registry step for the given method. The method does not have to be
+     * a method of the advised type, but it must be a method of a type which is assignable to the
+     * advised type.
      *
      * @param method the method to get or create a registry step for
+     *
      * @return the registry step for the given method
      */
     MethodAdvisorRegistryStep<T, Object> method(Method method);
 
     /**
-     * Gets or creates an advisor registry step for the given type. The type must be assignable to the advised type.
+     * Gets or creates an advisor registry step for the given type. The type must be assignable to
+     * the advised type.
      *
      * @param type the type to get or create a registry step for
-     * @return the registry step for the given type
      * @param <S> the type of the registry step
+     *
+     * @return the registry step for the given type
      */
     <S> TypeAdvisorRegistryStep<S, T> type(Class<S> type);
 
     /**
-     * Gets or creates an advisor registry step for the given type. The type must be assignable to the advised type.
+     * Gets or creates an advisor registry step for the given type. The type must be assignable to
+     * the advised type.
      *
      * @param type the type to get or create a registry step for
-     * @return the registry step for the given type
      * @param <S> the type of the registry step
+     *
+     * @return the registry step for the given type
      */
     <S> TypeAdvisorRegistryStep<S, T> type(TypeView<S> type);
 
@@ -95,20 +105,22 @@ public interface AdvisorRegistry<T> {
     TypeAdvisorRegistryStep<T, T> type();
 
     /**
-     * Sets the default stub for all methods. The stub will be used if no other advisor is configured for a method.
+     * Sets the default stub for all methods. The stub will be used if no other advisor is
+     * configured for a method.
      *
      * @param stub the default stub
+     *
      * @return this registry
      */
     AdvisorRegistry<T> defaultStub(MethodStub<T> stub);
 
     /**
-     * Sets the lazy-loaded default stub for all methods. The stub will be used if no other advisor is configured for a
-     * method.
+     * Sets the lazy-loaded default stub for all methods. The stub will be used if no other advisor
+     * is configured for a method.
      *
      * @param stub the default stub
+     *
      * @return this registry
      */
     AdvisorRegistry<T> defaultStub(Supplier<MethodStub<T>> stub);
-
 }

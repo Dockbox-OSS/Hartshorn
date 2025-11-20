@@ -26,12 +26,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Looks up a resource through the local filesystem. The file directory is looked up based on the configuration path of
- * the path representation, typically this will be similar to {@code /config/{owner-id}/}.
- *
- * @since 0.4.7
+ * Looks up a resource through the local filesystem. The file directory is looked up based on the
+ * configuration path of the path representation, typically this will be similar to
+ * {@code /config/{owner-id}/}.
  *
  * @author Guus Lieben
+ * @since 0.4.7
  */
 public class FileSystemLookupStrategy implements ResourceLookupStrategy {
 

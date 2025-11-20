@@ -11,8 +11,9 @@ public class GreetingConfiguration {
 
     @Singleton(lazy = true)
     public GreetingAction greetingAction(
-            @PropertyValue(name = "greetings.hello", defaultValue = "Hello there, {}") String helloGreetingTemplate,
-            @LoggerMeta(name = "Greeting implementation") Logger logger
+        @PropertyValue(name = "greetings.hello", defaultValue = "Hello there, {}")
+        String helloGreetingTemplate,
+        @LoggerMeta(name = "Greeting implementation") Logger logger
     ) {
         return () -> logger.info(helloGreetingTemplate, "World");
     }

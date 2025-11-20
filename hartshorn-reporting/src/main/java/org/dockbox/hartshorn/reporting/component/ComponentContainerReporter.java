@@ -30,7 +30,8 @@ import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.reporting.AnnotationReporter;
 
 /**
- * A reportable that reports the contents of a {@link ComponentContainer} instance. This includes the following information:
+ * A reportable that reports the contents of a {@link ComponentContainer} instance. This includes
+ * the following information:
  * <ul>
  *     <li>Component class type, {@link ComponentContainer#type()}</li>
  *     <li>Component ID, {@link ComponentContainer#id()}</li>
@@ -47,9 +48,8 @@ import org.dockbox.hartshorn.reporting.AnnotationReporter;
  * <p>Each of these can be enabled or disabled individually, using the {@link ComponentReportingConfiguration} that
  * is provided by this reporter.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 class ComponentContainerReporter implements Reportable {
 
@@ -57,9 +57,11 @@ class ComponentContainerReporter implements Reportable {
     private final ApplicationEnvironment environment;
     private final ComponentContainer<?> container;
 
-    public ComponentContainerReporter(ComponentDiagnosticsReporter componentDiagnosticsReporter,
-                                      ApplicationEnvironment environment,
-                                      ComponentContainer<?> container) {
+    public ComponentContainerReporter(
+        ComponentDiagnosticsReporter componentDiagnosticsReporter,
+        ApplicationEnvironment environment,
+        ComponentContainer<?> container
+    ) {
         this.componentDiagnosticsReporter = componentDiagnosticsReporter;
         this.environment = environment;
         this.container = container;
@@ -72,40 +74,54 @@ class ComponentContainerReporter implements Reportable {
         componentCollector.property("name").writeString(this.container.name());
         componentCollector.property("lifecycle").writeEnum(this.container.lifecycle());
         componentCollector.property("lazy").writeBoolean(this.container.lazy());
-        componentCollector.property("permitsProxying").writeBoolean(this.container.permitsProxying());
-        componentCollector.property("permitsProcessing").writeBoolean(this.container.permitsProcessing());
+        componentCollector.property("permitsProxying")
+            .writeBoolean(this.container.permitsProxying());
+        componentCollector.property("permitsProcessing")
+            .writeBoolean(this.container.permitsProcessing());
 
         if (this.componentDiagnosticsReporter.configuration().includeDependencies()) {
-            componentCollector.property("dependencies").writeDelegate((DiagnosticsPropertyCollector dependencyCollector) -> {
-                dependencyCollector.property("inject").writeDelegate(this::reportAnnotatedField);
-            });
+            componentCollector.property("dependencies")
+                .writeDelegate((DiagnosticsPropertyCollector dependencyCollector) -> {
+                    dependencyCollector.property("inject")
+                        .writeDelegate(this::reportAnnotatedField);
+                });
         }
 
         if (this.componentDiagnosticsReporter.configuration().includeRequiredConditions()) {
-            Reportable[] reporters = this.container.type().annotations().all(RequiresCondition.class)
+            Reportable[] reporters =
+                this.container.type().annotations().all(RequiresCondition.class)
                     .stream()
                     .map(requiresCondition -> (Reportable) conditionCollector -> {
-                        conditionCollector.property("definition").writeDelegate(new AnnotationReporter<>(requiresCondition));
-                        conditionCollector.property("condition").writeString(requiresCondition.condition().getCanonicalName());
-                        conditionCollector.property("failOnNoMatch").writeBoolean(requiresCondition.failOnNoMatch());
+                        conditionCollector.property("definition")
+                            .writeDelegate(new AnnotationReporter<>(requiresCondition));
+                        conditionCollector.property("condition")
+                            .writeString(requiresCondition.condition().getCanonicalName());
+                        conditionCollector.property("failOnNoMatch")
+                            .writeBoolean(requiresCondition.failOnNoMatch());
                     }).toArray(Reportable[]::new);
             componentCollector.property("conditions").writeDelegates(reporters);
         }
 
-        componentCollector.property("stereotype").writeString(ComponentDiagnosticsReporter.stereotype(this.container).getCanonicalName());
+        componentCollector.property("stereotype")
+            .writeString(ComponentDiagnosticsReporter.stereotype(this.container)
+                .getCanonicalName());
         componentCollector.property("package").writeDelegate(this.container.type().packageInfo());
     }
 
     private void reportAnnotatedField(DiagnosticsPropertyCollector injectCollector) {
-        ComponentInjectionPointsResolver injectionPointsResolver = this.environment.injectionPointsResolver();
+        ComponentInjectionPointsResolver injectionPointsResolver =
+            this.environment.injectionPointsResolver();
         ComponentKeyResolver componentKeyResolver = this.environment.componentKeyResolver();
-        Set<? extends ComponentInjectionPoint<?>> injectionPoints = injectionPointsResolver.resolve(this.container.type());
+        Set<? extends ComponentInjectionPoint<?>> injectionPoints =
+            injectionPointsResolver.resolve(this.container.type());
 
         for (ComponentInjectionPoint<?> injectionPoint : injectionPoints) {
-            injectCollector.property(injectionPoint.declaration().name()).writeDelegate(fieldCollector -> {
-                ComponentKey<?> key = componentKeyResolver.resolve(injectionPoint.declaration());
-                fieldCollector.property("key").writeDelegate(key);
-            });
+            injectCollector.property(injectionPoint.declaration().name())
+                .writeDelegate(fieldCollector -> {
+                    ComponentKey<?> key =
+                        componentKeyResolver.resolve(injectionPoint.declaration());
+                    fieldCollector.property("key").writeDelegate(key);
+                });
         }
     }
 }

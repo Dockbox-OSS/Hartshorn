@@ -22,12 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Registers a shutdown hook for the application context when the application starts. This hook will ensure that the
- * application context is closed when the JVM is shutting down.
- *
- * @since 0.6.0
+ * Registers a shutdown hook for the application context when the application starts. This hook will
+ * ensure that the application context is closed when the JVM is shutting down.
  *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 public class RuntimeHookLifecycleObserver implements LifecycleObserver {
 
@@ -36,7 +35,9 @@ public class RuntimeHookLifecycleObserver implements LifecycleObserver {
     @Override
     public void onStarted(ApplicationContext applicationContext) {
         LOG.debug("Registering shutdown hook for application context");
-        ApplicationContextShutdownHook shutdownHook = new ApplicationContextShutdownHook(LOG, applicationContext);
+        ApplicationContextShutdownHook shutdownHook = new ApplicationContextShutdownHook(
+            LOG, applicationContext
+        );
         Runtime.getRuntime().addShutdownHook(new Thread(shutdownHook, "shutdown-hook"));
     }
 }

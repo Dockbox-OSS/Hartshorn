@@ -29,7 +29,10 @@ import org.junit.jupiter.api.Test;
 public class BinderProcessorTests {
 
     @Test
-    void testBinderPostProcessorIsCalled(@Inject HierarchicalBinder binder, @Inject ComponentProvider provider) {
+    void testBinderPostProcessorIsCalled(
+        @Inject HierarchicalBinder binder,
+        @Inject ComponentProvider provider
+    ) {
         BindingHierarchy<String> hierarchy = binder.hierarchy(ComponentKey.of(String.class));
         Assertions.assertTrue(hierarchy.size() > 0);
 

@@ -23,10 +23,10 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * Basic instruction context for the application. This context is used to determine the main class and arguments
- * passed to the application. Most likely this context is constructed based on the parameters provided to a
- * {@link ApplicationBuilder}. The amount of context provided is limited at this stage, as the application bootstrap
- * process is the first step in the application lifecycle.
+ * Basic instruction context for the application. This context is used to determine the main class
+ * and arguments passed to the application. Most likely this context is constructed based on the
+ * parameters provided to a {@link ApplicationBuilder}. The amount of context provided is limited at
+ * this stage, as the application bootstrap process is the first step in the application lifecycle.
  *
  * @see ApplicationBuilder
  *
@@ -53,8 +53,9 @@ public class ApplicationBuildContext extends DefaultContext {
     }
 
     /**
-     * Returns the main class of the application. When this context is created, the validity of the main class is
-     * verified. It is thus safe to assume that this class can be loaded, or otherwise accessed.
+     * Returns the main class of the application. When this context is created, the validity of the
+     * main class is verified. It is thus safe to assume that this class can be loaded, or otherwise
+     * accessed.
      *
      * @return The main class of the application.
      */
@@ -63,8 +64,8 @@ public class ApplicationBuildContext extends DefaultContext {
     }
 
     /**
-     * Returns the arguments that were passed to the application. These arguments have not been parsed or validated,
-     * and are provided as-is.
+     * Returns the arguments that were passed to the application. These arguments have not been
+     * parsed or validated, and are provided as-is.
      *
      * @return The arguments that were passed to the application.
      */
@@ -83,8 +84,8 @@ public class ApplicationBuildContext extends DefaultContext {
     }
 
     /**
-     * Returns the logger to use for the bootstrap process. This logger is based on the main class of the application,
-     * or otherwise a default logger.
+     * Returns the logger to use for the bootstrap process. This logger is based on the main class
+     * of the application, or otherwise a default logger.
      *
      * @return The logger to use for the bootstrap process.
      */

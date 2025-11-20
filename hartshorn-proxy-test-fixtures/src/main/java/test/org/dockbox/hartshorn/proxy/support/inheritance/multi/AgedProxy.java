@@ -19,9 +19,8 @@ package test.org.dockbox.hartshorn.proxy.support.inheritance.multi;
 /**
  * Parent interface for {@link NamedAgedProxy}.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public interface AgedProxy {
     int age();

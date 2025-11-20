@@ -17,13 +17,14 @@
 package org.dockbox.hartshorn.proxy.advice;
 
 /**
- * A function that is invoked by a {@link org.dockbox.hartshorn.proxy.advice.ProxyAdvisor} to handle the interception of
- * a method invocation. The function is expected to return the result of the method invocation, or throw an exception.
+ * A function that is invoked by a {@link org.dockbox.hartshorn.proxy.advice.ProxyAdvisor} to handle
+ * the interception of a method invocation. The function is expected to return the result of the
+ * method invocation, or throw an exception.
  *
  * @param <T> The type of the proxy instance on which the method is invoked.
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 @FunctionalInterface
 public interface ProxyInterceptFunction<T> {
@@ -32,6 +33,7 @@ public interface ProxyInterceptFunction<T> {
      * Handles the interception of a method invocation.
      *
      * @return The result of the method invocation.
+     *
      * @throws Throwable If an error occurs during the method invocation.
      */
     T handleInterception() throws Throwable;

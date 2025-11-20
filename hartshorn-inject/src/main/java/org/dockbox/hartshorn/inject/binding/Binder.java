@@ -44,8 +44,8 @@ public interface Binder {
     default <C> BindingFunction<C> bind(Class<C> type) {
         // Strict, so new hierarchies are created if needed, rather than using fuzzy search
         ComponentKey<C> componentKey = ComponentKey.builder(type)
-                .strict()
-                .build();
+            .strict()
+            .build();
         return this.bind(componentKey);
     }
 
@@ -54,20 +54,23 @@ public interface Binder {
      * will bind to the given key. The key may be named or unnamed, and may contain a scope.
      *
      * @param key The key to bind to
-     * @return The binding function
      * @param <C> The type of the binding
+     *
+     * @return The binding function
      */
     <C> BindingFunction<C> bind(ComponentKey<C> key);
 
     /**
      * Imports the given hierarchy into the current binder. This will override any existing bindings
      * in the current binder with the bindings from the given hierarchy. If you wish to keep both
-     * the existing and new bindings, obtain the active bindings from the current {@link HierarchicalComponentProvider}
-     * and merge them with {@link BindingHierarchy#merge(BindingHierarchy)}.
+     * the existing and new bindings, obtain the active bindings from the current
+     * {@link HierarchicalComponentProvider} and merge them with
+     * {@link BindingHierarchy#merge(BindingHierarchy)}.
      *
      * @param hierarchy The hierarchy to import
-     * @return The binder
      * @param <C> The type of the binding
+     *
+     * @return The binder
      */
     <C> Binder bind(BindingHierarchy<C> hierarchy);
 }

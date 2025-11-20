@@ -23,26 +23,38 @@ import org.dockbox.hartshorn.util.introspect.view.ParameterView;
 import org.dockbox.hartshorn.util.option.Option;
 
 /**
- * A parameter loader rule that loads the first argument of an {@link Object#equals(Object)} method invocation. This
- * will attempt to unproxy the argument, and if that fails, will return the argument as-is.
+ * A parameter loader rule that loads the first argument of an {@link Object#equals(Object)} method
+ * invocation. This will attempt to unproxy the argument, and if that fails, will return the
+ * argument as-is.
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
-public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<ProxyParameterLoaderContext> {
+public class ObjectEqualsParameterLoaderRule
+    implements ParameterLoaderRule<ProxyParameterLoaderContext> {
 
     @Override
-    public boolean accepts(ParameterView<?> parameter, int index, ProxyParameterLoaderContext context, Object... args) {
+    public boolean accepts(
+        ParameterView<?> parameter,
+        int index,
+        ProxyParameterLoaderContext context,
+        Object... args
+    ) {
         ExecutableElementView<?> executable = parameter.declaredBy();
         return executable.declaredBy().is(Object.class) && "equals".equals(executable.name());
     }
 
     @Override
-    public <T> Option<T> load(ParameterView<T> parameter, int index, ProxyParameterLoaderContext context, Object... args) {
+    public <T> Option<T> load(
+        ParameterView<T> parameter,
+        int index,
+        ProxyParameterLoaderContext context,
+        Object... args
+    ) {
         Object argument = args[index];
         Option<ProxyManager<Object>> handler = context.proxyOrchestrator().manager(argument);
         return handler.flatMap(ProxyManager::delegate)
-                .orCompute(() -> argument)
-                .cast(parameter.type().type());
+            .orCompute(() -> argument)
+            .cast(parameter.type().type());
     }
 }

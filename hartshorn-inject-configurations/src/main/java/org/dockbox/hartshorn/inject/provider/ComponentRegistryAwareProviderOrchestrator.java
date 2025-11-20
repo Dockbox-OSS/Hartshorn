@@ -19,14 +19,13 @@ package org.dockbox.hartshorn.inject.provider;
 import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 
 /**
- * Represents a {@link ComponentProviderOrchestrator} that is aware of the {@link ComponentRegistry} that is used to locate
- * managed components.
- *
- * @see ComponentRegistry
- *
- * @since 0.7.0
+ * Represents a {@link ComponentProviderOrchestrator} that is aware of the {@link ComponentRegistry}
+ * that is used to locate managed components.
  *
  * @author Guus Lieben
+ * @see ComponentRegistry
+ * @since 0.7.0
  */
-public interface ComponentRegistryAwareProviderOrchestrator extends ComponentRegistryAwareComponentProvider, ComponentProviderOrchestrator {
+public interface ComponentRegistryAwareProviderOrchestrator
+    extends ComponentRegistryAwareComponentProvider, ComponentProviderOrchestrator {
 }

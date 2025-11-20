@@ -29,9 +29,8 @@ import java.lang.reflect.Modifier;
  * An introspector for element modifiers that uses reflection to determine the modifiers of a given
  * member. Additional modifiers such as {@code SYNTHETIC} and {@code MANDATED} are also supported.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ReflectionElementModifiersIntrospector implements ElementModifiersIntrospector {
 
@@ -53,7 +52,7 @@ public class ReflectionElementModifiersIntrospector implements ElementModifiersI
         }
         catch (NoSuchFieldException | IllegalAccessException | InaccessibleObjectException e) {
             syntheticModifier = 0x00001000;
-            mandatedModifier  = 0x00008000;
+            mandatedModifier = 0x00008000;
         }
         SYNTHETIC = syntheticModifier;
         MANDATED = mandatedModifier;

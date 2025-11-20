@@ -26,9 +26,8 @@ import org.dockbox.hartshorn.util.option.Option;
  * Converts an {@link Option} to an {@link Object}. If the {@link Option} is empty, {@code null} is
  * returned. Otherwise, the value of the {@link Option} is returned.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class OptionToObjectConverterFactory
     implements ConverterFactory<Option<?>, Object>, ConditionalConverter {

@@ -42,7 +42,8 @@ public class TypeCollectorTests {
 
     @Test
     void testClassPathScannerTypeCollector() throws TypeCollectionException {
-        TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector("test.org.dockbox.hartshorn.introspect.types");
+        TypeReferenceCollector collector =
+            new ClassPathScannerTypeReferenceCollector("test.org.dockbox.hartshorn.introspect.types");
         Set<TypeReference> typeReferences = collector.collect();
 
         Assertions.assertEquals(7, typeReferences.size());
@@ -68,7 +69,8 @@ public class TypeCollectorTests {
 
     @Test
     void testCachedTypeCollector() throws TypeCollectionException {
-        TypeReferenceCollector collector = new ClassPathScannerTypeReferenceCollector("test.org.dockbox.hartshorn.introspect.types");
+        TypeReferenceCollector collector =
+            new ClassPathScannerTypeReferenceCollector("test.org.dockbox.hartshorn.introspect.types");
         TypeReferenceCollector cachedCollector = new CachedTypeReferenceCollector(collector);
 
         Set<TypeReference> typeReferencesA = cachedCollector.collect();
@@ -79,11 +81,15 @@ public class TypeCollectorTests {
 
     @Test
     void testAggregateTypeCollector() throws TypeCollectionException {
-        PredefinedSetTypeReferenceCollector enumCollector = PredefinedSetTypeReferenceCollector.of(ScanEnum.class);
-        PredefinedSetTypeReferenceCollector classCollector = PredefinedSetTypeReferenceCollector.of(ScanClass.class);
-        PredefinedSetTypeReferenceCollector interfaceCollector = PredefinedSetTypeReferenceCollector.of(ScanInterface.class);
+        PredefinedSetTypeReferenceCollector enumCollector =
+            PredefinedSetTypeReferenceCollector.of(ScanEnum.class);
+        PredefinedSetTypeReferenceCollector classCollector =
+            PredefinedSetTypeReferenceCollector.of(ScanClass.class);
+        PredefinedSetTypeReferenceCollector interfaceCollector =
+            PredefinedSetTypeReferenceCollector.of(ScanInterface.class);
 
-        TypeReferenceCollector collector = new AggregateTypeReferenceCollector(enumCollector, classCollector, interfaceCollector);
+        TypeReferenceCollector collector =
+            new AggregateTypeReferenceCollector(enumCollector, classCollector, interfaceCollector);
         Set<TypeReference> typeReferences = collector.collect();
 
         Assertions.assertEquals(3, typeReferences.size());
@@ -102,5 +108,4 @@ public class TypeCollectorTests {
         Assertions.assertTrue(types.contains(ScanClass.class));
         Assertions.assertTrue(types.contains(ScanInterface.class));
     }
-
 }

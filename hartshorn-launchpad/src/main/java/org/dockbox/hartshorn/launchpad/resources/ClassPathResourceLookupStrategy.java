@@ -23,13 +23,12 @@ import java.net.URI;
 import java.util.Set;
 
 /**
- * Looks up a resource through the classpath. The packaged resource is copied to a temporary file, created and managed
- * by {@link ClasspathResourceLocator#resources(String)}. This requires the strategy name to be
- * configured to be equal to {@code classpath:{resource_name}}.
- *
- * @since 0.4.7
+ * Looks up a resource through the classpath. The packaged resource is copied to a temporary file,
+ * created and managed by {@link ClasspathResourceLocator#resources(String)}. This requires the
+ * strategy name to be configured to be equal to {@code classpath:{resource_name}}.
  *
  * @author Guus Lieben
+ * @since 0.4.7
  */
 public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {
 
@@ -44,7 +43,7 @@ public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {
     public Set<URI> lookup(ApplicationEnvironment environment, String path) {
         try {
             return environment.classpath()
-                    .resources(path);
+                .resources(path);
         }
         catch (Exception e) {
             throw new RuntimeException("Failed to lookup classpath resource: " + path, e);

@@ -25,24 +25,24 @@ import org.dockbox.hartshorn.inject.targets.ComponentInjectionPointsResolver;
 import org.dockbox.hartshorn.inject.ComponentKeyResolver;
 
 /**
- * Resolves dependencies for a binding declaration using a {@link IntrospectionDependencyResolver} to
- * introspect the method and resolve the dependencies.
- *
- * @see IntrospectionDependencyResolver
- *
- * @since 0.6.0
+ * Resolves dependencies for a binding declaration using a {@link IntrospectionDependencyResolver}
+ * to introspect the method and resolve the dependencies.
  *
  * @author Guus Lieben
+ * @see IntrospectionDependencyResolver
+ * @since 0.6.0
  */
-public class IntrospectionBindingDependencyResolver implements BindingDeclarationDependencyResolver {
+public class IntrospectionBindingDependencyResolver
+    implements BindingDeclarationDependencyResolver {
 
     private final IntrospectionDependencyResolver introspectionDependencyResolver;
 
     public IntrospectionBindingDependencyResolver(
-            ComponentInjectionPointsResolver injectionPointsResolver,
-            ComponentKeyResolver componentKeyResolver
+        ComponentInjectionPointsResolver injectionPointsResolver,
+        ComponentKeyResolver componentKeyResolver
     ) {
-        this.introspectionDependencyResolver = new IntrospectionDependencyResolver(injectionPointsResolver, componentKeyResolver);
+        this.introspectionDependencyResolver =
+            new IntrospectionDependencyResolver(injectionPointsResolver, componentKeyResolver);
     }
 
     @Override
@@ -52,7 +52,8 @@ public class IntrospectionBindingDependencyResolver implements BindingDeclaratio
 
     @Override
     public Set<ComponentKey<?>> dependencies(BindingStrategyContext<?> context) {
-        MethodAwareBindingStrategyContext<?> strategyContext = (MethodAwareBindingStrategyContext<?>) context;
+        MethodAwareBindingStrategyContext<?> strategyContext =
+            (MethodAwareBindingStrategyContext<?>) context;
         return this.introspectionDependencyResolver.resolveDependencies(strategyContext.method());
     }
 }

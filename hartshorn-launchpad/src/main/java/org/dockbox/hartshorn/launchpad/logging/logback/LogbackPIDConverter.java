@@ -25,11 +25,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
  * Logback converter that provides the PID of the current process. This is used by the
  * {@link LogbackEncoder} to offer the PID to the log message.
  *
- * @see LogbackEncoder
- *
- * @since 0.4.8
- *
  * @author Guus Lieben
+ * @see LogbackEncoder
+ * @since 0.4.8
  */
 public class LogbackPIDConverter extends ClassicConverter {
 

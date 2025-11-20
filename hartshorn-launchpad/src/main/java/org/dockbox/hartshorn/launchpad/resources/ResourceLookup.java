@@ -20,21 +20,21 @@ import java.net.URI;
 import java.util.Set;
 
 /**
- * A resource lookup is responsible for finding resources based on a given path. This may be a file, a classpath
- * resource or any other type of resource.
- *
- * @since 0.4.1
+ * A resource lookup is responsible for finding resources based on a given path. This may be a file,
+ * a classpath resource or any other type of resource.
  *
  * @author Guus Lieben
+ * @since 0.4.1
  */
 @FunctionalInterface
 public interface ResourceLookup {
 
     /**
-     * Looks up all resources that match the given path. The path may be a file path, a classpath resource path or any
-     * other type of path.
+     * Looks up all resources that match the given path. The path may be a file path, a classpath
+     * resource path or any other type of path.
      *
      * @param path the path to the resource
+     *
      * @return a set of {@link URI URIs} pointing to the resource
      */
     Set<URI> lookup(String path);

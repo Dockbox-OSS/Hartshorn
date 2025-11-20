@@ -22,19 +22,18 @@ import org.dockbox.hartshorn.inject.graph.declaration.DependencyDeclarationConte
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * {@link DependencyDeclarationContext} specifically designed for managed components, which are tracked in
- * {@link ComponentContainer containers}. A managed component never has qualifiers, and is only identified
- * by its type.
+ * {@link DependencyDeclarationContext} specifically designed for managed components, which are
+ * tracked in {@link ComponentContainer containers}. A managed component never has qualifiers, and
+ * is only identified by its type.
  *
  * @param container the container in which the component is managed
  * @param <T> the type of the component managed by the container
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public record ComponentContainerDependencyDeclarationContext<T>(ComponentContainer<T> container)
-        implements DependencyDeclarationContext<T> {
+    implements DependencyDeclarationContext<T> {
 
     @Override
     public TypeView<T> type() {

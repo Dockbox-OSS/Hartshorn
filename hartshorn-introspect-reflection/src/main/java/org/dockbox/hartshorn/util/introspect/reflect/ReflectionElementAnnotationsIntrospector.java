@@ -34,13 +34,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * An {@link ElementAnnotationsIntrospector} that uses reflection to introspect annotations on an {@link
- * AnnotatedElement}. This introspector is capable of caching annotations, and supports the use of meta-annotations,
- * assuming the {@link AnnotationLookup} provided supports this.
- *
- * @since 0.4.13
+ * An {@link ElementAnnotationsIntrospector} that uses reflection to introspect annotations on an
+ * {@link AnnotatedElement}. This introspector is capable of caching annotations, and supports the
+ * use of meta-annotations, assuming the {@link AnnotationLookup} provided supports this.
  *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public class ReflectionElementAnnotationsIntrospector implements ElementAnnotationsIntrospector {
 
@@ -49,19 +48,26 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
     private final AnnotationLookup annotationLookup;
     private Map<Class<?>, Annotation> annotationCache;
 
-    public ReflectionElementAnnotationsIntrospector(Introspector introspector, AnnotatedElement element) {
+    public ReflectionElementAnnotationsIntrospector(
+        Introspector introspector,
+        AnnotatedElement element
+    ) {
         this(introspector, element, introspector.annotations());
     }
 
-    public ReflectionElementAnnotationsIntrospector(Introspector introspector, AnnotatedElement element, AnnotationLookup annotationLookup) {
+    public ReflectionElementAnnotationsIntrospector(
+        Introspector introspector,
+        AnnotatedElement element,
+        AnnotationLookup annotationLookup
+    ) {
         this.introspector = introspector;
         this.element = element;
         this.annotationLookup = annotationLookup;
     }
 
     /**
-     * Returns the annotation cache, initializing it if necessary. The annotation cache is a map of annotation
-     * types to annotation instances, and is used to speed up annotation lookups.
+     * Returns the annotation cache, initializing it if necessary. The annotation cache is a map of
+     * annotation types to annotation instances, and is used to speed up annotation lookups.
      *
      * @return the annotation cache
      */
@@ -85,8 +91,10 @@ public class ReflectionElementAnnotationsIntrospector implements ElementAnnotati
     @Override
     public Set<Annotation> annotedWith(Class<? extends Annotation> annotation) {
         return this.all().stream()
-                .filter(presentAnnotation -> this.introspector.introspect(presentAnnotation.annotationType()).annotations().has(annotation))
-                .collect(Collectors.toSet());
+            .filter(presentAnnotation -> this.introspector.introspect(presentAnnotation.annotationType())
+                .annotations()
+                .has(annotation))
+            .collect(Collectors.toSet());
     }
 
     @Override

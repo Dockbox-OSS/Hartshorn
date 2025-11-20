@@ -23,9 +23,8 @@ import java.lang.annotation.Target;
 /**
  * Annotation without a {@link Target} annotation, which means it can be applied to any element.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AnyElementAnnotation {

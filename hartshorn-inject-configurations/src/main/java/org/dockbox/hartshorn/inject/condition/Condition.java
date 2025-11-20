@@ -17,14 +17,13 @@
 package org.dockbox.hartshorn.inject.condition;
 
 /**
- * A condition that may be used by a {@link ConditionMatcher} to determine whether a certain operation
- * should be executed. Conditions are expected to be stateless, and may be reused for multiple matches.
- *
- * @see ConditionMatcher
- *
- * @since 0.4.12
+ * A condition that may be used by a {@link ConditionMatcher} to determine whether a certain
+ * operation should be executed. Conditions are expected to be stateless, and may be reused for
+ * multiple matches.
  *
  * @author Guus Lieben
+ * @see ConditionMatcher
+ * @since 0.4.12
  */
 @FunctionalInterface
 public interface Condition {

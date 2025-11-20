@@ -30,9 +30,8 @@ import java.util.Set;
  * {@link ConditionalConverter}, then the {@link ConditionalConverter#canConvert(Object, Class)}
  * method is used to further narrow the match.
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class ConverterAdapter implements GenericConverter, ConditionalConverter {
 
@@ -40,9 +39,9 @@ public class ConverterAdapter implements GenericConverter, ConditionalConverter 
     private final ConvertibleTypePair typePair;
 
     public <I, O> ConverterAdapter(
-            Class<I> sourceType,
-            Class<O> targetType,
-            Converter<I, O> converter
+        Class<I> sourceType,
+        Class<O> targetType,
+        Converter<I, O> converter
     ) {
         this.converter = converter;
         this.typePair = ConvertibleTypePair.of(sourceType, targetType);
@@ -73,9 +72,9 @@ public class ConverterAdapter implements GenericConverter, ConditionalConverter 
     @SuppressWarnings("unchecked")
     @Override
     public @Nullable <I, O> Object convert(
-            @Nullable Object source,
-            @NonNull Class<I> sourceType,
-            @NonNull Class<O> targetType
+        @Nullable Object source,
+        @NonNull Class<I> sourceType,
+        @NonNull Class<O> targetType
     ) {
         Converter<I, O> ioConverter = (Converter<I, O>) this.converter;
         return ioConverter.convert(sourceType.cast(source));

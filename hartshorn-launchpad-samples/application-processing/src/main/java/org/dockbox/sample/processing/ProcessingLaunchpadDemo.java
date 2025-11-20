@@ -16,7 +16,8 @@ public class ProcessingLaunchpadDemo {
     public ApplicationStarter starter(Logger logger) {
         return applicationContext -> {
             // Binding defined in CustomBindingPostProcessor
-            HelloWorldSupplier helloWorldSupplier = applicationContext.get(HelloWorldSupplier.class);
+            HelloWorldSupplier helloWorldSupplier =
+                applicationContext.get(HelloWorldSupplier.class);
             logger.info(helloWorldSupplier.getHelloWorldMessage());
         };
     }

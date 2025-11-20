@@ -33,9 +33,8 @@ import java.util.function.BiPredicate;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class UnmodifiableMultiMap<K, V> implements MultiMap<K, V> {
 

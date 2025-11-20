@@ -22,17 +22,21 @@ import org.dockbox.hartshorn.inject.processing.HierarchicalBinderPostProcessor;
 import org.dockbox.hartshorn.inject.scope.Scope;
 
 /**
- * A {@link HierarchicalBinderPostProcessor} that filters the {@link HierarchicalBinder} based on the {@link Scope} of the
- * binder.
- *
- * @since 0.7.0
+ * A {@link HierarchicalBinderPostProcessor} that filters the {@link HierarchicalBinder} based on
+ * the {@link Scope} of the binder.
  *
  * @author Guus Lieben
+ * @since 0.7.0
  */
-public abstract class AbstractScopeFilteredBinderPostProcessor implements HierarchicalBinderPostProcessor {
+public abstract class AbstractScopeFilteredBinderPostProcessor
+    implements HierarchicalBinderPostProcessor {
 
     @Override
-    public void process(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder) {
+    public void process(
+        InjectionCapableApplication application,
+        Scope scope,
+        HierarchicalBinder binder
+    ) {
         if (this.supportsScope(application, scope)) {
             this.processBinder(application, scope, binder);
         }
@@ -45,13 +49,18 @@ public abstract class AbstractScopeFilteredBinderPostProcessor implements Hierar
      * @param scope the scope of the binder
      * @param binder the binder to process
      */
-    protected abstract void processBinder(InjectionCapableApplication application, Scope scope, HierarchicalBinder binder);
+    protected abstract void processBinder(
+        InjectionCapableApplication application,
+        Scope scope,
+        HierarchicalBinder binder
+    );
 
     /**
      * Determines whether this post processor supports the given scope.
      *
      * @param application the application the binder belongs to
      * @param scope the scope of the binder
+     *
      * @return true if the post processor supports the scope, false otherwise
      */
     protected abstract boolean supportsScope(InjectionCapableApplication application, Scope scope);

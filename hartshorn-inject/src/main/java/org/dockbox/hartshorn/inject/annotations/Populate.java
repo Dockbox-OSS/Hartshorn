@@ -24,10 +24,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the values of fields and executables should be automatically populated
- * by {@link ComponentPopulator}s. Note that this annotation is typically not required,
- * however {@link ComponentPopulator}s can decide to either not populate at all if this
- * annotation is absent, or to populate all targets by default.
+ * Indicates that the values of fields and executables should be automatically populated by
+ * {@link ComponentPopulator}s. Note that this annotation is typically not required, however
+ * {@link ComponentPopulator}s can decide to either not populate at all if this annotation is
+ * absent, or to populate all targets by default.
  *
  * <p>Population targets can be specified by using the {@link Populate#value()} attribute. By
  * default, nothing is populated. All targets are therefore opt-in when using this annotation.
@@ -49,9 +49,8 @@ public @interface Populate {
     /**
      * Types of elements that can be populated. Used as a value for {@link Populate#value()}.
      *
-     * @since 0.5.0
-     *
      * @author Guus Lieben
+     * @since 0.5.0
      */
     enum Type {
         /**

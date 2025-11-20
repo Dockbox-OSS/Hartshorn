@@ -29,13 +29,12 @@ import java.util.Set;
  * @param <K> the type of the keys
  * @param <V> the type of the values
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public abstract class AbstractBiMultiMap<K, V>
-        extends StandardMultiMap<K, V>
-        implements BiMultiMap<K, V> {
+    extends StandardMultiMap<K, V>
+    implements BiMultiMap<K, V> {
 
     protected AbstractBiMultiMap() {
     }

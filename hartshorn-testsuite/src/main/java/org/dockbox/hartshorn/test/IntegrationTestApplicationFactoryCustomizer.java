@@ -39,41 +39,44 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Customizer for the {@link StandardApplicationContextFactory} that configures the application context for integration tests.
+ * Customizer for the {@link StandardApplicationContextFactory} that configures the application
+ * context for integration tests.
  *
  * @param testClass the test class
  * @param testComponentSources the component sources to use for the test
  * @param applicationCustomizer the customizer for the test application
  */
 public record IntegrationTestApplicationFactoryCustomizer(
-        Class<?> testClass,
-        List<AnnotatedElement> testComponentSources,
-        TestApplicationCustomizer applicationCustomizer
+    Class<?> testClass,
+    List<AnnotatedElement> testComponentSources,
+    TestApplicationCustomizer applicationCustomizer
 ) implements Customizer<StandardApplicationContextFactory.Configurer> {
 
     private static final ObjectFactory OBJECT_FACTORY = new ReflectionObjectFactory();
 
     @Override
     public void configure(StandardApplicationContextFactory.Configurer constructor) {
-        Customizer<ConfigurableApplicationEnvironment.Configurer> environmentCustomizer = environment -> {
-            environment.disableBanner();
-            environment.enableBatchMode();
-            environment.showStacktraces();
-            environment.applicationFSProvider(new TemporaryFileSystemProvider());
-            environment.applicationContext(SimpleApplicationContext.create(this.applicationCustomizer::customizeApplication));
+        Customizer<ConfigurableApplicationEnvironment.Configurer> environmentCustomizer =
+            environment -> {
+                environment.disableBanner();
+                environment.enableBatchMode();
+                environment.showStacktraces();
+                environment.applicationFSProvider(new TemporaryFileSystemProvider());
+                environment.applicationContext(SimpleApplicationContext.create(this.applicationCustomizer::customizeApplication));
 
-            environment.propertyRegistryFactory(EnvironmentProfilesPropertyRegistryFactory.create(propertyRegistryFactory -> {
-                propertyRegistryFactory.profileNameResolver(new CompositeProfileNameResolver(
-                        new FromPropertyProfileNameResolver(),
-                        new FromTestAnnotationProfileNameResolver(this.testComponentSources)
-                ));
-            }));
-        };
+                environment.propertyRegistryFactory(EnvironmentProfilesPropertyRegistryFactory.create(
+                    propertyRegistryFactory -> {
+                        propertyRegistryFactory.profileNameResolver(new CompositeProfileNameResolver(
+                            new FromPropertyProfileNameResolver(),
+                            new FromTestAnnotationProfileNameResolver(this.testComponentSources)
+                        ));
+                    }));
+            };
         constructor.environment(ConfigurableApplicationEnvironment.create(
-                environmentCustomizer.compose(this.applicationCustomizer::customizeEnvironment)
+            environmentCustomizer.compose(this.applicationCustomizer::customizeEnvironment)
         ));
 
-        for(AnnotatedElement element : this.testComponentSources) {
+        for (AnnotatedElement element : this.testComponentSources) {
             this.customizeWithComponentSource(constructor, element);
         }
 
@@ -83,10 +86,11 @@ public record IntegrationTestApplicationFactoryCustomizer(
     private void customizeModuleActivators(StandardApplicationContextFactory.Configurer constructor) {
         Class<?> next = this.testClass;
         Set<Annotation> moduleActivators = new HashSet<>();
-        while(next != null) {
+        while (next != null) {
             Arrays.stream(next.getAnnotations())
-                    .filter(annotation -> annotation.annotationType().isAnnotationPresent(ModuleActivator.class))
-                    .forEach(moduleActivators::add);
+                .filter(annotation -> annotation.annotationType()
+                    .isAnnotationPresent(ModuleActivator.class))
+                .forEach(moduleActivators::add);
 
             next = next.getSuperclass();
         }
@@ -95,9 +99,13 @@ public record IntegrationTestApplicationFactoryCustomizer(
         });
     }
 
-    private void customizeWithComponentSource(StandardApplicationContextFactory.Configurer constructor, AnnotatedElement element) {
-        Option<HartshornIntegrationTest> testDecorator = Option.of(element.getAnnotation(HartshornIntegrationTest.class));
-        if(testDecorator.present()) {
+    private void customizeWithComponentSource(
+        StandardApplicationContextFactory.Configurer constructor,
+        AnnotatedElement element
+    ) {
+        Option<HartshornIntegrationTest> testDecorator =
+            Option.of(element.getAnnotation(HartshornIntegrationTest.class));
+        if (testDecorator.present()) {
             this.registerProcessors(constructor, testDecorator.get());
             constructor.scanPackages(config -> config.addAll(testDecorator.get().scanPackages()));
             constructor.includeBasePackages(testDecorator.get().includeBasePackages());
@@ -105,20 +113,26 @@ public record IntegrationTestApplicationFactoryCustomizer(
         registerStandaloneComponents(constructor, element);
     }
 
-    private void registerProcessors(StandardApplicationContextFactory.Configurer constructor, HartshornIntegrationTest testDecorator) {
+    private void registerProcessors(
+        StandardApplicationContextFactory.Configurer constructor,
+        HartshornIntegrationTest testDecorator
+    ) {
         constructor.componentPreProcessors(config ->
-                config.addAll(this.instantiateAll(List.of(testDecorator.componentPreProcessors())))
+            config.addAll(this.instantiateAll(List.of(testDecorator.componentPreProcessors())))
         );
         constructor.componentPostProcessors(config ->
-                config.addAll(this.instantiateAll(List.of(testDecorator.componentPostProcessors())))
+            config.addAll(this.instantiateAll(List.of(testDecorator.componentPostProcessors())))
         );
         constructor.binderPostProcessors(config ->
-                config.addAll(this.instantiateAll(List.of(testDecorator.binderPostProcessors())))
+            config.addAll(this.instantiateAll(List.of(testDecorator.binderPostProcessors())))
         );
     }
 
-    private static void registerStandaloneComponents(StandardApplicationContextFactory.Configurer constructor, AnnotatedElement element) {
-        if(element.isAnnotationPresent(TestComponents.class)) {
+    private static void registerStandaloneComponents(
+        StandardApplicationContextFactory.Configurer constructor,
+        AnnotatedElement element
+    ) {
+        if (element.isAnnotationPresent(TestComponents.class)) {
             TestComponents testComponents = element.getAnnotation(TestComponents.class);
             constructor.standaloneComponents(components -> components.addAll(testComponents.value()));
         }
@@ -126,7 +140,7 @@ public record IntegrationTestApplicationFactoryCustomizer(
 
     private <T> List<T> instantiateAll(List<Class<? extends T>> types) {
         List<T> result = new ArrayList<>();
-        for(Class<? extends T> type : types) {
+        for (Class<? extends T> type : types) {
             result.add(OBJECT_FACTORY.create(type));
         }
         return result;

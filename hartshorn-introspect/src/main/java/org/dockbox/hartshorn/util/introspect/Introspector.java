@@ -49,9 +49,8 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
  * always possible, as some elements may not be accessible to the application. In such cases, the
  * implementation may decide how to proceed.
  *
- * @since 0.4.13
- *
  * @author Guus Lieben
+ * @since 0.4.13
  */
 public interface Introspector extends ReferenceIntrospector {
 
@@ -61,7 +60,7 @@ public interface Introspector extends ReferenceIntrospector {
      * output type parameters will be included if applicable.
      *
      * @param type the type to introspect
-     * @param <T>  the type of the provided type
+     * @param <T> the type of the provided type
      *
      * @return a view of the provided type
      *

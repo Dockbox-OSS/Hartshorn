@@ -37,17 +37,15 @@ import java.util.stream.Collector;
  * @param keyMapper A function that maps elements to keys
  * @param valueMapper A function that maps elements to values
  * @param finisher A function that transforms the intermediate {@link MultiMap} into the final
- *                 resulting {@link MultiMap}
- *
+ * resulting {@link MultiMap}
  * @param <T> The type of the elements to collect
  * @param <K> The type of the keys in the resulting {@link MultiMap}
  * @param <V> The type of the values in the resulting {@link MultiMap}
  * @param <M> The type of the intermediate {@link MultiMap} used during collection
  * @param <F> The type of the resulting {@link MultiMap}
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends MultiMap<K, V>>(
     Supplier<M> supplier,
@@ -73,14 +71,13 @@ public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends Mul
      * {@link MultiMap} equivalent of {@link java.util.stream.Collectors#groupingBy(Function)}.
      *
      * @param keyMapper the classifier function to determine the key for each element
-     *
      * @param <T> the type of the elements to collect
      * @param <K> the type of the keys in the resulting {@link MultiMap}
      *
      * @return a {@link MultiMapCollector} that collects elements into a {@link MultiMap}
      */
     public static <T, K> MultiMapCollector<T, K, T, MultiMap<K, T>, MultiMap<K, T>> groupingBy(
-            Function<T, K> keyMapper
+        Function<T, K> keyMapper
     ) {
         return toMultiMap(keyMapper, Function.identity());
     }
@@ -91,7 +88,6 @@ public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends Mul
      *
      * @param keyMapper a mapper function to determine the key for each element
      * @param valueMapper a mapper function to determine the value for each element
-     *
      * @param <T> the type of the elements to collect
      * @param <K> the type of the keys in the resulting {@link MultiMap}
      * @param <V> the type of the values in the resulting {@link MultiMap}
@@ -99,14 +95,14 @@ public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends Mul
      * @return a {@link MultiMapCollector} that collects elements into a {@link MultiMap}
      */
     public static <T, K, V> MultiMapCollector<T, K, V, MultiMap<K, V>, MultiMap<K, V>> toMultiMap(
-            Function<T, K> keyMapper,
-            Function<T, V> valueMapper
+        Function<T, K> keyMapper,
+        Function<T, V> valueMapper
     ) {
         return toMultiMap(
-                ArrayListHashBiMultiMap::new,
-                keyMapper,
-                valueMapper,
-                UnmodifiableMultiMap::new
+            ArrayListHashBiMultiMap::new,
+            keyMapper,
+            valueMapper,
+            UnmodifiableMultiMap::new
         );
     }
 
@@ -117,7 +113,6 @@ public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends Mul
      * @param mapSupplier a supplier that creates a new {@link MultiMap} instance
      * @param keyMapper a function that maps elements to keys
      * @param valueMapper a function that maps elements to values
-     *
      * @param <T> the type of the elements to collect
      * @param <K> the type of the keys in the resulting {@link MultiMap}
      * @param <V> the type of the values in the resulting {@link MultiMap}
@@ -126,9 +121,9 @@ public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends Mul
      */
     public static <T, K, V, M extends MultiMap<K, V>>
     MultiMapCollector<T, K, V, M, M> toMultiMap(
-            Supplier<M> mapSupplier,
-            Function<T, K> keyMapper,
-            Function<T, V> valueMapper
+        Supplier<M> mapSupplier,
+        Function<T, K> keyMapper,
+        Function<T, V> valueMapper
     ) {
         return toMultiMap(mapSupplier, keyMapper, valueMapper, Function.identity());
     }
@@ -141,8 +136,7 @@ public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends Mul
      * @param keyMapper a function that maps elements to keys
      * @param valueMapper a function that maps elements to values
      * @param finisher a function that transforms the intermediate {@link MultiMap} into the final
-     *                 resulting {@link MultiMap}
-     *
+     * resulting {@link MultiMap}
      * @param <T> the type of the elements to collect
      * @param <K> the type of the keys in the resulting {@link MultiMap}
      * @param <V> the type of the values in the resulting {@link MultiMap}
@@ -153,10 +147,10 @@ public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends Mul
      */
     public static <T, K, V, M extends MultiMap<K, V>, F extends MultiMap<K, V>>
     MultiMapCollector<T, K, V, M, F> toMultiMap(
-            Supplier<M> mapSupplier,
-            Function<T, K> keyMapper,
-            Function<T, V> valueMapper,
-            Function<M, F> finisher
+        Supplier<M> mapSupplier,
+        Function<T, K> keyMapper,
+        Function<T, V> valueMapper,
+        Function<M, F> finisher
     ) {
         return new MultiMapCollector<>(mapSupplier, keyMapper, valueMapper, finisher);
     }
@@ -164,8 +158,8 @@ public record MultiMapCollector<T, K, V, M extends MultiMap<K, V>, F extends Mul
     @Override
     public BiConsumer<M, T> accumulator() {
         return (map, element) -> map.put(
-                this.keyMapper().apply(element),
-                this.valueMapper().apply(element)
+            this.keyMapper().apply(element),
+            this.valueMapper().apply(element)
         );
     }
 

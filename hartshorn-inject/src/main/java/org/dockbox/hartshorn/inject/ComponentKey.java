@@ -40,23 +40,24 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * A key that can be used to identify a component. This contains required metadata to identify a component, such as
- * its type, name, scope and whether post-construction is allowed on provisioning.
+ * A key that can be used to identify a component. This contains required metadata to identify a
+ * component, such as its type, name, scope and whether post-construction is allowed on
+ * provisioning.
  *
- * <p>Component keys contain a {@link ParameterizableType} that describes the type of the component. This type can
- * be parameterized. Therefore, key instances differentiate between e.g. {@code List<String>} and {@code List<Integer>}.
+ * <p>Component keys contain a {@link ParameterizableType} that describes the type of the component.
+ * This type can
+ * be parameterized. Therefore, key instances differentiate between e.g. {@code List<String>} and
+ * {@code List<Integer>}.
  *
  * <p>Keys are immutable, to build a new key based on an existing key, use {@link #mutable()}.
  *
  * @param <T> the type of the component
  *
+ * @author Guus Lieben
  * @see ComponentProvider#get(ComponentKey)
  * @see ComponentProvider#get(ComponentKey, ComponentRequestContext)
  * @see ComponentKey#builder(Class)
- *
  * @since 0.5.0
- *
- * @author Guus Lieben
  */
 public final class ComponentKey<T> implements Reportable {
 
@@ -69,13 +70,13 @@ public final class ComponentKey<T> implements Reportable {
     private final Tristate strict;
 
     private ComponentKey(
-            ProviderSelectionStrategy selectionStrategy,
-            ComponentResolutionFailureStrategy failureStrategy,
-            ParameterizableType type,
-            CompositeQualifier qualifier,
-            Scope scope,
-            boolean postConstructionAllowed,
-            Tristate strict
+        ProviderSelectionStrategy selectionStrategy,
+        ComponentResolutionFailureStrategy failureStrategy,
+        ParameterizableType type,
+        CompositeQualifier qualifier,
+        Scope scope,
+        boolean postConstructionAllowed,
+        Tristate strict
     ) {
         this.selectionStrategy = selectionStrategy;
         this.failureStrategy = failureStrategy;
@@ -87,8 +88,8 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new builder for a component key of the given type. If the type is parameterized, the key will
-     * be for the raw type.
+     * Creates a new builder for a component key of the given type. If the type is parameterized,
+     * the key will be for the raw type.
      *
      * @param type the type of the component
      * @param <T> the type of the component
@@ -100,8 +101,8 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new builder for a component key of the given type. If the type is parameterized, the key will
-     * retain its parameterization.
+     * Creates a new builder for a component key of the given type. If the type is parameterized,
+     * the key will retain its parameterization.
      *
      * @param type the type of the component
      * @param <T> the type of the component
@@ -113,8 +114,8 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new builder for a component key of the given type. If the type is parameterized, the key will
-     * retain its parameterization.
+     * Creates a new builder for a component key of the given type. If the type is parameterized,
+     * the key will retain its parameterization.
      *
      * @param type the type of the component
      *
@@ -125,8 +126,9 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new collector component key of the given type. If the type is parameterized, the key will be for
-     * the raw type. The collector key is used to collect all components of the given type.
+     * Creates a new collector component key of the given type. If the type is parameterized, the
+     * key will be for the raw type. The collector key is used to collect all components of the
+     * given type.
      *
      * @param type the type of the component
      * @param <T> the type of the component
@@ -138,8 +140,9 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new collector component key of the given type. If the type is parameterized, the key will retain its
-     * parameterization. The collector key is used to collect all components of the given type.
+     * Creates a new collector component key of the given type. If the type is parameterized, the
+     * key will retain its parameterization. The collector key is used to collect all components of
+     * the given type.
      *
      * @param type the type of the component
      *
@@ -153,7 +156,8 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new component key of the given type. If the type is parameterized, the key will be for the raw type.
+     * Creates a new component key of the given type. If the type is parameterized, the key will be
+     * for the raw type.
      *
      * @param type the type of the component
      * @param <T> the type of the component
@@ -165,8 +169,8 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new component key of the given type. If the type is parameterized, the key will retain its
-     * parameterization.
+     * Creates a new component key of the given type. If the type is parameterized, the key will
+     * retain its parameterization.
      *
      * @param type the type of the component
      * @param <T> the type of the component
@@ -178,8 +182,8 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new component key of the given type. If the type is parameterized, the key will retain its
-     * parameterization.
+     * Creates a new component key of the given type. If the type is parameterized, the key will
+     * retain its parameterization.
      *
      * @param type the type of the component
      *
@@ -190,7 +194,8 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new named component key of the given type. If the type is parameterized, the key will be for the raw type.
+     * Creates a new named component key of the given type. If the type is parameterized, the key
+     * will be for the raw type.
      *
      * @param key the type of the component
      * @param name the name of the component
@@ -207,8 +212,8 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new named component key of the given type. If the type is parameterized, the key will retain its
-     * parameterization.
+     * Creates a new named component key of the given type. If the type is parameterized, the key
+     * will retain its parameterization.
      *
      * @param type the type of the component
      * @param named the name of the component
@@ -221,8 +226,9 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new key builder based on this key. The builder will have the same type, name, scope and post-construction
-     * values as this key. The builder can be used to create a new key with different values.
+     * Creates a new key builder based on this key. The builder will have the same type, name, scope
+     * and post-construction values as this key. The builder can be used to create a new key with
+     * different values.
      *
      * @return a new builder
      */
@@ -231,9 +237,9 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Creates a new view of this key. The view will have the same type and qualifiers as this key. Views are not
-     * attached to a scope, and do not indicate whether post-construction callbacks are allowed. This method is useful
-     * for comparing keys, or for use in maps.
+     * Creates a new view of this key. The view will have the same type and qualifiers as this key.
+     * Views are not attached to a scope, and do not indicate whether post-construction callbacks
+     * are allowed. This method is useful for comparing keys, or for use in maps.
      *
      * <p>Views always retain the parameterization of the key.
      *
@@ -244,34 +250,36 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Returns the qualified name of this key. The qualified name is the name of the type, followed by the name of
-     * the component, followed by the name of the scope. If the component has no name, the name is omitted. If the
-     * component has no explicit scope, the default scope is the application scope of the component provider.
+     * Returns the qualified name of this key. The qualified name is the name of the type, followed
+     * by the name of the component, followed by the name of the scope. If the component has no
+     * name, the name is omitted. If the component has no explicit scope, the default scope is the
+     * application scope of the component provider.
      *
      * @return the qualified name
      */
     public String qualifiedName() {
-        String qualifier = StringUtilities.join(", ", this.qualifier.qualifiers(), QualifierKey::toString);
+        String qualifier =
+            StringUtilities.join(", ", this.qualifier.qualifiers(), QualifierKey::toString);
         String qualifierSuffix = StringUtilities.empty(qualifier) ? "" : ":" + qualifier;
         String scopeName = this.scope()
-                .map(Scope::installableScopeType)
-                .map(ScopeKey::name)
+            .map(Scope::installableScopeType)
+            .map(ScopeKey::name)
             .map(scope -> " @ " + scope)
-                .orElse("");
+            .orElse("");
         return "%s%s%s".formatted(this.type.toQualifiedString(), qualifierSuffix, scopeName);
     }
 
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("type", this.type)
-                .field("qualifier", this.qualifier)
-                .field("scope", this.scope)
-                .field("postConstructionAllowed", this.postConstructionAllowed)
-                .field("strict", this.strict)
-                .field("selectionStrategy", this.selectionStrategy)
-                .field("failureStrategy", this.failureStrategy)
-                .describe();
+            .field("type", this.type)
+            .field("qualifier", this.qualifier)
+            .field("scope", this.scope)
+            .field("postConstructionAllowed", this.postConstructionAllowed)
+            .field("strict", this.strict)
+            .field("selectionStrategy", this.selectionStrategy)
+            .field("failureStrategy", this.failureStrategy)
+            .describe();
     }
 
     @Override
@@ -309,8 +317,8 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Returns the qualifier of the component. If the component has no explicit qualifier, an empty qualifier is
-     * returned.
+     * Returns the qualifier of the component. If the component has no explicit qualifier, an empty
+     * qualifier is returned.
      *
      * @return the qualifier of the component
      */
@@ -319,8 +327,8 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Returns the scope of the component. If the component has no explicit scope, the default scope of
-     * component provider should be used.
+     * Returns the scope of the component. If the component has no explicit scope, the default scope
+     * of component provider should be used.
      *
      * @return the scope of the component
      */
@@ -329,8 +337,8 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Returns whether {@link OnInitialized} callbacks of the component should be activated after initialization. If the key
-     * did not explicitly set this value, {@code true} is returned.
+     * Returns whether {@link OnInitialized} callbacks of the component should be activated after
+     * initialization. If the key did not explicitly set this value, {@code true} is returned.
      *
      * @return whether post-construction should be activated on provisioning
      */
@@ -339,11 +347,12 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Returns whether the lookup for this component should be strict. If the lookup is strict, the type of the
-     * hierarchy has to match this key exactly. If the lookup is not strict, the type of the hierarchy can be a
-     * sub-type of this key.
+     * Returns whether the lookup for this component should be strict. If the lookup is strict, the
+     * type of the hierarchy has to match this key exactly. If the lookup is not strict, the type of
+     * the hierarchy can be a sub-type of this key.
      *
-     * <p>If strict-mode is not explicitly set, {@link Tristate#UNDEFINED} is returned. In this case it remains
+     * <p>If strict-mode is not explicitly set, {@link Tristate#UNDEFINED} is returned. In this case
+     * it remains
      * up to the component provider to decide whether strict-mode should be applied.
      *
      * @return whether the lookup for this component should be strict
@@ -353,8 +362,8 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Returns the strategy that should be used to select a provider for this component. This often selects
-     * a provider based on the priority of the key.
+     * Returns the strategy that should be used to select a provider for this component. This often
+     * selects a provider based on the priority of the key.
      *
      * @return the strategy that should be used to select a provider for this component
      */
@@ -363,7 +372,8 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * Returns the strategy that should be used to handle the scenario where no component is found for this key.
+     * Returns the strategy that should be used to handle the scenario where no component is found
+     * for this key.
      *
      * @return the strategy that should be used to handle component resolution failures
      */
@@ -382,27 +392,28 @@ public final class ComponentKey<T> implements Reportable {
     }
 
     /**
-     * A builder for {@link ComponentKey}s. The builder can be used to create a new key based on an existing key,
-     * or to create a new key from scratch.
+     * A builder for {@link ComponentKey}s. The builder can be used to create a new key based on an
+     * existing key, or to create a new key from scratch.
      *
      * @param <T> the type of the component
      *
+     * @author Guus Lieben
      * @see ComponentKey
      * @see ComponentKey#builder(Class)
-     *
      * @since 0.5.0
-     *
-     * @author Guus Lieben
      */
     public static final class Builder<T> {
 
         private final ParameterizableType type;
         private final CompositeQualifier qualifier = new CompositeQualifier();
-        private ProviderSelectionStrategy selectionStrategy = HighestPriorityProviderSelectionStrategy.INSTANCE;
-        private ComponentResolutionFailureStrategy failureStrategy = ExceptionOnComponentResolutionFailureStrategy.INSTANCE;
+        private ProviderSelectionStrategy selectionStrategy =
+            HighestPriorityProviderSelectionStrategy.INSTANCE;
+        private ComponentResolutionFailureStrategy failureStrategy =
+            ExceptionOnComponentResolutionFailureStrategy.INSTANCE;
         private Scope scope = null; // If not provided, defaults to application scope
         private boolean postConstructionAllowed = true;
-        private Tristate strict = Tristate.UNDEFINED; // If not provided, defaults to InjectorConfiguration#isStrictMode
+        private Tristate strict = Tristate.UNDEFINED;
+            // If not provided, defaults to InjectorConfiguration#isStrictMode
 
         private Builder(ComponentKey<T> key) {
             this.type = key.type;
@@ -420,10 +431,10 @@ public final class ComponentKey<T> implements Reportable {
 
         private <U> Builder<U> copyProperties(Builder<U> builder) {
             builder.qualifiers(this.qualifier.qualifiers())
-                    .selectionStrategy(this.selectionStrategy)
-                    .failureStrategy(this.failureStrategy)
-                    .scope(this.scope)
-                    .postConstructionAllowed(this.postConstructionAllowed);
+                .selectionStrategy(this.selectionStrategy)
+                .failureStrategy(this.failureStrategy)
+                .scope(this.scope)
+                .postConstructionAllowed(this.postConstructionAllowed);
             if (this.strict != Tristate.UNDEFINED) {
                 builder.strict(this.strict.booleanValue());
             }
@@ -431,7 +442,8 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Sets the type of the component. If the type is parameterized, the key will be for the raw type.
+         * Sets the type of the component. If the type is parameterized, the key will be for the raw
+         * type.
          *
          * @param type the type of the component
          * @param <U> the type of the component
@@ -443,7 +455,8 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Sets the type of the component. If the type is parameterized, the key will retain its parameterization.
+         * Sets the type of the component. If the type is parameterized, the key will retain its
+         * parameterization.
          *
          * @param type the type of the component
          * @param <U> the type of the component
@@ -455,7 +468,8 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Sets the type of the component. If the type is parameterized, the key will retain its parameterization.
+         * Sets the type of the component. If the type is parameterized, the key will retain its
+         * parameterization.
          *
          * @param type the type of the component
          *
@@ -466,8 +480,8 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Sets the strategy that should be used to select a provider for this component. This often selects
-         * a provider based on the priority of the key.
+         * Sets the strategy that should be used to select a provider for this component. This often
+         * selects a provider based on the priority of the key.
          *
          * @param strategy the strategy that should be used to select a provider for this component
          *
@@ -479,10 +493,12 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Sets the strategy that should be used to handle the scenario where no component is found for this key.
-         * The default strategy is {@link ExceptionOnComponentResolutionFailureStrategy}.
+         * Sets the strategy that should be used to handle the scenario where no component is found
+         * for this key. The default strategy is
+         * {@link ExceptionOnComponentResolutionFailureStrategy}.
          *
-         * @param failureStrategy the strategy that should be used to handle component resolution failures
+         * @param failureStrategy the strategy that should be used to handle component resolution
+         * failures
          *
          * @return this builder
          */
@@ -492,8 +508,9 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Sets the {@link #failureStrategy(ComponentResolutionFailureStrategy) failure strategy} to ignore lookup
-         * failures, thus making it possible to result in {@code null} values from a lookup.
+         * Sets the {@link #failureStrategy(ComponentResolutionFailureStrategy) failure strategy} to
+         * ignore lookup failures, thus making it possible to result in {@code null} values from a
+         * lookup.
          *
          * @return this builder
          */
@@ -502,8 +519,8 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Sets the {@link #failureStrategy(ComponentResolutionFailureStrategy) failure strategy} to throw an exception
-         * when a lookup fails, thus ensuring the result is always non-null.
+         * Sets the {@link #failureStrategy(ComponentResolutionFailureStrategy) failure strategy} to
+         * throw an exception when a lookup fails, thus ensuring the result is always non-null.
          *
          * @return this builder
          */
@@ -512,7 +529,8 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Sets the name of the component. This is a convenience method for setting a qualifier with the given name.
+         * Sets the name of the component. This is a convenience method for setting a qualifier with
+         * the given name.
          *
          * @param name the name of the component
          *
@@ -523,7 +541,8 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Adds a qualifier to the component. Qualifiers are used to differentiate between components of the same type.
+         * Adds a qualifier to the component. Qualifiers are used to differentiate between
+         * components of the same type.
          *
          * @param qualifier the qualifier to add
          *
@@ -535,7 +554,8 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Adds multiple qualifiers to the component. Qualifiers are used to differentiate between components of the same type.
+         * Adds multiple qualifiers to the component. Qualifiers are used to differentiate between
+         * components of the same type.
          *
          * @param qualifiers the qualifiers to add
          *
@@ -547,8 +567,8 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Adds multiple qualifiers to the component. Qualifiers are used to differentiate between components of the
-         * same type.
+         * Adds multiple qualifiers to the component. Qualifiers are used to differentiate between
+         * components of the same type.
          *
          * @param qualifiers the qualifiers to add
          *
@@ -582,9 +602,11 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Sets whether {@link OnInitialized} callbacks of the component should be activated after initialization.
+         * Sets whether {@link OnInitialized} callbacks of the component should be activated after
+         * initialization.
          *
-         * @param postConstructionAllowed whether post-construction should be activated on provisioning
+         * @param postConstructionAllowed whether post-construction should be activated on
+         * provisioning
          *
          * @return this builder
          */
@@ -594,11 +616,12 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Sets whether the lookup for this component should be strict. If the lookup is strict, the type of the
-         * hierarchy has to match this key exactly. If the lookup is not strict, the type of the hierarchy can be a
-         * sub-type of this key.
+         * Sets whether the lookup for this component should be strict. If the lookup is strict, the
+         * type of the hierarchy has to match this key exactly. If the lookup is not strict, the
+         * type of the hierarchy can be a sub-type of this key.
          *
-         * <p>If strict-mode is not explicitly set, {@link Tristate#UNDEFINED} is returned. In this case it remains
+         * <p>If strict-mode is not explicitly set, {@link Tristate#UNDEFINED} is returned. In this
+         * case it remains
          * up to the component provider to decide whether strict-mode should be applied.
          *
          * @param strict whether the lookup for this component should be strict
@@ -638,19 +661,21 @@ public final class ComponentKey<T> implements Reportable {
         }
 
         /**
-         * Builds a collector key builder for the component type of this key. The collector key builder can be used to
-         * create a new key for a collection of components of the given type.
+         * Builds a collector key builder for the component type of this key. The collector key
+         * builder can be used to create a new key for a collection of components of the given
+         * type.
          *
          * @return a new collector key builder
          */
         public Builder<ComponentCollection<T>> collector() {
-            ParameterizableType collectionType = ParameterizableType.builder(ComponentCollection.class)
+            ParameterizableType collectionType =
+                ParameterizableType.builder(ComponentCollection.class)
                     .parameters(this.type)
                     .build();
             Builder<?> builder = builder(collectionType)
-                    .qualifiers(this.qualifier.qualifiers())
-                    .scope(this.scope)
-                    .postConstructionAllowed(this.postConstructionAllowed);
+                .qualifiers(this.qualifier.qualifiers())
+                .scope(this.scope)
+                .postConstructionAllowed(this.postConstructionAllowed);
             return TypeUtils.unchecked(builder, Builder.class);
         }
 
@@ -661,20 +686,21 @@ public final class ComponentKey<T> implements Reportable {
          */
         public ComponentKey<T> build() {
             return new ComponentKey<>(
-                    this.selectionStrategy,
-                    this.failureStrategy,
-                    this.type,
-                    this.qualifier,
-                    this.scope,
-                    this.postConstructionAllowed,
-                    this.strict
+                this.selectionStrategy,
+                this.failureStrategy,
+                this.type,
+                this.qualifier,
+                this.scope,
+                this.postConstructionAllowed,
+                this.strict
             );
         }
 
         /**
-         * Builds a new view of the key based on the values of this builder. The view will have the same type and
-         * qualifiers as the key. Views are not attached to a scope, and do not indicate whether the component should
-         * be enabled. This method is useful for comparing keys, or for use in maps.
+         * Builds a new view of the key based on the values of this builder. The view will have the
+         * same type and qualifiers as the key. Views are not attached to a scope, and do not
+         * indicate whether the component should be enabled. This method is useful for comparing
+         * keys, or for use in maps.
          *
          * <p>Views always retain the parameterization of the key.
          *

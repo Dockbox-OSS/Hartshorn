@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.reporting.application;
 
 /**
- * Configuration for the {@link ApplicationDiagnosticsReporter}. This configuration allows for enabling/disabling
- * of specific diagnostics.
+ * Configuration for the {@link ApplicationDiagnosticsReporter}. This configuration allows for
+ * enabling/disabling of specific diagnostics.
  *
  * @since 0.5.0
  *
@@ -34,9 +34,11 @@ public class ApplicationReportingConfiguration {
     private boolean includeContexts = true;
 
     /**
-     * Returns {@code true} if the version of the application should be included in the diagnostics report.
+     * Returns {@code true} if the version of the application should be included in the diagnostics
+     * report.
      *
-     * @return {@code true} if the version of the application should be included in the diagnostics report.
+     * @return {@code true} if the version of the application should be included in the diagnostics
+     * report.
      */
     public boolean includeVersion() {
         return this.includeVersion;
@@ -45,7 +47,8 @@ public class ApplicationReportingConfiguration {
     /**
      * Configures if the version of the application should be included in the diagnostics report.
      *
-     * @param includeVersion {@code true} if the version of the application should be included in the diagnostics report.
+     * @param includeVersion {@code true} if the version of the application should be included in
+     * the diagnostics report.
      *
      * @return this, for chaining.
      */
@@ -55,18 +58,22 @@ public class ApplicationReportingConfiguration {
     }
 
     /**
-     * Returns {@code true} if the location of the application jar should be included in the diagnostics report.
+     * Returns {@code true} if the location of the application jar should be included in the
+     * diagnostics report.
      *
-     * @return {@code true} if the location of the application jar should be included in the diagnostics report.
+     * @return {@code true} if the location of the application jar should be included in the
+     * diagnostics report.
      */
     public boolean includeJarLocation() {
         return this.includeJarLocation;
     }
 
     /**
-     * Configures if the location of the application jar should be included in the diagnostics report.
+     * Configures if the location of the application jar should be included in the diagnostics
+     * report.
      *
-     * @param includeJarLocation {@code true} if the location of the application jar should be included in the diagnostics report.
+     * @param includeJarLocation {@code true} if the location of the application jar should be
+     * included in the diagnostics report.
      *
      * @return this, for chaining.
      */
@@ -76,9 +83,11 @@ public class ApplicationReportingConfiguration {
     }
 
     /**
-     * Returns {@code true} if the environment variables should be included in the diagnostics report.
+     * Returns {@code true} if the environment variables should be included in the diagnostics
+     * report.
      *
-     * @return {@code true} if the environment variables should be included in the diagnostics report.
+     * @return {@code true} if the environment variables should be included in the diagnostics
+     * report.
      */
     public boolean includeApplicationProperties() {
         return this.includeApplicationProperties;
@@ -87,11 +96,14 @@ public class ApplicationReportingConfiguration {
     /**
      * Configures if the environment variables should be included in the diagnostics report.
      *
-     * @param includeApplicationProperties {@code true} if the environment variables should be included in the diagnostics report.
+     * @param includeApplicationProperties {@code true} if the environment variables should be
+     * included in the diagnostics report.
      *
      * @return this, for chaining.
      */
-    public ApplicationReportingConfiguration includeApplicationProperties(boolean includeApplicationProperties) {
+    public ApplicationReportingConfiguration includeApplicationProperties(
+        boolean includeApplicationProperties
+    ) {
         this.includeApplicationProperties = includeApplicationProperties;
         return this;
     }
@@ -108,11 +120,14 @@ public class ApplicationReportingConfiguration {
     /**
      * Configures if the module activators should be included in the diagnostics report.
      *
-     * @param includeModuleActivators {@code true} if the module activators should be included in the diagnostics report.
+     * @param includeModuleActivators {@code true} if the module activators should be included in
+     * the diagnostics report.
      *
      * @return this, for chaining.
      */
-    public ApplicationReportingConfiguration includeModuleActivators(boolean includeModuleActivators) {
+    public ApplicationReportingConfiguration includeModuleActivators(
+        boolean includeModuleActivators
+    ) {
         this.includeModuleActivators = includeModuleActivators;
         return this;
     }
@@ -129,7 +144,8 @@ public class ApplicationReportingConfiguration {
     /**
      * Configures if the observers should be included in the diagnostics report.
      *
-     * @param includeObservers {@code true} if the observers should be included in the diagnostics report.
+     * @param includeObservers {@code true} if the observers should be included in the diagnostics
+     * report.
      *
      * @return this, for chaining.
      */
@@ -150,7 +166,8 @@ public class ApplicationReportingConfiguration {
     /**
      * Configures if the contexts should be included in the diagnostics report.
      *
-     * @param includeContexts {@code true} if the contexts should be included in the diagnostics report.
+     * @param includeContexts {@code true} if the contexts should be included in the diagnostics
+     * report.
      *
      * @return this, for chaining.
      */

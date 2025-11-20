@@ -32,35 +32,39 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * A collector for types in the environment. This delegates to the {@link TypeReferenceCollector type reference collectors}
- * defined in the {@link TypeReferenceCollectorContext} attached to the environment's {@link ApplicationContext}. If no
- * such context is available, a warning is logged and an empty collection is returned.
+ * A collector for types in the environment. This delegates to the
+ * {@link TypeReferenceCollector type reference collectors} defined in the
+ * {@link TypeReferenceCollectorContext} attached to the environment's {@link ApplicationContext}.
+ * If no such context is available, a warning is logged and an empty collection is returned.
  *
- * <p>All type references are resolved to their respective classes and then introspected using the environment's
- * {@link org.dockbox.hartshorn.util.introspect.Introspector}. Note that while classes are loaded, it is not ensured they
- * are immediately initialized.
- *
- * @see TypeReferenceCollector
- * @see TypeReferenceCollectorContext
- *
- * @since 0.5.0
+ * <p>All type references are resolved to their respective classes and then introspected using the
+ * environment's
+ * {@link org.dockbox.hartshorn.util.introspect.Introspector}. Note that while classes are loaded,
+ * it is not ensured they are immediately initialized.
  *
  * @author Guus Lieben
+ * @see TypeReferenceCollector
+ * @see TypeReferenceCollectorContext
+ * @since 0.5.0
  */
 public class EnvironmentTypeCollector {
 
     private final ApplicationEnvironment environment;
     private final TypeReferenceCollectorContext collectorContext;
 
-    public EnvironmentTypeCollector(ApplicationEnvironment environment, TypeReferenceCollectorContext collectorContext) {
+    public EnvironmentTypeCollector(
+        ApplicationEnvironment environment,
+        TypeReferenceCollectorContext collectorContext
+    ) {
         this.environment = environment;
         this.collectorContext = collectorContext;
     }
 
     /**
-     * Collects all types that match the given predicate. The collection is performed by delegating to the
-     * {@link TypeReferenceCollector type reference collectors} defined in the {@link TypeReferenceCollectorContext}
-     * attached to the environment's {@link ApplicationContext}.
+     * Collects all types that match the given predicate. The collection is performed by delegating
+     * to the {@link TypeReferenceCollector type reference collectors} defined in the
+     * {@link TypeReferenceCollectorContext} attached to the environment's
+     * {@link ApplicationContext}.
      *
      * @param predicate the predicate to match
      * @param <T> the type of the elements in the collection
@@ -72,10 +76,10 @@ public class EnvironmentTypeCollector {
             Set<TypeReference> references = this.collectorContext.collector().collect();
             Collection<Class<?>> classes = this.loadClasses(references);
             return classes.stream()
-                    .map(this.environment.introspector()::introspect)
-                    .filter(predicate)
-                    .map(reference -> (TypeView<T>) reference)
-                    .collect(Collectors.toSet());
+                .map(this.environment.introspector()::introspect)
+                .filter(predicate)
+                .map(reference -> (TypeView<T>) reference)
+                .collect(Collectors.toSet());
         }
         catch (TypeCollectionException e) {
             this.environment.handle(e);
@@ -86,16 +90,16 @@ public class EnvironmentTypeCollector {
     private Collection<Class<?>> loadClasses(Collection<TypeReference> references) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return references.stream()
-                .map(reference -> {
-                    try {
-                        return reference.getOrLoad(classLoader);
-                    }
-                    catch (ClassReferenceLoadException e) {
-                        this.environment.handle(e);
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+            .map(reference -> {
+                try {
+                    return reference.getOrLoad(classLoader);
+                }
+                catch (ClassReferenceLoadException e) {
+                    this.environment.handle(e);
+                    return null;
+                }
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
     }
 }

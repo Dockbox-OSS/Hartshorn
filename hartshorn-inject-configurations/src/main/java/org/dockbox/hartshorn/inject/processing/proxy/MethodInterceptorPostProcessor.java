@@ -28,14 +28,13 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
 import java.util.Collection;
 
 /**
- * An abstract {@link ComponentPostProcessor} that allows implementations to configure interceptors for methods matching
- * the specified criteria. This is useful for adding method-level interceptors to components.
- *
- * @see AnnotatedMethodInterceptorPostProcessor
- *
- * @since 0.4.8
+ * An abstract {@link ComponentPostProcessor} that allows implementations to configure interceptors
+ * for methods matching the specified criteria. This is useful for adding method-level interceptors
+ * to components.
  *
  * @author Guus Lieben
+ * @see AnnotatedMethodInterceptorPostProcessor
+ * @since 0.4.8
  */
 public abstract class MethodInterceptorPostProcessor extends ComponentPostProcessor {
 
@@ -45,7 +44,11 @@ public abstract class MethodInterceptorPostProcessor extends ComponentPostProces
     }
 
     @Override
-    public <T> void preConfigureComponent(InjectionCapableApplication application, @Nullable T instance, ComponentProcessingContext<T> processingContext) {
+    public <T> void preConfigureComponent(
+        InjectionCapableApplication application,
+        @Nullable T instance,
+        ComponentProcessingContext<T> processingContext
+    ) {
         Collection<MethodView<T, ?>> methods = this.modifiableMethods(processingContext);
 
         ProxyFactory<T> factory = processingContext.get(ProxyFactory.class);
@@ -54,12 +57,16 @@ public abstract class MethodInterceptorPostProcessor extends ComponentPostProces
         }
 
         for (MethodView<T, ?> method : methods) {
-            MethodProxyContext<T> context = new SimpleMethodProxyContext<>(application, processingContext.type(), method);
+            MethodProxyContext<T> context =
+                new SimpleMethodProxyContext<>(application, processingContext.type(), method);
 
             if (this.preconditions(application, context, processingContext)) {
-                MethodInterceptor<T, ?> function = this.process(application, context, processingContext);
+                MethodInterceptor<T, ?> function =
+                    this.process(application, context, processingContext);
                 if (function != null) {
-                    factory.advisors().method(method).intercept(TypeUtils.unchecked(function, MethodInterceptor.class));
+                    factory.advisors()
+                        .method(method)
+                        .intercept(TypeUtils.unchecked(function, MethodInterceptor.class));
                 }
             }
             else {
@@ -74,7 +81,6 @@ public abstract class MethodInterceptorPostProcessor extends ComponentPostProces
      * Returns a collection of methods that can be modified by this post-processor.
      *
      * @param processingContext the processing context
-     *
      * @param <T> the type of the component being processed
      *
      * @return the modifiable methods
@@ -87,12 +93,15 @@ public abstract class MethodInterceptorPostProcessor extends ComponentPostProces
      * @param application the injection-capable application
      * @param methodContext the method proxy context
      * @param processingContext the component processing context
-     *
      * @param <T> the type of the component being processed
      *
      * @return true if the preconditions are met, false otherwise
      */
-    public abstract <T> boolean preconditions(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext);
+    public abstract <T> boolean preconditions(
+        InjectionCapableApplication application,
+        MethodProxyContext<T> methodContext,
+        ComponentProcessingContext<T> processingContext
+    );
 
     /**
      * Processes the method and returns a {@link MethodInterceptor} to be applied.
@@ -100,16 +109,20 @@ public abstract class MethodInterceptorPostProcessor extends ComponentPostProces
      * @param application the injection-capable application
      * @param methodContext the method proxy context
      * @param processingContext the component processing context
-     *
      * @param <T> the type of the component being processed
      * @param <R> the return type of the method being intercepted
      *
      * @return the method interceptor
      */
-    public abstract <T, R> MethodInterceptor<T, R> process(InjectionCapableApplication application, MethodProxyContext<T> methodContext, ComponentProcessingContext<T> processingContext);
+    public abstract <T, R> MethodInterceptor<T, R> process(
+        InjectionCapableApplication application,
+        MethodProxyContext<T> methodContext,
+        ComponentProcessingContext<T> processingContext
+    );
 
     /**
-     * Determines whether to fail when preconditions are not met. By default, this method returns true.
+     * Determines whether to fail when preconditions are not met. By default, this method returns
+     * true.
      *
      * @return true to fail on precondition failure, false to skip silently
      */

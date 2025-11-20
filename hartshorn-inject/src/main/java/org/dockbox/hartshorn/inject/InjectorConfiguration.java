@@ -30,21 +30,22 @@ import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 public interface InjectorConfiguration {
 
     /**
-     * Returns whether the injector should be in strict mode. In strict mode, the injector will require
-     * all {@link BindingHierarchy binding hierarchies} to be resolved using exact matching {@link
-     * ComponentKey keys}. If strict mode is disabled, the injector will attempt to resolve the hierarchy
-     * using the most specific key available (fuzzy matching).
+     * Returns whether the injector should be in strict mode. In strict mode, the injector will
+     * require all {@link BindingHierarchy binding hierarchies} to be resolved using exact matching
+     * {@link ComponentKey keys}. If strict mode is disabled, the injector will attempt to resolve
+     * the hierarchy using the most specific key available (fuzzy matching).
      *
      * @return {@code true} if the injector is in strict mode, {@code false} otherwise
      */
     boolean isStrictMode();
 
     /**
-     * Returns whether the injector should allow fallback to the single constructor of a component if there
-     * are no explicit injectable constructors available, and there is no default constructor.
+     * Returns whether the injector should allow fallback to the single constructor of a component
+     * if there are no explicit injectable constructors available, and there is no default
+     * constructor.
      *
-     * @return {@code true} if the injector should allow fallback to the single constructor, {@code false} otherwise
+     * @return {@code true} if the injector should allow fallback to the single constructor,
+     * {@code false} otherwise
      */
     boolean allowFallbackToSingleConstructor();
-
 }

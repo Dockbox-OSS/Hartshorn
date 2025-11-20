@@ -32,11 +32,9 @@ import java.util.Collection;
  * collections. This converter only creates an array of length 1 and delegates to the helper
  * converter.
  *
- * @see ArrayToCollectionConverterFactory
- *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @see ArrayToCollectionConverterFactory
+ * @since 0.5.0
  */
 public class ObjectToCollectionConverterFactory implements ConverterFactory<Object, Collection<?>> {
 
@@ -47,7 +45,7 @@ public class ObjectToCollectionConverterFactory implements ConverterFactory<Obje
     }
 
     public ObjectToCollectionConverterFactory(
-            ConverterFactory<Object[], Collection<?>> helperConverterFactory
+        ConverterFactory<Object[], Collection<?>> helperConverterFactory
     ) {
         this.helperConverterFactory = helperConverterFactory;
     }
@@ -55,7 +53,7 @@ public class ObjectToCollectionConverterFactory implements ConverterFactory<Obje
     @Override
     public <O extends Collection<?>> Converter<Object, O> create(Class<O> targetType) {
         Converter<Object[], O> converter = ObjectToCollectionConverterFactory.this
-                .helperConverterFactory.create(targetType);
+            .helperConverterFactory.create(targetType);
         return new ObjectToCollectionConverter<>(converter);
     }
 
@@ -66,25 +64,24 @@ public class ObjectToCollectionConverterFactory implements ConverterFactory<Obje
      * @param helperConverter the converter that is used to convert an array to a collection
      * @param <O> the type of the collection
      *
-     * @since 0.5.0
-     *
      * @author Guus Lieben
+     * @since 0.5.0
      */
     private record ObjectToCollectionConverter<O extends Collection<?>>(
-            Converter<Object[], O> helperConverter
+        Converter<Object[], O> helperConverter
     ) implements Converter<Object, O> {
 
         @Override
-            public O convert(@Nullable Object source) {
-                Object[] array;
-                if (source != null) {
-                    array = (Object[]) Array.newInstance(source.getClass(), 1);
-                    array[0] = source;
-                }
-                else {
-                    array = new Object[0];
-                }
-                return this.helperConverter.convert(array);
+        public O convert(@Nullable Object source) {
+            Object[] array;
+            if (source != null) {
+                array = (Object[]) Array.newInstance(source.getClass(), 1);
+                array[0] = source;
             }
+            else {
+                array = new Object[0];
+            }
+            return this.helperConverter.convert(array);
         }
+    }
 }

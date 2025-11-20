@@ -20,9 +20,9 @@ import org.dockbox.hartshorn.launchpad.launch.ApplicationBuilder;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * An exception that is thrown when an attempt is made to use an invalid activator class
- * for a new {@link ApplicationContext}. Typically, a class is considered valid when it
- * is a class that is not:
+ * An exception that is thrown when an attempt is made to use an invalid activator class for a new
+ * {@link ApplicationContext}. Typically, a class is considered valid when it is a class that is
+ * not:
  * <ul>
  *     <li>abstract</li>
  *     <li>an interface</li>
@@ -36,9 +36,8 @@ import org.dockbox.hartshorn.util.ApplicationRuntimeException;
  * <p>Note that specific {@link ApplicationBuilder} implementations
  * may have additional requirements for valid activator classes.
  *
- * @since 0.4.12
- *
  * @author Guus Lieben
+ * @since 0.4.12
  */
 public class InvalidActivationSourceException extends ApplicationRuntimeException {
 

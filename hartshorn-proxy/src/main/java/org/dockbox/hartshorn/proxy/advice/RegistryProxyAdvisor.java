@@ -25,12 +25,13 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 
 /**
- * An implementation of {@link ProxyAdvisor} that uses a {@link StateAwareAdvisorRegistry} to resolve advisors.
+ * An implementation of {@link ProxyAdvisor} that uses a {@link StateAwareAdvisorRegistry} to
+ * resolve advisors.
  *
  * @param <T> the type of the proxy instance
  *
- * @since 0.5.0
  * @author Guus Lieben
+ * @since 0.5.0
  */
 public class RegistryProxyAdvisor<T> implements ProxyAdvisor<T> {
 
@@ -46,11 +47,14 @@ public class RegistryProxyAdvisor<T> implements ProxyAdvisor<T> {
     }
 
     @Override
-    public <U> U safeWrapIntercept(ProxyCallbackContext<T> context, ProxyInterceptFunction<U> interceptFunction) throws Throwable {
+    public <U> U safeWrapIntercept(
+        ProxyCallbackContext<T> context,
+        ProxyInterceptFunction<U> interceptFunction
+    ) throws Throwable {
         Method method = context.method().method().orElseThrow(() -> null);
         Collection<MethodWrapper<T>> wrappers = this.resolver()
-                .method(method)
-                .wrappers();
+            .method(method)
+            .wrappers();
         MethodWrapper<T> methodWrapper = new MethodWrapperList<>(wrappers);
 
         methodWrapper.acceptBefore(context);

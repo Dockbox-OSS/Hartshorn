@@ -24,14 +24,13 @@ import org.dockbox.hartshorn.inject.processing.ComponentPostProcessor;
 import org.dockbox.hartshorn.inject.provider.ComponentProvider;
 
 /**
- * Marks a method as a method that should be invoked after the component has been initialized. A component is
- * considered initialized if it has been fully populated and processed by any applicable {@link ComponentPostProcessor}s
- * The method may have any parameters which match injectable components that can be provided through the current {@link
- * ComponentProvider}.
- *
- * @since 0.6.0
+ * Marks a method as a method that should be invoked after the component has been initialized. A
+ * component is considered initialized if it has been fully populated and processed by any
+ * applicable {@link ComponentPostProcessor}s The method may have any parameters which match
+ * injectable components that can be provided through the current {@link ComponentProvider}.
  *
  * @author Guus Lieben
+ * @since 0.6.0
  */
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

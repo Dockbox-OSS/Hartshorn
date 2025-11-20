@@ -23,9 +23,8 @@ import org.dockbox.hartshorn.util.collections.NavigableMultiMap;
  * Intermediate context used by {@link CompositeComponentPostProcessor} to store compatible
  * {@link ComponentPostProcessor} between phases of post-processing.
  *
- * @since 0.7.0
- *
  * @author Guus Lieben
+ * @since 0.7.0
  */
 public class CompatibleProcessorsContext extends DefaultContext {
 

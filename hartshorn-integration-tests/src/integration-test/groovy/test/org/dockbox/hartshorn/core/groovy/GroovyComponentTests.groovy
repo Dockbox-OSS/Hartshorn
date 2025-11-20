@@ -38,38 +38,40 @@ import java.util.stream.Stream
 @HartshornIntegrationTest(includeBasePackages = false, scanPackages = ["test.org.dockbox.hartshorn.core.groovy"])
 class GroovyComponentTests {
 
-    @Inject
-    private ApplicationContext applicationContext
+  @Inject
+  private ApplicationContext applicationContext
 
-    @Inject
-    private ComponentRegistry componentRegistry
+  @Inject
+  private ComponentRegistry componentRegistry
 
-    @ParameterizedTest
-    @MethodSource("components")
-    <T> void testComponent(Class<T> componentType, applicationContextFunction, applicationManagerFunction) {
-        def component = this.applicationContext.get(componentType)
-        Assertions.assertNotNull(component)
+  @ParameterizedTest
+  @MethodSource("components")
+  <T> void testComponent(Class<T> componentType, applicationContextFunction,
+          applicationManagerFunction) {
+    def component = this.applicationContext.get(componentType)
+    Assertions.assertNotNull(component)
 
-        def container = this.componentRegistry.container(componentType)
-        Assertions.assertNotNull(container)
-        Assertions.assertTrue(container.present())
+    def container = this.componentRegistry.container(componentType)
+    Assertions.assertNotNull(container)
+    Assertions.assertTrue(container.present())
 
-        if (applicationContextFunction != null) {
-            Assertions.assertSame(this.applicationContext, applicationContextFunction(component))
-        }
-
-        if (applicationManagerFunction != null) {
-            Assertions.assertSame(this.applicationContext.environment(), applicationManagerFunction(component))
-        }
+    if (applicationContextFunction != null) {
+      Assertions.assertSame(this.applicationContext, applicationContextFunction(component))
     }
 
-    static Stream<Arguments> components() {
-        return Stream.of(
-                Arguments.of(GroovyInterfaceComponent.class, null, null),
-                Arguments.of(GroovyClassComponent.class,
-                        { final GroovyClassComponent component -> component.applicationContext() },
-                        { final GroovyClassComponent component -> component.applicationManager() },
-                ),
-        )
+    if (applicationManagerFunction != null) {
+      Assertions.assertSame(this.applicationContext.environment(),
+              applicationManagerFunction(component))
     }
+  }
+
+  static Stream<Arguments> components() {
+    return Stream.of(
+            Arguments.of(GroovyInterfaceComponent.class, null, null),
+            Arguments.of(GroovyClassComponent.class,
+                    { final GroovyClassComponent component -> component.applicationContext() },
+                    { final GroovyClassComponent component -> component.applicationManager() },
+            ),
+    )
+  }
 }
