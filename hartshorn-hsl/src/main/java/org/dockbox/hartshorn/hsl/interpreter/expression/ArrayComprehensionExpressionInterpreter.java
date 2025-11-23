@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,11 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
- * TODO: #1061 Add documentation
+ * Interpreter for {@link ArrayComprehensionExpression}s
  *
  * @since 0.5.0
  *
@@ -41,12 +42,12 @@ public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpret
     public Object interpret(ArrayComprehensionExpression node, Interpreter interpreter) {
         List<Object> values = new ArrayList<>();
         Object collection = interpreter.evaluate(node.collection());
-        if (collection instanceof Iterable<?> iterable) {
-
-            interpreter.withNextScope(() -> {
-                interpreter.visitingScope().define(node.selector().lexeme(), null);
-                interpreter.withNextScope(() -> visitIterable(node, interpreter, values, iterable));
-            });
+        Iterable<?> iterable;
+        if (collection instanceof Iterable<?> collectionIterable) {
+            iterable = collectionIterable;
+        }
+        else if (collection != null && collection.getClass().isArray()) {
+            iterable = Arrays.asList((Object[]) collection);
         }
         else {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
@@ -54,6 +55,10 @@ public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpret
                     .at(node)
                     .build();
         }
+        interpreter.withNextScope(() -> {
+            interpreter.visitingScope().define(node.selector().lexeme(), null);
+            interpreter.withNextScope(() -> visitIterable(node, interpreter, values, iterable));
+        });
         return new Array(values.toArray());
     }
 

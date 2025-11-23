@@ -16,11 +16,6 @@
 
 package test.org.dockbox.hartshorn.hsl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
-
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
 import org.dockbox.hartshorn.hsl.lexer.Lexer;
@@ -43,7 +38,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import test.org.dockbox.hartshorn.hsl.interpreter.InterpreterTestHelper;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 public class LexerTests {
 
@@ -51,7 +49,9 @@ public class LexerTests {
         final List<Arguments> arguments = new ArrayList<>();
         DefaultTokenRegistry tokenRegistry = DefaultTokenRegistry.createDefault();
         Set<TokenType> nonLiteralTokens = tokenRegistry.tokenTypes(type -> {
-            return !(type instanceof LiteralTokenType || tokenRegistry.comments().resolveFromOpenToken(type).present());
+            return !(type instanceof LiteralTokenType || tokenRegistry.comments()
+                .resolveFromOpenToken(type)
+                .present());
         });
         for (TokenType type : nonLiteralTokens) {
             arguments.add(Arguments.of(type.representation(), type));
@@ -66,7 +66,8 @@ public class LexerTests {
     @ParameterizedTest
     @MethodSource("tokens")
     void testCorrectToken(String text, TokenType expected) {
-        Lexer lexer = new SimpleTokenRegistryLexer(text, InterpreterTestHelper.defaultTokenRegistry());
+        Lexer lexer =
+            new SimpleTokenRegistryLexer(text, DefaultTokenRegistry.createDefault());
         List<Token> tokens = lexer.scanTokens();
 
         Assertions.assertNotNull(tokens);
@@ -82,7 +83,8 @@ public class LexerTests {
 
     @Test
     void testSingleLineComment() {
-        Lexer lexer = new SimpleTokenRegistryLexer("# Comment", InterpreterTestHelper.defaultTokenRegistry());
+        Lexer lexer =
+            new SimpleTokenRegistryLexer("# Comment", DefaultTokenRegistry.createDefault());
         List<Token> tokens = lexer.scanTokens();
 
         Assertions.assertNotNull(tokens);
@@ -104,7 +106,8 @@ public class LexerTests {
     void testCombinedOperatorsAreParsedCorrectly() {
         // No such operator (logical shift left), so should be parsed as '1 << < 2' (1 shift left, less than 2).
         // While this isn't valid code for HSL, it's a good test to see if the lexer is working as expected.
-        final Lexer lexer = new SimpleTokenRegistryLexer("1 <<< 2", InterpreterTestHelper.defaultTokenRegistry());
+        final Lexer lexer =
+            new SimpleTokenRegistryLexer("1 <<< 2", DefaultTokenRegistry.createDefault());
         List<Token> tokens = lexer.scanTokens();
         Assertions.assertSame(5, tokens.size());
         Assertions.assertEquals(LiteralTokenType.NUMBER, tokens.get(0).type());
@@ -156,8 +159,8 @@ public class LexerTests {
         @Override
         public TokenType delegate() {
             return TokenMetaData.builder(this)
-                    .combines(this.character, this.character, this.character, this.character)
-                    .build();
+                .combines(this.character, this.character, this.character, this.character)
+                .build();
         }
     }
 }
