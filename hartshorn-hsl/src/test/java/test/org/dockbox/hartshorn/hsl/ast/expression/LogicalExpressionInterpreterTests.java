@@ -16,4 +16,66 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
-public class LogicalExpressionInterpreterTests {}
+import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.LogicalExpressionParser;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import test.org.dockbox.hartshorn.hsl.ast.HSLTestHelper;
+
+import java.util.stream.Stream;
+
+public class LogicalExpressionInterpreterTests {
+
+    @ParameterizedTest(name = "{0} {1} {2} = {3}")
+    @MethodSource("logicalCases")
+    void verifyLogicalExpression(
+            Object left,
+            String operator,
+            Object right,
+            Object expected
+    ) {
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression(
+                        "left %s right".formatted(operator)
+                )
+                .defineVariable("left", left)
+                .defineVariable("right", right)
+                .expressionParser(new LogicalExpressionParser())
+                .expressionParser(new IdentifierExpressionParser());
+
+        Object value = helper.interpretValue();
+        Assertions.assertEquals(expected, value);
+    }
+
+    public static Stream<Arguments> logicalCases() {
+        return Stream.of(
+                // XOR
+                logical(true, "^", true, false),
+                logical(true, "^", false, true),
+                logical(false, "^", true, true),
+                logical(false, "^", false, false),
+
+                // OR
+                logical(true, "||", true, true),
+                logical(true, "||", false, true),
+                logical(false, "||", true, true),
+                logical(false, "||", false, false),
+
+                // AND
+                logical(true, "&&", true, true),
+                logical(true, "&&", false, false),
+                logical(false, "&&", true, false),
+                logical(false, "&&", false, false)
+        );
+    }
+
+    public static Arguments logical(
+            Object left,
+            String operator,
+            Object right,
+            Object expected
+    ) {
+        return Arguments.of(left, operator, right, expected);
+    }
+}

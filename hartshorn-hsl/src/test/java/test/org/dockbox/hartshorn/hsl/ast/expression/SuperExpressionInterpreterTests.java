@@ -16,4 +16,51 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
-public class SuperExpressionInterpreterTests {}
+import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
+import org.dockbox.hartshorn.hsl.objects.ClassReference;
+import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.objects.MethodReference;
+import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
+import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import test.org.dockbox.hartshorn.hsl.ast.HSLTestHelper;
+
+public class SuperExpressionInterpreterTests {
+
+    @Test
+    void superMethodCanBeAccessedWithCurrentInstance() {
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("super.hello")
+                .expressionParser(new LiteralExpressionParser());
+
+        helper.resolver().currentClass(Resolver.ClassType.SUBCLASS);
+        Expression expression = helper.parseExpression();
+
+        helper.interpreter().state().resolve(expression, 1);
+
+        ClassReference classReference = Mockito.mock(ClassReference.class);
+        MethodReference methodReference = Mockito.mock(MethodReference.class);
+        Mockito.when(classReference.method("hello"))
+                .thenReturn(methodReference);
+        Mockito.when(methodReference.bind(Mockito.any(InstanceReference.class)))
+                .thenAnswer(invocation -> {
+                    InstanceReference argument = invocation.getArgument(0, InstanceReference.class);
+                    Mockito.when(methodReference.bound()).thenReturn(argument);
+                    return methodReference;
+                });
+
+        VariableScope parentScope = helper.interpreter().visitingScope();
+        parentScope.define("super", classReference);
+
+        InstanceReference instanceReference = Mockito.mock(InstanceReference.class);
+        VariableScope subScope = new VariableScope(parentScope);
+        subScope.define("this", instanceReference);
+        helper.interpreter().enterScope(subScope);
+
+        Object value = helper.interpretValue();
+        Assertions.assertSame(methodReference, value);
+        Assertions.assertSame(instanceReference, methodReference.bound());
+    }
+}

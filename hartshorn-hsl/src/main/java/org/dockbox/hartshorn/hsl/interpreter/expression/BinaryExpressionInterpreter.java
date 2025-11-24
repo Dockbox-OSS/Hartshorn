@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.ArithmeticTokenType;
 import org.dockbox.hartshorn.hsl.token.type.ConditionTokenType;
+import org.dockbox.hartshorn.util.Tuple;
 
 import java.util.Set;
 import java.util.function.BiPredicate;
@@ -74,8 +75,12 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                         .build();
             }
             case ArithmeticTokenType.MINUS -> {
-                InterpreterUtilities.checkNumberOperands(operator, left, right);
-                yield (double) left - (double) right;
+                Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(
+                        operator,
+                        left,
+                        right
+                );
+                yield tuple.left().doubleValue() - tuple.right().doubleValue();
             }
             case ArithmeticTokenType.STAR -> {
                 if ((left instanceof String || left instanceof Character) && right instanceof Number number) {
@@ -96,22 +101,34 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
                     }
                     yield result;
                 }
-                InterpreterUtilities.checkNumberOperands(operator, left, right);
-                yield (double) left * (double) right;
+                Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(
+                        operator,
+                        left,
+                        right
+                );
+                yield tuple.left().doubleValue() * tuple.right().doubleValue();
             }
             case ArithmeticTokenType.MODULO -> {
-                InterpreterUtilities.checkNumberOperands(operator, left, right);
-                yield (double) left % (double) right;
+                Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(
+                        operator,
+                        left,
+                        right
+                );
+                yield tuple.left().doubleValue() % tuple.right().doubleValue();
             }
             case ArithmeticTokenType.SLASH -> {
-                InterpreterUtilities.checkNumberOperands(operator, left, right);
-                if ((double) right == 0) {
+                Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(
+                        operator,
+                        left,
+                        right
+                );
+                if (tuple.right().doubleValue() == 0) {
                     throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                             .message(DiagnosticMessage.ILLEGAL_ZERO_DIVISION)
                             .at(operator)
                             .build();
                 }
-                yield (double) left / (double) right;
+                yield tuple.left().doubleValue() / tuple.right().doubleValue();
             }
             case ConditionTokenType.GREATER -> this.compareNumbers(node, left, right, (l, r) -> l > r);
             case ConditionTokenType.GREATER_EQUAL -> this.compareNumbers(node, left, right, (l, r) -> l >= r);
@@ -124,7 +141,11 @@ public class BinaryExpressionInterpreter implements ASTNodeInterpreter<Object, B
     }
 
     private boolean compareNumbers(BinaryExpression expression, Object left, Object right, BiPredicate<Double, Double> predicate) {
-        InterpreterUtilities.checkNumberOperands(expression.operator(), left, right);
-        return predicate.test(Double.parseDouble(left.toString()), Double.parseDouble(right.toString()));
+        Tuple<Number, Number> tuple = InterpreterUtilities.checkNumberOperands(
+                expression.operator(),
+                left,
+                right
+        );
+        return predicate.test(tuple.left().doubleValue(), tuple.right().doubleValue());
     }
 }

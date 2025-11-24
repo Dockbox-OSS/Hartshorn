@@ -16,4 +16,111 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
-public class BinaryExpressionInterpreterTests {}
+import org.dockbox.hartshorn.hsl.parser.expression.AbstractBitwiseOrLogicalExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.BinaryAdditionExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.BinaryComparisonExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.BinaryEqualityExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.BinaryMultiplicationExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import test.org.dockbox.hartshorn.hsl.ast.HSLTestHelper;
+
+import java.util.stream.Stream;
+
+public class BinaryExpressionInterpreterTests {
+
+    @ParameterizedTest(name = "{1} {2} {3} = {4}")
+    @MethodSource("binaryCases")
+    void verifyBinaryExpression(
+            AbstractBitwiseOrLogicalExpressionParser parser,
+            Object left,
+            String operator,
+            Object right,
+            Object expected
+    ) {
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression(
+                        "left %s right".formatted(operator)
+                )
+                .defineVariable("left", left)
+                .defineVariable("right", right)
+                .expressionParser(parser)
+                .expressionParser(new IdentifierExpressionParser());
+
+        Object value = helper.interpretValue();
+        Assertions.assertEquals(expected, value);
+    }
+
+    public static Stream<Arguments> binaryCases() {
+        return Stream.of(
+                // Addition
+                binary(new BinaryAdditionExpressionParser(), 5, "+", 10, 15d),
+                binary(new BinaryAdditionExpressionParser(), 'A', "+", 5, (double) 'A' + 5),
+                binary(new BinaryAdditionExpressionParser(), 5, "+", 'A', (double) 5 + 'A'),
+                binary(new BinaryAdditionExpressionParser(), 'A', "+", 'B', "AB"),
+                binary(new BinaryAdditionExpressionParser(), "Hello, ", "+", "world!", "Hello, world!"),
+                binary(new BinaryAdditionExpressionParser(), "Value: ", "+", 42, "Value: 42"),
+                binary(new BinaryAdditionExpressionParser(), 42, "+", " is the answer.", "42 is the answer."),
+
+                // Subtraction
+                binary(new BinaryAdditionExpressionParser(), 5, "-", 3, 2d),
+
+                // Greater than
+                binary(new BinaryComparisonExpressionParser(), 5, ">", 3, true),
+                binary(new BinaryComparisonExpressionParser(), 3, ">", 5, false),
+                binary(new BinaryComparisonExpressionParser(), 5, ">", 5, false),
+
+                // Greater than or equal to
+                binary(new BinaryComparisonExpressionParser(), 6, ">=", 5, true),
+                binary(new BinaryComparisonExpressionParser(), 5, ">=", 5, true),
+                binary(new BinaryComparisonExpressionParser(), 4, ">=", 5, false),
+
+                // Less than
+                binary(new BinaryComparisonExpressionParser(), 3, "<", 5, true),
+                binary(new BinaryComparisonExpressionParser(), 5, "<", 3, false),
+                binary(new BinaryComparisonExpressionParser(), 3, "<", 3, false),
+
+                // Less than or equal to
+                binary(new BinaryComparisonExpressionParser(), 4, "<=", 5, true),
+                binary(new BinaryComparisonExpressionParser(), 5, "<=", 5, true),
+                binary(new BinaryComparisonExpressionParser(), 6, "<=", 5, false),
+
+                // Equality
+                binary(new BinaryEqualityExpressionParser(), null, "==", null, true),
+                binary(new BinaryEqualityExpressionParser(), null, "==", 5, false),
+                binary(new BinaryEqualityExpressionParser(), 5, "==", 5, true),
+                binary(new BinaryEqualityExpressionParser(), 5, "==", 10, false),
+                binary(new BinaryEqualityExpressionParser(), "test", "==", "test", true),
+                binary(new BinaryEqualityExpressionParser(), "test", "==", "TEST", false),
+
+                // Inequality
+                binary(new BinaryEqualityExpressionParser(), null, "!=", null, false),
+                binary(new BinaryEqualityExpressionParser(), null, "!=", 5, true),
+                binary(new BinaryEqualityExpressionParser(), 5, "!=", 5, false),
+                binary(new BinaryEqualityExpressionParser(), 5, "!=", 10, true),
+                binary(new BinaryEqualityExpressionParser(), "test", "!=", "test", false),
+                binary(new BinaryEqualityExpressionParser(), "test", "!=", "TEST", true),
+
+                // Multiplication
+                binary(new BinaryMultiplicationExpressionParser(), 5, "*", 10, 50d),
+
+                // Division
+                binary(new BinaryMultiplicationExpressionParser(), 20, "/", 4, 5d),
+
+                // Modulus
+                binary(new BinaryMultiplicationExpressionParser(), 20, "%", 6, 2d)
+        );
+    }
+
+    public static Arguments binary(
+            AbstractBitwiseOrLogicalExpressionParser parser,
+            Object left,
+            String operator,
+            Object right,
+            Object expected
+    ) {
+        return Arguments.of(parser, left, operator, right, expected);
+    }
+}

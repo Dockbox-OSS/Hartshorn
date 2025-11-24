@@ -46,6 +46,14 @@ public record Tuple<K, V>(K key, V value) implements Entry<K, V> {
         return new Tuple<>(key, value);
     }
 
+    public K left() {
+        return this.key();
+    }
+
+    public V right() {
+        return this.value();
+    }
+
     @Override
     public K getKey() {
         return this.key();

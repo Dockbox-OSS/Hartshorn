@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class PostfixExpressionInterpreter implements ASTNodeInterpreter<Object, 
     @Override
     public Object interpret(PostfixExpression node, Interpreter interpreter) {
         Object left = interpreter.evaluate(node.leftExpression());
-        InterpreterUtilities.checkNumberOperand(node.operator(), left);
+        Number leftNumber = InterpreterUtilities.checkNumberOperand(node.operator(), left);
 
         TokenType type = node.operator().type();
         if (!(type instanceof ArithmeticTokenType arithmeticTokenType)) {
@@ -49,8 +49,8 @@ public class PostfixExpressionInterpreter implements ASTNodeInterpreter<Object, 
                     .build();
         }
         double newValue = switch (arithmeticTokenType) {
-            case PLUS_PLUS -> (double) left + 1;
-            case MINUS_MINUS -> (double) left -1;
+            case PLUS_PLUS -> (double) leftNumber + 1;
+            case MINUS_MINUS -> (double) leftNumber -1;
             default -> throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                     .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, type.representation())
                     .at(node.operator())
@@ -60,6 +60,6 @@ public class PostfixExpressionInterpreter implements ASTNodeInterpreter<Object, 
         if (node.leftExpression() instanceof VariableExpression variable) {
             interpreter.visitingScope().assign(variable.name(), newValue);
         }
-        return left;
+        return leftNumber;
     }
 }

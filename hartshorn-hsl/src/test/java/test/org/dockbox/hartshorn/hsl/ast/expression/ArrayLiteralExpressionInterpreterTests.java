@@ -49,7 +49,9 @@ public class ArrayLiteralExpressionInterpreterTests {
 
     @Test
     void testMultipleValueArrayLiteralYieldsArrayObject() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("[\"test\", \"test2\"]")
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+                        ["test", "test2"]
+                        """)
                 .expressionParser(new LiteralExpressionParser())
                 .expressionParser(new ComplexArrayExpressionParser());
         Object value = helper.interpretValue();

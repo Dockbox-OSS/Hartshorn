@@ -34,10 +34,7 @@ public class ArrayGetExpressionInterpreterTests {
                 .expressionParser(new IdentifierExpressionParser());
 
         Object[] realArray = {"test"};
-        helper.interpreter().visitingScope().define(
-                "array",
-                new Array(realArray)
-        );
+        helper.defineVariable("array", new Array(realArray));
 
         Object interpretedValue = helper.interpret(
                 ArrayGetExpression.class,
@@ -53,10 +50,7 @@ public class ArrayGetExpressionInterpreterTests {
                 .expressionParser(new IdentifierExpressionParser());
 
         Object[] realArray = {"test"};
-        helper.interpreter().visitingScope().define(
-                "array",
-                new Array(realArray)
-        );
+        helper.defineVariable("array", new Array(realArray));
 
         Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
             helper.interpret(

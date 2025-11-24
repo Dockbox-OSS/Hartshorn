@@ -16,4 +16,31 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
-public class ElvisExpressionInterpreterTests {}
+import org.dockbox.hartshorn.hsl.parser.expression.ElvisExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import test.org.dockbox.hartshorn.hsl.ast.HSLTestHelper;
+
+public class ElvisExpressionInterpreterTests {
+
+    @Test
+    void elvisWithTruthyValueReturnsLeft() {
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("42 ?: 24")
+                .expressionParser(new ElvisExpressionParser())
+                .expressionParser(new LiteralExpressionParser());
+
+        Object value = helper.interpretValue();
+        Assertions.assertEquals(42d, value);
+    }
+
+    @Test
+    void elvisWithFalsyValueReturnsRight() {
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("null ?: 24")
+                .expressionParser(new ElvisExpressionParser())
+                .expressionParser(new LiteralExpressionParser());
+
+        Object value = helper.interpretValue();
+        Assertions.assertEquals(24d, value);
+    }
+}

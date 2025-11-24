@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
+import org.dockbox.hartshorn.util.Tuple;
 
 import java.math.BigDecimal;
 
@@ -99,9 +100,9 @@ public final class InterpreterUtilities {
      *
      * @see #checkNumberOperands(Token, Object, Object) for binary operand checking
      */
-    public static void checkNumberOperand(Token operator, Object operand) {
-        if (operand instanceof Number) {
-            return;
+    public static Number checkNumberOperand(Token operator, Object operand) {
+        if (operand instanceof Number number) {
+            return number;
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                 .message(DiagnosticMessage.NON_NUMBER_OPERAND, operand)
@@ -119,9 +120,9 @@ public final class InterpreterUtilities {
      *
      * @see #checkNumberOperand(Token, Object) for unary operand checking
      */
-    public static void checkNumberOperands(Token operator, Object left, Object right) {
-        if (left instanceof Number && right instanceof Number) {
-            return;
+    public static Tuple<Number, Number> checkNumberOperands(Token operator, Object left, Object right) {
+        if (left instanceof Number leftNumber && right instanceof Number rightNumber) {
+            return new Tuple<>(leftNumber, rightNumber);
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                 .message(DiagnosticMessage.OPERAND_MISMATCH, "number", left, right)

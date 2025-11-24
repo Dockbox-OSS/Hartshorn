@@ -40,15 +40,19 @@ public class AssignExpressionInterpreterTests {
 
     public static Stream<Arguments> variableDefinitionScopes() {
         return Stream.of(
-            Arguments.of((Function<Interpreter, VariableScope>) Interpreter::visitingScope),
-            Arguments.of((Function<Interpreter, VariableScope>) Interpreter::global)
+                Arguments.of((Function<Interpreter, VariableScope>) Interpreter::visitingScope),
+                Arguments.of((Function<Interpreter, VariableScope>) Interpreter::global)
         );
     }
 
     @ParameterizedTest
     @MethodSource("variableDefinitionScopes")
-    void testAssignmentToDefinedVariable(Function<Interpreter, VariableScope> variableScopeFunction) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("variable = \"newValue\"")
+    void testAssignmentToDefinedVariable(
+            Function<Interpreter, VariableScope> variableScopeFunction
+    ) {
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+                        variable = "newValue"
+                        """)
                 .expressionParser(new AssignExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
                 .expressionParser(new IdentifierExpressionParser());
@@ -56,7 +60,10 @@ public class AssignExpressionInterpreterTests {
         VariableScope scope = variableScopeFunction.apply(helper.interpreter());
         scope.define("variable", "originalValue");
 
-        Object interpreted = helper.interpret(AssignExpression.class, new AssignExpressionInterpreter());
+        Object interpreted = helper.interpret(
+                AssignExpression.class,
+                new AssignExpressionInterpreter()
+        );
         Assertions.assertEquals("newValue", interpreted);
 
         Object variableValue = scope.get(Token.of(LiteralTokenType.IDENTIFIER, "variable").build());
@@ -65,7 +72,9 @@ public class AssignExpressionInterpreterTests {
 
     @Test
     void testAssignmentToUndefinedVariable() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("variable = \"newValue\"")
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+                        variable = "newValue"
+                        """)
                 .expressionParser(new AssignExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
                 .expressionParser(new IdentifierExpressionParser());

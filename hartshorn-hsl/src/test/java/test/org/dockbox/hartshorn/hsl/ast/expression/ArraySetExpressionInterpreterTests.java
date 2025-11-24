@@ -30,17 +30,16 @@ public class ArraySetExpressionInterpreterTests {
 
     @Test
     void testSetWithinArrayRange() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("array[0] = \"value\"")
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+                        array[0] = "value"
+                        """)
                 .expressionParser(new AssignExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
                 .expressionParser(new IdentifierExpressionParser());
 
         Object[] realArray = {"test"};
         Array hslArray = new Array(realArray);
-        helper.interpreter().visitingScope().define(
-                "array",
-                hslArray
-        );
+        helper.defineVariable("array", hslArray);
 
         Object interpreted = helper.interpret(
                 ArraySetExpression.class,
@@ -53,17 +52,16 @@ public class ArraySetExpressionInterpreterTests {
 
     @Test
     void testSetOutsideRangeThrowsOutOfBounds() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("array[1] = \"value\"")
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+                        array[1] = "value"
+                        """)
                 .expressionParser(new AssignExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
                 .expressionParser(new IdentifierExpressionParser());
 
         Object[] realArray = {"test"};
         Array hslArray = new Array(realArray);
-        helper.interpreter().visitingScope().define(
-                "array",
-                hslArray
-        );
+        helper.defineVariable("array", hslArray);
 
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             helper.interpret(

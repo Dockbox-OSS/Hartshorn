@@ -16,4 +16,31 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
-public class TernaryExpressionInterpreterTests {}
+import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.TernaryExpressionParser;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import test.org.dockbox.hartshorn.hsl.ast.HSLTestHelper;
+
+public class TernaryExpressionInterpreterTests {
+
+    @Test
+    void ternaryWithTruthyValueReturnsLeft() {
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("true ?  42 : 24")
+                .expressionParser(new TernaryExpressionParser())
+                .expressionParser(new LiteralExpressionParser());
+
+        Object value = helper.interpretValue();
+        Assertions.assertEquals(42d, value);
+    }
+
+    @Test
+    void ternaryWithFalsyValueReturnsRight() {
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("false ? 42 : 24")
+                .expressionParser(new TernaryExpressionParser())
+                .expressionParser(new LiteralExpressionParser());
+
+        Object value = helper.interpretValue();
+        Assertions.assertEquals(24d, value);
+    }
+}

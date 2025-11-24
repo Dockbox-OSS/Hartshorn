@@ -29,10 +29,12 @@ import org.dockbox.hartshorn.hsl.lexer.Lexer;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
+import org.dockbox.hartshorn.hsl.runtime.Return;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+import org.dockbox.hartshorn.util.option.Option;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.List;
@@ -46,7 +48,10 @@ public class HSLTestHelper {
 
     private Lexer lexer;
     private TokenParser parser;
+    private Resolver resolver;
     private Interpreter interpreter;
+
+    private List<Statement> statements;
 
     public HSLTestHelper(ScriptComponentFactory factory, TokenRegistry tokenRegistry, String source) {
         this.factory = factory;
@@ -110,7 +115,17 @@ public class HSLTestHelper {
     }
 
     public List<Statement> parse() {
-        return this.tokenParser().parse();
+        if (this.statements == null) {
+            this.statements = this.tokenParser().parse();
+        }
+        return this.statements;
+    }
+
+    public Resolver resolver() {
+        if (this.resolver == null) {
+            this.resolver = new Resolver(this.interpreter());
+        }
+        return this.resolver;
     }
 
     public Interpreter interpreter() {
@@ -126,10 +141,24 @@ public class HSLTestHelper {
     public ResultCollector interpret() {
         Interpreter interpreter = this.interpreter();
         List<Statement> statements = this.parse();
-        Resolver resolver = new Resolver(this.interpreter());
-        resolver.resolve(statements);
+        this.resolver().resolve(statements);
         interpreter.interpret(statements);
         return interpreter.resultCollector();
+    }
+
+    public Option<?> captureReturn() {
+        try {
+            this.interpret();
+            return Option.empty();
+        }
+        catch (Return returnValue) {
+            return Option.of(returnValue.value());
+        }
+    }
+
+    public HSLTestHelper defineVariable(String name, Object value) {
+        this.interpreter().visitingScope().define(name, value);
+        return this;
     }
 
     public <T extends ASTNode, R> R interpret(T node, ASTNodeInterpreter<R, T> interpreter) {
@@ -158,6 +187,11 @@ public class HSLTestHelper {
         @Override
         public ExpressionTestHelper expressionParser(ExpressionParser parser) {
             return (ExpressionTestHelper) super.expressionParser(parser);
+        }
+
+        @Override
+        public ExpressionTestHelper defineVariable(String name, Object value) {
+            return (ExpressionTestHelper) super.defineVariable(name, value);
         }
 
         public Object interpretValue() {

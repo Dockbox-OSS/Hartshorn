@@ -40,21 +40,19 @@ public class ArrayComprehensionExpressionInterpreterTests {
                 Arguments.of(List.of("test")),
                 // Note: first array is captured as varargs. Inner array
                 // is the actual input array.
-                Arguments.of(new Object[] {new Object[] {"test"}})
+                Arguments.of(new Object[]{new Object[]{"test"}})
         );
     }
 
     @ParameterizedTest
     @MethodSource("arrayInputs")
     void arrayComprehensionWithoutTransformation(Object inputArray) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("[x for x in list]")
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+                        [x for x in list]
+                        """)
                 .expressionParser(new IdentifierExpressionParser())
-                .expressionParser(new ComplexArrayExpressionParser());
-
-        helper.interpreter().visitingScope().define(
-                "list",
-                inputArray
-        );
+                .expressionParser(new ComplexArrayExpressionParser())
+                .defineVariable("list", inputArray);
 
         Object interpreted = helper.interpret(
                 ArrayComprehensionExpression.class,
@@ -68,16 +66,14 @@ public class ArrayComprehensionExpressionInterpreterTests {
     @ParameterizedTest
     @MethodSource("arrayInputs")
     void arrayComprehensionWithBasicTransformation(Object inputArray) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("[x + \"2\" for x in list]")
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+                        [x + "2" for x in list]
+                        """)
                 .expressionParser(new BinaryAdditionExpressionParser())
                 .expressionParser(new IdentifierExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new ComplexArrayExpressionParser());
-
-        helper.interpreter().visitingScope().define(
-                "list",
-                inputArray
-        );
+                .expressionParser(new ComplexArrayExpressionParser())
+                .defineVariable("list", inputArray);
 
         Object interpreted = helper.interpret(
                 ArrayComprehensionExpression.class,
@@ -91,15 +87,13 @@ public class ArrayComprehensionExpressionInterpreterTests {
     @ParameterizedTest
     @MethodSource("arrayInputs")
     void arrayComprehensionWithConditional(Object inputArray) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("[x for x in list if false]")
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+                        [x for x in list if false]
+                        """)
                 .expressionParser(new IdentifierExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new ComplexArrayExpressionParser());
-
-        helper.interpreter().visitingScope().define(
-                "list",
-                inputArray
-        );
+                .expressionParser(new ComplexArrayExpressionParser())
+                .defineVariable("list", inputArray);
 
         Object interpreted = helper.interpret(
                 ArrayComprehensionExpression.class,
@@ -112,15 +106,13 @@ public class ArrayComprehensionExpressionInterpreterTests {
     @ParameterizedTest
     @MethodSource("arrayInputs")
     void arrayComprehensionWithConditionalAlternative(Object inputArray) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("[x for x in list if false else \"other\"]")
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+                        [x for x in list if false else "other"]
+                        """)
                 .expressionParser(new IdentifierExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new ComplexArrayExpressionParser());
-
-        helper.interpreter().visitingScope().define(
-                "list",
-                inputArray
-        );
+                .expressionParser(new ComplexArrayExpressionParser())
+                .defineVariable("list", inputArray);
 
         Object interpreted = helper.interpret(
                 ArrayComprehensionExpression.class,
