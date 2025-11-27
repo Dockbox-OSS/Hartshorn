@@ -143,7 +143,10 @@ public class ApplicationDiagnosticsReporter implements ConfigurableDiagnosticsRe
 
             collector.property("observers").writeDelegate(observerCollector -> {
                 observers.forEach((type, instances) -> {
-                    observerCollector.property(type.getSimpleName()).writeInts(instances.size());
+                    observerCollector.property(type.getName()).writeDelegates(instances.stream()
+                            .map(observer -> new ObserverDiagnosticsReporter(environment.introspector(), observer))
+                            .toArray(Reportable[]::new)
+                    );
                 });
             });
         }

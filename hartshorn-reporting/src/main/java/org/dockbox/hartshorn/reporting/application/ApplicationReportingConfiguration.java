@@ -28,7 +28,7 @@ public class ApplicationReportingConfiguration {
 
     private boolean includeVersion = true;
     private boolean includeJarLocation = true;
-    private boolean includeEnvironmentVariables = true;
+    private boolean includeApplicationProperties = true;
     private boolean includeModuleActivators = true;
     private boolean includeObservers = true;
     private boolean includeContexts = true;
@@ -81,18 +81,18 @@ public class ApplicationReportingConfiguration {
      * @return {@code true} if the environment variables should be included in the diagnostics report.
      */
     public boolean includeApplicationProperties() {
-        return this.includeEnvironmentVariables;
+        return this.includeApplicationProperties;
     }
 
     /**
      * Configures if the environment variables should be included in the diagnostics report.
      *
-     * @param includeEnvironmentVariables {@code true} if the environment variables should be included in the diagnostics report.
+     * @param includeApplicationProperties {@code true} if the environment variables should be included in the diagnostics report.
      *
      * @return this, for chaining.
      */
-    public ApplicationReportingConfiguration includeApplicationProperties(boolean includeEnvironmentVariables) {
-        this.includeEnvironmentVariables = includeEnvironmentVariables;
+    public ApplicationReportingConfiguration includeApplicationProperties(boolean includeApplicationProperties) {
+        this.includeApplicationProperties = includeApplicationProperties;
         return this;
     }
 

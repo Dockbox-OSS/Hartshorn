@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ public interface LifecycleObserver extends Observer {
      *
      * @param applicationContext The application context
      */
+    @Observation("application.started")
     default void onStarted(ApplicationContext applicationContext) {}
 
     /**
@@ -41,5 +42,6 @@ public interface LifecycleObserver extends Observer {
      *
      * @param applicationContext The application context
      */
+    @Observation("application.stopping")
     default void onExit(ApplicationContext applicationContext) {}
 }

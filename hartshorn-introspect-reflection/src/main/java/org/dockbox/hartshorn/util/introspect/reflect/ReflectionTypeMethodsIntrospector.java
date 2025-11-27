@@ -67,6 +67,13 @@ public class ReflectionTypeMethodsIntrospector<T> implements TypeMethodsIntrospe
                     .toList();
             allMethods.addAll(superClassMethods);
         }
+        for (TypeView<?> anInterface : this.type.interfaces()) {
+            List<Method> interfaceMethods = anInterface.methods().all().stream()
+                    .filter(method -> method.modifiers().isPublic())
+                    .flatMap(method -> method.method().stream())
+                    .toList();
+            allMethods.addAll(interfaceMethods);
+        }
         allMethods.addAll(declaredMethods);
         allMethods.addAll(methods);
 
