@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.launchpad.launch;
 
-import java.util.List;
-
 import org.slf4j.Logger;
+
+import java.util.List;
 
 /**
  * Basic context for the application bootstrap process. This context is used to determine the main class and arguments
@@ -37,8 +37,8 @@ public class ApplicationBootstrapContext extends ApplicationBuildContext {
 
     private final boolean includeBasePackages;
 
-    public ApplicationBootstrapContext(Class<?> mainClass, List<String> arguments, Logger logger, boolean includeBasePackages) {
-        super(mainClass, arguments, logger);
+    public ApplicationBootstrapContext(Class<?> mainClass, List<String> arguments, Logger logger, boolean includeBasePackages, String applicationName) {
+        super(mainClass, arguments, applicationName, logger);
         this.includeBasePackages = includeBasePackages;
     }
 

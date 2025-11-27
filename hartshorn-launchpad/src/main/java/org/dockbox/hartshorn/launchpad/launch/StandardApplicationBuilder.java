@@ -92,6 +92,7 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
 
     private final ApplicationBuildContext buildContext;
     private final ApplicationContextFactory applicationContextFactory;
+    private final ApplicationStartupLogger startupLogger;
 
     private volatile FactoryState state = FactoryState.WAITING;
 
@@ -106,10 +107,16 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         }
 
         SingleElementContext<? extends Class<?>> initializerContext = new ApplicationInitializerContext<>(mainClass).initializeInitial();
-        this.buildContext = new ApplicationBuildContext(mainClass, configurer.arguments.initialize(initializerContext));
+        this.buildContext = new ApplicationBuildContext(
+                mainClass,
+                configurer.arguments.initialize(initializerContext),
+                configurer.applicationName.initialize(initializerContext)
+        );
 
         SingleElementContext<ApplicationBuildContext> buildInitializerContext = initializerContext.transform(this.buildContext);
         this.applicationContextFactory = configurer.applicationContextFactory.initialize(buildInitializerContext);
+
+        this.startupLogger = configurer.startupLogger.initialize(buildInitializerContext);
     }
 
     /**
@@ -150,14 +157,13 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         }
         this.state = FactoryState.CREATING;
 
-        ApplicationStartupLogger logger = new ApplicationStartupLogger(this.buildContext);
-        logger.logStartup();
+        this.startupLogger.logStartup();
         long applicationStartTimestamp = System.currentTimeMillis();
         ApplicationContext applicationContext = this.applicationContextFactory.createContext();
         long applicationStartedTimestamp = System.currentTimeMillis();
 
-        final Duration startupTime = Duration.ofMillis(applicationStartedTimestamp - applicationStartTimestamp);
-        logger.logStarted(startupTime);
+        Duration startupTime = Duration.ofMillis(applicationStartedTimestamp - applicationStartTimestamp);
+        this.startupLogger.logStarted(startupTime);
 
         this.state = FactoryState.WAITING;
 
@@ -192,7 +198,9 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
 
         private ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextFactory> applicationContextFactory = StandardApplicationContextFactory.create(
                 Customizer.useDefaults());
+        private ContextualInitializer<ApplicationBuildContext, ApplicationStartupLogger> startupLogger = ApplicationStartupLogger.create(Customizer.useDefaults());
         private final LazyStreamableConfigurer<Class<?>, String> arguments = LazyStreamableConfigurer.empty();
+        private ContextualInitializer<Class<?>, String> applicationName = ContextualInitializer.of(Class::getSimpleName);
         private Initializer<Class<?>> mainClass;
 
         /**
@@ -240,6 +248,47 @@ public final class StandardApplicationBuilder implements ApplicationBuilder<Appl
         public Configurer applicationContextFactory(ContextualInitializer<ApplicationBuildContext, ? extends ApplicationContextFactory> applicationContextFactory) {
             this.applicationContextFactory = applicationContextFactory;
             return this;
+        }
+
+        /**
+         * Sets the logger that is used to log the startup of the application. The provided logger is expected
+         * to be capable of logging the startup of the application with the provided
+         * {@link ApplicationBuildContext}.
+         * @param startupLogger
+         * @return This {@link Configurer} instance.
+         */
+        public Configurer startupLogger(ContextualInitializer<ApplicationBuildContext, ApplicationStartupLogger> startupLogger) {
+            this.startupLogger = startupLogger;
+            return this;
+        }
+
+        /**
+         * Sets the name of the application that will be created. The name is expected to be a valid
+         * name for the application.
+         *
+         * <p>Application names do not have a specific use, but may be used to identify applications
+         * when batched together, or when logging application events.
+         *
+         * @param applicationName The name of the application that will be created.
+         * @return This {@link Configurer} instance.
+         */
+        public Configurer applicationName(ContextualInitializer<Class<?>, String> applicationName) {
+            this.applicationName = applicationName;
+            return this;
+        }
+
+        /**
+         * Sets the name of the application that will be created. The name is expected to be a valid
+         * name for the application.
+         *
+         * <p>Application names do not have a specific use, but may be used to identify applications
+         * when batched together, or when logging application events.
+         *
+         * @param applicationName The name of the application that will be created.
+         * @return This {@link Configurer} instance.
+         */
+        public Configurer applicationName(String applicationName) {
+            return this.applicationName(ContextualInitializer.of(applicationName));
         }
 
         /**
