@@ -49,8 +49,8 @@ public class PostfixExpressionInterpreter implements ASTNodeInterpreter<Object, 
                     .build();
         }
         double newValue = switch (arithmeticTokenType) {
-            case PLUS_PLUS -> (double) leftNumber + 1;
-            case MINUS_MINUS -> (double) leftNumber -1;
+            case PLUS_PLUS -> leftNumber.doubleValue() + 1;
+            case MINUS_MINUS -> leftNumber.doubleValue() - 1;
             default -> throw ScriptEvaluationError.builder(Phase.INTERPRETING)
                     .message(DiagnosticMessage.UNSUPPORTED_LOGICAL, type.representation())
                     .at(node.operator())

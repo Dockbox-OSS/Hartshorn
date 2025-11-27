@@ -16,21 +16,21 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import org.dockbox.hartshorn.hsl.parser.expression.BitwiseExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
-import org.dockbox.hartshorn.hsl.parser.expression.LogicalExpressionParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.org.dockbox.hartshorn.hsl.ast.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
 
 import java.util.stream.Stream;
 
-public class LogicalExpressionInterpreterTests {
+public class BitwiseExpressionTests {
 
     @ParameterizedTest(name = "{0} {1} {2} = {3}")
-    @MethodSource("logicalCases")
-    void verifyLogicalExpression(
+    @MethodSource("bitwiseCases")
+    void verifyBitwiseExpression(
             Object left,
             String operator,
             Object right,
@@ -41,36 +41,40 @@ public class LogicalExpressionInterpreterTests {
                 )
                 .defineVariable("left", left)
                 .defineVariable("right", right)
-                .expressionParser(new LogicalExpressionParser())
+                .expressionParser(new BitwiseExpressionParser())
                 .expressionParser(new IdentifierExpressionParser());
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(expected, value);
     }
 
-    public static Stream<Arguments> logicalCases() {
+    public static Stream<Arguments> bitwiseCases() {
         return Stream.of(
-                // XOR
-                logical(true, "^", true, false),
-                logical(true, "^", false, true),
-                logical(false, "^", true, true),
-                logical(false, "^", false, false),
+                // Shift left
+                bitwise(0b0001, "<<", 2, 0b0100),
+                bitwise(0b0011, "<<", 1, 0b0110),
 
-                // OR
-                logical(true, "||", true, true),
-                logical(true, "||", false, true),
-                logical(false, "||", true, true),
-                logical(false, "||", false, false),
+                // Shift right
+                bitwise(0b0100, ">>", 2, 0b0001),
+                bitwise(0b0110, ">>", 1, 0b0011),
 
-                // AND
-                logical(true, "&&", true, true),
-                logical(true, "&&", false, false),
-                logical(false, "&&", true, false),
-                logical(false, "&&", false, false)
+                // Logical shift right
+                bitwise(0b0100, ">>>", 2, 0b0001),
+                bitwise(0b0110, ">>>", 1, 0b0011),
+
+                // Bitwise OR
+                bitwise(0b0101, "|", 0b0011, 0b0111),
+                bitwise(0b0000, "|", 0b0000, 0b0000),
+                bitwise(0b1111, "|", 0b0000, 0b1111),
+
+                // Bitwise AND
+                bitwise(0b0101, "&", 0b0011, 0b0001),
+                bitwise(0b1111, "&", 0b0000, 0b0000),
+                bitwise(0b1111, "&", 0b1111, 0b1111)
         );
     }
 
-    public static Arguments logical(
+    public static Arguments bitwise(
             Object left,
             String operator,
             Object right,

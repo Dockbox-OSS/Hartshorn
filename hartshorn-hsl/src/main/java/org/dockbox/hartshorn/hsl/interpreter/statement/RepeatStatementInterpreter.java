@@ -16,9 +16,12 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.statement;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.FlowControlKeyword;
 import org.dockbox.hartshorn.hsl.ast.statement.RepeatStatement;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 /**
  * TODO: #1061 Add documentation
@@ -34,13 +37,20 @@ public class RepeatStatementInterpreter implements StatementInterpreter<RepeatSt
         interpreter.withNextScope(() -> {
             Object value = interpreter.evaluate(node.value());
 
-            boolean isNotNumber = !(value instanceof Number);
-
-            if (isNotNumber) {
-                throw new RuntimeException("Repeat Counter must be number");
+            if (!(value instanceof Number number)) {
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.NON_NUMBER_OPERAND, value)
+                        .at(node.value())
+                        .build();
+            }
+            if (number.doubleValue() < 0) {
+                throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                        .message(DiagnosticMessage.ILLEGAL_NEGATIVE_NUMBER, number.doubleValue())
+                        .at(node.value())
+                        .build();
             }
 
-            int counter = (int) Double.parseDouble(value.toString());
+            int counter = number.intValue();
             for (int i = 0; i < counter; i++) {
                 try {
                     interpreter.execute(node.body());

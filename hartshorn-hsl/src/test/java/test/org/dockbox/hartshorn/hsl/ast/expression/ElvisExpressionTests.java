@@ -16,18 +16,18 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
+import org.dockbox.hartshorn.hsl.parser.expression.ElvisExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
-import org.dockbox.hartshorn.hsl.parser.expression.TernaryExpressionParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import test.org.dockbox.hartshorn.hsl.ast.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
 
-public class TernaryExpressionInterpreterTests {
+public class ElvisExpressionTests {
 
     @Test
-    void ternaryWithTruthyValueReturnsLeft() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("true ?  42 : 24")
-                .expressionParser(new TernaryExpressionParser())
+    void elvisWithTruthyValueReturnsLeft() {
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("42 ?: 24")
+                .expressionParser(new ElvisExpressionParser())
                 .expressionParser(new LiteralExpressionParser());
 
         Object value = helper.interpretValue();
@@ -35,9 +35,9 @@ public class TernaryExpressionInterpreterTests {
     }
 
     @Test
-    void ternaryWithFalsyValueReturnsRight() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("false ? 42 : 24")
-                .expressionParser(new TernaryExpressionParser())
+    void elvisWithFalsyValueReturnsRight() {
+        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("null ?: 24")
+                .expressionParser(new ElvisExpressionParser())
                 .expressionParser(new LiteralExpressionParser());
 
         Object value = helper.interpretValue();

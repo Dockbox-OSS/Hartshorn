@@ -16,4 +16,76 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
-public class RepeatStatementInterpreterTests {}
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.parser.expression.AssignExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.BinaryAdditionExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.UnaryExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.statement.BlockStatementParser;
+import org.dockbox.hartshorn.hsl.parser.statement.RepeatStatementParser;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.HSLTestUtilities;
+
+public class RepeatStatementInterpreterTests {
+
+    @Test
+    void repeatWithNonZeroValueRepeatsExactlyNTimes() {
+        HSLTestHelper helper = HSLTestHelper.of("""
+                        repeat (3) {
+                            counter = counter + 1
+                        }
+                        """)
+                .statementParser(new RepeatStatementParser())
+                .statementParser(new BlockStatementParser())
+                .expressionParser(new AssignExpressionParser())
+                .expressionParser(new BinaryAdditionExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser());
+
+        helper.defineVariable("counter", 0);
+        helper.interpret();
+
+        Object counter = helper.findVariable("counter");
+        Assertions.assertEquals(3d, counter);
+    }
+
+    @Test
+    void repeatWithNegativeValueFails() {
+        HSLTestHelper helper = HSLTestHelper.of("repeat (-1) { }")
+                .statementParser(new RepeatStatementParser())
+                .statementParser(new BlockStatementParser())
+                .expressionParser(new UnaryExpressionParser())
+                .expressionParser(new LiteralExpressionParser());
+
+        ScriptEvaluationError error = Assertions.assertThrows(
+                ScriptEvaluationError.class,
+                helper::interpret
+        );
+        HSLTestUtilities.assertEvaluationError(
+                error,
+                FormattedDiagnostic.of(DiagnosticMessage.ILLEGAL_NEGATIVE_NUMBER, -1d)
+        );
+    }
+
+    @Test
+    void repeatWithNonNumberValueFails() {
+        HSLTestHelper helper = HSLTestHelper.of("repeat (null) { }")
+                .statementParser(new RepeatStatementParser())
+                .statementParser(new BlockStatementParser())
+                .expressionParser(new LiteralExpressionParser());
+
+        ScriptEvaluationError error = Assertions.assertThrows(
+                ScriptEvaluationError.class,
+                helper::interpret
+        );
+        HSLTestUtilities.assertEvaluationError(
+                error,
+                FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, (Object) null)
+        );
+    }
+}

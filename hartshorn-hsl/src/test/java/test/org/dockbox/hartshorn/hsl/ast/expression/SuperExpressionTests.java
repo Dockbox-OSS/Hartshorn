@@ -26,18 +26,22 @@ import org.dockbox.hartshorn.hsl.semantic.Resolver;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import test.org.dockbox.hartshorn.hsl.ast.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
 
-public class SuperExpressionInterpreterTests {
+public class SuperExpressionTests {
 
     @Test
     void superMethodCanBeAccessedWithCurrentInstance() {
+        // 'super.hello' rather than 'super.hello()', as we want to test resolution, not
+        // invocation (which would be CallExpressionParser -> FunctionCallExpression).
         HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("super.hello")
                 .expressionParser(new LiteralExpressionParser());
 
+        // To access 'super', we need to be in a subclass context
         helper.resolver().currentClass(Resolver.ClassType.SUBCLASS);
-        Expression expression = helper.parseExpression();
 
+        Expression expression = helper.parseExpression();
+        // Resolve scope distance for 'super' to 1 (one level up, to parent)
         helper.interpreter().state().resolve(expression, 1);
 
         ClassReference classReference = Mockito.mock(ClassReference.class);
@@ -51,9 +55,11 @@ public class SuperExpressionInterpreterTests {
                     return methodReference;
                 });
 
+        // Define 'super' in the parent scope (parent class)
         VariableScope parentScope = helper.interpreter().visitingScope();
         parentScope.define("super", classReference);
 
+        // Define 'this' in a sub-scope (child class)
         InstanceReference instanceReference = Mockito.mock(InstanceReference.class);
         VariableScope subScope = new VariableScope(parentScope);
         subScope.define("this", instanceReference);

@@ -20,6 +20,7 @@ import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.extension.CustomStatement;
+import org.dockbox.hartshorn.hsl.extension.ResolverExtension;
 import org.dockbox.hartshorn.hsl.extension.StatementModule;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
@@ -60,6 +61,15 @@ public class CaptureModule implements StatementModule<CaptureModule.CaptureState
             public Set<Class<? extends CaptureStatement>> types() {
                 return Set.of(CaptureStatement.class);
             }
+        };
+    }
+
+    @Override
+    public ResolverExtension<CaptureStatement> resolver() {
+        return (node, resolver) -> {
+            resolver.beginScope();
+            resolver.resolve(node.expression());
+            resolver.endScope();
         };
     }
 

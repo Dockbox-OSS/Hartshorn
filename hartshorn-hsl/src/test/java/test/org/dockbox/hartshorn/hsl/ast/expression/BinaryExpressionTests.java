@@ -26,11 +26,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.org.dockbox.hartshorn.hsl.ast.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
 
 import java.util.stream.Stream;
 
-public class BinaryExpressionInterpreterTests {
+public class BinaryExpressionTests {
 
     @ParameterizedTest(name = "{1} {2} {3} = {4}")
     @MethodSource("binaryCases")

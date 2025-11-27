@@ -17,30 +17,31 @@
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
-import org.dockbox.hartshorn.hsl.parser.expression.UnaryExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.LogicalExpressionParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.org.dockbox.hartshorn.hsl.ast.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
 
 import java.util.stream.Stream;
 
-public class UnaryExpressionInterpreterTests {
+public class LogicalExpressionTests {
 
-
-    @ParameterizedTest(name = "{0} {1} = {2}")
+    @ParameterizedTest(name = "{0} {1} {2} = {3}")
     @MethodSource("logicalCases")
-    void verifyUnaryExpression(
+    void verifyLogicalExpression(
+            Object left,
             String operator,
             Object right,
             Object expected
     ) {
         HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression(
-                        "%sright".formatted(operator)
+                        "left %s right".formatted(operator)
                 )
+                .defineVariable("left", left)
                 .defineVariable("right", right)
-                .expressionParser(new UnaryExpressionParser())
+                .expressionParser(new LogicalExpressionParser())
                 .expressionParser(new IdentifierExpressionParser());
 
         Object value = helper.interpretValue();
@@ -49,37 +50,32 @@ public class UnaryExpressionInterpreterTests {
 
     public static Stream<Arguments> logicalCases() {
         return Stream.of(
-                // BANG
-                unary("!", true, false),
-                unary("!", false, true),
+                // XOR
+                logical(true, "^", true, false),
+                logical(true, "^", false, true),
+                logical(false, "^", true, true),
+                logical(false, "^", false, false),
 
-                // MINUS
-                unary("-", 5, -5d),
-                unary("-", -10, 10d),
-                unary("-", 0, -0d),
+                // OR
+                logical(true, "||", true, true),
+                logical(true, "||", false, true),
+                logical(false, "||", true, true),
+                logical(false, "||", false, false),
 
-                // PLUS_PLUS
-                unary("++", 5, 6d),
-                unary("++", -1, 0d),
-                unary("++", 0, 1d)
-
-                // MINUS_MINUS
-                ,unary("--", 5, 4d),
-                unary("--", -1, -2d),
-                unary("--", 0, -1d),
-
-                // COMPLEMENT
-                unary("~", 5, -6d),
-                unary("~", -1, 0d),
-                unary("~", 0, -1d)
+                // AND
+                logical(true, "&&", true, true),
+                logical(true, "&&", false, false),
+                logical(false, "&&", true, false),
+                logical(false, "&&", false, false)
         );
     }
 
-    public static Arguments unary(
+    public static Arguments logical(
+            Object left,
             String operator,
             Object right,
             Object expected
     ) {
-        return Arguments.of(operator, right, expected);
+        return Arguments.of(left, operator, right, expected);
     }
 }

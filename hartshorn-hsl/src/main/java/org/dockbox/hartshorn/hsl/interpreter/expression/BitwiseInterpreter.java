@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,18 +42,21 @@ public abstract class BitwiseInterpreter<R, T extends ASTNode> implements ASTNod
             int iLeft = ((Number) left).intValue();
             int iRight = ((Number) right).intValue();
 
-            return switch (operator.type()) {
-                case BitwiseTokenType.SHIFT_RIGHT -> iLeft >> iRight;
-                case BitwiseTokenType.SHIFT_LEFT -> iLeft << iRight;
-                case BitwiseTokenType.LOGICAL_SHIFT_RIGHT -> iLeft >>> iRight;
-                case BitwiseTokenType.BITWISE_AND -> iLeft & iRight;
-                case BitwiseTokenType.BITWISE_OR -> iLeft | iRight;
-                case BitwiseTokenType.XOR -> this.xor(iLeft, iRight);
-                default -> throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .message(DiagnosticMessage.UNSUPPORTED_BITWISE, operator.lexeme())
-                        .at(operator)
-                        .build();
-            };
+            if (operator.type() instanceof BitwiseTokenType bitwiseType) {
+                return switch (bitwiseType) {
+                    case SHIFT_RIGHT -> iLeft >> iRight;
+                    case SHIFT_LEFT -> iLeft << iRight;
+                    case LOGICAL_SHIFT_RIGHT -> iLeft >>> iRight;
+                    case BITWISE_AND -> iLeft & iRight;
+                    case BITWISE_OR -> iLeft | iRight;
+                    case XOR -> this.xor(iLeft, iRight);
+                    case COMPLEMENT -> ~iLeft;
+                };
+            }
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.UNSUPPORTED_BITWISE, operator.lexeme())
+                    .at(operator)
+                    .build();
         }
         String leftType = left != null ? left.getClass().getSimpleName() : null;
         String rightType = right != null ? right.getClass().getSimpleName() : null;

@@ -18,7 +18,9 @@ package test.org.dockbox.hartshorn.hsl;
 
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
+import org.dockbox.hartshorn.util.StringUtilities;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.Locale;
@@ -37,10 +39,31 @@ public class HSLTestUtilities {
             ScriptEvaluationError error,
             FormattedDiagnostic diagnosticMessage
     ) {
+        if (diagnosticMessage.message().phase() != null) {
+            Assertions.assertEquals(diagnosticMessage.message().phase(), error.phase());
+        }
         String phase = error.phase().name().toLowerCase(Locale.ROOT);
         String expectedMessageStart = diagnosticMessage.format();
         String actualMessageStart = error.getMessage().split("While " + phase)[0].trim();
         Assertions.assertEquals(expectedMessageStart, actualMessageStart);
+    }
+
+    public static void assertEvaluationError(
+            ScriptEvaluationError error,
+            DiagnosticMessage diagnosticMessage
+    ) {
+        if (diagnosticMessage.phase() != null) {
+            Assertions.assertEquals(diagnosticMessage.phase(), error.phase());
+        }
+        String phase = error.phase().name().toLowerCase(Locale.ROOT);
+        String actualMessageStart = error.getMessage().split("While " + phase)[0].trim();
+        String rawMessage = diagnosticMessage.format();
+        Assertions.assertTrue(
+                StringUtilities.matchesFormatted(rawMessage, actualMessageStart),
+                "Expected message to match:\n" +
+                rawMessage + "\nbut was:\n" +
+                actualMessageStart
+        );
     }
 
     public static void assertEvaluationFailedAtPosition(ScriptEvaluationError error, int line, int column) {

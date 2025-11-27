@@ -96,7 +96,7 @@ public enum DiagnosticMessage {
     MISSING_CONSTRUCTOR_WITH_PARAMETERS(4016, Phase.INTERPRETING, "No constructor found for class {0} with arguments {1}."),
     NON_ITERABLE_COLLECTION(4017, Phase.INTERPRETING, "Collection must be iterable, but got {0}."),
     NON_PROPERTY_CONTAINER(4018, Phase.INTERPRETING, "Can only access properties of property containers, but received {0}."),
-    NON_NUMBER_OPERAND(4019, Phase.INTERPRETING, "Operand must be a number, but got {0}."),
+    NON_NUMBER_OPERAND(4019, Phase.INTERPRETING, "Operand must be a number, but got '{0}'."),
     NON_EXTERNAL_OBJECT_CALL(4020, Phase.INTERPRETING, "Cannot call method '{0}' on non-external instance."),
     OPERAND_MISMATCH(4021, Phase.INTERPRETING, "Operand mismatch, expected operands to be the same type ({0}), but got {1} and {2}."),
     DUPLICATE_X_DEFINITION(4022, Phase.INTERPRETING, "Duplicate {0} definition: {1}.{2}."),
@@ -113,6 +113,7 @@ public enum DiagnosticMessage {
     ILLEGAL_RETURN_IN_GENERATOR(4033, Phase.INTERPRETING, "Cannot return a value from generator function."),
     INCORRECT_INSTANCE_TYPE_FOR_FUNCTION(4034, Phase.INTERPRETING, "Function '{0}' expected instance of type {1}, but got {2}."),
     DUPLICATE_EXTERNAL_CLASS_NAME(4035, Phase.INTERPRETING, "An external class with name '{0}' is already registered."),
+    ILLEGAL_NEGATIVE_NUMBER(4036, Phase.INTERPRETING, "Expected a positive number (>=0), but got {0}."),
 
     // 5xxx - Common validation
     EXPECTED_EXPRESSION_AFTER_X(5001, "Expected expression after {0}."),

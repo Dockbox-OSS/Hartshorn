@@ -23,9 +23,9 @@ import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import test.org.dockbox.hartshorn.hsl.ast.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
 
-public class ArrayGetExpressionInterpreterTests {
+public class ArrayGetExpressionTests {
 
     @Test
     void testArrayGetExpressionCanGetIfInRange() {

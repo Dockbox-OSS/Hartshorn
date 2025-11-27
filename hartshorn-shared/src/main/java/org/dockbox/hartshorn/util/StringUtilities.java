@@ -311,6 +311,22 @@ public final class StringUtilities {
     }
 
     /**
+     * Tests if the given raw string matches the given formatted string. The raw string may contain
+     * placeholders in the form of {@code {0}}, {@code {1}}, etc. This is a matcher for strings that
+     * are typically formatted with {@link #format(String, Object...)}.
+     *
+     * @param raw the raw string with placeholders
+     * @param formatted the formatted string to match against
+     * @return {@code true} if the raw string matches the formatted string, {@code false} otherwise
+     */
+    public static boolean matchesFormatted(String raw, String formatted) {
+        String regex = Pattern.quote(raw);
+       regex = regex.replaceAll("\\{\\d+}", "(.+?)");
+        regex = regex.replaceAll("\\\\Q(.+?)\\\\E", "$1");
+        return Pattern.compile("^" + regex + "$", Pattern.DOTALL).matcher(formatted).matches();
+    }
+
+    /**
      * Joins the given elements into a string, separated by the given delimiter. The elements are
      * converted to strings using the given function. If the given collection is empty, an empty
      * string is returned.

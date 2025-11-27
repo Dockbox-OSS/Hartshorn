@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.RangeExpressionParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import test.org.dockbox.hartshorn.hsl.ast.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
 
-public class RangeExpressionInterpreterTests {
+public class RangeExpressionTests {
 
     @Test
     void rangeYieldsLeftRightInclusiveArray() {
