@@ -114,6 +114,13 @@ public enum DiagnosticMessage {
     INCORRECT_INSTANCE_TYPE_FOR_FUNCTION(4034, Phase.INTERPRETING, "Function '{0}' expected instance of type {1}, but got {2}."),
     DUPLICATE_EXTERNAL_CLASS_NAME(4035, Phase.INTERPRETING, "An external class with name '{0}' is already registered."),
     ILLEGAL_NEGATIVE_NUMBER(4036, Phase.INTERPRETING, "Expected a positive number (>=0), but got {0}."),
+    NON_CALLABLE_CALLEE(4037, Phase.INTERPRETING, "Callee is not callable, got {0}."),
+    ERROR_WHILE_EVALUATING_X_EXPRESSION_WITH_OPERATOR(4038, Phase.INTERPRETING, "Error while evaluating {0} expression with operator {1}: {2}"),
+    UNSUPPORTED_MODULE_FUNCTION(4039, Phase.INTERPRETING, "Function '{0}' is not supported by module '{1}'."),
+    AMBIGUOUS_FUNCTION_CALL(4040, Phase.INTERPRETING, "Ambiguous function call to '{0}'."),
+    DEFERRED_INSTANCE_EAGER_ACCESS(4041, Phase.INTERPRETING, "Cannot access deferred instance of type {0} before it has been initialized."),
+    PROPERTY_ACCESS_FAILURE(4042, Phase.INTERPRETING, "Failed to {0} property '{1}' on instance of type {2}: {3}"),
+    ERROR_WHILE_INVOKING_NATIVE_METHOD(4043, Phase.INTERPRETING, "Error while invoking native method '{0}': {1}"),
 
     // 5xxx - Common validation
     EXPECTED_EXPRESSION_AFTER_X(5001, "Expected expression after {0}."),

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.hsl.objects.BindableNode;
 import org.dockbox.hartshorn.hsl.objects.CallableNode;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.ApplicationException;
@@ -35,11 +36,11 @@ import java.util.List;
 /**
  * TODO: #1061 Add documentation
  *
- * @since 0.5.0
- *
  * @author Guus Lieben
+ * @since 0.5.0
  */
-public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Object, FunctionCallExpression> {
+public class FunctionCallExpressionInterpreter
+    implements ASTNodeInterpreter<Object, FunctionCallExpression> {
 
     @Override
     public Object interpret(FunctionCallExpression node, Interpreter interpreter) {
@@ -58,16 +59,16 @@ public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Obj
         Token openParenthesis = node.openParenthesis();
         if (!(callee instanceof CallableNode function)) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .at(openParenthesis)
-                    .message("Can only call functions and classes, but received %s.".formatted(callee))
-                    .build();
+                .at(openParenthesis)
+                .message(DiagnosticMessage.NON_CALLABLE_CALLEE, callee)
+                .build();
         }
 
         try {
             if (callee instanceof InstanceReference instance) {
                 return function.call(openParenthesis, interpreter, instance, arguments);
             }
-            else if (callee instanceof BindableNode<?> bindable){
+            else if (callee instanceof BindableNode<?> bindable) {
                 return function.call(openParenthesis, interpreter, bindable.bound(), arguments);
             }
             else {
@@ -76,9 +77,9 @@ public class FunctionCallExpressionInterpreter implements ASTNodeInterpreter<Obj
         }
         catch (ApplicationException e) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .at(openParenthesis)
-                    .cause(e)
-                    .build();
+                .at(openParenthesis)
+                .cause(e)
+                .build();
         }
     }
 }

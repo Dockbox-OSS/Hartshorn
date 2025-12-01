@@ -112,9 +112,9 @@ public class VirtualInstance implements InstanceReference {
             return this.fields.get(name.lexeme());
         }
         throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                .at(name)
-                .message("Undefined property '%s'.".formatted(name.lexeme()))
-                .build();
+            .at(name)
+            .message(DiagnosticMessage.UNDEFINED_PROPERTY, name.lexeme(), this.type().name())
+            .build();
     }
 
     protected PropertyAccessVerifier accessVerifier() {

@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.hsl.objects.NativeExecutionException;
 import org.dockbox.hartshorn.hsl.objects.external.ExecutableLookup;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalClass;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
@@ -112,17 +113,21 @@ public abstract class AbstractNativeModule implements NativeModule {
             }
             catch(Throwable e) {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(at)
-                        .message("Error while invoking function '%s': %s".formatted(function.name().lexeme(), e.getMessage()))
-                        .cause(e)
-                        .build();
+                    .at(at)
+                    .message(DiagnosticMessage.ERROR_WHILE_INVOKING_NATIVE_METHOD,
+                        function.name().lexeme(),
+                        e.getMessage())
+                    .cause(e)
+                    .build();
             }
         }
         else {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .at(at)
-                    .message("Function '%s' is not supported by module '%s'".formatted(function.name().lexeme(), this.moduleClass().getSimpleName()))
-                    .build();
+                .at(at)
+                .message(DiagnosticMessage.UNSUPPORTED_MODULE_FUNCTION,
+                    function.name().lexeme(),
+                    this.moduleClass().getSimpleName())
+                .build();
         }
     }
 

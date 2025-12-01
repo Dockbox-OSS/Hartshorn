@@ -23,9 +23,11 @@ import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
+import org.dockbox.hartshorn.hsl.objects.access.StandardPropertyAccessVerifier;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualFunction;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualInstance;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
 import org.dockbox.hartshorn.hsl.token.Token;
@@ -39,10 +41,10 @@ import org.dockbox.hartshorn.util.types.TypeUtils;
 import java.util.List;
 
 /**
- * A {@link VirtualInstance} that combines the capabilities of a virtual instance and an external instance. This is
- * typically used when a virtual class extends an external class. Any fields and functions defined in the external
- * instance are directly modified on the external instance, while fields and functions defined in the virtual
- * instance are handled by the virtual instance.
+ * A {@link VirtualInstance} that combines the capabilities of a virtual instance and an external
+ * instance. This is typically used when a virtual class extends an external class. Any fields and
+ * functions defined in the external instance are directly modified on the external instance, while
+ * fields and functions defined in the virtual instance are handled by the virtual instance.
  *
  * @param <T> the type of the first external class in the inheritance hierarchy
  *
@@ -64,9 +66,12 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
         if (superClass == null) {
             throw new IllegalArgumentException("No external class found in " + virtualClass.name());
         }
-        this.firstExternalClass = TypeUtils.unchecked(((ExternalClass<?>) superClass).type(), TypeView.class);
+        this.firstExternalClass =
+            TypeUtils.unchecked(((ExternalClass<?>) superClass).type(), TypeView.class);
         if (this.firstExternalClass.constructors().defaultConstructor().absent()) {
-            throw new IllegalArgumentException("No empty or default constructor found in " + this.firstExternalClass.name() + ", composite instances cannot carry complex constructors.");
+            throw new IllegalArgumentException("No empty or default constructor found in "
+                + this.typeName()
+                + ", composite instances cannot carry complex constructors.");
         }
     }
 
@@ -77,14 +82,22 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
      * @param interpreter the interpreter executing the constructor
      * @param arguments the arguments to pass to the virtual constructor
      * @param virtualConstructor the virtual constructor to call, or {@code null} if none
-     * @throws ApplicationException if an error occurs during instance creation or virtual constructor execution
+     *
+     * @throws ApplicationException if an error occurs during instance creation or virtual
+     * constructor execution
      */
-    public void makeInstance(Token at, Interpreter interpreter, List<Object> arguments, VirtualFunction virtualConstructor) throws ApplicationException {
+    public void makeInstance(
+        Token at,
+        Interpreter interpreter,
+        List<Object> arguments,
+        VirtualFunction virtualConstructor
+    ) throws ApplicationException {
         if (this.instance != null) {
             throw new IllegalStateException("Instance already made");
         }
         // External class constructor
-        ConstructorView<T> constructor = this.firstExternalClass.constructors().defaultConstructor().get();
+        ConstructorView<T> constructor =
+            this.firstExternalClass.constructors().defaultConstructor().get();
         try {
             this.instance = constructor.create();
         }
@@ -102,7 +115,12 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     }
 
     @Override
-    public void set(final Interpreter interpreter, final Token name, final Object value, final VariableScope fromScope) {
+    public void set(
+        final Interpreter interpreter,
+        final Token name,
+        final Object value,
+        final VariableScope fromScope
+    ) {
         this.checkInstance(name);
         final VirtualProperty property = super.type().property(name.lexeme());
         if (property != null) {
@@ -116,23 +134,34 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
                 }
                 catch (Throwable throwable) {
                     throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                            .at(name)
-                            .message("Failed to set property %s on external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()))
-                            .cause(throwable)
-                            .build();
+                        .at(name)
+                        .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
+                            StandardPropertyAccessVerifier.WRITE_ACTION,
+                            name.lexeme(),
+                            this.typeName(),
+                            throwable.getMessage()
+                        )
+                        .cause(throwable)
+                        .build();
                 }
             }
             else {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(name)
-                        .message("Field %s not found in %s".formatted(name.lexeme(), this.firstExternalClass.name()))
-                        .build();
+                    .at(name)
+                    .message(DiagnosticMessage.UNDEFINED_PROPERTY,
+                        name.lexeme(),
+                        this.typeName())
+                    .build();
             }
         }
     }
 
     @Override
-    public Object get(final Interpreter interpreter, final Token name, final VariableScope fromScope) {
+    public Object get(
+        final Interpreter interpreter,
+        final Token name,
+        final VariableScope fromScope
+    ) {
         this.checkInstance(name);
         final VirtualProperty property = super.type().property(name.lexeme());
         if (property != null) {
@@ -146,17 +175,24 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
                 }
                 catch (Throwable throwable) {
                     throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                            .at(name)
-                            .message("Failed to get property %s from external instance of type %s".formatted(name.lexeme(), this.firstExternalClass.name()))
-                            .cause(throwable)
-                            .build();
+                        .at(name)
+                        .message(DiagnosticMessage.PROPERTY_ACCESS_FAILURE,
+                            StandardPropertyAccessVerifier.READ_ACTION,
+                            name.lexeme(),
+                            this.typeName(),
+                            throwable.getMessage()
+                        )
+                        .cause(throwable)
+                        .build();
                 }
             }
             else {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                        .at(name)
-                        .message("Field %s not found in %s".formatted(name.lexeme(), this.firstExternalClass.name()))
-                        .build();
+                    .at(name)
+                    .message(DiagnosticMessage.UNDEFINED_PROPERTY,
+                        name.lexeme(),
+                        this.typeName())
+                    .build();
             }
         }
     }
@@ -169,9 +205,14 @@ public class CompositeInstance<T> extends VirtualInstance implements ExternalObj
     private void checkInstance(Token position) {
         if (this.instance == null) {
             throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .at(position)
-                    .message("Composite instance of type %s not yet created".formatted(this.firstExternalClass.name()))
-                    .build();
+                .at(position)
+                .message(DiagnosticMessage.DEFERRED_INSTANCE_EAGER_ACCESS,
+                    this.typeName())
+                .build();
         }
+    }
+
+    private String typeName() {
+        return this.firstExternalClass.name();
     }
 }

@@ -39,16 +39,19 @@ import org.dockbox.hartshorn.hsl.token.type.MemberModifierTokenType;
  */
 public class StandardPropertyAccessVerifier implements PropertyAccessVerifier {
 
+    public static final String READ_ACTION = "read";
+    public static final String WRITE_ACTION = "assign to";
+
     @Override
     public FormattedDiagnostic read(final Token at, final VirtualProperty property, final InstanceReference instance, final VariableScope fromScope) {
         if (property.readModifier() == null || property.readModifier().type() == MemberModifierTokenType.PUBLIC) return null;
-        return this.permittedScope("read", property, instance, fromScope);
+        return this.permittedScope(READ_ACTION, property, instance, fromScope);
     }
 
     @Override
     public FormattedDiagnostic write(final Token at, final VirtualProperty property, final InstanceReference instance, final VariableScope fromScope) {
         if (property.writeModifier() == null || property.writeModifier().type() == MemberModifierTokenType.PUBLIC) return null;
-        return this.permittedScope("assign to", property, instance, fromScope);
+        return this.permittedScope(WRITE_ACTION, property, instance, fromScope);
     }
 
     private FormattedDiagnostic permittedScope(final String action, final VirtualProperty property, final InstanceReference instance, final VariableScope fromScope) {
