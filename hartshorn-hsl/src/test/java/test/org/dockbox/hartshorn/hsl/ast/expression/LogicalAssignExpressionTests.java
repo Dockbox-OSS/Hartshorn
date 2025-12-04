@@ -76,7 +76,7 @@ public class LogicalAssignExpressionTests {
     @MethodSource("logicalTokenTypes")
     void logicalAssignUpdatesVariableAndReturnsNewValue(TokenType tokenType, int result) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(
-                        applicationContext,
+                this.applicationContext,
                         "a %s 1".formatted(tokenType.representation())
                 )
                 .parser(parser -> {
@@ -96,7 +96,7 @@ public class LogicalAssignExpressionTests {
     @MethodSource("logicalTokenTypes")
     void logicalAssignCanNotAssignToNonVariable(TokenType tokenType) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(
-                        applicationContext,
+                this.applicationContext,
                         "1 %s 1".formatted(tokenType.representation())
                 )
                 .parser(parser -> {

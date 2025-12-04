@@ -26,16 +26,20 @@ import org.dockbox.hartshorn.hsl.parser.statement.BlockStatementParser;
 import org.dockbox.hartshorn.hsl.parser.statement.RepeatStatementParser;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.FormattedDiagnostic;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
-import test.org.dockbox.hartshorn.hsl.HSLTestUtilities;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class RepeatStatementInterpreterTests {
 
     @Test
-    void repeatWithNonZeroValueRepeatsExactlyNTimes() {
-        HSLTestHelper helper = HSLTestHelper.of("""
+    void repeatWithNonZeroValueRepeatsExactlyNTimes(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
                         repeat (3) {
                             counter = counter + 1
                         }
@@ -45,9 +49,10 @@ public class RepeatStatementInterpreterTests {
                 .expressionParser(new AssignExpressionParser())
                 .expressionParser(new BinaryAdditionExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser());
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("counter", 0)
+                .build();
 
-        helper.defineVariable("counter", 0);
         helper.interpret();
 
         Object counter = helper.findVariable("counter");
@@ -55,35 +60,37 @@ public class RepeatStatementInterpreterTests {
     }
 
     @Test
-    void repeatWithNegativeValueFails() {
-        HSLTestHelper helper = HSLTestHelper.of("repeat (-1) { }")
+    void repeatWithNegativeValueFails(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, "repeat (-1) { }")
                 .statementParser(new RepeatStatementParser())
                 .statementParser(new BlockStatementParser())
                 .expressionParser(new UnaryExpressionParser())
-                .expressionParser(new LiteralExpressionParser());
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
                 ScriptEvaluationError.class,
                 helper::interpret
         );
-        HSLTestUtilities.assertEvaluationError(
+        ScriptAssertions.assertEvaluationError(
                 error,
                 FormattedDiagnostic.of(DiagnosticMessage.ILLEGAL_NEGATIVE_NUMBER, -1d)
         );
     }
 
     @Test
-    void repeatWithNonNumberValueFails() {
-        HSLTestHelper helper = HSLTestHelper.of("repeat (null) { }")
+    void repeatWithNonNumberValueFails(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, "repeat (null) { }")
                 .statementParser(new RepeatStatementParser())
                 .statementParser(new BlockStatementParser())
-                .expressionParser(new LiteralExpressionParser());
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
                 ScriptEvaluationError.class,
                 helper::interpret
         );
-        HSLTestUtilities.assertEvaluationError(
+        ScriptAssertions.assertEvaluationError(
                 error,
                 FormattedDiagnostic.of(DiagnosticMessage.NON_NUMBER_OPERAND, (Object) null)
         );

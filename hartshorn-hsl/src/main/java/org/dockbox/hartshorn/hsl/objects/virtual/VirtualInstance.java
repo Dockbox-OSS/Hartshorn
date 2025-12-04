@@ -52,6 +52,10 @@ public class VirtualInstance implements InstanceReference {
         this.virtualClass = virtualClass;
     }
 
+    public VirtualClass virtualClass() {
+        return this.virtualClass;
+    }
+
     @Override
     public void set(Interpreter interpreter, Token name, Object value, VariableScope fromScope) {
         VirtualProperty field = this.virtualClass.property(name.lexeme());

@@ -16,4 +16,118 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
-public class ClassStatementInterpreterTests {}
+import org.dockbox.hartshorn.hsl.objects.ClassReference;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualClass;
+import org.dockbox.hartshorn.hsl.objects.virtual.VirtualProperty;
+import org.dockbox.hartshorn.hsl.parser.expression.CallExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.statement.ClassStatementParser;
+import org.dockbox.hartshorn.hsl.parser.statement.FieldStatementParser;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
+
+@HartshornIntegrationTest(includeBasePackages = false)
+public class ClassStatementInterpreterTests {
+
+    @Inject
+    private ApplicationContext applicationContext;
+
+    @Test
+    void virtualClassDefinitionCanInitialize() {
+        HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
+                        class Person {
+                            name;
+                        }
+                        capture(Person())
+                        """)
+                .withCaptureModule()
+                .statementParser(new ClassStatementParser(new FieldStatementParser()))
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .build();
+
+        helper.interpret();
+
+        Object classVariable = helper.findVariable("Person");
+        VirtualClass virtualClass = Assertions.assertInstanceOf(VirtualClass.class, classVariable);
+        Assertions.assertNull(virtualClass.superClass());
+        Assertions.assertFalse(virtualClass.isDynamic());
+
+        VirtualProperty name = virtualClass.property("name");
+        Assertions.assertNotNull(name);
+
+        // TODO: Test instance behavior
+    }
+
+    @Test
+    void dynamicClassDefinitionCanInitialize() {
+        HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
+                        class Person? {
+                            name;
+                        }
+                        capture(Person())
+                        """)
+                .withCaptureModule()
+                .statementParser(new ClassStatementParser(new FieldStatementParser()))
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .build();
+
+        helper.interpret();
+
+        Object classVariable = helper.findVariable("Person");
+        VirtualClass virtualClass = Assertions.assertInstanceOf(VirtualClass.class, classVariable);
+        Assertions.assertNull(virtualClass.superClass());
+        Assertions.assertTrue(virtualClass.isDynamic());
+
+        VirtualProperty name = virtualClass.property("name");
+        Assertions.assertNotNull(name);
+
+        // TODO: Test instance dynamic behavior
+    }
+
+    @Test
+    void virtualChildClassDefinitionCanInitialize() {
+        HSLTestHelper helper = HSLTestHelper.of(this.applicationContext, """
+                        class LivingThing {
+                            age;
+                        }
+                        class Person extends LivingThing {
+                            name;
+                        }
+                        capture(Person())
+                        """)
+                .withCaptureModule()
+                .statementParser(new ClassStatementParser(new FieldStatementParser()))
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .build();
+
+        helper.interpret();
+
+        Object classVariable = helper.findVariable("Person");
+        VirtualClass virtualClass = Assertions.assertInstanceOf(VirtualClass.class, classVariable);
+        Assertions.assertFalse(virtualClass.isDynamic());
+
+        VirtualProperty name = virtualClass.property("name");
+        Assertions.assertNotNull(name);
+
+        ClassReference superClass = virtualClass.superClass();
+        Assertions.assertNotNull(superClass);
+        Assertions.assertEquals("LivingThing", superClass.name());
+
+        VirtualClass virtualSuperClass = Assertions.assertInstanceOf(VirtualClass.class, superClass);
+        VirtualProperty age = virtualSuperClass.property("age");
+        Assertions.assertNotNull(age);
+
+        VirtualProperty childAge = virtualClass.property("age");
+        // No override, so definition remains in super class
+        Assertions.assertNull(childAge);
+
+        // TODO: Test instance behavior
+    }
+}

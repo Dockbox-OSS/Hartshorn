@@ -16,4 +16,56 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
-public class DoWhileStatementInterpreterTests {}
+import org.dockbox.hartshorn.hsl.parser.expression.AssignExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.BinaryComparisonExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.statement.BlockStatementParser;
+import org.dockbox.hartshorn.hsl.parser.statement.DoWhileStatementParser;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
+
+@HartshornIntegrationTest(includeBasePackages = false)
+public class DoWhileStatementInterpreterTests {
+
+    @Test
+    void doWhileWithFalseExpressionExecutesOnce(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
+                        do {
+                            checkpoint("inside-do-while")
+                        } while (false)
+                        """)
+                .statementParser(new DoWhileStatementParser())
+                .statementParser(new BlockStatementParser())
+                .expressionParser(new LiteralExpressionParser())
+                .build();
+
+        helper.interpret();
+        Assertions.assertTrue(helper.checkpoints().checkpointAccessed("inside-do-while"));
+        Assertions.assertEquals(1, helper.checkpoints().checkpointAccessCount("inside-do-while"));
+    }
+
+    @Test
+    void doWhileWithConditionalExpressionExecutesUntilFalse(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, """
+                        do {
+                            counter = checkpoint("inside-do-while")
+                        } while (counter < 3)
+                        """)
+                .statementParser(new DoWhileStatementParser())
+                .statementParser(new BlockStatementParser())
+                .expressionParser(new AssignExpressionParser())
+                .expressionParser(new BinaryComparisonExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("counter", 0)
+                .build();
+
+        helper.interpret();
+        Assertions.assertEquals(3, helper.checkpoints().checkpointAccessCount("inside-do-while"));
+    }
+}

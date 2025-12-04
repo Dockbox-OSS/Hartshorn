@@ -405,7 +405,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
             case INLINE_FUNCTION, CLASS_FUNCTION -> {
                 if (statement.returnType() != ReturnStatement.ReturnType.RETURN) {
                     throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                            .message(DiagnosticMessage.FUNCTION_CANNOT_YIELD)
+                            .message(DiagnosticMessage.FUNCTION_YIELD)
                             .at(statement.keyword())
                             .build();
                 }
@@ -427,9 +427,9 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
                 }
             }
             case FIELD_MEMBER -> {
-                if (statement.returnType() != ReturnStatement.ReturnType.YIELD) {
+                if (statement.returnType() != ReturnStatement.ReturnType.RETURN) {
                     throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
-                            .message(DiagnosticMessage.FIELD_MEMBER_RETURN)
+                            .message(DiagnosticMessage.FIELD_MEMBER_YIELD)
                             .at(statement.keyword())
                             .build();
                 }

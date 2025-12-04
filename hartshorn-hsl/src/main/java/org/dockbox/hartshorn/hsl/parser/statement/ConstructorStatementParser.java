@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ConstructorStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ParametricExecutableStatement.Parameter;
@@ -27,6 +24,9 @@ import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.FunctionTokenType;
 import org.dockbox.hartshorn.util.option.Option;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * TODO: #1061 Add documentation
@@ -42,7 +42,7 @@ public class ConstructorStatementParser extends AbstractBodyStatementParser<Cons
         Token keyword = parser.peek();
         if (keyword.type() == FunctionTokenType.CONSTRUCTOR) {
             parser.advance();
-            List<Parameter> parameters = this.parameters(parser, validator, "constructor", Integer.MAX_VALUE, keyword.type());
+            List<Parameter> parameters = this.parameters(parser, validator, "constructor", -1, keyword.type());
             BlockStatement body = this.blockStatement("constructor", keyword, parser, validator);
             return Option.of(new ConstructorStatement(keyword, parameters, body));
         }

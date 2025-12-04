@@ -82,7 +82,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
     @Override
     public String toString() {
         return ObjectDescriber.of(this)
-                .field("length", length())
+                .field("length", this.length())
                 .field("values", this.values)
                 .describe();
     }

@@ -79,8 +79,8 @@ public enum DiagnosticMessage {
     INVALID_EXPRESSION(Phase.SEMANTIC_ANALYSIS, "Expected last statement to be a valid expression or return statement, but found {0}."),
     MISSING_MODULE(Phase.SEMANTIC_ANALYSIS, "Cannot find module named '{0}'."),
     X_CAN_ONLY_BE_USED_IN_LOOPS_AND_SWITCHES(Phase.SEMANTIC_ANALYSIS, "{0} can only be used in loops and switch case statements."),
-    FIELD_MEMBER_RETURN(Phase.SEMANTIC_ANALYSIS, "Cannot return from a field member statement."),
-    FUNCTION_CANNOT_YIELD(Phase.SEMANTIC_ANALYSIS, "Cannot yield from a function."),
+    FIELD_MEMBER_YIELD(Phase.SEMANTIC_ANALYSIS, "Cannot yield from a field member statement."),
+    FUNCTION_YIELD(Phase.SEMANTIC_ANALYSIS, "Cannot yield from a function."),
     CONSTRUCTOR_OUTSIDE_CLASS(Phase.SEMANTIC_ANALYSIS, "Constructor cannot be declared outside of a class."),
 
     // 4xxx - Interpretation
@@ -121,12 +121,12 @@ public enum DiagnosticMessage {
     DUPLICATE_EXTERNAL_CLASS_NAME(Phase.INTERPRETING, "An external class with name '{0}' is already registered."),
     ILLEGAL_NEGATIVE_NUMBER(Phase.INTERPRETING, "Expected a positive number (>=0), but got {0}."),
     NON_CALLABLE_CALLEE(Phase.INTERPRETING, "Callee is not callable, got {0}."),
-    ERROR_WHILE_EVALUATING_X_EXPRESSION_WITH_OPERATOR(Phase.INTERPRETING, "Error while evaluating {0} expression with operator {1}: {2}"),
+    ERROR_WHILE_EVALUATING_X_EXPRESSION_WITH_OPERATOR(Phase.INTERPRETING, "Error while evaluating {0} expression with operator {1}: {2}."),
     UNSUPPORTED_MODULE_FUNCTION(Phase.INTERPRETING, "Function '{0}' is not supported by module '{1}'."),
     AMBIGUOUS_FUNCTION_CALL(Phase.INTERPRETING, "Ambiguous function call to '{0}'."),
     DEFERRED_INSTANCE_EAGER_ACCESS(Phase.INTERPRETING, "Cannot access deferred instance of type {0} before it has been initialized."),
-    PROPERTY_ACCESS_FAILURE(Phase.INTERPRETING, "Failed to {0} property '{1}' on instance of type {2}: {3}"),
-    ERROR_WHILE_INVOKING_NATIVE_METHOD(Phase.INTERPRETING, "Error while invoking native method '{0}': {1}"),
+    PROPERTY_ACCESS_FAILURE(Phase.INTERPRETING, "Failed to {0} property '{1}' on instance of type {2}: {3}."),
+    ERROR_WHILE_INVOKING_NATIVE_METHOD(Phase.INTERPRETING, "Error while invoking native method '{0}': {1}."),
 
     // 5xxx - Common validation
     EXPECTED_EXPRESSION_AFTER_X("Expected expression after {0}."),

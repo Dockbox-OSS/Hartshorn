@@ -93,7 +93,7 @@ public class ScriptEvaluationError extends RuntimeException {
      * @return a new builder for a {@link ScriptEvaluationError}
      */
     public static Builder builder(Phase phase) {
-        return new Builder(phase);
+        return new Builder(phase).virtualPosition();
     }
 
     /**

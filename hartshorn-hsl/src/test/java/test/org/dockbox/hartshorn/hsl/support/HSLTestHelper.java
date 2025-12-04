@@ -157,8 +157,8 @@ public class HSLTestHelper {
      * @return the parsed statements
      */
     public List<Statement> parse() {
-        context.runtime().runUntil(context, Phase.PARSING);
-        return context.statements();
+        this.context.runtime().runUntil(this.context, Phase.PARSING);
+        return this.context.statements();
     }
 
     /**

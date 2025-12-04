@@ -54,7 +54,7 @@ public class ArrayComprehensionExpressionTests {
     @ParameterizedTest
     @MethodSource("arrayInputs")
     void arrayComprehensionWithoutTransformation(Object inputArray) {
-        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
+        HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                         [x for x in list]
                         """)
                 .expressionParser(new IdentifierExpressionParser())
@@ -74,7 +74,7 @@ public class ArrayComprehensionExpressionTests {
     @ParameterizedTest
     @MethodSource("arrayInputs")
     void arrayComprehensionWithBasicTransformation(Object inputArray) {
-        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
+        HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                         [x + "2" for x in list]
                         """)
                 .expressionParser(new BinaryAdditionExpressionParser())
@@ -96,7 +96,7 @@ public class ArrayComprehensionExpressionTests {
     @ParameterizedTest
     @MethodSource("arrayInputs")
     void arrayComprehensionWithConditional(Object inputArray) {
-        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
+        HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                         [x for x in list if false]
                         """)
                 .expressionParser(new IdentifierExpressionParser())
@@ -116,7 +116,7 @@ public class ArrayComprehensionExpressionTests {
     @ParameterizedTest
     @MethodSource("arrayInputs")
     void arrayComprehensionWithConditionalAlternative(Object inputArray) {
-        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
+        HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                         [x for x in list if false else "other"]
                         """)
                 .expressionParser(new IdentifierExpressionParser())

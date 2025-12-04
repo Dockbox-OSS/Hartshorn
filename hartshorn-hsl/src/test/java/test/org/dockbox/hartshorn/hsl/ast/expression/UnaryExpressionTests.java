@@ -43,7 +43,7 @@ public class UnaryExpressionTests {
             Object expected
     ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(
-                        applicationContext,
+                this.applicationContext,
                         "%sright".formatted(operator)
                 )
                 .parser(parsers -> parsers

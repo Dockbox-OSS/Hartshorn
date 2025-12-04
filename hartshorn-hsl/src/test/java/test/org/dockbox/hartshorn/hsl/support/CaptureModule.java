@@ -114,7 +114,7 @@ public class CaptureModule implements StatementModule<CaptureModule.CaptureState
         }
 
         public Expression expression() {
-            return expression;
+            return this.expression;
         }
     }
 }

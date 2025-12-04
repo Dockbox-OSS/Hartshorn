@@ -60,7 +60,7 @@ public class AssignExpressionTests {
     void testAssignmentToDefinedVariable(
             Function<Interpreter, VariableScope> variableScopeFunction
     ) {
-        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
+        HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                         variable = "newValue"
                         """)
                 .expressionParser(new AssignExpressionParser())
@@ -93,7 +93,7 @@ public class AssignExpressionTests {
                 Mockito.any(VariableScope.class)
         );
 
-        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "object.property = 42")
+        HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, "object.property = 42")
                 .expressionParser(new AssignExpressionParser())
                 .expressionParser(new CallExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
@@ -114,7 +114,7 @@ public class AssignExpressionTests {
 
     @Test
     void testAssignmentToUndefinedVariable() {
-        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
+        HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                         variable = "newValue"
                         """)
                 .expressionParser(new AssignExpressionParser())

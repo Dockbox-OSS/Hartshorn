@@ -28,7 +28,7 @@ public class Yield extends RuntimeException {
 
     private final Object value;
 
-    public Yield(final Object value) {
+    public Yield(Object value) {
         super(null, null, false, false);
         this.value = value;
     }

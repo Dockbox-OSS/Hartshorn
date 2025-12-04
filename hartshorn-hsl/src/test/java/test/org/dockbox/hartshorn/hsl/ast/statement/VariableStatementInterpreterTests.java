@@ -16,4 +16,39 @@
 
 package test.org.dockbox.hartshorn.hsl.ast.statement;
 
-public class VariableStatementInterpreterTests {}
+import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.statement.VariableDeclarationParser;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
+
+@HartshornIntegrationTest(includeBasePackages = false)
+public class VariableStatementInterpreterTests {
+
+    @Test
+    void variableDeclarationWithInitializer(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, "var x = 10")
+                .statementParser(new VariableDeclarationParser())
+                .expressionParser(new LiteralExpressionParser())
+                .build();
+
+        helper.interpret();
+        Object x = helper.findVariable("x");
+        Assertions.assertEquals(10d, x);
+    }
+
+    @Test
+    void variableDeclarationWithoutInitializer(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.of(applicationContext, "var y")
+                .statementParser(new VariableDeclarationParser())
+                .expressionParser(new LiteralExpressionParser())
+                .build();
+
+        helper.interpret();
+        Object y = helper.findVariable("y");
+        Assertions.assertNull(y);
+    }
+}

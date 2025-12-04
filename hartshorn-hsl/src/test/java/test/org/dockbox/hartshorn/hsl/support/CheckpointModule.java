@@ -88,8 +88,8 @@ public class CheckpointModule implements ExpressionModule<CheckpointModule.Check
         return (node, interpreter) -> {
             Object descriptor = interpreter.evaluate(node.descriptor());
             if (descriptor instanceof String string) {
-                Integer count = checkpoints.getOrDefault(string, 0) + 1;
-                checkpoints.put(string, count);
+                Integer count = this.checkpoints.getOrDefault(string, 0) + 1;
+                this.checkpoints.put(string, count);
                 return count;
             } else {
                 throw ScriptEvaluationError.builder(Phase.INTERPRETING)
@@ -117,7 +117,7 @@ public class CheckpointModule implements ExpressionModule<CheckpointModule.Check
         }
 
         public Expression descriptor() {
-            return descriptor;
+            return this.descriptor;
         }
     }
 }

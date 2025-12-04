@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
-import java.util.function.BiFunction;
-
 import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.token.Token;
+
+import java.util.function.BiFunction;
 
 /**
  * TODO: #1061 Add documentation
@@ -46,6 +46,7 @@ public abstract class ArrayInterpreter<R, T extends ASTNode> implements ASTNodeI
         int index = indexValue.intValue();
 
         if (index < 0 || array.length() < index) {
+            // TODO: Migrate to ScriptEvaluationError
             throw new ArrayIndexOutOfBoundsException("Size can't be negative or bigger than array size");
         }
 

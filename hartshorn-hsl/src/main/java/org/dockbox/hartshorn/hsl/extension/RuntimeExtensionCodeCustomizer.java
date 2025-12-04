@@ -81,7 +81,7 @@ public class RuntimeExtensionCodeCustomizer extends AbstractCodeCustomizer {
     }
 
     public Set<StatementModule<?>> statementModules() {
-        return statementModules;
+        return this.statementModules;
     }
 
     public void expressionModules(ExpressionModule<?>... modules) {
@@ -89,6 +89,6 @@ public class RuntimeExtensionCodeCustomizer extends AbstractCodeCustomizer {
     }
 
     public Set<ExpressionModule<?>> expressionModules() {
-        return expressionModules;
+        return this.expressionModules;
     }
 }

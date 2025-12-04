@@ -57,7 +57,7 @@ public class AssignExpressionInterpreterTests {
     void testAssignmentToDefinedVariable(
             Function<Interpreter, VariableScope> variableScopeFunction
     ) {
-        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
+        HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                         variable = "newValue"
                         """)
                 .expressionParser(new AssignExpressionParser())
@@ -78,7 +78,7 @@ public class AssignExpressionInterpreterTests {
 
     @Test
     void testAssignmentToUndefinedVariable() {
-        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
+        HSLTestHelper helper = HSLTestHelper.ofExpression(this.applicationContext, """
                         variable = "newValue"
                         """)
                 .expressionParser(new AssignExpressionParser())

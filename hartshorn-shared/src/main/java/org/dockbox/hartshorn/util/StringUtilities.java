@@ -390,7 +390,9 @@ public final class StringUtilities {
      */
     public static class MatrixBuilder {
 
-        private final List<Collection<String>> segments = new ArrayList<>();
+        record Segment(Collection<String> values, boolean optional) {}
+
+        private final List<Segment> segments = new ArrayList<>();
 
         /**
          * Adds a segment to the matrix.
@@ -399,7 +401,7 @@ public final class StringUtilities {
          * @return this {@link MatrixBuilder} instance
          */
         public MatrixBuilder segment(Collection<String> segment) {
-            this.segments.add(segment);
+            this.segments.add(new Segment(segment, false));
             return this;
         }
 
@@ -411,6 +413,15 @@ public final class StringUtilities {
          */
         public MatrixBuilder segment(String... segment) {
             return this.segment(List.of(segment));
+        }
+
+        public MatrixBuilder optionalSegment(Collection<String> segment) {
+            this.segments.add(new Segment(segment, true));
+            return this;
+        }
+
+        public MatrixBuilder optionalSegment(String... segment) {
+            return this.optionalSegment(List.of(segment));
         }
 
         /**
@@ -430,13 +441,17 @@ public final class StringUtilities {
                 String current,
                 int depth
         ) {
-            if (depth == this.segments.size()) {
+            if (depth >= this.segments.size()) {
                 results.add(current);
                 return;
             }
 
-            for (String value : this.segments.get(depth)) {
+            Segment segment = this.segments.get(depth);
+            for (String value : segment.values) {
                 this.generate(results, current + value, depth + 1);
+            }
+            if (segment.optional) {
+                this.generate(results, current, depth + 1);
             }
         }
     }

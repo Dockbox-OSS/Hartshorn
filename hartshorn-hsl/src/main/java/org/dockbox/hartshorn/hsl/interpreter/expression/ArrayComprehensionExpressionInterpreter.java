@@ -16,17 +16,13 @@
 
 package org.dockbox.hartshorn.hsl.interpreter.expression;
 
-import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.expression.ArrayComprehensionExpression;
 import org.dockbox.hartshorn.hsl.interpreter.ASTNodeInterpreter;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.InterpreterUtilities;
-import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
-import org.dockbox.hartshorn.hsl.runtime.Phase;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,19 +38,7 @@ public class ArrayComprehensionExpressionInterpreter implements ASTNodeInterpret
     public Object interpret(ArrayComprehensionExpression node, Interpreter interpreter) {
         List<Object> values = new ArrayList<>();
         Object collection = interpreter.evaluate(node.collection());
-        Iterable<?> iterable;
-        if (collection instanceof Iterable<?> collectionIterable) {
-            iterable = collectionIterable;
-        }
-        else if (collection != null && collection.getClass().isArray()) {
-            iterable = Arrays.asList((Object[]) collection);
-        }
-        else {
-            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
-                    .message(DiagnosticMessage.NON_ITERABLE_COLLECTION, collection)
-                    .at(node)
-                    .build();
-        }
+        Iterable<?> iterable = InterpreterUtilities.checkIterable(node.collection(), collection);
         interpreter.withNextScope(() -> {
             interpreter.visitingScope().define(node.selector().lexeme(), null);
             interpreter.withNextScope(() -> visitIterable(node, interpreter, values, iterable));

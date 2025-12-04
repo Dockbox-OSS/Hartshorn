@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.hsl.interpreter;
 
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
+import org.dockbox.hartshorn.hsl.ast.ASTNode;
 import org.dockbox.hartshorn.hsl.objects.external.ExternalInstance;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
@@ -24,6 +25,7 @@ import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.util.Tuple;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 /**
  * Utilities for interpreters, providing common functionality that should remain consistent across
@@ -128,5 +130,22 @@ public final class InterpreterUtilities {
                 .message(DiagnosticMessage.OPERAND_MISMATCH, "number", left, right)
                 .at(operator)
                 .build();
+    }
+
+    public static Iterable<?> checkIterable(ASTNode at, Object collection) {
+        collection = InterpreterUtilities.unwrap(collection);
+
+        if (collection instanceof Iterable<?> collectionIterable) {
+            return collectionIterable;
+        }
+        else if (collection != null && collection.getClass().isArray()) {
+            return Arrays.asList((Object[]) collection);
+        }
+        else {
+            throw ScriptEvaluationError.builder(Phase.INTERPRETING)
+                    .message(DiagnosticMessage.NON_ITERABLE_COLLECTION, collection)
+                    .at(at)
+                    .build();
+        }
     }
 }

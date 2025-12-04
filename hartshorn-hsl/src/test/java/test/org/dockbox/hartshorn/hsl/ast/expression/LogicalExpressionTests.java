@@ -44,7 +44,7 @@ public class LogicalExpressionTests {
             Object expected
     ) {
         HSLTestHelper helper = HSLTestHelper.ofExpression(
-                        applicationContext,
+                this.applicationContext,
                         "left %s right".formatted(operator)
                 )
                 .defineLocal("left", left)
