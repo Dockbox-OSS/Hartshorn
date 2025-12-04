@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.hsl;
 
-import java.util.List;
-import java.util.Map;
-
-import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.interpreter.ResultCollector;
 import org.dockbox.hartshorn.hsl.interpreter.SimpleVisitorInterpreter;
@@ -28,8 +24,13 @@ import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.parser.StandardTokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.semantic.SimpleResolver;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.TokenRegistry;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * A standard implementation of the {@link ScriptComponentFactory} interface, using
@@ -53,7 +54,7 @@ public class StandardScriptComponentFactory implements ScriptComponentFactory {
 
     @Override
     public Resolver resolver(Interpreter interpreter) {
-        return new Resolver(interpreter);
+        return new SimpleResolver(interpreter);
     }
 
     @Override

@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.interpreter.Interpreter;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
-import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.expression.ExpressionParser;
+import org.dockbox.hartshorn.hsl.parser.statement.StatementParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.util.StringUtilities;
@@ -54,14 +54,14 @@ import java.util.Map;
  *
  * @author Guus Lieben
  */
-public class AbstractScriptRuntime extends ExpressionConditionContext implements MutableScriptRuntime {
+public class SimpleScriptRuntime extends ExpressionConditionContext implements MutableScriptRuntime {
 
     private final ScriptComponentFactory factory;
     private final ApplicationContext applicationContext;
 
     private ParserCustomizer parserCustomizer;
 
-    protected AbstractScriptRuntime(
+    public SimpleScriptRuntime(
         ApplicationContext applicationContext,
         ScriptComponentFactory factory
     ) {
@@ -69,7 +69,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
         });
     }
 
-    protected AbstractScriptRuntime(
+    public SimpleScriptRuntime(
         ApplicationContext applicationContext,
         ScriptComponentFactory factory,
         ParserCustomizer parserCustomizer
@@ -115,7 +115,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
             if (until.ordinal() >= Phase.PARSING.ordinal()) {
                 this.parse(context);
             }
-            if (until.ordinal() >= Phase.RESOLVING.ordinal()) {
+            if (until.ordinal() >= Phase.SEMANTIC_ANALYSIS.ordinal()) {
                 this.resolve(context);
             }
             if (until.ordinal() >= Phase.INTERPRETING.ordinal()) {
@@ -140,7 +140,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
             switch(only) {
             case TOKENIZING -> this.tokenize(context);
             case PARSING -> this.parse(context);
-            case RESOLVING -> this.resolve(context);
+            case SEMANTIC_ANALYSIS -> this.resolve(context);
             case INTERPRETING -> this.interpret(context);
             default -> throw new IllegalArgumentException("Unsupported standalone phase: " + only);
             }
@@ -218,7 +218,7 @@ public class AbstractScriptRuntime extends ExpressionConditionContext implements
     protected void resolve(ScriptContext context) {
         context.resolver(this.factory.resolver(context.interpreter()));
         context.interpreter().restore();
-        this.customizePhase(Phase.RESOLVING, context);
+        this.customizePhase(Phase.SEMANTIC_ANALYSIS, context);
         context.resolver().resolve(context.statements());
     }
 

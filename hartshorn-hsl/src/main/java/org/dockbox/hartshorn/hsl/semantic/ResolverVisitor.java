@@ -70,8 +70,6 @@ import org.dockbox.hartshorn.hsl.ast.statement.WhileStatement;
 import org.dockbox.hartshorn.hsl.modules.NativeModule;
 import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.runtime.Phase;
-import org.dockbox.hartshorn.hsl.semantic.Resolver.ClassType;
-import org.dockbox.hartshorn.hsl.semantic.Resolver.FunctionType;
 import org.dockbox.hartshorn.hsl.token.type.ObjectTokenType;
 import org.dockbox.hartshorn.hsl.visitors.ExpressionVisitor;
 import org.dockbox.hartshorn.hsl.visitors.StatementVisitor;
@@ -198,8 +196,8 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(ThisExpression expression) {
-        if (this.resolver.currentClass() == ClassType.NONE) {
-            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+        if (this.resolver.currentClassType() == ClassType.NONE) {
+            throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
                     .message(DiagnosticMessage.CANNOT_USE_X_OUTSIDE_CLASS, expression.keyword().lexeme())
                     .at(expression.keyword())
                     .build();
@@ -213,7 +211,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         if (this.resolver.hasDefinedScopes()) {
             Boolean initialized = this.resolver.peekScope().get(expression.name().lexeme());
             if (initialized != null && !initialized) {
-                throw ScriptEvaluationError.builder(Phase.RESOLVING)
+                throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
                         .message(DiagnosticMessage.UNDEFINED_VARIABLE, expression.name().lexeme())
                         .at(expression.name())
                         .build();
@@ -311,7 +309,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     public Void visit(BreakStatement statement) {
         // add this case inside semantic to make sure it inside loop
         if (this.resolver.currentScopeType() != FlowControlKeyword.ScopeType.LOOP && this.resolver.currentScopeType() != FlowControlKeyword.ScopeType.SWITCH) {
-            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+            throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
                     .message(DiagnosticMessage.X_CAN_ONLY_BE_USED_IN_LOOPS_AND_SWITCHES, statement.keyword().lexeme())
                     .at(statement.keyword())
                     .build();
@@ -323,7 +321,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     public Void visit(ContinueStatement statement) {
         // add this case inside semantic to make sure it inside loop
         if (this.resolver.currentScopeType() != FlowControlKeyword.ScopeType.LOOP) {
-            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+            throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
                     .message(DiagnosticMessage.X_CAN_ONLY_BE_USED_IN_LOOPS_AND_SWITCHES, statement.keyword().lexeme())
                     .at(statement.keyword())
                     .build();
@@ -335,7 +333,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
     public Void visit(FunctionStatement statement) {
         this.resolver.makeFinal(statement, "function");
         this.resolver.define(statement.name());
-        this.resolver.resolveFunction(statement, FunctionType.FUNCTION);
+        this.resolver.resolveFunction(statement, FunctionType.INLINE_FUNCTION);
         return null;
     }
 
@@ -374,6 +372,12 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(ConstructorStatement statement) {
+        if (this.resolver.currentClassType() == ClassType.NONE) {
+            throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
+                    .message(DiagnosticMessage.CONSTRUCTOR_OUTSIDE_CLASS)
+                    .at(statement.keyword())
+                    .build();
+        }
         this.resolver.define(statement.initializerIdentifier());
         this.resolver.resolveFunction(statement, FunctionType.INITIALIZER);
         return null;
@@ -393,26 +397,49 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(ReturnStatement statement) {
-        // Make sure return is inside function
-        if (this.resolver.currentFunction() == FunctionType.NONE) {
-            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+        switch (this.resolver.currentFunction()) {
+            case NONE -> throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
                     .message(DiagnosticMessage.TOP_LEVEL_RETURN)
                     .at(statement.keyword())
                     .build();
-        }
-        if (this.resolver.currentFunction() == FunctionType.TEST && statement.returnType() != ReturnStatement.ReturnType.YIELD) {
-            throw ScriptEvaluationError.builder(Phase.RESOLVING)
-                    .message(DiagnosticMessage.TEST_BLOCK_RETURN)
-                    .at(statement.keyword())
-                    .build();
-        }
-        if (statement.expression() != null) {
-            if (this.resolver.currentFunction() == FunctionType.INITIALIZER) {
-                throw ScriptEvaluationError.builder(Phase.RESOLVING)
-                        .message(DiagnosticMessage.INITIALIZER_RETURN)
-                        .at(statement.keyword())
-                        .build();
+            case INLINE_FUNCTION, CLASS_FUNCTION -> {
+                if (statement.returnType() != ReturnStatement.ReturnType.RETURN) {
+                    throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
+                            .message(DiagnosticMessage.FUNCTION_CANNOT_YIELD)
+                            .at(statement.keyword())
+                            .build();
+                }
             }
+            case INITIALIZER -> {
+                if (statement.expression() != null) {
+                    throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
+                            .message(DiagnosticMessage.INITIALIZER_RETURN)
+                            .at(statement.keyword())
+                            .build();
+                }
+            }
+            case TEST-> {
+                if (statement.returnType() != ReturnStatement.ReturnType.YIELD) {
+                    throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
+                            .message(DiagnosticMessage.TEST_BLOCK_RETURN)
+                            .at(statement.keyword())
+                            .build();
+                }
+            }
+            case FIELD_MEMBER -> {
+                if (statement.returnType() != ReturnStatement.ReturnType.YIELD) {
+                    throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
+                            .message(DiagnosticMessage.FIELD_MEMBER_RETURN)
+                            .at(statement.keyword())
+                            .build();
+                }
+            }
+            default -> {
+                throw new IllegalStateException("Unrecognized function type: " + this.resolver.currentFunction());
+            }
+        }
+
+        if (statement.expression() != null) {
             this.resolve(statement.expression());
         }
         return null;
@@ -420,8 +447,8 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(ClassStatement statement) {
-        ClassType enclosingClass = this.resolver.currentClass();
-        this.resolver.currentClass(ClassType.CLASS);
+        ClassType enclosingClass = this.resolver.currentClassType();
+        this.resolver.currentClassType(ClassType.CLASS);
 
         this.resolver.declare(statement.name());
         this.resolver.makeFinal(statement, "class");
@@ -429,7 +456,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         // Class must not extend itself
         if (statement.superClass() != null &&
                 statement.name().lexeme().equals(statement.superClass().name().lexeme())) {
-            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+            throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
                     .message(DiagnosticMessage.CLASS_CANNOT_EXTEND_SELF)
                     .at(statement.superClass().name())
                     .build();
@@ -437,7 +464,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
         // For inheritance
         if (statement.superClass() != null) {
-            this.resolver.currentClass(ClassType.SUBCLASS);
+            this.resolver.currentClassType(ClassType.SUBCLASS);
             this.resolve(statement.superClass());
         }
 
@@ -455,7 +482,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
             this.resolve(field);
         }
         for (FunctionStatement method : statement.methods()) {
-            this.resolver.resolveFunction(method, FunctionType.METHOD);
+            this.resolver.resolveFunction(method, FunctionType.CLASS_FUNCTION);
         }
         if (statement.constructor() != null) {
             this.resolver.resolveFunction(statement.constructor(), FunctionType.INITIALIZER);
@@ -465,7 +492,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         if (statement.superClass() != null) {
             this.resolver.endScope();
         }
-        this.resolver.currentClass(enclosingClass);
+        this.resolver.currentClassType(enclosingClass);
         return null;
     }
 
@@ -493,7 +520,7 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
         Map<String, NativeModule> modules = this.resolver.interpreter().state().externalModules();
         String module = statement.name().lexeme();
         if (!modules.containsKey(module)) {
-            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+            throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
                     .message(DiagnosticMessage.MISSING_MODULE, module)
                     .at(statement.name())
                     .build();
@@ -579,14 +606,14 @@ public class ResolverVisitor implements ExpressionVisitor<Void>, StatementVisito
 
     @Override
     public Void visit(SuperExpression expression) {
-        if (this.resolver.currentClass() == ClassType.NONE) {
-            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+        if (this.resolver.currentClassType() == ClassType.NONE) {
+            throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
                     .message(DiagnosticMessage.CANNOT_USE_X_OUTSIDE_CLASS, expression.keyword().lexeme())
                     .at(expression.keyword())
                     .build();
         }
-        else if (this.resolver.currentClass() != ClassType.SUBCLASS) {
-            throw ScriptEvaluationError.builder(Phase.RESOLVING)
+        else if (this.resolver.currentClassType() != ClassType.SUBCLASS) {
+            throw ScriptEvaluationError.builder(Phase.SEMANTIC_ANALYSIS)
                     .message(DiagnosticMessage.CANNOT_USE_X_WITHOUT_SUPER_CLASS, expression.keyword().lexeme())
                     .at(expression.keyword())
                     .build();

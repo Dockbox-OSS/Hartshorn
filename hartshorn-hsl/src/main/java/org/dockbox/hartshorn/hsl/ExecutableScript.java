@@ -140,7 +140,7 @@ public class ExecutableScript extends DefaultApplicationAwareContext {
      * @return The resolved {@link ScriptContext}
      */
     public ScriptContext resolve() {
-        this.context = this.getOrCreateRuntime().runUntil(this.source, Phase.RESOLVING);
+        this.context = this.getOrCreateRuntime().runUntil(this.source, Phase.SEMANTIC_ANALYSIS);
         return this.context;
     }
 
