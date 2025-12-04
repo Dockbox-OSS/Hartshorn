@@ -65,6 +65,7 @@ public class NativeLibrary implements CallableNode {
         String moduleName = this.declaration.moduleName().lexeme();
 
         if (!this.externalModules.containsKey(moduleName)) {
+            // TODO: Migrate to ScriptEvaluationError
             throw new NativeExecutionException("Module Loader : Can't find class with name : " + moduleName);
         }
 

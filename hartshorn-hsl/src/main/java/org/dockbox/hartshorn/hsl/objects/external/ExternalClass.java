@@ -75,6 +75,7 @@ public record ExternalClass<T>(ExternalClassRegistry registry, TypeView<T> type,
                 throw e;
             }
             catch (Throwable throwable) {
+                // TODO: Migrate to ScriptEvaluationError
                 throw new ApplicationException(throwable);
             }
         }

@@ -39,7 +39,7 @@ import java.util.Map;
 public class InlineStandardLibraryCustomizer extends AbstractCodeCustomizer {
 
     public InlineStandardLibraryCustomizer() {
-        super(Phase.RESOLVING);
+        super(Phase.SEMANTIC_ANALYSIS);
     }
 
     @Override

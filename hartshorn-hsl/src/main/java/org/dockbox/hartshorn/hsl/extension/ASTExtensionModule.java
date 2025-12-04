@@ -59,14 +59,12 @@ public sealed interface ASTExtensionModule<T extends ASTNode & CustomASTNode<T, 
     TokenType tokenType();
 
     /**
-     * The resolver that is responsible for resolving the node, if required. If the node does not require
-     * any resolution, the default implementation can be used.
+     * The resolver that is responsible for resolving the node and its references. If the node
+     * does not require symantic analysis, this method may return a no-op resolver.
      *
      * @return The resolver that is responsible for resolving the node, if required.
      */
-    default ResolverExtension<T> resolver() {
-        return (node, resolver) -> {};
-    }
+    ResolverExtension<T> resolver();
 
     /**
      * The interpreter that is responsible for interpreting the node. The return type of the interpreter

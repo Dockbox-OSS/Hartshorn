@@ -84,9 +84,11 @@ public class FieldStatement extends FinalizableStatement implements MemberStatem
 
     public void withGetter(final FieldGetStatement statement) {
         if (statement.field() != this) {
+            // TODO: Migrate to ScriptEvaluationError
             throw new IllegalArgumentException("Getter is not for field '%s'".formatted(this.name.lexeme()));
         }
         if (this.getter != null) {
+            // TODO: Migrate to ScriptEvaluationError
             throw new IllegalStateException("Duplicate getter for field '%s'".formatted(this.name.lexeme()));
         }
         this.getter = statement;
@@ -94,9 +96,11 @@ public class FieldStatement extends FinalizableStatement implements MemberStatem
 
     public void withSetter(final FieldSetStatement statement) {
         if (statement.field() != this) {
+            // TODO: Migrate to ScriptEvaluationError
             throw new IllegalArgumentException("Setter is not for field '%s'".formatted(this.name.lexeme()));
         }
         if (this.setter != null) {
+            // TODO: Migrate to ScriptEvaluationError
             throw new IllegalArgumentException("Duplicate setter for field '%s'".formatted(this.name.lexeme()));
         }
         this.setter = statement;

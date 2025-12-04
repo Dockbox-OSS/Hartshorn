@@ -81,6 +81,7 @@ public abstract class AbstractNativeModule implements NativeModule {
             if (arguments.isEmpty()) {
                 Option<MethodView<Object, ?>> methodViewOption = type.methods().named(functionName);
                 if (methodViewOption.absent()) {
+                    // TODO: Migrate to ScriptEvaluationError
                     throw new NativeExecutionException("Module Loader : Can't find function with name : " + function);
                 }
                 method = methodViewOption.get();

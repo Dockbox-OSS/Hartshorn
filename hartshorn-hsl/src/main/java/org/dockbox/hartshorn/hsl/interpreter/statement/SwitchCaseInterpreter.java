@@ -36,6 +36,7 @@ public class SwitchCaseInterpreter implements StatementInterpreter<SwitchCase> {
                 interpreter.execute(node.body());
             } catch (FlowControlKeyword keyword) {
                 if (keyword.moveType() != FlowControlKeyword.MoveType.BREAK) {
+                    // TODO: Migrate to ScriptEvaluationError
                     throw new RuntimeException("Unexpected move keyword " + keyword.moveType());
                 }
             }

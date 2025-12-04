@@ -94,6 +94,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
 
     @Override
     public void set(final Interpreter interpreter, final Token name, final Object value, VariableScope fromScope) {
+        // TODO: Migrate to ScriptEvaluationError
         throw new UnsupportedOperationException("Cannot set properties on arrays.");
     }
 
@@ -103,6 +104,7 @@ public class Array implements Iterable<Object>, PropertyContainer {
             return this.values.length;
         }
         else {
+            // TODO: Migrate to ScriptEvaluationError
             throw new UnsupportedOperationException("Cannot get properties on arrays, only 'length'.");
         }
     }

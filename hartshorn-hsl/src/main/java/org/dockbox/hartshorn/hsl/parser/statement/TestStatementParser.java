@@ -16,11 +16,14 @@
 
 package org.dockbox.hartshorn.hsl.parser.statement;
 
+import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
 import org.dockbox.hartshorn.hsl.ast.statement.BlockStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.ReturnStatement;
 import org.dockbox.hartshorn.hsl.ast.statement.TestStatement;
 import org.dockbox.hartshorn.hsl.parser.TokenParser;
 import org.dockbox.hartshorn.hsl.parser.TokenStepValidator;
+import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.AssertTokenType;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
@@ -43,6 +46,7 @@ public class TestStatementParser extends AbstractBodyStatementParser<TestStateme
     public Option<? extends TestStatement> parse(TokenParser parser, TokenStepValidator validator) {
         TokenTypePair parameter = parser.tokenRegistry().tokenPairs().parameters();
         if (parser.match(AssertTokenType.TEST)) {
+            Token testToken = parser.previous();
             validator.expectAfter(parameter.open(), "test statement");
 
             Token name = validator.expect(LiteralTokenType.STRING, "test name");
@@ -50,12 +54,18 @@ public class TestStatementParser extends AbstractBodyStatementParser<TestStateme
 
             BlockStatement body = this.blockStatement("test", name, parser, validator);
             if (body.statements().isEmpty()) {
-                throw new IllegalStateException("Test body cannot be empty");
+                throw ScriptEvaluationError.builder(Phase.PARSING)
+                        .message(DiagnosticMessage.EMPTY_TEST_BODY)
+                        .at(testToken)
+                        .build();
             }
-            else if (!(CollectionUtilities.last(body.statements()) instanceof ReturnStatement)) {
-                throw new IllegalStateException("Test body must end with a return statement");
+            else if (!(CollectionUtilities.last(body.statements()) instanceof ReturnStatement returnStatement)
+                    || returnStatement.returnType() != ReturnStatement.ReturnType.YIELD) {
+                throw ScriptEvaluationError.builder(Phase.PARSING)
+                        .message(DiagnosticMessage.TEST_BODY_MUST_END_WITH_YIELD)
+                        .at(testToken)
+                        .build();
             }
-
             return Option.of(new TestStatement(name, body));
         }
         return Option.empty();

@@ -53,6 +53,7 @@ public class ExternalInstance implements ExternalObjectReference {
 
     public <T> ExternalInstance(T instance, ExternalClass<T> type) {
         if (instance != null && !type.type().isInstance(instance)) {
+            // TODO: Migrate to ScriptEvaluationError
             throw new IllegalArgumentException("Instance of type %s is not an instance of %s".formatted(instance.getClass().getName(), type.name()));
         }
         this.instance = instance;
