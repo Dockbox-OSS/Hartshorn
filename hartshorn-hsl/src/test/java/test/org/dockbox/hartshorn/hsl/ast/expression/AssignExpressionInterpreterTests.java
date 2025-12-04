@@ -26,17 +26,24 @@ import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
 import org.dockbox.hartshorn.hsl.token.Token;
 import org.dockbox.hartshorn.hsl.token.type.LiteralTokenType;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.org.dockbox.hartshorn.hsl.ast.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class AssignExpressionInterpreterTests {
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     public static Stream<Arguments> variableDefinitionScopes() {
         return Stream.of(
@@ -50,37 +57,38 @@ public class AssignExpressionInterpreterTests {
     void testAssignmentToDefinedVariable(
             Function<Interpreter, VariableScope> variableScopeFunction
     ) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
                         variable = "newValue"
                         """)
                 .expressionParser(new AssignExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser());
+                .expressionParser(new IdentifierExpressionParser())
+                .define("variable", "originalValue", variableScopeFunction)
+                .build();
 
-        VariableScope scope = variableScopeFunction.apply(helper.interpreter());
-        scope.define("variable", "originalValue");
-
-        Object interpreted = helper.interpret(
-                AssignExpression.class,
-                new AssignExpressionInterpreter()
-        );
+        Object interpreted = helper
+                .evaluateWith(AssignExpression.class, new AssignExpressionInterpreter())
+                .interpretValue();
         Assertions.assertEquals("newValue", interpreted);
 
+        VariableScope scope = variableScopeFunction.apply(helper.interpreter());
         Object variableValue = scope.get(Token.of(LiteralTokenType.IDENTIFIER, "variable").build());
         Assertions.assertEquals("newValue", variableValue);
     }
 
     @Test
     void testAssignmentToUndefinedVariable() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
                         variable = "newValue"
                         """)
                 .expressionParser(new AssignExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser());
+                .expressionParser(new IdentifierExpressionParser())
+                .build();
 
-        Assertions.assertThrows(ScriptEvaluationError.class, () -> {
-            helper.interpret(AssignExpression.class, new AssignExpressionInterpreter());
-        });
+        Assertions.assertThrows(ScriptEvaluationError.class, () -> helper
+                .evaluateWith(AssignExpression.class, new AssignExpressionInterpreter())
+                .interpretValue()
+        );
     }
 }

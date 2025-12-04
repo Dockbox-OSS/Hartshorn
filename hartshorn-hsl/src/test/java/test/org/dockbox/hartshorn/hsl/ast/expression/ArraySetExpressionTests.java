@@ -22,52 +22,55 @@ import org.dockbox.hartshorn.hsl.interpreter.expression.ArraySetExpressionInterp
 import org.dockbox.hartshorn.hsl.parser.expression.AssignExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class ArraySetExpressionTests {
 
     @Test
-    void testSetWithinArrayRange() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+    void testSetWithinArrayRange(@Inject ApplicationContext applicationContext) {
+        Object[] realArray = {"test"};
+        Array hslArray = new Array(realArray);
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
                         array[0] = "value"
                         """)
                 .expressionParser(new AssignExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser());
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("array", hslArray)
+                .build();
 
-        Object[] realArray = {"test"};
-        Array hslArray = new Array(realArray);
-        helper.defineVariable("array", hslArray);
-
-        Object interpreted = helper.interpret(
-                ArraySetExpression.class,
-                new ArraySetExpressionInterpreter()
-        );
+        Object interpreted = helper
+                .evaluateWith(ArraySetExpression.class, new ArraySetExpressionInterpreter())
+                .interpretValue();
         Assertions.assertEquals("value", interpreted);
         Assertions.assertEquals("value", hslArray.value(0));
         Assertions.assertEquals("value", realArray[0]);
     }
 
     @Test
-    void testSetOutsideRangeThrowsOutOfBounds() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+    void testSetOutsideRangeThrowsOutOfBounds(@Inject ApplicationContext applicationContext) {
+        Object[] realArray = {"test"};
+        Array hslArray = new Array(realArray);
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
                         array[1] = "value"
                         """)
                 .expressionParser(new AssignExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser());
-
-        Object[] realArray = {"test"};
-        Array hslArray = new Array(realArray);
-        helper.defineVariable("array", hslArray);
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("array", hslArray)
+                .build();
 
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
-            helper.interpret(
+            helper.evaluateWith(
                     ArraySetExpression.class,
                     new ArraySetExpressionInterpreter()
-            );
+            ).interpretValue();
         });
     }
 }

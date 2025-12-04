@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.hsl.customizer;
 
 import org.dockbox.hartshorn.hsl.runtime.Phase;
 
+import java.util.function.Consumer;
+
 /**
  * Code customizers run during a specific {@link Phase phase} of a script's execution.
  * During the customization, the customizer can modify the script runtime's behavior,
@@ -41,5 +43,19 @@ public interface CodeCustomizer {
      * @param context the script context.
      */
     void call(ScriptContext context);
+
+    static CodeCustomizer of(Phase phase, Consumer<ScriptContext> action) {
+        return new CodeCustomizer() {
+            @Override
+            public Phase phase() {
+                return phase;
+            }
+
+            @Override
+            public void call(ScriptContext context) {
+                action.accept(context);
+            }
+        };
+    }
 
 }

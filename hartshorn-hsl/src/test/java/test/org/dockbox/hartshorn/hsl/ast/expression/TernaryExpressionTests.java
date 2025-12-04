@@ -18,27 +18,33 @@ package test.org.dockbox.hartshorn.hsl.ast.expression;
 
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.TernaryExpressionParser;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class TernaryExpressionTests {
 
     @Test
-    void ternaryWithTruthyValueReturnsLeft() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("true ?  42 : 24")
+    void ternaryWithTruthyValueReturnsLeft(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "true ?  42 : 24")
                 .expressionParser(new TernaryExpressionParser())
-                .expressionParser(new LiteralExpressionParser());
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(42d, value);
     }
 
     @Test
-    void ternaryWithFalsyValueReturnsRight() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("false ? 42 : 24")
+    void ternaryWithFalsyValueReturnsRight(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "false ? 42 : 24")
                 .expressionParser(new TernaryExpressionParser())
-                .expressionParser(new LiteralExpressionParser());
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(24d, value);

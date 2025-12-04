@@ -24,18 +24,25 @@ import org.dockbox.hartshorn.hsl.runtime.DiagnosticMessage;
 import org.dockbox.hartshorn.hsl.token.DefaultTokenRegistry;
 import org.dockbox.hartshorn.hsl.token.type.BitwiseAssignmentTokenType;
 import org.dockbox.hartshorn.hsl.token.type.TokenType;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
-import test.org.dockbox.hartshorn.hsl.HSLTestUtilities;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
 import java.util.List;
 import java.util.stream.Stream;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class LogicalAssignExpressionTests {
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     public static Stream<Arguments> logicalTokenTypes() {
         return Stream.of(
@@ -68,14 +75,17 @@ public class LogicalAssignExpressionTests {
     @ParameterizedTest
     @MethodSource("logicalTokenTypes")
     void logicalAssignUpdatesVariableAndReturnsNewValue(TokenType tokenType, int result) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression(
-                "a %s 1".formatted(tokenType.representation())
-        );
-        helper.expressionParser(new LogicalAssignExpressionParser(helper.lexer().tokenRegistry()))
+        HSLTestHelper helper = HSLTestHelper.ofExpression(
+                        applicationContext,
+                        "a %s 1".formatted(tokenType.representation())
+                )
+                .parser(parser -> {
+                    parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry()));
+                })
                 .expressionParser(new IdentifierExpressionParser())
-                .expressionParser(new LiteralExpressionParser());
-
-        helper.defineVariable("a", 0b101);
+                .expressionParser(new LiteralExpressionParser())
+                .defineLocal("a", 0b101)
+                .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(result, value);
@@ -85,16 +95,20 @@ public class LogicalAssignExpressionTests {
     @ParameterizedTest
     @MethodSource("logicalTokenTypes")
     void logicalAssignCanNotAssignToNonVariable(TokenType tokenType) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression(
-                "1 %s 1".formatted(tokenType.representation())
-        );
-        helper.expressionParser(new LogicalAssignExpressionParser(helper.lexer().tokenRegistry()))
-                .expressionParser(new LiteralExpressionParser());
+        HSLTestHelper helper = HSLTestHelper.ofExpression(
+                        applicationContext,
+                        "1 %s 1".formatted(tokenType.representation())
+                )
+                .parser(parser -> {
+                    parser.expressionParser(new LogicalAssignExpressionParser(parser.tokenRegistry()));
+                })
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
         ScriptEvaluationError error = Assertions.assertThrows(
                 ScriptEvaluationError.class,
-                helper::parseExpression
+                helper::expression
         );
-        HSLTestUtilities.assertEvaluationError(error, DiagnosticMessage.INVALID_ASSIGNMENT_TARGET);
+        ScriptAssertions.assertEvaluationError(error, DiagnosticMessage.INVALID_ASSIGNMENT_TARGET);
     }
 }

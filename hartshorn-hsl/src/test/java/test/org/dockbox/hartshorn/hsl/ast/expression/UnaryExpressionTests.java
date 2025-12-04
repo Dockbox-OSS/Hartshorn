@@ -18,16 +18,22 @@ package test.org.dockbox.hartshorn.hsl.ast.expression;
 
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.UnaryExpressionParser;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
 import java.util.stream.Stream;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class UnaryExpressionTests {
 
+    @Inject
+    private ApplicationContext applicationContext;
 
     @ParameterizedTest(name = "{0} {1} = {2}")
     @MethodSource("logicalCases")
@@ -36,12 +42,16 @@ public class UnaryExpressionTests {
             Object right,
             Object expected
     ) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression(
+        HSLTestHelper helper = HSLTestHelper.ofExpression(
+                        applicationContext,
                         "%sright".formatted(operator)
                 )
-                .defineVariable("right", right)
-                .expressionParser(new UnaryExpressionParser())
-                .expressionParser(new IdentifierExpressionParser());
+                .parser(parsers -> parsers
+                        .expressionParser(new UnaryExpressionParser())
+                        .expressionParser(new IdentifierExpressionParser())
+                )
+                .defineLocal("right", right)
+                .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(expected, value);

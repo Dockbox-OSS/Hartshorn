@@ -21,42 +21,46 @@ import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.interpreter.expression.ArrayGetExpressionInterpreter;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class ArrayGetExpressionTests {
 
     @Test
-    void testArrayGetExpressionCanGetIfInRange() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("array[0]")
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser());
-
+    void testArrayGetExpressionCanGetIfInRange(@Inject ApplicationContext applicationContext) {
         Object[] realArray = {"test"};
-        helper.defineVariable("array", new Array(realArray));
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "array[0]")
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("array", new Array(realArray))
+                .build();
 
-        Object interpretedValue = helper.interpret(
+        Object interpretedValue = helper.evaluateWith(
                 ArrayGetExpression.class,
                 new ArrayGetExpressionInterpreter()
-        );
+        ).interpretValue();
         Assertions.assertSame(realArray[0], interpretedValue);
     }
 
     @Test
-    void testArrayGetExpressionThrowsIfOutOfRange() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("array[1]")
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser());
-
+    void testArrayGetExpressionThrowsIfOutOfRange(@Inject ApplicationContext applicationContext) {
         Object[] realArray = {"test"};
-        helper.defineVariable("array", new Array(realArray));
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "array[1]")
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("array", new Array(realArray))
+                .build();
 
         Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            helper.interpret(
+            helper.evaluateWith(
                     ArrayGetExpression.class,
                     new ArrayGetExpressionInterpreter()
-            );
+            ).interpretValue();
         });
     }
 }

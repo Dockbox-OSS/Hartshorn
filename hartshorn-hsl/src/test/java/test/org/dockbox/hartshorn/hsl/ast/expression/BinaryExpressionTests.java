@@ -22,15 +22,22 @@ import org.dockbox.hartshorn.hsl.parser.expression.BinaryComparisonExpressionPar
 import org.dockbox.hartshorn.hsl.parser.expression.BinaryEqualityExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.BinaryMultiplicationExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
 import java.util.stream.Stream;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class BinaryExpressionTests {
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     @ParameterizedTest(name = "{1} {2} {3} = {4}")
     @MethodSource("binaryCases")
@@ -41,13 +48,15 @@ public class BinaryExpressionTests {
             Object right,
             Object expected
     ) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression(
+        HSLTestHelper helper = HSLTestHelper.ofExpression(
+                        applicationContext,
                         "left %s right".formatted(operator)
                 )
-                .defineVariable("left", left)
-                .defineVariable("right", right)
+                .defineLocal("left", left)
+                .defineLocal("right", right)
                 .expressionParser(parser)
-                .expressionParser(new IdentifierExpressionParser());
+                .expressionParser(new IdentifierExpressionParser())
+                .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(expected, value);

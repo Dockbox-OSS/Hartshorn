@@ -18,27 +18,33 @@ package test.org.dockbox.hartshorn.hsl.ast.expression;
 
 import org.dockbox.hartshorn.hsl.parser.expression.ElvisExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class ElvisExpressionTests {
 
     @Test
-    void elvisWithTruthyValueReturnsLeft() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("42 ?: 24")
+    void elvisWithTruthyValueReturnsLeft(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "42 ?: 24")
                 .expressionParser(new ElvisExpressionParser())
-                .expressionParser(new LiteralExpressionParser());
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(42d, value);
     }
 
     @Test
-    void elvisWithFalsyValueReturnsRight() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("null ?: 24")
+    void elvisWithFalsyValueReturnsRight(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "null ?: 24")
                 .expressionParser(new ElvisExpressionParser())
-                .expressionParser(new LiteralExpressionParser());
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals(24d, value);

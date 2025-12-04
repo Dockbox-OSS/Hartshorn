@@ -19,7 +19,6 @@ package test.org.dockbox.hartshorn.hsl;
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ExpressionScript;
 import org.dockbox.hartshorn.hsl.UseExpressionValidation;
-import org.dockbox.hartshorn.hsl.customizer.AbstractCodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.customizer.ScriptContext;
 import org.dockbox.hartshorn.hsl.lexer.Comment;
@@ -188,12 +187,7 @@ public class ScriptRuntimeTests {
         ExecutableScript script = ExecutableScript.of(this.applicationContext, "1 == 1");
 
         AtomicBoolean called = new AtomicBoolean(false);
-        CodeCustomizer customizer = new AbstractCodeCustomizer(phase) {
-            @Override
-            public void call(ScriptContext context) {
-                called.set(true);
-            }
-        };
+        CodeCustomizer customizer = CodeCustomizer.of(phase, context -> called.set(true));
         script.runtime().customizer(customizer);
         script.evaluate();
         Assertions.assertTrue(called.get());

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test.org.dockbox.hartshorn.hsl;
+package test.org.dockbox.hartshorn.hsl.support;
 
 import org.dockbox.hartshorn.hsl.ExecutableScript;
 import org.dockbox.hartshorn.hsl.ScriptEvaluationError;
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Assertions;
 
 import java.util.Locale;
 
-public class HSLTestUtilities {
+public class ScriptAssertions {
 
     public static void assertEvaluationFails(
             ExecutableScript executableScript,

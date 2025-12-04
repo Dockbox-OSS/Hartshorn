@@ -23,16 +23,23 @@ import org.dockbox.hartshorn.hsl.parser.expression.BinaryAdditionExpressionParse
 import org.dockbox.hartshorn.hsl.parser.expression.ComplexArrayExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
 import java.util.List;
 import java.util.stream.Stream;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class ArrayComprehensionExpressionTests {
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     public static Stream<Arguments> arrayInputs() {
         return Stream.of(
@@ -47,17 +54,18 @@ public class ArrayComprehensionExpressionTests {
     @ParameterizedTest
     @MethodSource("arrayInputs")
     void arrayComprehensionWithoutTransformation(Object inputArray) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
                         [x for x in list]
                         """)
                 .expressionParser(new IdentifierExpressionParser())
                 .expressionParser(new ComplexArrayExpressionParser())
-                .defineVariable("list", inputArray);
+                .defineLocal("list", inputArray)
+                .build();
 
-        Object interpreted = helper.interpret(
+        Object interpreted = helper.evaluateWith(
                 ArrayComprehensionExpression.class,
                 new ArrayComprehensionExpressionInterpreter()
-        );
+        ).interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, interpreted);
         Assertions.assertEquals(1, array.length());
         Assertions.assertEquals("test", array.value(0));
@@ -66,19 +74,20 @@ public class ArrayComprehensionExpressionTests {
     @ParameterizedTest
     @MethodSource("arrayInputs")
     void arrayComprehensionWithBasicTransformation(Object inputArray) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
                         [x + "2" for x in list]
                         """)
                 .expressionParser(new BinaryAdditionExpressionParser())
                 .expressionParser(new IdentifierExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
                 .expressionParser(new ComplexArrayExpressionParser())
-                .defineVariable("list", inputArray);
+                .defineLocal("list", inputArray)
+                .build();
 
-        Object interpreted = helper.interpret(
+        Object interpreted = helper.evaluateWith(
                 ArrayComprehensionExpression.class,
                 new ArrayComprehensionExpressionInterpreter()
-        );
+        ).interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, interpreted);
         Assertions.assertEquals(1, array.length());
         Assertions.assertEquals("test2", array.value(0));
@@ -87,18 +96,19 @@ public class ArrayComprehensionExpressionTests {
     @ParameterizedTest
     @MethodSource("arrayInputs")
     void arrayComprehensionWithConditional(Object inputArray) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
                         [x for x in list if false]
                         """)
                 .expressionParser(new IdentifierExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
                 .expressionParser(new ComplexArrayExpressionParser())
-                .defineVariable("list", inputArray);
+                .defineLocal("list", inputArray)
+                .build();
 
-        Object interpreted = helper.interpret(
+        Object interpreted = helper.evaluateWith(
                 ArrayComprehensionExpression.class,
                 new ArrayComprehensionExpressionInterpreter()
-        );
+        ).interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, interpreted);
         Assertions.assertEquals(0, array.length());
     }
@@ -106,18 +116,19 @@ public class ArrayComprehensionExpressionTests {
     @ParameterizedTest
     @MethodSource("arrayInputs")
     void arrayComprehensionWithConditionalAlternative(Object inputArray) {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
                         [x for x in list if false else "other"]
                         """)
                 .expressionParser(new IdentifierExpressionParser())
                 .expressionParser(new LiteralExpressionParser())
                 .expressionParser(new ComplexArrayExpressionParser())
-                .defineVariable("list", inputArray);
+                .defineLocal("list", inputArray)
+                .build();
 
-        Object interpreted = helper.interpret(
+        Object interpreted = helper.evaluateWith(
                 ArrayComprehensionExpression.class,
                 new ArrayComprehensionExpressionInterpreter()
-        );
+        ).interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, interpreted);
         Assertions.assertEquals(1, array.length());
         Assertions.assertEquals("other", array.value(0));

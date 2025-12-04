@@ -21,39 +21,37 @@ import org.dockbox.hartshorn.hsl.objects.ExternalObjectReference;
 import org.dockbox.hartshorn.hsl.parser.expression.CallExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class FunctionCallExpressionTests {
 
     @Test
-    void functionWithoutArgumentsCanBeCalled() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("sayHello()")
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser());
-
+    void functionWithoutArgumentsCanBeCalled(@Inject ApplicationContext applicationContext) {
         CallableNode node = (at, interpreter, instance, args) -> {
             Assertions.assertNull(instance);
             Assertions.assertTrue(args.isEmpty());
             return "Hello world!";
         };
-        helper.defineVariable("sayHello", node);
+
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "sayHello()")
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("sayHello", node)
+                .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals("Hello world!", value);
     }
 
     @Test
-    void functionWithArgumentsCanBeCalled() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
-                        greet("Guus")
-                        """)
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new IdentifierExpressionParser());
-
+    void functionWithArgumentsCanBeCalled(@Inject ApplicationContext applicationContext) {
         CallableNode node = (at, interpreter, instance, args) -> {
             Assertions.assertNull(instance);
             Assertions.assertEquals(1, args.size());
@@ -61,21 +59,24 @@ public class FunctionCallExpressionTests {
 
             return "Hello " + args.getFirst() + "!";
         };
-        helper.defineVariable("greet", node);
+
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
+                        greet("Guus")
+                        """)
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new LiteralExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("greet", node)
+                .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals("Hello Guus!", value);
     }
 
     @Test
-    void externalObjectReferenceArgumentIsUnwrapped() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("sayHello(person)")
-                .expressionParser(new CallExpressionParser())
-                .expressionParser(new IdentifierExpressionParser());
-
+    void externalObjectReferenceArgumentIsUnwrapped(@Inject ApplicationContext applicationContext) {
         ExternalObjectReference objectReference = Mockito.mock(ExternalObjectReference.class);
         Mockito.when(objectReference.externalObject()).thenReturn("Guus");
-        helper.defineVariable("person", objectReference);
 
         CallableNode node = (at, interpreter, instance, args) -> {
             Assertions.assertNull(instance);
@@ -85,7 +86,13 @@ public class FunctionCallExpressionTests {
 
             return "Hello world!";
         };
-        helper.defineVariable("sayHello", node);
+
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "sayHello(person)")
+                .expressionParser(new CallExpressionParser())
+                .expressionParser(new IdentifierExpressionParser())
+                .defineLocal("person", objectReference)
+                .defineLocal("sayHello", node)
+                .build();
 
         Object value = helper.interpretValue();
         Assertions.assertEquals("Hello world!", value);

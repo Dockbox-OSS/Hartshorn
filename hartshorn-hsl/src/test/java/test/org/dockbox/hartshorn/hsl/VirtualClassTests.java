@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import test.org.dockbox.hartshorn.hsl.support.ScriptAssertions;
 
 @HartshornIntegrationTest(includeBasePackages = false)
 @UseExpressionValidation
@@ -111,7 +112,7 @@ public class VirtualClassTests {
         // If an error message is expected, assert that the script evaluation fails with the expected message
         if (message != null) {
             ScriptEvaluationError error = Assertions.assertThrows(ScriptEvaluationError.class, script::evaluate);
-            HSLTestUtilities.assertEvaluationError(error, message);
+            ScriptAssertions.assertEvaluationError(error, message);
         } else {
             Assertions.assertDoesNotThrow(script::evaluate);
         }

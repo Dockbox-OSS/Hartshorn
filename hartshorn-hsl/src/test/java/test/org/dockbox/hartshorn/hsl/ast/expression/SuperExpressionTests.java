@@ -17,30 +17,38 @@
 package test.org.dockbox.hartshorn.hsl.ast.expression;
 
 import org.dockbox.hartshorn.hsl.ast.expression.Expression;
+import org.dockbox.hartshorn.hsl.customizer.CodeCustomizer;
 import org.dockbox.hartshorn.hsl.interpreter.VariableScope;
 import org.dockbox.hartshorn.hsl.objects.ClassReference;
 import org.dockbox.hartshorn.hsl.objects.InstanceReference;
 import org.dockbox.hartshorn.hsl.objects.MethodReference;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
-import org.dockbox.hartshorn.hsl.semantic.Resolver;
+import org.dockbox.hartshorn.hsl.runtime.Phase;
+import org.dockbox.hartshorn.hsl.semantic.ClassType;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class SuperExpressionTests {
 
     @Test
-    void superMethodCanBeAccessedWithCurrentInstance() {
+    void superMethodCanBeAccessedWithCurrentInstance(@Inject ApplicationContext applicationContext) {
         // 'super.hello' rather than 'super.hello()', as we want to test resolution, not
         // invocation (which would be CallExpressionParser -> FunctionCallExpression).
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("super.hello")
-                .expressionParser(new LiteralExpressionParser());
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "super.hello")
+                .expressionParser(new LiteralExpressionParser())
+                .customize(CodeCustomizer.of(Phase.SEMANTIC_ANALYSIS, context -> {
+                    // To access 'super', we need to be in a subclass context
+                    context.resolver().currentClassType(ClassType.SUBCLASS);
+                }))
+                .build();
 
-        // To access 'super', we need to be in a subclass context
-        helper.resolver().currentClass(Resolver.ClassType.SUBCLASS);
-
-        Expression expression = helper.parseExpression();
+        Expression expression = helper.expression();
         // Resolve scope distance for 'super' to 1 (one level up, to parent)
         helper.interpreter().state().resolve(expression, 1);
 
@@ -65,7 +73,9 @@ public class SuperExpressionTests {
         subScope.define("this", instanceReference);
         helper.interpreter().enterScope(subScope);
 
-        Object value = helper.interpretValue();
+        Object value = helper.interpretOnly()
+                .captures()
+                .capturedValue();
         Assertions.assertSame(methodReference, value);
         Assertions.assertSame(instanceReference, methodReference.bound());
     }

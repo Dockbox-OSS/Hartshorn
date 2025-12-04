@@ -20,17 +20,22 @@ import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.parser.expression.IdentifierExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.RangeExpressionParser;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class RangeExpressionTests {
 
     @Test
-    void rangeYieldsLeftRightInclusiveArray() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("1..5")
+    void rangeYieldsLeftRightInclusiveArray(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "1..5")
                 .expressionParser(new RangeExpressionParser())
-                .expressionParser(new LiteralExpressionParser());
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
         Object value = helper.interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, value);
@@ -41,33 +46,34 @@ public class RangeExpressionTests {
     }
 
     @Test
-    void rangeWithSameValueYieldsSingleElementArray() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("2..2")
+    void rangeWithSameValueYieldsSingleElementArray(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "2..2")
                 .expressionParser(new RangeExpressionParser())
-                .expressionParser(new LiteralExpressionParser());
+                .expressionParser(new LiteralExpressionParser())
+                .build();
 
         Object value = helper.interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, value);
         Assertions.assertArrayEquals(
-                new Double[] { 2d },
+                new Double[]{2d},
                 array.values()
         );
     }
 
     @Test
-    void rangeSupportsIdentifierValues() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("min..max")
+    void rangeSupportsIdentifierValues(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "min..max")
                 .expressionParser(new RangeExpressionParser())
                 .expressionParser(new IdentifierExpressionParser())
-                .expressionParser(new LiteralExpressionParser());
-
-        helper.defineVariable("min", 1);
-        helper.defineVariable("max", 5);
+                .expressionParser(new LiteralExpressionParser())
+                .defineLocal("min", 1)
+                .defineLocal("max", 5)
+                .build();
 
         Object value = helper.interpretValue();
         Array array = Assertions.assertInstanceOf(Array.class, value);
         Assertions.assertArrayEquals(
-                new Double[] { 1d, 2d, 3d, 4d, 5d },
+                new Double[]{1d, 2d, 3d, 4d, 5d},
                 array.values()
         );
     }

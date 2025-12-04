@@ -19,16 +19,21 @@ package test.org.dockbox.hartshorn.hsl.ast.expression;
 import org.dockbox.hartshorn.hsl.interpreter.Array;
 import org.dockbox.hartshorn.hsl.parser.expression.ComplexArrayExpressionParser;
 import org.dockbox.hartshorn.hsl.parser.expression.LiteralExpressionParser;
+import org.dockbox.hartshorn.inject.annotations.Inject;
+import org.dockbox.hartshorn.launchpad.ApplicationContext;
+import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import test.org.dockbox.hartshorn.hsl.HSLTestHelper;
+import test.org.dockbox.hartshorn.hsl.support.HSLTestHelper;
 
+@HartshornIntegrationTest(includeBasePackages = false)
 public class ArrayLiteralExpressionTests {
 
     @Test
-    void testEmptyArrayLiteralYieldsEmptyArrayObject() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("[]")
-                .expressionParser(new ComplexArrayExpressionParser());
+    void testEmptyArrayLiteralYieldsEmptyArrayObject(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "[]")
+                .expressionParser(new ComplexArrayExpressionParser())
+                .build();
         Object value = helper.interpretValue();
 
         Array array = Assertions.assertInstanceOf(Array.class, value);
@@ -36,10 +41,11 @@ public class ArrayLiteralExpressionTests {
     }
 
     @Test
-    void testSingleValueArrayLiteralYieldsArrayObject() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("[\"test\"]")
+    void testSingleValueArrayLiteralYieldsArrayObject(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, "[\"test\"]")
                 .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new ComplexArrayExpressionParser());
+                .expressionParser(new ComplexArrayExpressionParser())
+                .build();
         Object value = helper.interpretValue();
 
         Array array = Assertions.assertInstanceOf(Array.class, value);
@@ -48,12 +54,13 @@ public class ArrayLiteralExpressionTests {
     }
 
     @Test
-    void testMultipleValueArrayLiteralYieldsArrayObject() {
-        HSLTestHelper.ExpressionTestHelper helper = HSLTestHelper.ofExpression("""
+    void testMultipleValueArrayLiteralYieldsArrayObject(@Inject ApplicationContext applicationContext) {
+        HSLTestHelper helper = HSLTestHelper.ofExpression(applicationContext, """
                         ["test", "test2"]
                         """)
                 .expressionParser(new LiteralExpressionParser())
-                .expressionParser(new ComplexArrayExpressionParser());
+                .expressionParser(new ComplexArrayExpressionParser())
+                .build();
         Object value = helper.interpretValue();
 
         Array array = Assertions.assertInstanceOf(Array.class, value);
