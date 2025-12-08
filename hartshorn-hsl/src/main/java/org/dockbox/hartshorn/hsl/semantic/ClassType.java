@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.hsl.ast.statement.ClassStatement;
  * The type of the class that is currently being resolved. This is used to determine
  * whether certain operations are allowed or not.
  *
- * @author Guus Lieben
  * @since 0.4.12
+ *
+ * @author Guus Lieben
  */
 public enum ClassType {
     /**

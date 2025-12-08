@@ -100,6 +100,8 @@ public final class InterpreterUtilities {
      * @param operator the operator token
      * @param operand the operand to check
      *
+     * @return the operand cast to a {@link Number} if it is valid
+     *
      * @see #checkNumberOperands(Token, Object, Object) for binary operand checking
      */
     public static Number checkNumberOperand(Token operator, Object operand) {
@@ -119,6 +121,8 @@ public final class InterpreterUtilities {
      * @param operator the operator token
      * @param left the left operand
      * @param right the right operand
+     *
+     * @return a {@link Tuple} containing both operands cast to {@link Number} if they are valid
      *
      * @see #checkNumberOperand(Token, Object) for unary operand checking
      */

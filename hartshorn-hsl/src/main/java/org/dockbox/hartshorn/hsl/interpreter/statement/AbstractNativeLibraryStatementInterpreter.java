@@ -29,8 +29,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Abstract base class for interpreters that handle native library statements, which may contain
+ * multiple functions with the same name. When such ambiguity arises, this class provides the logic
+ * to either throw an error or register an ambiguous function handler based on the current
+ * interpreter's settings.
+ *
+ * @since 0.5.0
+ *
+ * @author Guus Lieben
+ */
 public abstract class AbstractNativeLibraryStatementInterpreter {
-
 
     protected void registerModuleFunction(
             String moduleName,

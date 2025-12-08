@@ -31,8 +31,9 @@ import java.util.List;
 /**
  * Interpreter for {@link PrefixExpression} nodes.
  *
- * @author Guus Lieben
  * @since 0.5.0
+ *
+ * @author Guus Lieben
  */
 public class PrefixExpressionInterpreter implements ASTNodeInterpreter<Object, PrefixExpression> {
 
