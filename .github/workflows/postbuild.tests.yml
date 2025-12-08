@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, macos-13]
+        os: [windows-latest, macos-latest]
     name: Unit tests (Compatibility, JDK 21, ${{ matrix.os }})
     runs-on: "${{ matrix.os }}"
     steps:
